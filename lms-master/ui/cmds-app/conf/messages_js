@@ -1,0 +1,29 @@
+#These messages are for use in javascript files. 
+
+TO_REORDER_CONTENT_MSG = In order to re-order content, you must select only one content and Filter by value should be 'All Resources' and Sort by should be 'Custom Order'.
+
+SIGNUP.ADD_EDIT = Add/Edit
+SIGNUP.FIELD_TYPE_TEXT = Text
+SIGNUP.FIELD_TYPE_DECIMAL = Decimal
+SIGNUP.FIELD_TYPE_WHOLE_NUMBER = Number
+SIGNUP.FIELD_TYPE_EMAIL = Email
+SIGNUP.FIELD_TYPE_DATE = Date
+SIGNUP.FIELD_TYPE_PHONE_NO = Phone No
+SIGNUP.FIELD_TYPE_PASSWORD = Password
+SIGNUP.FIELD_TYPE_DROP_DOWN = Drop Down
+SIGNUP.FIELD_TYPE_REGEXP = Regular Expression
+SIGNUP.ERROR_NOT_PROPER_REGEXP = Not a proper regular expresion testing value, please provide in string format.
+SIGNUP.SELECT_DEFAULT_VALUE = Select Default Value
+
+SDCARD.PROVIDE_NAME = Please provide with a name for the new Sd-Card Group.
+SDCARD.PROVIDE_NAME_WRONG_FORMAT = Please provide the Sd Card group name in alpha-numeric format. Special characters are not allowed!
+SDCARD.PROVIDE_SDCARD_SIZE = Please select each SD-Card size.
+SDCARD_SPECIFY_PRICE = Specify price
+SDCARD.ENABLE_SECTION_MSG = Are you sure to <b>enable</b> Sd cards in selected <b>class/section</b>.</br> It will disable download option for online consumption of this class/section's contents.
+SDCARD.DISABLE_SECTION_MSG = Are you sure to <b>disable</b> Sd cards in selected <b>class/section</b>.</br> You will not be able to further view Sd cards for the class/section.
+
+CHOOSE_SEARCH_ENTITY = Choose the entity, search it by choosing entity type and its name by typing and choose from drop list.
+PLEASE_PROVIDE_SELLING_POINT = Selling point and selling reference number required!
+
+ACCESS_CODE_EMAIL_RESEND = Successfully sent access-code to email <b>%s</b>.
+ALLOWED_DEVICE_ID = Allowed Device Ids

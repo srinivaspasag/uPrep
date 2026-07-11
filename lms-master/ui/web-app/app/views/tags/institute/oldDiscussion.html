@@ -1,0 +1,104 @@
+%{
+    if(discuss.has('dissId'))dissId=discuss.dissId;
+    else if(discuss.has('id'))dissId=discuss.id;
+    orgId = params.orgId;
+}%
+#{if discuss != null && discuss !=""}
+<div class="instDiscusWrapper" data-target="${_target}" data-diss-id="${dissId}">
+	<span class="instVoteHold relative left">
+        	#{widgets.upVoteItem entityType:"DISCUSSION",entityId:dissId,upVote:discuss.upVote,voted:discuss.voted /}
+	</span>
+	#{if _target=="EXTERNAL"}
+		<a class="doCStream instSimQuesBody openInstDiscussion" name="SIMILAR_DISCUSSION_LINK" 
+		data-diss-id="${dissId}" href="organization/${orgId}/discussion/${dissId}">
+			${discuss.title.raw()}
+		</a>
+	#{/if}
+	#{else}
+	<div class="instDiscussHead big14 boldy rteTextDiv">
+		<a class="doCStream ptrTag" name="DISCUSSION_LINK" style="display:inline-block;" 
+		data-diss-id="${dissId}">
+			${discuss.title.raw()}
+		</a>
+	</div>
+	#{/else}
+	<div class="instDiscussTags">
+		#{if discuss.has('targets')&&discuss.targets.length()>0 }
+			#{list items:0..discuss.targets.length()-1, as:'tIndex'}
+			%{ target = discuss.targets.get(tIndex);}%
+				<a class="instDiscussTag boardExam" 
+					href="${controllers.Boards.getBoardUrl('exam',target.brdId)}" 
+					data-brd-id="${target.brdId}">${target.name}
+				</a>
+			#{/list}
+		#{/if}
+		#{if discuss.boards.length()>0 }
+			#{list items:0..discuss.boards.length()-1, as:'brdIndex'}
+			%{ board = discuss.boards.get(brdIndex);}%
+				<a class="instDiscussTag" 
+					href="${controllers.Boards.getBoardUrl('subject',board.brdId)}" 
+					data-brd-id="${board.brdId}">${board.name}
+				</a>
+				#{if board.has('children') && board.children!="" && board.children.length()>0}
+				#{list items:0..board.children.length()-1, as:'childIndex'}
+				%{ child = board.children.get(childIndex);}%
+					<a class="instDiscussTag" 
+						href="${controllers.Boards.getBoardUrl('topic',child.brdId)}" 
+						data-brd-id="${child.brdId}">${child.name}
+					</a>
+				#{/list}
+				#{/if}
+			#{/list}
+		#{/if}
+	</div>
+	<div class="instDiscussDesc">
+		${discuss.desc.raw()}
+	</div>
+	<div class="instDiscUser">
+		<span class="instCommentInfo boldy" data-opened=false>
+			Answers(<span class="instCommentCount">${discuss.comments}</span>)
+		</span>
+		#{if discuss.has('user') ||discussOwner!=null }
+		%{
+                        if(discussOwner!=null)user=discussOwner;
+                        else user=discuss.user;
+			getUser=(controllers.Profile.getUserClassAndUrl(user));
+                        userClass = getUser.get("className");
+                        userUrl = getUser.get("url");
+		}%
+		<div class="right">
+			<span class="greyTextColor instPad smally" style="padding-right:5px;">by</span>
+		<a class="instDisUploader ${userClass} doCStream" href="${userUrl}" 
+			name="UPLOADER_LINK" data-user-id="${user._id}">
+			
+			<img src="${user.profilePic}" alt="${user.firstName.raw()}" class="icon absolute"/>
+			<span class="instPad" style="padding-left:25px">${user.firstName.raw()} ${user.lastName.raw()}</span>
+		</a>
+			%{ creationTime = uicom.util.Utilities.getDiffFromPresent(discuss.timeCreated);}%
+			<span class="simpleTabDivider"></span>
+			<span class="instDiscussAge instPad smally">${creationTime} ago</span>
+			<span class="simpleTabDivider"></span>
+			<div class="sharedInfoHolder linBlk relativePos" style="top:-3px;">
+            			<div class="sharedInfoBtn showSharedInfo">
+                			<span class="sharedInfoBtnImg"></span>
+               	 			<span class="sharedInfoBtnArrow"></span>
+            			</div>
+            			<div class="sharedInfoDiv nonner">
+					<span class="ptrTagHovered blocky">Public</a>
+				</div>                    
+        		</div>
+		</div>
+		<div class="cleaner_with_divider">&nbsp;</div>
+		#{/if}
+	</div>
+	<div class="instDiscussionDiv"></div>
+	<div style="padding-left:35px;">
+		<span class="smally greyTextColor"><!-- Shared with--></span>	
+                #{if discuss.has('followType')}
+		<span class="instDiscussFollowBtn right">
+			#{widgets.followUnfollowEntity followType:discuss.followType,entityType:'DISCUSSION',entityId:dissId,'saveText':'Follow this question','callback':'FOLLOW_DISCUSSION'/}
+		</span>	
+                #{/if}
+	</div>
+</div>
+#{/if}

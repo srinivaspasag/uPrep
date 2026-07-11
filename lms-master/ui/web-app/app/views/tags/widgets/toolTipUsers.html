@@ -1,0 +1,16 @@
+#{if !users.equals(null) && users.errorCode.isEmpty() && users.result.has('list') && users.result.list.length()>0}
+	#{list items:0..users.result.list.length()-1,as:'index'}
+	%{ 
+		user = users.result.list.get(index);
+	}%
+		<div class="toolTipUser-${user.get("id")}">
+			#{institute.memberName user : user , classNames : "whiteTextColor" /}
+		</div>
+	#{/list}
+	#{if Integer.parseInt(users.result.totalHits.toString())>Integer.parseInt(params.size.toString())}
+		<div style="padding:5px 6px 0 0">${Integer.parseInt(users.result.totalHits.toString())-Integer.parseInt(params.size.toString())} More..</span>
+	#{/if}
+#{/if}
+#{else}
+	<div>None</div>
+#{/else}

@@ -1,0 +1,83 @@
+<html style="height:0;">
+<head>
+<style>
+.blueButton{
+	padding: 6px 25px;
+	background-color: #3ab2e4;
+	font-size: 15px;
+	color: #fff;
+	position:absolute;
+	cursor:pointer;
+}
+.fileUploadBtn{
+	position:absolute;
+	cursor: pointer;
+	left:10px;
+	top:0px;
+	z-index:100;
+	padding: 3px 0px;
+	width:125px;
+	opacity:0;
+}
+</style>
+</head>
+<body style="margin:0;padding:0;">
+<form METHOD="POST" enctype="multipart/form-data" style="padding:4px 10px;"
+     action="@{Institute.uploadFeedImg}" id="instActivityImgForm">
+     <input type="file" class="fileUploadBtn" id="file-instShareFileInput" name="imageFile" title="Choose File"
+     	accept="image/*" value="${params.fileName?params.qqfileName:''}"/>
+	<span class="blueButton" data-default-text="&{'TXT_UPLOAD_IMG'}">
+     		#{if "yes".equals(isResponse)}
+     			&{'TXT_CHANGE_IMG'}
+		#{/if}
+		#{else}
+     			&{'TXT_UPLOAD_IMG'}
+		#{/else}
+	</span>
+     <input type="hidden" value="${session.userId}" name="userId"/>
+     <input type="hidden" value="${params.orgId}" name="orgId"/>
+</form>
+<script type="text/javascript">
+	new function(){
+		var allowedImgTypes = ["image/jpeg","image/jpg","image/bmp","image/png"];
+		document.getElementById("file-instShareFileInput").addEventListener("change", function (evt) {
+	    		try{
+				if(window.top.onIframeImgLoad){
+					window.top.onIframeImgLoad({"errorCode":"",result:{}},"");
+				}
+	    		}catch(err){}
+			var fileType = this.files[0].type;
+			if(allowedImgTypes.indexOf(fileType)>=0){
+				document.getElementById("instActivityImgForm").submit();
+			}else{
+				top.window["showError"]("&{'IMG_NOT_SUPPORTED'}");
+			}
+		});
+	}
+</script>
+
+#{if isResponse=="yes"}
+   <div id="ifrmImageResponse" style="display:none;">
+   #{if data!=null && data.has("result") && data.errorCode==""}
+	%{
+		result = data.get("result");
+		result.put("image",result.get("url"));
+	}%
+	#{institute.previews.image source:result,target:'editable' /}
+   #{/if}
+   #{else}
+	<div class="instNotValidImg">&{'IMG_NOT_UPLOADED'}</div>
+   #{/else}
+   </div>
+   <script type="text/javascript">
+	if(window.top.onIframeImgLoad){
+	    var html = document.getElementById("ifrmImageResponse").innerHTML;
+	    try{
+		window.top.onIframeImgLoad(${data.raw()},html);
+	    }catch(err){
+		window.top.onIframeImgLoad(false,html);
+	    }
+	}
+   </script>
+#{/if}
+</body>

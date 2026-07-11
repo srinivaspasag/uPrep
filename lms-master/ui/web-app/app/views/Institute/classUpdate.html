@@ -1,0 +1,133 @@
+#{extends 'header.html' /}
+<script>
+	$(function() {
+		$( "#lecturePicker" ).datepicker();
+	});
+</script>
+<div class="classUpdateWrapper clearfix">
+	<div class="classUpdateHeader">
+		<div class="wrapClassUpdate clearfix">
+			<h3>Class Update</h3>
+			<div class="batchSelect">
+				<span class="CUBatch">Batch</span> 
+				
+				<select id="batches">
+					<!-- <option value="1">S-1</option>
+					<option value="2">S-2</option>
+					<option value ="3">S-3</option> -->
+				</select>
+				<span class="CUCourse">Course</span>
+				<select id="CUcourses">
+
+				</select>
+			</div>
+			<div class="masterPlanBtn">
+				<a href="/institute/compareSchedule">Comapare with master plan</a>
+			</div>
+		</div>
+	</div>
+	<div class="classUpdateContents clearfix">
+		<div id="classTopicWidget">
+			<h4>Topics</h4>
+			<ul class="topicLists clearfix">
+			</ul>
+		</div>
+		<div class="lectureContainer">
+			<div class="lectureInfo clearfix">
+				<div class="startedWrap">
+					<span class='classStarted'>Started</span>
+					<span class="startedDate"></span>
+				</div>
+				<div class="ongoingWrap">
+					<span class='classOngoing'>Ongoing</span>
+					<span class="ongoingDays"></span>
+				</div>
+				<a id="endTopic">End Topic</a>
+			</div>
+			<div class="lectureCalendarWrapper clearfix">
+				<div class="lecturesListWrapper">
+					<span id="noOfLectures"></span>
+					<a id="addLecture">Add Lecture</a>
+					<div id="lecturesList">
+					</div>
+				</div>
+				<div class="lectureCalendar">
+					<div id="lecturePicker">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	lectureManager.init();
+	lectureUpdate.init();
+});
+
+
+//Cancel lecture
+// $(document).on('click','.cancelLecture', function(){
+// 	var lectureId = $(this).parent().siblings().attr('id');
+// 	topicUpdate.cancelAddedLecture(lectureId);
+// })
+
+//show corresponding lectures for each topic
+	// $(document).on('click', 'ul.topcisLists .CU-done .CUtopics', function(){
+	// 	e.preventDefult();
+	// });
+
+	// $(document).on("click", 'ul.topicLists .CU-ongoing .CUtopics', function(){
+	// 	var topic = $(this).html();
+	// 	$('#lecturePicker').find('td[data-month] a').nextAll().remove();
+	// 	topicUpdate.showLectures(topic);
+	// });
+
+// function unbindClick(){
+// 	var $sel = $('#lecturePicker').find('td');
+// 	$sel.each(function(){
+//  		if($(this).data('handler')){
+//  			$(this).unbind('click');
+//  		}
+//  	})
+// }
+
+
+// var CACHE = {};
+// function LoadValues(batchVal){
+// 	return CACHE[batchVal] || $.ajax("/Institute/getSchedule",
+// 		{data: {batch: batchVal},
+// 		dataType:'json',
+// 		success: function(data){
+// 			CACHE[batchVal] = data.batches[batchVal-1];
+
+// 		}		
+// 	});
+
+// }
+// $(document).ready(function(){
+//  	topicUpdate.getTopics("s-1");
+//  	$.get("/Institute/getSchedule", {userRole: "TEACHER", orgId: "4ffae4cf5444f2cc464e64fb", masterPlanId: "50642880655ab0e47d5071e5"}, function(data){
+//  	// 	//console.log("Response is ")
+//  		unbindClick();
+//  	 })
+// });
+
+//Add lecture
+	// $('#addLecture').on('click', function(){
+	// 	topicUpdate.addLecture();
+	// });	
+// $(function () {
+//     $("#batches").change(function () { 
+//     	$.when(
+//     	LoadValues($("#batches").val())
+//     	).then(function(result){
+//     		//console.log("The values of deffered " +result.batch);
+//     		topicUpdate.listTopics(result.batches[0]);
+//     		topicUpdate.showLectures("Optics");
+//     	});
+//     });//[0].selectedIndex = -1;
+// });
+
+
+</script>

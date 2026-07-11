@@ -1,0 +1,108 @@
+%{
+	userRole = _userRole;
+}%
+<div class="instTAGraphH nonner">
+  <div class="pageHolderNM">
+    <div class="instTAGraphBackGround">
+      <div class="instTAGraphContainer">
+	<div class="left" style="height:100%">
+		<!--*{<div class="instTAshowRankTab" #{if userRole!="STUDENT"}style="display: none;"#{/if}>
+			<div class="boldy smally">Show</div>
+			<div class="pad5Top">
+				<input type="radio" name="instTARankRad" 
+					checked=true class="instSwitchRankType" data-show-type=".instOverallRank" data-hide-type=".instCenterRank" data-type="OVERALL"/>
+				<span class="boldy">Overall Rank</span>
+			</div>
+			<div class="pad5Top">
+				<input type="radio" name="instTARankRad" 
+					class="instSwitchRankType" data-show-type=".instCenterRank" data-hide-type=".instOverallRank" data-type="CENTER"/>
+				<span class="boldy">Center Rank</span>
+			</div>
+		</div>}*-->
+		<div class="instTAshowHighestTab">
+			<div class="pad5Top">
+                            <input type="checkbox" name="instTAHighestRad" class="showTAHighestMarks"/>
+				<span class="boldy">Show Highest</span>
+			</div>
+			#{if userRole == "STUDENT"}
+			<div class="pad5Top">
+                            <input type="checkbox" name="instTAHighestRad" class="showTAAvgMarks"/>
+				<span class="boldy">Show Average</span>
+			</div>
+			#{/if}
+		</div>
+		<div class="instTASubjectSelect">
+			<div class="boldy smally">Subjects</div>
+			#{institute.widgets.dropDowns.singleList listType : "Subjects" , showSelectAll : true /}
+		</div>
+		<!--COMPARE WITH DISABLED < NOT_IMPLEMENTED
+		*{<div class="instTACompareSelect" #{if userRole!="STUDENT"}style="display: none;"#{/if}>
+			<div class="boldy smally">Compare with</div>
+			<div class="instTACompare vDropDown">
+				<input type="text" class="left searchCompareTA"	value="" placeholder="search"/>
+				<span class="instImgs noUserSelect"></span>
+				<div class="instTAUsersHolder nonner">
+					<span class="instTAUsers" data-value="">None</span>
+					<div class="cleaner_with_divider">&nbsp;</div>
+				</div>
+			</div> 
+		</div>}*
+		-->
+		<div class="instTAComparedUsers nonner">
+			<div class="instComYou"><span class="instTAcircle"></span><span class="uName">You</span></div>
+			<div class="instComUser"><span class="instTAcircle"></span><span class="uName">You</span></div>
+		</div>
+	</div>
+	<div class="left instTAGraphHolder" style="width:50%;padding-left:30px;height:100%">
+                <div class="tests-stats clearfix CSWidget" data-widget="TEST_GRAPH">
+		#{if userRole=="STUDENT"}
+		  <div class="boldy big14 left">&{'TEST_RESULT_GRAPH'} &{'TXT_BY'} % Marks</div>
+		  <!--<div class="vselect vselectHide selectInstTAGraphType vDropDown absolute" onstatechange="instTAGraphChanged" data-value="RANK">
+			<span class="vSelectHead">
+				<input type="text" class="vSelectText" value="% Marks" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect"></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+					#{if userRole=="STUDENT"}
+					<span class="doCStream vSelectEach" data-value="RANK" 
+						data-yaxis-text="Rank">Rank</span>
+					#{/if}
+					<span class="doCStream vSelectEach" data-value="MARK"
+						data-yaxis-text="% Marks">% Marks</span>
+				</div>
+			</div>
+		  </div> -->
+		#{/if}
+		#{else}
+		  <div class="boldy big16 left">&{'AVG_TEST_SCORE'}</div>
+		#{/else}
+                    <div class="instTANextPrev relative clearfix">
+                        <a class="nextTA doCStream" name="NEXT"></a>
+                        <a class="prevTA doCStream" name="PREV"></a>
+                    </div>
+                    <div class="test-graph"></div>
+                    <table class="testDetailsTable">
+                    </table>
+		</div>
+	</div>
+	<div class="testGraphGlobalFilter" style="display: none;">
+            <span style="float: left; margin-top: 50px;">
+                <input type="checkbox" value="MAX" class="showTAHighestMarks"> Show Highest
+            </span>
+            <span style="float: left;">
+                <input type="checkbox" value="AVG"  class="" checked=true> Show Average
+            </span>
+	</div>
+	<div class="right" style="width:170px;height:100%">
+		<!--<span class="instShowStrengthBtn left centerText smally">Show Strength and Weaknesses</span>-->
+
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+      </div>
+      <div class="instTAGraphNoTest nonner">
+	<div class="centerText big14 redTextColor boldy" style="padding:30px 0;">&{'NO_TEST_ATTEMPTED'}</div>
+      </div>
+    </div>
+  </div>
+</div>

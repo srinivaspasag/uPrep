@@ -1,0 +1,39 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.has('result')}
+%{
+	conv = resp.get('result').get('summary');
+	if(firstMessageResp && firstMessageResp.errorCode.isEmpty() 
+		&& firstMessageResp.has("result") && firstMessageResp.result.has("message")
+		&& firstMessageResp.result.message.has("sender")){
+		conv.put("mostRecentSender",firstMessageResp.result.message.sender);
+	}
+}%
+<div id="msgConversation"  
+	data-conversation-id="${conv.conversationId}" data-user-conversation-id="${conv.userConversationId}">
+   <div class="pageHolderM relative">
+	<div class="bodyWhiteBg">
+	    <div class="msgConversationBody">
+		#{messages.msg msg:conv,target:"CONVERSATION" /}
+		<div class="msgConvMsgBody" data-msg-id="${conv.firstMessageId}">
+			#{messages.convOne firstMsg : firstMessageResp , users : users /}
+		</div>
+		<div class="msgConvPostsContainer" data-msg-count="${conv.messageCount-1}">
+			*{#{messages.postMessage/}}*
+		</div>
+		#{messages.reply/}
+	    </div>
+	</div>
+   </div>
+</div>
+<script type="text/javascript">
+	var msgHmPgOpenTimer;
+	$(function(){
+		if(msgHmPgOpenTimer){clearInterval(msgHmPgOpenTimer);}
+                msgHmPgOpenTimer = setInterval(function(){
+                        if(userMessages && userMessages.conversation.init){
+                                clearInterval(msgHmPgOpenTimer);
+                                userMessages.conversation.init();
+                        }
+                },10);
+	});
+</script>
+#{/if}

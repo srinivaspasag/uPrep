@@ -1,0 +1,96 @@
+<style type="text/css">
+    .vpopupBodyHolder {
+    border: 3px solid #FEA918;
+    border-radius: 5px;
+    box-shadow: none;
+}
+.crossVPopup.stl {
+    display: none;
+}
+.memberSignupTable{
+    padding: 10px 20px 7px;
+    background-color: #f4f4f4;
+    margin-top: 15px;
+    width: 100%;
+}
+.signupTitleTd {
+    width: 140px;
+}
+.loginFieldTitle {
+    font-size: 14px;
+    color: #666;
+}
+.orgSiteColor {
+    color: #fea918;
+}
+.big20 {
+    font-size: 20px;
+}
+
+.loginErrorMsg {
+    background-color: #ffebeb;
+    border: 1px solid #ffa4a4;
+    color: #ec0000;
+    padding: 15px 10px;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 15px;
+}
+.loginButton{
+    color: #fff;
+    background-color: #ed3237;
+    /*border: 0px solid #88ad5f;*/
+    background-image: none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 8px 35px;
+    font-size: 16px;
+}
+.loginInputField {
+    padding: 10px;
+    height: 15px;
+    font-size: 14px;
+    color: #666;
+    outline: 0;
+    border: 1px solid #ddd;
+    margin: 0 0 4px 15px;
+    width: 270px;
+}
+
+</style>
+
+<div>
+<div class="signupPopup">
+<div class="orgSiteColor big20">ENTER CONTACT NUMBER</div>
+<!-- <div id="otperror" class=""></div> -->
+<!-- <form method="POST" id="memberSignupForm"> -->
+    <table cellspacing=0 cellpadding=0 class="memberSignupTable">
+        <tr>
+            <td class="signupTitleTd">
+                <span class="loginFieldTitle">Contact Number <span class="redTextColor">*</span></span>
+            </td>
+            <td>
+                <input type="tel" class="loginInputField" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;" />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            </tr>
+            </table>
+            <span class="redTextColor" id="contactlength" style="left:46px;position: relative;"></span>
+            <!-- <td> -->
+                <div class="centerText" style="padding-top:27px;">
+          <input class="loginButton orgButton" id="clickToSignUp" value="submit" type="button" onclick="contactNumberPopup.validate();" />
+       </div>
+                %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+                <input type="hidden" value="${learnpediaOrgId  }" name="orgId" id="orgId" />
+                <!-- <input type="hidden" data-full-name="${fullname}" data-username="${contactNumber}" data-contact-number="${contactNumber}" data-country-code="${countryCode}" data-prog-type="${progType}" id='result'/> -->
+                <input type="hidden" value="" name="sectionId" />
+            <!-- </td> -->
+    <!-- <a href="javascript:otpProcess.otpsend();" style="left: 4px;">Resend OTP</a> -->
+<!-- </form> -->
+</div>
+</div>
+<script type="text/javascript">
+    contactNumberPopup.init();
+</script>

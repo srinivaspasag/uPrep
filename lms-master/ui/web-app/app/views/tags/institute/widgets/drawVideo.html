@@ -1,0 +1,23 @@
+#{if data!=null && data.has('result') && data.result.has('url') && !data.result.url.isEmpty()}
+	%{
+		source = data.result;
+		source.put("content",source.description);
+		source.put("caption",source.site_name);
+		url = source.url;
+    		url = url.replace("http://", "https://");
+    		domainUrl = url.substring(0,url.indexOf('/',url.lastIndexOf('.')));
+		source.put("domainUrl",domainUrl);
+	}%
+	#{if source.has('video') && !source.video.equals(null) && !source.video.isEmpty()}
+		#{institute.previews.video target:"editable",'source':source,'inUrl':params.url , domainUrl : domainUrl /}
+	#{/if}
+	#{else}
+		<div class="instNotValidUrlTxt"><p>&{'VIDEO_EMBED_PERMISSION_NA'}</p></div>
+	#{/else}
+#{/if}
+#{else}
+	<div class="instNotValidUrlTxt">&{'NOT_VALID_VIDEO_URL'} 
+		</br>
+		(&{'VALID_VIDEO_URL_DOMAIN'})
+	</div>
+#{/else}

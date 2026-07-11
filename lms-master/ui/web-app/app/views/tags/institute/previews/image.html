@@ -1,0 +1,10 @@
+%{
+	data = _source;
+}%
+#{if data!=null && data.has('url')}
+<div class="instImgPreview instItemPreview" data-src='${_target=="editable"?data.toString():""}'>
+	<div class="instImgPreviewCont instActFeedImgHolder">
+		<img class="instFeedImgPre instActFeedImg" src="${data.get('image')}" alt="&{'IMG_NA'}" rel="${data.get('url')}"/>
+	</div>
+</div>
+#{/if}

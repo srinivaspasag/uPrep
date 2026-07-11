@@ -1,0 +1,83 @@
+#{if memberInfo!=null && memberInfo.programs.length()>0}
+<div class="instLibraryHolder CSWidget" widget-name="LIBRARY">
+    <div class="instLibCenter">
+	<div class="pageHolderM relative">
+		<div class="left instLibFacetHolder">
+			<!--*{<div class="showContentBy relative CSWidget" data-widget="LIBRARY_FACET_SHARE_BY">
+				<div class="big14 boldy">Show</div>
+				<div class="blueTextColor">
+					<input type="radio" name="instLibFilterBy" checked="checked"
+						data-share-by="ALL" class="doCStream"/>
+					<span>All</span>
+				</div>
+				<div>
+					<input type="radio" name="instLibFilterBy"
+						data-share-by="INSTITUTE" class="doCStream"/>
+					<span>Added by Institute</span>
+				</div>
+				<div>
+					<input type="radio" name="instLibFilterBy"
+						data-share-by="MEMBERS" class="doCStream"/>
+					<span>Shared by Others</span>
+				</div>
+				<div>
+					<input type="radio" name="instLibFilterBy"
+						data-share-by="ME" class="doCStream"/>
+					<span>My Saved</span>
+				</div>
+			</div>
+			<div class="rearrangeBy relative CSWidget" data-widget="LIBRARY_FACET_ORDER_BY">
+				<div class="big14 boldy">Rearrange By</div>
+				<div class="blueTextColor">
+					<input type="radio" name="instLibRearrangeBy" checked="checked" 
+						data-order-by="timeCreated" class="doCStream"/>
+					<span>Recently Added First</span>
+				</div>
+				<div>
+					<input type="radio" name="instLibRearrangeBy" data-order-by="views" 
+						class="doCStream"/>
+					<span>Most Popular First</span>
+				</div>
+			</div>
+			<div class="instLibSubSubTopics nonner">
+				<div class="big14 boldy">Sub sub-topics</div>
+				<div class="instLibFacetAllSubSubTopic blueTextColor">
+					<input type="checkbox" checked="checked"/>
+					<span>All</span>
+				</div>
+				<div class="instLibFacetSubSubTopic">
+				    <span class="instLibFacetSST">
+					<input type="checkbox"/>
+					<span class="SSTName"></span>
+				    </span>
+				</div>
+			</div>}*-->
+		</div>
+		<div class="left instLibContentHolder" style="z-index: 2">
+			#{include 'tags/institute/library/home.html'/}	
+		</div>
+        	<div class="cleaner_with_divider">&nbsp;</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	var centerData;
+	var libraryOpenTabId = "${tabId}";
+	$(document).ready(function(){
+		$("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+		$("#instPageNavigator").find(".instNavTab.instOpenLibraryPage").addClass("clInstTab");
+		centerData = ${memberInfo.raw()};
+		hiddenFields = ${fields.raw()};
+		setTimeout(function(){
+			instLibrary.init();
+		},100);
+	});
+</script>
+#{/if}
+#{else}
+<div class="pageHolderM">
+	<div style="padding:100px;" class="centerText">
+		<span class="big18">&{'org.NOT_PART_OF_PROG'}</span>
+	</div>
+</div>
+#{/else}

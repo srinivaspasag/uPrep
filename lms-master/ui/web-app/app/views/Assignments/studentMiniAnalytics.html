@@ -1,0 +1,42 @@
+#{if resp!=null && resp.errorCode.isEmpty()}
+%{
+	user = resp.result.user;
+	getUser=(controllers.Profile.getUserClassAndUrl(user));
+}%
+<div>
+<a class="ptrTag ${getUser.className}" data-user-id="${getUser.id}" href="${getUser.url}">
+<table class="asnStudentMiniAnaTable">
+	<tr>
+		<td rowspan=2>
+			<img src="${user.thumbnail}" alt="&{'IMG_NA'}" class="instProfilePic">
+		</td>
+		<td>
+			<div class="boldy big14 singleLineText" style="max-width:220px;">${user.firstName} ${user.lastName}</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			%{
+				programs = user.mappings.programs;
+			}%
+			<div class="greyTextColor">
+				<span>&{'TXT_STUDENT'}, </span>
+				#{if !programs.equals(null) && programs.length()>0}
+				#{list items:0..programs.length()-1,as:'pIndex'}
+					<span>${programs.get(pIndex).name}</span>
+				#{/list}
+				#{/if}
+			</div>
+		</td>
+	</tr>
+</table>
+</a>
+</div>
+<div style="padding-top:12px;">
+	%{
+		measures = resp.result.measures;
+		total = measures.attempts + measures.left;
+	}%
+	#{institute.analyticsHorizontalBar correct : measures.correct , incorrect : measures.incorrect , attempts : total /}
+</div>
+#{/if}

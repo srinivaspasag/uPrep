@@ -1,0 +1,371 @@
+%{
+    info = testAnalytics.result.info;
+    analytics = info.measures;
+    percentScore = util.Utilities.calcPercentage(analytics.score,info.totalMarks);
+    percentageCorrect = util.Utilities.calcPercentage(analytics.correct,info.qusCount);
+    percentageIncorrect = util.Utilities.calcPercentage(analytics.incorrect,info.qusCount);
+    percentageLeft = util.Utilities.calcPercentage(analytics.left,info.qusCount);
+    timeTaken = util.Utilities.getTimeFromMiliSec(analytics.timeTaken);
+    boards = info.boards;
+}%
+<style type="text/css">
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 5px;
+} 
+    .bootstrap-select.btn-group .dropdown-toggle .filter-option {
+    color: black;
+}
+
+    @media(max-width: 768px)
+    {
+        .smallScreenMargin{
+           margin-bottom: 25px!important;
+        }
+    }
+
+</style>
+<div class="card border8px">
+    <div class="card-body container">
+    <div class="row">
+        <div class="panel-group p-l-20 p-r-20" data-collapse-color="green" id="TestDetails" role="tablist"
+                        aria-multiselectable="true">
+            <div class="panel panel-collapse">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title text-uppercase">
+                        <a data-toggle="collapse" data-parent="#TestDetails"
+                           href="#TestDetails-one" aria-expanded="true">
+                           Test Curriculum
+                        </a>
+                    </h4>
+                </div>
+                <div id="TestDetails-one" class="collapse" role="tabpanel">
+                    <div class="panel-body">
+                        #{list items:0..testInfo.result.metadata.length()-1, as:'sIndex'}
+                        %{
+                            subData = testInfo.result.metadata.get(sIndex);
+                        }%
+                        <div class="f-400 c-black f-14 m-t-5">
+                            ${subData.name}
+                        </div>
+                        #{if subData.has('children') && !subData.children.equals(null) &&subData.children.length()>0}
+                        <div class="m-l-20">
+                        #{list items:0..subData.children.length()-1, as:'cIndex'}
+                            ${subData.children.get(cIndex).name}
+                            <br>
+                        #{/list}
+                        </div>
+                        #{/if}
+
+                        #{/list}
+                        <hr>
+                        <div class="visible-xs text-center">
+                            <div class="m-t-10">
+                                <span class="f-400">Total Marks : </span>
+                                <span class="f-500 c-green f-14">${testInfo.result.totalMarks}</span>
+                                <span> marks</span>
+                            </div>
+                            <div class="m-t-10">
+                                <span class="f-400">Total Questions : </span>
+                                <span class="f-500 c-green f-14">${testInfo.result.qusCount}</span>
+                                <span >questions</span>
+                            </div>
+                            <div class="m-t-10">
+                                <span class="f-400">Time Allotted : </span>
+                            #{if testInfo.result.duration>0}
+                                %{
+                                    timeObj=util.Utilities.getTimeFromMiliSec(testInfo.result.duration);
+                                }%
+                                <span class="f-500 c-green f-14">${timeObj.hrs}:${timeObj.mins}</span>
+                            #{/if}
+                            #{else}
+                                <span class="f-500 c-green f-14">Unlimited</span>
+                            #{/else}
+                                <span>hours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="row m-t-25">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-4 pull-left smallScreenMargin hidden-xs">
+                <div class="m-t-10">
+                    <span class="f-400">Total Marks : </span>
+                    <span class="f-500 c-green f-14">${testInfo.result.totalMarks}</span>
+                    <span> marks</span>
+                </div>
+                <div class="m-t-10">
+                    <span class="f-400">Total Questions : </span>
+                    <span class="f-500 c-green f-14">${testInfo.result.qusCount}</span>
+                    <span >questions</span>
+                </div>
+                <div class="m-t-10">
+                    <span class="f-400">Time Allotted : </span>
+                #{if testInfo.result.duration>0}
+                    %{
+                            timeObj=util.Utilities.getTimeFromMiliSec(testInfo.result.duration);
+                    }%
+                    <span class="f-500 c-green f-14">${timeObj.hrs}:${timeObj.mins}</span>
+                #{/if}
+                #{else}
+                    <span class="f-500 c-green f-14">Unlimited</span>
+                #{/else}
+                    <span>hours</span>
+                </div>
+            </div>
+            <div class="col-sm-6 text-center">
+                <div id="gaugeDemo" class="gauge gauge-big gauge-green">
+                    <div class="gauge-arrow" data-percentage="${percentageCorrect}" style="transform: rotate(0deg);"></div>
+                </div>
+                <div class="text-center m-t-10">
+                Performance Meter
+                </div>
+            </div>
+        </div>
+        <div class="row m-t-25">
+            <hr>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+
+            </div>
+            #{if boards.length()==1}
+                <div class="text-center col-sm-6">
+                   %{boardName = boards.get(0).entity.name; }%
+                   <span class="f-18 f-400 c-black">${boardName}</span>
+                </div>
+            #{/if}
+            #{else}
+            <div class="col-sm-6" id="boardSelect">
+                <h4 class="text-center">Please Select to get SubjectWise Analytics : </h4>
+                <select class="selectpicker" id="board">
+                <optgroup label="Select Subject">
+                    <option value="ALL" data-board-id="ALL" selected="true" data-correct-percentage=${percentageCorrect}>All Subjects</option>
+                    #{list items:0..boards.length()-1,as:'index'}
+                    %{
+                        boardName = boards.get(index).entity.name;
+                        boardId = boards.get(index).entity.id;
+                        boardPercentageCorrect = util.Utilities.calcPercentage(boards.get(index).measures.score,boards.get(index).totalMarks);
+                    }%
+                    <option value="${boardId}" data-board-id="${boardId}" data-correct-percentage=${boardPercentageCorrect}>${boardName}</option>
+                    #{/list}
+                </select>
+            </div>
+            #{/else}
+            <div class="col-sm-3">
+
+            </div>
+        </div>
+        <div class="boardAnalytics">
+        #{list 0..boards.length()-1,as:'boardIndex'}
+        %{
+            boardIdData = boards.get(boardIndex).entity.id;
+            board = boards.get(boardIndex);
+            boardAnalytics = board.measures;
+            boardPercentScore = util.Utilities.calcPercentage(boardAnalytics.score,board.totalMarks);
+            boardPercentageCorrect = util.Utilities.calcPercentage(boardAnalytics.correct,board.qusCount);
+            boardPercentageIncorrect = util.Utilities.calcPercentage(boardAnalytics.incorrect,board.qusCount);
+            boardPercentageLeft = util.Utilities.calcPercentage(boardAnalytics.left,board.qusCount);
+            boardTimeTaken = util.Utilities.getTimeFromMiliSec(boardAnalytics.timeTaken);
+        }%
+        <div class="container hidden" id="board_${boardIdData}">
+            <div class="row m-t-20 m-b-25">
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-lg-3 col-xs-6">
+                            <div class="f-14 f-500">
+                                Your Score
+                            </div>
+                            <div>
+                                <span class="f-500 c-testBlue f-24">${boardAnalytics.score}</span>
+                                <span class="f-18 c-bluegray">/${board.totalMarks}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-xs-6">
+                            <div class="f-14 f-500">
+                                Your Rank
+                            </div>
+                            <div>
+                                <span class="f-500 c-testBlue f-24">${(int)board.rank}</span>
+                                <span class="f-18 c-bluegray">/${testAnalytics.result.totalAttempts}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-xs-6">
+                            <div class="f-14 f-500">
+                                Accuracy %
+                            </div>
+                            <div>
+                                <span class="f-500 c-testBlue f-24">${boardPercentageCorrect}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-xs-6">
+                            <div class="f-14 f-500">
+                                Time Taken
+                            </div>
+                            <div>
+                                <span class="f-500 c-testBlue f-24">${boardTimeTaken.hrs}:${boardTimeTaken.mins}:${boardTimeTaken.secs}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container">
+                    <div class="row">
+                        <div class="f-18 f-400 text-center c-black">Questions</div>
+                    </div>
+                    <div class="row">
+                        <div class="row m-t-20">
+                            <div class="card col-md-6 col-md-offset-3" style="padding-left: 0px!important; padding-right: 0px!important;">
+                                <div class="card-body">
+                                    <span class="bgm-correct" style="width: ${boardPercentageCorrect}%;">
+                                    </span>
+                                    <span class="bgm-incorrect" style="width: ${boardPercentageIncorrect}%;">
+                                    </span>
+                                    <span class="bgm-left" style="width: ${boardPercentageLeft}%;">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-b-20 text-center m-t-20">
+                        <div class="col-md-6 col-md-offset-3">
+                        <ul class="legend">
+                            <li class="text-center">
+                                <span class="bgm-correct"></span> Correct ${boardAnalytics.correct}
+                            </li>
+                            <li class="text-center"><span class="bgm-incorrect"></span> Incorrect ${boardAnalytics.incorrect}</li>
+                            <li class="text-center"><span class="bgm-left"></span> Left ${boardAnalytics.left}</li>
+                        </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        #{/list}
+        </div>
+        <div class="container overallScoreDiv">
+            <div class="row m-t-20 m-b-25">
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-lg-3 col-xs-6">
+                            <div class="f-14 f-500">
+                                Your Score
+                            </div>
+                            <div>
+                                <span class="f-500 c-testBlue f-24">${analytics.score}</span>
+                                <span class="f-18 c-bluegray">/${info.totalMarks}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-xs-6">
+                            <div class="f-14 f-500">
+                                Your Rank
+                            </div>
+                            <div>
+                                <span class="f-500 c-testBlue f-24">${(int)info.rank}</span>
+                                <span class="f-18 c-bluegray">/${testAnalytics.result.totalAttempts}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-xs-6">
+                            <div class="f-14 f-500">
+                                Accuracy %
+                            </div>
+                            <div>
+                                <span class="f-500 c-testBlue f-24">${percentageCorrect}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-xs-6">
+                            <div class="f-14 f-500">
+                                Time Taken
+                            </div>
+                            <div>
+                                <span class="f-500 c-testBlue f-24">${timeTaken.hrs}:${timeTaken.mins}:${timeTaken.secs}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container">
+                    <div class="row">
+                        <div class="f-18 f-400 text-center c-black">Questions</div>
+                    </div>
+                    <div class="row">
+                        <div class="row m-t-20">
+                            <div class="card col-md-6 col-md-offset-3" style="padding-left: 0px!important; padding-right: 0px!important;">
+                                <div class="card-body">
+                                    <span class="bgm-correct" style="width: ${percentageCorrect}%;"></span>
+                                    <span class="bgm-incorrect" style="width: ${percentageIncorrect}%;"></span>
+                                    <span class="bgm-left" style="width: ${percentageLeft}%;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-b-20 m-t-20">
+                        <div class="col-md-6 col-md-offset-3">
+                            <ul class="legend">
+                            <li class="text-center"><span class="bgm-correct"></span> Correct ${analytics.correct}</li>
+                            <li class="text-center"><span class="bgm-incorrect"></span> Incorrect ${analytics.incorrect}</li>
+                            <li class="text-center"><span class="bgm-left"></span> Left ${analytics.left}</li>
+                        </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row m-t-25" style="border: solid #eee; border-radius: 12px;">
+            #{if !board.has('mode') || (board.has('mode') && board.mode != "OFFLINE")}
+        <div class="text-center f-18 c-white f-500" style="padding: 15px; background: #71c171">Topic Level Analytics</div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-inner table-vmiddle">
+                    <tr>
+                        <th>Topic Name</th>
+                        <th></th>
+                        <th class="text-center">Score</th>
+                        <th></th>
+                        <th class="text-center">Questions</th>
+                        <th></th>
+                    </tr>
+                    #{list items:0..info.boards.length()-1,as:'index'}
+                    %{
+                    subData = info.boards.get(index);
+                    }%
+                    <tr>
+                        <td class="c-black f-16">${subData.entity.name}</td>
+                        <td class="text-center">Question count</td>
+                        <td class="text-center c-blue">Total</td>
+                        <td class="text-center c-green">Correct</td>
+                        <td class="text-center c-red">Incorrect</td>
+                        <td class="text-center">Left</td>
+                    </tr>
+                    #{if subData.has('children') && !subData.children.equals(null) && subData.children.length()>0}
+                        #{list items:0..subData.children.length()-1,as:'chIndex'}
+                        %{
+                            childData = subData.children.get(chIndex);
+                            childAna = childData.measures;
+                        }%
+                        <tr>
+                            <td ><span class="c-bluegray m-l-25 f-14">${childData.entity.name}</span></td>
+                            <td class="text-center">${childData.qusCount}</td>
+                            <td class="text-center c-blue">${childAna.score}</td>
+                            <td class="c-green text-center" >${childAna.correct}</td>
+                            <td class="c-red text-center">${childAna.incorrect}</td>
+                            <td class="text-center">${childAna.left}</td>
+                        </tr>
+                        #{/list}
+                    #{/if}
+                    #{/list}
+                </table>
+            </div>
+            #{/if}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(function () {
+        $('#gaugeDemo .gauge-arrow').cmGauge();
+    });
+</script>

@@ -1,0 +1,67 @@
+
+%{
+    videos=_videos;
+    loopStart=_loopStart;
+    if(loopStart==null)loopStart=0;
+    loopEnd=_loopEnd;
+    if(loopEnd==null)loopEnd=videos.length()-1;
+    target=_target;
+    seeMore=_seeMore;
+}%
+#{if target!="HOME_PAGE_RECOS"}
+#{comingSoon.video /}
+#{/if}
+*{#{if loopEnd >= loopStart}
+        #{list items:loopStart..loopEnd,as:'d'}
+            %{
+                video=videos.get(d);
+                callback='';
+                if(target=="HOME_PAGE_RECOS")callback='POPULAR_VIDEO';
+                videoUrl=controllers.Doc.getVideoUrl(video.title,video.docId);
+            }%
+        <div class='videoItem crossXPa widgetItem' >
+            <div class='widgetWhiteBox'>
+                <a class='crossX widgetItemCrossX popularVideoCross'></a>
+                <span class="widgetItemFollow">
+                    #{widgets.followUnfollowEntity followType:video.followType,callback:callback,
+                    entityType:'DOCUMENT',entityId:video.docId/}
+                </span>
+                <a class='widgetItemName ptrTag margTop openDocPage' 
+                   data-doc-id="${video.docId}" href="${videoUrl}">${video.title}</a>
+                 #{if video.has('user')}
+                 %{
+                    user=video.user;
+                    getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                 }%
+                 <div class='smally'>
+                     by <a data-user-id="${user.id}" class="${getUserClassAndUrl.className}" href="${getUserClassAndUrl.url}">${user.firstName+' '+user.lastName}</a>
+                 </div>
+                 #{/if}
+                <a class="videoImgWrapper imgWrapper openDocPage"  href="${videoUrl}" data-doc-id="${video.docId}">
+                    <img class='videoImg' src='${video.thumbnail}' alt='' />
+                    %{
+                            timeObj=uicom.util.Utilities.getTimeObjFromMilliSec((video.duration*1000));
+                            timeText= timeObj.hrs+':'+timeObj.mins+':'+timeObj.secs;
+                    }%                      
+                    <div class="videoDuration" rel="${video.duration}">${timeText}</div>
+                </a>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+            <div class='widgetItemStats'>
+                <span class='boldy'>Views- </span>${video.views} <label class="feedPipe">|</label>
+                #{if video.has('reviews')}
+                <span class="boldy">Comments-</span>${video.reviews}
+                #{/if}
+                #{elseif video.has('comments')}
+                <span class="boldy">Comments-</span>${video.comments}
+                #{/elseif}
+            </div>
+        </div>
+        #{/list}
+        #{if seeMore==true&&videos.length()==3}
+        <a class="smally liner">see more</a>
+        #{/if}
+#{/if}
+#{elseif target=="QUESTION_PAGE"||target=="BOARD_PAGE"}
+<div class="userMessage">No Videos available</div>
+#{/elseif}}*

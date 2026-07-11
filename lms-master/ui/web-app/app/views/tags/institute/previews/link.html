@@ -1,0 +1,76 @@
+%{
+	data = _source;
+	contentHolderEditable = _target=="editable"?true:false;
+}%
+#{if data.has('url')}
+<div class="instLinkPreview instItemPreview" data-src="${_target=='editable'?data.toString():''}" >
+   #{if _target=="editable"}
+    <div style="max-width:550px;">
+   	<span class="instAttachUrl">${data.url}</span>
+   	<span class="instAttachDiscard" title="discard the attachment">Discard</span>
+	<div class='cleaner_with_divider'>&nbsp;</div>
+    </div>
+   #{/if}
+   <table class="fullWidth" cellspacing=0 cellpadding=1>
+   	<tr>
+	 #{if data.has('thumbnail') && !data.thumbnail.equals(null) && data.thumbnail!="" && data.thumbnail.length()>0}
+   	   <td rowspan="2" class="thumbnailCell" data-index=0 >
+		<div class="instAttachLinkImgContainer" rel="${data.url}">
+			<div class="instAttachLinkAllImgs left">
+		   	#{list items:0..data.thumbnail.length()-1,as:'tIndex'}
+			   <img src="${data.thumbnail.get(tIndex)}" alt="&{'IMG_NA'}" 
+				class="instAttachLinkImg">
+			#{/list}
+			</div>
+        		<div class="cleaner_with_divider">&nbsp;</div>
+		</div> 
+		<div class="instThumbNextPrevHold #{if data.thumbnail.length()<2} nonner #{/if}"
+			data-count=0 data-total=${data.thumbnail.length()}>
+		 	<span class="instImgs instAttachLinkPrev"></span>
+		 	<span class="instAttachThumbCount">
+				<span id="curCount">1</span> of <span id="curTotal">${data.thumbnail.length()}</span>
+			</span>
+		 	<span class="instImgs instAttachLinkNext active"></span>
+        		<div class="cleaner_with_divider">&nbsp;</div>
+		</div>
+	   </td>
+	 #{/if}
+	 #{elseif data.has('image') && !data.image.equals(null) && !data.image.isEmpty()}
+   	   <td rowspan="2" class="thumbnailCell" data-index=0 >
+		<div class="instAttachLinkImgContainer" rel="${data.url}">
+			<div class="instAttachLinkAllImgs left">
+			   <div class="instActFeedImgHolder">
+			      <img src="${data.image}" alt="&{'IMG_NA'}" class="instAttachLinkImg instActFeedImg">
+			   </div>
+			</div>
+		</div>
+	   </td>
+	 #{/elseif}
+	 %{
+		title = data.has("title") && !data.title.equals(null) && !data.title.isEmpty() ? data.title : data.url;
+	 }%
+	   <td>
+		<a class="boldy" target="_blank" href="${data.url}">${title}</a>
+	   </td>
+	</tr>
+        #{if data.has('content') && !data.content.equals(null) && data.content!=""}
+	<tr>
+	   <td>
+		<div contenteditable=${contentHolderEditable} style="background-color:#{if contentHolderEditable}white#{/if}";
+			class="instAttachTxtArea">${data.content.trim().raw()}</div>
+	   </td>
+	</tr>
+        #{/if}
+        <!--*{#{if data.has('keywords') && data.keywords!=""}
+	<tr>
+	   <td colspan="2">
+		<div class="big14 boldy">Keywords : </div>
+		<div class="instAttachKeywords">
+			${data.keywords.trim()}
+		</div>
+	   </td>
+	</tr>
+        #{/if}}*-->
+   </table>
+</div>
+#{/if}

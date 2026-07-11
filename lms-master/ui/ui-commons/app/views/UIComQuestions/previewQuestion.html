@@ -1,0 +1,138 @@
+%{
+    qType=params.type;
+    target=params.target;
+    publishText="Add";
+    publishTextIng='Adding';
+    if(target=="EDIT_QUESTION"){
+        publishText="Save";
+        publishTextIng='Saving';
+    }
+    if(currentOrgInfo!=null){
+    	profilePic=currentOrgInfo.getOrgUserProfilePic();
+    	userfullname=currentOrgInfo.getOrgUserFullName();
+    }
+}%
+<div id="previewQuestionDiv">
+    <div class="margBot10 big16">Question Preview</div>
+    <div class="previewQuesBody">
+        <div>                  
+            <div class="quesHeadDiv">
+                <span class='img20Wrapper img20Round'>
+                    <div class="img20DummyWrapper img20DummyRound">
+                        <img src='${profilePic}' class='img20 img20Round' alt="${userfullname}"/>
+                    </div>
+                </span>
+                &nbsp; by ${userfullname}
+                <label class="feedPipe">|</label>
+                <span class="quesCreatedTime">Added on ${new Date().format('dd/MM/yy')}</span>
+                    <span class='floatRight margRight10 ptrTagInline'>
+                        ${params.subject}
+                    </span>
+              </div>
+              #{if qType == "PARA" || qType == "TEXT"}
+              <div class="showParagraphPreview nonner">
+              </div>
+              #{/if}
+            <div class="quesTextDivHolder">
+                <a class='quesTextDiv ptrTagInline blocky rteTextDiv'>
+                    <div class="big15 margBot5">${params.content.raw()}</div>
+                    #{if options!=null&& options.size()>0}
+                    <div class='quesOptions margTop'>
+                        #{list items:options,as:'opt'}
+                        <div class='quesOption'>
+                            <span class="floatLeft">
+                                ${uicom.util.Utilities.getOption((opt_index))}
+                            </span>
+                            <div class="margLeft20 quesOptionBody">${opt.raw()}</div>
+                        </div>
+                        #{/list}
+                    </div>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                    #{/if}                 
+                </a>
+            </div>                
+            <div class="quesMetatags">
+                <div class="margTop">
+                    #{if topics!=null&&topics.size()>0}
+                        #{list items:topics,as:'t'}
+                        <a class='greenBrdTopic ptrTagInline'>
+                            ${t}
+                        </a>                     
+                        #{/list}                    
+                    #{/if}
+                    #{if subTopics!=null&&subTopics.size()>0}
+                        >
+                        #{list items:subTopics,as:'st'}
+                        <a class='yellowBrdSubTopic ptrTagInline'>
+                            ${st}
+                        </a>
+                        #{/list}            
+                    #{/if}
+                </div>
+                <div class="quesExamAndLevel">
+                    #{if exams!=null&&exams.size()>0}
+                    <label class="smally">Target-</label>
+                        #{list items:exams,as:'e'}                        
+                        <a class='boldy margRight5'>
+                            ${e}
+                        </a>
+                        #{/list}
+                    #{/if}
+                    <label class="smally">Level- </label>
+                    <span class="quesDifficulty">${params.difficulty}</span>
+                    %{
+                        quesType = qType;
+                        if(qType == 'TEXT'){
+                            quesType = 'PARA';
+                        }
+                        else if(qType == 'PARA'){
+                            quesType = 'PARA_QUESTION';
+                        }
+                    }%
+                    <div style="display: inline;float: right;">
+                        <label class="smally">Question Type:</label>
+                        <span class="quesDifficulty">${quesType}</span>
+                    </div>
+                </div>
+            </div> 
+         </div>
+    </div>
+    #{if answers!=null&&answers.size()>0}
+    <div class="previewQuesPart big16">
+        <div class="margBot5">Answer Given</div>
+        #{if (qType=="SCQ"||qType=="MCQ") || qType == "MATRIX" || (qType == "PARA")}
+            #{list items:answers,as:'ans'}
+                ${uicom.util.Utilities.getOption(Integer.parseInt(ans))} ${ans_isLast?'':', '}
+            #{/list}
+        #{/if}
+        #{elseif qType=="NUMERIC"}
+            <span class="boldy">${answers[0]}</span>
+        #{/elseif}
+    </div>
+    #{/if}
+    #{if params.solution!=null}
+    <div class="previewQuesPart rteTextDiv margTop20">
+        <div class="margBot5 big16 boldy">Solution Added</div>
+        <div>${params.solution.raw()}</div>
+    </div>
+    #{/if}
+    
+    <!--953*{#{if params.origRefNo!=null}
+    <div class="previewQuesPart">
+        <div class="margBot5 big16 boldy">Orig Ref. No.</div>
+        <div>${params.origRefNo}</div>
+    </div>        
+    #{/if}}*-->
+    #{if hints!=null&&hints.size()>0}
+    <div class="previewQuesPart rteTextDiv margTop20">
+        <div class="margBot5 big16 boldy">Hints Added</div>
+        #{list items:hints,as:"hint"}
+        <div class="margLeft">${hint_index}. ${hint.raw()}</div>
+        #{/list}
+    </div>    
+    #{/if}        
+    <div class="floatRight">
+        <span class="QASubmit QASubmitConfirm bigGreenButton" data-normal-text="${publishText}"
+                  data-ing-text="${publishTextIng}">${publishText}</span>
+    </div>
+</div>

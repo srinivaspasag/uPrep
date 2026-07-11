@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Hello SyntaxHighlighter</title>
+<link href="http://alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+<link href="http://alexgorbatchev.com/pub/sh/current/styles/shCoreDefault.css" rel="stylesheet" type="text/css" />
+<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js" type="text/javascript"></script>
+<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJava.js" type="text/javascript"></script>
+</head>
+
+    <body style="background: white; font-family: Helvetica">
+        #{include 'UIComWidgets/rte.html' /}   
+        
+        
+<pre class="RTECodeDiv brush: java;">
+&lt;div&gt;iam goog&lt;/div&gt;
+function helloSyntaxHighlighter()
+{
+	return "hi!";
+}
+</pre>        
+    <script type="text/javascript">
+        var asyncFnsStore=[];
+        var jsFileLogger=[];
+        var filesUpFront=[];
+        var cbfnUpFront;
+        var serverSystemTimeDelta=parseInt("${new Date().getTime()}")-(new Date().getTime());        
+    </script>                 
+        #{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /} 
+        #{script src:'uicomUtils.js', charset:'utf-8' /}    
+        #{script src:'uicomWidgets/rte.js', charset:'utf-8' /}    
+        #{stylesheet media:'screen', src:'uicomMain.css' /}
+        #{stylesheet media:'screen', src:'uicomWidgets/rte.css' /}
+                <script type="text/javascript">
+            vRTE.init($(".RTEHolder"));
+        </script>
+    </body>
+</html>

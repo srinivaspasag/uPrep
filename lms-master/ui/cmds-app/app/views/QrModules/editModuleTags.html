@@ -1,0 +1,13 @@
+#{if moduleInfo.errorCode.isEmpty()}
+%{
+    moduleResp=moduleInfo.result;
+    boards=moduleResp.boardTree;
+}%
+<div id="editModuleTagsPage">
+    <div class="cmdsPopupHead">Add/Edit Tags</div>
+    #{UIComWidgets.tagging target:'ADD_MODULE_TAGS',subjects:boards/}
+</div>
+#{/if}
+#{elseif moduleInfo.errorCode!=''}
+    <div class="userMessage">There was some problem in displaying the page. Close the popup and try again.</div>
+#{/elseif}

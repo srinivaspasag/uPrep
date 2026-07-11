@@ -1,0 +1,3 @@
+#{if resp!=null && resp.errorCode=="" && resp.result.has('centerCalendarEntries') && resp.result.centerCalendarEntries.length()>0 && resp.result.centerCalendarEntries.get(0).has('center')}
+	#{institute.widgets.myschedule scheduleOpenClass:'instSchTab',orgId:params.orgId,data:resp.result.centerCalendarEntries.get(0).center/}
+#{/if}

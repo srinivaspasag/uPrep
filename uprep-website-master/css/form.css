@@ -1,0 +1,9 @@
+.enquiry-form .form-group{margin:15px 0px;}
+.enquiry-form select.form-control:not([size]):not([multiple]){height:calc(2.25rem + 2px);}
+.enquiry-form button, select{text-transform:none;}
+.enquiry-form button, input, optgroup, select, textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit;}
+.enquiry-form .form-control:focus{color:#495057;background-color:#fff;border-color:#80bdff;outline:0;box-shadow:0 0 0 0.2rem rgba(0,123,255,.25);}
+.enquiry-form .form-control{display:block;width:100%;padding:.375rem .75rem;font-size:1rem;line-height:1.5;color:#495057;background-color:#fff;background-clip:padding-box;border:1px solid #ced4da;border-radius:.25rem;transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out;}
+.enquiry-form input,select{max-width:350px;}
+@media only screen and (max-width:600px){.enquiry-form-div{width:100%;}
+}

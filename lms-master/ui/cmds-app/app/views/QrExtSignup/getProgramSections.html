@@ -1,0 +1,89 @@
+#{if resp!=null && resp.errorCode.isEmpty()}
+%{
+	noOfCols = Integer.parseInt(params.noOfCols) - 4;
+	program = resp.result;
+	centers = program.centers;
+}%
+#{if centers.length()>0}
+#{list items:0..centers.length()-1,as:'cIndex'}
+%{
+	center = centers.get(cIndex);
+	sections = center.sections;
+}%
+#{if sections.length()>0}
+#{list items:0..sections.length()-1,as:'sIndex'}
+%{
+	section = sections.get(sIndex);
+	accessScope = "CLOSED";
+	costValue = null;
+	revenueModel = "FREE";
+	if(section.has("accessScope") && !section.accessScope.equals(null)){
+		accessScope = section.accessScope;
+	}
+	if(section.has("costRate") && !section.costRate.equals(null)){
+		costRate = section.costRate;
+		if(costRate.has("currencyCode") && !costRate.currencyCode.equals(null)){
+			currency = uicom.util.Utilities._getCurrencyByCode(costRate.currencyCode);
+		}
+		if(costRate.has("value") && !costRate.value.equals(null)){
+			if(costRate.value>0){
+				costValue = costRate.value/100;
+			}
+		}
+	}
+	if(section.has("revenueModel") && !section.revenueModel.equals(null)){
+		revenueModel = section.revenueModel;
+	}
+}%
+<tr class="sectionTr" data-section-id="${section.id}">
+	<td>
+	   <div class="big15 sectionName">${program.name}, ${center.name}, ${section.name} </div>
+	</td>
+	<td>
+		<select class="chooseSecOpenness" data-section-id="${section.id}">
+			<option value="CLOSED" #{if accessScope == "CLOSED"} selected #{/if}>Close</option>
+			<option value="OPEN" #{if accessScope == "OPEN"} selected #{/if}>Open</option>
+		</select>
+	</td>
+	<td class="centerText">
+	<div style="display:inline-block">
+	    <input type="checkbox" class="checkForPayment" #{if revenueModel == "PAID"} checked #{/if}/>
+	</div>
+	<!--
+		<div>
+			<input type="checkbox" class="checkForPayment" #{if revenueModel == "PAID"} checked #{/if}/>
+			<a class="chooseSecCurrency toolTipTitle" data-title="click to change currency"
+				data-symbol="${currency.symbol}"
+				data-code="${currency.code}">${currency.code}(${currency.symbol})</a>
+			<input type="text" class="priceTextBox pricePerSec" 
+				#{if costValue == null}	disabled #{/if} #{else}	value="${costValue}" #{/else}/>
+		</div>
+	-->
+		<div style="display:inline-block">
+		  <span class="managePackageInfo blueButton" data-prog-id="${program.id}" data-section-id="${section.id}"> Manage </span>
+		</div>
+	</td>
+	#{if noOfCols>0}
+	#{list items:0..noOfCols-1,as:'colIndex'}
+	<td class="centerText">
+		<div>
+			<input type="checkbox" class="chooseSecForCategory"/>
+		</div>
+	</td>
+	#{/list}
+	#{/if}
+	<td class="addCatTd">
+	</td>	
+</tr>
+#{/list}
+#{/if}
+#{/list}
+#{/if}
+#{/if}
+#{else}
+	<tr>
+		<td class="boldy centerText" colspan="${params.noOfCols}">
+			<span class="big15 redTextColor">No data received</span>
+		</td>
+	</tr>
+#{/else}

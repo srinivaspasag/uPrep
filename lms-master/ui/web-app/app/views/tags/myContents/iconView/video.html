@@ -1,0 +1,58 @@
+%{ 
+	videoData = _video; 
+	caller = _caller == null ? "" : _caller;
+	vidUrl = webUtils.TemplateHelper._getVidUrl(videoData,params.orgId);
+	recordState = videoData.has("recordState") && !videoData.recordState.equals(null) ? videoData.recordState : "ACTIVE";
+}%
+<div class="left relative eachMyContentsVideos myContentsEachIconItems myContentsEachItem" 
+	data-video-id="${videoData.id}" data-entity-type="VIDEO" data-entity-id="${videoData.id}">
+	#{if recordState == "TEMPORARY"}
+	<div class="absolute contentUnavailable">
+		<div class="contentUnavailableMsg">&{'TXT_UNAVAILABLE'}</div>
+	</div>	
+	#{/if}
+	#{elseif caller != "EXT" }
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+                <a class="right relative greenButton doCStream myContentsButtonItem ${vidUrl.className}"
+                   data-id="${vidUrl.id}" href="${vidUrl.url}" data-cs-name="OPEN">Open</a>
+		<!--*{<div class="right relative myContentsButtonItem">
+			#{widgets.followUnfollowEntity followType:videoData.followType,entityType:'VIDEO',entityId:videoData.id/}
+		</div>}*-->
+		<span class="right absolute myContentsShareIt">Share</span>
+	</div>
+	<div class="myContentsVideoText boldy toolTipTitle" data-title="Video : ${videoData.name}">
+		<span>${videoData.name}</span>
+	</div>
+	#{/elseif}
+	#{else}
+	<div class="myContentsVideoText toolTipTitle" data-title="Video : ${videoData.name}">
+                <a class="doCStream boldy ${vidUrl.className}"
+                   data-id="${vidUrl.id}" href="${vidUrl.url}" data-cs-name="OPEN">${videoData.name}</a>
+	</div>
+	#{/else}
+	#{if videoData.has('user') && !videoData.user.equals(null)}
+                      %{
+                        user=videoData.user;
+                      }%
+		<div class="relative big12 myContentsVideoText" style="padding-top:0px;">
+			<span>by </span>
+			#{institute.memberName user : user , classNames : "blueTextColor" /}
+		</div>
+	#{/if}
+	<img class="left relative myContentsVideoIcon ${vidUrl.className}" data-id="${vidUrl.id}" 
+		alt="no preview" src="${videoData.thumbnail}" href="${vidUrl.url}"/><br/>
+		%{
+			timeObj=uicom.util.Utilities.getTimeFromMiliSec(videoData.duration);
+		}%
+		<span class="right absolute myContentsVideoDur boldy">
+		#{if timeObj.getInt("hrs") > 0} 
+			${timeObj.hrs}:
+		#{/if}
+			${timeObj.mins}:${timeObj.secs}
+		</span>
+	<div class="left myContentsVideoText smally fullWidth" style="padding-top:3px">
+		<span class="entityViews">Views: <b>${videoData.views}</b> </span>
+		<span class="entityComments"> | Comments: <b>${videoData.comments}</b>
+	</div>
+</div>	

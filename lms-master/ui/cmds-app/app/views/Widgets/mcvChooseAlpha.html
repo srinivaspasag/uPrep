@@ -1,0 +1,22 @@
+%{
+	defaultValue = "timeCreated";
+	defaultHead = "Date Added";
+	if(showCustomOrder == true){
+		defaultValue = "customOrder";
+		defaultHead = play.i18n.Messages.get("TXT_CUSTOM");
+	}
+}%
+<div class="vChoose vChooseAlpha mcvChoose" data-value="${defaultValue}" data-onchange="onmcvChooseChange"
+     data-param-name="orderBy">
+    <div class="vChooseLabel">Sort By</div>
+    <div class="vChooseHead">${defaultHead}</div>
+    <div class="vChooseDownIcon"></div>
+    <div class="vChooseDropDown">
+	#{if showCustomOrder == true}
+        	<div class="vChooseOpt vChooseOptCustomOrder" data-value="customOrder">&{'TXT_CUSTOM'}</div>
+	#{/if}
+        <div class="vChooseOpt" data-value="timeCreated">Date Added</div>
+        <div class="vChooseOpt" data-value="lastUpdated">Last Modified</div>
+        <div class="vChooseOpt" data-value="name.untouched">Alphabetical</div>
+    </div>
+</div>

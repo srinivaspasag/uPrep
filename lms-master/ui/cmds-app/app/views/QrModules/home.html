@@ -1,0 +1,17 @@
+#{if moduleInfo!=null&& moduleInfo.errorCode!=''}
+    #{common.errorCodes resp:resources /}
+#{/if}
+#{else}
+    %{  
+        published=false;
+        if(moduleInfo!=null){
+            published=false;
+        }
+    }%
+    #{if published}
+        #{include 'QrModules/view.html' /}
+    #{/if}
+    #{else}
+        #{include 'QrModules/create.html' /}
+    #{/else}
+#{/else}

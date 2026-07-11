@@ -1,0 +1,36 @@
+%{
+    documentResponse=resp.result.documentRes;
+}%
+
+#{list items:0..documentResponse.list.length()-1,as:'Pindex'}
+%{
+    document = documentResponse.list.get(Pindex);
+}%
+
+<div class="card
+			#{if document.completed}
+				attemptedHover
+			#{/if}
+			#{else}
+				libraryHover
+			#{/else}
+			border8px documentClass p-t-15 p-b-15 p-l-15 p-r-15 m-b-10">
+	<div class="card-body container" data-id="${document.id}">
+		<div class="row">
+			<div class="col-xs-9 row text-capitalize text-left f-14">
+				<img src="/public/assets/theme1/img/bookIcon.png" class="analytics-img-browser imageStyle">
+	            ${document.name}
+	            <div class="visible-xs m-t-5">
+                    <span class="f-14 text-center smallScreenFont">${document.views}</span> 
+					<span class="text-center smallScreenFont">Views</span>
+	            </div>
+	        </div>
+			<div class="col-xs-3 hidden-xs">
+				<span class="f-14 text-center smallScreenFont">${document.views}</span> 
+				<span class="text-center smallScreenFont">Views</span>
+			</div>
+            <i class="zmdi zmdi-check-all iconAllign #{if document.completed} c-blue #{/if}"></i>
+		</div>
+	</div>
+</div>
+#{/list}

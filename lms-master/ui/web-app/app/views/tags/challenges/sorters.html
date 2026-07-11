@@ -1,0 +1,53 @@
+    <div class="vChoose CPSelect" data-value="timeCreated" data-onchange="onCPSelectChange"
+     data-sort-type="orderBy">
+  <div class="vChooseHead">Most Recent</div>
+  <div class="vChooseDownIcon"></div>
+  <div class="vChooseDropDown">
+        <div class="vChooseOpt" data-value="timeCreated">Most Recent</div>
+        <div class="vChooseOpt" data-value="mostPopular">Most Popular</div>
+  </div>
+</div>                
+<div class="vChoose CPSelect" data-value="-1" data-onchange="onCPSelectChange"
+     data-sort-type="brdIds">
+  <div class="vChooseHead">All Subjects</div>
+  <div class="vChooseDownIcon"></div>
+  <div class="vChooseDropDown CPSubjectSelectDropDown">
+        <div class="vChooseOpt" data-value="-1">All Subjects</div>
+  </div>
+</div>                
+<div class="vChoose CPSelect" data-value="-1" data-onchange="onCPSelectChange"
+     data-sort-type="qType">
+  <div class="vChooseHead">All Types</div>
+  <div class="vChooseDownIcon"></div>
+  <div class="vChooseDropDown">
+    <div class="vChooseOpt" data-value="-1">All Types</div>
+    <div class="vChooseOpt" data-value="SCQ">SCQ</div>
+    <div class="vChooseOpt" data-value="MCQ">MCQ</div>
+    <div class="vChooseOpt" data-value="NUMERIC">NUMERIC</div>
+  </div>
+</div>                
+<div class="vChoose CPSelect" data-value="-1" data-onchange="onCPSelectChange"
+     data-sort-type="difficulty">
+  <div class="vChooseHead">All Levels</div>
+  <div class="vChooseDownIcon"></div>
+  <div class="vChooseDropDown">
+    <div class="vChooseOpt" data-value="-1">All Levels</div>
+    <div class="vChooseOpt" data-value="EASY">Easy</div>
+    <div class="vChooseOpt" data-value="MODERATE">Moderate</div>
+    <div class="vChooseOpt" data-value="TOUGH">Tough</div>
+  </div>
+</div>                
+<div id="challengePageSortersReq">
+    <script type="text/javascript">
+        $(function(){
+            $.get("/uicomboards/getOrgBoards",{type:"COURSE"},function(data){
+                var boards=data.result.list,subs='';
+                for(var k=0;k<boards.length;k++){
+                    var sub=boards[k];
+                    subs+='<div class="vChooseOpt" data-value="'+sub.id+'">'+sub.name+'</div>';
+                }
+                $("#CPChallengesHolder").find(".CPSubjectSelectDropDown").append(subs);
+            });
+        });
+    </script>
+</div>

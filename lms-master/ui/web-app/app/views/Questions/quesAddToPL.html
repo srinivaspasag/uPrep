@@ -1,0 +1,44 @@
+%{
+    playlistInfo=playlistInfo.result;
+}%
+<div class="quesAddToPLDiv">
+    <div class="boldy">
+        <span class="quesAddToImg"></span>Add To Playlist
+    </div>
+    <div class="centry quesAddToPLSelect"></div>
+    <div class="cleaner_with_divider" style="border-bottom: 1px solid #cccccc">&nbsp;</div>
+    <div class="margBot10">
+           #{if PL.topics.length()>0}
+               #{list items:0..PL.topics.length()-1,as:'i'}
+                    %{
+                        topic=PL.topics.get(i);
+                    }%
+                    <div class="boldy" data-topic-id="${topic._id}">${topic.heading}</div>
+                        %{
+                            secs=topic.sections;
+                        }%
+                        #{if secs.length()>0}
+                             #{list items:0..secs.length()-1,as:'j'}
+                                %{
+                                    sec=secs.get(j);
+                                }%
+                                #{if sec.has('_id')}
+                                    <input type='radio' class='addToPLRadio' name='addToPLRadio' value='${sec._id}'/>
+                                    <span class='PLSecQuesImg'></span>${sec.heading}
+                                #{/if}
+                            #{/list}
+                        #{/if}
+                #{/list}
+            #{/if}
+            #{else}
+                <div class="userMessage">No contents in this Playlist</div>
+            #{/else}
+    </div>
+    <div class="centry">
+        <span class="greenButton submitQuesAddToPL">Done</span>
+        <a class="cancelCommonPopup liner"></a>
+    </div>
+</div>
+
+
+

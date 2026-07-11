@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>Invoice Test Page</title>
+<style>
+#footer,
+#header{
+	background-color:blue;
+	text-align:center;
+	font-weight:bold;
+	font-size:20px;
+	padding:20px 0;
+}
+.body{
+	background-color:green;
+	font-size:20px;
+	padding:50px 0;
+	height:500px;
+	text-align:center;
+	border:1px solid #333;
+}
+#footer{
+	background-color:red;
+}
+.container{
+	width:800px;
+	margin:0 auto;
+}
+@media print {
+	#header,
+	#footer{
+		position: fixed;
+		display:block;
+		width:100%;
+	}
+	#header{
+            	top: 0;
+	}
+	#footer{
+            	bottom: 0;
+	}
+}
+</style>
+</head>
+<body>
+<div class="container">
+	<div id="header">HEADER</div>
+	<div class="body">BODY1</div>	
+	<div class="body">BODY2</div>	
+	<div id="footer">FOOTER</div>	
+</div>
+</body>
+</html>

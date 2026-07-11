@@ -1,0 +1,51 @@
+%{
+	item_per_col = 3;
+	col_per_page = 3;
+}%
+<div class="instLibraryTopics CSWidget" data-widget="LIB_TOPICS_HOLDER">
+	<div class="big20 blueTextColor instLibSelSubName"></div><br>
+	<div class="greyTextColor" style="padding-top:6px;">&{'SEL_TO_VIEW_CONTENT_TOPIC'}</div>
+	#{if data!=null && data.errorCode=="" && data.result.list.length()>0}
+	#{if data.result.list.length()>item_per_col*col_per_page}
+	<span class="nextPrevInstLibT absolute">
+		<span class="prevInstLibT disPrevInstLib"></span>
+		<span class="nextInstLibT"></span>
+	</span>
+	#{/if}
+	<div class="instLibTopicHolder absolute">
+	%{
+		total = data.result.list.length();
+		holders = Math.ceil(total/item_per_col);
+		holders = holders<=0?1:holders;
+	}%
+	  <div class="instLibTopicH1 absolute" data-total="${holders+1}" data-cur=0>
+		#{list items:0..holders-1,as:'hIndex'}
+		<div class="instLibTopicH2 left fullHeight absolute" data-index="${hIndex}" style="left:${250*hIndex}px">
+		%{ 
+			st = item_per_col*hIndex;
+			end = st+item_per_col;
+			end = end>total?total:end;
+		}%
+			#{list items:st..end-1,as:'index'}
+			%{ topic = data.result.list.get(index);}%
+			<div class="instLibEachTopic"> 
+				<span class="instLibTopicTxt doCStream" data-brd-id="${topic.id}" id="TOPIC${topic.id}" name="TOPIC"
+                                title="${topic.name}" data-index="${index}">${topic.name}</span>
+			</div>
+			#{/list}
+		</div>	
+		#{/list}
+		<script type="text/javascript">
+			var programmeTopics = ${data.result.raw()};
+		</script>
+		<div class="cleaner_with_divider">&nbsp;</div>
+	   </div>
+	</div>
+	<!--*{<div class="relative right nonner" id="instLibTopicsInfoH" style="right:20px;">
+		#{include 'tags/institute/library/brdInfoPopup.html'/}
+	</div>}*-->
+	#{/if}
+	#{else}
+		<div class="centerText instLibNoItemTxt">&{'NO_TOPICS_FOUND'}</div>
+	#{/else}
+</div>

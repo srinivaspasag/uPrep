@@ -1,0 +1,81 @@
+#{extends 'main.html' /}
+#{set title:'Tools:Organizations' /}
+<div id="allOrgsPage">
+    #{respStatus /}
+    <a class="blueButton addOrgButton" href="/addOrganization">Add Organization</a>
+    <div class="smallBlueButton restartAll">Restart Event Bus Console</div>
+    <div class="addOrgHeading">List of all Organizations</div>
+    %{
+        orgs=orgs.result.list;
+    }%
+    #{if orgs.length()>0}
+    <table>
+        <thead>
+            <tr>
+                <td>
+                  Name of the organization  
+                </td>
+                <td>
+                  Type
+                </td>
+                <td>
+                  Scope
+                </td>  
+                <td>
+                  Status
+                </td> 
+                <td></td>
+		<td style="width:140px;">Desktop App Credentials</td>
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:0..orgs.length()-1,as:'i'}
+            %{
+                org=orgs.get(i);
+            }%
+            <tr>
+                <td>
+                    <a href="/organization/${org.id}">${org.name}</a>
+                </td>
+                <td>
+                  ${org.type}
+                </td>
+                <td>
+                  ${org.scope}
+                </td>  
+                <td>
+                  ${org.status}
+                </td>
+                %{
+                    adminEmail='';
+                    if(flash.contains('addedOrgId')&&flash.get('addedOrgId')==org.id){
+                        adminEmail=flash.get("adminEmail");
+                    }
+                }%
+                <td data-admin-email='${adminEmail}' style="max-width: 100px;">
+                    #{if org.status=='REQUESTED'}
+                    <div class="darkGrayButton approveOrg" data-org-id='${org.id}'>Approve</div>
+                    #{/if}
+                </td>
+		<td>
+                    #{if org.status!='REQUESTED'}
+			<div class="smallBlueButton viewAppCredential" 
+				data-app-id="DesktopApp" data-org-id='${org.id}'>View</div>
+                    #{/if}
+		</td>
+            </tr>
+            #{/list}
+        </tbody>
+    </table>    
+    #{/if}
+    #{else}
+    <div class="userMessage">
+        There are no organizations added yet. <a href="@{Organizations.addOrganization}">Click here</a>
+        to add an organization.
+    </div>
+    #{/else}
+</div>
+<script type="text/javascript">
+    $("#organizationsMenu").addClass("activeMenuItem");
+</script>
+    

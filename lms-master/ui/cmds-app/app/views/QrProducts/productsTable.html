@@ -1,0 +1,28 @@
+        %{
+            if(cmdsResp!=null)products=cmdsResp;
+            totalPrdts=products.result.totalHits;
+        }% 
+         <input type="hidden" class="totalHitsHider" value="${totalPrdts}" />
+          <table class="headSecTable">
+              <thead>
+                  <tr>
+                      <td class="CTCBoxTd">
+                          <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                              <div class="gCBoxTicker"></div>                      
+                          </div>
+                      </td>
+                      <td class="CTInfoTd"></td>
+                      <td class="CTTitleTd">TITLE</td>
+                      <td class="CTPrdtTypeTd">TYPE</td>
+                      <td class="CTAddedByTd">CREATED BY</td>
+                      <td class="CTStatusTd">STATUS</td>
+                  </tr>                  
+              </thead>
+          </table>
+          <div id="fixedSec">
+            <table class="cmdsTable">
+                <tbody class="cmdsContentTBody LMHandlerDiv">
+                    #{include 'QrProducts/productsList.html' /}
+                </tbody>
+            </table>                
+          </div>

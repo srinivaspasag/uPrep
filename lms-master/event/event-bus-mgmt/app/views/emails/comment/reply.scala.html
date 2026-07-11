@@ -1,0 +1,73 @@
+@(emailDetails:com.vedantu.eventbus.email.details.AbstractEmailNotificationDetails)
+@import views.html.emails._
+@appDomain( emailDetails) { host =>  
+
+	@defining(emailDetails.details.getJSONObject("src").getJSONObject("contentSrc").getString("id")) { orgId =>
+
+		@defining(emailDetails.details.getJSONObject("src")) { src =>
+			@if(src.getJSONObject("root").getString("type")=="DISCUSSION"){
+				added comment 
+		
+			@emailDetails.details.getString("why") match { 
+				case "ROOT_OWNER" => {
+					 on a answer on the 
+					<a href="@host/organization/@orgId/discussion/@src.getJSONObject("root").getString("id")">doubt</a>
+					 that you added on @(new java.util.Date(src.getJSONObject("root").getLong("timeCreated")).format("dd/MM/yyyy")) 
+				}
+				case "OWNER" => {
+					on your answer that 
+					you added on @(new java.util.Date(src.getLong("timeCreated")).format("dd/MM/yyyy")) 
+					for the
+					<span style="color: #329cc6;"> 
+						<a href="@host/organization/@orgId/discussion/@src.getJSONObject("root").getString("id")">doubt</a>
+					</span>
+				}	 
+				case "FOLLOWING_SOURCE" => {
+			   		on a answer on the 
+			   		<span style="color: #329cc6;">
+			   			<a href="@host/organization/@orgId/discussion/@src.getJSONObject("root").getString("id")">doubt</a>
+			   		</span> 
+			   		you followed on vedantu.
+				}			 
+			}
+		}else{
+		
+		replied 
+		
+		@emailDetails.details.getString("why") match { 
+			case "ROOT_OWNER" => {
+					 to a comment on the 
+					 <span style="color: #329cc6;">
+						 <a href="@host/organization/@orgId/discussion/@src.getJSONObject("root").getString("id")">
+						 	@src.getJSONObject("root").getString("type").toLowerCase()
+						 </a> 
+					 </span>
+					 that
+					 you added on @(new java.util.Date(src.getJSONObject("root").getLong("timeCreated")).format("dd/MM/yyyy")) 
+				}
+			case "OWNER" => {
+					to a comment
+					you added on @(new java.util.Date(src.getLong("timeCreated")).format("dd/MM/yyyy")) 
+					for the 
+					<span style="color: #329cc6;">
+						 <a href="@host/organization/@orgId/discussion/@src.getJSONObject("root").getString("id")">
+						 	@src.getJSONObject("root").getString("type").toLowerCase()
+						 </a> 
+					</span>
+				}	 
+			case "FOLLOWING_SOURCE" => {
+			   		to a comment on the 
+			   		<span style="color: #329cc6;">
+			   			<a href="@host/organization/@orgId/discussion/@src.getJSONObject("root").getString("id")">
+			   				@src.getJSONObject("root").getString("type").toLowerCase()
+			   			</a>
+			   		</span> 
+			   		you followed on vedantu.
+				}			 
+			}
+		}
+	}
+   }
+		
+}	
+			

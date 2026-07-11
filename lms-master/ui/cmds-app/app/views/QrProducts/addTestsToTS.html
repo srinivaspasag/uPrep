@@ -1,0 +1,21 @@
+#{if testSeries.result.testSeries.length()>0}
+<div class="cmdsPopupHead">Add Tests to Test Series</div>
+<table class="margLeft20" width="95%">
+    <tbody>
+        <tr>
+            <td class="grayHead pad10Top alignTop">
+                Choose Test Series
+            </td>
+            <td class="pad10Top entityListDiv">
+                <input type="hidden" class="entityListTotal" value="${testSeries.result.totalHits}"/>
+                <div class="vRadioGrp formvRadioGrp entityList" data-param-name="testSeriesId">            
+                    #{include 'QrProducts/addTestsToTSList.html' /}
+                </div>                
+            </td>
+        </tr>
+    </tbody>
+</table>   
+#{/if}
+#{else}
+<div class="userMessage">No Test series found</div>
+#{/else}

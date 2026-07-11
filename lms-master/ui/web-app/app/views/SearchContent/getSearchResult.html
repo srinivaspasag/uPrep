@@ -1,0 +1,27 @@
+
+<div class="left relative CSWidget" id="searchContentPage" data-widget="SEARCH_RESULT_BODY">
+<div class="left relative searchContentLHS">
+	<!--<div class="relative searchContentNavBar">
+		<span class="relative left searchContentNavItem"><span class="relative left searchContentNavItemCross"></span>Physics</span>
+	</div>-->
+	<img class="relative bowShadowDivider" src="/public/images/my-content/bowHorizontalShadow.png"/>
+	<div class="searchContentResults">
+		#{include '/SearchContent/getSearchBody.html'/}
+	</div>
+	<span class="right relative myContentsHeadRightArrow nonner"></span>
+	<span class="right relative myContentsHeadLeftArrow nonner"></span>
+</div>
+<div class="left relative verticalSectionsDivider"></div>
+<div class="left relative searchContentRHS CSWidget" data-widget="SEARCH_FACET">
+	#{if frnds!=null && frnds.has('result')}
+		#{include '/Widgets/frndSuggs.html'/}	
+	#{/if}
+	#{elseif searchResponse.result.has("facet")}
+		%{ facetData = searchResponse.result.facet; }%
+		#{include '/SearchContent/getFacets.html'/}
+	#{/elseif}
+</div>
+</div>
+<script type="text/javascript">
+	$(".searchContentInputQuery").val('${params.query}');
+</script>

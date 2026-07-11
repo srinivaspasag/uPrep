@@ -1,0 +1,50 @@
+#{if orderInfo!=null&&orderInfo.get('errorCode')==""}
+    %{
+        orderInfo=orderInfo.result;
+        amtPaid='-';
+        if(orderInfo.has("invoiceInfo") && !orderInfo.invoiceInfo.equals(null)){
+            currencyCode = java.util.Currency.getInstance(orderInfo.invoiceInfo.currencyCode).getSymbol();
+            amtPaid=currencyCode+' '+uicom.util.Utilities.roundDecimals(orderInfo.invoiceInfo.total/100);
+        }        
+    }%
+<div class="cmdsPopupHead">Payment Details</div>        
+<table class="margLeft20 paymentInfoTable" width="95%">
+    <tbody>
+        <tr>
+            <td class="grayHead">Order ID</td>
+            <td>
+                ${orderInfo.orderId}
+            </td>
+        </tr>                  
+        <tr>
+            <td class="grayHead">Amount Paid</td>
+            <td>${amtPaid}</td>
+        </tr> 
+        <tr>
+            <td class="grayHead">Date</td>
+            <td>
+                ${new Date(orderInfo.orderTime).format('dd/MM/yyyy')}
+            </td>
+        </tr>         
+        #{if orderInfo.has('pointOfSale')&&!orderInfo.pointOfSale.equals(null)}
+        <tr>
+            <td class="grayHead">Point of Sale</td>
+            <td>
+                ${orderInfo.pointOfSale}
+            </td>            
+        </tr>
+        #{/if}
+        #{if orderInfo.has('sellerReferenceNo')&&!orderInfo.sellerReferenceNo.equals(null)}
+        <tr>
+            <td class="grayHead">Seller Reference No</td>
+            <td>
+                ${orderInfo.sellerReferenceNo}
+            </td>            
+        </tr>
+        #{/if}
+    </tbody>
+</table>
+#{/if}
+#{else}
+<div class="userMessage">Payment Info is not available</div>
+#{/else}

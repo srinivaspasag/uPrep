@@ -1,0 +1,108 @@
+        %{
+            schedules=schedules.result.schedules;
+            globalTestId='';
+            if(params.testId!=null)globalTestId=params.testId;           
+        }%
+        <div class="cmdsPopupHead">List of Schedules and their keys</div>     
+        <ul class="margBot10 color8" style="list-style: disc inside none;">
+            <li>New schedule can only be added before the last schedule expires.</li>
+            <li>In case there is no schedule for a published test, a new schedule can be added if the test is published private.</li>
+            <li>A schedule can only be removed if no user has attempted the test in that schedule.</li>
+        </ul>
+        <table class="scheduleListTable" width="95%" data-global-test-id="${globalTestId}">
+            <thead class="grayHead">
+                <tr>
+                    <td style="width: 300px;">Schedule</td>
+                    <td>Key</td>
+                    #{if session.userRole=="ADMIN" || session.userRole=="SUPER_USER"}
+                    <td style="width: 100px;">Extra Time</td>
+                    <td style="width: 220px;"></td>
+                    #{/if}
+                </tr>
+            </thead>                
+            <tbody>
+                #{if schedules!=null&& schedules.length()>0}
+                #{list items:0..schedules.length()-1,as:'i'}
+                    %{
+                        schedule=schedules.get(i);
+                    }%
+                <tr data-schedule-id="${schedule.scheduleId}" data-end-time="${schedule.endTime}">                    
+                    <td class="grayHead">
+                        #{if schedule.startTime>0&&schedule.endTime>0}
+                        ${new Date(schedule.startTime).format('dd MMMM yyyy hh:mm a')}
+                        <span class="margLeft margRight10">to</span>
+                        ${new Date(schedule.endTime).format('dd MMMM yyyy hh:mm a')}
+                        #{/if}
+                        #{else}
+                        <span class="smallThinGray">Invalid schedule provided.</span>
+                        #{/else}
+                    </td>
+                    <td class="scheduleKeyTd scheduleKey_${schedule.scheduleId}">
+                         ${schedule.key}                         
+                    </td>
+                    #{if session.userRole=="ADMIN" || session.userRole=="SUPER_USER"}
+                            %{
+                                extraTime='-';
+                            }%
+                        #{if schedule.extraTime!=0}
+                            %{
+                            timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(schedule.extraTime);
+                            extraTime= timeObj.hrs+':'+timeObj.mins+':'+timeObj.secs+' hrs';                             
+                            }%
+                        #{/if}
+                        <td class="scheduleDowntimeTd centry">${extraTime}</td>                        
+                        <td class="smally">
+                            #{if schedule.endTime>new Date().getTime()}
+                            <a class="blocky cmdsGetNewKey">Generate New key</a>
+                            <a class="blocky cmdsRemSchedule">Remove Schedule</a>
+                            <a class="blocky cmdsAddDowntime">Add Extra Time</a>
+                            <div class="cmdsDowntimeDiv"></div>
+                            #{/if}
+                        </td>                                            
+                    #{/if}                    
+                </tr>           
+                #{/list}
+                #{/if}
+                #{else}
+                <tr class="noScheduleTr">
+                    <td colspan="4">
+                     <div class="userMessage">This Test is not scheduled</div>   
+                    </td>
+                </tr>                
+                #{/else}                
+            </tbody>
+        </table>     
+        #{if session.userRole=="ADMIN" || session.userRole=="SUPER_USER"}
+        <div class="addScheduleDiv margTop20"></div>
+        <div class="rightText margTop">
+            <div class="gButton cmdsGenerateAllKeys" style="max-width: 200px;">Regenerate Keys for all Schedules</div>
+            <div class="gButton addToScheduleList">Add Schedule</div>             
+        </div>
+        <div class="scheduleSample nonner">
+            #{common.scheduleEntity /}
+            <div class="linBlk margLeft" style="vertical-align: top;">
+                <div class="grayHead margBot5 smally">Questions State*</div>
+                <div class="vChoose vChooseQuesnsState" data-value="ORIGINAL">
+                  <div class="vChooseHead">No Shuffle</div>
+                  <div class="vChooseDownIcon"></div>
+                  <div class="vChooseDropDown">
+                      <div class="vChooseOpt" data-value="ORIGINAL">No Shuffle</div>
+                      <div class="vChooseOpt" data-value="RANDOM">Shuffle</div>
+                  </div>
+                </div>                                
+            </div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+            <div class="floatLeft addScheduleErr"></div>
+            <div class="rightText margTop">
+                <div class="gBlueButton confirmAddSchedule">Add</div>
+                <div class="gButton margLeft cancelAddSchedule">Cancel</div>                
+            </div>
+        </div>
+        <div class="addDowntimeSample nonner">
+            #{common.timeDiv /}
+            <div class="margTop rightText">
+                <div class="gBlueButton confirmDowntime">Add</div>
+                <div class="gButton margLeft cancelDowntime">Cancel</div>
+            </div>
+        </div>
+        #{/if}

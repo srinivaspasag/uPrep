@@ -1,0 +1,105 @@
+#{if videos!=null && videos.errorCode.isEmpty() && videos.result.list.length()>0}
+<input type="hidden" class="resultDataCount" value="${videos.result.totalHits}" data-real-count="${videos.result.totalHits}"/>
+#{list items:0..videos.result.list.length()-1, as:'tIndex'}
+%{
+	videoData = videos.result.list.get(tIndex);
+	caller = _caller == null ? "" : _caller;
+	vidUrl = webUtils.TemplateHelper._getVidUrl(videoData,params.orgId);
+	recordState = videoData.has("recordState") && !videoData.recordState.equals(null) ? videoData.recordState : "ACTIVE"; 
+}%
+<a class="doCStream ${vidUrl.className}" data-id="${vidUrl.id}" href="${vidUrl.url}" data-cs-name="OPEN">
+   <div class="relative myContentsEachListItems myContentsEachItem"
+	data-video-id="${vidUrl.id}" data-entity-type="video" data-entity-id="${vidUrl.id}">
+	<div class="left relative myContentsListLeft">
+		<span class="resourceIconVIDEO"></span>
+		<span class="relative big12 boldy blackTextColor "
+			 title="${videoData.name}">${videoData.name}</span>
+		<!-- <div class="relative singleLineText">
+		#{if videoData.has('user') && videoData.user!=null}
+                      %{
+                        user=videoData.user;
+                        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                      }%
+			<span class="blackTextColor">by</span>
+			<a class="relative big12 blueTextColor ${getUserClassAndUrl.className}"
+                   		style="padding-top:0px;" href="${getUserClassAndUrl.url}" data-user-id="${user.id}">
+                    		 ${user.firstName} ${user.lastName}
+			</a>
+		#{/if}
+		</div> -->
+	</div>
+	<div class="left relative myContentsListMiddle greyTextColor">
+	<!-- #{if videoData.avgRating>0}
+            <div class="left relative myContentsRankingHolder">
+		<div class="relative boldy leftText">Rating</div>
+		<div class="relative myContentsRankingStars" style="width:${videoData.avgRating*20}%"></div>
+	    </div>
+	    <div class="left verticalItemDivider"></div>
+	#{/if} -->
+	    <div class="left myContentsItemInfo">
+		<div class="leftText nonner"><b>Views</b> - ${videoData.views}</div>
+		#{if videoData.duration <= 0}
+			<div class="leftText"><b>Duration</b> - Time Not Available</div>
+		#{/if}
+		#{else}
+			%{
+				timeObj=uicom.util.Utilities.getTimeFromMiliSec(videoData.duration);
+			}%
+			<div class="leftText"><b>Duration</b> - ${timeObj.hrs}:${timeObj.mins} hrs</div>
+		#{/else}
+	    </div>
+	</div>
+	<div class="right relative myContentsListRight">
+		<span class="left relative myContentsDocumentsText">
+		%{
+			boards = videoData.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   #{if boards.length()<=2}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<span style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</span>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+			<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+	</span>
+		<a class="right relative greenButton myContentsButtonItem ${vidUrl.className} doCStream" data-id="${vidUrl.id}" href="${vidUrl.url}" data-cs-name="OPEN">Open</a>
+		<!-- *{#{if videoData.followType == "OWNER"}
+			<a class="right relative smallBlueButton myContentsButtonItem editMyDoc" data-doc-id="${videoData.docId}" data-title="${videoData.name}">Edit</a>
+		#{/if}}* -->
+<!-- 		<span class="right relative myContentsButtonItem">
+			#{widgets.followUnfollowEntity followType:videoData.followType,entityType:'DOCUMENT',entityId:videoData.id/}
+		</span>
+		<span class="right relative myContentsShareIt big14">Share</span> -->
+	</div>
+   </div>
+</a>
+#{/list}
+#{/if}
+*{#{elseif videos==null}
+	#{include '/tags/comingSoon/video.html'/}
+#{/elseif}}*
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_VIDS'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/3library-videos-zero.jpg" /}
+#{/else}
+
+#{if params.orgId == "602ea5ee2736d6c753bd7772" || params.orgId == "58c244d9e4b0d17e65cab555" || params.orgId == "5551bf80e4b053fbc7baf90d" || params.orgId == "55f6b821e4b06863a03b2fcc" }
+#{if "STUDENT".equals(params.userRole)}
+		<div class="instNavCMDSLink right toolTipTitle" data-title="Click here to Download<br>Course Completion Certificate">
+			<a class="" href="/Institute/getCertificate?callingUserId=${params.myUserId}&userId=${params.myUserId}&sectionId=${params.sectionId}&programId=${params.programId}&orgId=${params.orgId}&callingApp=web-app&callingAppId=web-app&centreId=${params.centerId}" target="_blank">
+			 <span class="bigGreenButton blackTextColor">
+				 <span>Download Certificate</span>
+			 </span>
+			</a>
+		 </div>
+#{/if}
+#{/if}

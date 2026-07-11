@@ -1,0 +1,18 @@
+#{if orgs.size()>0}
+%{
+            for(String key:orgs.keySet()){
+                org=orgs.get(key);
+                profile=org.getOrgUserProfile();
+                orgId=org.getOrgId();
+                url='/organization/'+orgId+'/resources';
+}%                
+        #{if (profile=='MANAGER'||profile=='TEACHER'||profile=='EDITOR')&&orgId!=params.orgId}        
+            <a href='${url}' class="boxDropDownEntity ptrTagHovered">
+                ${org.getName()}
+            </a>       
+        #{/if}                
+%{
+                
+  }
+}%
+#{/if}

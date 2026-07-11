@@ -1,0 +1,19 @@
+        <div id="docConTOC">
+            #{if docTocs.result.length()>0}
+              %{
+                docTocs=docTocs.result;
+              }%
+            <table width="100%">
+                #{list items:0..docTocs.length()-1,as:'i'}
+                        %{
+                                className='tocPad';
+                                if(docTocs.get(i).tocElement.headingLevel==1)className="boldy";
+                        }%
+                    <tr class="tocTextClickable" rel="page_${docId}"><td class='${className}' rel='${docTocs.get(i).tocElement.headingLevel}'>${docTocs.get(i).tocElement.tocText}</td><td rel='${docTocs.get(i).tocElement.pageIdAssociatedTO}' class="conTocNum">${docTocs.get(i).pageNo}</td></tr>
+                #{/list}
+            </table>
+            #{/if}
+            #{else}
+            <div class="userMessage">There are no TOCs listed</div>
+            #{/else}
+        </div>

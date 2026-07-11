@@ -1,0 +1,47 @@
+.vCalenHeadDiv{
+    text-align: center;
+}
+.vCalenHead {
+    display: inline-block;
+    font-weight: bold;
+    padding: 0 8px;
+    width: 100px;
+}
+.vCalenPrevMonth, .vCalenNextMonth {
+    background-image: url("/public/images/my-content/recommendation-prev.png");
+    display: inline-block;
+    height: 16px;
+    vertical-align: text-bottom;
+    width: 11px;
+    cursor: pointer;
+}
+.vCalenNextMonth{
+    background-image: url("/public/images/my-content/recommendation-next.png");
+}
+.vCalenTable{
+    border-spacing: 0;
+    font-size: 11px;
+    margin: 20px 0;
+}
+.vCalenTable th{
+    font-weight: normal;
+    text-align: center;
+}
+.vCalenTable td {
+    border-bottom: 1px solid #E0E0E0;
+    border-right: 1px solid #E0E0E0;
+    height: 110px;
+    position: relative;
+    text-align: right;
+    vertical-align: top;
+    width: 110px;
+}
+.vCalenTable tr td:first-child{
+    border-left: 1px solid #E0E0E0;
+}
+.vCalenTable tr:nth-child(2) td{
+    border-top: 1px solid #E0E0E0;
+}
+.vCalenTable td:hover,.activeScheduleDate{
+    background-color: #FAFAFA;
+}

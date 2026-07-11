@@ -1,0 +1,39 @@
+<div class="popupWrapper nonner" id="vPopup">
+	<div class="popupHolder">
+	    <div class="popupContainer">
+		<span class="crossPopup" title="close"></span>
+		<div class="popupBody">
+		</div>
+	    </div>
+	</div>
+</div>
+<script type="text/javascript">
+	function showPopup(body){
+		var sTop = $(window).scrollTop();
+		var popup = $("#vPopup");
+                popup.removeClass("nonner").css("min-width",$(window).innerWidth()+"px");
+		popup.find(".popupBody").append($(body).addClass("popupContent"));
+                $("#mainContainHolder").addClass("disableMainBodyScroll").css({'top':"-"+sTop+'px'}).data('scrollTop',sTop);	
+	}
+	function closePopup(){
+		var popup = $("#vPopup").addClass("nonner");
+		$("#popupHolders").append(popup.find(".popupContent").removeClass("popupContent"));
+		popup.find(".popupBody").html("");
+                var sTop = $("#mainContainHolder").removeClass("disableMainBodyScroll").css({'top':''}).data('scrollTop');
+                window.scrollTo(0,sTop);
+		
+	};
+	$(function(){
+		$("#vPopup").on("click",function(e){
+           	     	var $this = $(e.srcElement||e.target);
+                	var has = $(".popupContent").has($this);
+                	if(!has.get(0) && !$this.hasClass("popupContent")){
+                        	closePopup();
+                	}
+        	});
+		$(".crossPopup").on("click",function(){
+                	closePopup();
+        	});
+		$(document).on("click",".closePopup",closePopup);
+	});
+</script>

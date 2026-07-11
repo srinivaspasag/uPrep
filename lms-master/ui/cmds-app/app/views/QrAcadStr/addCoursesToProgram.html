@@ -1,0 +1,46 @@
+#{if courses.errorCode!=''}
+    #{common.errorCodes resp:courses /}
+#{/if}
+#{else}
+%{
+    courses=courses.result.list;
+}%
+#{if courses.length()>0}
+<div class="cmdsPopupHead">&{'ADD_COURSES_TO_PROGRAMME_HEAD'}</div>
+<table class="margLeft20" width="95%">
+    <tbody>
+        <tr>
+            <td class="grayHead pad10Top alignTop">
+                &{'ADD_COURSES_TO_PROGRAMME_CHOOSE_COURSES'}
+            </td>
+            <td class="pad10Top entityListDiv">
+                <input type="hidden" class="entityListTotal" value=""/>
+                <div class="multiplevChoose">
+                    <div class="mvcAllItems">
+                        <div class="gCBox" data-callback="mvcAllCheckFn">
+                            <div class="gCBoxTicker"></div>
+                        </div>
+                        <span class="mvcAllItemsText gCBoxText">&{'ADD_COURSES_TO_PROGRAMME_ALL_COURSES'}</span>
+                    </div>   
+                    #{list items:0..courses.length()-1,as:'c'}
+                    %{
+                        course=courses.get(c);
+                        courseId=course.id;
+                    }%
+                    <div class='mvcItem'>
+                        <div class='gCBox gCBoxAcadEntity_${courseId}' data-value='${courseId}'>
+                            <div class='gCBoxTicker'></div>
+                        </div>
+                        <span class='mvcItemText gCBoxText'>${course.name}</span>
+                    </div>                    
+                    #{/list}
+                </div>                   
+            </td>
+        </tr>
+    </tbody>
+</table>   
+#{/if}
+#{else}
+<div class="userMessage">&{'ADD_COURSES_TO_PROGRAMME_NO_COURSES'}</div>
+#{/else}
+#{/else}

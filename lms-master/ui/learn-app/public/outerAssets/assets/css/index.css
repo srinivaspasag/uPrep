@@ -1,0 +1,386 @@
+body{
+	background-image: none;
+	font-family: Open Sans,sans-serif;
+
+}
+
+.heading{
+	font-size: 30px;
+	text-align: center;
+	font-weight: 700;
+	text-transform: capitalize;
+	letter-spacing: 2px;
+	line-height: 50px;
+}
+
+
+
+/* CSS For Main first screen */
+.topScreen{
+	width: 100%;
+	height: 570px; 
+	background:radial-gradient(#00bfff ,#006699);
+	/*background: #fc9700;*/
+	margin-top: -50px;
+}
+
+.jumbotron h1{
+	margin-top: 40px;
+	font-size: 40px;
+	line-height: 50px; 
+	font-weight: 700;
+	position: relative;
+	top: 20px;
+}
+
+.jumbotron small{
+	font-size: 20px;
+	position: relative;
+	top: 20px;
+}
+
+.top-input{
+	margin: 0 auto;
+	position: relative;
+	max-width: 700px;
+}
+.top-input .input-group{
+	width: 90%;
+	margin:auto;
+}
+.getStartedInput{
+	position: absolute;
+	margin: 0 auto;
+	background: rgb(255, 255, 255);
+	width: 100%;
+	border: none;
+	font-size: 20px;
+	outline: none;
+	height: 60px;
+	top: 250px;
+	padding: 20px;
+	color: #000;
+	border: 2px solid #fff;
+	border-radius: 30px;
+	box-shadow: 0 2px 10px 1px rgba(0,0,0,0.5);
+}
+.get-started-submit-btn{
+	position: absolute;
+	min-height: 30px;
+	min-width: 44px;
+	background: #197B3C !important;
+	font-weight: 500!important;
+	color: #fff;
+	line-height: 1px;
+	margin-bottom: 50px;
+	box-shadow:none!important;
+	border-radius: 30px;
+	right: 17px;
+	top: 15px;
+	transition: background 0.2s;
+}
+
+.get-started-submit-btn:hover{
+	box-shadow: 0 2px 10px 1px rgba(0,0,0,0.35)!important;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	color: #333;
+	font-size: 16px;
+	line-height: 3;
+}
+input:-moz-placeholder{
+	color: #333;
+	font-size: 16px;
+	line-height: 3;
+}
+:-ms-input-placeholder { /* IE 10+ */
+	color: #333;font-size: 16px;
+	line-height: 3;
+}
+.intl-tel-input.allow-dropdown .flag-container, .intl-tel-input.separate-dial-code .flag-container {
+	height: 10px;
+}
+
+#phone-help{
+	color: #ff9800;
+	position: absolute;
+	margin: auto;
+	left: 0;
+	right: 0;
+	font-size: 15px;
+	font-weight: 600;
+	top: 63px;
+}
+
+
+.avatar-img{
+	width: 72px;
+	height: 72px;
+}
+
+.m-auto{
+	margin: auto;
+}
+
+.top-laptop{
+	max-height: 200px;
+}
+.top-laptop img{
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/*END OF CSS For Main first screen */
+
+
+/*CSS For Journey Section */
+
+.journey{
+	overflow-x: hidden;
+}
+.journey .block{
+	padding: 25px 40px;
+}
+.journey img{
+	width: 500px;
+	margin-top: 100px;
+}
+.journey .inner-heading{
+	letter-spacing: 1px;
+	color: #fff;
+	font-weight: 600;
+	font-size: 25px;
+	text-align: center;
+	position: relative;
+	margin: auto;
+}
+.journey .inner-description{
+	color: #fff;
+	/*font-weight: 600;*/
+	font-size: 14px;
+	text-align: center;
+	margin: 20px 0px;
+	max-width: 400px;
+	margin: auto;
+	padding: 10px 20px;
+	position: relative;
+}
+
+.journey .video-heading{
+	left: 75px;
+	bottom: 30px;
+	width: 400px;
+}
+
+.journey .video-description{
+	left: 75px;
+	bottom: 20px;
+}
+
+.journey .challenge-heading{
+	right: 130px;
+	bottom: 35px;
+	margin: auto;
+}
+.journey .challenge-description{
+	right: 130px;
+	bottom: 35px;
+}
+
+.journey .analytics-heading{
+	left: 75px;
+	bottom: 100px;
+	width: 400px;
+	margin: auto;
+}
+.journey .analytics-description{
+	left: 75px;
+	bottom: 100px;
+}
+
+.journey .doubts-heading{
+	right: 75px;
+	bottom: 65px;
+}
+.journey .doubts-description{
+	right: 75px;
+	bottom: 65px;
+}
+
+/*END OF CSS For Journey Section */
+
+/*START OF CSS For Features Section */
+
+.features{
+	margin:40px;
+}
+.features .container{
+	max-width:90%;
+}
+
+.feature-block{
+	padding: 10px;
+	margin-top: 20px;
+}
+
+.feature-block img{
+	max-width: 80px;
+}
+
+.feature-block .feature-heading{
+	margin-top: 20px;
+	font-weight: bold;
+	font-size: 18px;
+	color: #0f2e3b;
+}
+.feature-block .feature-description{
+	color: #333;
+	font-size: 15px;
+	text-align: justify;
+	padding: 20px;
+}
+
+/*END OF CSS For Features Section */
+
+/*START OF CSS For Video Section */
+.video-row{
+	margin: 80px 0px;
+}
+.video-holder{
+	margin:20px auto;
+	cursor: pointer;
+	transition: all .2s ease;
+}
+.video-holder img{
+	border-radius: 10px;
+	border: 1px solid #eee;
+}
+.video-holder:hover{
+	box-shadow: 7px 10px 20px 0 rgba(0,0,0,.2);
+	border-radius: 10px;
+}
+.videoPopup{
+	width: 50vw;
+	padding: 0px!important;
+}
+
+/*END OF CSS For Video Section */
+
+/*CSS For Testimonials Section*/
+
+.testimonials   .active{
+	display: block;
+}
+
+.testimonials  {
+	position: relative;
+	padding: 100px 10px 100px 10px;
+	max-width: 100%;
+	margin:auto;
+	transition: all ease-in 0.5s;
+}
+
+.testimonials .container{
+	width: 70%;
+}
+
+.testimonials  .testimonial-left{
+	position: absolute;
+	top: 50%;
+	left: 0px;
+	padding-left: 15px;
+	cursor: pointer;
+}
+
+.testimonials  .testimonial-left .zmdi-chevron-left{
+	font-size: 80px;
+}
+
+
+.testimonials  .testimonial-right{
+	position: absolute;
+	top: 50%;
+	right: 0px;
+	padding-right: 15px;
+	cursor: pointer;
+}
+
+.testimonials  .testimonial-right .zmdi-chevron-right{
+	font-size: 80px;
+}
+
+.testimonials  .testimonial-avatar{
+	position: absolute;
+	top: 32px;
+	left: 50%;
+	transform: translateX(-32px);
+}
+
+.testimonials  .testimonial-content{
+	margin-top: 30px;
+	text-align: center;
+	font-size: 15px;
+	font-family: 'Raleway';
+}
+.testimonials  .testimonial-client-name{
+	float: right;
+	margin-top: 10px;
+}
+
+/*END OF CSS For Testimonials Section */
+
+
+
+/*START OF CSS For Applink Section */
+
+.app-link{
+	background:linear-gradient(180deg,#3a3a3a ,#1b1b1b);
+	margin-bottom: -2px;
+}
+
+.app-icon{
+	margin: 10px 0px 0px 0px;
+}
+
+/*END OF CSS For Applink Section */
+
+/*CSS For Video Popup Holder Section*/
+
+.btn-tv-play{
+	bottom: 100px;
+	border-radius:0.3125rem;
+	right: 37px;
+    width: 50px;
+    height: 50px;
+    line-height: 46px!important;
+}
+
+.btn-tv-play i{
+	font-size: 30px;
+	top:3px;
+	position: relative;
+}
+
+.popupVideoLoader .content{
+	padding: 40px;
+    text-align: left;
+    font-size: 14px;
+}
+.videoPopupOnLoad{
+	width: 90vw;
+	padding: 0px!important;
+}
+
+@media(max-width: 500px){
+	.videoPopupOnLoad{
+		height:75vh;
+		min-height: 75vh!important;
+	}
+	.popupVideoLoader .videoPlayer{
+		padding: 15px;
+	}
+}
+
+/*END OF CSS For Video Popup Holder Section */

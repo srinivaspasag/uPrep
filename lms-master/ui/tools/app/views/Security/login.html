@@ -1,0 +1,47 @@
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Welcome to Learnpedia' /}
+%{
+	appName = play.Play.configuration.getProperty("application.name");
+}%
+<div class="signInWrapper">
+<div style="text-align: center; margin-right: 20px; font-family: Times New Roman; color: rgb(51, 186, 215); font-size: 50px; padding-top: 140px;">Tools</div>
+    <div id="loginFormDiv">
+        <form action="@{Security.authentify}" method="post" id="loginForm">
+            <div class="loginPageWrapper">
+                    <div class="loginContent">
+                            <div class="regInputBoxHolder">
+                                    <input type="text" id="loginUsername" placeholder="&{'login.PLACEHOLDER_USERNAME'}" name="username"/>
+                            </div>
+                            <div class="regInputBoxHolder">
+                                    <input type="password" id="userPassword" placeholder="&{'login.PASSWORD'}" name="password"/>
+                            </div>
+                            <div class="regSubmitHolder">
+                                    <input class="loginButton" id="clickToLogin" value="Submit" type="submit"/>
+                            </div>
+                    </div> 
+            </div>
+        </form>
+    </div>
+        <div class="errorWrapperDiv">
+            <div class="errorWrapper"></div>
+        </div>    
+        #{if flash.get("loginError")!=null}
+            %{ errorCode = flash.get("loginError"); }%    
+            <div class="serverErrorDiv">
+                <div class="serverError">
+                &{'login.'+errorCode}
+                </div>            
+            </div>         
+        #{/if}      
+    <div class="successWrapper">
+	<span>&{'login.CHECK_MAILBOX'}</span>
+    </div>
+    <div id="detectClientMsg"></div>
+</div>
+<script type="text/javascript">
+    loginProcess.init({loginType:"${loginType}"});
+    var loginErrors={
+        emailError:"&{'login.INVALID_EMAIL'}",
+        blankError:"&{'login.BLANK_FIELD'}"
+    }
+</script>

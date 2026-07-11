@@ -1,0 +1,108 @@
+<style type="text/css">
+    .instDbtFacets, .instDbtPopularTags{
+        padding: 15px;
+    }
+    .dbtFacetsSubs, .instTopicTree{
+        border-top: 1px solid #eee;
+    }
+    .txtBd{
+        /*color: #666;*/
+    }
+     .dbtFacetSubjTopics li{
+        background: #e1ecf4;
+    }
+    .dbtFacetSubjTopics li:hover{
+        background: #39739d;
+        color: white;
+        cursor: pointer;
+    }
+    .instDbtTopicSeld{
+        background: #39739d;
+        color: white!important;
+        bottom: 10px;
+        position: relative;
+    }
+</style>
+#{if dicussionsData.has('result') && dicussionsData.result.has('facet')}    
+%{ facets = dicussionsData.result.facet; }%
+#{if params.facet == "true" }
+#{if params.subFacetHolder!=null && !params.subFacetHolder.isEmpty()}
+    #{if facets.has('topics') && facets.topics.length()>0}
+        <ul class="dbtFacetSubjTopics lgi-attrs">
+        #{list items:0..facets.topics.length()-1, as:'tIndex'}
+        %{ topicFacet = facets.topics.get(tIndex); }%
+            <li class="dbtFacetTopic doCStream" data-name="${topicFacet.obj.name}" 
+            name="TRENDING_TOPIC_LINK" data-brd-id="${topicFacet.obj.id}">
+                <span class="instTrTopicText doubtBrd-${topicFacet.obj.id}" 
+                    data-brd-id="${topicFacet.obj.id}">
+                    ${topicFacet.obj.name}</span> (${topicFacet.count})
+            </li>
+        #{/list}
+        </ul>
+    #{/if}
+#{/if}
+#{else}
+#{if facets.has('courses') && facets.courses.length()>0}
+<div class="instDbtFacets card">
+    <div class="titleTxt boldy text-center"><h4>&{'POPULAR_SUBS'}</h4></div>
+    <div class="dbtFacetsSubs p-t-10">
+         <div class="dbtFacetSubject">
+        <div class="dbtFacetSub selected dbtFacetAllSub checkbox m-b-15">
+            <label>
+                <input type="checkbox" value="" class="dbtFacetSubChk" checked>
+                <i class="input-helper"></i>
+                <span class="facetSubTxt">&{'TXT_ALL'} (${totalCount})</span>
+            </label>
+            <!-- <input class="dbtFacetSubChk" type="checkbox" value="" checked/>
+            <span class="facetSubTxt">&{'TXT_ALL'} (${totalCount})</span> -->
+        </div>
+         </div>
+         #{list items:0..facets.courses.length()-1, as:'cIndex'}
+         %{ courseFacet = facets.courses.get(cIndex); }%
+         <div class="dbtFacetSubject dbtFacetSubId_${courseFacet.obj.id}">
+        <div class="dbtFacetSub checkbox m-b-15">
+            <label>
+                <input class="dbtFacetSubChk doCStream" type="checkbox" value="${courseFacet.obj.id}" 
+                    data-name="SUB_${courseFacet.obj.code}_CHK_BOX"/>
+                <i class="input-helper"></i>
+                <span class="facetSubTxt">${courseFacet.obj.name} (${courseFacet.count})</span>
+            </label>
+            <!-- <span class="right instImgs nonner"></span> -->
+        </div>
+        <div class="dbtFacetSubjTopicsHolder" style="min-height: inherit!important;">
+        </div>
+         </div>
+         #{/list}
+    </div>
+</div>
+#{/if}
+<div class="instDbtPopularTags card">
+    #{if facets.has('topics') && facets.topics.length()>0}
+    <div class="instTopicHead text-center"><h4>&{'POPULAR_TOPICS'}</h4></div>
+    <div class="left instTopicTree CSWidget p-t-10" data-widget="FILTER_DISCUSSION_BY_TRENDING_TOPICS">
+        #{list items:0..facets.topics.length()-1, as:'tIndex'}
+        %{ topicFacet = facets.topics.get(tIndex); }%
+            <ul class="instEachTrTopic doCStream lgi-attrs" data-name="${topicFacet.obj.name}" name="TRENDING_TOPIC_LINK" 
+                data-brd-id="${topicFacet.obj.id}">
+                <li class="instTrTopicText doubtBrd-${topicFacet.obj.id}" 
+                    data-brd-id="${topicFacet.obj.id}">
+                    ${topicFacet.obj.name}</li>
+                <span class="instTrTopicCount">(${topicFacet.count})</span>
+            </ul>
+        #{/list}
+    </div>
+    #{/if}
+</div>
+#{/else}
+#{/if}
+#{else}
+<script type="text/javascript">
+    $(function(){
+        try{
+            institute.doubts.facetsData = ${facets.raw()}; 
+            institute.doubts.facetsData.total = ${totalCount};
+        }catch(err){}
+    });
+</script>
+#{/else}
+#{/if}

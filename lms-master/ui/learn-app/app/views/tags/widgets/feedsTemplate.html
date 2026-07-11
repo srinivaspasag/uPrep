@@ -1,0 +1,133 @@
+%{
+    feed = _feedData;
+    lastFeedId = _lastFeedId;
+    firstFeedId = _firstFeedId;
+    lastFeedTime = _lastFeedTime;
+    firstFeedTime = _firstFeedTime;
+    actor = _actor;
+}%
+#{if feed!=null && feed.has(lastFeedId) && feed.has('src') && feed.src.has('id')}
+%{
+    src = feed.src;
+    srcType = "STATUSFEED";
+    if(src.has("type")){
+        srcType = src.get("type");
+    }
+    knownType = false;
+    ownerUser = actor != null && !actor.equals(null) ? actor : feed.get('srcOwner');
+    srcOwnerUser = feed.get('srcOwner');
+    content = src;
+    contentType = "";
+    extraClass = "";
+    statusMessage = "";
+    entityType = "STATUSFEED";
+    if(!src.equals(null)){
+       if(src.has('statusMessage') && !src.statusMessage.equals(null) && !src.statusMessage.isEmpty()){
+        statusMessage = src.statusMessage;
+       }
+       if(src.has('sourceContent') && !src.sourceContent.equals(null) && src.sourceContent.has('type')){
+        content = src.sourceContent;
+        contentType = content.get('type');
+        knownType = util.InstituteUtil.isSupportedActivityFeed(contentType); 
+       }else if(src.has('type') && !src.type.equals(null)){
+        contentType = src.get('type');
+        if(feed.eType=="MADE_VISIBLE"){
+            contentName = play.i18n.Messages.get("ENTITY_NAME_"+contentType);
+            msg = play.i18n.Messages.get("NEW_ENTITY_PUBLISHED",contentName);
+            statusMessage = msg;
+            extraClass = "publishedEntity";
+        }
+        entityType = contentType;
+        content = src;
+        content.put("user",srcOwnerUser);
+        knownType = util.InstituteUtil.isSupportedActivityFeed(contentType);
+       }
+    }
+}%
+<div class="eachInstFeedHolder ${extraClass} card w-item" data-first-news-feed-id="${feed.getString(firstFeedId)}" data-last-news-feed-id="${feed.getString(lastFeedId)}">
+    <!-- <table cellspacing=0 cellpadding=0 class="fullWidth"> -->
+    <div class="card-header">
+       <!-- <tr> -->
+        #{if !ownerUser.equals(null)}
+        %{
+            getUser=(controllers.Profile.getUserClassAndUrl(ownerUser));
+                    userClass = getUser.get("className");
+                    userUrl = getUser.get("url");
+        }%
+        <!-- <td rowspan=4 style="vertical-align:top;width:60px;"> -->
+        <div class="media">
+            <div class="instProfilePicContainer pull-left">
+            <a class="${userClass} displayInBlock" data-user-id="${ownerUser.id}">
+                <img class="instFeedProfilePic img-circle avatar-img" src="${ownerUser.thumbnail}" alt=""/>
+            </a>
+            </div>
+        <!-- </div> -->
+        <!-- </td> -->
+        <!-- <td> -->
+                #{memberName user : ownerUser , classNames : "instFeedProfileName boldy" , getUser : getUser , timeCreated:feed.get(firstFeedTime) /}
+        </div>
+    </div>
+            #{if feed.has('sharedWith') && feed.sharedWith.length()>0}
+            %{
+                shr = feed.sharedWith.get(0);
+                shrName = shr.has('name')?shr.name:"";
+            }%
+            <span class="instFeedShareScope nonner">
+                <span class="instImgs"></span>
+                <span class="big12">${shrName}</span>
+            </span>
+            #{/if}
+        <!-- </td> -->
+        #{/if}
+        #{if !src.equals(null) && src.has("id") && srcType == "STATUSFEED" && ownerUser.id == session.userId}
+            <ul class="actions" style="bottom: 90px;position: relative;">
+                <li class="dropdown pull-right">
+                <a href="" data-toggle="dropdown">
+                    <i class="zmdi zmdi-more-vert"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a class="delInstFeed" data-id="${src.id}">&{'TXT_DELETE'}</a>
+                    </li>
+                </ul>
+                </li>
+            </ul>
+        #{/if}
+        <!-- <td class="right"> -->
+            <!-- <div class="instItemStgs">
+                <div class="instImgs"></div>
+            </div>
+            <div class="instItemStgsDropped nonner">
+                <div class="delInstFeed" data-id="${src.id}">&{'TXT_DELETE'}</div>
+            </div> -->
+        <!-- </td> -->
+       <!-- </tr>
+       <tr>
+        <td> -->
+            <div class="instFeedPreview card-body card-padding" style="padding-top: 0px!important;">
+                #{if !statusMessage.isEmpty()}
+                    #{previews.text source:statusMessage,target:'preview'/}
+                #{/if}
+                <div class="feedEntityHolder">
+                 <!-- <div class="cleaner_with_divider">&nbsp;</div>  -->
+                 </div>
+            <!-- </div> -->
+        <!-- </td>
+       </tr> -->
+    #{if knownType == true || !statusMessage.isEmpty()}
+       <!-- <tr>
+        <td> -->
+            #{widgets.upvoteBar entityType:entityType,entityId:src.id,upVotes:src.upVotes,voted:src.voted,comments:src.comments,timeCreated:feed.get(firstFeedTime) /}
+        </div>
+        <!-- </td>
+       </tr>
+       <tr> -->
+        <div class="instFeedCommContainer wi-comments">
+            *{#{widgets.comments entityType:entityType,entityId:src.id /}}*
+        </div>
+       <!-- </tr> -->
+    #{/if}
+    <!-- </table> -->
+<!-- </div> -->
+</div>
+#{/if}

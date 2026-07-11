@@ -1,0 +1,1184 @@
+body {
+	padding: 0;
+	line-height: 16px;
+	font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
+	font-size: 12px;
+	margin: 0px;
+	background-color: #F7F7F7;
+	color: #373737;
+}
+
+a img {
+	border-width: 0;
+}
+
+a {
+	color: #006699;
+	text-decoration: none;
+	cursor: pointer;
+	position: relative;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.cleaner_with_divider {
+	clear: both;
+	width: 100%;
+	height: 0px;
+	font-size: 1px;
+}
+
+input[type="password"],input[type="text"] {
+	color: #333333;
+	font-family: arial, sans-serif;
+	font-size: 13px;
+	min-height: 19px;
+	outline: medium none;
+}
+
+input {
+	border: 1px solid #e0e0e0;
+}
+
+input[type="checkbox"],input[type="radio"] {
+	width: 14px;
+	height: 14px;
+}
+
+select {
+	background-color: #FFFFFF;
+	border: 1px solid #E0E0E0;
+	font-size: 11px;
+}
+
+ul {
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.userMessage {
+	font-weight: bold;
+	color: #373737;
+	text-align: center;
+	margin-top: 20px;
+}
+
+.errorMessageDiv {
+	color: #CC3333;
+}
+
+.floatLeft {
+	float: left;
+}
+
+.floatRight {
+	float: right;
+}
+
+.greenButton {
+	font-size: 15px;
+	background-color: #51C25C;
+}
+
+.nonner {
+	display: none;
+}
+
+.italica {
+	font-style: italic;
+}
+
+.boldy {
+	font-weight: bold;
+}
+
+.color3 {
+	color: #333333;
+}
+
+.color6 {
+	color: #666666;
+}
+
+.color9 {
+	color: #999999;
+}
+
+.pipe {
+	margin: 0 5px;
+}
+
+#cmdsBlackOut {
+	background-color: #AAAAAA;
+	bottom: 0;
+	left: 0;
+	opacity: 0.6;
+	position: fixed;
+	right: 0;
+	top: 0;
+	display: none;
+	z-index: 2049;
+}
+
+#cmdsPopup {
+	background-color: #FFFFFF;
+	border: 1px solid #AAAAAA;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+	left: 0;
+	margin: 0 auto;
+	min-height: 100px;
+	position: absolute;
+	right: 0;
+	top: 120px;
+	width: 500px;
+	padding: 0 20px 20px 20px;
+	z-index: 2050;
+	display: none;
+}
+
+.cmdsPopupHead {
+	color: #333333;
+	font-size: 17px;
+	font-weight: bold;
+	margin: 0 0 13px;
+}
+
+.cmdsErrorPopup .cmdsPopupBody {
+	padding-top: 20px;
+	word-wrap: break-word;
+}
+
+.cmdsPopupBody {
+	position: relative;
+}
+
+.closePopupImg {
+	color: #999999;
+	cursor: pointer;
+	display: inline-block;
+	font-family: Comic Sans MS;
+	font-size: 21px;
+	font-weight: bold;
+	left: 8px;
+	padding: 0;
+	position: relative;
+	top: 5px;
+}
+
+.closePopupImg:hover {
+	color: #333333;
+	text-decoration: none;
+}
+
+.closePopupImg.nonner {
+	display: none;
+}
+
+.cmdsPopupError {
+	color: #CC3333;
+	float: left;
+	font-size: 11px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.cmdsPopupBtns {
+	clear: both;
+}
+
+#topLoader {
+	height: 0;
+	position: fixed;
+	text-align: center;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+}
+
+.loadingSpanTop {
+	background: url("../images/loadingTop.gif") no-repeat scroll center
+		center transparent;
+	display: inline-block;
+	height: 30px;
+	position: relative;
+	width: 135px;
+	z-index: 2056;
+}
+
+.margHalfTop {
+	margin-top: 5px;
+}
+
+.padRight10 {
+	padding-right: 10px;
+}
+
+.padLeft10 {
+	padding-left: 10px;
+}
+
+.rightText {
+	text-align: right;
+}
+
+.leftText {
+	text-align: left;
+}
+
+.centerText {
+	text-align: center;
+}
+
+.blocky {
+	display: block;
+}
+
+.inlineBlock {
+	display: inline-block;
+}
+
+.alignMiddle {
+	vertical-align: middle;
+}
+
+.alignBottom {
+	vertical-align: bottom;
+}
+
+.alignTop {
+	vertical-align: top;
+}
+
+.ptr {
+	cursor: pointer;
+}
+
+.margTop,.margTop10 {
+	margin-top: 10px;
+}
+
+.margTop5 {
+	margin-top: 5px;
+}
+
+.margTop20,.UPOverButtons {
+	margin-top: 20px;
+}
+
+.margTop15 {
+	margin-top: 15px;
+}
+
+.margRight10 {
+	margin-right: 10px;
+}
+
+.margRight15 {
+	margin-right: 15px;
+}
+
+.margRight5,.PLTopicNo {
+	margin-right: 5px;
+}
+
+.margRight2 {
+	margin-right: 2px;
+}
+
+.margBot5 {
+	margin-bottom: 5px;
+}
+
+.margBot15 {
+	margin-bottom: 15px;
+}
+
+.margBot20 {
+	margin-bottom: 20px;
+}
+
+.margLeft5 {
+	margin-left: 5px;
+}
+
+.margLeft20 {
+	margin-left: 20px;
+}
+
+.smally {
+	font-size: 11px;
+}
+
+.small9 {
+	font-size: 9px;
+}
+
+.small10 {
+	font-size: 10px;
+}
+
+.big14 {
+	font-size: 14px;
+}
+
+.big15 {
+	font-size: 15px;
+}
+
+.big16 {
+	font-size: 16px;
+	line-height: 16px;
+}
+
+.big18 {
+	font-size: 18px;
+	line-height: 20px;
+}
+
+.big20 {
+	font-size: 20px;
+	line-height: 20px;
+}
+
+.big22 {
+	font-size: 22px;
+	line-height: 22px;
+}
+
+.big24 {
+	font-size: 24px;
+	line-height: 24px;
+}
+
+.big25 {
+	font-size: 25px;
+	line-height: 25px;
+}
+
+.big28 {
+	font-size: 28px;
+	line-height: 30px;
+}
+
+.color999 {
+	color: #999;
+}
+
+/*acad str table*/
+#acadStrTable {
+	border-collapse: collapse;
+	margin-top: 20px;
+	width: 100%;
+}
+
+.ASTSearchTd {
+	background-color: #EEEEEE;
+	border: 1px solid #CCCCCC;
+	padding: 5px 0;
+	width: 25%;
+}
+
+.ASTSearchHolder {
+	background-color: transparent;
+	display: block;
+	margin: 0 10px;
+}
+
+.ASTSearchInput {
+	background-color: transparent !important;
+	font-size: 14px !important;
+}
+
+.ASTResultsTd {
+	border: 1px solid #CCCCCC;
+	box-shadow: 1px -1px 4px #DDDDDD;
+	padding: 10px 0 0 !important;
+	vertical-align: top;
+}
+
+.ASTCoursesTd,.ASTSectionsTd {
+	box-shadow: none;
+}
+
+.ASTResultsHolder {
+	min-height: 300px;
+	position: relative;
+}
+
+.ASTResultsDiv {
+	height: 265px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.ASTItem {
+	cursor: pointer;
+	padding: 7px 12px;
+	position: relative;
+}
+
+.ASTItem:hover {
+	background-color: #F4F4F4;
+}
+
+.ASTSectionsTd .ASTItem,.ASTCoursesTd .ASTItem,.acadStrInstCentersDiv .ASTItem
+	{
+	cursor: default;
+}
+
+.ASTItemActive,.ASTItemActive:hover {
+	background-color: #DDDDDD;
+}
+
+.ASTResultsTdClicked .ASTItemActive,.ASTResultsTdClicked .ASTItemActive:hover
+	{
+	background-color: #bae3f5;
+}
+
+.ASTItemName {
+	display: inline-block;
+}
+
+.ASTItemState {
+	color: #888888;
+	display: inline-block;
+	font-size: 11px;
+	font-style: italic;
+}
+
+.ASTItemImg {
+	height: 30px;
+	position: absolute;
+	right: -11px;
+	top: 0;
+	width: 10px;
+}
+
+.ASTItemActive .ASTItemImg {
+	background: url("../images/acadEntityArrowGray.png") no-repeat;
+}
+
+.ASTResultsTdClicked .ASTItemActive .ASTItemImg {
+	background: url("../images/acadEntityArrow.png") no-repeat;
+}
+
+.activeASTItem .ASTItemState {
+	display: none;
+}
+
+.activeASTItem:hover .editASTItem,.activeASTItem:hover .removeASTItem,.inactiveASTItem:hover .reactivateASTItem,.ASTItem:hover .removeProgMapping
+	{
+	display: inline-block;
+}
+
+.ASTItemDeactivated {
+	background-color: transparent !important;
+	color: #999999 !important;
+	cursor: default !important;
+}
+
+.ASTItemDeactivated:hover {
+	background-color: transparent !important;
+}
+
+.acadEntityDefaultText {
+	color: #999999;
+	font-size: 11px;
+	line-height: 14px;
+	padding: 0 10px;
+	text-align: center;
+}
+
+.selectSectionForProgChange {
+	cursor: pointer !important;
+}
+
+.selectSectionForProgChange .ASTItemImg {
+	display: none;
+}
+
+#dtappHeader {
+	background-color: #FFFFFF;
+	box-shadow: 1px 1px 4px #CCCCCC;
+	height: 55px;
+	padding-top: 25px;
+	position: fixed;
+	text-align: center;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+}
+
+.commonSprite {
+	background-image: url("../images/dtapp_sprite.png");
+	background-repeat: no-repeat;
+}
+
+.programsPageHead {
+	color: #666666;
+	font-size: 26px;
+}
+
+#settingsHolder {
+	position: absolute;
+	right: 50px;
+	top: 0;
+}
+
+.settingsImg {
+	background: url("../images/settings.png") no-repeat scroll center center
+		rgba(0, 0, 0, 0);
+	border: 1px solid transparent;
+	cursor: pointer;
+	display: inline-block;
+	height: 79px;
+	vertical-align: middle;
+	width: 65px;
+}
+
+.settingsImg:hover,.toggleClick.settingsImg {
+	border-color: #CCCCCC;
+}
+
+.settingsDiv {
+	background-color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	display: none;
+	left: -116px;
+	margin-top: -1px;
+	position: absolute;
+	text-align: left;
+	width: 180px;
+}
+
+.openToggler.settingsDiv {
+	display: block;
+}
+
+.settingsOpt {
+	border-bottom: 1px solid #EEEEEE;
+	display: block;
+	padding: 12px;
+	position: relative;
+}
+
+/*first pages*/
+.welcomeDivImg {
+	background-position: -132px -10px;
+	display: inline-block;
+	height: 62px;
+	margin-bottom: 12px;
+	margin-top: 35px;
+	width: 60px;
+}
+
+.welcomeDivText {
+	color: #333333;
+	font-size: 30px;
+	line-height: 30px;
+}
+
+.welcomeDivText label {
+	color: #0099CC;
+}
+
+.welcomeDivCaption {
+	color: #999999;
+	font-size: 14px;
+	margin-top: 5px;
+}
+
+.firstPagesFormHead {
+	color: #666666;
+	font-size: 16px;
+	margin-bottom: 12px;
+	margin-top: 70px;
+}
+
+.firstPagesFormInput {
+	border: 1px solid #DDDDDD;
+	color: #999999 !important;
+	display: block;
+	font-size: 14px !important;
+	height: 44px;
+	margin: 0 auto 12px;
+	padding: 0 13px;
+	width: 334px;
+}
+
+.firstPagesFormSubmit {
+	border: medium none;
+	border-radius: 2px;
+	font-size: 18px;
+	margin-top: 20px;
+	padding: 9px 0;
+	width: 200px;
+}
+
+/*landing page*/
+.landingPageHead {
+	color: #999999;
+	font-size: 30px;
+	line-height: 30px;
+	margin-bottom: 15px;
+	margin-top: 35px;
+	text-align: center;
+}
+
+.landingPageOpts {
+	margin-bottom: 50px;
+	text-align: center;
+}
+
+.landingPageOpt {
+	cursor: pointer;
+	display: inline-block;
+	margin-top: 15px;
+	vertical-align: text-top;
+}
+
+.landingPageOpt:hover {
+	text-decoration: none;
+}
+
+#goToImportsPage {
+	left: 40px;
+	position: relative;
+}
+
+.landingPageImgHolder {
+	background-color: #FFFFFF;
+	border-radius: 25px;
+	box-shadow: 0 1px 2px #CCCCCC;
+	display: inline-block;
+	height: 205px;
+	line-height: 205px;
+	margin-bottom: 25px;
+	width: 205px;
+}
+
+.landingPageOpt:hover .landingPageImgHolder {
+	box-shadow: 1px 2px 3px #CCCCCC;
+}
+
+.landingPageUploadImg {
+	background-position: -23px -103px;
+	display: inline-block;
+	height: 102px;
+	margin-top: 45px;
+	vertical-align: middle;
+	width: 62px;
+}
+
+#goToImportsPage .landingPageUploadImg {
+	background-position: -188px -103px;
+}
+
+.landingPageOpt:hover .landingPageUploadImg {
+	background-position: -91px -103px;
+}
+
+#goToImportsPage.landingPageOpt:hover .landingPageUploadImg {
+	background-position: -259px -103px;
+}
+
+.landingPageOptText {
+	color: #666666;
+	font-size: 26px;
+	line-height: 26px;
+	margin-bottom: 10px;
+}
+
+.landingPageOpt:hover .landingPageOptText {
+	color: #0099CC;
+}
+
+.landingPageOptCaption {
+	color: #999999;
+	font-size: 18px;
+	line-height: 20px;
+}
+/*programs*/
+#dtappContentDiv {
+	margin: 0 auto;
+	padding-bottom: 50px;
+	position: relative;
+	top: 80px;
+	width: 1225px;
+}
+
+#importDiv {
+	background-color: #FFFFFF;
+	border-bottom: 1px solid #D5D5D5;
+	padding: 25px 40px;
+}
+
+#onlyImportButtonDiv {
+	padding-bottom: 20px;
+	text-align: center;
+}
+
+.onlyImportButtonImage {
+	background-position: -275px -14px;
+	display: block;
+	height: 62px;
+	margin: 10px auto;
+	width: 41px;
+}
+
+.onlyImportLibraryBtn {
+	border-radius: 2px;
+	font-size: 20px;
+	margin-bottom: 10px;
+	padding: 13px 50px;
+}
+
+.importProgressDivHead {
+	margin-bottom: 30px;
+	margin-top: 10px;
+}
+
+.importingItem {
+	margin-bottom: 45px;
+}
+
+.importingItemImage {
+	background-position: -334px -12px;
+	display: inline-block;
+	float: left;
+	height: 42px;
+	margin-top: 8px;
+	width: 30px;
+}
+
+.importingItemContent {
+	margin-left: 43px;
+}
+
+.importingItemTitle {
+	bottom: -5px;
+	color: #E98210;
+	font-size: 20px;
+	line-height: 20px;
+	position: relative;
+}
+
+.importingItemProgressDiv {
+	display: inline-block;
+	position: relative;
+	width: 700px;
+}
+
+.importingItemGrayDiv {
+	background-color: #CCCCCC;
+	height: 5px;
+}
+
+.importingItemGreenDiv {
+	background-color: #51C25C;
+	height: 5px;
+	position: absolute;
+	top: 0;
+}
+
+.importingItemPauseResumeButton {
+	cursor: pointer;
+	display: inline-block;
+	height: 30px;
+	margin-left: 15px;
+	margin-right: 3px;
+	vertical-align: middle;
+	width: 25px;
+}
+
+.importingItemPauseButton {
+	background-position: -16px -11px;
+}
+
+.importingItemResumeButton {
+	background-position: -16px -11px;
+}
+
+.importingItemCancelButton {
+	background-position: -42px -11px;
+	cursor: pointer;
+	display: inline-block;
+	height: 30px;
+	vertical-align: middle;
+	width: 25px;
+}
+
+.importingItemStatusText {
+	font-size: 15px;
+	position: relative;
+	top: -5px;
+	width: 700px;
+}
+
+.importingItemImportPercent {
+	color: #51C25C;
+	font-weight: bold;
+}
+
+.importingItemTimeDiv {
+	color: #999999;
+	float: right;
+	font-size: 14px;
+}
+
+#importedLibrariesSection {
+	background-color: #F2F2F2;
+	padding: 25px;
+}
+
+.importedLibrariesHead {
+	margin-bottom: 30px;
+	margin-top: 25px;
+}
+
+.importedLibrary {
+	background-color: #FFFFFF;
+	border-bottom: 1px solid #D5D5D5;
+	cursor: pointer;
+	float: left;
+	height: 145px;
+	margin-bottom: 25px;
+	padding: 25px 25px 0 35px;
+	position: relative;
+	width: 487px;
+}
+
+.importedLibrary:hover {
+	text-decoration: none;
+}
+
+.importedLibrary:nth-child(2n) {
+	float: right;
+}
+
+.importedLibraryTitle {
+	color: #E98210;
+	font-size: 24px;
+	line-height: 25px;
+	margin-bottom: 8px;
+}
+
+.importedLibraryDetails {
+	color: #666666;
+	font-size: 16px;
+}
+
+.importedLibrarySyncDiv {
+	bottom: 0;
+	font-size: 14px;
+	padding-bottom: 10px;
+	position: absolute;
+	width: 100%;
+}
+
+.syncLibraryButton {
+	float: right;
+	height: 27px;
+	margin-right: 60px;
+	visibility: hidden;
+	width: 34px;
+}
+
+.syncNewContentForLibrary {
+	background-position: -75px -44px;
+	visibility: visible;
+}
+
+.noSyncPossible {
+	background-position: -75px -70px;
+	visibility: visible;
+}
+
+/*sdcards page*/
+#sdcardsProgNameDiv {
+	display: block;
+	padding: 42px 0 37px;
+}
+
+#sdcardsProgNameDiv:HOVER {
+	text-decoration: none;
+}
+
+.sdcardsProgNameImg {
+	background-position: -337px -63px;
+	float: left;
+	height: 34px;
+	width: 35px;
+}
+
+.sdcardsProgName {
+	color: #E98009;
+	font-size: 26px;
+	margin-left: 43px;
+	margin-top: 8px;
+}
+
+#sdcardsTable {
+	background-color: #FBFBFB;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#sdcardsTable td {
+	padding: 0;
+	vertical-align: top;
+	width: 33%;
+}
+
+.sdcardGroup {
+	background-color: #FFFFFF;
+	border-bottom: 1px solid #F5F5F5;
+	cursor: pointer;
+	padding: 25px 30px;
+	position: relative;
+}
+
+.sdcardGroupActive {
+	background-color: #FFFFFF;
+}
+
+.sdcardGroupInactive {
+	background-color: #FBFBFB;
+}
+
+.sdcardGroupActive .sdcardGroupActiveTile,.sdcardGroupActive .sdcardGroupWhiteTile
+	{
+	background-color: #33BAD7;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	width: 4px;
+}
+
+.sdcardGroupActive .sdcardGroupActiveTile {
+	left: 0;
+}
+
+.sdcardGroupActive .sdcardGroupWhiteTile {
+	background-color: #FFFFFF;
+	right: -4px;
+	z-index: 1;
+}
+
+.sdcardGroupTitle {
+	color: #666666;
+	font-size: 20px;
+	font-weight: bold;
+	line-height: 20px;
+}
+
+.sdcardGroupCreationTime {
+	color: #999999;
+	font-size: 14px;
+	margin-top: 5px;
+}
+
+.sdcardArrow {
+	background: url("../images/sdcard_arrow.png") no-repeat scroll 0 center
+		rgba(0, 0, 0, 0);
+	bottom: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 20px;
+}
+
+td#sdcardsSection,td#sdcardFlashingSection {
+	border-left: 3px solid transparent;
+	padding: 25px 0 25px 30px;
+}
+
+td#sdcardsSection.sdcardsSectionActive,td#sdcardFlashingSection.sdcardFlashingSectionActive
+	{
+	background-color: #FFFFFF;
+	border-color: #EEEEEE;
+}
+
+.sdcard {
+	cursor: pointer;
+	padding: 20px 15px 25px 20px;
+	position: relative;
+}
+
+.sdcardActive {
+	background-color: #FFFDC9;
+}
+
+.sdcardImageDiv {
+	background-color: #666666;
+	float: left;
+	height: 52px;
+	position: relative;
+	width: 41px;
+}
+
+.sdcardFillPercentDiv {
+	background-color: #51C25C;
+	bottom: 7px;
+	height: 0;
+	position: absolute;
+	width: 100%;
+}
+
+.sdcardImage {
+	background-image: url("../images/sdcard.png");
+	display: inline-block;
+	height: 52px;
+	position: relative;
+	width: 41px;
+}
+
+.sdcardActive .sdcardImage {
+	background-image: url("../images/sdcard_hover.png");
+}
+
+.sdcardContent {
+	color: #999999;
+	margin-left: 50px;
+}
+
+.sdcardTitle {
+	color: #000000;
+	font-size: 18px;
+	font-weight: bold;
+	line-height: 18px;
+	margin-bottom: 5px;
+}
+
+td#sdcardFlashingSection {
+	padding-top: 10px;
+}
+
+.sdcardFlashSection {
+	border-bottom: 1px dashed #CCCCCC;
+	display: none;
+	margin-right: 25px;
+	padding: 20px 0;
+}
+
+.sdcardFlashingSectionActive .sdcardFlashSection { /* display: block; */
+	
+}
+
+.sdcardState {
+	color: #333333;
+	display: none;
+}
+
+.sdcardStateActive {
+	display: block;
+}
+
+.sdcardState>div:nth-child(1) {
+	display: inline-block;
+	font-size: 20px;
+	font-weight: bold;
+	width: 10px;
+}
+
+.sdcardState>div:nth-child(2) {
+	display: inline-block;
+	margin: 0 8px;
+	vertical-align: middle;
+}
+
+.sdcardIcon {
+	background-position: -336px -104px;
+	display: inline-block;
+	height: 40px;
+	width: 42px;
+}
+
+.sdcardIconInactive {
+	background-position: -336px -143px;
+}
+
+.sdcardState>div:nth-child(3) {
+	display: inline-block;
+	font-size: 18px;
+	font-weight: bold;
+	vertical-align: middle;
+}
+
+.sdcardState>div:nth-child(4) {
+	float: right;
+	margin-right: 25px;
+	margin-top: 7px;
+}
+
+.sdcardLoadingImg {
+	background-image: url("../images/sdcard_loading.gif");
+	background-repeat: no-repeat;
+	display: inline-block;
+	height: 30px;
+	width: 30px;
+}
+
+.sdcardSuccessImg {
+	background-position: -412px -67px;
+	display: inline-block;
+	height: 26px;
+	width: 30px;
+}
+
+.sdcardFlashStepInactive {
+	color: #CCCCCC !important;
+}
+
+.sdcardFlashStepSuccess .sdcardSuccessImg {
+	background-position: -412px -14px;
+}
+
+#sdcardStorageSection .sdcardIcon {
+	background-position: -375px -104px;
+}
+
+#sdcardStorageSection .sdcardIconInactive {
+	background-position: -375px -143px;
+}
+
+#sdcardEncryptionSection .sdcardIcon {
+	background-position: -416px -104px;
+}
+
+#sdcardEncryptionSection .sdcardIconInactive {
+	background-position: -416px -143px;
+}
+
+#flashNow {
+	font-size: 20px;
+	font-weight: normal;
+	line-height: 20px;
+	margin-top: 30px;
+	padding: 10px 0;
+	width: 200px;
+}
+
+.flashProgressDiv {
+	display: inline-block;
+	margin-top: 15px;
+	position: relative;
+	width: 100%;
+}
+
+.flashGrayDiv {
+	background-color: #CCCCCC;
+	height: 10px;
+}
+
+.flashGreenDiv {
+	background-color: #51C25C;
+	height: 10px;
+	position: absolute;
+	top: 0;
+}

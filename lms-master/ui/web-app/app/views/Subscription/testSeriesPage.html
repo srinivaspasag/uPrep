@@ -1,0 +1,17 @@
+<div id="testSeries">
+	#{if testSeriesData!=null && testSeriesData.errorCode == ""}
+	<div class="pageHolderM">
+            <div class="testSeriesHead">
+                Lakshya Test Series
+            </div>
+            <div id="testSeriesTestList">                   
+                    #{include 'UIComTestSeries/testSeriesDetails.html'/}
+            </div>
+	</div>
+	#{/if}
+	#{else}
+        	<div style="font-size:16px;font-weight:bold;text-align:center;padding:30px;">
+                	You are not subscribed to any test series.
+        	</div>
+	#{/else}
+</div>

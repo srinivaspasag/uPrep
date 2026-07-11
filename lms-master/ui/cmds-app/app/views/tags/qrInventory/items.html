@@ -1,0 +1,43 @@
+%{
+	items = _items;
+}%
+	#{if items.length()>0}
+	<ul class="qrInvItemList">
+	#{list items:0..items.length()-1,as:'index'}
+		%{ item = items.get(index); info = item.info; }%
+		#{if !info.equals(null)}
+		<li class="relative">
+			<div class="big15" style="width:80%;">
+				<span class="">&{'ENTITY_NAME_'+item.entity.type}: </span>
+				<span class="boldy">${info.name}</span>
+			</div>
+			#{if info.has("desc") && !info.desc.equals(null) && !info.desc.isEmpty()}
+			<div class="greyTextColor qrInvItemDesc">${info.desc}</div>
+			#{/if}
+			#{if info.has("costRate") && !info.costRate.equals(null)}
+			%{
+				costRate = info.costRate;
+				costValue = 0;
+				if(costRate.has("currencyCode") && !costRate.currencyCode.equals(null)){
+					currency = uicom.util.Utilities._getCurrencyByCode(costRate.currencyCode);
+				}
+				if(costRate.has("value") && !costRate.value.equals(null)){
+					if(costRate.value>0){
+						costValue = costRate.value/100;
+					}
+				}
+			}%
+			<div class="right big14 blueTextColor absolute" 
+				style="right:0px;top:0px;">
+				<span class="boldy">${currency.symbol}</span>
+				<span>${costValue}</span>
+			</div>
+			#{/if}
+		</li>
+		#{/if}
+		#{else}
+			<div class="centerText greyTextColor italics smally">&{'TXT_NA'}</div>
+		#{/else}
+	#{/list}
+	</ul>	
+	#{/if}

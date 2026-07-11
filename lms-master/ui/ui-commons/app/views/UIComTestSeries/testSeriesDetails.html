@@ -1,0 +1,40 @@
+<script type="text/javascript">
+	var testSeriesData;
+</script>
+#{stylesheet media:'screen', src:'uicomTakeTest/testSeries.css' /}
+#{if testSeriesData!=null && testSeriesData.errorCode == ""}
+%{ testSeriesData = testSeriesData.result; }%
+<script type="text/javascript">
+	testSeriesData = ${testSeriesData.raw()};
+</script>
+%{
+    noTests=false;
+    if(testSeriesData.activeTests.tests.length()==0&&testSeriesData.inactiveTests.tests.length()==0)noTests=true;
+}%
+<div class="testSeriesActiveTests testSeriesTests CSWidget" data-widget="TEST_SERIES_WIDGET">
+    #{if testSeriesData.activeTests.tests.length()>0}
+    #{list items:0..testSeriesData.activeTests.tests.length()-1,as:'index'}
+	%{ test = testSeriesData.activeTests.tests.get(index);}%
+        #{include 'UIComTestSeries/testSeriesTest.html' /}
+    #{/list}
+    #{/if}
+</div>
+<div class="testSeriesInactiveTests testSeriesTests CSWidget" data-widget="TEST_SERIES_WIDGET">
+    #{if testSeriesData.inactiveTests.tests.length()>0}
+    #{list items:0..testSeriesData.inactiveTests.tests.length()-1,as:'index'}
+	%{ test = testSeriesData.inactiveTests.tests.get(index);}%
+        #{include 'UIComTestSeries/testSeriesTest.html' /}
+    #{/list}
+    #{/if}
+</div>
+#{if noTests}
+<div class="userMessage">
+        No Tests available
+</div>
+#{/if}
+#{/if}
+#{else}
+<div class="userMessage">
+        No Tests available
+</div>
+#{/else}

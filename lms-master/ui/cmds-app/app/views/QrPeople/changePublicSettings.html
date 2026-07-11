@@ -1,0 +1,76 @@
+%{
+    publicProfile=publicProfile.result.info;
+}%
+    <div class="cmdsPopupHead">Edit Settings</div>
+    <table>
+        <tbody>
+            <tr>
+                <td class="width120">
+                    Email
+                </td>
+                <td>
+                    %{
+                      email='';
+                      if(!publicProfile.isNull('email')){
+                          email=publicProfile.email;
+                      }
+                    }%       
+                    #{if email==''}
+                        <div class="smallThinGray">Not Given</div>
+                        <div>
+                            <a class="changeEmail smally">Set Email</a>
+                        </div>                                
+                    #{/if}
+                    #{else}
+                        ${email.raw()}
+                        #{if publicProfile.isEmailVerified}
+                        <span class="greenTextColor smally margRight10">Verified</span>
+                        <div class="margTop color9">                            
+                            <a class="changeEmail smally" data-email='${email.raw()}'>
+                                Change Email
+                            </a>
+                            <a class="resetMyEmail smally">Unset Email</a>
+                        </div>                                               
+                        #{/if}                                                        
+                    #{/else}
+                    
+                    
+                    
+                    <div class="margTop10">
+                        #{if email!=''&&publicProfile.isEmailVerified}
+                        <a class="putEmailAsUsername liner" data-email='${email.raw()}'>
+                            Use email as username
+                        </a>
+                        #{/if}        
+                        <div class="margTop10">
+                            <a class="changePasswordBtn liner">Change Password</a>
+                        </div>                                                    
+                    </div>                         
+                </td>
+            </tr>
+            #{if publicProfile.emailChangeRequested!=''}
+            <tr>
+                <td>
+                    Email Change Request to
+                </td>
+                <td>
+                    ${publicProfile.emailChangeRequested}
+                    <br>
+                    <span class="redTextColor smally margRight10">Not Verified</span>
+                    <div class="smallThinGray">
+                        <a class="resendVerificationLink">
+                            Resend Verification Link
+                        </a>
+                    </div>
+                </td>
+            </tr> 
+            #{/if}                     
+        </tbody>
+    </table>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrPeople.init({target:"PUBLIC_PROFILE",
+                targetUserId:"${publicProfile.id}"});}
+        lazyLoad([{fname:"qrPeople.js",cb:fn}]);        
+    }();    
+</script>  

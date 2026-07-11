@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>Invoice Test Page</title>
+<style>
+.header{
+	background-color:blue;
+	font-size:20px;
+	padding:20px 0;
+}
+.body{
+	background-color:green;
+	font-size:20px;
+	padding:50px 0;
+	height:500px;
+	text-align:center;
+	border:1px solid #333;
+}
+.footer{
+	background-color:red;
+	font-size:20px;
+	padding:20px 0;
+}
+.table{
+	width:800px;
+	margin:0 auto;
+}
+@media print {
+   thead {
+    	display: table-header-group;
+   }
+   tfoot {
+   	display: table-footer-group;
+   }
+}
+</style>
+</head>
+<body>
+<table class="table" cellspacing=0 cellpadding=0>
+  <thead>
+    <tr>
+      <th>
+	<div class="header">HEADER</div>	
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+	<div class="body">BODY1</div>	
+	<div class="body">BODY2</div>	
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th>
+	<div class="footer">FOOTER</div>	
+      </th>
+    </tr>
+  </tfoot>
+</table>
+</body>
+</html>

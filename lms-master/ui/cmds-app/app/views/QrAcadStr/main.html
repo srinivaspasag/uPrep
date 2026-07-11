@@ -1,0 +1,30 @@
+<div id="acadStrPage">
+    <div id="leftSection" class="acadStrLeftSec">
+        <div class="acadStrInstCentersDiv">
+            <div class="boldy big15 margBot10">Classroom Centers</div>
+            %{
+                entities=centers;
+			        org.json.JSONObject centerRenderInfo = new org.json.JSONObject();
+		            centerRenderInfo.put("entityType", "CENTER");
+		            centerRenderInfo.put("astClass", "");
+		            centerRenderInfo.put("addClass", "addCenter");
+		            centerRenderInfo.put("notFoundMessage", "CENTER_NOT_FOUND");
+		            renderInfo=centerRenderInfo;
+            }%
+            #{include 'QrAcadStr/acadEntities.html' /}                             
+        </div>
+    </div>    
+    <div id="mainSection">
+        <div class="centry">
+            <div class="editAcadStr blueTabNew blueTabActiveNew">Edit Academic Structure</div>
+            <div class="blueTabNew assignCoursesInAcadStr">Assign Courses</div>            
+        </div>
+        #{acadStr.acadStrTable target:"EDIT_ACAD_STR",depts:depts,currentOrgInfo:currentOrgInfo /}
+    </div>    
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){qrAcadStr.init({targetTable:"EDIT_ACAD_STR"});}
+        lazyLoad([{fname:"qrAcadStr.js",cb:fn}]);
+    }();       
+</script> 

@@ -1,0 +1,191 @@
+#{extends 'header.html' /}
+#{set title:'Home' /}
+<div id=""  class="instiTopBarHolder">
+    <div id="" class="instiTB">
+        <div class="floatLeft">
+            <span class="SRTopBarHead">Results</span>
+            <div class="SRTBItem">
+                Batch<br>
+                <span class="SRTBItemValue">S1</span>
+            </div>
+            <div class="SRTBItem">
+                Tests<br>
+                <span class="SRTBItemValue">23</span>
+            </div>
+            <div class="SRTBItem">
+                Avg.Score<br>
+                <span class="SRTBItemValue">54%</span>
+            </div>
+            <div class="SRTBItem SRTBItemCurrentRank">
+                Current Rank<br>
+                <span class="SRTBItemValue">12</span>
+            </div>
+        </div>
+        <div class="floatRight">
+              <div class="img50Wrapper imgWrapper">
+                  <img class="img50 img50Round" src="/public/images/LMS/frnd2.png" />
+              </div>
+              <div class="img50Lefter margHalfTop">
+                  <div class="big14 boldy">Ajith Reddy</div>
+                  <label class="smally">Overall Performance</label>
+              </div>
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+</div>
+<!--<div class="SRTableSec" id="">
+    <div class="centry">
+        <input class="SRTableSearchInput" placeHolder="Search"/>
+    </div>
+    <table class="SRTable" id="" cellspacing="10px">
+        <tbody>
+            <tr class="SRTableTrHead">
+                <td>Date</td>
+                <td>Tests</td>
+                <td>Physics</td>
+                <td>Mathematics</td>
+                <td>Chemistry</td>
+                <td>Rank</td>
+            </tr>
+            <tr class="SRTableMarksRow">
+                <td class="SRTableTestDate">${new Date().format('dd/mm/yy')}</td>
+                <td class="boldy">SSDF1321</td>
+                <td><span class="SRTableSubMark boldy">23</span>/50</td>
+                <td><span class="SRTableSubMark boldy">35</span>/50</td>
+                <td><span class="SRTableSubMark boldy">34</span>/50</td>
+                <td class="SRTableRank boldy">14</td>
+            </tr>
+            <tr class="SRTableMarksRow SRTableMarksActiveRow">
+                <td class="SRTableTestDate">${new Date().format('dd/mm/yy')}</td>
+                <td class="boldy">SSDF1321</td>
+                <td><span class="SRTableSubMark">23</span>/50</td>
+                <td><span class="SRTableSubMark">35</span>/50</td>
+                <td><span class="SRTableSubMark">34</span>/50</td>
+                <td class="SRTableRank">14</td>
+            </tr>
+            <tr class="SRTestTableRow">
+                <td colspan="6" class="SRTestTableTd">
+                    <div class="SRTestTableDiv">
+                        <table class="SRTestTable">
+                          <tbody>
+                               <tr class="SRTestTopicsRow">
+                                    <td colspan="2">
+                                        <div class="SRTTRWhiteBox">
+                                            <div><span class="bigger boldy">Centers: </span><label>TDF,edg,asedvds  vakshgc,asjhvg s,ash sd</label></div>
+                                            <div><span class="bigger boldy">Batches: </span><label>S1,S4,dHRISTI,SANKALP</label></div>
+                                            <div class="margTop smally boldy"><span>Overall Avg:</span><label class="SRTTROverallAvg">46</label></div>
+                                            <div class="margHalfTop smally boldy"><span>Overall Highest:</span><label class="SRTTROverallHighest">87</label></div>
+                                            <div class="margHalfTop smally boldy"><span>You Scored:</span><label class="SRTTRMyScore">68</label></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="SRTTRSubjectTopics">
+                                            <div>Electromagnetics</div>
+                                            <div>sdvkjgds jhvds</div>
+                                            <div>kj sadhkjg sdjhgsdjhgksdhgmn jnsdv sdhvjh</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="SRTTRSubjectTopics">
+                                            <div>Electromagnetics</div>
+                                            <div>sdvkjgds jhvds</div>
+                                            <div>kj sadhkjg sdjhgsdjhgksdhgmn jnsdv sdhvjh</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="SRTTRSubjectTopics">
+                                            <div>Electromagnetics</div>
+                                            <div>sdvkjgds jhvds</div>
+                                            <div>kj sadhkjg sdjhgsdjhgksdhgmn jnsdv sdhvjh</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>Section Rank <span class="boldy big14">4</span></div>
+                                        <div>Center Rank  <span class="boldy big14">14</span></div>
+                                        <div>Overall Rank  <span class="boldy big14">46</span></div>
+                                    </td>
+                                </tr>
+                                <tr class="SRTestAvgMarksRow">
+                                    <td colspan="2" class="rightText boldy">Avg. Marks</td>
+                                    <td>34</td>
+                                    <td>33</td>
+                                    <td>14</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="SRTestHighestMarksRow">
+                                    <td colspan="2" class="rightText boldy">Highest</td>
+                                    <td>44</td>
+                                    <td>45</td>
+                                    <td>50</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="SRTestMyMarksRow">
+                                    <td colspan="5"></td>
+                                    <td class="centry boldy">Total</td>
+                                </tr>
+                                <tr class="SRTestMyMarksRow">
+                                    <td class="rightText boldy" colspan="2">Total Questions</td>
+                                    <td>20</td>
+                                    <td>20</td>
+                                    <td>20</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr class="SRTestMyMarksRow">
+                                    <td class="rightText boldy" colspan="2">Attempted</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>7</td>
+                                    <td>27</td>
+                                </tr>
+                                <tr class="SRTestMyMarksRow">
+                                    <td class="rightText boldy" colspan="2">Left</td>
+                                    <td>10</td>
+                                    <td>10</td>
+                                    <td>13</td>
+                                    <td>23</td>
+                                </tr>
+                                <tr class="SRTestCompareRow">
+                                    <td colspan="6"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>                    
+                </td>
+            </tr>
+            <tr class="SRTableMarksRow">
+                <td class="SRTableTestDate">${new Date().format('dd/mm/yy')}</td>
+                <td class="boldy">SSDF1321</td>
+                <td><span class="SRTableSubMark">23</span>/50</td>
+                <td><span class="SRTableSubMark">35</span>/50</td>
+                <td><span class="SRTableSubMark">34</span>/50</td>
+                <td class="SRTableRank">14</td>
+            </tr>
+        </tbody>
+    </table>
+</div>-->
+<div class="SRStrengthSec" id="">
+    <div class="rightText"><div class="SRHideStrengths">Hide Strength and Weeknesses</div></div>
+    <div class="SRStrengthChartDiv">
+        
+    </div>
+    <div class="SRStrengthBlocs">
+        <div class="SRStrengthBloc">
+            <div class="SRStrengthBlocHead">Physics</div>
+            <div class="SRWeakTopics">You are particularly weak at: <label>Theromodynamics, fluid mehcanics, kinetics,orgadfbkjd ksbndfkjsd</label></div>
+            <div class="SRBestPerf margHalfTop"><div class="boldy">Best Performance:</div><label>S132DRE Score 46/50</label></div>
+            <div class="SRWorstPerf margHalfTop"><div class="boldy">Worst Performance:</div><label>S132DRE Score 16/50</label></div>
+        </div>
+        <div class="SRStrengthBloc">
+            <div class="SRStrengthBlocHead">Physics</div>
+            <div class="SRWeakTopics">You are particularly weak at: <label>Theromodynamics, fluid mehcanics, kinetics,orgadfbkjd ksbndfkjsd</label></div>
+            <div class="SRBestPerf margHalfTop"><div class="boldy">Best Performance:</div><label>S132DRE Score 46/50</label></div>
+            <div class="SRWorstPerf margHalfTop"><div class="boldy">Worst Performance:</div><label>S132DRE Score 16/50</label></div>
+        </div>
+        <div class="SRStrengthBloc">
+            <div class="SRStrengthBlocHead">Physics</div>
+            <div class="SRWeakTopics">You are particularly weak at: <label>Theromodynamics, fluid mehcanics, kinetics,orgadfbkjd ksbndfkjsd</label></div>
+            <div class="SRBestPerf margHalfTop"><div class="boldy">Best Performance:</div><label>S132DRE Score 46/50</label></div>
+            <div class="SRWorstPerf margHalfTop"><div class="boldy">Worst Performance:</div><label>S132DRE Score 16/50</label></div>
+        </div>
+    </div>
+</div>

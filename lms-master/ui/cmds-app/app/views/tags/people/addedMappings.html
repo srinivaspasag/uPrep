@@ -1,0 +1,68 @@
+#{if _peopleInfo!=null}
+%{
+    peopleInfo=_peopleInfo;
+    progs=peopleInfo.mappings.programs;
+    userProfile=peopleInfo.profile;
+}%
+#{if progs!=null&&progs.length()>0}
+#{list items:0..progs.length()-1,as:"p"}
+    %{
+        prog=progs.get(p);
+        centers=prog.centers;
+    }%
+    #{if centers.length()>0}
+        #{list items:0..centers.length()-1,as:"c"}
+            %{
+                center=centers.get(c);
+                sections=center.sections;
+            }%
+            #{if sections.length()>0}
+                #{list items:0..sections.length()-1,as:"s"}
+                    %{
+                        section=sections.get(s);
+                        courses=section.courses;
+                        endTimeOfSubscription=section.endTime;
+                    }%
+                    #{if courses.length()>0}
+                        #{list items:0..courses.length()-1,as:"b"}
+                            %{
+                                board=courses.get(b);
+                            }%
+                            <div class="addedMapping" data-course-id="${board.id}"
+                                data-course-name="${board.name}"
+                                data-program-id="${prog.id}" data-program-name="${prog.name}"
+                                data-center-name='${center.name}' data-center-id='${center.id}'
+                                data-section-id='${section.id}' data-section-name='${section.name}' data-end-time='${endTimeOfSubscription}'></div>
+                        #{/list}
+                    #{/if}  
+                    #{else}
+                        %{
+                            secClass='addedMapping';
+                            if(!section.revenueModel.equals(null)&&section.revenueModel=="PAID"
+                            &&userProfile=="STUDENT"){
+                                secClass='addMappingPaid';
+                            }
+                        }%
+                        <div class="${secClass}" data-course-id="NO_COURSE"    
+                         data-program-id="${prog.id}" data-program-name="${prog.name}"
+                         data-center-name='${center.name}'  data-center-id='${center.id}'
+                         data-section-id='${section.id}' data-section-name='${section.name}' data-end-time='${endTimeOfSubscription}'></div>
+                    #{/else}
+                #{/list}
+            #{/if}        
+        #{/list}
+    #{/if}
+#{/list}
+#{/if}
+#{/if}
+
+        *{<div class="addMemProgCenter">
+            <a class="floatRight smally removeProgCenterSecs">Remove</a>
+            <span class="amsdProg">Akaer</span>
+            <span class="addMemSecSep">></span>
+            <span class="amsdProg">Pataila</span>
+            <span class="addMemSecSep">></span>                            
+            <span class="amsdSecs">
+                A1,A2,A3
+            </span>
+        </div>}*

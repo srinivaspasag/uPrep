@@ -1,0 +1,42 @@
+#{if discussionResponse==null||(discussionResponse.has('errorCode')&& discussionResponse.errorCode!='')||!discussionResponse.has('errorCode')}
+    <script type="text/javascript">
+        showError(COMMON_ERROR_MESSAGE);
+    </script>
+#{/if}
+#{else}
+%{
+discussionList=discussionResponse.get("result");
+discussion = discussionList.get("discussions");
+len=discussion.length();
+}%
+   #{if len>0}
+   #{list items:0..discussion.length()-1,as:'i'}
+                %{
+                    disc=discussion.get(i);
+                }%
+        <div class='discItem' data-disc-id='${disc._id}'>
+            <div class='discContentWrapper'>
+                    <div class="initiatedWrapper">
+                        %{
+                            user=disc.user;
+                        }%
+                            #{widgets.img30 user:user /}
+			    #{institute.memberName user : user /}
+                            <span>says</span>
+                    </div>
+                    <div class="secondWrapper">
+                            <div class="margHalfTop smally commItemVoteDiv centry linBlk">
+                                #{widgets.upVoteItem entityType:"DISCUSSION",entityId:disc._id,upVote:disc.upVotes,voted:false /}
+                            </div>
+                            <div class="discTopic">${disc.title}</div>
+                    </div>
+                    <div class="discBottomWrapper">
+                            <a class='commentToDiscItem'>Comment</a>(${disc.comments})
+                    </div>
+
+            </div>
+            <div class="commentWidgetHolder"></div>
+	</div>
+    #{/list}
+    #{/if}
+#{/else}

@@ -1,0 +1,73 @@
+<div class="instDoubtsHolder">
+	<div class="instAskDbtHolder">
+	    <table class="fullWidth" cellspacing=0 cellpadding=0>
+		<tr>
+		   <td style="width:30%;">
+    			<div class="askDoubtBtn greenButton">&{'ASK_DOUBT'}</div>
+		   </td>
+		   <td>
+			<span class="left instAskDbtArr"></span>
+    			<div class="instAskDbtInfo">
+				<div class="big14 boldy">&{'HAVE_DOUBT'}</div>
+				<div class="">&{'ASK_DOUBT_CAPTION'}</div>
+			</div>
+		   </td>
+		</tr>
+	    </table>
+	</div>
+	<div class="instFilterDoubts">
+		<span class="mangeDoubtsTab doCStream simpleBlackTab" 
+			data-cs-name="SHOW_RECENT_S-TAB" data-order-by="timeCreated" data-result-type="ALL">&{'TXT_RECENT'}
+			<span class="sBlckDivi">|</span>
+		</span>
+		<span class="mangeDoubtsTab doCStream simpleBlackTab" 
+			data-cs-name="SHOW_RECENT_S-TAB" data-order-by="mostPopular" data-result-type="ALL">&{'TXT_POPULAR'}
+			<span class="sBlckDivi">|</span>
+		</span>
+		<span class="mangeDoubtsTab doCStream simpleBlackTab" 
+			data-cs-name="SHOW_RECENT_S-TAB" data-order-by="timeCreated" data-result-type="FOLLOWING">
+			&{'TXT_FOLLOWING'}
+			<span class="sBlckDivi">|</span>
+		</span>
+		<span class="mangeDoubtsTab doCStream simpleBlackTab" 
+			data-cs-name="SHOW_RECENT_S-TAB" data-order-by="timeCreated" data-result-type="CREATED">&{'TXT_ASKED'}
+		</span>
+		
+		<div class="right searchDbtsBtn nonner">
+			<span class="instImgs relative"></span>
+			<span class="smally boldy">Search Doubts</span>
+		</div>
+	</div>
+	<div class="instDoubtSearchedTopics"></div>
+	<div class="instDoubtSearchBoxHolder">
+	    <div class="instDoubtSearchBox nonner">
+		<span class="instImgs left"></span>
+		<div class="searchDivBox" placeholder="Search" contenteditable=true>
+			<span class="placeHolder">&{'TXT_SEARCH'}</span>
+		</div>
+	    </div>
+	</div>
+	<div class="instDoubtsLists">
+		*{#{institute.widgets.doubt /}}*
+	</div>
+</div>
+<div class="instDoubtRightSec">
+</div>
+<div class="cleaner_with_divider">&nbsp;</div>
+<script type="text/javascript">
+	var instHmPgOpenTimer;
+	$(function(){
+		if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+        	instHmPgOpenTimer = setInterval(function(){
+			if(institute && institute.doubts){
+				clearInterval(instHmPgOpenTimer);
+				institute.doubts.init(${params.isExtLoad});
+			}
+		},10);
+	});
+	$(document).ready(function(){
+		$("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+		$("#instPageNavigator").find(".instNavTab.instDoubtsForum").addClass("clInstTab");
+	});
+</script>
+#{institute.askDoubt/}

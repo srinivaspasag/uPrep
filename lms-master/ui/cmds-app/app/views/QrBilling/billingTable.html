@@ -1,0 +1,45 @@
+<div id="qrBillingPage">
+   <div class="pageHolderNM">
+    <center>
+        <div>
+            Number of Free Users : ${resp.result.freeUsers}
+        </div>
+        <div>
+            Number of App Users : ${resp.result.onlyAppUsers}
+        </div>
+        <div>
+            Number of No Program Users : ${resp.result.noProgramsUsers}
+        </div>
+    </center>
+       #{if resp.result.countResponse!=null && resp.errorCode.isEmpty() && resp.result.countResponse.length()>0}
+    <table class="qrSaleDetailsTable" cellspacing=0 cellpadding=0 border=1>
+       <tr class="qrSaleDetailsTableHead">
+        <th class="width100">Program Name</th>
+        <th class="width75">Monthly Subscriptions(< 6 months)</th>
+        <th class="width75">1 Year</th>
+        <th class="width75">2 Year</th>
+       </tr>
+
+        %{
+            data = resp.result.countResponse;    
+        }%
+
+        #{list items:data.keys(), as:'key'}
+            
+       <tr class="eachSaleDetailInfo">
+        <td class="width100">${data.get(key).programName}</td>
+        <td class="width75">${data.get(key).numberOfSixMonths}</td>
+        <td class="width75">${data.get(key).numberOfOneYear}</td>
+        <td class="width75">${data.get(key).numberOfTwoYears}</td>
+       </tr>
+        #{/list}
+
+    </table>
+        #{/if}
+        #{else}
+        <center>
+            <div>NO Paid Users</div>
+        </center>
+        #{/else}
+   </div>
+</div>

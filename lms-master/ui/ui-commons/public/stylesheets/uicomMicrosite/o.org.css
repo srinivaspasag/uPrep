@@ -1,0 +1,38 @@
+.orgSiteColor{
+	color:#FEA918;
+}
+.orgSiteBgColor{
+	background-color:#FEA918;
+}
+.topBarSignupColor{
+	color:#333;
+}
+.topBarSignupBGColor{
+	background-color:#333;
+}
+.orgSiteColor85,
+.orgButton{
+	background-color:#FEA918;
+	color:#FFF;
+	border-radius: 10px;
+}
+.orgSiteColor85{
+	background-color:rgba(254,169,24,0.85);
+}
+.siteTopBar{
+	background-color:#FFF;
+}
+.bgImageBlackOut{
+	min-height:400px;
+	height: 100px;
+}
+.middleSliderHolder{
+	min-height:426px;
+}
+.featureText{
+	color:#FEA918;
+}
+.smallGreenButton{
+	color: #fff;
+	background-color: rgb(114, 192, 34);
+}

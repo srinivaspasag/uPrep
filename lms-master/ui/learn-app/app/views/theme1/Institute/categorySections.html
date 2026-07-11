@@ -1,0 +1,235 @@
+#{if resp!=null && resp.errorCode.isEmpty()}
+    %{
+        list = resp.result.list;
+        noOfPatternsAvailable = 3
+    }%
+    #{if list.length()>0}
+    #{list items:0..list.length()-1,as:'index'}
+    %{
+        item = list.get(index);
+        program = item.programInfo;
+        center = item.centerInfo;
+        section = item.sectionInfo;
+        if(section.has('descriptionPoints') && !section.descriptionPoints.equals(null)){
+            descriptionPoints = section.descriptionPoints;
+        }
+        else{
+        descriptionPoints="";
+    }
+        if(item.has("description")){
+            description = item.description;
+        }
+        else{
+            description = null;
+        }
+        name = program.name;
+        desc = section.desc;
+        packages = null;
+        price;
+        flag=true;
+        packageOrgId = params.orgId;
+                if (section.has("packagesMap")) {
+                    packagesMap = section.packagesMap;
+                    if (!packagesMap.equals(null)) {
+                        if (section.packagesMap.has(params.orgId)) {
+                            packages = section.packagesMap.getAt(params.orgId);
+                        }
+                        if (packages.equals(null) || packages.length() == 0) {
+                            packageOrgId = section.orgId;
+                            packages = section.packagesMap.getAt(section.orgId);
+                        }
+                    }
+                }
+        costValue = 0;
+        currencySymbol = "from Rs.";
+        if(section.revenueModel == "PAID"){
+            costRate = section.costRate;
+                    if(costRate.has("currencyCode") && !costRate.currencyCode.equals(null)){
+                            currency = util.Utilities._getCurrencyByCode(costRate.currencyCode);
+                    }
+
+                    if(costRate.has("value") && !costRate.value.equals(null)){
+                            if(costRate.value>0){
+                                    costValue = costRate.value/100;
+                            }
+                    }
+        }
+        startingValue = 0;
+        if (section.has("startingRates")) {
+            startingRates = section.startingRates;
+            startingRate = null;
+            if(!startingRates.equals(null)) {
+                if (startingRates.has(params.orgId)) {
+                    startingRate = startingRates.get(params.orgId);
+                }
+                if(startingRate.equals(null) && startingRates.has(section.orgId)) {
+                    startingRate = startingRates.get(section.orgId);
+                }
+                if (!startingRate.equals(null) && startingRate.value > 0) {
+                    startingValue = startingRate.value/100;
+                }
+            }
+        }
+    }%
+    <div class="col-sm-4">
+    #{if descriptionPoints!=null && descriptionPoints.length()> 0}
+    #{if section.has("thumbnail") && !section.thumbnail.equals(null)}
+        %{thumbnail = section.thumbnail}%
+    #{/if}
+    <div class="card pt-inner lpProgramHolder ${section.id}" data-section-id="${section.id}" style="height: 580px;">
+                <div class="pti-header" style="background-image: url('${thumbnail}');background-repeat: round;">
+                    <div class="sectionTitle ptih-title">${name}</div>
+                </div>
+                <div class="pti-body">
+                    <div class="ptib-item">
+            <div class="description">
+                ${desc}
+            </div>
+            <a class='readMore' style="cursor: pointer;" data-section-id="${section.id}" data-org-id="${packageOrgId}">Read More</a>
+        </div>
+        #{if !descriptionPoints.equals(null)}
+        <div class="list-group lg-odd-black">
+            #{list items:0..descriptionPoints.length()-1,as:'descindex'}
+            <div class="text-center f-14 f-300 list-group-item media" style="padding: 12px 0px;">
+                <!-- <i class="zmdi zmdi-check-circle c-green f-20"></i> -->
+                ${descriptionPoints.get(descindex)}
+            </div>
+            #{/list}
+        </div>
+        #{/if}
+                </div>
+                #{if resp.isPartOf !=null && resp.isPartOf==true}
+                #{/if}
+                #{else}
+                <div class="pti-footer">
+                #{if section.revenueModel == "FREE"}
+                    <span class="boldy pull-left" style="color:#8CC92D;"><span style="vertical-align: -webkit-baseline-middle;position: absolute;bottom: 14px;left: 32px;font-size: 20px;">&{'microsite.JOIN_CAPS'}</span></span>
+                #{/if}
+                #{elseif section.revenueModel == "PAID"}
+                    <div>
+                    <span class="packageSelectText pull-left " style="position: absolute;bottom: 60px;left: 30px">&{'CHOOSE_SUBSCRIPTION'}</span>
+                    <select class="packageSelect pull-right" style="position: absolute;bottom: 60px;right: 30px;" id="subscription" data-package-org-id="${packageOrgId}">
+                    #{if !packages.equals(null)}
+                       #{list items:0..packages.length()-1,as:'pIndex'}
+                       %{
+                          pkg = packages.get(pIndex);
+                          days = pkg.numDays;
+                          displayDays = pkg.displayDays;
+                          costRate = pkg.costRate;
+                          costValue = 0;
+                          if(costRate.has("value") && !costRate.value.equals(null)){
+                           if(costRate.value>0){
+                                   costValue = costRate.value/100;
+                           }
+                          }
+                          if(flag==true){
+                            price = "Rs "+costValue;
+                            flag=false;
+                          }
+                          displayOption = "Rs. ${costValue} for ${displayDays}";
+                          if (pkg.has("savingsTxt") && !pkg.savingsTxt.equals(null) && !pkg.savingsTxt.isEmpty()) {
+                            displayOption = "Rs. ${costValue} for ${displayDays} (${pkg.savingsTxt})";
+                          }
+                       %}
+                   <option value=${days} data-price="Rs ${costValue}">${displayDays}</option>
+                       #{/list}
+                   #{/if}
+                   </select>
+                   <h3 class="pull-left" style="clear: both;position: absolute;bottom: 10px;left: 30px;"><span id="price" style="vertical-align: -webkit-baseline-middle;">${price}</span></h3>
+            #{/elseif}
+            #{if section.revenueModel == "FREE"}
+                <button class="orgButton joinProgramForFree btn btn-primary waves-effect pull-right" data-section-id="${section.id}" style="position: absolute;bottom: 16px;right: 20px;">&{'microsite.JOIN_NOW'}</button>
+            #{/if}
+            <div class="pull-right" style="padding-top: 20px;">
+                #{elseif section.revenueModel == "PAID"}
+                    <button class="orgButton signupPaidProgram btn btn-primary waves-effect" data-section-id="${section.id}" style="position: absolute;bottom: 16px;right: 30px">&{'microsite.BUY_NOW'}</button>
+                #{/elseif}
+                <input type="hidden" id="programId" class="programId" value="${program.id}"/>
+                <input type="hidden" id="centerId" class="centerId" value="${center.id}"/>
+                <input type="hidden" id="sectionId" class="sectionId" value="${section.id}"/>
+                <input type="hidden" id="catProgramName" class="catProgramName" value="${name}"/>
+                <!-- <a class="skipToHome btn btn-success waves-effect" href="/home">Skip To Home</a> -->
+            </div>
+            </div>
+        </div>
+            #{/else}
+        #{/if}
+        #{else}
+        <div class="siteProgramHolder card pt-inner" data-section-id="${section.id}" style="height: 275px;">
+            <div class="pti-header bgm-darkgray">
+                    <div class="sectionTitle ptih-title">${name}</div>
+            </div>
+            <div class="siteProgramName pattern${(index)%noOfPatternsAvailable} pti-body">
+                #{if desc!=null && !desc.equals(null) && !desc.isEmpty()}
+                <div class="siteProgramDesc">
+                <div class="descHolder ptib-item">${desc}</div>
+            </div>
+            #{/if}
+            </div>
+            <!-- <table class="siteProgramBottomSec" cellspacing=0 cellpadding=0> -->
+            <!--   <tr>
+            <td> -->
+            <!--   <div class="spriteImg sitePeopleIcon"></div>
+               <span class="siteProgStudentsCount">${section.memberCount}</span>
+               <span class="siteProgStudentsTxt">
+                #{if section.memberCount == 1}
+                    &{'TXT_STUDENT'}
+                #{/if}
+                #{else}
+                    &{'TXT_STUDENTS'}
+                #{/else}
+               </span>  // commented to remove student count display on 14aug2015 -->
+            <!-- </td> -->
+            <!-- <td class=""> -->
+            #{if showUserPaymentInfo == true}
+               <div class="nonner">
+               #{if section.revenueModel == "FREE"}
+                <span class="right c-green showUserPaymentInfo freeProgram">&{'TXT_FREE'}</span>
+               #{/if}
+               #{else}
+                <span class="showUserPaymentInfo right"
+                    data-price="${currencySymbol}${startingValue}">&{'payment.TXT_PAYMENT_INFO'}</span>
+               #{/else}
+               </div>
+            #{/if}
+            #{else}
+            #{if section.revenueModel == "FREE"}
+               <span class="joinProgButton text-center c-green right">&{'microsite.JOIN_CAPS'}</span>
+            #{/if}
+            #{elseif section.revenueModel == "PAID"}
+               <span class="joinPaidProgButton text-center c-red right">${currencySymbol}${startingValue}</span>
+            #{/elseif}
+            #{/else}
+        #{/else}
+            <!-- </td> -->
+              <!-- </tr> -->
+            <!-- </table> -->
+        </div>
+    </div>
+    #{/list}
+    #{/if}
+    #{else}
+    <div class="text-center padTopBottom">
+        <img src="/public/images/no-results.png" alt="No Programs To Show"/>
+    </div>
+    #{/else}
+    <input type="hidden" id="totalPrograms" value="${resp.result.totalHits}"/>
+    #{if params.myPrograms == "true"}
+        <script type="text/javascript">
+            var myProgramsList = ${resp.result.raw()}
+        </script>
+    #{/if}
+#{/if}
+#{else}
+<div class="text-center padTopBottom">
+    <img src="/public/images/no-results.png" alt="No Programs To Show"/>
+</div>
+#{/else}
+<script type="text/javascript">
+    $('.pti-body .description').text(function(_, txt) {
+    if(txt.length > 60){
+      txt = txt.substr(0, 60) + "...";
+    }
+    $(this).html(txt)
+  });
+</script>

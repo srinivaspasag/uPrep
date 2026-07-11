@@ -1,0 +1,112 @@
+<head>
+<title>Learnpedia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+<link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+<link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}"> 
+</head>
+
+<div class="page-loader">
+    <div class="preloader pl-xxl">
+        <svg class="pl-circular" viewBox="25 25 50 50">
+            <circle class="plc-path" cx="50" cy="50" r="20" />
+        </svg>
+        <p>Please wait...</p>
+    </div>
+    <div class="madeInHyderabad" style="position: absolute;bottom: 20px;left: 50%;transform: translateX(-50%);">
+        <img src="/public/images/MadeInHyderabad.jpg" style="width: 150px;">
+    </div>
+</div>
+{%
+    web_app_url = play.Play.configuration.getProperty("domain.url");
+%}
+
+<script type="text/javascript">
+var loadPage = function(url,redirect){
+    var orgId = "${session.get('loginOrgId')}";
+    if(redirect === false){
+        window.top.location.href = url;
+    }
+    else{
+        console.log("I am here "+url);
+        if(url === "/library"){
+            window.top.location.href = "${web_app_url}"+"organization/"+orgId+url;
+        }
+        else if(url === "/programs"){
+            window.top.location.href = "${web_app_url}"+"organization/"+orgId+"/myprograms";
+        }
+        else{
+            if(url.includes("/programs")){
+               var vars = url.split('&');
+               var sectionId = "";
+               for (var i = 0; i < vars.length; i++) {
+                    var pair = vars[i].split('=');
+                    if (decodeURIComponent(pair[0]) === "sectionId") {
+                        sectionId = decodeURIComponent(pair[1]);
+                    }
+                }
+                window.top.location.href = "${web_app_url}"+"signupsection/"+sectionId+"?orgId="+orgId;
+            }
+            else{
+                Window.top.location.href = "${web_app_url}";
+            }
+        }
+    }
+    return;
+    /*var xmlhttp;
+    if (window.XMLHttpRequest){
+        xmlhttp=new XMLHttpRequest();
+    }
+    xmlhttp.onreadystatechange=function(){
+        if (xmlhttp.readyState==4 && xmlhttp.status==200){
+                document.write(xmlhttp.responseText);
+            }
+    }
+    xmlhttp.open("GET",url,true);
+    xmlhttp.send();
+    history.pushState(null,null,url);*/
+}
+
+var isMobileDevice = function(){
+    var valid = false;
+    var isMobile = {
+        Android: function() {
+            return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function() {
+            return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function() {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function() {
+            return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function() {
+            return navigator.userAgent.match(/IEMobile/i);
+        },
+        any: function() {
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+        }
+    };
+    if( isMobile.any() ){
+        valid = true;
+    }
+    return valid;
+}
+var readyStateCheckInterval = setInterval(function() {
+    if (document.readyState === "complete") {
+        setTimeout(function(){
+            var fetchUrl = "${fetchUrl}";
+            fetchUrl = fetchUrl.replace(/&amp;/g,'&');
+            if(isMobileDevice()){
+                loadPage(fetchUrl,false);
+            }
+            else{
+                loadPage(fetchUrl,true);
+            }
+        },1000);
+        clearInterval(readyStateCheckInterval);
+    }
+}, 10);
+</script>

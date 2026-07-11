@@ -1,0 +1,39 @@
+#{extends 'registerhead.html'/}
+#{set title:'Welcome to Learnpedia' /}
+<style>
+	.pHolder{
+		text-align:center;padding:200px;
+	}
+	.eachLoginItem{
+		margin:25px;
+		background-color: #39C;
+		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#66CCDF), to(#39C));
+		border: 1px solid #65A3C2;
+		border-image: initial;
+		border-radius: 5px;
+		color: white;
+		font-size: 18px;
+		padding: 10px 20px;
+		font-family: georgia;
+		text-decoration:none;
+	}
+</style>
+<div class="pHolder">
+	#{list items:0..orgs.length()-1,as:'index'}
+	%{
+		org = orgs.get(index);
+		role = org.getString("userRole");
+		link = "/";
+		if(role == "MEMBER"){
+			role = "Student";
+		}else if(role == "PROFESSOR"){
+			role = "Professor";
+		}else if(role == "FRONT_DESK_USER"){
+			role = "Front Desk User";
+			link = "/frontdesk/"+org.getString("_id");
+		}
+		instName = org.getString("fullName");
+	}%
+		<a href="${link}" class="eachLoginItem">Login as ${role} in ${instName}</a>
+	#{/list}
+</div>

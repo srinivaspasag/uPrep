@@ -1,0 +1,326 @@
+#{if ques==null || (ques.has('errorCode') && !ques.errorCode.isEmpty())}
+	#{common.messagePage msgTextColor : "redTextColor" , msg : ques.errorMessage /}
+#{/if}
+#{else}
+<div id="questionPage">
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="vQuestionPageStyles">
+    showNoTabSec("QUESTION_PAGE");
+</script>
+#{/if}
+#{stylesheet media:'screen', src:'uicomQuestions/questionPage.css' /}
+%{
+    ques=ques.result;
+    if(ques.has('challengeId') && !ques.challengeId.equals(null)){
+	challengeId=ques.challengeId;
+    }else{
+	challengeId='';
+    }
+    if(params.source!=null)source=params.source;
+    else source='';
+    attemptable=true;
+    if(!ques.hasAns||ques.type=='PARA'||ques.type=='TEXT')attemptable=false;
+    hasSeenAnswer=ques.hasSeenAnswer;   
+}%
+<div class="sec1002" id="QPContentSec">
+    <div id='QPMiddleSec'>
+                <div class='ques QPQues CSWidget' data-qid="${ques.id}" data-type="${ques.type}" data-widget="QUESTION">
+                    <input type="hidden" id="QPPLAndTestsInfo"
+                           data-pls-count="0*{${ques.playlistsAdded}}*" data-tests-count="0*{${ques.testsAdded}}*"/>
+                    <div class="quesLeftBlock">
+                        #{widgets.upVoteItem entityType:"QUESTION",entityId:ques.id,upVote:ques.upVotes,voted:ques.voted /}
+                    </div>
+                    <div class="quesLefter">
+                            <div class="margTop quesHeadDiv">
+                                #{if ques.has('user')}
+                                %{
+                                    user=ques.user;
+                                    getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                                }%
+                    		#{widgets.img20 user:user /}
+                    		<span style="padding:0 4px"> by </span>
+		    		#{institute.memberName user : user , classNames : "quesCreator" /}
+                                <label class="feedPipe">|</label>
+                                #{/if}
+                                <span class="quesCreatedTime">Added on ${new Date(webUtils.TemplateHelper._getClientTimeOffsetCalc(ques.timeCreated,params.clientServerTimeDelta)).format('dd/MM/yy')}</span>
+                                #{if !ques.boardTree.equals(null) && ques.boardTree.length()>0&&ques.boardTree.get(0).type=="COURSE"}
+                                    %{
+                                        sub=ques.boardTree.get(0);
+                                    }%
+                                        <a class='boardSubject floatRight margRight10 ptrTagInline doCStream' 
+					data-brd-id="${sub.id}"
+                                        /*href="${controllers.Boards.getBoardUrl('subject',sub.id)}"*/  data-name="BOARD_SUBJECT">
+                                            ${sub.name}
+                                        </a>
+                                #{/if}
+        <!--                                <a class='quesSourcePath quesSourcePathClass ptrTagHovered'>${ques.id}</a>-->
+                            </div>
+                            <div class="quesTextDivHolder">
+                                    <div class='quesTextDiv rteTextDiv'>
+					<span class="instImgs refreshQues nonner right" data-closest=".quesTextDiv"></span>
+                                        #{questions.quesText ques:ques/}
+                                    </div>
+                            </div>
+                        <div class='floatRight margTop margRight10 QPQuesAttemptOpt'>
+                            #{if attemptable}
+                                #{if ques.attempted==false}
+                                    <span class="smally margHalfTop margLeft">
+                                        &{ques.type.raw()}
+                                    </span>
+                                    <span class='attemptQues acacac doCStream' data-name="ATTEMPT_BTN">Attempt</span>
+                                #{/if}
+                                #{else}
+                                    <span class="acacac QPAttemptCountDiv">
+                                        Attempts: <label class="boldy QPAttemptCount">${ques.attempts}</label>
+                                    </span>
+                                    <span class="smally margHalfTop margLeft">
+                                        &{ques.type.raw()}
+                                    </span>
+                                #{/else}                            
+                            #{/if}
+                            #{else}
+                                    <span class="acacac QPAttemptCountDiv">
+                                        Views: <label class="boldy QPAttemptCount">${ques.views}</label>
+                                    </span>
+                                    <span class="smally margHalfTop margLeft">
+                                        &{ques.type.raw()}
+                                    </span>                            
+                            #{/else}
+                            <!--*{DISABLED
+			    #{if ques.followType=="NONE"}
+                            <span class="saveQues margRight10 doCStream" data-qid='${ques.id}' data-name="SAVE_QUESTION">
+                                <label></label>
+                                <span>Save</span>
+                            </span>
+                            #{/if}
+                            #{elseif ques.followType=="FOLLOWING"}
+                            <span class="unsaveQues margRight10 doCStream" data-qid='${ques.id}' data-name="UNSAVE_QUESTION">
+                                <label></label>
+                                <span>Unsave</span>
+                            </span>
+                            #{/elseif}
+				<span class="shareEntity margLeft doCStream ptr doCStream" data-entity-id='${ques.id}' data-name="SHARE_ENTITY" data-entity-type="QUESTION">
+                                <label></label>
+                                <span>Share</span>
+                            </span>
+			    }*  -->                                 
+<!--                            <span class="quesAddToDiv" data-qid='${ques.id}'>
+                                <label class="quesAddToImg"></label>
+                                Add to
+                            </span>-->
+                        </div>
+                        <div class='cleaner_with_divider'>&nbsp;</div>
+                    </div>
+                    <div class="QPSubmitAnsHelper">
+                        #{if attemptable}
+                            #{if !ques.attempted}
+                            <div class="QPQuesAttemptsAndAnalytics margTop">
+                                <div class="acacac QPAttemptCountDiv">
+                                    Attempts: <label class="boldy QPAttemptCount">${ques.attempts}</label>
+                                </div>
+                                #{if ques.type=="SCQ"||ques.type=="MCQ"||ques.type=="NUMERIC"}
+                                	%{
+                                		showAnalyticsClass="showQuesAnalyticsWarn";
+                                		if(hasSeenAnswer)showAnalyticsClass="showQuesAnalytics";
+                                	}%
+                                <span class="QPShowGraphBtn margTop">
+                                    <a class="${showAnalyticsClass} ptrTagInline">Question Analytics</a>
+                                </span>
+                                #{/if}
+                                <div class="cleaner_with_divider">&nbsp;</div>
+                            </div>
+                            #{questions.quesAnsDiv ques:ques,target:'QUESTION_PAGE' /}
+                            #{/if}
+                            #{elseif !ques.isNull('answer')}
+                                %{
+                                    answer=ques.answer;
+                                    if(answer.has('correctAnswer')){
+                                        correctAnswer=answer.correctAnswer;
+                                    }else{
+                                        correctAnswer=null;
+                                    }
+                                    userAttemptedAns=answer.answerGiven;
+                                    isCorrect=answer.isCorrect;
+                                }%
+                                #{questions.userAnsAndGraphBtn source:source,type:ques.type,correctAnswer:correctAnswer,userAttemptedAns:userAttemptedAns,isCorrect:isCorrect /}
+                            #{/elseif}
+                        #{/if}
+                    </div>
+                    <div class="QPChallengeStatsDiv"></div>
+                    <div class="QPQuesShadowDivHolder"><div class="QPQuesShadowDiv"></div></div>
+                </div>
+                <div class='quesSolnsDiscsHolder' data-qid='${ques.id}' data-type="${ques.type}" >
+                    <div class='margTop15 CSWidget' data-widget="SOLUTIONS_AND_DISCUSSIONS_TOGGLE">
+                        %{
+                            showAll=false;
+                            if(ques.attempted==true||!attemptable||hasSeenAnswer)showAll=true;
+                        }%
+                        <a class='${(showAll)?"quesSolnsTab":"quesSolnsTabWarn"} textTab doCStream' data-name="SOLUTIONS_TAB">
+                            View Solution <span style="font-style: normal;font-size: 12px;font-weight: normal;"><span class='quesSolnsTabNo'></span></span>
+                        </a>
+                        *{<a class='${(showAll)?"quesDiscsTab":"quesDiscsTabWarn"} textTab doCStream'  data-name="DISCUSSIONS_TAB">
+                            Discussions <span style="font-style: normal;font-size: 12px;font-weight: normal;">(<span class='quesDiscsTabNo'>${ques.comments}</span>)</span>
+                        </a>}*
+                    </div>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                    <div class='quesSolnsDiv nonner margTop15'></div>
+                    <div class="quesDiscsDiv"></div>
+                </div>
+            </div>
+            <div id='QPRightSec' data-qid="${ques.id}">
+                <div class="QPTagsHolder CSWidget" data-widget="TAGS_HOLDER">
+                    <div class="QPTagsDiv">
+                        <div class="QPTagsHead">Tags</div>
+                                #{if !ques.boardTree.equals(null) && ques.boardTree.length()>0 && ques.boardTree.get(0).type=="COURSE"}
+                                    %{
+                                        subject=ques.boardTree.get(0);
+                                    }%
+                                    #{if subject.has('children')&&subject.children.length()>0}
+                                        #{list items:0..subject.children.length()-1,as:'to'}
+                                        %{
+                                            topic=subject.children.get(to);
+                                        }%
+                                        <a class='boardTopic greenBrdTopic ptrTagInline linBlk doCStream' 
+					data-brd-id="${topic.id}"
+                                           /*href="${controllers.Boards.getBoardUrl('topic',topic.id)}"*/
+                                           data-name="BOARD_TOPIC" title="${topic.name}">
+                                            ${topic.name}
+                                        </a>
+                                        #{if topic.has('children')&&topic.children.length()>0}
+                                           <div class="margLeft">
+                                                #{list items:0..topic.children.length()-1,as:'st'}
+                                                    %{
+                                                        subTopic=topic.children.get(st);
+                                                        subTopicName=subTopic.name;
+                                                        if(subTopicName.length()>54)subTopicName=subTopicName.substring(0,55)+"..";
+                                                    }%
+                                                <a class='boardSubTopic yellowBrdSubTopic ptrTagInline linBlk margTop doCStream' data-brd-id="${subTopic.id}"
+                                                   /*href="${controllers.Boards.getBoardUrl('subtopic',subTopic.id)}"*/
+                                                   data-name="BOARD_SUBTOPIC" title="${subTopic.name}">
+                                                    ${subTopicName}
+                                                </a><br>
+                                                    #{if subTopic.has('children')&&subTopic.children.length()>0}
+                                                    <div class="margLeft">
+                                                        #{list items:0..subTopic.children.length()-1,as:'sst'}
+                                                            %{
+                                                                subSubTopic=subTopic.children.get(sst);
+                                                                subSubTopicName=subSubTopic.name;
+                                                                if(subSubTopicName.length()>54)subSubTopicName=subSubTopicName.substring(0,55)+"..";
+                                                            }%
+                                                            <a class='boardSubSubTopic yellowBrdSubSubTopic doCStream 
+                                                               ptrTagInline linBlk' data-brd-id="${subSubTopic.id}" 
+                                                               data-name="BOARD_SUBSUBTOPIC" title="${subSubTopic.name}">
+                                                                ${subSubTopicName}
+                                                            </a><br>
+                                                        #{/list}
+                                                      </div>
+                                                    #{/if}
+                                                 #{/list}
+                                            </div>
+                                        #{/if}
+                                        #{/list}
+                                     #{/if}
+                                #{/if}
+                            #{if ques.tags.length()>0}
+                            <div class="margHalfTop">
+                                #{list items:0..ques.tags.length()-1,as:'tag'}
+                                <label class="quesTag">${ques.tags.get(tag)}</label>
+                                #{/list}
+                            </div>
+                            #{/if}
+                    </div>
+
+                    %{
+                        boards=ques.boardTree;
+                    }%
+                    <div class="quesExamAndLevel">
+                        #{if ques.has('targets')&&ques.targets.length()>0}
+                            <label class="smally">Target-</label>
+                            #{list items:0..ques.targets.length()-1,as:'e'}
+                            %{
+                                exam=ques.targets.get(e);
+                            }%
+                            <a class='boardExam boldy margRight5 doCStream' data-brd-id="${exam.id}"
+                               /*href="${controllers.Boards.getBoardUrl('exam',exam.id)}"*/ data-name="BOARD_EXAM">
+                                ${exam.code}
+                            </a>
+                            #{/list}
+                        #{/if}
+                        #{if ques.has('difficulty')&&ques.difficulty!='UNKNOWN'}
+                        <label class="smally">Level- </label>
+                        <span class="quesDifficulty">${ques.difficulty}</span>
+                        #{/if}
+                    </div>
+                </div>
+                <div class='cleaner_with_divider QPRightSecBorder'>&nbsp;</div>
+                <div class="QPRelatedTags"></div>
+
+                #{if challengeId!=''}
+                %{
+                    if(ques.attempted||hasSeenAnswer)chalAnalyticsClass='showChallengeAnalytics';
+                    else chalAnalyticsClass='showChallengeAnalyticsWarn';
+                }%
+                *{Not warning the user if he has already attempted the question as a challenge}*
+                <div class="centry">
+                    <span class="showChallengeAnalytics blueSubmitButton"
+                          data-qid="${ques.id}" data-challenge-id="${challengeId}" data-type="${ques.type}">
+                        View Challenge Analytics
+                    </span>
+                </div>
+                #{/if}
+                <div class="QPChallengeLeaderBoard"></div>
+
+                <div class="QPSimilarQuesnsDiv CSWidget" data-widget="SIMILAR_QUESTIONS">
+                    <div class="QPSQnsHead">
+                        <span class="boldy big14 QPSimilarQuesnsTab">Similar Questions</span>
+                        <div class='floatRight'>
+                            <span class='QPSQPrevNaN doCStream' data-name="PREV_QUESTIONS" data-add-by="-2"></span>
+                            <span class='QPSQNextNaN doCStream' data-name="NEXT_QUESTIONS" data-add-by="2"></span>
+                        </div>
+                    </div>
+                    <div class="QPSimilarQuesns"></div>
+                </div>
+
+                <div class='cleaner_with_divider QPRightSecBorder'>&nbsp;</div>
+		<!-- NOT IMPLEMENTED YET
+                *{<div class="QPRelatedContent">
+                    <div class="big16 boldy margTop20 " style="color: rgb(204, 204, 204); margin-bottom: 5px;">Related</div>
+                    <div>
+                        <span class="textTab activeTextTab QPRelatedTestsTab">Tests</span>
+                        <span class="textTab QPRelatedPLsTab">Playlists</span>
+                        <span class="textTab  QPRelatedDocsTab">Documents</span>
+                        <span class="textTab  QPRelatedVideosTab">Videos</span>
+                    </div>
+                    <div class='cleaner_with_divider' style="border-bottom: 1px solid #cccccc;margin-top: 5px;">&nbsp;</div>
+                    <div>
+                        <div class="QPRelatedTests CSWidget" data-widget="RELATED_TESTS"></div>
+                        <div class="QPRelatedPLs"></div>
+                        <div class="QPRelatedDocs nonner"></div>
+                        <div class="QPRelatedVideos nonner"></div>
+                    </div>
+                </div>}*-->
+        </div>
+        <div class='cleaner_with_divider'>&nbsp;</div>
+</div>
+<script type="text/javascript">
+    var orgId = "";
+    //NOT_USED var orgName = "";
+    #{if params.orgId !=null }
+        orgId = "${params.orgId}";
+        //NOT_USED orgName = "${flash.get('instFullName')}";
+        $(function(){
+                try{
+                        if(institute){
+                                institute.init();
+                        }
+                }catch(err){}
+        });
+    #{/if}
+    new function(){
+        var fn=function(){vQuestionPage.init({isAttempted:"${ques.attempted}",attemptable:"${attemptable}",boardsJSON:${ques.boardTree.raw()},
+             qid:"${ques.id}",type:"${ques.type}",challengeId:"${challengeId}",source:"${source}"});}
+        fetchScripts([{fname:"uicomQuestions/questionPage.js",cb:fn}]);   
+    }();      
+</script> 
+</div>
+#{/else}

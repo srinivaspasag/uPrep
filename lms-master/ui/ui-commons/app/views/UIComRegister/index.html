@@ -1,0 +1,64 @@
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Welcome to Learnpedia' /}
+%{
+	appName = play.Play.configuration.getProperty("application.name");
+        if(appName=='cmds-app'){
+            pageHolderClass='cmdsLoginPage';
+        }else{
+            pageHolderClass='webAppLoginPage';
+        }
+}%
+<div class="pageHolder ${pageHolderClass}">
+    #{if appName=='web-app'}
+	<script type="text/javascript">
+		var app_type = "LEARN";
+	</script>
+        #{UIComRegister.slides /}
+        <div class="mainLoginBox right">
+            <div class="vedantuNameWrapper">
+                    <div class="vedantuTitle"></div>
+            </div>
+            #{include 'UIComRegister/signInWrapper.html'/}
+        </div>            
+    #{/if}
+    #{else}
+	<style>
+	.orgInfoToolTip{
+		top:0px;
+		right:0px;
+	}
+	</style>
+	<script type="text/javascript">
+		var app_type = "CMDS";
+	</script>
+        <div class="centerText">
+                <div class="cmdsTitle"></div>
+        </div>    
+        <div class="mainLoginBox" style="margin: 0 auto;">
+            #{include 'UIComRegister/signInWrapper.html'/}
+        </div>
+    #{/else}        
+  <div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<div class="howToLoginBtn nonner">
+	<span class="backImg"></span>
+	<span style="position:relative;top:-6px;">&{'login.HOW_TO_LOGIN'}</span>
+</div>
+%{
+	emailVerified = flash.get('emailVerified');
+}%
+#{if emailVerified!=null && emailVerified.equals("done")}
+<div id="verifyEmailDone" class="nonner">
+    <div class="centerText" style="padding:40px 15px;">
+	<div style="font-size:14px;color:rgb(84, 128, 39);padding-bottom:3px;">&{'login.EMAIL_VERIFY_SUCCESS_1'}</div>
+	<div style="font-size:12px;color:rgb(15, 64, 116);">&{'login.EMAIL_VERIFY_SUCCESS_2'}</div>
+    </div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var popup = showVPopup();
+		popup.html($("#verifyEmailDone").html());
+	});
+</script>
+#{/if}
+#{leadSquaredTrackingCode /}

@@ -1,0 +1,101 @@
+<head>
+  <!-- Latest compiled and minified CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="/public/stylesheets/responsivesignup.css">
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1174379095986728'); // Insert your pixel ID here.
+fbq('track', 'Lead');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1174379095986728&ev=PageView&noscript=1"
+/></noscript>
+<!-- DO NOT MODIFY -->
+<!-- End Facebook Pixel Code -->
+
+</head>
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Welcome to Learnpedia' /}
+%{
+  appName = play.Play.configuration.getProperty("application.name");
+        if(appName=='cmds-app'){
+            pageHolderClass='cmdsLoginPage';
+        }else{
+            pageHolderClass='webAppLoginPage';
+        }
+}%
+
+<!-- Google Code for Leads Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 855462609;
+var google_conversion_language = "en";
+var google_conversion_format = "3";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "Ir3yCOqY_XIQ0aX1lwM";
+var google_remarketing_only = false;
+/* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/855462609/?label=Ir3yCOqY_XIQ0aX1lwM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+<!-- End Google Code for Leads Conversion Page -->
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-7 visible-lg" style="padding-left: 8%;">
+<!-- <div class="pageHolder ${pageHolderClass}"> -->
+        #{UIComRegister.slides /}
+    </div>
+        <!-- <div class="mainLoginBox right"> -->
+            <!-- <div class="vedantuNameWrapper"> -->
+    <div class="col-sm-5" style="padding-top: 40px;padding-left: 25px;">
+                    <!-- <div class="vedantuTitle"></div> -->
+        <br>
+            #{if additionalResp!=null && additionalResp.has('errorCode') && additionalResp.errorCode.isEmpty()}
+                #{include 'UIComRegister/quickSignupForm.html'/}
+            #{/if}
+            #{else}
+              <div class="card" style="margin: 10px auto 50px auto;">
+                <div class="card-header">
+                    <center>
+                      <img class="img-responsive" id="lpimage" src="/public/images/vedantutm.png">
+                    </center>
+                  </div>
+                  <div class="card-body text-center" style="margin:40px 0px;padding: 20px 0px;box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;background: white;">
+                      #{if additionalResp!=null && additionalResp.has('errorMessage') && additionalResp.errorMessage != null}
+                        <div style="font-size: 20px;line-height: 2;">${additionalResp.errorMessage}</div>
+                      #{/if}
+                  </div>
+              </div>
+            #{/else}
+    </div>
+  </div>
+  <div class="cleaner_with_divider">&nbsp;</div>
+<!-- </div> -->
+</div>
+%{
+  emailVerified = flash.get('emailVerified');
+}%
+#{if emailVerified!=null && emailVerified.equals("done")}
+<div id="verifyEmailDone" class="nonner">
+    <div class="centerText" style="padding:40px 15px;">
+  <div style="font-size:14px;color:rgb(84, 128, 39);padding-bottom:3px;">&{'login.EMAIL_VERIFY_SUCCESS_1'}</div>
+  <div style="font-size:12px;color:rgb(15, 64, 116);">&{'login.EMAIL_VERIFY_SUCCESS_2'}</div>
+    </div>
+</div>
+
+#{/if}

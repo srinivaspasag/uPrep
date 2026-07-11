@@ -1,0 +1,137 @@
+#{stylesheet media:'screen', src:'myContents/o.myContents.css' /}
+<div id="myContents" #{if showMyContents != true} style="margin-top:20px;" #{/if} class="pageHolderT">
+	<script>
+		var isMyContents = ${showMyContents};
+		var targetUserId = "${targetUserId}";
+		var isExploreContent = "${isExploreContent}";
+		var openTabId = "${openTabId}";
+	</script>
+	#{if showMyContents == true}
+		#{include 'tags/myContents/myContentsExtra.html' /}	
+	#{/if}
+	#{else}
+		<div class="boldy blackTextColor" style="font-size:20px;padding-bottom:30px;">Explore Content</div>
+	#{/else}
+	<div class="left relative myContentsLHS CSWidget myContentsActiveListView" data-widget="CONTENT_FILTER_TAB_HOLDER">
+		<div class="topBarMyContents relative">	
+		<div class="margBot10 SSCTabsHolder contentsTabs">
+                    <div class="SSCTabs">
+                        <a class="ptrTagInline SSCTab activeSSCTab doCStream" data-cs-name="show_all_tab" data-tab-id=''>All</a>
+                        <a class="ptrTagInline SSCTab doCStream" data-cs-name="show_playlist_tab" data-tab-id='myContentsPlaylist'>Playlists</a>
+                        <a class="ptrTagInline SSCTab doCStream" data-cs-name="show_documents_tab" data-tab-id='myContentsDocumentslist'>Documents</a>
+                        <a class="ptrTagInline SSCTab doCStream" data-cs-name="show_test_tab" data-tab-id='myContentsTestslist'>Tests</a>
+                        <a class="ptrTagInline SSCTab doCStream" data-cs-name="show_video_tab" data-tab-id='myContentsVideoslist'>Videos</a>
+                        <div class='cleaner_with_divider'>&nbsp;</div>
+                    </div>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                </div>
+                <div class="shadowDivHolder"><div class="shadowDiv"></div></div>
+                <div class="SSCSearchSortDiv">
+		#{if showMyContents == true}
+                <div class="FilterForTestOnly nonner">
+		    <div class="SSCTabs">
+                        <a class="ptrTagInline SSCTab activeSSCTab doCStream" data-cs-name="FILTER_TEST_TAB" data-tab-id='ALL'>All <span class="blackTextColor">/</span> </a>
+                        <a class="ptrTagInline SSCTab doCStream" data-cs-name="FILTER_TEST_TAB" data-tab-id='ATTEMPTED'>Attempted <span class="blackTextColor">/</span> </a>
+                        <a class="ptrTagInline SSCTab doCStream" data-cs-name="FILTER_TEST_TAB" data-tab-id='UNATTEMPTED'>Unattempted</a>
+                    </div>
+		</div>
+		#{/if}
+                        <div class="SSCSearchDiv">
+                            <input type="text" class="SSCSearchDivInput searchMyContents doCStream" data-cs-name="search_textbox" placeholder="Search Contents"/>
+                            <span class="SSCSearchDivImg"></span>
+                            <div class="SSCSearchNoMoreDiv nonner">
+                                <div class="SSCSearchVal"></div>
+                                <span class="SSCSearchCross"></span>
+                            </div>
+                        </div>
+                        <div class="vselect vselectHide SSCSelect" onstatechange="myContentsTypeChange" data-value="views"
+				data-cs-name="SELECT_FILTER">
+                                <span class="vSelectHead">
+                                        <input type="text" class="vSelectText" value="Most Popular" readonly="readonly"/>
+                                        <span class="dropDownIcon noUserSelect" ></span>
+                                </span>
+                                <div class="vSelectListHolder">
+                                        <div class="vSelectList">
+						<span class="vSelectEach" data-value="views">Most Popular</span>
+						<span class="vSelectEach" data-value="timeCreated">Most Recent</span>
+                                        </div>
+                                </div>
+                        </div>
+                </div>	
+		</div>
+		<div class="relative myContentsPlaylist myContentsEachContentList CSWidget" data-widget="PLAYLIST_HOLDER">
+			<div class="relative myContentsItemsHead">
+				<span class="left relative headText big14 boldy">Playlists</span>
+				<span class="right relative myContentsHeadRightArrow"></span>
+				<span class="right relative myContentsHeadLeftArrow"></span>
+				<div class='cleaner_with_divider'>&nbsp;</div>
+			</div>
+			<div class="relative myContentsListsHolder myContentsPlaylistsIconsHolder">
+				#{include 'tags/myContents/iconView/getPlaylists.html' /}
+			</div>
+			<!--<img class="left relative" style="width:100%" src="/public/images/my-content/bowHorizontalShadow.png" alt=""/>-->
+		</div>
+		<div class="relative myContentsTestslist myContentsEachContentList CSWidget" data-widget="TEST_HOLDER">
+			<div class="relative myContentsItemsHead">
+				<span class="left relative headText big14 boldy">Tests</span>
+				<span class="right relative myContentsHeadRightArrow"></span>
+				<span class="right relative myContentsHeadLeftArrow"></span>
+				<div class='cleaner_with_divider'>&nbsp;</div>
+			</div>
+			<div class="relative myContentsListsHolder myContentsTestsIconsHolder">
+				#{include 'tags/myContents/iconView/getTests.html' /}
+			</div>
+			<!--<img class="left relative" style="width:100%" src="/public/images/my-content/bowHorizontalShadow.png" alt=""/>-->
+		</div>
+		<div class="relative myContentsDocumentslist myContentsEachContentList CSWidget" data-widget="DOCUMENTS_HOLDER">
+			<div class="relative myContentsItemsHead">
+				<span class="left relative headText big14 boldy">Documents</span>
+				<span class="right relative myContentsHeadRightArrow"></span>
+				<span class="right relative myContentsHeadLeftArrow"></span>
+				<div class='cleaner_with_divider'>&nbsp;</div>
+			</div>
+			<div class="relative myContentsListsHolder myContentsDocumentsIconsHolder">
+				#{include 'tags/myContents/iconView/getDocuments.html' /}
+			</div>
+			<!--<img class="left relative" style="width:100%" src="/public/images/my-content/bowHorizontalShadow.png" alt=""/>-->
+		</div>
+		<div class="relative myContentsVideoslist myContentsEachContentList CSWidget" data-widget="VIDEOS_HOLDER">
+			<div class="relative myContentsItemsHead">
+				<span class="left relative headText big14 boldy">Videos</span>
+				<span class="right relative myContentsHeadRightArrow"></span>
+				<span class="right relative myContentsHeadLeftArrow"></span>
+				<div class='cleaner_with_divider'>&nbsp;</div>
+			</div>
+			<div class="relative myContentsListsHolder myContentsVideosIconsHolder">
+				#{include 'tags/myContents/iconView/getVideos.html' /}
+			</div>
+			<!--<img class="left relative" style="width:100%" src="/public/images/my-content/bowHorizontalShadow.png" alt=""/>-->
+		</div>
+	</div>
+	<div class="left relative myContentsRHS nonner">
+		<div class="left relative myContentsCreatePlaylistBlock">
+			<span class="left relative big12 boldy blackTextColor myContentsUploadText" style="width:52%;margin:10px 50px;">Curate content from Learnpedia and web into one playlist</span>
+			<img class="myContentCreatePlaylistImg" src="/public/images/my-content/create-playlist-img.png" alt=" "/>
+			<div class='createBlock createPlaylist'>
+                		<a class="createBlockImg"><img class='' src='/public/images/questions/createPL.png' alt='' /></a>
+                		<span class='big16 boldy createBlockText'>Create Playlist</span>
+        		</div>	
+		</div>
+		<div class="left relative myContentsCreateTestBlock">
+			<br/>
+			<span class="big12 boldy blackTextColor myContentsUploadText">Curate questions to create a test</span>
+            		<div class='createBlock createTest'>
+            			<a class="createBlockImg"><img class='' src='/public/images/questions/createTest.png' alt='' /></a>
+                		<span class='big16 boldy createBlockText'>Create Tests</span>
+            		</div>
+		</div>
+		<div class="left relative myContentsUploadBlock">
+			<span class="left relative big12 boldy blackTextColor myContentsUploadText">Upload Books,Tutorials or Notes and contribute to the knowledge world</span>
+			<div class='createBlock uploadContent'>
+              			<a class="createBlockImg"><img class='' src='/public/images/questions/uploadContent.png' alt='' /></a>
+                		<span class='big16 boldy createBlockText'>Upload Content</span>
+        		</div>
+		</div>
+	</div>
+</div>
+#{script src:'myContents/o.index.js', charset:'utf-8' /}

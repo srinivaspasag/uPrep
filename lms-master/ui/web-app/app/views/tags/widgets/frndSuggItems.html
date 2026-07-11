@@ -1,0 +1,30 @@
+%{
+    loopStart=_loopStart;
+    loopEnd=_loopEnd;
+    frnds=_frnds;
+}%
+
+#{if loopEnd >= loopStart}
+        #{list items:loopStart..loopEnd,as:'f'}
+            %{
+                frnd=frnds.get(f);
+                getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(frnd);
+            }%
+        <div class='frndSugg crossXPa widgetItem CSWidget' data-widget="FRND_SUGG">
+            <a class='crossX widgetItemCrossX frndSuggCross'></a>
+            #{widgets.img30 user:frnd /}
+            <div class='img30Lefter'>
+                <span class="widgetItemFollow">
+                    #{widgets.followUnfollowEntity followType:'NONE',callback:'FRND_SUGG',
+                    entityType:'USER',entityId:frnd.userId,saveText:'Follow'/}
+                </span>                                
+                <a class='ptrTag boldy widgetItemName ${getUserClassAndUrl.className} doCStream'
+                   data-user-id="${frnd.userId}" href="${getUserClassAndUrl.url}" data-cs-name="USER_PROFILE_LINK">
+                    ${frnd.firstName} ${frnd.lastName}
+                </a>
+                   *{<a class='ptrTag frndSuggInsti' data-insti-id="${frnd.institute.id}">${frnd.institute.name}</a>}*
+            </div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>
+        #{/list}
+#{/if}

@@ -1,0 +1,40 @@
+#{if data!=null}
+#{include '/tags/test/testDetailsLeftBar.html' /}
+	
+	<div class="leftAndRelative testFormatPreview">
+		<!--<span class="leaftAndRelative blueTextColor big14 boldy">Format</span>-->
+		#{if data.metadata!=null && data.metadata.length()>0}
+		#{list items:0..data.metadata.length()-1, as:'index'}
+		%{
+			subData = data.metadata.get(index);
+		}%
+		<span class="leftAndRelative eachSubject">
+			<span class="leftAndRelative subjectName blueTextColor big14 boldy">${subData.name}</span>
+			*{
+				<span class="leftAndRelative subjectTopics blueTextColor">
+				#{if subData.children!=null && subData.children.length()>0}
+				#{list items:0..subData.children.length()-1,as:'chIndex'}
+					${subData.children.get(chIndex).name},
+				#{/list}
+				#{/if}
+				</span>
+			}*
+			<span class="leftAndRelative subjectWiseMarks greyTextColor"><span class="blueTextColor big14 boldy">${subData.totalMarks}</span> Marks</span>
+			<span class="leftAndRelative subjectWiseNoOfQuestions greyTextColor"><span class="blueTextColor big14 boldy">${subData.qusCount}</span> Questions</span>
+			#{if subData.details!=null && subData.details.length()>0}
+			#{list items:0..subData.details.length()-1,as:'dIndex'}
+			%{ dData = subData.details.get(dIndex);
+			   marks = dData.qusCount * dData.marks.positive;
+			}%
+			<span class="leftAndRelative subQuestionType blackTextColor"><b>${dData.type} : </b><span class="greyTextColor">${dData.qusCount} questions ${marks} marks</span></span>
+			#{/list}
+			#{/if}
+			<!--<span class="leftAndRelative subQuestionType blackTextColor"><b>SCQ </b><span class="greyTextColor">12questions 60marks</span></span>-->
+		</span>
+		#{/list}
+		#{/if}
+	</div>
+<script type="text/javascript">
+var tempCreateTestJson = '${data.raw()}';
+</script>
+#{/if}

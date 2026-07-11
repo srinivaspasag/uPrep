@@ -1,0 +1,320 @@
+#{if videoInfo !=null && videoInfo.errorCode.isEmpty()}
+%{
+    vid = videoInfo.result;
+
+}%
+<style type="text/css">
+    .mejs-container .mejs-controls div.mejs-time-rail a, .mejs-container .mejs-controls div.mejs-time-rail span:not(.mejs-time-float) {
+    border-radius: 0;
+    height: 6px;
+}
+</style>
+<div id="digitalLibrary">
+    <div id="videoPage" data-video-id="${vid.id}">
+        <div class="card">
+           <div class="card-header container hidden-xs" style="background-color: ghostwhite;">
+                <div class="row">
+                    <div class="pull-left text-uppercase f-20 f-700">
+                        <img src="/public/assets/theme1/img/videoIcon.png" class="analytics-img-browser"
+                                style="width: 30px;">
+                        ${vid.name}
+                    </div>
+                    #{if vid.has("boardTree") && !vid.boardTree.equals(null) && vid.boardTree.length()>0}
+                    %{
+                            boards = vid.boardTree;
+                    }%
+                    #{list items:0..boards.length()-1,as:'bIndex'}
+                    %{
+                            subject = boards.get(bIndex);
+                    }%
+                    <div class="media-body pull-right">
+                        <ul class="lgi-attrs" >
+                            <li>
+                                ${subject.name}
+                            </li>
+                            #{if subject.has("children") && !subject.children.equals(null) && subject.children.length()}
+                                #{list items:0..subject.children.length()-1,as:'cIndex'}
+                                    %{
+                                      topic = subject.children.get(cIndex);
+                                    }%
+                            <li >
+                                ${topic.name}
+                            </li>
+                        </ul>
+                                #{/list}
+                            #{/if}
+                    </div>
+                </div>
+                #{/list}
+                #{/if}
+            </div>
+            <div class="card-header visible-xs" style="background-color: white;">
+                <div class="panel-group" data-collapse-color="cyan" id="accordionBlue" role="tablist"
+                    aria-multiselectable="true">
+                    <div class="panel panel-collapse">
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title text-uppercase">
+                                <a data-toggle="collapse" data-parent="#accordionBlue"
+                                   href="#accordionBlue-one" aria-expanded="true">
+                                 <img src="/public/assets/theme1/img/videoIcon.png" class="analytics-img-browser"
+                                style="width: 20px;">
+                                    ${vid.name}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="accordionBlue-one" class="collapse" role="tabpanel">
+                            <div class="panel-body">
+                                <div class="container">
+                                    <div class="media-body row">
+                                        <ul class="lgi-attrs" >
+                                            <li>
+                                                ${subject.name}
+                                            </li>
+                                        #{if subject.has("children") && !subject.children.equals(null) && subject.children.length()}
+                                                #{list items:0..subject.children.length()-1,as:'cIndex'}
+                                                    %{
+                                                      topic = subject.children.get(cIndex);
+                                                    }%
+                                            <li >
+                                                ${topic.name}
+                                            </li>
+                                                #{/list}
+                                            #{/if}
+                                        </ul>
+                                    </div>
+                                    #{if vid.has('linkInfo') && !vid.linkInfo.equals(null) && vid.linkInfo.has('originalURL')}
+                                    %{
+                                        extInfo = vid.linkInfo;
+                                    }%
+                                    <div class="row">
+                                        <div class="pull-left">
+                                            <a href="${extInfo.domainURL}" target="_blank">${extInfo.domainName}</a>
+                                        </div>
+                                    </div>
+                                    #{/if}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body container">
+            <div class="row">
+                <div class="col-sm-8">
+                #{if "UPLOADED".equals(vid.linkType)}
+                        %{
+                            callingAppName = play.Play.configuration.getProperty("application.name");
+                            playUrl = util.Utilities.putParamInUrl(vid.s3url,"callingApp",callingAppName);
+                            playBackupVideoUrl = "";
+                            if(vid.has('backupVideoUrl') || vid.backupVideoUrl != null ||  vid.backUpVideoUrl !=""){
+                                playBackupVideoUrl = util.Utilities.putParamInUrl(vid.s3HDurl,"callingApp",callingAppName);
+                            }
+                        }%
+                        
+                            <video style="width: 100%; height: 100%;" poster="${vid.thumbnail}" controls="controls" preload="none">
+                                <!-- Play mp4 videos by default-->
+                                #{if playBackupVideoUrl != ""}
+                                        <source type="video/mp4" src="${playBackupVideoUrl}" data-video-src="playBackupVideoUrl"/>
+                                #{/if}
+                                #{else}
+                                    <source type="video/webm" src="${playUrl}"/>
+                                #{/else}
+                            </video>
+                       
+                    #{/if}
+                    #{elseif "ADDED".equals(vid.linkType)}
+                        %{
+                            playUrl = vid.url;
+                        }%
+                        #{if vid.has('linkInfo') && !vid.linkInfo.equals(null) && vid.linkInfo.has('id')}
+                            %{
+                                playUrl = vid.linkInfo.embedURL;
+                                if(extInfo.domainName != null && "YOUTUBE".equals(extInfo.domainName.toUpperCase())){
+                                    playUrl = util.Utilities.putParamInUrl(playUrl,"rel","0");
+                                    playUrl = util.Utilities.putParamInUrl(playUrl,"showinfo","0");
+                                }
+                            }%
+                        #{/if}
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="${playUrl}"></iframe>
+                        </div>
+                    #{/elseif}
+                    #{if vid.has('description') && !vid.description.isEmpty()}
+                        <div class="visible-xs m-t-20" style="padding: 20px;">
+                            <div class="panel-group" data-collapse-color="cyan" id="accordionBlue" role="tablist"
+                            aria-multiselectable="true">
+                                <div class="panel panel-collapse">
+                                    <div class="panel-heading" role="tab">
+                                        <h4 class="panel-title text-uppercase">
+                                            <a data-toggle="collapse" data-parent="#Description"
+                                               href="#Description-one" aria-expanded="true">
+                                             Description :
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="Description-one" class="collapse" role="tabpanel">
+                                        <div class="panel-body">
+                                            <small>${vid.description.raw()}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="hidden-xs m-l-20 m-b-20 m-t-20">
+                            <h5 class="m-t-20">
+                                Description :
+                            </h5>
+                            <small>${vid.description.raw()}</small>
+                        
+                        </div>
+                        #{/if}
+                        <div class="visible-xs m-b-25" style="padding: 20px;">
+                            <div class="panel-group" data-collapse-color="cyan" id="accordionBlue" role="tablist"
+                            aria-multiselectable="true">
+                                <div class="panel panel-collapse">
+                                    <div class="panel-heading" role="tab">
+                                        <h4 class="panel-title text-uppercase">
+                                            <a data-toggle="collapse" data-parent="#Comments"
+                                               href="#Comments-one" aria-expanded="true">
+                                             Comments :
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="Comments-one" class="collapse" role="tabpanel">
+                                        <div class="panel-body">
+                                            <div class="wi-comments">
+                                            #{if comments.result.list.length() > 0 && comments.errorMessage.isEmpty()}
+                                                <div class="list-group">
+                                                 #{list items:comments.result.list.length()-1..0,as:'cIndex'}
+                                                 %{
+                                                    userDetails = comments.result.list.get(cIndex).user;
+                                                 }%
+                                                    <div class="list-group-item media">
+                                                        <div class="pull-left">
+                                                            <img src="${userDetails.thumbnail}" alt="" class="lgi-img">
+                                                        </div>
+
+                                                        <div class="media-body">
+                                                            <a class="lgi-heading">${userDetails.firstName}<small class="c-gray m-l-10">${new Date(comments.result.list.get(cIndex).timeCreated).since(true)}</small></a>
+                                                            <small class="lgi-text">${comments.result.list.get(cIndex).content.raw()}</small>
+                                                        </div>
+                                                    </div>
+                                                #{/list}    
+                                                </div>
+                                            #{/if}
+                                                <div class="wic-form">
+                                                    <textarea class="commentText" placeholder="Write something..." data-ma-action="wall-comment-open"></textarea>
+
+                                                    <div class="wicf-actions text-right postComment">
+                                                        <button class="btn btn-sm btn-link waves-effect" data-ma-action="wall-comment-close">Cancel</button>
+                                                        <button class="btn btn-primary btn-sm pull-right waves-effect submitComment" data-id="${vid.id}">Post</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="card w-post" style="background-color: #F9F9F9">
+                                                <div class="card-body">
+                                                    <textarea class="wp-text commentText" placeholder="Write Something..." style="overflow: hidden; word-wrap: break-word; height: 76px;"></textarea>
+                                                    <div class="wp-actions clearfix postComment">
+                                                        <button class="btn btn-primary btn-sm pull-right waves-effect submitComment" data-id="${vid.id}">Post</button>
+                                                    </div>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden-xs m-b-25">
+                            <h4>Comment Section :</h4>
+                            <div class="wi-comments">
+                            #{if comments.result.list.length() > 0 && comments.errorMessage.isEmpty()}
+                                <div class="list-group">
+                                 #{list items:comments.result.list.length()-1..0,as:'cIndex'}
+                                 %{
+                                    userDetails = comments.result.list.get(cIndex).user;
+                                 }%
+                                    <div class="list-group-item media">
+                                        <div class="pull-left">
+                                            <img src="${userDetails.thumbnail}" alt="" class="lgi-img">
+                                        </div>
+                            
+                                        <div class="media-body">
+                                            <a class="lgi-heading">${userDetails.firstName}<small class="c-gray m-l-10">${new Date(comments.result.list.get(cIndex).timeCreated).since(true)}</small></a>
+                                            <small class="lgi-text">${comments.result.list.get(cIndex).content.raw()}</small>
+                                        </div>
+                                    </div>
+                                #{/list}    
+                                </div>
+                            #{/if}
+                            <div class="wic-form">
+                                <textarea class="commentTextLargeScreen" placeholder="Write something..." data-ma-action="wall-comment-open"></textarea>
+
+                                <div class="wicf-actions text-right postComment">
+                                    <button class="btn btn-sm btn-link waves-effect" data-ma-action="wall-comment-close">Cancel</button>
+                                    <button class="btn btn-primary btn-sm pull-right waves-effect submitComment" data-id="${vid.id}">Post</button>
+                                </div>
+                            </div>
+                            </div>
+                            <!-- <div class="card w-post" style="background-color: #F9F9F9">
+                                <div class="card-body">
+                                    <textarea class="wp-text commentTextLargeScreen" placeholder="Write Something..." style="overflow: hidden; word-wrap: break-word; height: 76px;"></textarea>
+                                    <div class="wp-actions clearfix postComment">
+                                        <button class="btn btn-primary btn-sm pull-right waves-effect submitComment" data-id="${vid.id}">Post</button>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                    #{if !nextVideosInfo.equals(null)}
+                        <div id="videoEntriesHolder" class="col-sm-4 card">
+                        <h2 class="m-l-5 m-b-20">Next Videos :</h2>
+                        #{if nextVideosInfo.result.videoIds.length()==0}
+                            <div class="m-b-20">
+                                <h4 class="text-center">You have finished this chapter.</h4>
+                            </div>
+                        #{/if}
+                        #{else}
+                        #{list items:0..nextVideosInfo.result.videoIds.length()-1,as:'vIndex'}
+    
+                        %{
+                        nextVideo = nextVideosInfo.result.videoIds.get(vIndex);
+                        playUrl = nextVideo.url;
+                        nextThumbNail = nextVideo.thumbnail
+                        nextName = nextVideo.name
+                        }%
+                        <div id="videoHolder" class="card hoverWithoutBg border8px row m-l-5 m-r-5" style="cursor: pointer;" data-entity-id = "${nextVideo.id}" data-module-id="${moduleId}" >
+                            <div class="card-header">
+                                <img style="width: 100%; height: 150px;" class="img-responsive m-t-5" src="${nextThumbNail}">
+                                <h2 class="m-t-20">
+                                    ${nextName}
+                                    %{
+                                        timeObj=util.Utilities.getTimeFromMiliSec(nextVideo.duration);
+                                    }%
+                                    <small>${timeObj.hrs}:${timeObj.mins}:${timeObj.secs} Hours</small>
+                                </h2>
+                            </div>
+                        </div>
+                        #{/list}
+                    </div>
+                    #{/else}
+                    </div>
+                    #{/if}
+                </div>    
+            </div>
+        </div>
+    </div>
+</div>
+#{/if}
+#{elseif videoInfo!=null && !videoInfo.errorCode.isEmpty()}
+    <div class="c-red f-20 f-500">Something Went Wrong!!</div>
+#{/elseif}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        if($('audio, video')[0]) {
+            $('video,audio').mediaelementplayer();
+        }
+    });
+    library.init();
+</script>

@@ -1,0 +1,137 @@
+<div class="singleProgramPopup">
+#{if resp!=null && resp.errorCode.isEmpty()}
+    %{
+        item = resp.result;
+        program = item.programInfo;
+        center = item.centerInfo;
+        section = item.sectionInfo;
+        courses = item.courseInfo;
+        name = program.name;
+        desc = section.desc;
+        if(section.has("descriptionPoints") && !section.descriptionPoints.equals(null)){
+            descriptionPoints = section.descriptionPoints;
+        }
+        packages = null;
+        packageOrgId = params.orgId;
+                if (section.has("packagesMap")) {
+                    packagesMap = section.packagesMap;
+                    if (!packagesMap.equals(null)) {
+                        if (section.packagesMap.has(params.orgId)) {
+                            packages = section.packagesMap.getAt(params.orgId);
+                        }
+                        if (packages.equals(null) || packages.length() == 0) {
+                            packageOrgId = section.orgId;
+                            packages = section.packagesMap.getAt(section.orgId);
+                        }
+                    }
+                }
+
+    }%
+    #{if item.isPartOf == false}
+    <div class="orgSiteColor big20">${name}</div>
+    <div class="catProgramPrice">
+        #{if section.revenueModel == "FREE" && descriptionPoints.equals(null)}
+           <span class="boldy" style="color:#8CC92D;">&{'microsite.JOIN_CAPS'}</span>
+        #{/if}
+        #{elseif section.revenueModel == "PAID" && descriptionPoints.equals(null)}
+          <span class="packageSelectText">&{'CHOOSE_SUBSCRIPTION'}</span>
+          <select class="packageSelect" data-package-org-id="${packageOrgId}">
+                    #{if !packages.equals(null)}
+                       #{list items:0..packages.length()-1,as:'pIndex'}
+                       %{
+                          pkg = packages.get(pIndex);
+                          days = pkg.numDays;
+                          displayDays = pkg.displayDays;
+                          costRate = pkg.costRate;
+                          costValue = 0;
+                          if(costRate.has("value") && !costRate.value.equals(null)){
+                           if(costRate.value>0){
+                                   costValue = costRate.value/100;
+                           }
+                          }
+                          displayOption = "Rs. ${costValue} for ${displayDays}";
+                          if (pkg.has("savingsTxt") && !pkg.savingsTxt.equals(null) && !pkg.savingsTxt.isEmpty()) {
+                            displayOption = "Rs. ${costValue} for ${displayDays} (${pkg.savingsTxt})";
+                          }
+                       %}
+                   <option value=${days}>${displayOption}</option>
+                   #{/list}
+                   #{/if}
+          </select>
+        #{/elseif}
+    </div>
+    <div class="catProgramDetailInfo">
+            #{if desc!=null && !desc.equals(null) && !desc.isEmpty()}
+        <div class="titleRobotoMedium14">&{'TXT_DESCRIPTION'}</div>
+        <pre class="preDesc" ">
+            <div class="catProgramDesc">${desc}</div>
+        </pre>
+        #{/if}
+        #{if courses.length()>0}
+                <div class="f-14" style="text-align: left;margin-left: 10px;">&{'TXT_COURSES'}</div>
+        <ul class="catProgramCourses" style="text-align: left;">
+            #{list items:0..courses.length()-1,as:'cIndex'}
+            %{ course = courses.get(cIndex);}%
+            <li>${course.name}</li>
+            #{/list}
+        </ul>
+        #{/if}
+        #{if session != null && session.userId == null}
+        <div class="enrollProgText">&{'microsite.ENROLL_TO_PROGRAM'}</div>
+        <div style="margin-top:10px;">
+            <span class="orgButton signUpNowBtn signupPopupButton" 
+                data-section-id="${section.id}">&{'microsite.SIGNUP_NOW'}</span>
+        </div>
+        #{/if}
+    </div>
+    #{if session != null && session.userId == null}
+    <div class="right" style="margin-top:13px;">
+        <span class="big12" style="color:#666;">&{'ALREADY_A_MEMBER'}</span>
+        <span class="big14 blueLoginButton loginPopupBtn" data-section-id="${section.id}">&{'login.SIGNIN'}</span>
+    </div>
+    #{/if}
+    #{else}
+    #{if descriptionPoints.equals(null)}
+        <div class="centerText" style="margin-top:20px;">
+            #{if section.revenueModel == "FREE"}
+                <button class="orgButton joinProgramForFree btn btn-primary waves-effect">&{'microsite.JOIN_NOW'}</button>
+            #{/if}
+            #{elseif section.revenueModel == "PAID"}
+                <button class="orgButton signupPaidProgram btn btn-primary waves-effect">&{'microsite.BUY_NOW'}</button>
+            #{/elseif}
+            <input type="hidden" id="programId" value="${program.id}"/>
+            <input type="hidden" id="centerId" value="${center.id}"/>
+            <input type="hidden" id="sectionId" value="${section.id}"/>
+            <input type="hidden" id="catProgramName" class="catProgramName" value="${name}"/>
+            <a class="skipToHome btn btn-success waves-effect" href="/home">Skip To Home</a>
+        </div>
+    #{/if}
+    #{/else}
+    #{/if}
+    #{else}
+        <div class="orgSiteColor big20 centerText" style="margin-top:30px;">${name}</div>
+        <div class="centerText big16 boldy" style="margin-top:20px;">&{'microsite.ALREADY_PART_OF_PROG'}</div>
+        #{if session != null && session.userId == null}
+        <div class="centerText" style="margin:40px 0 30px;">
+            <a class="orgButton" href="/home">&{'microsite.PROCEED'}</a>
+        </div>
+        #{/if}
+        #{else}
+        <div class="centerText" style="margin:40px 0 30px;">
+            <span class="orgButton closeVPopup">&{'TXT_OK'}</span>
+        </div>
+        #{/else}
+    #{/else}
+#{/if}
+#{else}
+    #{if resp!= null && !resp.errorMessage.isEmpty()}
+        <div class="centerText big16 boldy" style="margin-top:20px;">${resp.errorMessage}</div>
+    #{/if}
+    #{else}
+        <div class="centerText big16 boldy" style="margin-top:20px;">&{'NO_DATA_RECIEVED'}</div>
+    #{/else}
+    <div class="centerText" style="margin:40px 0 30px;">
+        <a class="orgButton" href="/home">&{'microsite.PROCEED'}</a>
+    </div>
+#{/else}
+</div>

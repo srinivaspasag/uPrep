@@ -1,0 +1,22 @@
+#{if orgs!=null && orgs.errorCode.isEmpty() && orgs.result.list.length()>0}
+	%{
+		orgList = orgs.result.list;
+		jsOrgData = "{";
+	}%
+	#{list items:0..orgList.length()-1,as:'index'}
+		%{
+			org = orgList.get(index);
+			jsOrgData = jsOrgData + "'" + org.id + "':" + org.raw() + ",";
+		}%
+		<div class="regInstSugg" data-org-id="${org.id}" data-org-type="${org.type}">${org.name}</div>
+		*{<script type="text/javascript">
+			orgSuggListById["${org.id}"] = ${org.raw()};
+		</script>}*
+	#{/list}
+	%{
+		jsOrgData = jsOrgData.substring(0, jsOrgData.lastIndexOf(",")) + "}";
+	}%
+	<script type="text/javascript">
+		var orgSuggListById = ${jsOrgData.raw()};
+	</script>
+#{/if}

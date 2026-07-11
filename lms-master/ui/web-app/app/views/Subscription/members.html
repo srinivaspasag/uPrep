@@ -1,0 +1,55 @@
+#{if users.errorCode=="" && users.result.list.length()>0}
+#{list items:0..users.result.list.length()-1,as:'index'}
+%{ user=users.result.list.get(index);}%
+<tr data-user-id="${user.userId}" data-subscription-id="${user.subscriptionId}">
+	<td class="centerText"> #{if user.has('memberId')} ${user.get('memberId')} #{/if}</td>
+	<td>
+		<input class="testSignUpInputBox firstNameInput" placeholder="First" title="${user.firstName}" 
+			pattern="^[a-zA-Z]+$" required disabled value="${user.firstName}" data-org-val="${user.firstName}"/>
+		<input class="testSignUpInputBox lastNameInput" placeholder="Last" 
+			pattern="^[a-zA-Z]+$" required disabled value="${user.lastName}" data-org-val="${user.lastName}"/>
+	</td>
+	<td class="centerText" style="max-width:125px;overflow:hidden;">
+	    #{if user.has('testSeries') && user.testSeries.length()>0}
+		#{list items:0..user.testSeries.length()-1,as:'tsIndex'}
+			<span title="${user.testSeries.get(tsIndex).name}">${user.testSeries.get(tsIndex).name}</span></br>
+		#{/list}
+	    #{/if}
+	</td>
+	<td>
+		<input class="testSignUpInputBox numberTextBox mobileNo" disabled
+		placeholder="Mobile / Landline Number" min="10" maxlength="12" required 
+		value="${user.contactNo}" data-org-val="${user.contactNo}"/>
+	</td>
+	<td>
+		<span class="testSignUpInputBox" style="max-width:165px;" title="${user.username}">${user.username}</span>
+	</td>
+	<td>
+		<input type="button" class="button right doCStream" id="editTestSignUp" value="Update" 
+			data-name="UPDATE_FIELD_BTN"/>
+		<input type="submit" class="blueButton right nonner doCStream" id="updateTestSignUp" 
+			value="Submit" data-name="SUBMIT_UPDATED_DATA_BTN"/>
+		</br>
+		<input type="submit" class="redButton right nonner doCStream" id="cancelUpdateSignUp" 
+			value="Cancel" data-name="UPDATE_CANCEL_BTN"/>
+	</td>
+</tr>
+#{/list}
+<script type="text/javascript">
+	totalMembers = ${users.result.totalHits};
+	memberIndex = ${Integer.parseInt(params.start)+users.result.users.length()};
+</script>
+#{/if}
+#{elseif params.isSearch == null}
+	<div style="font-size:14px;font-weight:bold;text-align:center;color:#B40404">No Users Found</div>
+	<script type="text/javascript">
+		$("#signUpMembersForm").find("tr").addClass("nonner");
+	</script>
+#{/elseif}
+#{else}
+<tr id="noUserFoundCell">
+	<td colspan="6">
+		<div style="font-size:14px;font-weight:bold;text-align:center;color:#B40404">No Users Found</div>
+	</td>
+</tr>
+#{/else}

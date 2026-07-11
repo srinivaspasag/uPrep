@@ -1,0 +1,10 @@
+.dataTables_buttons{
+    display: none;
+}
+.syncUserInfo{
+    display: inline-block;
+    float: right;
+}
+.boldy{
+    font-weight: 600;
+}

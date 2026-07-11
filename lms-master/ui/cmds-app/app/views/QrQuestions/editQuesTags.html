@@ -1,0 +1,41 @@
+%{
+    ques=question.result.info;   
+    qid=ques.id;
+    if(ques.has('detail')){
+        ques=ques.detail;
+    } 
+}%
+<div id="editQuesTagsPage" data-qid="${qid}" data-type="${ques.type}">
+    <div class="cmdsPopupHead">Change Level and Tags of Question</div>
+    <div class="floatRight margTop20">
+        <label class="boldy margRight10"><span class='redColor'>*</span>Question Level</label>
+        %{
+            diffName='Choose';
+            diffValue='-1';
+            if(!ques.isNull('difficulty')){
+                diffValue=ques.difficulty;
+                diffName=diffValue;
+            }                      
+        }%
+        <div class="vChoose QALevelSelect alignMiddle" data-value="${diffValue}">
+          <div class="vChooseHead">${diffName}</div>
+          <div class="vChooseDownIcon"></div>
+          <div class="vChooseDropDown">
+              <div class="vChooseOpt" data-value="EASY">Easy</div>
+              <div class="vChooseOpt" data-value="MODERATE">Moderate</div>
+              <div class="vChooseOpt" data-value="TOUGH">Tough</div>
+          </div>
+        </div>       
+    </div>    
+    <div class="QATagsDiv CSWidget" data-widget="QA_TAGGING">
+       <div class="big14 margBot10">
+           <span class='boldy'>Add Tags</span>
+           <label class="acacac smally italica">(*Add atleast one subject and topic)</label>
+       </div>
+        %{
+            boards=ques.boardTree;                 
+        }%
+        #{UIComWidgets.tagging addTagsId:'addTagsForAddQuestion',
+        target:'EDIT_QUESTION_TAGS',subjects:boards,tags:ques?.tags/}
+    </div>
+</div>

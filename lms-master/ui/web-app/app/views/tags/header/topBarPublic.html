@@ -1,0 +1,91 @@
+<div id="topBar" class="${_classNm}">
+    <div class="vedHold">
+<!--        <a id="homePageImg" href="/" class="doCStream" data-cs-name="HOME_PAGE_TAB">
+            <img src="/public/images/vedantu.png" alt="Vedantu"/></a>-->
+    </div>
+   
+    <div id="menuBar">
+      *{%{
+      	orgsStr = session.get('orgs');
+      	orgs = uicom.util.Utilities.parseJsonText("{'orgs':"+orgsStr+"}");
+      	orgs = orgs.get('orgs');
+      	orgId = params.orgId;
+      	orgMIndex = 0;
+      	if(orgId!=null && orgs.length()>1){
+      		for(Integer oi=0;oi<orgs.length();oi++){
+      			if(orgId.equals(orgs.get(oi).getString("_id"))){
+      				orgMIndex = oi;
+      			}
+      		}
+      	}
+      }%
+      #{if orgs!=null && orgs.length() > 0}
+        <a id="myInstitutePage" class="ptrTagInline doCStream" data-cs-name="MY_INSTITUTE_TAB" 
+      	data-count="${orgs.length()}" data-org-id="${orgs.get(orgMIndex).get('_id')}" data-org-obj='${orgs.get(orgMIndex).raw()}'>
+            <span class="institutePageImg"></span>
+            <span class="relative">My Institute</span>
+            <span id="instTickerCount" class="nonner"></span>
+        #{if orgs.length() > 1}
+            	<span class="institutePageDropImg"></span>
+        </a>
+   	  <div id="orgSelectDrop" class="nonner">
+      	#{list items:0..orgs.length()-1,as:'orgIndex'}
+      	%{ org = orgs.get(orgIndex);}%
+   			<a class="eachOrgName #{if orgIndex==orgMIndex}selectedOrg #{/if}" title="${org.fullName}"
+      			href="/organization/${org._id}"
+      			data-org-id="${org._id}" data-org-obj='${org.raw()}'>${org.fullName}</a>
+      	#{/list}
+   	  </div>
+        #{/if}
+        #{else}
+        </a>
+        #{/else}
+      #{/if}
+      }*
+	%{
+		orgObj = _myOrgInfo!=null ? _myOrgInfo : session.get("myOrgInfo");
+	}%
+        <a id="myInstitutePage" class="ptrTagInline doCStream" data-cs-name="MY_INSTITUTE_TAB"
+      	data-count="1" data-org-id="${params.orgId}" data-org-obj='${orgObj}'>
+            <span class="institutePageImg"></span>
+            <span class="relative">My Institute</span>
+            <span id="instTickerCount" class="nonner"></span>
+        </a>
+	<script>
+		var myAssociateOrg = ${orgObj.raw()};
+	</script>
+       <a id="myContentPage" href="/mycontent" class="ptrTagInline doCStream" data-cs-name="MY_CONTENT_TAB">
+           <span class="myContentPageImg"></span>My Content
+       </a>
+       <a id="profilePage" href="/myprofile" class="ptrTagInline doCStream" data-cs-name="MY_PROFILE_TAB">
+           <img src='${session.profilePic}'  class='img20 img20Round profilePageImg'
+                data-user-id='${session.userId}'alt=""title="${session.fullname}" />
+           My Profile
+       </a>
+      
+      #{if Boolean.parseBoolean(play.Play.configuration.getProperty("UPLOAD_DOC_FEATURE"))}
+       <a  href="/upload" class="ptrTagInline doCStream uploadContent" data-cs-name="UPLOAD_TAB">
+           Upload
+       </a>                
+      #{/if}
+       <!--<a id="addQuestionPage" class="ptrTagInline" data-cs-name="ADD_QUESTION">
+           Add Question
+       </a>-->
+   </div>
+    <div id="userDetails" class="${session.get('userId')}">
+       <!--<div class="userFullName">${session.get("fullname")}</div>-->
+       <a id="settingsImg" class="floatLeft"><!--<img src="/public/images/settingsImg.png" alt=""/>--></a>                 
+       <div id="settingsOptions">
+           <span id="logout"><a href="/security/logout" class="doCStream" data-cs-name="LOGOUT">Logout</a></span>
+       </div>
+   </div>
+    <div id="notiHolder">
+        <div class="notiHead">Notifications 
+            <div class="notiNoDiv">
+                <span class="notiNo notiNoNone">0</span>
+            </div>
+            <span class="notiDownArrowImg"></span>
+        </div>
+        <div class="notiDiv"></div>
+    </div>
+</div>

@@ -1,0 +1,105 @@
+#{if devicesResp != null && devicesResp.errorCode.isEmpty() && devicesResp.result.list.length()>0}
+%{
+	totalHits = devicesResp.result.totalHits;
+        devices = devicesResp.result.list;
+	isStudent = params.profile == "STUDENT" ? true : false; 
+}%
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<tr>
+	<th>Name</th>
+	<th>&{'INST_ID'}</th>
+	#{if isStudent}
+		<th>Program</th>
+		<th>Center</th>
+		<th>Section</th>
+	#{/if}
+	#{else}
+		<th>Part Of</th>
+	#{/else}
+	<th>Status</th>
+</tr>
+#{list items:0..devices.length()-1, as:'index'}
+<tr>
+	%{
+		device = devices.get(index);
+		member = device.memberInfo;
+		status = device.statuses;
+	}%
+        <td class="tdPadLeft5">
+            #{widgets.user20 user:member /}                              
+        </td>
+        <td class="width120 maxWidth120 boldy">${member.memberId}</td>
+	#{if isStudent}
+            %{
+                programs=member.mappings.programs;
+                programName='-';
+                centerName='-';
+                sectionName='-';
+                try{
+                    if(programs.length()>0){
+                        if(programs.length()==1){
+                            program=programs.get(0);
+                            programName=program.name;
+                            center=program.centers.get(0);
+                            centerName=center.name;
+                            sectionName=center.sections.get(0).name;
+                        }else{
+                            programName='<a class="showUserMappings" data-user-id="'+member.userId+'">'+programs.length()+' Programs</a>';
+                        }
+                    }else{
+                        programName='0 programs';
+                    }                            
+                }catch(Exception e){
+                }
+            }%
+            <td class="boldy big12">${programName.raw()}</td>
+            <td class="big12">${centerName}</td>
+            <td class="big12">${sectionName}</td>
+	#{/if}
+	#{else}
+            <td class="width120 maxWidth120">
+                %{
+                    mappings=member.mappings.programs.length();
+                }%
+                <a class="showUserMappings" data-user-id='${member.userId}'>
+                    ${mappings} Program${mappings.pluralize()}
+                </a>
+            </td>
+	#{/else}
+	<td style="width:200px;">
+	#{if !status.equals(null)}
+	   <div class="deviceIconHolderTable">
+	   #{if status.has('WEB') && status.WEB == "LOGGED_IN"}
+		<span class="onlineWebIcon" title="Available on Web"></span>
+	   #{/if}
+	   #{else}
+		<span class="offlineWebIcon" title="Un-available on Web"></span>
+	   #{/else}
+	   </div>
+	   <div class="deviceIconHolderTable">
+	   #{if status.has('MOBILE') && status.MOBILE == "LOGGED_IN"}
+		<span class="onlineDeviceIcon" title="Available on Device"></span>
+	   #{/if}
+	   #{else}
+		<span class="offlineDeviceIcon" title="Un-available on Device"></span>
+	   #{/else}
+	   </div>
+	   <span>
+		<a class="big12 viewUserDeviceDetails" data-user-id="${member.userId}"
+			data-user-full-name="${member.firstName} ${member.lastName}">View Details</a>
+	   </span>
+	#{/if}
+	#{else}
+		<span>Un-Available</span>
+	#{/else}
+	</td>
+</tr>
+#{/list}
+#{/if}
+#{else}
+<tr>
+	<td colspan=4 class="centerText">
+		<div class="boldy big16 redTextColor">&{'NO_DEVICES_FOUND'}</div>	
+	</td>
+</tr>
+#{/else}

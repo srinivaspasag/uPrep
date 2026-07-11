@@ -1,0 +1,62 @@
+%{
+    solutions=solutions.result.list;
+    loadMoreSize=0;
+}%
+<style type="text/css">
+   .quesSoln img{
+    width: 80%;
+    height: auto;
+    }
+</style>
+#{if solutions.length()>0}
+#{list items:0..solutions.length()-1,as:'s'}
+    %{
+        soln = solutions.get(s);
+	attachments = soln.attachmentsInfo; 
+        user=soln.user;
+    }%
+    <div class="card quesSoln libraryShadow">
+        <div class="card-header" style="padding: 5px 10px;">
+            <h2>
+                Solution : 
+                <small>
+                    <span>${new Date(soln.timeCreated).since(true)}</span>
+                </small>
+            </h2>
+        </div>
+        <div class="card-body m-t-20">
+            #{if !soln.content.equals(null) && !soln.content.isEmpty()}
+                <div class="text-capitalize m-l-20 m-t-20" style="word-wrap: break-word;">${soln.content.raw()}</div>
+            #{/if}
+            #{if !attachments.equals(null) && attachments.length()>0}
+            <div class="c-black f-15 m-t-20 m-l-20 m-b-20">Video Solution : </div>
+            #{list items:0..attachments.length()-1,as:'aIndex'}
+            %{
+                                attachEntity = attachments.get(aIndex).entity;
+                                attachInfo = attachments.get(aIndex).info;
+                                entityName = attachInfo.name;
+                        }%
+            #{library.videoSolution entityType : attachEntity.type , entityId : attachEntity.id , entityName : entityName , entityObj : attachEntity , info : attachInfo /}
+            #{/list}
+            #{/if}
+            #{if !soln.isNull('answers')&&soln.answers.length()>0}
+                <div class="margHalfTop">
+                    Answer: 
+                    <span class="boldy">                    
+                        #{list items:0..soln.answers.length()-1,as:'sa'}
+                            ${soln.answers.get(sa)}${sa_isLast?'':','}
+                        #{/list}
+                    </span>
+                </div>
+            #{/if}
+        </div>
+    </div>
+#{/list}
+#{/if}
+#{else}
+<div class="c-gray f-19">No Solutions available</div>
+#{/else}
+<script type="text/javascript">
+postTest.init();
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+</script>

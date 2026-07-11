@@ -1,0 +1,109 @@
+#{if users.errorCode.isEmpty() && users.result.has("list") && users.result.list.length()>0}
+%{
+	totalCount = users.result.totalHits;
+	currentCount = users.result.list.length();
+}%
+#{list items:0..currentCount-1,as:'index'}
+%{ 
+	user = users.result.list.get(index);
+        userJsonObj=(controllers.Profile.getUserClassAndUrl(user));
+        userClass = userJsonObj.className;
+        userUrl = userJsonObj.url;
+	userId = userJsonObj.id;
+}%
+	<div class="instEachMember left">
+		<span class="img60Holder left">
+			<a href="${userUrl}" class="${userClass} doCStream" title="${user.firstName} ${user.lastName}" name="MEMBER_ICON_LINK" data-user-id="${userId}" data-user-role="${params.role}">
+			<div class="instProfilePicContainer">
+				<img class="icon instProfilePic" src="${user.has('thumbnail')?user.thumbnail:'htp://123'}" alt="${user.firstName}"/>
+			</div>
+			</a>
+		</span>
+		<span class="instMemDetails left">
+			<a href="${userUrl}" class="${userClass} doCStream instMemName" name="MEMBER_ICON_LINK" 
+			  data-user-id="${userId}" data-user-role="${params.role}">
+				<span class="instMemName">${user.firstName} ${user.lastName}</span>
+			</a>
+			</br>
+			#{if user.profile == "STUDENT"}
+				<span class="instMemInfo">
+				&{'TXT_STUDENT'}
+				 #{if user.has('mappings')}
+					at %{ orgInfo = user.mappings;}%
+				 #{if orgInfo.has("programs") && orgInfo.programs.length()>0}
+				%{ progs = orgInfo.programs;}%
+				   #{list items:0..progs.length()-1,as:'pIndex'}
+					%{ prog = progs.get(pIndex);}%
+					<span class="boldy">${ prog.name}</span>
+				 	#{if prog.has('centers') && prog.centers.length()>0}
+					  #{list items:0..prog.centers.length()-1,as:'cIndex'}
+						%{ center = prog.centers.get(cIndex); }%
+				 	  #{if center.has("sections") && center.sections.length()>1}
+					    #{list items:0..center.sections.length()-2,as:'sIndex'}
+						<span class="smally italica">${center.sections.get(sIndex).name},</span>
+					    #{/list}
+				 	  #{/if}
+						<span class="smally italica">${center.sections.get(center.sections.length()-1).name}</span>
+					   <span class="boldy"> - ${center.name}</span>
+					  #{/list}
+				 	#{/if}
+				   #{/list}
+				#{/if}
+				#{/if}
+				</span>
+			#{/if}
+			#{elseif user.profile == "TEACHER"}
+				<span class="instMemInfo">
+				#{if user.has('orgInfo') && user.orgInfo.has('courses') && user.orgInfo.courses.length()>0}
+					&{'TXT_TEACHES'} 
+					#{if user.orgInfo.courses.length()>1}
+					  #{list items:0..user.orgInfo.courses.length()-2,as:'cIndex'}
+						${user.orgInfo.courses.get(cIndex).name},
+					  #{/list}
+					#{/if}
+					%{
+						lastCrs = user.orgInfo.courses.get(user.orgInfo.courses.length()-1);
+					}%
+					${lastCrs!=null&&lastCrs.toString()!="null"?lastCrs.name:""}
+				#{/if}
+				#{else} &{'TXT_TEACHER'} #{/else}
+				</span>
+			#{/elseif}
+		</span>
+		<span class="right instMemHovOpts">
+			#{if canImpersonate == true && userId != session.get("userId")}
+			<span class="left doCStream useMemberProfile" data-user-id='${userId}'>
+                        	<span class="browseAsUserIcon"></span>
+			</span>
+			#{/if}
+			<span class="left ${userClass} openInstMemberPro doCStream" 
+				data-user-id="${userId}" data-user-role="${user.profile}">
+				<span class="instImgs"></span>
+			</span>
+			<span class="right msgInstMember userSendMsg" data-user-id="${userId}" 
+				data-user-role="${params.role}" data-user-full-name="${user.firstName} ${user.lastName}">
+				<span class="instImgs"></span>
+			</span>
+		</span>
+	</div>
+#{/list}
+	%{
+		start = Integer.parseInt(params.start);
+		size = Integer.parseInt(params.size);
+	}%
+	<div class="cleaner_with_divider">&nbsp;</div>
+	<script type="text/javascript">
+		$(".instMembersTotalCount").text("${totalCount}");
+		$(".instMembersCurCount").text("${start + currentCount}");
+	</script>
+	#{if totalCount > (start + size) }
+        	<div class="loadMoreItems instLoadMoreMembers doCStream" name="LOAD_MORE_MEMBERS">&{'LOAD_MORE_item',params.name}</div>
+	#{/if}
+#{/if}
+#{else}
+	<div class="boldy big14 centerText greyTextColor">&{'NO_item_FOUND',params.name}</div>
+	<script type="text/javascript">
+		$(".instMembersTotalCount").text("0");
+		$(".instMembersCurCount").text("0");
+	</script>
+#{/else}

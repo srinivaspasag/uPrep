@@ -1,0 +1,30 @@
+%{
+	correct = _correct;
+	incorrect = _incorrect;
+	partial = _partial!=null ? _partial : 0;
+	quesId = _quesId;
+	left = _left;
+	attempts = _attempts;
+	correctPercent = incorrectPercent = partialPercent = leftPercent = 0;
+	if(attempts <= 0){
+		attempts = 0;
+	}
+	if(left == null || left.equals(null)){
+		left = 0;
+	}else{
+		leftPercent = uicom.util.Utilities.calcPercentage(left,attempts); 
+	}
+	correctPercent = uicom.util.Utilities.calcPercentage(correct,attempts);	
+	incorrectPercent = uicom.util.Utilities.calcPercentage(incorrect,attempts);
+	partialPercent = uicom.util.Utilities.calcPercentage(partial,attempts);
+}%
+<div class="analyticsHorizontalBarHolder">
+	<span class="analyticsHorizontalBar correct" style="width:${correctPercent}%" title="${correctPercent}%"></span>
+	<span class="analyticsHorizontalBar incorrect" style="width:${incorrectPercent}%" title="${incorrectPercent}%"></span>
+	<span class="analyticsHorizontalBar partial" style="width:${partialPercent}%" title="${partialPercent}%"></span>
+</div>
+<div>
+	<span class="greenTextColor studentQuesAnalytics" data-is-correct="CORRECT" style="padding-right:10px;cursor: pointer;" data-ques-id="${quesId}">&{'test.NO_CORRECT',correct}</span>
+	<span class="redTextColor studentQuesAnalytics"  data-is-correct = "INCORRECT" style="color:#ed3237 !important;cursor: pointer;" data-ques-id="${quesId}">&{'test.NO_INCORRECT',incorrect}</span>
+	<span class="studentQuesAnalytics" data-is-correct = "PARTIAL" style="color:orange;cursor: pointer;" data-ques-id="${quesId}">&{'test.NO_PARTIAL',partial}</span>
+</div>	

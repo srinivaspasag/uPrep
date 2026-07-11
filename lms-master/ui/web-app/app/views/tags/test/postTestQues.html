@@ -1,0 +1,247 @@
+#{if questions!=null && questions.errorCode.isEmpty()}
+%{
+	boards = questions.result.boards;
+}%
+%{
+	alphabets=['(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'];
+}%
+<center>
+	<span class="quesGridViewBtn blackTab activeBlackTab quesGridViewBtnSelected doCStream" data-active-class="quesGridViewBtnSelected" data-cs-name="SHOW_GRID_VIEW_TAB">Grid View</span>
+	#{if params.testType != "OFFLINE"}
+		<b> | </b>
+		<span class="quesListViewBtn blackTab doCStream" data-active-class="quesListViewBtnSelected" data-cs-name="SHOW_QUESTION_VIEW_TAB">Question View</span>
+		#{if  !data.pdfId.equals(null) && data.has("pdfId")}
+			<b> | </b>
+		    <span><a href="/organization/${params.orgId}/document/${data.pdfId}" target="_blank">Test Paper</a></span>
+	    #{/if}
+	#{/if}
+</center>
+<div class="questionsDataHolder postTestQuesGridView">
+	<div class="centerText">
+	  <table class="IHolder">
+	    <tr>
+		<td class="each">
+			<span class="smallRect correct" style="margin-left:7px;"></span></br>
+		</td>
+		<td class="each">
+			<span class="smallRect inCorrect" style="margin-left:14px;"></span></br>
+		</td>
+		<td class="each">
+			<span class="smallRect notAttempted"></span></br>
+		</td>
+		<td class="each">
+			<span class="smallRect partialCorrect" style="margin-left:34px;"></span></br>
+		</td>
+	     </tr>
+	    <tr>
+		<td>
+			<center>correct</center>
+		</td>
+		<td>
+			<center>In-correct</center>
+		</td>
+		<td>
+			<center>left</center>
+		</td>
+		<td>
+			<center>Partial Correct</center>
+		</td>
+	     </tr>
+	  </table>
+	</div>
+	<div class="subjectQuesList">
+		#{if boards.length()>0}
+		%{ qIndex=0; }%
+		#{list items:0..boards.length()-1,as:'index'}
+		<div class="eachSubjectQues">
+			%{ subData = boards.get(index);}%
+			<span class="left boldy big14">${subData.name}</span><br/>
+			#{if subData.has('questions') && subData.questions.length()>0}
+			<div class="left qIconList">
+			#{list items:0..subData.questions.length()-1,as:'qIndx'}
+				%{ 
+				   question = subData.questions.get(qIndx);
+				   qIndex++; className = "";
+				   if(question.status == "ATTEMPTED"){
+						if(question.isCorrect == "CORRECT"){
+							className="correct";
+						}
+						else if(question.isCorrect == "INCORRECT"){
+							className="inCorrect";
+						}
+						else if(question.isCorrect == "PARTIAL"){
+							className="partialCorrect";
+						}
+					}
+				    else{
+						className="notAttempted";
+					}
+				}%
+				<span class="qIcon ${className}">Q${qIndex}</span>
+			#{/list}
+			</div>
+			#{/if}
+			<div class="cleaner_with_divider">&nbsp;</div>
+		</div>
+		#{/list}
+		#{/if}
+	</div>
+</div>
+
+#{if params.testType != "OFFLINE"}
+<div class="questionsDataHolder postTestQuesView nonner CSWidget" data-widget="QUESTION_VIEW_HOLDER">
+#{if boards.length()>0}
+<div class="vselect vselectHide resultPreviewChooseSubject vDropDown" onstatechange="resultPreviewSubjectChanged" data-value="">
+	<span class="vSelectHead">
+		<input type="text" class="vSelectText blueTextColor boldy" value="All Subjects" readonly="readonly"/>
+		<span class="dropDownIcon noUserSelect" ></span>
+	</span>
+	<div class="vSelectListHolder">
+		<div class="vSelectList">
+			<span class="vSelectEach" data-value="">All Subjects</span>
+			#{list items:0..boards.length()-1,as:'index'}
+			<span class="vSelectEach" data-value="${boards.get(index).id}">${boards.get(index).name}</span>
+			#{/list}
+		</div>
+	</div>
+</div>
+<table class="testResultQuesTable" cellpadding=0 cellspacing=0>
+	<tr>
+		<th class="testResultEachCellHeader borderBottom borderTop">Questions</th>
+		<th class="testResultEachCellHeader borderRight borderBottom borderTop">
+			#{if params.targetUserId==null}Your #{/if}Answer</th>
+		<th class="testResultEachCellHeader borderRight borderBottom borderTop">Correct Answer</th>
+		<th class="testResultEachCellHeader borderBottom borderTop">Time Taken</th>
+	</tr>
+	%{qIndex = 0;}%
+	#{list items:0..boards.length()-1,as:'index'}
+	%{ subData = boards.get(index);}%
+		#{list items:0..subData.questions.length()-1,as:'qIndx'}
+		%{ 
+			ques = subData.questions.get(qIndx);
+			qIndex++; className = "";
+			if(ques.status == "ATTEMPTED"){
+				if(ques.isCorrect == "CORRECT"){
+					className="correct";
+				}
+				else if(ques.isCorrect == "INCORRECT"){
+					className="inCorrect";
+				}
+				else if(ques.isCorrect == "PARTIAL"){
+					className="partialCorrect";
+				}
+			}
+		    else{
+				className="notAttempted";
+			}
+			quesBody = ques.info;
+		}%
+	<tr class="cls-${subData.id} tableRowResultQues">
+		<td style="width:550px;" class="postTestEachQuesList">
+			#{test.analyticQues qIndex : qIndex , qType : quesBody.type , quesBody : quesBody , subData : subData /}
+		</td>
+		#{if ques.status == "ATTEMPTED"}
+			%{
+				answer = ques.get('answer');
+				answerGiven = answer.get('answerGiven');
+			}%
+			#{if "NUMERIC" == quesBody.type}
+				%{
+					yourAnswer = answerGiven.get(0);
+				}%
+			#{/if}
+			#{elseif "SUBJECTIVE" == quesBody.type}
+				%{
+					yourAnswer = "";
+				}%
+			#{/elseif}
+			#{else}
+			%{	
+				yourAnswer = "";
+				for(ansIndex=0;ansIndex<answerGiven.length()-1;ansIndex++){
+					yourAnswer+=alphabets[Integer.parseInt(answerGiven.get(ansIndex))-1]+",";
+				}
+				yourAnswer+=alphabets[Integer.parseInt(answerGiven.get(ansIndex))-1];
+			}%
+			#{/else}
+			#{if quesBody.type == "SUBJECTIVE"}
+				<td class="testResultEachCellValue big12 borderRight borderBottom"><span class="${className}"></span><span class="showAnswerInPopup showCursor blocky">My Answer</span>
+					<div class="showSubjectiveAnswer nonner margTop10">
+						<h2>My Answer </h2>
+						<div class="big14">
+							${answerGiven.get(0).raw()}
+						</div>
+					</div>
+				</td>
+			#{/if}
+			#{else}
+				<td class="testResultEachCellValue big14 boldy borderRight borderBottom"><span class="${className}">${yourAnswer} </span></td>
+			#{/else}
+		#{/if}
+		#{else}
+			<td class="testResultEachCellValue big14 boldy borderRight borderBottom"><span class="${className}">N.A.</span></td>
+		#{/else}
+		#{if !ques.answer.equals(null) && !ques.answer.correctAnswer.equals(null) && ques.answer.correctAnswer.length()>0}
+		%{
+			quesTime = "";
+			timeTaken = uicom.util.Utilities.getTimeFromMiliSec(ques.answer.timeTaken);
+			if(timeTaken.hrs.toInteger() > 0){
+                timeTaken.hrs.toInteger() == 1 ? (quesTime += timeTaken.hrs + ' hr ') : (quesTime += timeTaken.hrs + ' hrs ');
+            }
+            if(timeTaken.mins.toInteger() > 0){
+                timeTaken.mins.toInteger() == 1 ? (quesTime += timeTaken.mins + ' min ') : (quesTime += timeTaken.mins + ' mins ');
+            }
+            if(timeTaken.secs.toInteger() > 0){
+                timeTaken.secs.toInteger() == 1 ? (quesTime += timeTaken.secs + ' sec ') : (quesTime += timeTaken.secs + ' secs ');
+            }
+		}%
+			#{if "NUMERIC" == quesBody.type}
+				%{
+					correctAnswer = ques.answer.correctAnswer.get(0);
+				}%
+			#{/if}
+			#{elseif "SUBJECTIVE" == quesBody.type}
+				%{
+					correctAnswer = "";
+				}%
+			#{/elseif}
+			#{else}
+			%{
+				correctAnswer = "";
+				answerIndex = 1;
+				ansIndex=0;
+				for(ansIndex=0;ansIndex<ques.answer.correctAnswer.length()-1;ansIndex++){
+					answerIndex = Integer.parseInt(ques.answer.correctAnswer.get(ansIndex));
+					answerIndex = answerIndex>=1?answerIndex-1:0;
+					correctAnswer+=alphabets[answerIndex]+",";
+				}
+				answerIndex = Integer.parseInt(ques.answer.correctAnswer.get(ansIndex));
+				answerIndex = answerIndex>=1?answerIndex-1:0;
+				correctAnswer+=alphabets[answerIndex];
+			}%
+			#{/else}
+			#{if quesBody.type == "SUBJECTIVE"}
+				<td class="testResultEachCellValue big12 borderRight borderBottom"><span class="viewSolution showCursor">View Answer</span></td>
+			#{/if}
+			#{else}
+				<td class="testResultEachCellValue big12 boldy borderRight borderBottom">${correctAnswer}</td>
+			#{/else}
+			#{if ques.status == "ATTEMPTED"}
+				<td class="testResultEachCellValue big12 boldy borderBottom">${timeTaken.mins}:${timeTaken.secs} mins</td>
+			#{/if}
+			#{else}
+				<td class="testResultEachCellValue big12 boldy borderBottom">N.A.</td>
+			#{/else}
+		#{/if}
+		#{else}
+			<td class="testResultEachCellValue big12 boldy borderBottom"></td>
+		#{/else}
+	</tr>
+		#{/list}
+	#{/list}
+</table>	
+#{/if}
+</div>
+#{/if}
+</div>
+#{/if}

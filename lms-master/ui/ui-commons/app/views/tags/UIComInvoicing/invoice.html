@@ -1,0 +1,399 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.has("id") &&
+resp.result.has("invoiceInfo") && !resp.result.invoiceInfo.equals(null) }
+%{
+	if(currentOrgInfo != null && !currentOrgInfo.result.equals(null)){
+		instLogo = uicom.util.Utilities.getInstLogo(currentOrgInfo.result.orgThumbnail);
+		instName = currentOrgInfo.result.name;
+		instAddress = currentOrgInfo.result.address;
+		instContactNumber = currentOrgInfo.result.contactNumber;
+		if(currentOrgInfo.result.has("representative") && !currentOrgInfo.result.representative.equals(null) ){
+			instEmail = currentOrgInfo.result.representative.email;
+		}
+		locations = currentOrgInfo.result.locations;
+	}
+}%
+<html>
+<head>
+	<title>${instName}-Invoice-${params.orderId}</title>
+	<link rel="shortcut icon" type="image/png" href="@{'/public/images/vedantu.png'}">
+<style>
+	@font-face {
+	font-family: Ubuntu;
+	src: url(../../../../public/fonts/Ubuntu-Regular.ttf);
+}
+body{
+	font-size:12px;
+	color:#333;
+	margin:0;
+	font-family: 'Ubuntu',tahoma,verdana,arial,sans-serif;
+}
+#mainContainer{
+	width:800px;
+	margin:0 auto;
+	padding:20px;
+	background-color:#FAFAFA;
+}
+.blueStrip{
+	padding:6px 20px;
+	background-color:#ADDAF1;
+}
+.smally{
+	font-size:11px;
+}
+.italics{
+	font-style: italic;
+}
+.fs20{
+	font-size:20px;
+	font-height:20px;
+}
+.fs18{
+	font-size:18px;
+	font-height:18px;
+}
+.fs16{
+	font-size:16px;
+	font-height:16px;
+}
+.fs13{
+	font-size:13px;
+}
+.centerText{
+	text-align:center;
+}
+.boldy{
+	font-weight:bold;
+}
+.alignTop{
+	vertical-align:top;
+}
+.underlineText{
+	text-decoration:underline;
+	width:150px;
+	margin:5px 0 0 10px;
+}
+.clearFloating{
+	clear:both;
+	font-size:1px;
+}
+.floatRight{
+	float:right;
+}
+.floatLeft{
+	float:left;
+}
+.rightText{
+	text-align:right;
+}
+.topLeftTable{
+	width:400px;
+}
+.topLeftTable th{
+	text-align:left;
+	font-size:15px;
+}
+.topLeftTable td{
+	vertical-align:top;
+	font-size:14px;
+}
+.topLeftTable td.addrTd{
+	font-size:12px;
+	color:#999;
+	padding-right:5px;
+}
+.invoiceInfoTable{
+	max-width:300px;
+	border:1px solid #333;
+}
+.invoiceInfoTable td,
+.invoiceInfoTable th{
+	padding:6px 10px;
+	text-align:left;
+	font-size:14px;
+}
+.invoiceTable{
+	width:100%;
+	min-height:200px;
+	border:2px solid #333;
+	margin-top:10px;
+}
+.invoiceInfoTable td,
+.invoiceInfoTable th,
+.invoiceTable td,
+.invoiceTable th{
+	border-style: solid;
+	border-color: #333;
+}
+.invoiceTable th{
+	font-size:15px;
+	border-width:0px 2px 2px 0px;
+	border-color: #333;
+	height:30px;
+	background-color:#EEE;
+}
+.invoiceTable th:last-child{
+	border-right-width:0px;
+}
+.invoiceTable td{
+	border-width:0px;
+	border-right-width:2px;
+	font-size:14px;
+	padding:5px 10px;
+	min-height:30px;
+}
+.invoiceTable td:last-child{
+	border-right-width:0px;
+}
+td.tableBorderTop{
+	border-top-width:2px;
+}
+td.tableBorderRight{
+	border-right-width:2px;
+}
+.height25{
+	height:25px;
+}
+#detailedBillingSec{
+	padding:20px 0px;
+}
+.greenButton{
+	color: #fff;
+	background-color: #99cc65;
+	border: 1px solid #88ad5f;
+	background-image: none;
+	cursor: pointer;
+	font-size: 15px;
+	padding: 5px 20px;
+	text-align: center;
+	text-decoration: none;
+}
+.eachDetailBill{
+	padding:10px;
+	background-color:#FFF;
+}
+@media print{
+   #mainContainer{
+	background-color:#FAFAFA !important;
+	min-height:840px;
+   }
+   #printSection{
+	display:none;
+   }
+}
+</style>
+</head>
+<body>
+%{
+	order = resp.result;
+	invoice = order.invoiceInfo;
+	currencyCode = java.util.Currency.getInstance(invoice.currencyCode).getSymbol();
+	items = order.items;
+}%
+   <div id="mainContainer">
+	<header id="pageHeader">
+   	<div style="padding-bottom:10px;" id="printSection">
+		<a class="floatRight greenButton" href="javascript:window.print();">Print Invoice</a>
+	    	<div class="clearFloating">&nbsp;</div>
+   	</div>
+	<div style="height:45px;">
+		<img src="${instLogo}" alt="${instName}" style="max-width: 150px;max-height: 50px;bottom: 10px;position: relative;" />
+		<div class="blueStrip floatRight rightText" style="width:60%;">
+			<span class="fs20">Invoice</span>		
+		</div>
+	</div>
+	</header>
+	<div style="margin-top:20px;">
+	   <div class="floatLeft">
+		<table cellspacing=5 cellpadding=0 class="topLeftTable">
+		   <tr>
+			<th class="alignTop">&{'INVOICE_BILL_TO'}:</th>
+			<td style="width:320px;">
+				#{if invoice.has('billTo')}
+					#{UIComInvoicing.address address : invoice.billTo /}
+				#{/if}
+				#{else}
+				<div style="color:#999;" class="italics">Not Provided</div>
+				#{/else}
+			</td>
+		   </tr>
+		   <tr>
+			<th style="padding-top:10px;" class="alignTop">&{'INVOICE_SHIP_TO'}:</th>
+			<td style="padding-top:10px;width:320px;">
+				#{if invoice.has('shipTo')}
+					#{UIComInvoicing.address address : invoice.shipTo /}
+				#{/if}
+				#{else}
+				<div style="color:#999;" class="italics">Not Provided</div>
+				#{/else}
+			</td>
+		   </tr>
+		</table>
+	   </div>
+	   <div class="floatRight">
+		<div class="fs16" style="padding-bottom:5px;">Invoice Summary</div>
+		<table border=1 cellspacing=0 cellpadding=1 class="invoiceInfoTable">
+		   <tr>
+			<th>Order Id</th>
+			<td>${order.orderId}</td>
+		   </tr>
+                    <tr>
+			<th>Invoice No.</th>
+			<td>${invoice.invoiceNo}</td>
+		   </tr>	
+		   <tr>
+			<th>Invoice Date</th>
+			<td><span class="updateClientTime" data-time="${invoice.issueTime}" data-format="dd mmm, yyyy"></span></td>
+		   </tr>	
+		   <tr>
+			<th>Customer No.</th>
+			<td>${invoice.customer.id}</td>
+		   </tr>	
+		   <tr>
+			<th>PO No.</th>
+			<td></td>
+		   </tr>	
+		   <tr>
+			<th>TIN No.</th>
+			<td>
+				<!-- Temporarily setting ANC values-->
+				#{if params.orgId == "561f82e7e4b04529cf8dcdb2"}
+					36AAGCR3954H1Z5
+				#{/if}
+				#{else}
+					${invoice.tin}
+				#{/else}
+			</td>
+		   </tr>	
+		   <tr>
+			<th>PAN No.</th>
+			<td>
+				<!-- Temporarily setting ANC values-->
+				#{if params.orgId == "561f82e7e4b04529cf8dcdb2"}
+					AAGCR3954H
+				#{/if}
+				#{else}
+					${invoice.pan}
+				#{/else}
+			</td>
+		   </tr>
+		   #{if order.has("pointOfSale") && !uicom.util.Validation.isEmpty(order.pointOfSale)}
+		   <tr>
+			<th>&{'INVENTORY_SELLING_POINT'}</th>
+			<td>
+				<span class="boldy">${order.pointOfSale}</span> 
+		   		#{if order.has("sellerReferenceNo") && !uicom.util.Validation.isEmpty(order.sellerReferenceNo)}
+				<span>(<span class="smally italics">&{'INVENTORY_SELLING_REF'}:</span>
+					<span class="fs13">${order.sellerReferenceNo}</span>)</span>
+				#{/if}
+			</td>
+		   </tr>
+		   #{/if}
+		</table>
+	    </div>
+	    <div class="clearFloating">&nbsp;</div>
+	    <div style="margin-top:25px;">
+		<div class="fs20">Summary</div>
+		<table cellspacing=0 cellpadding=1 class="invoiceTable">
+		    <tr>
+		    	<th>S. No.</th>
+		    	<th>Product</th>
+		    	<th style="width:300px;">Description</th>
+		    	<th>Unit Price</th>
+		    	<th>Quantity</th>
+		    	<th>Amount</th>
+		    </tr>
+		    #{list items:0..items.length()-1,as:'tIndex'}
+			%{ 
+                        item = items.get(tIndex);
+                        itemRateUnit='';
+                            if(!item.rate.unit.equals(null)){
+                                itemRateUnit=item.rate.unit;
+                            }
+                        }%
+		    <tr>
+			<td>${tIndex+1}</td>
+                        #{if item.category=="SECTION"}
+                        <td>${item.name}</td>
+                        #{/if}
+                        #{else}
+                        <td>&{'INVOICE_ITEM_'+item.category} (<span class="boldy">${item.name}</span>)</td>
+                        #{/else}			
+			<td>${item.desc}</td>
+			<td>${currencyCode} ${item.rate.value/100} ${itemRateUnit}</td>
+			<td class="centerText">${item.count}</td>
+			<td>${currencyCode} ${item.costInfo.base/100}</td>
+		    </tr>
+		    #{/list}
+		    <tr>
+			<td colspan=4 rowspan=3 class="tableBorderTop">
+				<div>
+					*{<!--<span class="boldy">Total Amount in words:</span>
+					<span class="underlineText">Five thousands and three hundred only</span>-->}*
+				</div>
+			</td>
+			<td class="tableBorderTop tableBorderRight height25">
+				<span class="boldy">Sub-Total</span>
+			</td>
+			<td class="tableBorderTop tableBorderRight">
+				<span class="">${currencyCode} ${uicom.util.Utilities.roundDecimals(invoice.subTotal/100)}</span>
+			</td>
+		    </tr>
+		    <tr>
+			<td class="tableBorderTop tableBorderRight height25">
+				<span class="boldy">Total Tax</span>
+			</td>
+			<td class="tableBorderTop tableBorderRight">
+				<span class="">${currencyCode} ${uicom.util.Utilities.roundDecimals(invoice.tax/100)}</span>
+			</td>
+		    </tr>
+		    <tr>
+			<td class="tableBorderTop tableBorderRight height25">
+				<span class="boldy">Total Amount</span>
+			</td>
+			<td class="tableBorderTop tableBorderRight">
+				<span class="">${currencyCode} ${uicom.util.Utilities.roundDecimals(invoice.total/100)}</span>
+			</td>
+		    </tr>	
+		</table>
+	    </div>
+	    <div id="detailedBillingSec">
+		<div class="fs20">Detailed Billing</div>
+	    	#{list items:0..items.length()-1,as:'iIndex'}
+			%{ item = items.get(tIndex); }%
+			#{include 'tags/UIComInvoicing/items/'+item.category.toLowerCase()+'.html' /}
+	    	#{/list}
+	    </div>
+	</div>
+	<footer id="pageFooter">
+	<div style="margin-top:25px;border-top:1px solid #999;">
+	    <div class="centerText fs13" style="padding:5px 0;">
+		<div>${instAddress}</div>
+		#{if locations!= null}
+		#{list items:0..locations.length()-1,as:'l'}
+		    %{
+		        loc=locations.get(l);
+		    }%
+			<div>${loc.city}, ${loc.state}, ${loc.country}</div>
+		#{/list}
+		#{/if}
+		<div>Email: <a href="mailto:${instEmail}">${instEmail}</a>  |  Phone: ${instContactNumber}</div>
+	    </div>
+	    <div class="centerText fs18 blueStrip">Thank You</div>
+	</div>
+	</footer>
+   </div>
+   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+   #{script src:'uicomCommon/utils.js', charset:'utf-8' /}
+   <script type="text/javascript">
+	$(function(){
+		$(document).updateClientTime();
+	});
+   </script>
+</body>
+</html>
+#{/if}
+#{else}
+	<div style="padding:20px;font-size:18px;color:#333;text-align:center;border:1px solid #333;margin-top:30px;">
+		<div class="text-align:center;">Invoice not found! contact info@learnpedia.in</div>
+	</div>
+#{/else}

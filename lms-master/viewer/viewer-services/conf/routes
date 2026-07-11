@@ -1,0 +1,21 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           						controllers.Application.index()
+GET     /ping                                               controllers.Application.ping()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               						controllers.Assets.at(path="/public", file)
+
+# this is common controller across all services and will provide information about currently deployed build
+POST	/sysinfo/get                              controllers.SysInfo.getInfo()
+
+GET 	/viewer/view/:entityType/:mediaType/*fileName  		controllers.Viewer.view(entityType,mediaType,fileName)
+GET 	/viewer/stream/:entityType/:mediaType/:fileName  		controllers.Viewer.stream(entityType,mediaType,fileName)
+GET 	/viewer/download/:entityType/:mediaType/:fileName/:id  		controllers.Viewer.download(entityType,mediaType,fileName,id)
+#GET 	/viewer/get				  		        controllers.Viewer.get()
+GET 	/viewer/estream/:encrypted				  		controllers.Viewer.estream(encrypted)
+
+GET 	/viewer/storeFolder  								controllers.Viewer.storeFolder(filePath)

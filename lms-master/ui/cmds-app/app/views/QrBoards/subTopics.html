@@ -1,0 +1,44 @@
+%{
+    subTopics=subTopics.result.boards;   
+    treeType=params.treeType;
+}%
+#{if subTopics.length()>0}
+#{list items:0..subTopics.length()-1,as:'st'}
+    %{
+        subTopic=subTopics.get(st);
+        brdId=subTopic.id;
+        publicBrdId=subTopic.publicBrdId;
+        brdClasses='';
+        if(treeType=="INSTITUTE"){
+            brdClasses="instBrdItem savedBrdItem brdFrom_"+publicBrdId+" instBrd_"+brdId;
+        }else{
+            brdClasses=brdClasses+"publicBrd_"+brdId;
+        }
+    }%
+    <div class="topicTreeSubTopicItem ${brdClasses}" data-brd-id='${brdId}' 
+         data-public-brd-id='${publicBrdId}'>
+        #{if treeType=='PUBLIC'}
+        <div class="gCBox">
+            <div class="gCBoxTicker"></div>
+        </div>
+        #{/if}
+        #{else}
+            <div class="vChoose brdItemvChoose" data-value="-1" data-onchange="editBrdItem">
+              <div class="vChooseHead">
+                  <div class="brdItemEdit"></div>
+              </div>
+              <div class="vChooseDownIcon"></div>
+              <div class="vChooseDropDown">
+                  <div class="vChooseOpt" data-value="RENAME">Rename</div>
+              </div>
+            </div>          
+        #{/else}
+        <span class="brdItemName">${subTopic.name}</span>   
+        
+    </div>      
+#{/list}
+#{/if}
+#{else}
+<div class="smallThinGray">No SubTopics Found</div>
+#{/else}
+

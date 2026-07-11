@@ -1,0 +1,458 @@
+#instTestAnalytics{
+	color:#666;
+	/*top:9px;*/
+	position: relative;
+}
+.instTATop{
+	background-color:#F7F7F4;
+	padding:5px 0 5px 0;
+	border-bottom:1px solid #e7e7e7;
+	/*overflow:hidden;*/
+}
+.instTAResultSummary{
+	color:#303636;
+	padding: 22px 20px;
+	position: relative;
+	/*top: 17px;*/
+}
+.instTAResultSummary .instTAResTab{
+	padding:5px 12px;
+	float:right;
+}
+.instTAResultSummary .instTAResTab font{
+	float:left;
+	width:100%;
+	padding:1px 0;
+}
+.instTAResultSummary .resultText{
+    	/*text-shadow:1px 1px #dbe3e7;*/
+}
+.instShowStrengthBtn,
+.instTAResultSummary .rankBG{
+	border-radius:4px;
+	box-shadow:0px 0px 1px 1px #e7e7e7;
+	background-color:#eafcfe;
+    	background-image: -moz-linear-gradient(center top , #eafcfe, #dbf0f5);
+    	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eafcfe', endColorstr='#dbf0f5');
+    	background-image: -webkit-gradient(linear, left top, left bottom, from(#eafcfe), to(#dbf0f5));
+    	background-image: -o-linear-gradient(top,#eafcfe, #dbf0f5);
+    	background-image: -ms-linear-gradient(top,#eafcfe,#dbf0f5);
+	padding:5px 0px;
+}
+#instTestAnalytics .shadowDiv{
+	width:75%;
+	left:200px;
+}
+.instTAResultSummary .instTAUserTab{
+	padding:4px 10px;
+	float:right;
+	border-right:1px solid #ccc;
+}
+.instTAResultSummary .instTAUserTab .texts{
+	max-width:350px;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	padding-top:5px;
+}
+.instTAUserTab .icon{
+	height:40px;
+	width:40px;
+}
+.instTAUserTab span{
+	padding:2px 0 0 10px;
+}
+.instTAGraphH{
+    	/*background-color: rgba(169, 232, 243, 0.15);*/
+}
+.instTAGraphBackGround{
+	background-image:url('/public/images/profile/profile-pattern.png');
+	background-color:#bce3f0;
+	border-bottom:1px solid #e7e7e7;
+}
+.instTAGraphContainer{
+	height:425px;
+}
+.instTAGraphHolder{
+	padding-top:20px;
+}
+.instTAshowHighestTab,
+.instTAshowRankTab{
+	padding:40px 50px 0;
+}
+.instTAshowRankTab{
+    display: none;
+}
+.instTAshowRankTab input[type="radio"]{
+	padding-top:5px;
+}
+.instTACompareSelect,
+.instTASubjectSelect,
+.instTATestSelect{
+	padding:25px 0 0 50px;
+}
+.instTASubjectSelect .nDropDown{
+	border: 1px solid transparent;
+	border-image: initial;
+	border-radius: 1px;
+	background-color:#fff;
+	padding:5px 0;
+	max-width:150px;
+}
+.instTASubjectSelect .dropDownContainer{
+	border-radius:0px;
+	margin-left: -2px;
+	margin-top: 6px;
+	border-top: 0px;
+	min-width: 142px;
+	border: 1px solid #ccc;
+}
+.instTATargetExams,
+.instTACompare,
+.instTASubjects{
+	width:150px;
+	height:25px;
+}
+.instTACompare.focused{
+	width:200px;
+}
+.instTACompare.focused .searchCompareTA{
+	width:165px;
+}
+.instTACompare .instImgs{
+	float: right;
+	padding: 8px;
+	background-position: -520px 0px;
+	margin: 2px 5px 0 5px;
+}
+.instShowStrengthBtn{
+	border-radius: 30px;
+	margin-top: 30px;
+	width: 100px;
+	padding: 7px;
+	cursor:pointer;
+}
+.instTATests{
+	margin:20px 40px;
+}
+.instSearchTests{
+}
+.instSearchTests .customSearchBox{
+	border-radius:0px;
+	width:350px;
+	height:30px;
+}
+.instTATable{
+	padding:20px 0;
+}
+.instTATableTH{
+	font-size:15px;
+	font-weight:bold;
+	overflow:hidden;
+	padding:1px;
+}
+.instTAEachTest:hover{
+	background-color:#def1f7;
+	border-color:#cadbd1;
+	cursor:pointer;
+}
+.instTATests .professor,
+.instTATests .student{
+	display:none;
+}
+.instTATests.studentTA .student{
+	display:block;
+}
+.instTATests.professorTA .professor{
+	display:block;
+}
+table.tableInstTACenters td,
+table.tableInstTACenters th,
+table.tableInstTA td,
+table.tableInstTA th{
+	text-align:left;
+	padding:10px 10px;
+	border:1px solid #ccc;
+	border-right:0px;
+}
+table.tableInstTACenters th,
+table.tableInstTA th{
+	font-size:15px;
+}
+table.tableInstTACenters td:first-child,
+table.tableInstTACenters th:first-child,
+table.tableInstTA td:first-child,
+table.tableInstTA th:first-child{
+	border-left:0px;
+}
+table.tableInstTACenters td,
+table.tableInstTA td{
+	border-top:0px;
+	border-bottom:1px solid #eee;
+	vertical-align:top;
+	min-height:32px;
+}
+table.tableInstTA td.indpRowCell:first-child{
+	border-left:1px solid #ccc;
+}
+table.tableInstTACenters td:first-child,
+table.tableInstTA td:first-child{
+}
+.TAOutOf{
+	color:#ccc;
+	font-size:12px;
+}
+.searchCompareTA{
+	background-color:rgba(250, 247, 247, 0.5);
+	padding-left:5px;
+	border:0px;
+	height:22px;
+	width:118px;
+	font-size:11px;
+}
+.instTAUsersHolder{
+	margin-top:24px;
+	background:#fff;
+	border:1px solid #ccc;
+	overflow:hidden;
+	z-index:20;
+	position:relative;
+}
+.instTAUsers{
+	width:192px;
+	padding:3px;
+	color:#2E2E2E;
+	font-style:italic;
+	float:left;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+}
+.instTAUsers:hover{
+	color:#fff;
+	background-color:#848484;
+	cursor:pointer;
+}
+.instTATestLoadMore{
+	margin:15px 0;
+}
+.selectInstTAGraphType{
+	/* margin from 20px 0 0 200px;  to 5px 0 0 250px; by Shankar */ 
+	margin:-3px 0 0 15px;
+	width:80px;
+	height:22px;
+	font-size:14px;
+}
+.selectInstTAGraphType .dropDownIcon{
+	padding:12px 7px;
+}
+.selectInstTAGraphType .input{
+	font-size:14px;
+}
+.instTANextPrev{
+    right:25px;
+    margin-top:-3px;
+    float:right;
+    width:60px;
+}
+.instTANextPrev .prevTA,
+.instTANextPrev .nextTA{
+    float:left;
+    display: block;
+    padding-right:8px;
+    width: 21px;
+    height: 28px;
+    cursor: default;
+}
+.instTANextPrev .nextTA{
+    /*background: url("/public/images/profile/prevIn.png") no-repeat;*/
+    background: url("/public/images/questions/IPrevQues.png") no-repeat;
+}
+.instTANextPrev .prevTA.active{
+    /*background: url("/public/images/profile/nextAc.png") no-repeat;*/
+    background: url("/public/images/questions/ANextQues.png") no-repeat;
+    cursor: pointer;
+}
+.instTANextPrev .nextTA.active{
+    /*background: url("/public/images/profile/prevAc.png") no-repeat;*/
+    background: url("/public/images/questions/APrevQues.png") no-repeat;
+    cursor: pointer;
+}
+.instTANextPrev .prevTA{
+    /*background: url("/public/images/profile/nextIn.png") no-repeat;*/
+    background: url("/public/images/questions/INextQues.png") no-repeat;
+}
+.instTAGraphHolder .smallLoader{
+	padding-top:100px;
+}
+.tests-stats{
+	width:100%;
+	height:100%;
+}
+.instTAComparedUsers{
+	margin:2px 48px;
+}
+.instTAComparedUsers .instComUser,
+.instTAComparedUsers .instComYou{
+	padding:10px 0 0 5px;
+}
+.instTAComparedUsers .instComUser .instTAcircle,
+.instTAComparedUsers .instComYou .instTAcircle{
+	width:10px;
+	height:10px;
+	border-radius:5px;
+	float:left;
+	margin:3px 5px;
+}
+.instTAComparedUsers .instComYou .instTAcircle{
+	background-color:#b8b588;
+}
+.instTAComparedUsers .instComUser .instTAcircle{
+	background-color:#de807e;
+}
+.test-graph{
+    margin-top: 40px;
+}
+.dropDownsInstAnalytics{
+	width:70%;
+}
+.instAnalyticsSelMyProg,
+.instAnalyticsSelMyCenter,
+.instAnalyticsSelMySection{
+	display:inline-block;
+	margin-right:20px;
+	width:45%;
+}
+.instAnalyticsSelMyProg .dropDownContainer{
+    min-width: 360px;
+}
+.instAnalyticsSelMyCenter,
+.instAnalyticsSelMySection{
+	width:20%;
+}
+.instAnalyticsSelMyProg .nDropDown{
+	background-color:#3bb5e6;
+	font-size:12px;
+	max-width:100%;
+	min-width:100%;
+}
+.instAnalyticsSelMyProg .dropDownHead{
+	color:#fff;
+	font-size:16px;
+}
+.instAnalyticsSelMyCenter .nDropDown,
+.instAnalyticsSelMySection .nDropDown{
+	max-width:100%;
+	min-width:100%;
+}
+.instAnalyticsSelMyCenter .dropDownContainer,
+.instAnalyticsSelMySection .dropDownContainer{
+	min-width:160px;
+}
+.instAnaProfilePic{
+	width:40px;
+	min-height:40px;
+}
+table.tableInstTATopper td{
+	border: 0px;
+	vertical-align: top;
+	text-align: left;
+	padding: 0px;
+	padding-left:10px;
+}
+.tableInstTACenters .instTAProgItem{
+	padding:5px 10px;
+	border-bottom:1px solid #eee;
+	height:13px;
+	font-size:13px;
+}
+table.tableInstTACenters td{
+	padding:0px;
+}
+.tableInstTACenters td .instTAProgItem:last-child{
+	border-bottom:0px;
+}
+.instTATableTestType{
+	padding:2px;
+}
+.instTATableTestType.OFFLINE{
+	color:#888;
+}
+.instTATableTestType.ONLINE{
+	color:rgb(233, 119, 119)
+}
+.selectSubjTopic {
+  font-size: 14px;
+  position: relative;
+  display: inline-block;
+}
+.selectSubjTopic select {
+  outline: none;
+  min-width: 250px;
+  -webkit-appearance: none;
+  display: block;
+  padding:10px;
+  margin: 0;
+  transition: border-color 0.2s;
+  background: #edeef0;
+  color: #666;
+  line-height: normal;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  border-radius: 10px;
+}
+
+.selectSubjTopic .arrow {
+  background: #edeef0;
+  bottom: 5px;
+  position: absolute;
+  right: 0px;
+  top: 5px;
+  width: 50px;
+  pointer-events: none;
+}
+.selectSubjTopic .arrow:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 24px;
+  margin-top: -5px;
+  pointer-events: none;
+  border-top: 8px solid #000;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+
+.selectSubjTopic .arrow:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 28px;
+  margin-top: -5px;
+  pointer-events: none;
+  border-top: 6px solid #000;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+.selectSubjTopic option{
+	background:#fff;
+	border: 1px solid #ccc;
+}
+.testDetailsTable{
+    width: 250px;
+    top:150px;
+    position: absolute;
+    right:0px;
+    max-height: 400px;
+}
+.testDetailsTableHeader th{
+    right: 15px;
+    position: relative;
+}
+@media(max-width:1192px){
+  .testDetailsTable{
+    display: none;
+  }
+}

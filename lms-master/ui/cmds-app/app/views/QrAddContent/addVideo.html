@@ -1,0 +1,70 @@
+<div id="addVideoContainer">
+    <div class="big20" style="padding-bottom:30px;">&{'ADD_VIDEO'}</div>
+<div class="selectVideoAddType">
+	<span class="bigGrayButton addVideoByTypeBtn" data-type="URL">&{'ADD_VIDEO_URL'}</span>
+	<span class="bigGrayButton /*btnDisabled*/ addVideoByTypeBtn" data-type="UPLOAD" style="margin-left:20px;">&{'UPLOAD_VIDEO_FILE'}</span>
+</div>
+<div class="nonner" id="addVideoDiv">
+	<table class="fullWidth" cellpadding=0 cellspacing=0>
+		<tr class="addVideoByUrlTR">
+			<td class="big16 addVideoTd">&{'PASTE_URL'}</td>
+			<td class="addVideoInputTd">
+				<div>
+					<input type="text" class="inputDiv addVideoPasteInput" placeholder="&{'PASTE_VIDEO_URL_PLACEHOLDER'}"/>
+				</div>
+			</td>
+		</tr>
+		<tr class="addVideoByUrlTR">
+			<td colspan=2>
+				<div class="addedVideoPreview"></div>
+			</td>
+		</tr>
+		<tr class="addVideoByUploadTR">
+			<td class="big16 addVideoTd">&{'TITLE'}</td>
+			<td class="addVideoInputTd">
+				<div>
+					<input type="text" class="inputDiv addVideoTitleInput" maxlength="256"/>
+				</div>
+			</td>
+		</tr>
+		<tr class="addVideoByUploadTR">
+			<td class="big16 addVideoTd">&{'UPLOAD'}</td>
+			<td class="addVideoInputTd">
+				<div class="uploadVidDiv"></div>
+				#{widgets.corsUpload/}
+			</td>
+		</tr>
+		<tr class="addVideoByUploadTR">
+			<td></td>
+			<td class="redTextColor smally">&{'SUPPORTED_VIDEO_FORMAT_INFO'}</td>
+		</tr>
+		<tr class="addVideoByUploadTR">
+			<td class="big16 addVideoTd">&{'DESCRIPTION'}</td>
+			<td class="addVideoInputTd">
+				<div>
+					<textarea class="textareaDiv addVideoDesc"/>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="big16 addVideoTd">&{'TAGS'}</td>
+			<td class="addVideoInputTd">
+			   <div class="addTagsForVideo">
+               			#{UIComWidgets.tagging target:'ADD_VIDEO',addTagsId:'addTagsForAddVideo'/}
+			   </div>
+			</td>
+		</tr>
+		<tr>
+			<td class="big16 addVideoTd">Type</td>
+			<td class="addVideoInputTd">
+			  <input type="radio" name="TYPE" id="web" value="web"> Web <input type="radio" name="TYPE" id="sdcard" value="sdcard"> SD-Card
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2>
+				<div class="right bigGreenButton" id="doneAddVideo">&{'DONE_ADD'}</div>
+			</td>
+		</tr>
+	</table>
+</div>
+</div>

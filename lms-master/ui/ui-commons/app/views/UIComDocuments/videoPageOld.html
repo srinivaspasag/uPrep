@@ -1,0 +1,200 @@
+%{
+    docId=params.docId
+    docInfo=docInfo.result;
+    if(play.Play.configuration.getProperty("application.name")=="web-app"){
+        domain='WEB_APP';
+    }else{
+        domain='CMDS_APP';
+    }        
+}%
+<div class='videoMenuHolder'>
+    <div class='videoMenu'>
+        
+    </div>
+</div>
+<div class='cleaner_with_divider'>&nbsp;</div>
+<div class='DTVideo1002'>
+    <div id="DTDocLeft"></div>
+    <div class='DTVideoMiddle'>
+    	<div class='videoStatsHolder'>
+    		<div class='videoTitleHolder'>
+    			<div class='videoTitle'>${docInfo.title}</div>
+    			<div class='smally'>published by - <a class='userKingOpen' rel='${docInfo.userId}'>${docInfo.uploadedByName}</a> via <a href="${docInfo.videoSrc.link}" target='_blank'>${docInfo.videoSrc.name}</a></div>
+    		</div>
+    		<div class='floatLeft centry rateVideo' style="width: 75px;position: relative;min-height: 1px;">
+				%{
+					myRating=docInfo.ratingInfo.ratingByMe;
+					String avgRating=docInfo.ratingInfo.avgRating.toString();
+					if(avgRating.length()>4)avgRating=avgRating.substring(0,4);				
+				}%    		
+    			<label class='videoStatNo videoRatingNo'>${avgRating}</label>
+    			<div class='videoRateText'>rating</div>
+		        <div class="ratingDoc" rel="${myRating}" lang="${docId}">
+		            #{list items:1..5,as:'i'}
+		                #{if i<=myRating}<div><img class="rateStar${i}" src="/public/images/rateYellow.png" alt=""/></div>#{/if}
+		                #{else}<div><img class="rateStar${i}" src="/public/images/rateWhite.png" alt=""/></div>#{/else}
+		            #{/list}
+		        </div>    			
+    		</div>
+    		<div class='floatLeft centry' style="width: 150px;"><label class='videoStatNo videoViewsNo'>0</label>
+    			<div>views</div>
+    		</div>
+    		<div class='floatLeft centry' style="width: 100px;"><label class='videoStatNo videoCommentsNo'>0</label>
+    			<div>comments</div>
+    		</div>
+    		<div class='cleaner_with_divider'>&nbsp;</div>
+    	</div>
+        <div class='videoWidget' id="videoWidget_${docId}"></div>
+<!--     	<object width="640" height="390">
+  <param name="movie"
+         value="https://www.youtube.com/v/u1zgFlCw8Aw?version=3&autoplay=1"></param>
+  <param name="allowScriptAccess" value="always"></param>
+  <param name="allowFullScreen" value="true"></param>
+  <embed src="https://www.youtube.com/v/u1zgFlCw8Aw?version=3&autoplay=1"
+         type="application/x-shockwave-flash"
+         allowscriptaccess="always"
+         allowFullScreen="true"
+         width="640" height="390"></embed>
+
+</object>		<iframe type="text/html" width="764" height="425"
+		  src="http://www.youtube.com/embed/${docInfo.videoId}?autoplay=1&origin=${docInfo.videoSrc.link}"
+		  frameborder="0">
+		 </iframe> -->
+    	<div class='videoCommentsAndDesc'>    		
+            <div class='videoDescAndTags'>
+                    #{if docInfo.has(description)&& docInfo.description!=''}
+                            <div class='normalHeading margBot10'>Description</div>
+                            ${docInfo.description}
+                    #{/if}
+                    %{
+                        tags=docInfo.get('tags');
+                            if(tags.has('added')){
+                                tags1Len=tags.added.length();
+                                tags1=tags.added;
+                            }
+                            else tags1Len=0;
+                            if(tags.has('suggested')){
+                                tags2Len=tags.suggested.length();
+                                tags2=tags.suggested;
+                            }
+                            else tags2Len=0;
+                            if(tags.has('template')){
+                                tags3Len=tags.template.length();
+                                tags3=tags.template;
+                            }
+                            else tags3Len=0;
+                            tags4=docInfo.uncategorizedTag;
+                    }%
+                    #{if (tags1.length()+tags2.length()+tags3.length()+tags4.length())>0}<label class='boldy'>TAGS</label>#{/if}
+                    #{if tags1Len>0}
+                        #{list items:0..tags1.length()-1,as:'i'}
+                            #{if tags1.get(i).value!=''}
+                              <span class="libItemTagSpan">${tags1.get(i).value}</span>
+                            #{/if}
+                        #{/list}
+                     #{/if}
+                     #{if tags2Len>0}
+                        #{list items:0..tags2.length()-1,as:'i'}
+                            #{if tags2.get(i).value!=''}
+                              <span class="libItemTagSpan">${tags2.get(i).value}</span>
+                            #{/if}
+                        #{/list}
+                     #{/if}
+                    #{if tags3Len>0}
+                        #{list items:0..tags3.length()-1,as:'i'}
+                            #{if tags3.get(i).value!=''&&tags3.get(i).key!="organizationId"}
+                              <span class="libItemTagSpan">${tags3.get(i).value}</span>
+                            #{/if}
+                        #{/list}
+                    #{/if}
+                    #{if tags4.length()>0}
+                        #{list items:0..tags4.length()-1,as:'i'}
+                            #{if tags4.get(i)!=''}
+                              <span class="libItemTagSpan">${tags4.get(i)}</span>
+                            #{/if}
+                        #{/list}
+                    #{/if}
+            </div>
+            <div class='normalHeading margTop20'>Comments</div>
+            <div id='videoCommentsSec' data-doc-id="${docId}"></div>
+    	</div>
+    	<div class='videosFromPublishers'>
+    		<div class='normalHeading centry margBot20'>More from this publisher</div>
+                <div class='publisherVideoList floatLeft' id='publisherVideoList_${docId}'></div>
+    		<div class="cleaner_with_divider">&nbsp;</div>
+    	</div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+       var parentId="${docId}",videoUrl="${docInfo.videoSrc.link}";
+        if(videoUrl==null||videoUrl==""||videoUrl==undefined){
+            $("#videoWidget_"+parentId).html("<div class='dummyVideoPlayer'>Sorry an error occured,<br> Try again Later</div>");
+        }
+        else{
+            var urlStr="http://api.embed.ly/1/oembed?url="+videoUrl;
+            $.ajax({
+                url: urlStr,
+                data: {width:"764",height:"425"},
+                jsonp:'callback',
+                dataType: 'jsonp',
+                type:'GET',
+                success: function(data) {
+                    var videoWid=$("#videoWidget_"+parentId);
+                        videoWid.html(data.html);
+                    var frame=videoWid.children("iframe");
+                    frame.attr("src",frame.attr("src")+"&showinfo=0");
+                }
+            });
+        }
+        $.get("/Doc/getDocStats",{docId:parentId},function(data){
+        	var d=data.result;
+             $(".videoViewsNo").html(d.views);
+             $(".videoCommentsNo").html(d.reviews);
+        });      
+        $.get("/Doc/docReviewsJson",{rootType:"DOCUMENT",rootId:parentId,start:0,size:10,orderBy:"time",sortOrder:"DESC"},function(data){
+        	$("#docCommAll_"+parentId).html(myCommentsStr(data,parentId).str);
+        });        
+        $.get("/Doc/getPublisherVideos",{start:0,size:5,docType:'Video',targetUserId:"${docInfo.userId}",excludeIds:parentId},function(data){
+        	var vids=data.result,recHTML="";
+        	if(vids.length>0){
+        		$.each(vids,function(i,vid){
+        			recHTML+="<div class='pblrVideo'><div class='boldy'>"+vid.title+"</div>\n\
+        			<a class='floatLeft videoThumbWrapper'><img src='"+vid.thumbnail+"' class='openDocImg' rel='"+vid.docId+"'\n\
+        			alt='"+vid.title+"' />"+getDuration(vid.duration)+"</a>\n\
+        			<div class='pblrVideoStats smally'><div>Rating: <label class='boldy'>"+vid.avgRating.toString().substr(0,4)+"</label></div>\n\
+        			<div>Views: <label class='boldy'>"+vid.views+"</label></div><div>Comments: <label class='boldy'>"+vid.reviews+"</label></div>\n\
+        			</div>"+divi+"</div>";
+        		});
+        	}
+        	else recHTML="<div class='userMessage'>No videos available</div>";
+            $("#publisherVideoList_"+parentId).html(recHTML);
+        });  
+        $.get("/Widgets/newDocReco",{size:3,targetDocId:parentId,docRecoType:"ONLY_VIDEO",docType:"Video"},function(data){
+        	var vids=data.result,recHTML="<div class='recosHeader docRecosHeader activeLeftTab'>Suggested</div> ";
+        	if(vids.length>0){
+        		$.each(vids,function(i,vid){
+        			recHTML+="<div class='docReco centry'><a class='videoThumbWrapper'>\n\
+        			<img src='"+vid.thumbnail+"' class='openDocImg' rel='"+vid.docId+"' alt='"+vid.title+"' />\n\
+        			"+getDuration(vid.duration)+"</a><div class='boldy'>"+vid.title+"</div></div>";
+        		});
+        	}
+        	else recHTML="";
+            $("#DTDiv_"+parentId+" .DTVideoLeft .DTDocL2").html("<div id='docRecos_"+parentId+"' class='docRecos'>"+recHTML+"</div>");
+       });
+
+       //initailizing comment widget
+        var commHolder=$("#videoCommentsSec");
+        var LMData={urlStr:"/widgets/commItems",size:10,start:0,rootType:"DOCUMENT",
+        rootId:commHolder.data("docId"),orderBy:"voteUp"};
+        var allParams={};
+        allParams.rootId=commHolder.data("docId");allParams.rootType="DOCUMENT";
+        allParams.baseId=commHolder.data("docId");allParams.baseType="DOCUMENT";
+        allParams.callBack="VIDEO";
+        initCommWidget(allParams,LMData,commHolder);
+    });
+</script>
+
+
+
+

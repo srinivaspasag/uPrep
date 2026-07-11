@@ -1,0 +1,34 @@
+%{
+    data = _address;
+}%
+#{if !data.equals(null)}
+    <span class="text-muted">
+        <address>
+            ${data.name}
+            ${data.email}
+            &{'ADDR_ADDRESS'}
+            #{if !util.Validation.isEmpty(data.address)}
+                ${data.address}
+            #{/if}
+            #{if !data.location.equals(null)}
+                %{
+                    loc = data.location;
+                }%
+                #{if !util.Validation.isEmpty(loc.city)}
+                    ${loc.state}
+                #{/if}
+                #{if !util.Validation.isEmpty(loc.country)}
+                    ${loc.country}
+                #{/if}
+            #{/if}
+            #{if !util.Validation.isEmpty(data.pinCode)}
+                &{'ADDR_PIN'}
+                ${data.pinCode}
+            #{/if}
+            #{if !util.Validation.isEmpty(data.contactNo)}
+                &{'ADDR_PHONE'}
+                ${data.contactNo}
+            #{/if}
+        </address>
+    </span>
+#{/if}

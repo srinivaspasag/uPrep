@@ -1,0 +1,50 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+# Catch all
+GET     /sayHello                   controllers.Application.sayHello(name ?= "Guest")
+GET     /sayHelloFormally           controllers.Application.sayHelloFormally()
+
+#ping
+GET    /application/ping                           controllers.Application.ping()
+
+# this is common controller across all services and will provide information about currently deployed build
+POST	/sysinfo/get				 controllers.SysInfo.getInfo()
+
+POST    /users/authenticateUser                  controllers.Users.authenticateUser()
+POST    /users/addUser                           controllers.Users.addUser()
+POST    /users/updateUsername                    controllers.Users.updateUsername()
+POST    /users/updateUserPassword                controllers.Users.updateUserPassword()
+POST    /users/changeUserPassword                controllers.Users.changeUserPassword()
+POST    /users/updateUser                        controllers.Users.updateUser()
+POST    /users/getUserSelfFullProfile            controllers.Users.getUserSelfFullProfile()
+POST    /users/validateEmail                     controllers.Users.validateEmail()
+POST    /users/resendEmailVerification           controllers.Users.resendEmailVerification()
+POST    /users/unsetEmail                        controllers.Users.unsetEmail()
+POST    /users/sendForgotPasswordMail            controllers.Users.sendForgotPasswordMail()
+POST    /users/updateUserForgottenPassword       controllers.Users.updateUserForgottenPassword()
+POST    /users/acceptTnC                         controllers.Users.acceptTnC()
+POST    /users/uploadProfilePic                  controllers.Users.uploadProfilePic()
+POST    /users/doesUserExists                    controllers.Users.doesUserExists()
+
+POST    /users/getDirectURL			 			controllers.Users.getDirectURL()
+
+POST    /users/subscribeEmail			 		controllers.Users.subscribeEmail()
+POST    /users/unsubscribeEmail			 		controllers.Users.unsubscribeEmail()
+POST    /users/getUnsubscriptions		 		controllers.Users.getUnsubscriptions()
+
+POST    /upgrades/generateCreds			 		controllers.UserUpgrades.generateCredentials()
+
+### for blacklisting emails 
+POST    /blacklists/blacklist		 			controllers.Blacklists.blacklist()
+POST    /blacklists/removeFromBlacklist		 	controllers.Blacklists.removeFromBlacklist()
+POST    /blacklists/getBlacklistInfo		 	controllers.Blacklists.getBlacklistInfo()
+POST    /blacklists/getBlacklistedEmails		controllers.Blacklists.getBlacklistedEmails() 
+
+

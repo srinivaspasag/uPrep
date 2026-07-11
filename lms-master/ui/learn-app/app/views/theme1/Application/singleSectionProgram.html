@@ -1,0 +1,41 @@
+<div class="card pt-inner singleProgram">
+	#{if section.has("thumbnail") && !section.thumbnail.equals(null)}
+		%{thumbnail = section.thumbnail}%
+	#{/if}
+	<div class="pti-header bgm-amber" style="background: url('${thumbnail}');background-repeat: round;">
+		<div class="ptih-title" style="background-color: rgba(0,0,0,0);">${name}</div>
+	</div>
+	<div class="pti-body">
+		<div class="ptib-item">
+			<div class="description">
+				${desc}
+			</div>
+			<!-- <a class='readMore' data-section-id="${section.id}" data-org-id="${packageOrgId}">Read More</a> -->
+		</div>
+		#{if !descriptionPoints.equals(null)}
+		<div class="list-group lg-odd-black">
+			#{list items:0..descriptionPoints.length()-1,as:'descindex'}
+			<div class="text-center f-14 f-300 list-group-item media" style="padding: 12px 0px;">
+				<!-- <i class="zmdi zmdi-check-circle c-green f-20"></i> -->
+				${descriptionPoints.get(descindex)}
+			</div>
+			#{/list}
+		</div>
+		#{/if}
+		<input type="hidden" id="programId" class="programId" value="${program.id}"/>
+		<input type="hidden" id="centerId" class="centerId" value="${center.id}"/>
+		<input type="hidden" id="sectionId" class="sectionId" value="${section.id}"/>
+		<input type="hidden" id="catProgramName" class="catProgramName" value="${name}"/>
+	</div>
+	<div class="pti-footer">
+		<div class="subscription f-14 m-t-20">
+			Duration: <b>${packages.get(index).displayDays}</b>
+		</div>
+		<div class="pricing text-center m-t-20">
+		Rs. ${packages.get(index).costRate.value/100}
+		</div>
+		<div class="btn btn-primary waves-effect buyButton text-center" data-section-id="${section.id}" data-package-days="${packages.get(index).numDays}">
+			Buy Now
+		</div>
+	</div>
+</div>

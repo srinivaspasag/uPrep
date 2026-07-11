@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+T_SCRIPT_DIR=`dirname $0`;
+T_STAGED_DIR=$T_SCRIPT_DIR"/staged";
+
+T_CP_SEPARATOR=":";
+
+#T_CP=`ls $T_STAGED_DIR/* | grep -v "{COMMONS_JAR}" | grep -v "{APP_JAR}" | tr [:space:] $T_CP_SEPARATOR`;
+#T_CP="$T_STAGED_DIR/{APP_JAR}:$T_STAGED_DIR/{COMMONS_JAR}:$T_CP";
+T_CP=`cat "$T_SCRIPT_DIR/vClasspath" | xargs -I F echo "$T_STAGED_DIR/F" | tr [:space:] $T_CP_SEPARATOR`;
+
+echo "CLASSPATH: $T_CP";
+
+#exec java $@ -cp "`dirname $0`/staged/*" play.core.server.NettyServer `dirname $0`/..
+exec java $@ -cp "$T_CP" play.core.server.NettyServer `dirname $0`/..

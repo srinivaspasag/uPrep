@@ -1,0 +1,84 @@
+%{ 
+	documentsData = _document; 
+	caller = _caller == null ? "" : _caller;
+	docUrl = webUtils.TemplateHelper._getDocUrl(documentsData,params.orgId);
+	recordState = documentsData.has("recordState") && !documentsData.recordState.equals(null) ? documentsData.recordState : "ACTIVE";
+}%
+<div class="left relative eachMyContentsDocuments myContentsEachIconItems myContentsEachItem" 
+	data-doc-id="${documentsData.id}" data-entity-type="document" data-entity-id="${documentsData.id}">
+	#{if recordState == "TEMPORARY"}
+	<div class="absolute contentUnavailable">
+		<div class="contentUnavailableMsg">&{'TXT_UNAVAILABLE'}</div>
+	</div>	
+	#{/if}
+	#{elseif caller != "EXT" }
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+		*{#{if documentsData.followType == "NONE"}
+			<a class="right relative smallBlueButton myContentsButtonItem saveDoc" data-doc-id="${documentsData.id}" data-callback-fn="saveBtnCallbackFn">Save</a>
+		#{/if}
+		#{if documentsData.followType == "OWNER"}
+			<a class="right relative smallBlueButton myContentsButtonItem editMyDoc" data-doc-id="${documentsData.id}">Edit</a>
+		#{/if}
+		#{elseif documentsData.followType == "FOLLOWING"}
+			<a class="right relative smallBlueButton myContentsButtonItem unsaveDoc" data-doc-id="${documentsData.id}" data-callback-fn="removeFromMyContentCB">Remove</a>
+		#{/elseif}}*
+                <a class="right relative greenButton doCStream myContentsButtonItem ${docUrl.className}"
+                   data-id="${docUrl.id}" href="${docUrl.url}" data-cs-name="OPEN">Open</a>
+		<div class="right relative myContentsButtonItem nonner">
+			#{widgets.followUnfollowEntity followType:documentsData.followType,entityType:'DOCUMENT',entityId:documentsData.id/}
+		</div>
+		<span class="left absolute myContentsItemInfo"><b>Views - </b>${documentsData.views}</span>
+		<span class="right absolute myContentsShareIt">Share</span>
+	</div>
+	#{/elseif}
+	<span class="left relative documentsIcon">
+	#{if !documentsData.thumbnail.equals(null) && !documentsData.thumbnail.isEmpty()}
+		<img class="relative" alt="no preview" src="${documentsData.thumbnail}"/>
+	#{/if}
+	</span>
+	<div class="left relative myContentsDocumentsDetails">
+		#{if documentsData.has('authorName') && documentsData.authorName!=null &&!documentsData.authorName.isEmpty()}
+		  <span class="left relative big12 boldy myContentsDocumentsText greyTextColor singleLineText"
+			title="${documentsData.name}" >${documentsData.authorName}</span><br/>
+		#{/if}
+		<span class="left relative big12 boldy myContentsDocumentsText blackTextColor singleLineText toolTipTitle"
+			data-title="${documentsData.name}" >
+			#{if caller == "EXT" }
+                		<a class="${docUrl.className} doCStream singleLineText blackTextColor"
+                   			data-id="${docUrl.id}" href="${docUrl.url}" data-cs-name="OPEN">${documentsData.name}</a>
+			#{/if}
+			#{else}
+				<span>${documentsData.name}</span>
+			#{/else}
+		</span><br/>
+		%{
+			boards = documentsData.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   <span class="left relative myContentsTestText" style="width:100%;padding-left:10px;">
+		   #{if boards.length()<=2}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<span style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</span>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+		   	<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+		#{if documentsData.has('user') && documentsData.user!=null}
+                      %{
+                        user=documentsData.user;
+                      }%
+			<span class="left relative myContentsDocumentsText">
+				<span>by </span>
+				#{institute.memberName user : user , classNames : "blueTextColor" /}
+			</span><br/>
+		#{/if}
+	</div>
+</div>	

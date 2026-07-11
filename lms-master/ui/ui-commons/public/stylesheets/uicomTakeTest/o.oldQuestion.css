@@ -1,0 +1,69 @@
+.questionNumber{
+	float:left;
+	position:relative;
+	width:30px;
+	text-align:center;
+	font-size:18px;
+	/*font-weight:bold;*/
+	height:100%;
+	top:7px;
+}
+.questionBody{
+	float:left;
+	position:relative;
+	background-color:#fff;
+	width:495px;
+	border-radius:4px;
+	border:1px solid #ccc;
+}
+.questionBody .questionText{
+	color:#4d4d4d;
+	font-size:14px;
+	padding:5px 0 0 5px;
+	line-height:22px;
+	overflow:hidden;
+	position:relative;
+}
+.questionBody .choices  .eachOpt img,
+.questionBody .questionText img{
+	max-width:100%;
+	cursor:pointer;
+}
+.questionBody .choices{
+	position:relative;
+}
+.questionBody .choices input{
+	float:left;
+}
+.questionBody .eachOptHolder{
+	margin:0 0 5px 5px;
+	width:45%;
+	min-height:25px;
+	position:relative;
+	float:left;
+}
+.questionBody .eachOptHolder.quesOptionsExceeded{
+	width:98%;
+	overflow-x:auto;
+	margin-bottom:20px;
+}
+.questionBody .choices  .eachOpt{
+	position:relative;
+	display:inline-block;
+}
+table.eachOptHolder .eachOpt{
+	width:100%;
+}
+.questionBody .choices .optAlphaCount{
+	padding-right:6px;
+	width:20px;
+}
+.mathJaxPa span{
+    display: inline-block;
+    float: none;
+    left:5px;
+}
+.mathJaxPa .questionBody{
+    display: inline-block;
+    margin-left: 0;
+}

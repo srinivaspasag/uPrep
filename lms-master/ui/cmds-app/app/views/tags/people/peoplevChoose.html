@@ -1,0 +1,27 @@
+    %{
+        vChooseValue=_vChooseValue;
+        vChooseHead=_vChooseHead;
+        pageTarget=_pageTarget;
+    }%
+    <div class="vChoose mcvChoose margLeft10 alignMiddle peopleProfilevChoose" data-value="${vChooseValue}" 
+         data-onchange="onmcvChooseChange changeAddPeopleEls"  data-beforemccall="setCoursesForPeoplePage"
+         data-param-name="targetProfile">
+        #{if pageTarget=="PROGRAM_PAGE"}
+        <div class="vChooseHead">${vChooseHead}</div>
+        #{/if}
+        #{else}
+        <div class="vChooseHead" style="background-color:#FFFFFF">${vChooseHead}</div>
+        #{/else}
+        <div class="vChooseDownIcon"></div>
+        <div class="vChooseDropDown">
+            #{if pageTarget!="PROGRAM_PAGE"}
+            <div class="vChooseOpt" data-value="STUDENT">&{'TXT_STUDENTS'}</div>    
+            <div class="vChooseOpt nonner" data-text="&{'TXT_OFFLINE_USER'}"
+			data-value="OFFLINE_USER">&{'TXT_OFFLINE_USER'}</div>
+            #{/if}
+            <div class="vChooseOpt" data-value="TEACHER">&{'TXT_TEACHERS'}</div>    
+            <div class="vChooseOpt" data-value="MANAGER">&{'TXT_MANAGERS'}</div>
+            <div class="vChooseOpt" data-value="EDITOR">&{'TXT_EDITORS'}</div>
+            <div class="vChooseOpt nonner" data-value="SALESPERSON">&{'TXT_SALESPERSONS'}</div>
+        </div>
+    </div>  

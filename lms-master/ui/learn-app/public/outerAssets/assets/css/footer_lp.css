@@ -1,0 +1,94 @@
+
+/* FOOTER */
+
+.siteAboutOrg {
+    background-color: #292c2f;
+    padding: 15px 0 25px;
+}
+
+.pageHolder1000 {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.siteAboutOrg table td {
+    border-bottom: 1px solid #222;
+}
+
+.alignTop {
+    vertical-align: top;
+}
+
+.siteAboutOrgTitle {
+    color: #cfd0d0;
+    padding-bottom: 5px;
+}
+
+.big14 {
+    font-size: 14px;
+}
+.siteAboutOrgDesc {
+    color: #717274;
+    padding-bottom: 25px;
+    width: 70%;
+}
+
+.big13 {
+    font-size: 13px;
+}
+.padTopBottom15 {
+    padding: 15px 0;
+}
+.spriteImg {
+    background-image: url(../images/siteSprite.png);
+    background-repeat: no-repeat;
+    display: inline-block;
+    font-size: 1px;
+}
+.googlePlayIcon {
+    background-position: -231px -18px;
+    height: 51px;
+    width: 180px;
+}
+.siteGoToOrgBtn {
+    padding: 18px 30px 16px;
+    font-size: 14px;
+    background-color: rgba(255,255,255,0.1);
+    color: #FFF;
+    border-radius: 2px;
+    vertical-align: top;
+    display: inline-block;
+}
+.siteAboutOrg table td {
+    border-bottom: 1px solid #222;
+}
+.siteAboutOrgRightTD {
+    width: 215px;
+}
+.siteFbIcon {
+    background-position: -25px -155px;
+}
+.siteTwitterIcon {
+    background-position: -66px -155px;
+}
+.siteBlogIcon {
+    background-position: -107px -155px;
+}
+.siteYouTubeIcon {
+    background-position: -148px -155px;
+}
+.siteLinkedInIcon {
+    background-position: -25px -197px;
+}
+
+.siteTwitterIcon, .siteBlogIcon, .siteYouTubeIcon, .siteFbIcon, .siteLinkedInIcon {
+    width: 34px;
+    height: 34px;
+    margin-right: 8px;
+}
+
+/*FOOTER */

@@ -1,0 +1,426 @@
+#{stylesheet media:'screen', src:'test/o.postTest.css' /}
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    $(function(){
+        showNoTabSec("TEST");
+    });
+</script>
+#{/if}
+    %{
+        alphabets=['(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'];
+    }%
+<input type="hidden" class="incommingTestId nonner" value='${testIdStr}'/>
+#{if play.mode.name()=='PROD'}
+	<script src="@{'/public/javascripts/test/o.postTest.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/if}
+#{else}
+	<script src="@{'/public/javascripts/test/postTest.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	<script src="@{'/public/javascripts/test/marksheet.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/else}
+#{if data!=null && data.has('name') && data.errorCode.isEmpty()}
+%{
+    resultVisibility='VISIBLE';
+    if(data.has('resultVisibility')&&!data.isNull('resultVisibility')){
+        resultVisibility=data.resultVisibility;
+    }
+    resultVisibilityMessage="Results not available yet. Will update them soon";
+    if(!data.isNull('resultVisibilityMessage')){
+       resultVisibilityMessage=data.resultVisibilityMessage;
+    }
+}%
+<div class="instBasicBg" style="min-height:800px">
+<div id="postTest" class="pageHolderNM">
+#{if data.pdfId!=null && data.has('pdfId') && data.errorCode.isEmpty()}
+    <input type="hidden" class="incommingPdfId nonner" value='${data.pdfId}'/>
+#{/if}
+#{test.testViewLeftBar data : data , testAnalytics : testAnalytics , toppersData : toppersData , testId : testIdStr /}
+#{if testStatus!=null && testStatus.has('testStatus') && testStatus.errorCode.isEmpty()}
+	#{if testStatus.testStatus == "FINISHED"}
+		#{if params.orgId == play.Play.configuration.getProperty("learnpedia.id") && params.targetId != null}
+			<button class="right bigBlueButton retakeTest nonner #{if testStatus.processed == false}disabled#{/if}" style="background: red;" title="#{if testStatus.processed == false } Analytics are currently being generated.Please wait #{/if}">Retake Test</button>
+		#{/if}
+		<!-- Enabling for ANC organization and QA LP Test -->
+		%{
+			buttonPositionClass ="default";
+		}%
+		#{if (params.orgId == "561f82e7e4b04529cf8dcdb2" || params.orgId == "5551bf80e4b053fbc7baf90d") && params.targetId != null}
+		%{
+			buttonPositionClass ="moveDown";
+		}%
+			<span class="right bigBlueButton retakeTest #{if testStatus.processed == false}disabled#{/if}" style="background: red;" title="#{if testStatus.processed == false } Analytics are currently being generated.Please wait #{/if}">Retake Test
+			</span>
+		#{/if}
+		<!-- -->
+		#{if testStatus.processed == false && resultVisibility == "VISIBLE"}
+			<center><span class="redColor boldy margTop10 big14 blocky">Your analytics generation is under process. Kindly wait for few mins.</span></center>
+		#{/if}
+	#{/if}
+	#{elseif testStatus.testStatus == "PAUSED"}
+		<center><span class="testPausedWarning">Your test has been paused,contact admin</span></center>
+	#{/elseif}
+	#{elseif testStatus.testStatus == "RESUMED" && params.targetId != null}
+		<button class="right bigBlueButton resumeTest">Resume Test</button>
+	#{/elseif}
+	#{elseif testStatus.testStatus == "ONGOING"}
+		<center><span class="testPausedWarning">Your test did not get submitted, Please contact admin for further details</span></center>
+	#{/elseif}
+#{/if}
+#{if data.subjectiveTest != null && data.has('subjectiveTest') && data.errorCode.isEmpty()}
+    <input type="hidden" class="subjectiveTest nonner" value='${data.subjectiveTest}'/>
+#{/if}
+#{if testAnalytics!=null && testAnalytics.errorCode.isEmpty() }
+   #{if testAnalytics.result.has("info") && !testAnalytics.result.info.equals(null)}
+	%{
+		info = testAnalytics.result.info;
+		analytics = info.measures;
+	}%
+	#{if resultVisibility == "VISIBLE"}
+		<a href="/Tests/downloadStudentTestAnalyticsSheet?test.id=${testIdStr}&orgId=${params.orgId}&entity.id=${testIdStr}&targetUserId=${params.targetUserId}"class="${buttonPositionClass} printTestReport" target="_blank" title="Print Test Report"><img src="/public/images/download.png"></a>
+	#{/if}
+	<div class="left centerBody bodyWhiteBg">
+		<div class="centerText">
+		%{
+			papers = info.children;
+		}%
+		#{if !papers.equals(null) && papers.length()>0}
+			<div class="vselect vselectHide selectChildrenTest vDropDown" 
+				onstatechange="childrenTestChanged" data-value="" style="margin-top:12px;">
+			   <span class="vSelectHead">
+				<span type="text" class="vSelectText" readonly="readonly">Select Paper</span>
+				<span class="dropDownIcon noUserSelect" ></span>
+			   </span>
+			   <div class="vSelectListHolder">
+				<div class="vSelectList">
+					#{list items:0..papers.length()-1,as:'index'}
+					%{
+						paper = papers.get(index).entity;
+					}%
+					<span class="vSelectEach" 
+						data-value="${paper.id}"
+						data-target-user-role="${params.targetUserRole}"
+						data-target-user-id="${params.targetUserId}">
+						${paper.name.raw()}
+					</span>
+					#{/list}
+				</div>
+			    </div>
+			</div>
+		#{/if}
+		</div>
+		#{if data.has('parentId') && !data.parentId.equals(null) && !data.parentId.isEmpty()}
+		<div class="goToParentTest right">
+                	<a class="openInstTest doCStream big14" data-cs-name="OPEN" data-org-id="${params.orgId}"
+				data-user-role="${params.userRole}" data-test-id="${data.parentId}" 
+				href="/organization/${params.orgId}/test/${data.parentId}">&{'PARENT_TEST'}</a>
+			<span class="instImgs"></span>
+		</div>
+		#{/if}
+	<div class="postTestMainTabs CSWidget" data-widget="POST_TEST_MAIN_TAB_HOLDER"
+		data-default-tab="performance" data-result-visibility='${resultVisibility}'
+                data-result-visibility-message='${resultVisibilityMessage}'>
+		<span class="depthTab doCStream" data-cs-name="TEST_DETAILS_TAB" data-tab-id="testDetails">Test Details</span>
+		<span class="depthTab activeDepthTab doCStream" data-cs-name="Your_Performance_tab" data-tab-id="performance">
+			#{if params.targetUserId==session.userId}Your #{/if}Performance</span>
+		<span class="depthTab doCStream" data-cs-name="YOUR_ANSWER_TAB" data-tab-id="yourAnswer" 
+			#{if info.children.equals(null) || info.children.length()==0}
+				data-test-id="${testIdStr}"
+				data-target-user-id="${params.targetUserId}"
+				data-test-type="${data.mode}"
+			#{/if}>
+			#{if params.targetUserId==session.userId}Your #{/if}Answers</span>
+			<!-- Hide ResultSheet option for student in TRIVIDYAA and Jaikranthi Organization-->
+			#{if params.orgId == "5bacb325e4b0ff57ab848e07" || params.orgId == "5ddf97cde4b0ec3a2c0bb4b1" } 
+			#{/if}
+			#{else}
+		<span class="depthTab doCStream testResultSheetTab" data-cs-name="RESULT_SHEET_TAB" 
+			data-test-id="${testIdStr}" data-tab-id="resultSheet">&{'TXT_RESULT_SHEET'}</span>
+			#{/else}
+			<!-- -->
+	</div>
+
+	<div class="postTestDetails nonner">
+		#{include 'tags/test/viewTestDetails.html'/}
+	</div>
+	<div class="showRatings" style="text-align: center;">
+	#{if ratings !=null && ratings.errorCode.isEmpty() && myOrgInfo!=null}
+        %{
+            ratings = ratings.result;
+            if(myOrgInfo.has('userRole') && myOrgInfo.userRole != null &&
+                myOrgInfo.userRole !=""){
+                userRole = myOrgInfo.userRole;
+            }
+        }%
+        #{if userRole == "STUDENT"}
+            #{institute.ratings entity : data , entityType:"TEST" ,ratings:ratings /}
+        #{/if}
+    #{/if}
+	</div>
+	<div class="relative userScoreBoard">
+        #{if resultVisibility=='VISIBLE'}
+	#{include 'Tests/testTaker.html'/}
+	<div class="left miniBoard CSWidget" data-widget="USER_MINI_SCORE_BOARD">
+		<div class="userRank institute absolute centerText">
+			<div class="boldy bot10">Rank</div>
+			<div class="bot10">
+			<span class="big16 blueTextColor boldy">${(int)testAnalytics.result.rank}</span>
+			#{if testAnalytics.result.has('totalAttempts')}
+				<span class="big14 boldy">/${testAnalytics.result.get('totalAttempts')}</span>
+			#{/if}
+			</div>
+		</div>
+		<span class="userScore left">
+			<span class="boldy left scoreTitle" style="width:100%">Score</span>
+			<span class="big25 blueTextColor boldy left">${Math.round(analytics.score * 100) / 100}/</span><span class="big18 boldy left" style="padding-top:3px;"> ${(int)data.totalMarks}</span>
+		</span>
+		<span class="userScorePercentage scoreInPercentage left relative">
+			%{
+				percentScore = uicom.util.Utilities.calcPercentage(analytics.score,data.totalMarks);
+			}%
+			<span class="right scorePercentVal relative greyTextColor" style="width:${100-percentScore}%;"><span class="left">${percentScore}%</span></span>
+		</span>
+		#{if analytics.has('timeTaken') && analytics.timeTaken!=""}
+		<span class="userTimeTaken left">
+			<span class="boldy">Time Taken</span><br/>
+			%{
+				timeObj=uicom.util.Utilities.getTimeFromMiliSec(analytics.timeTaken);
+                        }%
+			<span class="big16 blueTextColor boldy">${timeObj.hrs}:${timeObj.mins}</span><span class="big14"> hrs</span>
+		</span>
+		#{/if}
+		#{if testAnalytics.result.has("showAIR") && !testAnalytics.result.showAIR.equals(null)}
+			#{if testAnalytics.result.showAIR}
+			<div class="userRank left AIR absolute centerText">
+				<div class="boldy bot10">AIR</div>
+				<div class="bot10">
+				<span class="big14 blueTextColor boldy">${(int)testAnalytics.result.AIR}</span>
+				#{if testAnalytics.result.has('AIAttempts')}
+					<span class="big12 boldy">/${testAnalytics.result.get('AIAttempts')}</span>
+				#{/if}
+				</div>
+			</div>
+			#{/if}
+		#{/if}
+		<div class="left relative miniBoardQuesAHolder">
+			<span class="left boldy big16">Questions</span>
+			<span class="left big12 miniQuesACorrect"><span class="left miniQuesACorrectIndi"></span>% Correct</span>
+			<span class="left big12 miniQuesAPartialCorrect"><span class="left miniQuesAPartialCorrectIndi"></span>% Partial Correct</span>
+			<span class="left big12 miniQuesAIncorrect"><span class="left miniQuesAIncorrectIndi"></span>% Incorrect</span>
+			<div class="left relative miniBoardQuesAnalytics testQuesAnalyticsBar">
+				<div class="left testQuesAnalyticsBarHold" style="right: 30px;position: relative;">
+					
+						#{if data!=null && data.has('isNTAPattern') && data.isNTAPattern == true}
+						%{
+							percentCorrect = uicom.util.Utilities.calcPercentage(analytics.correct,data.maxQuestionsTobeAttempted);
+							percentPartialCorrect = uicom.util.Utilities.calcPercentage(analytics.partial,data.maxQuestionsTobeAttempted);
+							percentIncorrect = uicom.util.Utilities.calcPercentage(analytics.incorrect,data.maxQuestionsTobeAttempted);
+						}%
+						
+
+						#{/if}
+						#{else}
+						%{
+						percentCorrect = uicom.util.Utilities.calcPercentage(analytics.correct,data.qusCount);
+						percentPartialCorrect = uicom.util.Utilities.calcPercentage(analytics.partial,data.qusCount);
+						percentIncorrect = uicom.util.Utilities.calcPercentage(analytics.incorrect,data.qusCount);
+						}%
+						#{/else}
+					
+					<span class="left testQuesAnalyticsBarCorrect" style="width:${percentCorrect}%;" title="${percentCorrect}%"></span>
+					<span class="left testQuesAnalyticsBarPartialCorrect" style="width:${percentPartialCorrect}%;" title="${percentPartialCorrect}%"></span>
+					<span class="left testQuesAnalyticsBarIncorrect" style="width:${percentIncorrect}%;" title="${percentIncorrect}%"></span>
+				</div>
+				<div class="left testQuesAnalyticsCount" style="position: relative;right: 25px;">
+					<span class="left">Correct <b>${analytics.correct}</b></span>
+					<span class="left">Partial Correct <b>${analytics.partial}</b></span>
+					<span class="left">Incorrect <b>${analytics.incorrect}</b></span>
+					<span class="left">Left <b>${analytics.left}</b></span>
+					#{if data!=null && data.has('isNTAPattern') && data.isNTAPattern == true}
+					<span class="left">Total Questions <b>${data.maxQuestionsTobeAttempted}</b></span>
+					#{/if}
+					#{else}
+					<span class="left">Total Questions <b>${data.qusCount}</b></span>
+					#{/else}					
+				</div>
+			</div>
+		</div>
+		<div class="left absolute userScoreBoardBottomBorder"></div>
+	</div>
+	#{if info.has('boards') && !info.boards.equals(null) &&info.boards.length()>0}
+	<div class="left relative detailsScoreBoard">
+		<span class="left fullWidth big16 boldy" style="padding:10px 0 20px 0;text-align:center;">Subject Level Analytics</span>
+		<div class="left detailsScoreBoardHeader">
+			<span class="left subNameScoreBoardHeader boldy">Score</span>
+			<span class="left questionsScoreBoardHeader boldy">Questions</span>
+			<!--<span class="left timeTakenScoreBoardHeader boldy">Time Taken</span>-->
+		</div>
+		<div class="left detailsScoreBoardBody">
+			#{list items:0..info.boards.length()-1,as:'index'}
+                        %{
+                         	subData = info.boards.get(index);
+				subAna = subData.measures;
+			}%
+			<div class="left detailsScoreEachSubject">
+				<span class="big14 boldy detailsScoreSubjectName left">${subData.entity.name}</span>
+				<span class="big14 boldy detailsScoreSubjectScore greyTextColor left"><span class="blueTextColor big16">${subAna.score}/</span>${(int)subData.totalMarks}</span>
+				<span class="userScorePercentage scoreInPercentage left relative">
+					%{ 
+					   percentMarks = uicom.util.Utilities.calcPercentage(subAna.score,subData.totalMarks);
+					}%
+					<span class="right scorePercentVal relative greyTextColor" style="width:${100-percentMarks}%;"><span class="left">${percentMarks}%</span></span>
+				</span>
+				<div class="left relative detailsBoardQuesAnalytics testQuesAnalyticsBar">
+					<div class="left testQuesAnalyticsBarHold">
+						%{
+							percentCorrect = uicom.util.Utilities.calcPercentage(subAna.correct,subData.qusCount);
+							percentPartialCorrect = uicom.util.Utilities.calcPercentage(subAna.partial,subData.qusCount);
+							percentIncorrect = uicom.util.Utilities.calcPercentage(subAna.incorrect,subData.qusCount);
+						}%
+						<span class="left testQuesAnalyticsBarCorrect" style="width:${percentCorrect}%;" title="${percentCorrect}%"></span>
+						<span class="left testQuesAnalyticsBarPartialCorrect" style="width:${percentPartialCorrect}%;" title="${percentPartialCorrect}%"></span>
+						<span class="left testQuesAnalyticsBarIncorrect" style="width:${percentIncorrect}%;" title="${percentIncorrect}%"></span>
+					</div>
+					<div class="left testQuesAnalyticsCount">
+						<span class="left">Correct <b>${subAna.correct}</b></span>
+						<span class="left">Partial Correct <b>${subAna.partial}</b></span>
+						<span class="left">Incorrect <b>${subAna.incorrect}</b></span>
+						<span class="left">Left <b>${subAna.left}</b></span>
+						<span class="left">Total Questions <b>${subData.qusCount}</b></span>
+					</div>
+				</div>
+			</div>
+			#{/list}
+		</div>
+		<div class="left absolute userScoreBoardBottomBorder"></div>
+	</div>
+	#{if !data.has('mode') || (data.has('mode') && data.mode != "OFFLINE")}
+	<div class="left relative topicsScoreBoard">
+		<span class="left relative fullWidth big16 boldy" style="padding:10px 0 20px 0;text-align:center;">Topic Level Analytics</span>
+		<table cellspacing=0 cellpadding=0 class="topicScoreTable">
+			<tr>
+				<th class="borderBottom"><span class="left topicScoreTopicName">Topic Name</span></td>
+				<th class="borderBottom">Score</th>
+				<th class="borderBottom">Questions</th>
+				<th class="borderBottom"></th>
+				<th class="borderBottom"></th>
+				<th class="borderBottom"></th>
+			</tr>
+			#{list items:0..info.boards.length()-1,as:'index'}
+                        %{
+                         	subData = info.boards.get(index);
+			}%
+			<tr> 
+				<td class="noBottomBorder"><span class="left topicScoreSubName blueTextColor big16 boldy">${subData.entity.name}</span></td>
+				<td class="noBottomBorder"></td>
+				<td class="">Total</td>
+				<td class="">Correct</td>
+				<td class="">Incorrect</td>
+				<td class="">Left</td>
+			</tr>
+			#{if subData.has('children') && !subData.children.equals(null) && subData.children.length()>0}
+				#{list items:0..subData.children.length()-1,as:'chIndex'}
+				%{ 
+					childData = subData.children.get(chIndex); 
+					childAna = childData.measures;
+				}%
+				<tr>
+					<td class="noBottomBorder"><span class="left topicScoreTopicName big14 boldy">${childData.entity.name}</span></td>
+					<td class="blueTextColor boldy">${childAna.score}</td>	
+					<td class="boldy">${childData.qusCount}</td>
+					<td class="boldy">${childAna.correct}</td>
+					<td class="redTextColorTest boldy">${childAna.incorrect}</td>
+					<td class="boldy">${childAna.left}</td>
+				</tr>
+				#{/list}
+			#{/if}
+			#{/list}
+		</table>
+		<div class="left absolute userScoreBoardBottomBorder"></div>
+	</div>
+	#{/if}
+	#{/if}
+        #{/if}
+        #{else}
+        <div class="userMessage" style="padding: 150px 0px;background-color: rgb(255, 255, 255); margin-top: 0px;">
+            ${resultVisibilityMessage}
+        </div>            
+        #{/else}
+	</div>
+	  <div class="userQuestionAttemptDetails nonner CSWidget" data-widget="YOUR_ANSWER_HOLDER">
+		%{
+			papers = testAnalytics.result.info.children;
+		}%
+		#{if !papers.equals(null) && papers.length()>0}
+		<div class="centerText" style="padding-top:60px;">
+			<div class="big14 redTextColor">Please select a test-paper to view question attempted in test</div>
+		</div>
+		#{/if}
+	</div>
+	<div class="postTestResultSheet nonner">
+	</div>
+	#{/if}
+	#{else}
+   	<div class="left centerBody bodyWhiteBg">
+		<div class="postTestMainTabs CSWidget" data-widget="POST_TEST_MAIN_TAB_HOLDER"
+			data-default-tab="testDetails" data-result-visibility='${resultVisibility}'
+                data-result-visibility-message='${resultVisibilityMessage}'>
+			<span class="depthTab doCStream activeDepthTab" data-cs-name="TEST_DETAILS_TAB" data-tab-id="testDetails">Test Details</span>
+			<!-- Hide ResultSheet option for student in TRIVIDYAA and Jaikranthi Organization-->
+			#{if params.orgId == "5bacb325e4b0ff57ab848e07" || params.orgId == "5ddf97cde4b0ec3a2c0bb4b1" }
+			#{/if}
+			#{else}
+			<span class="depthTab doCStream testResultSheetTab" data-cs-name="RESULT_SHEET_TAB" 
+				data-test-id="${testIdStr}" data-tab-id="resultSheet">&{'TXT_RESULT_SHEET'}</span>
+			#{/else}
+			<!-- -->
+		</div>
+		<div class="relative postTestDetails">
+			#{include 'tags/test/viewTestDetails.html'/}
+		</div>
+		<div class="postTestResultSheet nonner">
+		</div>
+   	</div>
+	#{/else}
+	#{/if}
+	#{elseif testAnalytics.errorCode=="SCHEDULE_NOT_COMPLETED"}
+		<div class="left centerBody">
+		   <div class="big16 boldy redTextColor" style="padding:30px;">
+			Please wait for the above test schedule to get over	
+		   </div>
+		</div>
+	#{/elseif}
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		try{ 
+			initPostTest();
+		}catch(err){
+			putConsoleError(err);
+		}
+	});
+</script>
+</div>
+*{#{include 'tags/test/leaderBoard.html'/}}*
+#{include 'tags/test/testDetailsPopup.html'/}
+#{/if}
+#{elseif data!=null && !data.errorCode.isEmpty()}
+	#{common.messagePage msgTextColor : "redTextColor" , msg : data.errorMessage /}
+#{/elseif}
+#{else}
+	<div class="bodyWhiteBg">
+		<div class="pageHolderNM" style="height:700px;">
+			#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+			<div class="boldy big14 centerText" style="padding:30px 0;">Test data not available, please try later</div>
+		</div>
+	</div>
+#{/else}
+<script type="text/javascript">
+	$(document).ready(function(){
+	#{if params.orgId != null}
+	    try{
+		if(institute){
+			institute.init();
+		}
+	    }catch(err){}
+	#{/if}
+	});
+</script>

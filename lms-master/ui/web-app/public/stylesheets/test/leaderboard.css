@@ -1,0 +1,71 @@
+.leaderBoardHolderTable{
+margin:6px;
+overflow:hidden;
+min-width:300px;
+}
+.leaderBoardHolderTable td,.leaderBoardHolderTable th{
+text-align:center;
+border-right:1px solid #ccc;
+min-width:50px;
+}
+.leaderBoardHolderTable th{
+border-bottom:1px solid #ccc;
+font-size:14px;
+}
+.leaderBoardHolderTable tr:nth-child(even) {
+background-color: #e7eee7;
+}
+.chooseLeaderBoardMarksPercent{
+width:100px;
+height:100%;
+}
+.chooseLeaderBoardMarksPercent span{
+padding:6px 0 0 22px;
+}
+.chooseLeaderBoardMarksPercent input{
+z-index:2;
+}
+.leaderBoardScrollHolder{
+width:100%;
+overflow:hidden;
+max-height:350px;
+}
+.leaderBoardHeaderTable{
+width:100%;
+z-index:2000;
+background-color:#fff;
+display:none;
+}
+.leaderBoardScrollHolder .icon {
+width: 20px;
+height: 20px;
+border-radius: 10px;
+float: left;
+margin-right: 5px;
+}
+.testTakenSummary{
+width:100%;
+margin:25px 0 0 5px;
+}
+.testTakenSummary .avgTimeTaken,
+.testTakenSummary .attemptCount,
+.testTakenSummary .avgMarks{
+min-width:80px;
+float:left;
+margin-left:5px;
+padding-top:5px;
+color:#686868;
+}
+#instMoreTestToppers{
+	margin:20px 0;
+}
+.instTestToppers{
+	margin-top:50px;
+}
+.testLeadersDetails{
+	visibility:hidden;
+	padding-left:0px;
+}
+.leadersList .eachLeader:hover .testLeadersDetails{
+	visibility:visible;
+}

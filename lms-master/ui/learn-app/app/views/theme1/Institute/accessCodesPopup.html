@@ -1,0 +1,87 @@
+<div class="table-responsive">
+    <table class="table table-bordered" style="border: 3px solid dimgrey;">
+        <thead>
+            <tr style="border-bottom: 2px solid dimgrey;">
+                <th style="border-right: 2px solid dimgrey;">&{'TXT_ACCESS_CODE'}</th>
+                <th style="border-right: 2px solid dimgrey;">&{'INVENTORY_PRODUCT_ITEM'}</th>
+                <th style="border-right: 2px solid dimgrey;">&{'payment.ORDER_ID'}</th>
+                <th>&{'INVENTORY_BUYING_POINT'}</th>
+            </tr>
+        </thead>
+        #{if resp!=null && resp.errorCode.isEmpty() && resp.result.accessCodes.list.length()>0}
+        %{
+            dataList = resp.result.accessCodes.list;
+        }%
+            #{list items:0..dataList.length()-1,as:'index'}
+            %{
+                data = dataList.get(index);
+                items = data.items;
+            }%
+                <tbody>
+                    <tr>
+                        <td class="text-center f-16"><b>${data.code}</b></td>
+                        <td>
+                        #{if items.length()>0}
+                            #{list items:0..items.length()-1,as:'index'}
+                                %{ item = items.get(index); info = item.info; }%
+                                #{if !info.equals(null)}
+                                    <div class="f-15" style="text-align: left;">
+                                        &{'ENTITY_NAME_'+item.entity.type}: <b>${info.name}</b>
+                                        #{if info.has("costRate") && !info.costRate.equals(null)}
+                                        %{
+                                            costRate = info.costRate;
+                                            costValue = 0;
+                                            if(costRate.has("currencyCode") && !costRate.currencyCode.equals(null)){
+                                                currency = util.Utilities._getCurrencyByCode(costRate.currencyCode);
+                                            }
+                                            if(costRate.has("value") && !costRate.value.equals(null)){
+                                                if(costRate.value>0){
+                                                        costValue = costRate.value/100;
+                                                }
+                                            }
+                                        }%
+                                        <div class="pull-right f-14 c-blue">
+                                            <b>${currency.symbol}</b>${costValue}
+                                        </div>
+                                        #{/if}
+                                    </div>
+                                    <div class="f-13" style="text-align: left;">&{'USED_STATUS'} : 
+                                        #{if item.verified == true}
+                                            <span class="f-13 c-green"><b>&{'USED_STATUS_CONSUMED'}</b></span>
+                                        #{/if}
+                                        #{else}
+                                            <span class="f-13 c-red"><b>&{'USED_STATUS_UNUSED'}</b></span>
+                                        #{/else}
+                                    </div>
+                                #{/if}
+                                #{else}
+                                    <div class="text-center c-grey">&{'TXT_NA'}</div>
+                                #{/else}
+                            #{/list}
+                        #{/if}
+                        </td>
+                        <td>
+                            #{if !data.orderId.equals(null)}
+                                <a class="pull-right" href="/order/${data.orderId}" target="_blank">${data.orderId}</a>
+                            #{/if}
+                            #{else}
+                                <small class="text-center c-gray">&{'TXT_UNAVAILABLE'}</small>
+                            #{/else}
+                        </td>
+                        <td>
+                            <div class="f-14"><b>${data.sellerInfo.pointOfSale}</b></div>
+                            <div>(<span class="f-12" style="color: #666;">&{'REF_NO'}</span>:<span style="color: #333;"><b>${data.sellerInfo.sellerReferenceNo}</b></span>)</div>
+                        </td>
+                    </tr>
+                </tbody>
+            #{/list}
+        #{/if}
+        #{else}
+            <tbody>
+                <tr>
+                     <td colspan=4>&{'NO_item_FOUND',"Access Codes"}</td>
+                </tr>
+            </tbody>
+        #{/else}
+    </table>
+</div>

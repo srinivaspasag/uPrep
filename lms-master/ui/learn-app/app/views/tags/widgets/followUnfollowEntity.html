@@ -1,0 +1,18 @@
+%{
+    followType=_followType;
+    entityId=_entityId;
+    entityType=_entityType;
+    if(_callback!=null)callback=_callback;
+    else callback='';
+    if(_saveText!=null)saveText=_saveText;
+    else saveText='Save';
+    unsaveText='Un'+saveText.toLowerCase();
+}%
+#{if followType=='NONE'||followType=='FOLLOWER'}
+    <span class="followEntity btn btn-success waves-effect doCStream" data-entity-id="${entityId}" data-cs-name="FOLLOW_${entityType}_BTN"
+          data-entity-type="${entityType}" data-callback="${callback}">${saveText}</span>
+#{/if}
+#{elseif followType=="FOLLOWING"||followType=="BOTH_WAYS"}
+    <span class="unfollowEntity btn btn-danger waves-effect doCStream" data-entity-id="${entityId}" data-cs-name="UNFOLLOW_${entityType}_BTN"
+          data-entity-type="${entityType}" data-callback="${callback}">${unsaveText}</span>
+#{/elseif}

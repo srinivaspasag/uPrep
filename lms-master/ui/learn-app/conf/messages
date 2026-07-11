@@ -1,0 +1,416 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+signup.FIRST_NAME = Full Name
+signup.CONFIRM_PWD = Confirm Password
+signup.PWD = Password
+signup.COURSE = Course
+signup.CONTACT_NO = Contact Number
+signup.OTP = OTP
+signup.SIGNUP_CAPS = SIGNUP
+signup.REFERRAL = Referral Code
+signup.PROMO = Promo Code
+login.SIGNIN = Login
+login.SIGNIN_CAPS = LOGIN
+INVALID_CREDENTIAL=There was some error.Refresh the page and try again.
+NOT_REGISTERED=You are not registered.Please sign up.
+login.INVALID_PASSWORD=Password is incorrect!
+login.INVALID_USERNAME=Either the username or password is incorrect.
+login.INVALID_MEMBERID=Either the member-id or password is incorrect.
+login.INVALID_DATE_FORMAT = Date entered by you is not in proper format.
+login.INVALID_EMAIL = Invalid Email Id. Please try again.
+login.BLANK_FIELD = Fields cannot be empty.
+login.BLANK_FIELD_ORG = Please provide us with your institute name.
+login.CHECK_MAILBOX = Your reset password link had been sent to your E-Mail address.
+login.UNKNOWN_USER = User not found!
+login.USER_NOT_VERIFIED = Email Id not verified, check your mail inbox for verification mail from us.
+login.UNKNOWN_ERROR = Unknown Error, please try later.
+login.AUTHENTICATION_FAILED=Login credentials provided are incorrect.
+login.NULL_RESPONSE=Something went wrong.Refresh the Page and try again.
+login.MISSING_PARAMETERS = You forgot to provide some field.
+login.INVALID_ACCESS_CODE = Access Code entered by you is In-Correct, please contact your Instructor.
+login.USER_ALREADY_EXISTS = User Already exist in system, registred with the same EmailID.
+login.ORG_SIGNUP_NOT_SUPPORTED = Signup not allowed from this organization.
+#Wrong Password
+login.WRONG_PASSWORD_TITLE = Your Login ID and Password did not match
+login.WRONG_PASSWORD_CHECK = Check for the following
+login.FIRST_LOGIN_B = 1. First Login?
+login.FIRST_LOGIN_MSG = Make sure you have used the following format
+login.EMAIL_LOGIN_B = 2. If you have made your Email as Learnpedia Login ID,
+login.EMAIL_LOGIN_MSG = make sure you are using your correct Email in the LoginID field
+login.WRONG_FORGOT_PASS_B = 3. Did you forget your password?
+login.WRONG_FORGOT_PASS_MSG = click on the 'Forgot Password' link on the Login screen.
+login.CONTACT_ADMIN = For further queries, please contact your Institute Administrator.
+login.INVALID_VERIFICATION_CODE = It seems that you have taken a long time to reset your password.Request for resetting your password again.
+login.INVALID_ID = You are not a registered member with us.
+login.PWD_MISMATCH = Password mis-match
+login.PWD_MIN_FIVE_CHAR = Password should be of minimum 5 characters.
+login.RETRY_RESET_PASS = Please try reset password again or
+login.MEMBER_IS_BLOCKED = Sorry, your account is currently de-activated. Please contact your Organization Administrator.
+MY_MSG = My Messages
+#Common Texts
+TXT_NOTIFICATIONS = Notifications
+TXT_SEE_ALL = See All
+
+#MESSAGES
+NEW_MSG = New Message
+MY_MSG = My Messages
+CREATE_MSG_TITLE_PLACEHOLDER = Type name/s
+CREATE_MSG_SUB_PLACEHOLDER = Type Subject
+YOUR_INBOX = Message Inbox
+YOUR_SENT = Sent by you
+NO_RECENT_MSGS = No Recent Messages.
+TXT_CONV_MEMBERS = In this conversation
+CONV_MSG_REPLY = Add a reply
+TXT_UNREAD_MSGS = unread messages
+TXT_SEND_MSG = Send message
+
+TXT_ACTIVITY = RECENT ACTIVITY
+TXT_ANALYTICS = ANALYTICS
+TXT_LIBRARY = DIGITAL LIBRARY
+TXT_DOUBTS_FORUM = DOUBTS FORUM
+TXT_MANAGE_CONTENT = MANAGE CONTENT
+TXT_PROGRAMS_CAPS = PROGRAMS
+
+#AccessCodes
+TXT_ACCESS_CODE = Access Code
+INVENTORY_PRODUCT_ITEM = Product / Item
+payment.ORDER_ID = Order Id
+INVENTORY_BUYING_POINT = Buying Point
+NO_item_FOUND = No %s found
+USED_STATUS = Consumption Status
+USED_STATUS_CONSUMED = Consumed
+USED_STATUS_UNUSED = Not Consumed
+
+#ENTITY TYPE TO TEXT
+ENTITY_NAME_CMDSTEST = Test
+ENTITY_NAME_CMDSASSIGNMENT = Assignment
+ENTITY_NAME_CMDSVIDEO = Video
+ENTITY_NAME_CMDSDOCUMENT = Document
+ENTITY_NAME_CMDSRESOURCE = Resource
+ENTITY_NAME_CMDSQUESTION = Question
+ENTITY_NAME_CMDSQUESTIONSET = Question Set
+ENTITY_NAME_SECTION = Section/Class
+ENTITY_NAME_SDCARD = SD Cards
+ENTITY_NAME_SDCARDGROUP = SD Card Group
+ENTITY_NAME_CMDSMODULE = Module
+
+TXT_NA = Not Applicable
+TXT_NAV = Not Available
+TXT_UNAVAILABLE = Un-Available
+REF_NO = Ref. Number
+
+#slides text
+login.SLIDES_TEXT_1 = Learnpedia combines interactive <b>game-learning</b> with rigorous analytics. Use Challenges feature on Learnpedia to run questions in a game-like environment. Supported with <b>hints</b> and <b>solutions</b>, these Challenges really make learning a lot more fun!
+login.SLIDES_TEXT_2 = Anyone can <b>ask and answer</b> questions on Learnpedia. Using Doubts feature, collaborative problem solving continues long after the class is over. Learnpedia makes it extremely easy to add <b>complex formulae</b> and using <b>image upload</b> feature, teachers can simply click a pic of their whiteboards with solution and upload for the students to refer to.
+login.SLIDES_TEXT_3 = New social learning tools available on Learnpedia enable you and your students to <b>engage</b> and <b>collaborate</b> on any academic subject. Learnpedia helps you stay connected beyond the classroom.
+login.SLIDES_TEXT_4 = Results on Learnpedia go a step beyond just displaying the regular marks and ranks. Learnpedia's intelligent <b>algorithms</b> give students their detailed <b>strength, weakness</b> analysis based on their attempt pattern across multiple Tests.
+
+TXT_RECENT_ACTIVITY = Recent Activity
+PASTE_WEB_LINK = Copy & Paste web-page link here
+PASTE_VIDEO_LINK = Copy and Paste video link here
+NOT_VALID_VIDEO_URL = Not a valid video url
+NOT_VALID_EXT_URL = Might not be a valid url
+IMG_NOT_UPLOADED = Image not uploaded, please try later
+IMG_NOT_SUPPORTED = Image type not supported by our system. Try jpeg,jpg,png,bmp images only.
+CREATE_SHR_PLACEHOLDER = Start a discussion or share an update, thought, video ...
+
+#INVOICE
+#--------------------------------
+INVOICE_ITEM_PLAN = Plan
+INVOICE_ITEM_TABLET = Tablet
+INVOICE_ITEM_CONTENT = Content
+INVOICE_ITEM_SECTION = Program
+INVOICE_ITEM_SDCARDGROUP = SD-Card Group
+
+INVOICE_PAYMENT_STATE_UNPAID = Due
+INVOICE_PAYMENT_STATE_PAID = Paid
+INVOICE_PAYMENT_STATE_PROCESSING = Processing
+INVOICE_SHIP_TO = Ship To
+INVOICE_BILL_TO = Bill To
+
+#INVENTORY
+#-------------------
+SELLER_DASHBOARD = Seller Dashboard
+ORDERS_PAGE = Orders
+INVENTORY_PAGE = Access Codes
+SHIPMENTS_PAGE = Shipments
+INVENTORY_PRODUCT_ITEM = Product / Item
+INVENTORY_SELLING_POINT = Selling Point
+INVENTORY_BUYING_POINT = Buying Point
+INVENTORY_SELLING_REF = Selling Reference Number
+INVENTORY_STATE = Shipment status
+INVENTORY_NO_RECORDS_FOUND = No records found
+INVENTORY_CREATE_BTN_TXT = New Entry
+REF_NO = Ref. Number
+SHIPMENT_STATUS_NOT_DISPATCHED = Not Shipped
+SHIPMENT_STATUS_DISPATCHED = Shipped
+SHIPMENT_STATUS_RECEIVED = Received
+SHIP_TO_SAME_BILL_TO = Same as billing address
+SHIPMENT_ADDRESS = Shipment Address
+ALLOWED_DEVICE_ID = Allowed Devices
+VIEW_DEVICE_IDS = View Devices
+
+TXT_TO = To
+
+#ADDRESS
+ADDR_ADDRESS = Address
+ADDR_STATE = State
+ADDR_COUNTRY = Country
+ADDR_PIN = Pin Code
+ADDR_CITY = City
+ADDR_PHONE = Phone
+
+#Settings
+settings.TITLE = Account Settings
+settings.ABOUT_APP = About App
+settings.BUILD_VER = Build Version
+settings.MY_ACCESS_CODES = My Access Codes
+settings.LOGINID = Login-ID
+settings.EMAIL_LOGINID = Email as Login-ID
+settings.CURR_PASSWORD = Enter Current Password
+settings.NEW_PASSWORD = Enter New Password
+settings.REENTER_NEW_PASSWORD = Re-Enter New Password
+settings.MSG_1 = You can login using your Institute-ID
+settings.MSG_3 = You can now login using your Email-ID only
+settings.SERVICE_MSG_PWD_NOT_MATCH = Password does not match
+settings.SERVICE_MSG_CURR_PWD_NOT_MATCH = Current Password does not match
+settings.SERVICE_MSG_CHNG_PWD_SUCCESS = Password changed successfully
+settings.SERVICE_ERROR = Please try again
+settings.SERVICE_MSG_PWD_LENGTH_ERROR = Password field should be of minimum 5 character
+settings.EMAIL = Email
+settings.REGISTER_EMAIL = Register Email-ID
+settings.MSG_2 = Registering your email will keep you notified on activities happening in the system.\n \n Once registered , you can also use it as login ID.
+settings.EMAIL_VERIFICATION_LINK_SEND = A email verification link will be sent on this Email-Id.
+settings.RESEND_VERIFICATION_LINK = Resend Verification Link
+settings.EMAIL_VERIFICATION_LINK_SENT = Email Verification Link sent, check your mail account and revisit here.
+settings.USE_EMAIL_AS_LOGIN = Use as Login-ID
+settings.USE_EMAIL_AS_LOGIN_MSG = Note: You can now login ONLY using your E-mail ID. Login with Institute ID is no longer valid.
+settings.USE_EMAIL_AS_LOGIN_SUCCESS = Your Login Id Successfully Changed!
+settings.YOU_ARE_UNSUBSCRIBED_EMAIL = Currently you are unsubscribed for email notifications from Learnpedia.
+settings.YOU_ARE_SUBSCRIBED_EMAIL = Currently you are subscribed for email notifications from Learnpedia.
+settings.SUBSCRIBE_BTN = Subscribe Now
+settings.UNSUBSCRIBE_BTN = Unsubscribe
+login.PASSWORD = Password
+login.CHNG_PASSWORD = Update Password
+
+#SIMPLE TEXT
+TXT_NAME = Name
+TXT_MY_PROFILE = View Profile
+TXT_MY_PROGRAMS = MY PROGRAMS
+TXT_LOGOUT = Logout
+TXT_NOT_VERIFIED = Not Verified
+TXT_VERIFIED = Verified
+TXT_ADD = Add
+TXT_CHANGE = Change
+TXT_CLOSE = Close
+BTN_ADD_FORMULA = Add Formula
+BTN_ADD_IMAGE = Add Image
+BTN_REG_NOW = Register Now
+TXT_REMIND_LATER = Remind me later
+TXT_DESCRIPTION = Description
+TXT_DOWNLOAD = Download
+TXT_CANCEL = Cancel
+TXT_DELETE = Delete
+TXT_SAVE = Save
+TXT_RESET = Reset
+login.PLACEHOLDER_USERNAME = Enter email-id
+
+#PROFILE
+ROLE_STUDENT = Student
+ROLE_TEACHER = Teacher
+ROLE_MANAGER = Manager
+ROLE_PARENT = Parent
+ROLE_EDITOR = Editor
+POST_REMARK_FOR_USER = Post a remark for your student
+PROFILE_DATA_NOT_PROVIDED = Not Provided
+PROFILE_REGISTER_CONTACT_NUMBER = Register
+PROFILE_VERIFY_CONTACT_NUMBER = Verify
+PROFILE_REGISTER_EMAIL = Register
+PROFILE_EMAIL_NOT_VERIFIED = Verify
+member_MEMBER_INFO = %s's Organization Member info
+QUESTION_ATTEMPTED_INFO = The count shows questions attempted in all the tests.
+
+#INSTITUTE
+IMG_NA = Image not available
+TXT_UPLOAD_IMG = Upload Image
+TXT_CHANGE_IMG = Change Image
+CHOOSE_YOUR_INSTITUTE = Choose your Institute
+NOT_VALID_VIDEO_URL = Not a valid video url
+NOT_VALID_EXT_URL = Might not be a valid url
+VALID_VIDEO_URL_DOMAIN = We support youtube,vimeo video links.
+VIDEO_EMBED_PERMISSION_NA = Video embed and play permissions not available from owner. Try posting it as a link.
+NO_DOUBT = No Doubts found
+NO_DOUBT_FOLLOWED = You are not following any doubts
+HAVE_DOUBT = Have a doubt
+ASK_DOUBT_CAPTION = Resolve your doubts by asking them to your peers and teachers. The more specific the question, the better.
+ASK_HERE = ask here
+SUB = Subject
+POPULAR_TOPICS = Popular Topics
+POPULAR_SUBS = Popular Subjects
+ENTITY_AGE = %s ago
+INST_DOUBT_ANSWERS = Answers
+INST_DOUBT_UPVOTES = Upvote
+INST_DOUBT_REPLIES = Replies
+INST_DOUBT_REPLY = Reply
+INST_DOUBT_FOLLOWERS = <span class='count'>%s</span> Followers
+INST.ASK_DOUBT = Ask a Doubt
+ASK_DOUBT_TITLE_PLACEHOLDER = Describe your doubt in brief 
+SIM_DOUBTS = Similar Doubts
+SIM_TOPICS = Similar Topics
+VIEW_MORE = View more...
+IMG_NOT_UPLOADED = Image not uploaded, please try later
+IMG_NOT_SUPPORTED = Image type not supported by our system. Try jpeg,jpg,png,bmp images only.
+NO_RECENT_ACTIVITY = No recent activity available
+ACTIVITY_UNAVAILABLE = Activity feed requested is un-available currently.
+UNABLE_TO_SHARE_ACTIVITY = Unable to share activity, please try later.
+SHARED_SUCCESSFULLY = Sharing was successful
+WRITE_COMMENT = Write a comment...
+LOAD_MORE_FEEDS = Load More Feeds
+NO_MORE_FEEDS = No more recent activity available
+CHOOSE_YOUR_INSTITUTE = Choose your Institute
+CREATE_SHR_PLACEHOLDER = Start a discussion or share an update, thought, video ...
+PASTE_WEB_LINK = copy & paste web-page link here
+PASTE_VIDEO_LINK = copy and paste video link here
+TEST_RESULT_GRAPH = Test Result Graph
+AVG_TEST_SCORE = Average Test Score
+RESULT_ANALYTICS = Result Analytics
+WATCH_VIDEO_IN_site = Watch the video in %s
+NEW_ENTITY_PUBLISHED = New %s added to your library. Have a look!!
+TXT_TESTS = Tests
+TXT_ATTEMPTED = Attempted
+TXT_QUES = Questions
+TXT_AVERAGE = Average
+TXT_SCORE = Score
+TXT_SPEED = Speed
+TXT_ACCURACY = Accuracy
+TXT_BATCH = Program
+TXT_CENTER = Center
+TXT_SECTION = Section
+TXT_UPVOTED = Liked
+TXT_UPVOTE = Like
+TXT_CATEGORY_CAPS = CATEGORY
+microsite.JOIN_CAPS = FREE
+CHOOSE_SUBSCRIPTION = Choose a subscription:
+TXT_COURSES = Courses
+microsite.SIGNUP_NOW = SIGN UP NOW
+microsite.JOIN_NOW = JOIN NOW
+microsite.BUY_NOW = BUY NOW
+microsite.PROCEED = PROCEED
+microsite.ALREADY_PART_OF_PROG = Ah! You are already part of this program
+payment.success = Payment was success
+payment.failed = Payment failed to process.
+payment.cancelled = Payment was cancelled.
+payment.TXT_PAYMENT_INFO = Payment Info
+payment.ORDER_ID = Order Id
+payment.TOTAL_AMOUNT = Total Amount
+payment.AMMOUNT_PAID = Ammount Paid
+payment.PAYMENT_DATE = Payment Date
+payment.FREE_PROGRAM = Payment info not found! It is a free program.
+payment.PAYMENT_RETRY_FAILED = Retry payment process failed! Please contact your organization admin refering the 'Order Id' = %s.
+payment.NOT_A_WEB_TRANSACTION = The transaction for order Id '%s' is not originated from web devices, Its from your mobile/tablet device, please visit there to retry!
+payment.PLEASE_NOTE_BELLOW_INFO = Please note the following information regarding your transaction.
+payment.CONTACT_EMAIL = info@learnpedia.in
+payment.PROCEED = PROCEED
+payment.CONFIRM_EMAIL = Confirm your communication Email-ID
+payment.NO_REFRESH_CLOSE = > Please do not press browser refresh / back button during payment process. It will cancel the transaction.
+payment.CONFIRM_EMAIL_PLACEHOLDER = Email-Id for transaction status and invoice.
+AWAITING_PAYMENT = WAITING
+payment.COUPON_CODE = Coupon code
+payment.APPLY = Apply
+payment.ENTER_COUPON_CODE_PLACEHOLDER = Enter Coupon code
+TXT_EMAIL = Email
+TXT_CONTACT = Contact
+TXT_FREE = FREE
+TXT_VISIT_LIBRARY = Go to Library
+TXT_OK = OK
+
+#Org Error Codes
+ORGANIZATION_ALREADY_EXISTS = Organization Already Exist.
+ORGANIZATION_NOT_FOUND = Organization not found.
+ORGANIZATION_ALREADY_APPROVED = Organization already approved.
+ORGANIZATION_MEMBER_NOT_FOUND = Organization Member not found.
+ORGANIZATION_MEMBER_ALREADY_EXISTS = Organization Member Already Exist.
+ORGANIZATION_MEMBER_MAPPING_NOT_FOUND = Organization Member not mapped properly.
+ORGANIZATION_MEMBER_MAPPING_ALREADY_EXISTS = Organization Member's same mapping already exist.
+ORGANIZATION_CENTER_NOT_FOUND = Organization Center not found.
+ORGANIZATION_CENTER_ALREADY_EXISTS = Organization Center Already Exist.
+ORGANIZATION_DEPARTMENT_NOT_FOUND = Organization department not found.
+ORGANIZATION_DEPARTMENT_ALREADY_EXISTS = Organization department already exist.
+ORGANIZATION_PROGRAM_NOT_FOUND = Organization program not found.
+ORGANIZATION_PROGRAM_ALREADY_EXISTS = Organization program already exist.
+ORGANIZATION_PROGRAM_CENTER_NOT_FOUND = Organization center not found for the selected program.
+ORGANIZATION_PROGRAM_CENTER_ALREADY_EXISTS = Organization center already exist for the selected program.
+ORGANIZATION_PROGRAM_SECTION_NOT_FOUND = Organization section not found for the selected program.
+ORGANIZATION_PROGRAM_SECTION_ALREADY_EXISTS = Organization section already exist for the selected program.
+ORGANIZATION_USER_ASSOCIATION_NOT_FOUND = User is not associated with the organization.
+STUDENT_FILE_UNPARSEABLE = Student file failed to parse.
+UNABLE_TO_CREATE_ORGANIZATION = Unable to create asked organization.
+ORGANIZATION_MISSING_MEMBER_ID_AND_EMAIL = Please provide with either Email-Id or Institute Id. This is used to generate login credentials for the member.
+ORGANIZATION_MEMBER_ID_PATTERN_NOT_ALLOWED = This pattern of institute id is not allowed.(Reserved pattern)
+
+NO_DOUBT = No Doubts found
+NO_DOUBT_FOLLOWED = You are not following any doubts
+HAVE_DOUBT = Have a doubt
+ASK_DOUBT_CAPTION = Resolve your doubts by asking them to your peers and teachers. The more specific the question, the better.
+ASK_HERE = ask here
+ASK_DOUBT = Ask a Doubt
+TXT_RECENT = Recent
+TXT_POPULAR = Popular
+TXT_FOLLOWING = Following
+TXT_ASKED = Asked
+TXT_SEARCH = Search
+TXT_STUDENTS = Students
+TXT_TEACHERS = Teachers
+LOAD_MORE_item = Load More %s
+ENTITY_NAME_TEST = Test
+ENTITY_NAME_DOCUMENT = Document
+ENTITY_NAME_VIDEO = Video
+ENTITY_NAME_ASSIGNMENT = Assignment
+ENTITY_NAME_FILE = File
+ENTITY_NAME_QUESTION = Question
+
+ENTITY_NAME_SOLUTION = Solution
+ENTITY_NAME_REMARK = Remark
+ENTITY_NAME_COMMENT = Comment
+ENTITY_NAME_CHALLENGE = Challenge
+ENTITY_NAME_STATUSFEED = Post
+ENTITY_NAME_DISCUSSION = Doubt
+ENTITY_NAME_MODULE = Module
+#PROFILE
+MEMBER_PROFILE_TEACHER = Teacher
+MEMBER_PROFILE_MANAGER = Manager
+MEMBER_PROFILE_EDITOR = Manager
+MEMBER_PROFILE_STUDENT = Student
+#TEST
+test.NO_CORRECT = %s correct
+test.NO_INCORRECT = %s Incorrect
+test.TYPE_OFFLINE = Offline
+test.TYPE_ONLINE = Online
+test.TYPE_ASSIGNMENT = Assignment
+test.TYPE_TEST = Test
+test.QUES_BELONG_TO_MULTI_TOPICS = Note: Some of the questions might belong to more than 1 topics.
+btn.VIEW_ATTEMPTS = View Attempts
+TXT_PROGRAMS = Programs
+TXT_MY_ORDERS = My Orders
+TXT_VISIT_LIBRARY = Go to Library
+
+USED_STATUS_CONSUMED = Consumed
+USED_STATUS_UNUSED = Not Consumed
+NO_TEST = No Tests Found
+NO_TEST_ATTEMPTED = No Test Attempted
+NO_DOCS = No Documents Found
+NO_PLAYLIST = No Playlist Found
+NO_VIDS = No Videos Found
+NO_MODULES = No Modules Found
+
+#DISCUSSION / DOUBT ERROR
+DISCUSSION_NOT_FOUND = Doubt not found.
+COMMENT_NOT_FOUND = Comment not found.
+COMMENTING_NOT_ALLOWED = Commenting not allowed here.
+QUESTION_OPTION_UNSPECIFIED = Question options not specified.
+NO_SIMILAR_QUESTIONS = No Similar Questions
+TXT_ALL = All
+TXT_TITLE = Title
+TXT_DOUBT = Doubt
+TXT_TAGS = Tags

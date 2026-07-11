@@ -1,0 +1,14 @@
+#{if tests==null||(tests.has('errorCode')&& tests.errorCode!='')||!tests.has('errorCode')}
+    <script type="text/javascript">
+        showError(COMMON_ERROR_MESSAGE);
+    </script>
+#{/if}
+#{else}
+%{
+    tests=tests.result.tests;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+    target=params.target;
+}%
+#{test.testTileItems tests:tests,loadMoreSize:loadMoreSize,target:target/}
+#{/else}

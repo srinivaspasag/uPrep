@@ -1,0 +1,16 @@
+%{
+    packages=packages.result.packages;
+}%
+#{if packages.length()>0}
+#{list items:0..packages.length()-1,as:'i'}
+%{
+    packageItem=packages.get(i);              
+}%
+<div class="vRadioItem">
+    <div class="vRadio" data-value="${packageItem.packageId}" 
+         data-folder-id="${packageItem.folderIds.get(0)}">
+        ${packageItem.name}
+    </div>
+</div>                
+#{/list}
+#{/if}

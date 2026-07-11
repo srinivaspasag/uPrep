@@ -1,0 +1,111 @@
+#{if playlist==null||(playlist.has('errorCode')&& playlist.errorCode!='')||!playlist.has('errorCode')}
+    <script type="text/javascript">
+        showError(COMMON_ERROR_MESSAGE);
+    </script>
+#{/if}
+#{else}
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    showNoTabSec("PL_VIEW");
+</script>
+#{/if}
+#{stylesheet media:'screen', src:'playlist.css' /}
+%{
+    PL=playlist.result;
+    PLId=PL._id;
+}%
+<div id="PLViewPage" data-pl-id="${PLId}">
+    <div class="nonner fullScreen_PL_VIEW_TopBar"></div>
+    <div class='DTPL1002'>
+        <div class='DTPLLeft'>
+            <div class="DTPLLeftBody CSWidget" data-pl-id="${PLId}" data-widget="LEFT_BAR">
+                <div id="DPLSImgHider" class="nonner">
+
+                </div>
+    <!--            <a class="fullScreen_PL_VIEW_TOCHead">Table of Contents</a>-->
+                #{docPL.leftSecDetails docPL:PL,entityType:"PLAYLIST",docPLId:PLId /}
+                <div class="margTop20 CSWidget" data-widget="CONTENT_NAVIGATIONS_TAB">
+                    <span class="leftSecTab leftSecActiveTab showPLContents doCStream" 
+			data-cs-name="LIST_CONTENT_TITLE">Contents</span>
+                    <label class="leftSecTabPipe">|</label>
+                    <span class="leftSecTab showPLInfo doCStream" data-cs-name="LIST_INFO">Info</span>
+                    <label class="leftSecTabPipe">|</label>
+                    <span class="leftSecTab showPLReviews doCStream" data-cs-name="LIST_REVIEWS">Reviews</span>
+                </div>
+                <div id="leftSecContent" class="CSWidget" data-widget="CONTENT_TITLE_LIST">
+                    <div id="DPLSTOC" class="PLTOC PLContentDiv" rel="${PLId}">
+                        <div class="PLTOCHeading">Table of Contents</div>
+                        #{if PL.topics.length()>0}
+                            #{list items:0..PL.topics.length()-1,as:'i'}
+                                %{
+                                    topic=PL.topics.get(i);
+                                }%
+                                <div class="PLTOCTopic ${i_isFirst ? 'activePLTopic' : ''}">
+                                    <div class="boldy PLTTNameDiv doCStream" rel="${topic._id}" lang="PLTOCTOPIC" 
+					data-cs-name="CONTENT_TITLE">
+                                        <label class="PLTTNo margRight5">${i+1}</label>.
+                                        <span class="PLTTName">${topic.heading}</span>
+                                    </div>
+                                    %{
+                                        secs=topic.sections;
+                                    }%
+                                    #{if secs.length()>0}
+                                         #{list items:0..secs.length()-1,as:'j'}
+                                            %{
+                                                sec=secs.get(j);
+                                                if(sec.has('secType'))secType=sec.secType;
+                                                else secType='';
+                                            }%
+                                            #{if sec.has('_id')}
+                                                <div class="PLTOCSec activatePLTOCSec doCStream" rel="${sec._id}" 
+							lang="PLTOCSEC" data-cs-name="CONTENT_SECTION_NAME">
+                                                    <span class="PLSecHeadIcon PLSecHeadIcon${secType}"></span>
+                                                    <span class="headName">${sec.heading}</span>
+                                                </div>
+                                            #{/if}
+                                        #{/list}
+                                    #{/if}
+                                </div>
+                            #{/list}
+                        #{/if}
+                        #{else}
+                            <div class="userMessage">No contents in this Playlist</div>
+                        #{/else}
+                        <div class="cleaner_with_divider">&nbsp;</div>
+                    </div>
+                    <div id="DPLSInfo" class="PLContentDiv nonner">
+                        <div class="PLInfoTagTree">
+                            #{if PL.has('targets')}
+                                #{UIComWidgets.displayTags exams:PL.targets,subjects:PL.boards,tags:PL.tags /}
+                            #{/if}
+                            #{else}
+                                %{
+                                        org.json.JSONArray exams=new org.json.JSONArray();
+                                }%
+                                #{UIComWidgets.displayTags exams:exams,subjects:PL.boards,tags:PL.tags /}
+                            #{/else}                            
+                        </div>
+                        <div class="PLInfoPeoplesHolder"></div>
+                    </div>
+                    <div id="DPLSReviews" class="PLContentDiv nonner CSWidget" data-widget="PL_REVIEWS">
+                        #{docPL.reviews entityType:"PLAYLIST",docPLId:PLId,docPL:PL /}
+                    </div>
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </div> 
+            </div>
+        </div>
+        <div class='DTPLMiddle PLViewMode' rel="${PLId}" id="PLMiddle_${PLId}" data-pl-id="${PLId}"></div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+</div>
+    <script type="text/javascript">
+    new function(){
+        var fn=function(){vPlaylist.init({topicId:"${PL.topics.get(0)._id}",playlistId:"${PLId}",viewType:"PL_VIEW",
+            topicCount:"${PL.topics.length()}"});}
+        fetchScripts([{fname:"playlist.js",cb:fn}]);   
+    }();           
+    </script>     
+#{/else}
+
+
+

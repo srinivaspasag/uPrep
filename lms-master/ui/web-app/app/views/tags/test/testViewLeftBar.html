@@ -1,0 +1,100 @@
+%{
+	data = _data;
+	testAnalytics = _testAnalytics;
+	toppersData = _toppersData;
+	testIdStr = _testId;
+}%
+<div class="left testCreationLeftBar CSWidget" data-widget="LEFT_BAR">
+	#{test.testDetailsLeftBar data : data , testAnalytics : testAnalytics /}
+
+	#{if data.has('avgMarks') && data.has('attempts')}
+	<div class="left testTakenSummary">
+		<span class="avgMarks">
+			<span class="smally">Average Score : </span>
+			<span class="big14 padText blackTextColor">${Math.round(data.avgMarks)}</span>
+		</span><br/>
+		<span class="avgTimeTaken">
+			<span class="smally">Average Time <span style="padding-left:5px;">:</span> </span>
+			%{
+				timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.avgTimeTaken);
+			}%
+			<span class="big14 blackTextColor">${timeObj.hrs}:${timeObj.mins} hrs</span>
+		</span>
+		<span class="avgTimeTaken">
+			<span class="smally">Attempts <span style="padding-left:5px;">:</span> </span>
+			<span class="big14 blackTextColor">${data.attempts}</span>
+		</span>
+		*{#{include 'Tests/overallAnalyticsBtn.html'/}}*
+	</div>
+	#{/if}
+	<div class="left separator"></div>
+	#{if toppersData !=null && toppersData.has('result') && toppersData.result.has('list') && toppersData.result.list.length()>0}
+	#{if data.has('resultVisibility') && !data.isNull('resultVisibility') && data.resultVisibility == "VISIBLE"}
+	<div class="left leaderBoard">
+		<span class="boldy big12">&{'TXT_LEADER_BOARD'}</span><a class="viewAll">view all</a>
+		<div class="left leadersList">
+		#{list items:0..toppersData.result.list.length()-1,as:'tIndex'}
+		%{
+			if(tIndex >= 10) break;
+			topper = toppersData.result.list.get(tIndex);
+			user = topper.user;
+		}%
+		#{if !user.equals(null)}
+		%{
+			analytics = topper.info.measures;
+			getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(topper.user);
+			userId = getUserClassAndUrl.id;
+		}%
+		<table class="eachLeader">
+		    <tr>
+			<td rowspan="4" class="alignTop"><span class="boldy big14 rank">${topper.rank}.</span></td>
+			<td rowspan="4" class="alignTop">
+			  <a href="${getUserClassAndUrl.url}" data-user-id="${userId}"  
+				class="left ${getUserClassAndUrl.className} doCStream" 
+				data-cs-name="OPEN_TEST_LEADERS" data-test-id="${testIdStr}">
+				<img class="icon img" src="${user.thumbnail}" alt=" "/>
+			  </a>
+			</td>
+			<td>
+				#{institute.memberName user : user , classNames : "left name" , getUser : getUserClassAndUrl /}
+			</td>
+		#{/if}
+		#{else}
+		%{
+			analytics = topper.info.measures;
+		}%
+		<table class="eachLeader">
+		    <tr>
+			<td rowspan="4" class="alignTop"><span class="boldy big14 rank">${topper.rank}.</span></td>
+			<td rowspan="4" class="alignTop">
+			</td>
+			<td>
+				Unknown User
+			</td>
+		#{/else}
+		    </tr>
+		    <tr>
+			<td>
+				<span class="greyTextColor smally">${analytics.score} marks</span>
+			</td>
+		    </tr>
+		    <tr>
+			<td>
+				%{
+					timeObj=uicom.util.Utilities.getTimeFromMiliSec(analytics.timeTaken);
+				}%
+				<span class="greyTextColor smally" style="margin:3px 2px 0 0;">${timeObj.hrs}:${timeObj.mins} hrs</span>
+			</td>
+		    </tr>
+		    <tr>
+			<td class="testLeadersDetails">	
+				#{test.linkToStudentResult user : user , testId : testIdStr /}
+			</td>
+		    </tr>
+		</table>
+		#{/list}
+		</div>
+	</div>
+	#{/if}
+	#{/if}
+</div>

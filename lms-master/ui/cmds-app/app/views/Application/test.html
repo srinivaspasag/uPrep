@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+    <body>
+        #{stylesheet media:'screen', src:'uicomWidgets/rte.css' /}
+        #{stylesheet media:'screen', src:'uicomWidgets/fe.css' /} 
+        #{stylesheet media:'screen', src:'uicomMain.css' /} 
+        <script type="text/javascript"
+        src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+
+        #{script src:'uicomUtils.js', charset:'utf-8' /} #{script
+        src:'uicomCommon/utils.js', charset:'utf-8' /} #{script
+        src:'uicomWidgets/tabModel.js', charset:'utf-8' /} #{script
+        src:'main.js', charset:'utf-8' /} #{script src:'utilsUi.js',
+        charset:'utf-8' /}
+
+
+
+        #{script src:'uicomCommon/utilsUi.js', charset:'utf-8' /} 
+        #{script src:'uicomWidgets/rte.js', charset:'utf-8' /} 
+        <script type="text/javascript">
+            var asyncFnsStore = [];
+            var jsFileLogger = [];
+            var filesUpFront = [];
+            var cbfnUpFront;
+            var lazyFnCall = function(fn) {
+                try {
+                    fn();
+                } catch (err) {
+                    cbfnUpFront = fn;
+                }
+            }
+            var lazyLoad = function(fileList) {
+                try {
+                    fetchScripts(fileList);
+                } catch (err) {
+//                filesUpFront=fileList;
+                    for (var k = 0; k < fileList.length; k++) {
+                        filesUpFront.push(fileList[k]);
+                    }
+                }
+            }
+            var serverSystemTimeDelta = parseInt("${new Date().getTime()}") - (new Date().getTime());
+        </script>
+
+        <div id="FEWrapper">
+            <div id="FEContent" class="nonner"></div>
+        </div>
+        <div id='rteTest'>
+            #{include 'UIComWidgets/rte.html' /}
+        </div>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+            extensions : [ "tex2jax.js" ],
+            jax : [ "input/TeX", "output/HTML-CSS" ],
+            tex2jax : {
+            inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+            },
+            TeX: {
+            extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+            }
+            });
+        </script>
+        <script type="text/javascript"
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>    
+        <script type="text/javascript">
+            vRTE.init($(".RTEHolder"));
+        </script>  
+    </body>
+</html>

@@ -1,0 +1,89 @@
+%{
+    ordersResp=_ordersResp;
+    heading=_heading;
+    ordersType='STUDENT_BUY_ORDERS';
+    if(params.ordersType!=null){
+        ordersType=params.ordersType;
+    }
+}%
+<div id="orgInvoices" class="mcWidget" style="padding: 30px 50px;background-color: #FFFFFF;">
+    <div class="cmdsTableOptsAndSortDiv">
+        <div style="color: rgb(102, 102, 102); float: left; font-size: 30px; padding: 10px 10px 0px 3px;">
+            <span>${heading}</span>
+        </div>                  
+        <div class="floatRight">
+            <span class="color6 smally">From</span>
+            <input type="text" class="datePickCalendar" id="fromDate" style="width: 70px;height: 25px;"/>
+            <span class="color6 smally"> to </span>
+            <input type="text" class="datePickCalendar" id="toDate" style="width: 70px;height: 25px;"/>
+            <div class="inputDiv cmdsTableSearchBox hasSearchImg margLeft10">
+                <input type="text" class="mcSearchDivInput" data-param-name="orderId" value="${params.query}"
+                       placeholder="Search by order id"/>
+                <span class="inputSearchImg mcSearchDivImg" data-param-name="orderId"></span>                
+            </div>            
+            <div class="cmdsTableSortDiv linBlk">                                         
+                #{common.lmArrowsDiv /}  
+            </div>            
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>        
+    <div id="tableSection" class="LMHandlerDiv">
+        #{include 'UIComInvoices/ordersTable.html' /}
+    </div>                    
+</div>
+#{script src:'uicomCommon/utilsUi.js', charset:'utf-8' /} 
+#{script src:'uicomWidgets/manageContent.js', charset:'utf-8' /} 
+<script type="text/javascript">
+    var qrInvoices = new (function($) {
+        var mcWidget;
+        this.init = function() {
+            mcWidget = $("#orgInvoices");
+            var params={"customer.id": "${params.get('customer.id')}", "customer.type": "${params.get('customer.type')}"};
+            var urlStr="";
+            #{if ordersType=="INSTITUTE_SELL_ORDERS"}
+                urlStr="/qrinvoices/ordersTable";
+            #{/if}
+            #{elseif ordersType=="STUDENT_BUY_ORDERS"}                
+                urlStr="/profile/ordersTable";
+            #{/elseif}
+            manageContent.init(mcWidget, {params: params, urlStr: urlStr, initialSize:50},
+            false, true, null);
+            setUpDatePicker();
+        };
+        var setUpDatePicker = function() {
+            var today = new Date();
+            today.setDate(today.getDate());
+            $(".datePickCalendar").datepicker({
+                onClose:function(){
+                    var fromDate = $("#fromDate").datepicker('getDate');
+                    var toDate = $("#toDate").datepicker('getDate');
+                    var allParams={};
+                    if(fromDate){
+                       allParams["period.from"]= fromDate.getTime();
+                    }else{
+                        allParams["period.from"]=undefined;
+                    }
+                    if(toDate){
+                       allParams["period.till"]=toDate.getTime()+86400000;
+                    }else{
+                        allParams["period.till"]=undefined;
+                    }
+                    if (fromDate && toDate) {
+                        var from = fromDate.getTime();
+                        var to = toDate.getTime();
+                        if (from > to) {
+                            showError("From Date should not be greater than to Date");
+                            $("#toDate").datepicker( "setDate",null);
+                            allParams["period.till"]=undefined;
+                            manageContent.setmcWidgetParams(mcWidget,allParams);
+                            return;
+                        }
+                    }                        
+                    manageContent.setmcWidgetParams(mcWidget,allParams);
+                    manageContent.loadmcContent(mcWidget);                                            
+                }, maxDate: today
+            });
+        };
+    })(jQuery);
+    qrInvoices.init();
+</script>  

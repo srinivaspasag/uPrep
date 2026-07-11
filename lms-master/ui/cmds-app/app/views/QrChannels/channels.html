@@ -1,0 +1,48 @@
+#{if channels.errorCode!=''}
+    #{common.errorCodes resp:channels /}
+#{/if}
+#{else}
+%{
+    channels=channels.result.list;
+}%
+<div id="channelsPage" class="sec1002">
+    <div class="biggerRedButton floatRight createChannel">+ Create Channel</div>
+    <div class="big24 color3 margTop20 margBot20">Channels</div>    
+    <table id="tableSection" class="channelsTable">
+        <thead>
+            <tr>
+                <td>
+                    Name
+                </td>
+                <td class="width150">
+                    No. of challenges
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            #{if channels.length()>0}
+            #{list items:0..channels.length()-1,as:'c'}
+            %{
+                channel=channels.get(c);
+            }%
+            <tr>
+                <td>
+                    ${channel.name}
+                </td>
+                <td class="width150">
+                    ${channel.contentCount}
+                </td>
+            </tr>               
+            #{/list}
+            #{/if}
+            #{else}
+            <tr>
+                <td class="noResultsTr" colspan="2">
+                    <div class="userMessage">No Channels found.</div>
+                </td>
+            </tr>             
+            #{/else}
+        </tbody>
+    </table>
+</div>
+#{/else}

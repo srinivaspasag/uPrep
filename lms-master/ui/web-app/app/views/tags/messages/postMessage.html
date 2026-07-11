@@ -1,0 +1,37 @@
+#{if _msg!=null}
+%{
+	msg = _msg;
+	user = msg.get('sender');
+	getUser=(controllers.Profile.getUserClassAndUrl(user));
+        userClass = getUser.get("className");
+        userUrl = getUser.get("url");
+        userId = getUser.get("id");
+}%
+<div class="msgConvEachPost" data-msg-id="${msg.messageId}" data-user-msg-id="${msg.userMessageId}">
+	<table class="fullWidth" cellspacing=0 cellpadding=0>
+		<tr>
+  			<td style="vertical-align:top;">
+			    <div class="msgProfilePicCont">
+		      		<a class="${userClass} doCStream ptrTag" href="${userUrl}" data-user-id="${userId}">
+					<img class="img30" src="${user.thumbnail}" alt=""/>
+		      		</a>
+			    </div>
+  			</td>
+			<td style="width:72%;vertical-align:top;">
+		      		<div class="msgConvPostContent">
+					#{institute.memberName user : user , getUser : getUser /}
+		      		</div>
+				<div class="msgConvPostContent">
+					${msg.has("content")?msg.get("content").raw():""}
+				</div>		
+			</td>
+			<td class="rightMsgTD" style="width:100px">
+				<span class="msgDate smally">${new Date(webUtils.TemplateHelper._getClientTimeOffsetCalc(msg.receivedTime,params.clientServerTimeDelta)).format('dd MMMM yyyy')}</span>
+			</td>
+			<td class="rightMsgTD" style="width:70px">
+				<span class="msgTime smally">${new Date(webUtils.TemplateHelper._getClientTimeOffsetCalc(msg.receivedTime,params.clientServerTimeDelta)).format('hh:mm a')}</span>
+			</td>
+		</tr>	
+	</table>
+</div>
+#{/if}

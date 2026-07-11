@@ -1,0 +1,172 @@
+body{
+    overflow-x: hidden!important;
+    width: 100%;
+    font-family: 'Ubuntu', sans-serif!important;
+    background: none;
+}
+.footer,.popover-content{
+    font-family: 'Ubuntu', sans-serif!important;
+}
+#main{
+    padding-top: 60px;
+    background: whitesmoke;
+}
+.heading{
+    font-weight: normal;
+}
+.primary-color{
+    color: #4CAF50;
+}
+.w-80{
+    width: 80%;
+}
+
+.card.card-no-padding{
+    box-shadow: none;
+    padding: 0;
+}
+.userSelect{
+    padding: 5px 10px;
+}
+.userSelect option{
+    background: white;
+    color:#666;
+}
+.f-32{
+    font-size: 32px;
+}
+.tab-content{
+    /*min-height: 400px;*/
+}
+.app-price-description small{
+    vertical-align: top;
+    color: white;
+}
+.STANDARD{
+    position: relative;
+}
+.tag{
+    display: inline-block;
+    position: absolute;
+    color: white;
+    z-index: 1;
+    background: #fff;
+    right: 0px;
+    top: 5px;
+    padding: 5px 25px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+}
+thead tr th{
+    background: slategrey!important;
+    color:white!important;
+    font-weight: 700!important;
+}
+.w-75{
+    width: 75%;
+}
+.PACK.card{
+  max-width: 350px;
+  margin: 0 auto;
+}
+.max-container{
+  max-width: 1100px;
+  width: 100%;
+}
+.comparePlans{
+  overflow: auto;
+}
+.packBlock .col-sm-4{
+  margin: 15px 0px;
+}
+table td{
+    font-size: 14px;
+}
+tr td:not(:first-child) {
+    width: 130px;
+}
+.ptih-title{
+    font-size: 16px;
+    /*font-weight: bold;*/
+}
+
+.pti-header{
+    height: 175px;
+}
+.pricing-disclaimer p{
+    margin-left: 15px;
+    margin-top: 10px;
+}
+@media(max-width: 500px){
+    tr td{
+        font-size: 12px;
+    }
+    .heading{
+        font-size: 24px;
+    }
+    .discount-message{
+        display: block;
+        margin: 10px 0px;
+    }
+    .radio-options-container{
+        margin: 0 auto;
+        text-align: center;
+    }
+    .select-container{
+        margin-top :20px;
+    }
+    .select-container{
+        display: flex;
+        align-items: baseline;
+    }
+    .select-container span{
+        flex:1;
+        font-weight: bold;
+    }
+    .select-container select{
+        flex:1;
+        /*margin:0px 10px;*/
+        border-radius: 10px;
+    }
+    .PACK.card{
+        margin:20px auto!important;
+    }
+    .goToPack{
+        margin: 10px 0px;
+
+    }
+    .other-packs-container{
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+}
+
+.modal .input-group-addon>.zmdi {
+    position: relative;
+    bottom: 10px!important;
+    top: auto;
+}
+.viewMore{
+    cursor: pointer;
+}
+.goToPack{
+    cursor: pointer;
+    /*color: blue;
+    text-decoration: underline;*/
+    margin-left:15px;
+    font-size: 16px;
+    border-radius: 20px;
+    padding-bottom: 0px;
+    background: #009496ab;
+    color: #fff;
+}
+.goToPack p{
+    padding:15px 0px;
+    margin-bottom: 0px;
+}
+.other-packs-container{
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    border-radius: 20px;
+}

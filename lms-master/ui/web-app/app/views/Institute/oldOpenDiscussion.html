@@ -1,0 +1,41 @@
+  <div class="bodyWhiteBg" style="min-height:700px">
+    <div class="relative pageHolderT">
+	#{if discussion.has('result') && discussion.result.has('dissId')}
+	%{
+        	dicussionsData = discussion;
+        	discuss = discussion.result;
+        	_target="INTERNAL";
+	}%
+       	<div class="instDiscussionHeader">
+		<a class="instOpenAgain greenButton">Back to question list</a>
+	</div>
+	<div class="left relative instMiddleSec CSWidget mcWidget" data-widget="INSTITUTE_QUESTION_DISCUSSION">
+		<div id="instDiscusssionHolder" class="CSWidget LMHandlerDiv" 
+                    data-widget="QUESTION_DISCUSSION_HOLDER">
+			<div class="instEachDiscus" data-disc-id="${discuss.dissId}" data-disc-index="0">
+        			#{include 'tags/institute/discussion.html'/}
+			</div>
+		</div>
+                <div class="instCommentWidgetHolder nonner">
+                </div>
+	</div>		    
+	<div class="left relative instRightSec CSWidget" data-widget="RIGHT_SECTION">
+		<!--facets holder-->
+	</div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+        <script type="text/javascript">
+		var directDiscussion = true;
+                $(".instDiscussFollowBtn").find("span").removeClass("blueSubmitButton").addClass("greenButton");
+                $(".instHideComments").addClass("nonner");
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub],$("#instDiscusssionHolder").get(0));
+        </script>
+#{/if}
+#{else}
+        <div class="relative boldy centerText" style="padding:20px 0;">
+                <p>     Question Not found
+                </p>
+        </div>
+#{/else}
+    </div>
+  </div>
+</div>

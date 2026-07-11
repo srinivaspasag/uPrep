@@ -1,0 +1,112 @@
+.shareWithDiv{
+	width:400px;
+	padding:20px;
+}
+.shareWithDiv .topSec{
+	padding:0px 5px 10px;
+	border-bottom:1px solid #ccc;
+}
+.shareSelect,
+.instSelectShareBatch,
+.instSelectShareGroup{
+	width:150px;
+	height:25px;
+	margin:-6px 0 0 12px;
+}
+.instSelectShareOnlyName{
+	margin:-4px 0 0 12px;
+	border:1px solid #ccc;
+	padding:3px 6px;
+}
+.instShareBatches{
+	padding:20px 120px 12px;
+}
+.instSelectShareBatch,
+.instSelectShareGroup{
+	width:100px;
+}
+.shareSelect .dropDownIcon,
+.instSelectShareBatch .dropDownIcon,
+.instSelectShareGroup .dropDownIcon{
+	padding:12px 7px;
+}
+.instShareCenterSummary{
+	margin:-8px 0 0 10px;
+}
+.instShareCenterBtn,
+.submitShare{
+	padding:3px 10px;
+	color:#1d4159;
+	text-shadow: 0px 1px #ebf2f6;
+    	background-color: #337999;
+    	background-image: -moz-linear-gradient(center top , #c1e2a0, #AAC98C);
+    	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#A0DD50', endColorstr='#75AE2A');
+    	background-image: -webkit-gradient(linear, left top, left bottom, from(#b4d4e9), to(#9ac3de));
+    	background-image: -o-linear-gradient(top,#c1e2a0,#AAC98C);
+	border:1px solid #8cabbf;
+	border-radius:2px;
+	cursor:pointer;
+}
+.instShareCentersHolder{
+}
+.instShareEachCenter{
+	padding:10px;
+}
+.instSelectShareCenter{
+	margin:-2px 0 0 6px;
+	padding:3px 20px 3px 10px;
+	cursor:pointer;
+}
+.instShareCenterCNCL{
+	padding:4px 12px 0 0;
+}
+.instShareSelSection{
+	margin:-30px 0 0 50px;
+	padding:10px;
+	background-color:#eee;
+	border:1px solid #ccc;
+	z-index:50;
+	position:absolute;
+}
+.instShareSections{
+}
+.instShrSec{
+	padding:5px 0;
+	cursor:default;
+}
+.instShrSec span{
+	margin-top:2px;
+	font-size:13px;
+}
+.instSharedDetails{
+	margin:20px 20px 0 10px;
+}
+.instEachSharedCenter{
+	padding:6px 10px;
+	background-color:#eee;
+	margin-bottom:5px;
+}
+.instEachSharedCenter:hover .crossIt{
+	opacity:1;
+	filter:alpha(opacity=100);
+}
+.instEachSharedCenter .crossIt{
+	background: url(http://localhost:19002/public/images/questions/remove.png) 0px 0px no-repeat scroll transparent;
+	display: inline-block;
+	height: 16px;
+	opacity: 0;
+	filter:alpha(opacity=0);
+	vertical-align: middle;
+	width: 16px;
+	cursor: pointer;
+	right:-10px;
+	margin-right:-30px;
+}
+.submitShareDisabled{
+	opacity:0.3;
+	filter:alpha(opacity==30);
+	cursor:default;
+}
+.shareTypeHolder{
+	margin-bottom:10px;
+}

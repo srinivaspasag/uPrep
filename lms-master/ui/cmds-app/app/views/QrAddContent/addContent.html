@@ -1,0 +1,33 @@
+<div id="addContentPage">
+    <div class="margTop20 margBot20 big16 targetFolderDiv">
+        <span class="grayHead">
+            Add to Folder:
+        </span>
+        <div class="linBlk uploadTargetDiv"></div>
+        <div class="gBlueButton chooseContentTarget">Choose Target</div>
+    </div>
+    <div class="addContentBtns">
+        <div class="gButton gButtonActive loadACPQuesnsUploadArea">Upload Questions</div>
+        <div class="gButton addcmdsQuestion nonner">Add Question</div>
+        <div class="gButton addMultipleCmdsQuestions">Add Questions</div>
+<!--        <div class="gButton uploadcmdsDoc">Upload Documents</div>-->
+<!--        <div class="gButton addcmdsVideo">Add/Upload Videos</div>-->
+        <div class="cleaner_with_divider">&nbsp;</div>
+<!--        <div class="gButton loadACPQuesns">Content Added</div>-->
+    </div>  
+    <div id="addContentPageMain" class="LMHandlerDiv">
+        <div class='uploadContentDiv'>
+            <div id='cmdsUploader'></div>
+            <div class="uploadProgressDiv"></div>
+        </div>
+    </div>
+    <div id="addQuesSetSample" class="nonner">
+	#{common.downloadDocTemplate propertyName : "SAMPLE_TEMPLATE_QUESTIONSET_UPLOAD" /}
+    </div>
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){qrAddContent.init({addType:"${params.addType}",folderId:"${params.folderId}"});}
+        lazyLoad([{fname:"qrAddContent.js",cb:fn}]);
+    }();       
+</script> 

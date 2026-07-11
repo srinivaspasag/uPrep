@@ -1,0 +1,49 @@
+#{if memberInfo.errorCode!=''}
+    #{common.errorCodes resp:memberInfo/}
+#{/if}
+#{else}
+%{
+    info=memberInfo.result.info;
+}%
+<div id="peoplePage" class="memberPage">
+    <div class="memberPageHead">
+        <div class="img50Wrapper">
+            <img class="img50" src="${info.thumbnail}">
+        </div>
+        <div class="linBlk">
+            %{
+                orgUserProfile=currentOrgInfo.getOrgUserProfile();
+		extraInfo = currentOrgInfo.getExtraInfo();
+            }%
+	    <div class="margLeft10" style="display:inline-block;">
+            	<div class="big24 color3">${info.firstName+' '+info.lastName}</div>
+            	<div style="padding-top:3px;">
+			#{people.userStatus user : info , orgUserProfile : orgUserProfile /}
+		</div>
+	    </div>
+            #{if orgUserProfile=="MANAGER"} 
+		#{if (!"EXT_AUTH_ORG".equals(session.get("orgAuthType")) || 
+			(extraInfo!=null && extraInfo.isSuperAdmin == true && info.userId == session.userId))}
+            	<div class="grayButton margLeft20 editOrgMember" data-user-id="${info.userId}"
+            		data-user-profile="${info.profile}">&{'EDIT_PROFILE'}</div>
+		#{/if}
+	    	#{people.deactivateBtn user : info /}
+            #{/if}
+        </div>
+    </div>
+    <div class="peoplePageLeftSec">
+        #{people.basicProfileInfo info:info,target:'MEMBER_PAGE',orgUserProfile:orgUserProfile/}
+    </div>
+    <div class="peoplePageRightSec">               
+        <div class="color3 margBot20 big22">Institute Info</div>
+        #{widgets.mappingsTable programs:info.mappings.programs/}
+    </div>    
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrPeople.init({target:"MEMBER_PAGE",
+                targetUserId:"${info.userId}",targetOrgMemberId:"${info.id}"});}
+        lazyLoad([{fname:"qrPeople.js",cb:fn}]);        
+    }();    
+</script>  
+#{/else}

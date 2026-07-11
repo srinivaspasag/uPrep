@@ -1,0 +1,43 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET    /login/?                                 Security.login
+GET    /showuserblockmsg                        UIComRegister.showUserBlockMsg
+
+#organizations
+GET    /                                        Organizations.index
+GET    /home                                    Organizations.index
+GET    /termsandconditions                      TNC.termsAndConditions
+GET    /business-agreement/?                    TNC.businessAgreement
+GET    /addOrganization/?                       Organizations.addOrganization
+#POST   /organization/addOrganizationSubmit/?    Organizations.index
+GET    /organization/{orgId}/?                  Organizations.organization
+GET    /orgManagers/{orgId}/?                   Organizations.orgMembers
+GET    /orgInvoices/{orgId}/?                   Organizations.orgInvoices
+GET    /organization/{orgId}/order/{orderId}/?  UIComInvoices.invoicePage
+GET     /ping                                     UIComHelpCenter.ping
+
+#Licensing
+GET    /licensing/?                             Licensing.index
+GET    /createpricingplan/?                     Licensing.createPricingPlan
+
+#boards
+GET    /boards                                  Boards.index
+GET    /globalboards                            Boards.globalBoards
+GET    /consumerboards                          Boards.consumerBoards
+GET    /orgboards/{orgId}/?                     Boards.orgBoards
+GET    /boards/uploadglobaltree/?               Boards.index
+GET    /boards/uploadconsumertree/?             Boards.index
+GET    /boards/uploadorgtree/?                  Boards.index
+
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}

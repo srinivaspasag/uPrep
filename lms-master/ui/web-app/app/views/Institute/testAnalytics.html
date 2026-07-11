@@ -1,0 +1,85 @@
+#{if memberInfo!=null}
+<div id="instTestAnalytics" data-user-role="${userRole}" data-target-user-id="${params.targetUserId}">
+   	<div class="pageHolderNM bodyWhiteBg">
+		<div class="instTAResultSummary">
+			#{if userRole=="STUDENT" && profileAnalytics!=null && profileAnalytics.errorCode.isEmpty()}
+			%{
+				profile = profileAnalytics.result;
+			}%
+			<table class="fullWidth">
+			   <tr>
+				<td class="big20 boldy resultText">&{'RESULT_ANALYTICS'}</td>
+				<td class="instTAResTab centerText">
+					<font class="big13">Avg. Score <span id="info-on-hover" title="Data refreshes every 30 min">
+						<img src="/public/images/info30.png" width="11px">
+					</span></font>
+
+					<font class="big18 boldy instTAAvgMarks">${Math.round(profile.percentage)}%</font>
+				</td>
+				<td class="instTAResTab centerText">
+					<font class="big13">Tests <span id="info-on-hover" title="Data refreshes every 30 min">
+						<img src="/public/images/info30.png" width="11px">
+					</span></font>
+					<font class="big18 boldy instTATestCount">${profile.totalAttempts}</font>
+				</td>
+				<td class="instTAUserTab">
+				   #{if myOrgInfo != null}
+				   <div class="right texts">
+					<a href="/organization/${params.orgId}/profile/${session.get('userId')}" 
+						data-user-id="${session.get('userId')}" class="openInstProfile">
+						<span class="big14 boldy">${myOrgInfo.getString("fullName")}</span>
+					</a>
+					</br>
+					<span class="big12 ">Overall Performance</span>
+				   </div>
+				   <a href="/organization/${params.orgId}/profile/${session.get('userId')}" 
+					data-user-id="${session.get('userId')}" class="openInstProfile">
+					<img src="${myOrgInfo.get('profilePic')}" class="right icon" alt="${myOrgInfo.get("fullName")}"/>
+				   </a>
+				   #{/if}
+				</td>
+			    </tr>
+			</table>
+		      	<div style="padding-top:10px;" class="nonner">
+				#{institute.analytics.selectPrograms memberInfo : memberInfo /}
+		      	</div>
+			#{/if}
+			#{else}
+				<div class="big20 boldy resultText">&{'RESULT_ANALYTICS'}</div>
+		      		<div style="padding-top:10px;">
+					#{institute.analytics.selectPrograms memberInfo : memberInfo /}
+		      		</div>
+			#{/else}
+		</div>	
+	   	<div class="shadowDivHolder nonner"><div class="shadowDiv"></div></div>
+	   	#{institute.analytics.graph userRole : userRole /}
+	   	<div class="instTATests">
+			<!-- Test Search Box Removed , Due to Non-Support From backEnd-->
+                        #{if userRole!='STUDENT'}
+			<div class="instSearchTests" style="display:none;">
+	           		<input type="text" class="customSearchBox doCStream" placeholder="Search Test by ID/Name"/>
+			</div>
+                        #{/if}
+			<div class="instTATable">
+				<table class="instTATableTH CSWidget" data-widget="RESULT_ANALYTICS_TESTS">
+				</table>
+			</div>	
+	   	</div>
+	</div>
+</div>
+<script type="text/javascript">
+	var instTATestData;
+	$(function(){
+		$("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+		$("#instPageNavigator").find(".instNavTab.instOpenAnalytics").addClass("clInstTab");
+		instAnalytics.init();
+	});
+</script>
+#{/if}
+#{else}
+<div class="pageHolderM">
+	<div style="padding:100px;" class="centerText">
+		<span class="big18">&{'org.NOT_PART_OF_PROG'}</span>
+	</div>
+</div>
+#{/else}

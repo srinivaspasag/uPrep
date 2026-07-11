@@ -1,0 +1,204 @@
+.navbar-md {
+min-height: 60px
+}
+.navbar-md .navbar-brand,
+.navbar-md .navbar-nav>li>a {
+    padding-top: 10px;
+    padding-bottom: 10px
+}
+.navbar-md .navbar-brand {
+    height: 60px;
+    top: -18px;
+    position: relative;
+}
+.hover a:hover{
+    background-color: transparent!important;
+    box-shadow: 7px 10px 20px 0 rgba(46,61,73,.15);
+    border: solid #eee;
+    border-width: 1px; 
+    cursor: pointer;
+}
+.navbar-md .navbar-toggle {
+    margin: 6px 12px 6px 0px;
+    padding: 6px 7px 6px 7px;
+}
+.navbar-md .navbar-toggle .icon-bar {
+    width: 19px;
+}
+.navbar-nav>li {
+    position: relative;
+    top: 10px;
+}
+/*NavBar End*/
+/*Display start*/
+
+#textDisplay {
+    text-align: center;
+    padding: 40px;
+    height: auto;
+    /*background-image: url("main2.jpg") ;*/
+    margin-top: -60px;
+    background-repeat: no-repeat;
+    background-size: cover !important;
+    height: 100vh;
+}
+#textDisplay .jumbotron {
+    border-radius: 20px;
+    padding: 20px 0;
+    background-color: rgba(255, 255, 255, .75);
+    max-width: 900px;
+    margin: 0 auto;
+    height: 100%;
+    width: 100%;
+    padding-top: 60px;
+}
+/*Display end*/
+
+#introVideo {
+    width: 100%;
+    height: 315px;
+}
+.nodisplay {
+    display: none!important;
+}
+.showdisplay {
+    display: block!important;
+}
+/*Start for radio button*/
+
+/*@keyframes click-wave {
+    0% {
+        height: 40px;
+        width: 40px;
+        opacity: 0.35;
+        position: relative;
+    }
+    100% {
+        height: 200px;
+        width: 200px;
+        margin-left: -80px;
+        margin-top: -80px;
+        opacity: 0;
+    }
+}*/
+
+
+#images {
+   cursor: pointer;
+}
+#images img:last-child {
+   display: none
+}
+#images :hover img:first-child {
+   display: none
+}
+#images :hover img:last-child {
+   display: inline-block
+}
+.option-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    position: relative;
+    top: 13.33333px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    width: 40px;
+    transition: all 0.15s ease-out 0s;
+    background: white;
+    border: 2px solid white;
+    background-color: #E8A232;
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 0.5rem;
+    outline: none;
+    position: relative;
+    z-index: 1000;
+}
+.option-input:hover {
+    background: white;
+}
+.option-input:checked {
+    background: white;
+}
+.option-input:checked::before {
+    height: 40px;
+    width: 40px;
+    color: #E8A232;
+    position: absolute;
+    content: '✔';
+    display: inline-block;
+    font-size: 26.66667px;
+    text-align: center;
+    line-height: 40px;
+}
+.option-input:checked::after {
+    -webkit-animation: click-wave 0.45s;
+    -moz-animation: click-wave 0.45s;
+    animation: click-wave 0.45s;
+    background: white;
+    content: '';
+    display: block;
+    position: relative;
+}
+.option-input.radio {
+    border-radius: 50%;
+}
+.option-input.radio::after {
+    border-radius: 50%;
+}
+.option-input[type=radio]:focus {
+    outline-color: transparent;
+}
+
+.shadow{
+     box-shadow: 4px 4px 4px 4px #888888;
+     border: 3px solid white !important;
+     background-color: #62b23b !important;
+}
+
+.shadowAccess{
+     box-shadow: 2px 2px 2px 2px #888888;
+     border: 3px !important;
+     border-color: #62b23b !important;
+     color: white;
+}
+
+
+/*end for radio button*/
+@media (max-width: 991px),
+(min-width: 767px) {
+    #introVideo {
+        width: 100%;
+        height: 315px;
+    }
+}
+@media (max-width: 768px) {
+    .nav-justified > li {
+        display: table-cell;
+        width: 1%;
+    }
+    .nav-justified > li > a {
+        border-bottom: 1px solid #ddd !important;
+        border-radius: 4px 4px 0 0 !important;
+        margin-bottom: 0 !important;
+    }
+    #introVideo {
+        width: 100%;
+        height: 215px;
+    }
+    #accessIcon{
+        margin-top: 0px !important;
+    }
+    #accessIconNEET{
+        margin-top: 0px !important;
+    }
+}
+.navbar-toggle{
+    left: 10px;
+    position: relative;
+}

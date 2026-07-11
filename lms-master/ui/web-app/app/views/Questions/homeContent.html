@@ -1,0 +1,119 @@
+    <div id='homeContentSec' class="sec1002">
+        <div id='homeMiddleSec'>
+	#{if followBoards!=null && followBoards.has('result') && followBoards.result!="" && followBoards.result.has("boards") && followBoards.result.boards.length()>0}
+       <div class='myBoardTopBar CSWidget' data-widget="MY_BOARD">
+		<div class="homeQuesYourBoard">
+			<span class="boldy big16">Your Board</span>
+			<span class="smally">Quick access to what you need</span>
+		</div>
+		<div class="homeBoardDotDivider"></div>
+		<div class="homeBoardTargetExam">
+			<span class="boldy">Target Exams</span><br/>
+			<div class="homeBoardTargetExamHolder">
+			#{list items:0..followBoards.result.boards.length()-1,as:'brdExamIndex'}
+				%{
+					followBrd = followBoards.result.boards.get(brdExamIndex);
+					if(followBrd.type != "EXAM"){ continue;}
+				}%
+				<a class="eachHomeBoardTarget boardExam ptrTagInline doCStream" 
+				   href="${controllers.Boards.getBoardUrl('exam',followBrd.brdId)}"
+                                   data-brd-id="${followBrd.brdId}" title="${followBrd.name}" data-name="BOARD_EXAM">
+					<div class="boardTargetIconText margTop">${followBrd.code}</div>
+				</a>
+			#{/list}
+			</div>
+		</div>
+		<div class="homeBoardSubjects">
+			<span class="boldy">Subjects</span><br/>
+			<div class="homeBoardSubjectsHolder">
+			#{list items:0..followBoards.result.boards.length()-1,as:'brdSubIndex'}
+				%{
+					followBrd = followBoards.result.boards.get(brdSubIndex);
+					if(followBrd.type != "COURSE"){ continue;}
+					brdCode = followBrd.code.toUpperCase().substring(0,1);
+				}%
+				<a class="eachHomeBoardSubject boardSubject ptrTagInline doCStream"  
+				/*href="${controllers.Boards.getBoardUrl('subject',followBrd.brdId)}"*/
+                                     data-brd-id="${followBrd.brdId}" title="${followBrd.name}"  data-name="BOARD_SUBJECT">
+					<div class="boardSubjectIconText">${brdCode}</div>
+					<div>${followBrd.code}</div>
+				</a>
+			#{/list}
+			</div>
+		</div>
+           </div>
+	   #{/if}
+           <div class="mcWidget mcWidgetHomePage">
+                <div class="cleaner_with_divider">&nbsp;</div>
+                <div style="font-family: georgia; color: rgb(204, 204, 204); line-height: 23px; font-size: 22px;
+                     margin-left: -3px; margin-top: 25px;">Questions</div>
+                <div class="margBot10 SSCTabsHolder">
+                    <div class="SSCTabs CSWidget mcTabs" data-widget="QUESTIONS_TYPE" data-beforemccall='homePagemcTabClick'>
+                        <a class="ptrTagInline SSCTab mcTab activemcTab doCStream" 
+                           data-name="FEED_TAB" 
+                           data-params='{"resultType":"ALL","target":"HOME_PAGE_FEED"}'>
+                            Feed
+                        </a>
+                        <a class="ptrTagInline SSCTab mcTab doCStream" data-name="SAVED_TAB"
+                           data-params='{"resultType":"FOLLOWING","target":"HOME_PAGE_FOLLOWING"}'>
+                            Saved
+                        </a>
+                        <a class="ptrTagInline SSCTab mcTab doCStream" data-name="SHARED_TAB"
+                           data-params='{"resultType":"SHARED","target":"HOME_PAGE_SHARED_CONTENT"}'>
+                            Shared
+                        </a>                        
+                        <a class="ptrTagInline SSCTab mcTab doCStream" data-name="ADDED_TAB"
+                           data-params='{"resultType":"CREATED","target":"HOME_PAGE_CREATED"}'>
+                            Added
+                        </a>
+                        <div class='cleaner_with_divider'>&nbsp;</div>
+                    </div>
+                    <a class="askQues ptrTagInline" href="/addquestion">
+                        <span class="askQuesQicon"></span>
+                        <span class="big14">Contribute Question</span>
+                    </a>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                </div>
+                <div class="shadowDivHolder"><div class="shadowDiv"></div></div>
+                <div class="SSCSubTabs floatLeft mcSubTabs">
+                    <span class="SSCSubTab activemcSubTab mcSubTab">All</span>
+                    <span class="SSCSubTab mcSubTab">/ Attempted</span>
+                    <span class="SSCSubTab mcSubTab">/ Unattempted</span>
+                </div>                
+                <div class="SSCSearchSortDiv CSWidget" data-widget="QUESTIONS_SORT_AND_FILTER">
+                        <div class="SSCSearchDiv CSWidget">
+                            <input type="text" class="SSCSearchDivInput mcSearchDivInput doCStream"
+                               data-name="SEARCHBOX" placeholder="Search Questions" 
+                               data-e-type="ENTER" data-param-name="query"/>
+                            <span class="SSCSearchDivImg mcSearchDivImg" data-param-name="query"></span>
+                        </div>
+			<div class="vselect vselectHide SSCSelect mcSelect doCStream" 
+                             onstatechange="onmcSelectChange" data-value="timeCreated" 
+                             data-name="DROPDOWN" data-default-value="timeCreated" data-default-name="Recently Added"
+                             data-param-name="orderBy">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText" value="Recently Added" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">                                            
+                                            <span class="vSelectEach" data-value="timeCreated">Recently Added</span>
+                                            <span class="vSelectEach" data-value="upVote">Most Upvoted</span>
+                                            <span class="vSelectEach" data-value="attempts">Most Attempted</span>
+                                            <span class="vSelectEach" data-value="solution">Most Solved</span>
+                                            <span class="vSelectEach" data-value="views">Most Viewed</span>
+					</div>
+				</div>
+			</div>	
+                </div>
+                <div class="cleaner_with_divider" style="margin-left: -7px; border-bottom: 1px solid rgb(195, 210, 218); width: 102%;">&nbsp;</div>
+                <div class="LMHandlerDiv CSWidget" data-widget="QUESTIONS_HOLDER"></div>
+            </div>
+        </div>
+        <div id='homeRightSec'></div>
+        <div class='cleaner_with_divider'>&nbsp;</div>
+    </div>
+
+
+
+

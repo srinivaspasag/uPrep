@@ -1,0 +1,84 @@
+%{
+    entityType=_entityType.toLowerCase();
+    entityId=_entityId;
+    entityName=_entityName;
+    entityDownloadState = _entityDownloadState;
+    entityDownloadClass ='redColor';
+    if(entityDownloadState == 'ENABLED'){
+        entityDownloadClass = 'greenColor boldy';
+    }
+    else if(entityDownloadState == 'DISABLED'){
+        entityDownloadClass ='redColor boldy';
+    }
+    converted = _converted!=null?_converted:true;
+    completed = _completed!=null?_completed:true;
+    encrypted=_encrypted;
+    templateName='Widgets/aTagUtil/'+entityType+'Tag.html';
+    visibility = _visibility;
+    startsIn = _startsIn!=null?_startsIn:0;
+    if(startsIn < 0){
+        startsIn = 0;
+    }
+    endsIn = _endsIn!=null?_endsIn:0;
+    if(endsIn < 0){
+        endsIn = 0;
+    }
+    closesIn = _closesIn!=null?_closesIn:0;
+    if(closesIn < 0){
+        closesIn = 0;
+    }
+    Object[] Timers = [closesIn,endsIn,startsIn];
+}%
+<div class="entityNameDiv">
+    #{include arg:templateName /}
+    #{if completed != true}
+      <span class="incompleteStateTag">&{'TXT_DRAFT'}</span>
+    #{/if}
+    #{if converted!=true}
+	<span class="incompleteStateTag">&{'TXT_UNDER_CONVERSION'}</span>
+    #{/if}
+    #{if completed == true &&  entityType == "cmdstest" && visibility == "INVISIBLE" }
+        <span class="scheduleTestButton">
+            <img src="/public/images/alarm-white.png" style="position: relative;top:2px;"> 
+            <span style="bottom: 1px;position: relative;">Schedule Test</span>
+        </span>
+    #{/if}
+    #{if entityType == "cmdstest"}
+    #{list items:0..Timers.length-1, as:'index'}
+        #{if Timers[index] !=0 && Timers[index] >0}
+             %{
+                shouldRunTimer = false;
+                timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(Timers[index]);
+                if(timeObj.getInt("hrs") > 24){
+                    day = Math.round(timeObj.getInt("hrs")/24);
+                    if(day > 1){
+                        timeBlock = day + ' days';
+                    }else{
+                        timeBlock = day + ' day';
+                    }
+                    shouldRunTimer = false;
+                }
+                else if(timeObj.getInt("hrs") >= 0){
+                    timeBlock = timeObj.hrs+':'+timeObj.mins+' hrs';
+                    shouldRunTimer = true;
+                }
+            }%
+            <div class="floatRight entityRemainingTimeBlock #{if index == 1} endTestBlock #{/if} #{elseif index == 0} closeTestBlock #{/elseif}">
+                <div class="expandContent displayInBlock">
+                    <span>#{if index == 1} Ends #{/if} #{elseif index == 0} Closes #{/elseif} #{else} Starts #{/else} in </span>
+                    &nbsp;
+                    <span class="#{if shouldRunTimer} scheduleTimer #{/if} entityRemainingTime" data-time-block-in = "${Timers[index]}">
+                        ${timeBlock}
+                    </span>
+                </div>
+                <img src="/public/images/alarm-white.png" style="position: relative;top:3px;right: 2px;">
+            </div>
+        #{/if}
+    #{/list}
+    #{/if}
+    #{if entityDownloadState !=null && !entityDownloadState.equals(null) && !entityDownloadState.isEmpty()}
+    <div class="entityDownloadState floatRight maxWidth150 width150 displayInBlock">
+        <span class="${entityDownloadClass}">${entityDownloadState}</span>
+    </div>
+    #{/if}
+</div>

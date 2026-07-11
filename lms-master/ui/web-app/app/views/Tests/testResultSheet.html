@@ -1,0 +1,159 @@
+#{if testFullDetails!=null && testFullDetails.errorCode.isEmpty()}
+%{
+    testFullDetailsResult=testFullDetails.result;
+    testInfo=testFullDetailsResult.info;    
+    utilities=uicom.util.Utilities;
+}%
+<div id="fullMarksSheetPage">              
+    <div class="vChoose margLeft alignMiddle paperChangevChoose" data-value="-1" data-onchange="onPaperChange">
+        <div class="vChooseHead" style="width:  250px;">Overall Results</div>
+        <div class="vChooseDownIcon"></div>
+        <div class="vChooseDropDown">
+            <div class="vChooseOpt" data-value="-1">Overall Results</div>
+            %{
+                testHasPapers=false;
+            }%                                
+            #{if utilities.isJSONArrayNotEmpty(testInfo,'children')}
+            %{
+                children=testInfo.children;
+                testHasPapers=true;
+            }%            
+            #{list items:0..children.length()-1,as:'i'}
+            %{
+                paper=testInfo.children.get(i);
+            }%
+            <div class="vChooseOpt" data-value="${i_index}">
+                ${paper.name}
+                <span class="color8 small10">(correct/wrong/left)</span>
+            </div>
+            #{/list}                        
+            #{/if}   
+            #{else}            
+            <div class="vChooseOpt" data-value="1">
+                ${testInfo.name}
+                <span class="color8 small10">(correct/wrong/left)</span>
+            </div>
+            #{/else}                
+        </div>
+    </div>      
+    <div class="right">
+	<span class="refreshResultSheet instImgs"></span>
+    </div> 
+    <table class="marksSheetTable">
+        <tbody class="LMHandlerDiv">
+            <tr class="boldy color3">
+                <td>
+                    Rank
+                </td>
+                <td>
+                    Student Details
+                </td>              
+                <td class="totalTestMarksTd">
+                    Total Score
+                    <div class="outOfMarks">out of ${testInfo.totalMarks}</div>
+                </td>
+                #{if testHasPapers}
+                %{
+                    children=testInfo.children;
+                }%
+                #{list items:0..children.length()-1,as:'i'}
+                %{
+                    paper=testInfo.children.get(i);
+                    if(i>1){
+                        nonnerClass=' nonnerForPapers';
+                    }else{
+                        nonnerClass="";
+                    }          
+                    
+                    colSpan=paper.metadata.length()+1;
+                    if(colSpan>4){
+                        colSpan=4;
+                    }
+                }%
+                <td colspan="${colSpan}" class="testNameTd${nonnerClass} paper${i_index} paper"
+                    data-paper='${i_index}'>
+                    ${paper.name} score
+                    <div class="outOfMarks">out of ${paper.totalMarks}</div>
+                </td>                
+                #{/list}
+                #{/if}                
+                #{else}
+                <td colspan="${testInfo.metadata.length()+1}" class="testNameTd paper1 paper">
+                    ${testInfo.name} Subject Wise Scores
+                </td>                                     
+                #{/else}
+            </tr>
+            <tr class="big12">
+                <td></td>
+                <td></td>
+                <td class="totalTestMarksTd"></td>
+                #{if testHasPapers}
+                %{
+                    children=testInfo.children;                    
+                }%
+                    #{list items:0..children.length()-1,as:'i'}
+                    %{
+                        paper=testInfo.children.get(i);
+                    }%
+                    #{if utilities.isJSONArrayNotEmpty(paper,'metadata')}
+                    %{
+                        subjects=paper.metadata;
+                    }%
+                    #{list items:0..subjects.length()-1,as:'s'}
+                    %{
+                        nonnerClass="";
+                        if(s>2){
+                            nonnerClass=' nonnerForSubs';
+                        }
+                        if(i>1){
+                            nonnerClass+=' nonnerForPapers';
+                        }                        
+                    }%
+                    <td class="testSubjectName${nonnerClass} subject${s_index}
+                        lightGreenColor paper${i_index} paper subject" data-paper='${i_index}'
+                        data-subject='${s_index}'>
+                        <span class='subjectName'>${subjects.get(s).name}</span>
+                    </td>
+                    #{/list}                
+                    #{/if}
+                    %{
+                        if(i>1){
+                            nonnerClass=' nonnerForPapers';
+                        }else{
+                            nonnerClass="";
+                        }                     
+                    }%
+                    <td class="paper${nonnerClass} paper${i_index} totalMarks">Total</td>
+                    #{/list}
+                #{/if}                
+                #{else}
+                    %{
+                        //testMetadata=new org.json.JSONArray();
+                        //used in case of test with single paper.
+                    }%
+                    #{if utilities.isJSONArrayNotEmpty(testInfo,'metadata')}
+                    %{
+                        subjects=testInfo.metadata;
+                        //testMetadata=subjects;
+                    }%
+                    #{list items:0..subjects.length()-1,as:'s'}
+                    %{                        
+                        if(s>2){
+                            nonnerClass=' nonnerForSubs';
+                        }else{
+                            nonnerClass="";
+                        }
+                    }%
+                    <td class="testSubjectName${nonnerClass} subject${s_index} 
+                        lightGreenColor paper1 paper subject" data-paper='1'
+                        data-subject='${s_index}'>${subjects.get(s).name}</td>
+                    #{/list}                
+                    #{/if}                    
+                    <td class="paper paper1 totalMarks">Total</td>                    
+                #{/else}                
+            </tr>         
+            #{include 'Tests/testResultSheetStudents.html' /}
+        </tbody>
+    </table>
+</div>  
+#{/if} 

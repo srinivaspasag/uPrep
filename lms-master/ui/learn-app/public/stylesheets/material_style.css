@@ -1,0 +1,232 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900);
+.intl-tel-input {
+  position: relative;
+  display: block !important;
+}
+
+.intl-tel-input.allow-dropdown .flag-container,.intl-tel-input.separate-dial-code .flag-container {
+  right: auto;
+  left: 0;
+  left: -18px;
+  top: 16px;
+}
+header{
+  background: white!important;
+}
+header a{
+  color: black!important;
+}
+.ha-menu>ul>li>a:hover {
+  box-shadow: inset 0 -3px 0 0 #D92026!important;
+  color: #62b23b!important;
+  font-weight: bold;
+}
+.ha-menu>ul>li.active>a{
+  color: #62b23b!important;
+  box-shadow: none!important;
+}
+.login-content{
+  overflow-y: hidden;
+  /*background: white!important;*/
+  box-shadow: 0 0px 10px rgba(0,0,0,.2);
+}
+.success{
+  color: green;
+}
+.intl-tel-input .country-list{
+  z-index: 5!important;
+}
+.nonner{
+  display: none!important;
+}
+.redTextColor {
+    color: #cc6666;
+}
+.carousel-inner p{
+  font-size: 18px;
+}
+.card{
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+  /*padding-left: 20px;*/
+}
+.card-body{
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.p-20 {
+    padding-left: 0px!important;
+    padding-right: 0px!important;
+}
+
+@media(max-width:992px){
+  .card{
+    margin: 0 auto;
+  }
+}
+.ha-menu{
+  font-family:'Raleway', sans-serif;
+  color: #666;
+  font-size: 15px!important;
+  font-weight: 700;
+  top:5px;
+  right: 6px;
+  position: relative;
+}
+.ha-menu>ul>li>a {
+  text-transform: none!important;
+}
+.ha-menu>ul>li>a:hover{
+}
+/* 2.3.4 - Light Green */
+.btn-light-green {
+    border:2px solid #62b23b;
+    background: transparent;
+}
+.btn-light-green:hover {
+    color: #ffffff;
+    background: #62b23b;
+    border:2px solid #62b23b;
+}
+.btn-light-green.btn-bg {
+    color: #ffffff;
+    background: #62b23b;
+}
+.btn-light-green.btn-effect:hover:after,
+.btn-light-green.btn-bg.btn-effect:after {
+    background: #62b23b;
+}
+.btn-default.btn-bg:hover,
+.btn-light-yellow.btn-bg:hover,
+.btn-light-red.btn-bg:hover,
+{
+    color: inherit;
+    background: transparent;
+}
+.navlink{
+  cursor: pointer;
+  left: 2px;
+  position: relative;
+}
+.card{
+  box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+}
+.navlink-menu{
+  top:40px;
+  position: absolute;
+  background-color: rgba(225, 36, 68,1);
+  width: 160px;
+  border-radius: 0px;
+  font-size: 15px;
+  font-family:'Raleway', sans-serif;
+}
+.navlink-menu a{
+  font-weight: 600!important;
+  font-size: 0.9375em!important;
+  padding: 15px!important;
+  line-height: 25px!important;
+  color: white!important;
+}
+.navlink-menu a:hover{
+  color:black!important;
+}
+.caret{
+  margin-left: 6px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #000000;
+  bottom: 1px;
+  position: relative;
+}
+body{
+  background: url("/public/images/form_background.jpg");
+}
+.login-content{
+  background: none!important;
+}
+@media(max-width:992px){
+  #banner{
+    left: -11px!important;
+  }
+}
+@media (max-width:992px){#header .hi-trigger{display:inline-block!important;}}
+@media (max-width:1167px){
+  .h-inner{
+    right: 37px;
+    position: relative;
+  }
+  #buttonContainer{
+    left: 14px;
+    position: relative;
+  }
+}
+@media(max-width:992px){
+  .sideBarToggle{
+    display: block!important;
+  }
+  .h-inner{
+    left: 0px;
+    position: relative;
+  }
+}
+.lc-block .checkbox {
+    margin: 5px 0 0 15px!important;
+}
+/*.padClass{
+  padding-bottom: 0!important;
+  padding-top: 0!important;
+}*/
+.lc-block{
+  z-index: 9!important;
+}
+.lc-block.toggled{
+  /*animation: none!important;*/
+}
+.lc-block{
+  padding: 0!important;
+}
+.forgot-password{
+  box-shadow: 0 0px 10px rgba(0,0,0,.6)!important;
+}
+.resendOTP{
+  cursor: pointer;
+}
+.swal2-modal{
+  width: 400px;
+}
+#examContainer .card{
+  height: 250px;
+}
+#examContainer .avatar-img{
+  width: 60px;
+  height: 60px;
+  border-radius: 0%;
+}
+.examTitle{
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+}
+.examSubTitle{
+  font-size: 24px;
+}
+#examContainer .aiims .card-header{
+  background: #b54321!important;
+}
+#examContainer .neet .card-header{
+  background: #1D9455!important;
+}
+#examContainer .subjectsTitle{
+  bottom: 10px;
+  position: relative;
+  font-size: 18px;
+  font-weight: bold;
+  color:#5E5E5E
+}
+.subjectsList{
+  font-size: 15px;
+  color: #5E5E5E
+}
+

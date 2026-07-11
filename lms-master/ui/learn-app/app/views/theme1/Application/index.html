@@ -1,0 +1,1044 @@
+{%
+  signupError = flash.get('signupError');
+  loginError = flash.get('loginError');
+  emailVerified = flash.get('emailVerified');
+}%
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Best IIT JEE & NEET Online Coaching Classes and Video Lectures</title>
+  <meta name="google-site-verification" content="6DhL-KLdd2mI5o_YprF32lNPpE56x8ig7Yc1SKtlQ-4" />
+  <meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+  <meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+  <meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad, Best Online Coaching IIT JEE, IIT JEE, Best Video Lectures for IIT JEE, IIT JEE Online Coaching Videos, NEET Online Coaching, NEET Online Classes, Online NEET Coaching Classes" name="keywords">
+  <meta content="Learnpedia is a best Coaching platform that provides online classes & video lectures for IIT-JEE, NEET Exams." name="description"><!--[if IE]>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+        <![endif]-->
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+  <link rel="manifest" href="/public/images/favicons/manifest.json">
+  <link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+  <meta name="theme-color" content="#ffffff">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+  <link href="@{'/public/outerAssets/assets/css/bootstrap.min.css'}" rel="stylesheet"><!-- icon fonts font Awesome -->
+  <link href="@{'/public/outerAssets/assets/css/font-awesome.min.css'}" rel="stylesheet"><!-- icon fonts linecons -->
+  <link href="@{'/public/outerAssets/assets/css/linecons-font-style.css'}" rel="stylesheet">
+  <link href="@{'/public/outerAssets/assets/css/jquery.fs.boxer-min.css'}" rel="stylesheet"><!-- Important owl stylesheet -->
+  <link href="@{'/public/outerAssets/assets/css/owl.carousel-min.css'}" rel="stylesheet"><!-- content slider Styles -->
+  <link href="@{'/public/outerAssets/assets/css/content_slider_style-min.css'}" rel="stylesheet"><!-- animate.css Styles -->
+  <link href="@{'/public/outerAssets/assets/css/animate-min.css'}" rel="stylesheet"><!-- Import Custom Styles -->
+  <link href="@{'/public/outerAssets/assets/css/style-min.css'}" rel="stylesheet"><!-- Import Responsive Styles -->
+  <link href="@{'/public/outerAssets/assets/css/responsive-min.css'}" rel="stylesheet"><!-- Import Styles  for Version light red  -->
+  <link href="@{'/public/outerAssets/assets/css/v-light-red.css'}" rel="stylesheet"><!-- Footer -->
+  <link href="@{'/public/outerAssets/assets/css/footer_lp.css'}" rel="stylesheet">
+  <link href="@{'/public/outerAssets/assets/css/intlTelInput.css'}" rel="stylesheet">
+  <link href="@{'/public/stylesheets/o.index.css'}" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+  #{gaTrackingCode /}
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript">
+  </script> -->
+</head>
+<body>
+  <!-- Menu for Web App -->
+  <div id="page-top"></div>
+  <div class="main-menu-continer">
+    <div class="navbar navbar-default navbar-md" id="main-menu">
+      <div class="container">
+        <div class="navbar-header">
+          <!-- Responsive Navigation -->
+           <button class="navbar-toggle pull-left" data-target=".navbar-collapse" data-toggle="collapse" type="button"><span class="sr-only">Toggle Navigation</span> <i class="fa fa-bars"></i></button> <!-- /.navbar-toggle -->
+           <!-- Logo -->
+           <a class="navbar-brand" href="./"><!--<span>Learn</span>Pedia-->
+           <img src="@{'/public/outerAssets/assets/images/logonew.png'}" style="width: 145px;padding-left: 0px;top:-5px;position: relative;"></a> <!-- /.navbar-brand -->
+        </div><!-- /.navbar-header -->
+        <nav class="collapse navbar-collapse" role="navigation">
+          <!-- Main navigation -->
+          <ul class="nav navbar-nav" id="headernavigation">
+            <li class="active">
+              <a href="#page-top">Home</a>
+            </li>
+            <li class="menu-item-has-children">
+              <!-- <a href="" onclick="window.location.href='https://programs.learnpedia.in'">Programs</a> -->
+               <a href="programs" onclick="window.location.href='/programs'">Programs</a>
+               <ul class="sub-menu">
+                    <li><a href="/programs#ScoreJEE" id="ScoreJEEMenu">ScoreJEE</a></li>
+                    <li><a href="/programs#ScoreNEET" id="ScoreNEETMenu">ScoreNEET</a></li>
+                </ul>
+            </li>
+            <li>
+              <a onclick="window.location.href='http://blog.learnpedia.in'" style="cursor: pointer;">Blog</a>
+            </li>
+            <li class="menu-item-has-children">
+              <a style="cursor: pointer;" onclick="window.location.href='/about'">About</a>
+              <ul class="sub-menu">
+                <li>
+                  <a href="/about#team-info">Team</a>
+                </li>
+                <li>
+                  <a href="/about#portfolio-page">Advisors</a>
+                </li>
+                <li>
+                  <a href="/franchise">Partner Us</a>
+                </li>
+              </ul><!-- /.sub-menu -->
+            </li>
+            <li class="menu-item-has-children">
+              <a style="cursor: pointer;" onclick="window.location.href='/exams'">Exams</a>
+              <ul class="sub-menu">
+                <li>
+                  <a href="/exam/aiims">AIIMS</a>
+                </li>
+                <li>
+                  <a href="/exam/jeemain">JEE Main</a>
+                </li>
+                <li>
+                  <a href="/exam/jeeadvanced">JEE Advanced</a>
+                </li>
+                <li>
+                  <a href="/exam/neet">NEET</a>
+                </li>
+                <li>
+                  <a href="/exam/bitsat">BITSAT</a>
+                </li>
+              </ul><!-- /.sub-menu -->
+            </li>
+          </ul>
+          <ul class="nav navbar-nav pull-right" id="headernavigation">
+            <li class="menu-item hidden-sm hidden-xs"><button class="btn btn-xs btn-light-green" id="signbtn" onclick="window.location.href='/signup'" style="top:-4px;border-radius:4px; width: 100px;height: 30px;line-height: 1px;font-weight: normal;" type="button">Signup</button></li>
+            <li class="hidden-sm hidden-xs"><button class="btn btn-xs btn-light-green btn-bg" onclick="window.location.href='/login'" style="top:-4px;border-radius: 4px;width: 100px;height: 30px;line-height: 1px;font-weight:normal;background: #62b23b" type="button">Login</button></li>
+            <li class="visible-sm visible-xs">
+              <a onclick="window.location.href='/signup'" style="cursor: pointer;">Signup</a>
+            </li>
+            <li class="visible-sm visible-xs">
+              <a onclick="window.location.href='/login'" style="cursor: pointer;">Login</a>
+            </li>
+          </ul><!-- /.nav .navbar-nav -->
+        </nav><!-- /.navbar-collapse  -->
+      </div><!-- /.container -->
+    </div><!-- /#main-menu -->
+  </div><!-- /.main-menu-continer -->
+  <!-- Menu End -->
+  <!-- Page Top    -->
+  <!-- Page Top End -->
+  <!-- Top Section -->
+  <!-- <div id="page-top"></div> -->
+  <section class="top_img" id="top-section" style="background-position: 50% 0px;">
+    <div class="top-section parallax-style">
+      <div class="carousel slide top-carousel-container" data-ride="carousel" id="top-carousel">
+        <ol class="carousel-indicators">
+          <li class="active" data-slide-to="0" data-target="#top-carousel"></li>
+          <li data-slide-to="1" data-target="#top-carousel"></li>
+          <li data-slide-to="2" data-target="#top-carousel"></li>
+        </ol><!-- /.carousel-indicators -->
+        <div class="carousel-inner">
+          <div class="item active">
+            <div class="top-headings">
+              <h3 class="top-heading-3 wow bounceInDown center animated" data-wow-delay=".5s"><span>ACE</span> YOUR <span>JEE/NEET</span> EXAM</h3>
+              <h3 class="top-heading-3 wow bounceInDown center animated" data-wow-delay=".6s"><span>IN</span> 3 SIMPLE <span>STEPS</span></h3>
+              <h3 class="top-heading-3">PREPARE.<span>PRACTISE.</span>PERFORM.</h3>
+              <h3 class="top-heading-3">XI & XII Class</h3>
+            </div><!-- /.top-headings -->
+            <!-- Modal -->
+          </div><!-- /.item -->
+          <div class="item">
+            <div class="top-headings">
+              <h3 class="top-heading-3 wow bounceInLeft center animated" data-wow-delay=".5s">JEE/NEET <span>prep</span> enhanced</h3>
+              <h3 class="top-heading-3 wow bounceInRight center animated" data-wow-delay=".6s">with <span>SIMPLIFIED</span></h3><span></span>
+              <h3 class="top-heading-3"><span></span>CONTENT ENGAGING <span>PLATFORM</span></h3>
+              <h3 class="top-heading-3"><span>INSIGHTFUL</span> ANALYTICS</h3>
+            </div><!-- /.top-headings -->
+          </div><!-- /.item -->
+          <div class="item">
+            <div class="top-headings">
+              <h3 class="top-heading-3 wow bounceInDown center animated" data-wow-delay=".5s">Access <span>new</span> dimensions</h3>
+              <h3 class="top-heading-3 wow bounceInDown center animated" data-wow-delay=".6s"><span>IN</span> JEE/NEET <span>prep</span></h3>
+              <h3 class="top-heading-3">SIMPLE.<span>STIMULATING.</span>STRESS FREE</h3>
+              <h3 class="top-heading-3">XI & XII Class</h3>
+            </div><!-- /.top-headings -->
+          </div><!-- /.item -->
+        </div><!-- /.carousel-inner -->
+        <center>
+          <!-- <center> -->
+          <div class="input-group">
+            <input class="form-control" id="phone" onkeypress="return searchKeyPress(event);" placeholder="Enter Mobile Number" style="font-family: sans-serif;" type="tel"> <span class="input-group-btn">
+            <span class="input-group-btn">
+            <button class="btn btn-primary" id="btnSearch" onclick="validate();" style="min-height: 50px; margin: 0 0 10px 0;background: #62b23b;" type="button">
+            Get Started</button>
+            </span>
+          </div><span class="" id="null" style="font-size:14px;color: white;font-family: Arial"></span> <!-- </center> -->
+          <div id="playstoreApp" style="line-height: 34px;"><span id='playstoreText'>GET THE APP</span> <img class="img-responsive" data-target="#playstoreModal" data-toggle="modal" src="@{'/public/outerAssets/images/google_playstore.png'}" style="cursor: pointer;right:3px;position: relative;"></div>
+        </center>
+      </div>
+    </div><!-- /.top-section -->
+  </section><!-- /#top-section -->
+  <!-- Top Section End -->
+  <br>
+  <!--Products Tab -->
+  <section id="products">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div id="images">
+          <div class="col-sm-4" id="JEE">
+            <img class="img-responsive" src="/public/outerAssets/images/JEE.png"> <a data-target="#productsModal" data-id='JEE' data-toggle="modal"><img class="img-responsive" src="@{'/public/outerAssets/images/JEE-with-cursor-on.png'}"></a>
+          </div>
+          <div class="col-sm-4" id="NEET">
+            <img class="img-responsive" src="/public/outerAssets/images/NEET.png"> <a data-target="#productsModal" data-id='NEET' data-toggle="modal"><img class="img-responsive" src="/public/outerAssets/images/NEET-with-cursor-on.png"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section><!-- Products Tab End-->
+  <br>
+  <!-- Video Section -->
+  <div style="background: url(/public/outerAssets/images/background/backdrop-57.jpg) 50% 13% no-repeat fixed;">
+    <section id="video-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-2"></div>
+          <div class="col-sm-8">
+            <div class="embed-responsive embed-responsive-16by9">
+              <iframe width="640" height="360" src="" data-src="https://www.youtube.com/embed/EvtCXWCwRVI?iv_load_policy=3" frameborder="0" allowfullscreen onclick="this.paused?this.play():this.pause();" poster="/public/outerAssets/images/video_video.png"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div><!-- #video-section -->
+  <!-- GIF Tab-->
+  <section id="gif-section" style="top:50px;position: relative;">
+    <div class="container">
+    <center>
+      <span style="font-size: 40px;font-family: Calibri;">Regular Student vs Learnpedia Student</span>
+    </center><img class="img-responsive" src="/public/outerAssets/images/GIF.gif"></div>
+  </section><!-- GIF Tab End -->
+  <!-- About Us Section -->
+  <section id="about">
+    <!-- Our Works Section -->
+    <section id="works">
+      <div class="white-bg works-section">
+        <div class="sec-head-container">
+          <div class="sec-head-style">
+            <h2 class="section-title wow bounceInDown"><span>Our</span> Products</h2><!-- /.section-title -->
+            <div class="section-description">
+              <strong style="color:#d92026;">SCORE</strong> (<b>S</b>imple and <b>C</b>omplete <b>O</b>nline <b>Re</b>source) is a digital learning platform for various competitive exams. Currently two versions of SCORE – <strong>ScoreJEE</strong> and <strong>ScoreNEET</strong>, are available.
+            </div><!-- /.section-description -->
+          </div><!-- /.sec-head-style -->
+        </div><!-- /.sec-head-container -->
+        <div class="clearfix" id="works-container">
+          <div class="container">
+            <!--<div class="services"> -->
+            <div class="col-md-12">
+              <p><b><a href="/programs#ScoreJEE">ScoreJEE</a></b> is a digital test prep platform for students preparing to appear for the Joint Entrance Exam for admission into the prestigious IITs (Indian Institutes of Technology) and NITs (National Institutes of Technology).</p>
+              <p><b><a href="/programs#ScoreNEET">ScoreNEET</a></b> is a digital test prep platform for students preparing to write the Pre Medical Tests for admission into prestigious medical schools across the country.</p>
+            </div>
+          </div><!-- /.container -->
+        </div>
+      </div><!-- /.works-section -->
+    </section><!-- #works -->
+    <!-- Our Works Section End-->
+    <!-- What we do Section -->
+    <section id="we-do">
+      <div class="white-bg we-do-section">
+        <div class="sec-head-container">
+          <div class="sec-head-style">
+            <h2 class="section-title wow bounceInDown"><span>What</span> We Do</h2><!-- /.section-title -->
+            <div class="section-description">
+              Learnpedia ploughs through your entire curriculum meticulously for you and presents it in a simplified and interesting format.
+            </div><!-- /.section-description -->
+          </div><!-- /.sec-head-style -->
+        </div><!-- /.sec-head-container -->
+        <div class="container">
+          <div class="services">
+            At this virtual classroom, the syllabus takes the form of stimulating e-books, engaging video lectures and 3D animations. From getting your doubts answered and joining study groups to assessing yourself using special performance management tools, you can do it all from the comfort and convenience of your home. All you have to do is log on, study smart and score big.<br>
+            <br>
+            Presently, two variants of SCORE are available - ScoreJEE for engineering aspirants and ScoreNEET for medical aspirants.<br>
+            <br>
+            Besides this, Learnpedia also helps educational institutions like Schools/Colleges/Coaching Institutes to enhance the learning experience of their students by complementing their classroom delivery with our content and technology. To know more, please get in touch with us at <a href="mailto:info@learnpedia.in">info@learnpedia.in</a>
+          </div><!-- /.service -->
+        </div><!-- /.container -->
+      </div><!-- /.we-do-section -->
+    </section><!-- /#service -->
+    <!-- Service Section End-->
+    <!-- Portfolio Grid Section -->
+    <section class="bg-light-gray" id="portfolio" style="background: url(/public/outerAssets/images/background/backdrop-57.jpg) 50% 13% no-repeat">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <center>
+              <span style="font-size: 40px;font-family: Calibri;">Features</span>
+            </center><br>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 portfolio-item">
+            <div class="portfolio-link">
+            <div class="portfolio-hover">
+              <div class="portfolio-hover-content">
+                Access 4000+ videos (spanning over 800 hours) that simplify all the JEE concepts across Maths, Physics &amp; Chemistry.
+              </div>
+            </div><img alt="" class="img-responsive" src="/public/outerAssets/images/screen_51.jpg"></div>
+            <div class="portfolio-caption">
+              <p style="color:white;">PREP-KIT</p>
+            </div>
+          </div>
+          <div class="col-md-3 portfolio-item">
+            <div class="portfolio-link">
+            <div class="portfolio-hover">
+              <div class="portfolio-hover-content">
+                Get personalised content recommendations based on your learning behaviour.
+              </div>
+            </div><img alt="" class="img-responsive" src="/public/outerAssets/images/screen_52.jpg"></div>
+            <div class="portfolio-caption">
+              <p style="color:white;" class="hidden-md">CONTENT RECOMMENDATIONS</p>
+              <p style="color:white" class="visible-md">RECOMMENDATIONS</p>
+            </div>
+          </div>
+          <div class="col-md-3 portfolio-item">
+            <div class="portfolio-link">
+            <div class="portfolio-hover">
+              <div class="portfolio-hover-content">
+                Don’t let any doubt nag you anymore. Post it on Doubts Forum for others (peers, faculty, IITians, etc) to come to your rescue.
+              </div>
+            </div><img alt="" class="img-responsive" src="/public/outerAssets/images/screen_53.jpg"></div>
+            <div class="portfolio-caption">
+              <p style="color:white;">DOUBTS FORUM</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 portfolio-item">
+            <div class="portfolio-link">
+            <div class="portfolio-hover">
+              <div class="portfolio-hover-content">
+                In addition to marks and ranks, get detailed analysis of your strengths & weaknesses based on your pattern across multiple tests.
+              </div>
+            </div><img alt="" class="img-responsive" src="/public/outerAssets/images/screen_54.jpg"></div>
+            <div class="portfolio-caption">
+              <p style="color:white;">DETAILED ANALYTICS</p>
+            </div>
+          </div>
+          <div class="col-md-3 portfolio-item">
+            <div class="portfolio-link">
+            <div class="portfolio-hover">
+              <div class="portfolio-hover-content">
+                Attempt over 1,200 tests (with hints & video solutions) to boost your confidence.
+              </div>
+            </div><img alt="" class="img-responsive" src="/public/outerAssets/images/screen_55.jpg"></div>
+            <div class="portfolio-caption">
+              <p style="color:white;">TEST-A-VAGANZA</p>
+            </div>
+          </div>
+          <div class="col-md-3 portfolio-item">
+            <div class="portfolio-link">
+            <div class="portfolio-hover">
+              <div class="portfolio-hover-content">
+                Practise until every concept has been thoroughly drilled into your head. 15,000 Practice Questions and growing..
+              </div>
+            </div><img alt="" class="img-responsive" src="/public/outerAssets/images/screen_56.jpg"></div>
+            <div class="portfolio-caption">
+              <p style="color:white;">DRILL MACHINE</p>
+            </div>
+          </div>
+        </div>
+      </div><br>
+    </section><br>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-6">
+          <div class="over-view-circle wow bounceInUp center animated" data-wow-delay=".4s">
+            <span class="value counter">24</span><span class="val_sub">K</span><br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <span class="cat-name">Videos</span>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="over-view-circle wow bounceInUp center animated" data-wow-delay=".5s">
+            <span class="value counter">33</span><span class="val_sub">M+</span><br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <span class="cat-name">Views</span>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="over-view-circle wow bounceInUp center animated" data-wow-delay=".6s">
+            <span class="value"><span class="counter">47</span></span> <span class="val_sub">K</span><br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <span class="cat-name">Questions</span>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="over-view-circle wow bounceInUp center animated" data-wow-delay=".7s">
+            <span class="timer"></span><span class="val_sub">M</span><br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <span class="cat-name">Engagements</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section><!-- #about -->
+  <!-- About Us Section End-->
+  <br>
+  <!-- Skills Section -->
+   <!-- Skills Section End -->
+   <!-- Testimonials Section-->
+  <section class="top_img" id="testimonial">
+    <div class="parallax-style testimonial-section">
+      <div class="pattern">
+        <h3 class="text-center title">Happy Customers</h3>
+        <div class="content_slider_wrapper testimonial-slider" id="testimonial-slider">
+          <div class="circle_slider_text_wrapper" id="sw0" style="display: none;">
+            <!-- content for the first layer, id="sw0" -->
+            <div class="content_slider_text_block_wrap">
+              <!-- "content_slider_text_block_wrap" is a div class for custom content -->
+              <div class="client-says">
+                I personally feel that the videos offered by <b>Learnpedia</b> help students in learning concepts faster than light. This not only helps for the exams such as IIT-JEE but also for SRM,VITEE,GITAM,etc.,
+              </div><!-- /.client-says -->
+              <div class="clients-details author-bio">
+                <span class="name">Aravind (KMIIT Student) Hyderabad.</span>
+              </div><!-- /.clients-details -->
+            </div><!-- /.content_slider_text_block_wrap -->
+            <div class="clear"></div>
+          </div><!-- /.circle_slider_text_wrapper -->
+          <div class="circle_slider_text_wrapper" id="sw1" style="display: none;">
+            <!-- content for the second layer, id="sw1" -->
+            <div class="content_slider_text_block_wrap">
+              <div class="client-says">
+                I had difficulty in retaining information while preparing for the JEE Main exam, that's when I was introduced to <b>Learnpedia's ScoreJEE</b>. It has helped me immensely to perform to my fullest and clear the JEE exams with ease. Its interactive feature makes learning fun. Time management is another factor that scares us - <b>ScoreJEE's</b> tests also improved my time management skills.
+              </div><!-- /.client-says -->
+              <div class="clients-details author-bio">
+                <span class="name">Darshan Karra</span>
+              </div><!-- /.clients-details -->
+            </div><!-- /.content_slider_text_block_wrap -->
+            <div class="clear"></div>
+          </div><!-- /.circle_slider_text_wrapper -->
+          <div class="circle_slider_text_wrapper" id="sw2" style="display: none;">
+            <!-- content for the third layer, id="sw2" -->
+            <div class="content_slider_text_block_wrap">
+              <div class="client-says">
+                With <b>ScoreJEE</b>, one will not find it difficult to follow the lectures which one has missed. Its video lectures with classroom atmosphere can be accessed from the comfort of our homes. It has given me the confidence and clarity in many concepts.
+              </div><!-- /.client-says -->
+              <div class="clients-details author-bio">
+                <span class="name">Raaj Bora</span>
+              </div><!-- /.clients-details -->
+            </div><!-- /.content_slider_text_block_wrap -->
+            <div class="clear"></div>
+            <div class="clear"></div>
+          </div><!-- /.circle_slider_text_wrapper -->
+          <div class="circle_slider_text_wrapper" id="sw3" style="display: none;">
+            <!-- content for the fourth layer, id="sw3" -->
+            <div class="content_slider_text_block_wrap">
+              <div class="client-says">
+                <b>Learnpedia's ScoreJEE</b> is unique and innovative in its approach to identify the gaps for JEE preparations. Apart from that, the segregation of chapters into separate concepts helps us as students to understand the basics at large. Simple and clear explanation of concepts helped me score well in JEE Main examination.
+              </div><!-- /.client-says -->
+              <div class="clients-details author-bio">
+                <span class="name">Deepak Bharambe</span>
+              </div><!-- /.clients-details -->
+            </div><!-- /.content_slider_text_block_wrap -->
+            <div class="clear"></div>
+            <div class="clear"></div>
+          </div><!-- /.circle_slider_text_wrapper -->
+          <div class="circle_slider_text_wrapper" id="sw4" style="display: none;">
+            <!-- content for the fifth layer, id="sw4" -->
+            <div class="content_slider_text_block_wrap">
+              <div class="client-says">
+                We have finally found a credible way of being in touch with our students 24X7. It has dramatically lifted our scores in the doubt solving quotient of student satisfaction surveys. The customization options being offered by Learnpedia in terms of uploading institute level tests on to their platform is what appealed to me the most. I am saving quite a considerable amount of effort and resources on the IT front because of the Learnpedia Solution. Their sessizon plan and syllabus coverage is perfect. We have seen a higher conversion rate after bundling the ScoreJEE with the JEE Courses offered by us.
+              </div><!-- /.client-says -->
+              <div class="clients-details author-bio">
+                <span class="name">Nitin Acharya</span> <span class="website"><a>Managing Director<br>
+                Future VISTA</a></span>
+              </div><!-- /.clients-details -->
+            </div><!-- /.content_slider_text_block_wrap -->
+            <div class="clear"></div>
+            <div class="clear"></div>
+          </div><!-- /.circle_slider_text_wrapper -->
+          <div class="circle_slider_text_wrapper" id="sw5" style="display: none;">
+            <!-- content for the sixth layer, id="sw5" -->
+            <div class="content_slider_text_block_wrap">
+              <div class="client-says">
+                In some topics, you may find it difficult to grasp certain concepts that involve visualisation. Topics 'Atomic Structure' in chemistry and 'Optics' in physics are a few examples. <b>ScoreJEE</b>, with its precise presentation and animations, is an ideal learning buddy for you. Online testing platform is impressive and we are confident that you would be better equipped for online entrance exams also.
+              </div><!-- /.client-says -->
+              <div class="clients-details author-bio">
+                <span class="name">Mr. Uttam Narayan Tripathy (B.Tech-IIT) Kanpur</span>
+              </div><!-- /.clients-details -->
+            </div><!-- /.content_slider_text_block_wrap -->
+            <div class="clear"></div>
+            <div class="clear"></div>
+          </div><!-- /.circle_slider_text_wrapper -->
+          <div class="circle_slider_text_wrapper" id="sw6" style="display: none;">
+            <!-- content for the seventh layer, id="sw6" -->
+            <div class="content_slider_text_block_wrap">
+              <div class="client-says">
+                Bakliwal Tutorials - IIT has always been seen by students and parents as an institute that believes in bringing innovative concepts, year after year. Introducing the concept of tablet, powered by Learnpedia, as a supplement to classroom learning, has further enforced this belief in the mind of students. Undoubtedly, our association with Learnpedia has benefited us immensely. Practically, no institute in Maharashtra is offering something like this. Next year, we plan to provide it to all our students. This would help us to conduct regular tests in the classes on the tablet itself and monitor students performance effortlessly. I personally feel, unlike in a classroom, here a student can press the 'pause' button, reflect on what was spoken and basically learn at the pace, he/she is comfortable at. I would like to congratulate Learnpedia team for the wonderful work they are doing for the student community.
+              </div><!-- /.client-says -->
+              <div class="clients-details author-bio">
+                <span class="name">Mr. Vaibhav Bakliwal</span> <span class="website"><a>Bakliwal Tutorials Founder.</a></span>
+              </div><!-- /.clients-details -->
+            </div><!-- /.content_slider_text_block_wrap -->
+            <div class="clear"></div>
+            <div class="clear"></div>
+          </div><!-- /.circle_slider_text_wrapper -->
+        </div><!-- /.content_slider_wrapper -->
+      </div><!-- /.pattern -->
+    </div><!-- /.parallax-style -->
+  </section><!-- /#testimonial -->
+  <!-- Testimonials Section End -->
+  <!-- Modal HTML -->
+  <div class="modal fade" id="otpsignupModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" type="button"></button> <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+           <!--  Preparing For! -->
+        </div>
+        <div class="modal-body">
+          <section id="products">
+            <div class="container-fluid">
+              <form action="@{Security.signup}" class="form-horizontal" id="memberSignupForm" method="post" name="signupForm" onsubmit="return otpProcess.otpcheck();" role="form" style="margin-top: 0em;display: block;font-family: sans-serif;">
+                <div class="form-group">
+                  <label class="col-md-4 control-label loginFieldTitle" for="contactNumber">&{'signup.CONTACT_NO'} <span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-md-8">
+                    <input class="form-control contactNumber" id="otpsignupContact" name="contactNumber" placeholder="Enter Number" readonly required="" style="font-family: sans-serif;" type="tel">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-4 control-label loginFieldTitle" for="firstName">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-md-8">
+                    <input class="form-control" id="username" name="firstName" required="" type="text">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-md-4 loginFieldTitle" for="programType">&{'signup.COURSE'} <span class="redTextColor">*</span></label>
+                  <div class="radio col-md-8">
+                    <label><input checked id="radioButton" name="programType" type="radio" value="JEE"> <span style="top: 4px;position: relative;">JEE</span></label> <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input name="programType" type="radio" value="NEET"> <span style="top:4px;position: relative;">NEET</span></label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label loginFieldTitle" for="userOTP">&{'signup.OTP'} <span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-sm-8">
+                    <input class="form-control" id="userOTP" name="userOTP" placeholder="Enter OTP" required="" type="text">
+                  </div>
+                </div><!-- <table cellpadding="0" cellspacing="0" class="memberSignupTable"> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="text" class="loginInputField" required name="firstName" id="username" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="tel" class="loginInputField" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- </table> -->
+                <div>
+                  <span class="right greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span>
+                  <center>
+                    <span class="redTextColor text-center" id="otperror"></span>
+                    <div>
+                      <span class="redTextColor text-center" id="contactlength"></span> <span class="redTextColor text-center" id="usernamelength"></span> <span class="redTextColor text-center" id="timeleft"></span><br>
+                      <span class="redTextColor text-center" id="campaignErrorDiv"></span>
+                    </div>
+                  </center><span class="redTextColor text-center" id="campaignErrorDiv">%{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }% <input name="orgId" type="hidden" value="${learnpediaOrgId }"> <input name="sectionId" type="hidden" value=""> <input name="isOTPsignup" type="hidden" value="true"> <input id="flagCode" name="countryCode" type="hidden"> <input id="progType" name="progType" type="hidden"></span>
+                </div><span class="redTextColor text-center" id="campaignErrorDiv"></span>
+                <center>
+                  <span class="redTextColor text-center" id="campaignErrorDiv"><!-- <div class="centerText" style="padding-top:27px;"> -->
+                   <input class="btn btn-success" id="clickToSignUp" style="background: #62b23b" type="submit" value="&{'signup.SIGNUP_CAPS'}"> <!-- </div> --></span>
+                </center><span class="redTextColor text-center" id="campaignErrorDiv"></span>
+                <center>
+                <div class="loginPopupBtn text-center"><a onclick="otpProcess.resendOTP();">Resend OTP</a></div>
+              </form>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="otploginModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" type="button"></button> <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+           <!--  Preparing For! -->
+        </div>
+        <div class="modal-body">
+          <section id="products">
+            <div class="container-fluid">
+              <form action="@{Security.authentifyWithOTP}" class="form-horizontal" id="memberLoginForm" method="post" name="loginForm" onsubmit="return otpProcess.otpLogin();" role="form" style="margin-top: 0em;display: block;font-family: sans-serif;">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label loginFieldTitle" for="contactNumber">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-sm-8">
+                    <input class="form-control contactNumber" id="phoneNumber" name="contactNumber" placeholder="Enter Number" readonly required="" style="font-family: sans-serif;" type="tel">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label loginFieldTitle" for="firstName">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-sm-8">
+                    <input class="form-control" id="otpusername" name="firstName" required="" type="text">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label loginFieldTitle" for="userOTP">&{'signup.OTP'} <span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-sm-8">
+                    <input class="form-control" id="userloginOTP" name="userOTP" placeholder="Enter OTP" required="" type="text">
+                  </div>
+                </div><!-- <table cellpadding="0" cellspacing="0" class="memberSignupTable"> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="text" class="loginInputField" required name="firstName" id="username" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="tel" class="loginInputField" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- </table> -->
+                <span class="right greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span>
+                <center>
+                  <span class="redTextColor text-center" id="otploginerror"></span>
+                  <div>
+                    <span class="redTextColor text-center" id="logincontactlength"></span> <span class="redTextColor text-center" id="loginusernamelength"></span> <span class="redTextColor text-center" id="logintimeleft"></span>
+                  </div>
+                </center>%{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }% <input name="orgId" type="hidden" value="${learnpediaOrgId }"> <input name="sectionId" type="hidden" value=""> <input name="isOTPlogin" type="hidden" value="true"> <input id="contactName" name="username" type="hidden" value=""> <input id="countrycode" name="countryCode" type="hidden"> <!-- <input type="hidden" id="progType" name="progType" /> -->
+                <center>
+                  <input class="btn btn-success" id="clickToSignUp" style="background: #62b23b" type="submit" value="&{'login.SIGNIN_CAPS'}">
+                </center>
+                <center>
+                <div class="loginPopupBtn text-center"><a onclick="otpProcess.resendOTP();">Resend OTP</a></div>
+              </form>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="productsModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" type="button"></button> <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+           <!--  Preparing For! -->
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+              <form class="form-horizontal" method="post" name="productForm" id="form" style="margin-top: 0em;display: block;font-family: sans-serif;">
+
+                <div class="form-group">
+                  <label class="col-sm-4 control-label loginFieldTitle" for="contactNumber">&{'signup.CONTACT_NO'}
+                  <span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-sm-8">
+                    <input class="form-control contactNumber" id="contactNumber" name="contactNumber" placeholder="Enter Number" required="" type="tel">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-4 control-label loginFieldTitle" for="firstName">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-sm-8">
+                    <input class="form-control" id="loginusername" name="firstName" required="" type="text">
+                  </div>
+                </div>
+
+                <div class="form-group" style="display: none;" id="otpformgroup">
+                  <label class="col-sm-4 control-label loginFieldTitle" for="userOTP">&{'signup.OTP'} <span class="redTextColor">*</span></label> <!-- <span class="redTextColor">*</span> -->
+                  <div class="col-sm-8">
+                    <input class="form-control" id="userotp" name="userOTP" placeholder="Enter OTP" required="" type="text">
+                  </div>
+                </div>
+
+                <div class="form-group" id="radiogroup" style="display: none;">
+                  <label class="control-label col-sm-4 loginFieldTitle" for="programType">&{'signup.COURSE'} <span class="redTextColor">*</span></label>
+                  <div class="radio col-sm-8">
+                    <label><input checked name="programType" type="radio" value="JEE"> <span style="top: 4px;position: relative;">JEE</span></label> <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input name="programType" type="radio" value="NEET"> <span style="top:4px;position: relative;">NEET</span></label>
+                  </div>
+                </div>
+                <!-- <table cellpadding="0" cellspacing="0" class="memberSignupTable"> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="text" class="loginInputField" required name="firstName" id="username" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="tel" class="loginInputField" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- </table> -->
+                <center>
+                <button type="button"  id="otpButton" class="btn btn-success waves-effect" onclick="otpProcess.sendOTP();" style="background: #62b23b">Login</button>
+                <button type="submit" id="loginButton" class="btn btn-success waves-effect" style="display: none;background: #62b23b;">Login</button>
+                <button type="button" id="validateButton" class="btn btn-success waves-effect" style="display: none;background: #62b23b;">Login</button>
+                </center>
+                <center>
+                <span id="otpcodeerror" class="redTextColor text-center"></span>
+                <div>
+                    <!-- <span class="right greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span> -->
+                    <span class="redTextColor text-center" id="numberlength"></span>
+                    <span class="redTextColor text-center" id="unamelength"></span>
+                    <span class="redTextColor text-center" id="timeleft"></span>
+                </div>
+                </center>
+                %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+                <input type="hidden" value="${learnpediaOrgId  }" name="orgId" />
+                <input type="hidden" value="" name="sectionId" />
+                <input type="hidden" value=true name="isOTPlogin" id="isOTPlogin" />
+                <input type="hidden" name="isOTPsignup" id="isOTPsignup"/>
+                <input type="hidden" value="" name="username" id="uname" />
+                <input type="hidden" id="countryCode" name="countryCode" />
+                <input type="hidden" id="type" name="progType" />
+                <center>
+                <div class="loginPopupBtn text-center resendOTP" id="resendOTP" style="display: none;"><a onclick="otpProcess.resendOTP();">Resend OTP</a></div>
+                </center>
+              </form>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="otpErrorModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" type="button"></button> <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+           <!--  Preparing For! -->
+        </div>
+        <div class="modal-body">
+          <center>
+            <img class="img-responsive" height="100px" src="/public/outerAssets/images/error-icon.png" width="100px">
+          </center><span style="font-size: 14px;color: #777;font-weight: 600;">Your Contact Number is Not Verified, Please Login Through Your Email/InstituteID and Verify Your Contact Number</span>
+          <center>
+            <br>
+            <span class="btn btn-primary"><a href="/login" style="color: white;">&{'login.SIGNIN'}</a></span>
+          </center>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="playstoreModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" type="button"></button>
+          <center>
+            <span id="playstoreText" style="color: black!important;font-size: 14px;">GET THE APP FOR</span>
+          </center>
+        </div>
+        <div class="modal-body">
+          <section id="products">
+            <center>
+              <img class="img-responsive" src="/public/outerAssets/images/Score_small.png" style="width: 35%;">
+            </center>
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-6" id="Scorejee"><img class="img-responsive wow bounceInLeft center animated" onclick="window.open('https://play.google.com/store/apps/details?id=com.learnpedia.android','_blank')" src="/public/outerAssets/images/JEE_play.png" style="cursor: pointer;animation-duration: 2s;"></div>
+                <div class="col-sm-6" id="Scoreneet"><img class="img-responsive wow bounceInRight center animated" onclick="window.open('https://play.google.com/store/apps/details?id=com.scorepmt.android','_blank')" src="/public/outerAssets/images/NEET_play.png" style="cursor: pointer;animation-duration: 2s;"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div><!--End Modal HTML -->
+  <!-- Modal HTML -->
+  <div class="modal fade" id="footerModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" type="button"></button> Preparing For!
+        </div>
+        <div class="modal-body">
+          <section id="products">
+            <div class="container-fluid">
+              <div class="row">
+                <div id="images">
+                  <div class="col-sm-6" id="JEE"><img class="img-responsive" src="/public/outerAssets/images/JEE.png"> <img class="img-responsive" onclick="javascript:footerimage1();" src="/public/outerAssets/images/JEE-with-cursor-on.png"></div>
+                  <div class="col-sm-6" id="NEET"><img class="img-responsive" src="/public/outerAssets/images/NEET.png"> <img class="img-responsive" onclick="javascript:footerimage2();" src="/public/outerAssets/images/NEET-with-cursor-on.png"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="get_quote">
+    <div class="section-padding">
+      <div class="container">
+        <h1 class="section-titlenew text-center text-uppercase">Your test-prep gets even more interesting</h1>
+        <div class="section-descriptionnew text-center">
+          Click here to download Learnpedia's Mobile App
+        </div><!-- /.section-description -->
+        <div class="download-links top-padding-30 text-center">
+          <a class="link-item" href="https://play.google.com/store/apps/details?id=com.learnpedia.android&hl=en" target="_blank"><i class="fa fa-play"></i> <span class="heading">Download from</span> <span class="name">Playstore</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="contact">
+    <!-- Contact Form-->
+    <div class="contact-form-section" id="contact-form-section">
+      <div class="white-bg">
+        <div class="sec-head-container">
+          <div class="sec-head-style">
+            <h2 class="section-title wow bounceInDown"><span>Get In</span> Touch</h2><!-- /.section-title -->
+            <div class="section-description">
+              Get in touch with us to give us a feedback or put forth a query or simply to chat.
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="contact-form-container">
+              <form action="email.php" id="contact-form" method="post" name="contactform">
+                <div class="col-md-6">
+                  <div class="error" id="name_error">
+                    <img alt="Error!" src="/public/outerAssets/assets/images/email/error.png">Please enter your name.
+                  </div><input class="form-control" id="name" name="name" placeholder=" Your Name" required="" type="text">
+                  <div class="error" id="email_error">
+                    <img alt="Error!" src="/public/outerAssets/assets/images/email/error.png">Please enter your valid E-mail ID.
+                  </div><input class="form-control" id="email" name="email" placeholder="Your Email" required="" type="email">
+                  <div class="error" id="subject_error">
+                    <img alt="Error!" src="/public/outerAssets/assets/images/email/error.png">Please enter the subject.
+                  </div><input class="form-control" id="subject" name="subject" placeholder="Subject" required="" type="text">
+                </div><!-- /.col-md-6 -->
+                <div class="col-md-6">
+                  <div class="error" id="message_error">
+                    <img alt="Error!" src="/public/outerAssets/assets/images/email/error.png">Please enter your message.
+                  </div>
+                  <textarea class="form-control" id="your_message" name="your_message" placeholder="Your Message" required="" rows="4"></textarea>
+                  <div id="submit">
+                    <button class="btn btn-sm btn-light-red full-width btn-effect" id="send_message" type="submit">Send Message</button>
+                  </div><!-- /#submit -->
+                </div><!-- /.col-md-6 -->
+                <div class="col-md-12">
+                  <div class="success" id="mail_success">
+                    <img alt="Success!" src="/public/outerAssets/assets/images/email/success.png">Your message has been sent successfully.
+                  </div>
+                  <div class='error' id='mail_fail'>
+                    <img alt="Error!" src="/public/outerAssets/assets/images/email/error.png"> Sorry, error occurred this time sending your message.
+                  </div>
+                </div><input id="actionFlag" name="actionFlag" type="hidden"> <!-- /.col-md-12 -->
+              </form><!-- /#contact-form -->
+            </div><!-- /.contact-form-container -->
+          </div><!-- /.row -->
+        </div><!-- /.container -->
+      </div><!-- /.white-bg -->
+    </div><!-- /#contact-form-section -->
+    <!-- Contact Form End-->
+    <!-- Contact Details End-->
+    <div id="contact-details">
+      <div class="gray-bg contact-details">
+        <div class="container">
+          <div class="row">
+            <h3 class="text-center title">Contact Details</h3>
+            <div class="contact-info">
+              <div class="col-md-3 col-sm-6 contact-info-box wow bounceInDown center animated" data-wow-delay=".2s">
+                <span class="icon map-marker"><i aria-hidden="true" class="li_location"></i></span>
+                <p class="contact-details-title">Address</p><span class="texts">6-3-596/69, Naveen Nagar,<br>
+                Behind Hotel Taj Krishna, Khairathabad-500034,<br>
+                Hyderabad , Telangana.<br></span>
+              </div><!-- /.contact-info-box -->
+              <div class="col-md-2 col-sm-6 contact-info-box wow bounceInDown center animated" data-wow-delay=".4s">
+                <span class="icon envelope"><i aria-hidden="true" class="li_mail"></i></span>
+                <p class="contact-details-title">Email</p><span class="texts"><a href="mailto:info@learnpedia.in">info@learnpedia.in</a><br></span>
+              </div><!--  /.contact-info-box -->
+              <div class="col-md-2 col-sm-6 contact-info-box wow bounceInDown center animated" data-wow-delay=".6s">
+                <span class="icon phone"><i aria-hidden="true" class="li_phone"></i></span>
+                <p class="contact-details-title">Phone</p><span class="texts">+91 8099777711</span><br>
+                ( Available from<br>
+                9 A.M. to 9 P.M.<br>
+                on working days )
+              </div><!-- /.contact-info-box -->
+              <div class="col-md-2 col-sm-6 contact-info-box wow bounceInDown center animated" data-wow-delay=".8s">
+                <span class="icon skype"><i class="fa fa-skype"></i></span>
+                <p class="contact-details-title">Skype</p><span class="texts">learnpedia.support</span>
+              </div>
+              <div class="col-md-3 col-sm-6 contact-info-box wow bounceInDown center animated" data-wow-delay=".99s">
+                <span class="icon cs"><i class="fa cs-icon"></i></span>
+                <p class="contact-details-title">Customer Support</p><span class="texts"><a href="http://support.learnpedia.in" target="_blank">Click here</a><br>
+                <!--<a href="#">help.learnpedia@skype.com</a>--></span>
+              </div><!-- /.contact-info-box -->
+            </div><!-- /.contact-info -->
+          </div><!-- /.row -->
+        </div><!-- /.container -->
+      </div><!-- /.gray-bg  /.contact-details -->
+    </div><!-- /#contact-details -->
+    <!-- Contact Details End-->
+  </section><!-- /#contact -->
+  <!-- Contact Section End -->
+  <div class="footer sticky" id="log" style="background-color:#3C4C5B;box-shadow: 0 0px 10px rgba(0,0,0,.4);">
+    <div class="container">
+      <center>
+        <form class="form-inline" id="footerform" name="footerform" role="form">
+          <label style="color:#fff;position: relative;left: -30px;font-size: 20px;">Prepare for JEE/NEET</label>
+          <div class="input-group" style="top:10px;">
+            <input class="form-control" id="footerphone" onkeypress="return footersearchKeyPress(event);" placeholder="Enter Mobile Number" style="font-family: sans-serif;" type="tel"> <span class="input-group-btn">
+            <span class="input-group-btn">
+            <button class="btn btn-light-green btn-bg" id="footerbutton" onclick="validater();" style="min-height: 40px; margin: 0 0 20px 0;background: #62b23b;font-weight: normal;" type="button">Get Started</button></span>
+          </div>
+        </form>
+      </center>
+    </div>
+  </div>
+  <div id="footer" style="background: #f1f2f7;color: black;">
+    <div class="container text-center">
+      <hr style="border-color:#3C4C5B;border-width: 1px;">
+      2017 &copy; Learnpedia Edutech Pvt Ltd. ALL Rights Reserved | <a href="/privacypolicy" target="_blank">Privacy Policy</a>
+    </div>
+    <div class="container text-center">
+      <a class="left spriteImg siteFbIcon" href="https://www.facebook.com/learnpediaIN" target="_blank"></a> <a class="left spriteImg siteTwitterIcon" href="https://twitter.com/learnpediaIN?lang=en" target="_blank"></a> <a class="left spriteImg siteBlogIcon" href="http://blog.learnpedia.in" target="_blank"></a> <a class="left spriteImg siteYouTubeIcon" href="https://www.youtube.com/channel/UCpSlhIcpbaEaUYBhw2D0YQA" target="_blank"></a> <a class="left spriteImg siteLinkedInIcon" href="https://www.linkedin.com/company/learnpedia?trk=tyah&amp;trkInfo=clickedVertical%3Acompany%2CclickedEntityId%3A2775301%2Cidx%3A2-1-3%2CtarId%3A1449744529921%2Ctas%3Alearnpedia" target="_blank"></a>
+    </div>
+  </div>
+  <div id="vist_chat"></div>
+  <span id="loginError" style="font-size: 14px;color: #777;font-weight: 600;" data-error="&{'login.'+loginError}"></span>
+  <span id="signupError" style="font-size: 14px;color: #777;font-weight: 600;" data-error="&{'login.'+loginError}"></span>
+  <!-- <script src="@{'/public/outerAssets/assets/js/jquery-2.1.0.min.js'}">
+  </script> --><br>
+  <div id="scroll-to-top">
+    <span><i class="fa fa-chevron-up"></i></span>
+  </div>
+  <script src="@{'/public/outerAssets/assets/js/jquery-2.1.0.min.js'}">
+  </script>
+  <script src="@{'/public/outerAssets/assets/js/intlTelInput-min.js'}">
+  </script>
+  <script src="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.js"></script>
+  <script src="/public/javascripts/o.application.js">
+  </script>
+  <script src="@{'/public/outerAssets/assets/js/utils.js'}">
+  </script>
+  <script src="@{'/public/javascripts/o.modal.js'}">
+  </script>
+  <script src="@{'/public/javascripts/drift_chat_application.js'}">
+  </script>
+  <script type="text/javascript">
+   $("#phone").intlTelInput({
+    initialCountry: "in",
+    separateDialCode: true,
+    utilsScript: "@{'/public/outerAssets/assets/js/utils.js'}"
+   });
+  </script>
+  <script type="text/javascript">
+   $(".contactNumber").intlTelInput({
+    initialCountry: "in",
+    separateDialCode: true,
+    utilsScript: "@{'/public/outerAssets/assets/js/utils.js'}"
+   });
+  </script>
+  <script type="text/javascript">
+   $("#footerphone").intlTelInput({
+    initialCountry: "in",
+    separateDialCode: true,
+    utilsScript: "@{'/public/outerAssets/assets/js/utils.js'}"
+   });
+  </script> <!-- Email Validator -->
+  <script src="@{'/public/outerAssets/assets/js/email-validation.js'}">
+  </script><!-- Include JavaScript Plugins -->
+  <script src="@{'/public/outerAssets/assets/js/plugins.js'}">
+  </script><!-- Include JavaScript Functions -->
+  <script src="@{'/public/outerAssets/assets/js/functions-min.js'}">
+  </script><!-- Include jquery.parallax.js Plugins -->
+  <script src="@{'/public/outerAssets/assets/js/jquery.parallax-min.js'}">
+  </script><!-- Include wow.js Plugins -->
+  <script src="@{'/public/outerAssets/assets/js/wow.min.js'}">
+  </script>
+  <script src="@{'/public/outerAssets/assets/js/jquery.content_slider.min.js'}">
+  </script>
+  <script src="@{'/public/outerAssets/assets/js/jquery.mousewheel-min.js'}">
+  </script>
+  <script src="@{'/public/javascripts/o.index.js'}">
+  </script>
+  #{if loginError!=null}
+      <script type="text/javascript">
+      (function(){
+        var data = $("#loginError").data('error');
+        swal({
+          type: "warning",
+          title: ""+data,
+          timer: 5000
+        });
+      })();
+      </script>
+  #{/if}
+
+  #{if signupError!=null}
+    <script type="text/javascript">
+      (function(){
+        var data = $("#signupError").data('error');
+        swal({
+          type: "warning",
+          title: ""+data,
+          timer: 5000
+        });
+      })();
+      </script>
+  #{/if}
+
+  #{if emailVerified=='done'}
+    <script type="text/javascript">
+      (function(){
+        swal({
+          type: "success",
+          title: "Email verified successfully",
+          timer: 2000
+        });
+      })();
+      </script>
+  #{/if}
+  <script>
+    function init() {
+    var vidDefer = document.getElementsByTagName('iframe');
+    for (var i=0; i<vidDefer.length; i++) {
+    if(vidDefer[i].getAttribute('data-src')) {
+    vidDefer[i].setAttribute('src',vidDefer[i].getAttribute('data-src'));
+    } } }
+    window.onload = init;
+  </script>
+
+  <!--LeadSquared Tracking Code Start-->
+  <script type="text/javascript" src="https://web.mxradon.com/t/Tracker.js"></script>
+  <script type="text/javascript">
+        pidTracker('17140');
+  </script>
+<!--LeadSquared Tracking Code End-->
+
+</body>
+</html>

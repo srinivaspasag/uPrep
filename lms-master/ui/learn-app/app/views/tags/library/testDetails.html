@@ -1,0 +1,51 @@
+%{
+	data = _data;	
+}%
+#{if data!=null && data.has('metadata') && data.metadata.length()>0}
+<div class="testDetailsPopupHolder">
+#{list items:0..data.metadata.length()-1, as:'sIndex'}
+%{
+	subData = data.metadata.get(sIndex);
+}%
+<div class="chooseQuesFormat hidden" id="_testDetailsPop_${subData.id}">
+	<h2>Format Details - ${subData.name}</h2>
+	<div>
+		<table class="table table-inner table-vmiddle">
+			<thead>
+				<th>Type of Question</th>
+				<th>Number of Questions</th>
+				<th>Marks per Question</th>
+				<th>Negative Marks per Question</th>
+			</thead>
+			#{if subData.has('details') && subData.details.length()>0}
+			#{list items:0..subData.details.length()-1, as:'dIndex'}
+			<tbody>
+				<tr q-type='${subData.details.get(dIndex).type}'>
+					#{if subData.details.get(dIndex).type == "SCQ"}
+						<td><b>SCQ</b>(single choice question)</td>
+					#{/if}
+					#{elseif subData.details.get(dIndex).type == "MCQ"}
+						<td><b>MCQ</b>(multiple choice question)</td>
+					#{/elseif}
+					#{else}
+						<td><b>${subData.details.get(dIndex).type}</b></td>
+					#{/else}
+					<td>${subData.details.get(dIndex).qusCount}</td>
+					<td>${subData.details.get(dIndex).marks.positive}</td>
+					<td>${subData.details.get(dIndex).marks.negative}</td>
+				</tr>
+			#{/list}
+			#{/if}
+				<tr q-type='TOTAL'>
+					<td>Total</td>
+					<td>${subData.qusCount}</td>
+					<td>${subData.totalMarks}</td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+#{/list}
+</div>
+#{/if}

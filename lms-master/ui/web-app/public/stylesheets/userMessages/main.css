@@ -1,0 +1,298 @@
+@font-face {
+    font-family: Ubuntu;
+    src: url(../../fonts/Ubuntu-Regular.ttf);
+} 
+#msgsHeader{
+	color:#333;
+	width: 100% !important;
+	font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+}
+#msgsHeader .ptrTag{
+	display:initial;
+}
+#msgsHeader .ptrTag.displayInBlock{
+	display:inline-block;
+}
+#msgsHome{
+	min-height:800px;
+}
+#msgsInbox .bodyWhiteBg{
+	padding-bottom:50px;
+	min-height:400px;
+}
+#msgsHome .greenButton{
+	color:#fff;
+    	background-color: #99cc65;
+	border:1px solid #88ad5f;
+	background-image:none;
+	border-radius:0px;
+}
+.openInstTest, .openStatusFeed, .openInstProfile, .memberName, .msgOtherRecieversList, .msProfileNm  {
+color:#363636;
+}
+a, .showVoteUpDetails, .aTagClass{
+color:blue !important;
+}
+.searchInputBox{
+	background-color: #edeef0;
+	border: 1px solid #e0e0e0;
+	height: 15px;
+	outline: none;
+	padding: 11px 2px 11px 40px;
+	overflow-y: hidden;
+	font-size:14px;
+	white-space: nowrap;
+}
+.searchInputBox:focus{
+	border:1px solid #666;
+	background-color:#fff;
+}
+.searchInputDiv .instImgs{
+	margin: 10px 12px;
+	z-index:1000;
+}
+.searchInputDiv .instImgs{
+	width: 18px;
+	height: 20px;
+	background-position: -564px 0px;
+	position: absolute;
+}
+.msgInboxTop{
+	margin:0 20px 0 20px;
+	padding:12px 0 8px 0;
+	border-bottom:1px solid #666;
+}
+.msgInboxSrchBox{
+	display:inline;
+	margin-left:30px;
+}
+.msgInboxSrchBox .instImgs{
+	margin: 6px;
+}
+.msgInboxSrchBox .searchInputBox{
+	display:inline;
+	width:350px;
+	padding: 7px 2px 7px 30px;
+}
+.msgInboxTop .instCreateMsg{
+	padding:8px 50px;
+	font-size:13px;
+}
+.msgInboxNavig{
+	margin:30px 0 10px 0;
+}
+.msgInboxCount,
+.msgInboxTotal{
+	letter-spacing:1px;
+}
+.msgInboxLeftArrow,
+.msgInboxRightArrow{
+	padding:14px;
+	margin:8px 5px 5px 0;
+	cursor:pointer;
+	top:12px;
+}
+
+.msgInboxRightArrow{
+	background:url('/public/images/questions/ANextQues.png') no-repeat;
+}
+.msgInboxLeftArrow{
+	background:url('/public/images/questions/APrevQues.png') no-repeat;
+}
+.rightArrowDisabled{
+	background:url('/public/images/questions/INextQues.png') no-repeat;
+}
+.leftArrowDisabled{
+	background:url('/public/images/questions/IPrevQues.png') no-repeat;
+}
+
+/* INBOX SECTION */
+.msgInboxContainer{
+	margin:0px 20px 10px;
+	overflow:hidden;
+}
+.msgEachOne{
+	padding:10px 12px 12px 10px;
+	cursor:pointer;
+	border-bottom:1px solid #CCC;
+	background-color:#fff;
+	border-left:3px solid transparent;
+}
+.msgInboxContainer .msgEachOne{
+	left:100%;
+	position:relative;
+}
+.msgEachOne.convUnRead{
+	background-color:#ffffcc;
+}
+.msgEachOne.convChked:hover,
+.msgEachOne.convChked{
+	background-color:#CFEFF9;
+}
+.msgEachOne:hover{
+	border-left:3px solid #0099CC;
+}
+.msgEachTable{
+	width:100%;
+	/*-webkit-padding-start:25px;*/
+}
+.msgSelectionTD{
+	width:30px;
+}
+.msgEachOne .msProfileNm{
+	font-size:13px;
+	max-width:140px;
+}
+#msgConversation .msgEachOne .msProfileNm{
+	font-size:18px;
+	line-height:19px;
+}
+#msgConversation .msgNmTD{
+	width:550px;
+}
+#msgConversation .msgEachOne .msProfileNm{
+	max-width:90%;
+}
+.leftMsgImgTD{
+	width:40px;
+}
+.msgNmTD{
+	width:160px;
+}
+.msgBodyTD{
+	vertical-align:top;
+	max-width:500px;
+}
+.msgEachTable .msProfileNm,
+.msgEachTable .msProfileNm .memberName,
+.rightMsgTD{
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	text-align:center;
+	vertical-align:top;
+}
+.rightMsgTD{
+	width:80px;
+	float:right;
+}
+.msgTime,
+.msgDate{
+	color:#333;
+}
+.inboxMsgTitle{
+	font-weight:bold;
+	color:#333;
+}
+
+/* MESSAGE CONVERSATION */
+.msgConversationBody{
+	padding:10px 20px;
+	min-height:800px;
+}
+.msgConvPrimaryMsg{
+	width:55%;
+	padding:30px 2.5%;
+	border-bottom: 1px solid #eee;
+}
+.msgConvParticipants{
+	width:20%;
+	padding:15px 2.5%;
+	overflow:hidden;
+}
+.msConvMemberCloset{
+	padding-top:3px;
+}
+.msConvMemberHolder{
+	width:30px;
+	height:30px;
+	overflow:hidden;
+	display:inline-block;
+	margin:0 3px 3px 0;
+	float:left;
+}
+.msConvMember{
+	width:30px;
+}
+.msgConvPostsContainer{
+	margin:0 50px;
+	overflow:hidden;
+}
+.msgConvPostsContainer .msgConvEachPost{
+	position:relative;
+	left:100%;
+}
+.msgConvPostReplyTable{
+	margin:20px 50px 0 50px;
+}
+.msgConvPostReply{
+	width:500px;
+	margin-left:14px;
+	padding:5px;
+}
+.msgConvPostReply.RTEClosed{
+	border:2px solid #ccc;
+}
+.msgConvPostReply.RTEClosed .msgConvPostRTE,
+.msgConvPostReply.RTEClosed .msgConvPostBtns{
+	display:none;
+}
+.msgConvPostBtns{
+	margin:10px 5px;
+}
+.msgConvPostReply .msgConvPostRTE .RTEArea{
+	height:100px;
+	min-height:100px;
+}
+.cancelMsgConvReply{
+	margin-left:5px;
+	cursor:pointer;
+}
+.msgConvPostReply .placeHolderRTE{
+	display:none;
+}
+.msgConvPostReply.RTEClosed .placeHolderRTE{
+	font-style:italic;
+	color:#ccc;
+	padding:5px 0 25px 5px;
+	display:block;
+	cursor:text;
+}
+.msgConvEachPost{
+	padding:10px;
+	padding-bottom:10px;
+	border-bottom:1px solid #eee;
+	/*background-color:#f4f4f4;*/
+	margin-bottom:7px;
+}
+.msgConvPostContent{
+	margin:0 10px;
+}
+.convLoadOlderMsgs{
+	padding:15px 0;
+	text-align:center;
+	background-color:#efefef;
+	color:#bbb;
+	font-size:14px;
+	font-weight:bold;
+	cursor:pointer;
+	margin-bottom:12px;
+}
+.msgConvDeleteButton{
+	background-color:#efefef;
+	color:#666;
+	padding:6px 25px;
+	cursor:pointer;
+	opacity:0;
+}
+.msgConvMsgBody{
+	border-bottom:1px solid #CCC;
+}
+#msgConversation .RTEImageDiv img{
+	max-width:600px;
+	border:1px solid transparent;
+}
+#msgConversation .RTEImageDiv img:hover{
+	cursor:pointer;
+	border:1px solid #81BEF7;
+}

@@ -1,0 +1,92 @@
+#testSeries{
+	width:100%;
+}
+#testSeries .pad5{
+	padding:5px;
+}
+.selectTestSeries{
+	font-size:14px;
+	padding:2px 12px;
+}
+.testSeriesDetails{
+	margin:50px 0 0 20px;
+	padding:25px;
+	background-color:rgba(255, 255, 255, 0.8);
+	box-shadow:1px 1px 5px -2px rgba(50, 50, 50, 0.62);
+}
+.testSeriesHead{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 0 0;
+    text-align: center;    
+}
+.testSeriesTests{
+	padding:20px 60px;
+}
+.testSeriesTest{
+	margin:10px 0;
+	padding:5px;
+	border-radius:5px;
+	background-color:#fff;
+}
+.testSeriesDate{
+    background-color: #339900;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 12px 5px;
+    text-align: center;    
+}
+.testSeriesActiveTests .testSeriesDatetrue{
+    background-color: #7fbc60;
+}
+.testSeriesInactiveTests .testSeriesDate{
+    background-color: #eeeeee;
+    color: #888888;
+}
+.testSeriesMonth{
+    background-color: #CCCCCC;
+    color: #888888;
+    padding: 4px 10px;
+}
+.testSeriesTestDetails{
+    float: left;
+    margin-left: 10px;
+    padding-top: 5px;
+    width: 600px;
+}
+.testSeriesTestName{
+    font-size: 18px;
+    height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.testSeriesTestDue{
+    margin-left: 650px;
+    margin-top: 10px;
+    text-align: center;    
+}
+.testSeriesTest .testListLeft{
+	width:300px;
+	padding:5px 20px;
+}
+.testSeriesTest .testListMiddle{
+	padding:15px 5px 0 0;
+}
+.testSeriesTest .testRankingHolder{
+	height:15px;
+	width:56px;
+	overflow:hidden;
+}
+.testSeriesTest .testRankingStars{
+	width:100%;height:100%;
+	background:url('/public/images/my-content/ratingStar.png') repeat-x;
+}
+.verticalItemDivider{
+	height:100%;
+	width:1px;
+	background-color:#ccc;
+}
+.blueSubmitButton{
+    font-size: 12px;
+}

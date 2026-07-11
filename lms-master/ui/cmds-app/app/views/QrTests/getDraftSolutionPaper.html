@@ -1,0 +1,292 @@
+#{if questions.errorCode!='' || finalResp.errorCode != ''}
+        #{common.errorCodes resp:questions/}
+#{/if}
+#{else}
+%{
+    testDetails = finalResp.result;
+    //Changing font family for Trividyaa Organization
+    orgClass ='default';
+    if(params.orgId == '5bacb325e4b0ff57ab848e07'){
+        orgClass = 'trividyaa';
+    }
+    result=questions.result;
+    quesns=result.list;
+    boardMap =[:];
+    questionNumber =0;
+}%
+#{if quesns!=null && quesns.length()>0}
+#{list items:0..quesns.length()-1,as:'q'}
+     %{
+        ques = quesns.get(q);
+        if(ques.has('detail')){
+            ques=ques.detail;
+        }
+        boardTree = ques.boardTree.get(0);
+        if(!boardMap.containsKey(boardTree.id)){
+            quesList = [ques]
+            boardMap.put(boardTree.id,quesList);
+        }
+        else{
+            quesList = boardMap.get(boardTree.id);
+            quesList.add(ques);
+            boardMap.put(boardTree.id,quesList);
+        }
+    }%
+#{/list}
+#{/if}
+<style type="text/css">
+    body,span,div{
+        font-size: 13.0pt !important;
+        font-family: sans-serif!important;
+    }
+    .questionPaperHolder{
+        padding: 0px 20px;
+    }
+    .questionPaperHeader img{
+        height: 38px;
+        max-width: 140px;
+        padding: 3px;
+        position: absolute;
+    }
+    .questionPaperTitle{
+        font-size: 26px !important;
+        font-weight: bold;
+        text-align:  center;
+        line-height: 34px;
+        top: 5px;
+        position: relative;
+        text-transform: capitalize;
+    }
+    .cleaner_with_divider{
+        clear: both;
+        width: 100%;
+    }
+    .instName{
+     text-align: center;
+     font-size: 30px !important;
+     font-weight: bold;
+     line-height: 1.5;
+    }
+    .marksDetails{
+        float: right;
+        margin:10px 0px;
+    }
+    .boardHeading{
+        padding: 5px;
+        background: black;
+        color: white;
+        text-align: center;
+        min-width: 80px;
+        max-width: 150px;
+        margin: 10px auto;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    .nonner{
+        display: none;
+    }
+    .mainContent{
+        width: 90%;
+        margin: auto;
+    }
+    .questionNumber{
+        margin-right: 5px;
+        font-size: 18px !important;
+        font-weight: bold;
+    }
+    .RTEImageDiv {
+        margin-left: 25px;
+    }
+    .boldy{
+        font-weight: bold;
+    }
+    .testStatus{
+        background: #F44336;
+        color:white;
+        padding: 7px 10px;
+    }
+    .userMessage{
+        text-align: center;
+    }
+    .RTELatex{
+        display: inline-block;
+    }
+    .optKey{
+        font-size: 20px !important;
+    }
+    .questionNumber{
+        font-weight: bold;
+    }
+    .keyDiv{
+        display: inline-block;
+        width: 175px;
+        margin-top: 15px;
+    }
+    .solutionTitle{
+        font-size: 20px !important;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .solutionDiv{
+        margin-top: 40px;
+    }
+    @font-face{
+        font-family: trividyaaOrg;
+        src:url('../../public/Samarkan.ttf') format('truetype')
+    }
+    .trividyaa{
+        font-family: trividyaaOrg !important;;
+        letter-spacing: 1.6;
+    }
+</style>
+<div class="questionPaperHolder">
+    <div class="questionPaperHeader">
+             <img src="${currentOrgInfo.getOrgThumbnail()}" alt="${currentOrgInfo.getFullName()}">
+        <div class="instName ${orgClass}">
+            ${currentOrgInfo.getFullName()}
+        </div>
+        <div class="questionPaperTitle">
+            ${testDetails.name}
+        </div>
+        <span class="testStatus">
+            #{if testDetails.completed != true}
+                    <span class='boldy'>DRAFT</span>
+            #{/if}
+            #{else}
+                #{if testDetails.published != true}
+                    <span class='boldy'>NOT PUBLISHED</span>
+                #{/if}
+            #{/else}
+        </span>
+        <div class="marksDetails">
+            <div class="totalMarks">
+                <strong>Total Marks : </strong>${testDetails.totalMarks}
+            </div>
+            #{if testDetails.duration>0}
+            %{
+                    timeObj=uicom.util.Utilities.getTimeFromMiliSec(testDetails.duration);
+                    totalTimeHrs = timeObj.hrs;
+                    totalTimeMins = timeObj.mins;
+                    totalTime = totalTimeHrs + ":" + totalTimeMins;
+
+            }%
+            <div class="Duration">
+                <strong>Duration : </strong>${totalTime} hrs
+            </div>
+            #{/if}
+        </div>
+    </div>
+    <hr class="cleaner_with_divider">
+    <div class="mainContent">
+        %{
+            questionIndex = 0;
+        %}
+        #{if quesns!=null && quesns.length()>0}
+        <div class="solutionTitle boardHeading">KEY</div>
+        <!-- Starting Map iteration-->
+        %{
+            for(e in boardMap) {
+                quesns = e.value;
+        }%
+        #{list items:0..quesns.size()-1,as:'q'}
+            %{
+                ques = quesns.get(q);
+                quesType = ques.type;
+                if(!ques.isNull('solutionInfo'))solutionInfo=ques.solutionInfo;
+                else solutionInfo=null;
+            }%
+            #{if solutionInfo!=null}
+            <div class="keyDiv">
+                <span class="questionNumber">${++questionIndex}.</span>
+                %{
+                    key = solutionInfo.answer;
+                }%
+                %{
+                    alphabet = "ABCDEFGHIJKLMNOPQRSTWXYZ";
+                }%
+                #{if quesType != "NUMERIC" && quesType != "SUBJECTIVE"}
+                #{list items:0..key.length()-1, as:'keyIndex'}
+                    #{if quesType == 'SCQ'}
+                    <span class="optKey">(${alphabet[Integer.parseInt(key.getAt(keyIndex))-1]})</span>
+                    #{/if}
+                    #{if quesType == 'MCQ' || quesType == 'PARA' || quesType == 'MATRIX'}
+                        <span class="optKey">(${alphabet[Integer.parseInt(key.get(keyIndex))-1]})</span>
+                    #{/if}
+                #{/list}
+                #{/if}
+                #{elseif quesType == "SUBJECTIVE"}
+                    <span class="optKey">N/A</span>
+                #{/elseif}
+                #{else}
+                    <span class="optKey">
+                        <span class="optKey">[${key}]</span>
+                    </span>
+                #{/else}
+            </div>
+            #{/if}
+        #{/list}
+        <!-- Ending Map iteration-->
+        %{
+            }
+        }%
+        <div class="solutionTitle boardHeading">SOLUTIONS</div>
+        <!-- Starting Map iteration-->
+        %{
+            solutionIndex = 0;
+        }%
+        %{
+            for(e in boardMap) {
+                quesns = e.value;
+        }%
+        #{list items:0..quesns.size()-1,as:'q'}
+            %{
+                ques = quesns.get(q);
+                quesType = ques.type;
+                if(!ques.isNull('solutionInfo'))solutionInfo=ques.solutionInfo;
+                else solutionInfo=null;
+            }%
+            #{if solutionInfo!=null}
+                %{
+                    solutions = solutionInfo.solutions;
+                    solutionIndex = ++solutionIndex;
+                }%
+                #{if solutions.length()>0}
+                #{list items:0..solutions.length()-1, as:'solution'}
+                %{
+                    newText = solutions.get(solution).newText;
+                }%
+                    #{if newText != ""}
+                    <div class="solutionDiv">
+                        <span class="questionNumber">${solutionIndex}.</span>
+                        <span class="solution">${newText.raw()}</span>
+                    </div>
+                    #{/if}
+                #{/list}
+                #{/if}
+            #{/if}
+        #{/list}
+        <!-- Ending Map iteration-->
+        %{
+            }
+        }%
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+                extensions : [ "tex2jax.js" ],
+                jax : [ "input/TeX", "output/HTML-CSS" ],
+                tex2jax : {
+                        inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+                },
+                TeX: {
+                extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                        }
+        });
+        </script>
+        <script type="text/javascript"
+            src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        #{/if}
+        #{else}
+            <div class="userMessage noResultsTr">No questions found.</div>
+        #{/else}
+    </div>
+</div>
+#{/else}

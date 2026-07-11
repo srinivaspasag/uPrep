@@ -1,0 +1,15 @@
+%{
+    quesns=testInfo.result.course.questions;      
+}%
+#{if quesns!=null && quesns.length()>0}
+#{list items:0..quesns.length()-1,as:'q'}
+%{
+    ques=quesns.get(q);
+    target=params.target;
+}%
+#{questions.quesItem ques:ques,target:target,canEdit:false /}
+#{/list}
+#{/if}
+#{else}
+<div class="userMessage">No questions found.</div>
+#{/else}

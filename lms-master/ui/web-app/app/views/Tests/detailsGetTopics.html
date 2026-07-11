@@ -1,0 +1,12 @@
+#{if topicsData.has('result') && topicsData.result.has('boards') && topicsData.result.boards.length()>0}
+<input class="selectAllTopics doCStream" data-cs-name="SELECT_ALL_TOPICS_CHKBOX" type="checkbox"/><span class="selectText">All</span><br/>
+%{
+topics = topicsData.result.boards;
+}%
+#{list items:0..topics.length()-1, as:'index'}
+<input class="topicCheckBox doCStream" type="checkbox" data-cs-name="TOPIC_CHKBOX" data-brdId="${topics.get(index).brdId}" data-topic-id="${topics.get(index).brdId}" data-topic-name="${topics.get(index).name}"/><span class="selectTopicText textStyles">${topics.get(index).name}</span><br/>
+#{/list}
+#{/if}
+#{else}
+	<span class="noCurriculumMsg leftAndRelative greyTextColor boldy">No topics data for the selected subject</span>
+#{/else}

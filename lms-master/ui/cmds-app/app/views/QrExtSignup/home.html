@@ -1,0 +1,81 @@
+<div id="cmdsSingupMGMTPage">
+   <div class="centerText pageHeadGrayDiv">
+	<span class="big20">&{'EXT_SIGN_UP_MGMNT'}</span>
+	<a style="color: white !important;" class="blueButton manageDigLibraryBtn absolute cmdsaPush"
+		href='/organization/${params.orgId}/managedigitallibrary'>Manage Digital Library</a>
+	<a style="color: white !important;" class="blueButton customizeSignupBtn absolute cmdsaPush"
+		href='/organization/${params.orgId}/customizesignup'>&{'CUSTOMIZE_SIGNUP'}</a>
+	%{learnpediaId=play.Play.configuration.getProperty("learnpedia.id");}%
+        #{if params.orgId == learnpediaId}
+		<a class="blueButton customizeCategoriespBtn absolute cmdsaPush"
+		href='/organization/${params.orgId}/customizecategories'>Edit Categories</a>
+	#{/if}
+   </div>
+   #{if resp!=null && resp.errorCode.isEmpty() && resp.result.list.length()>0}
+   <div class="cmdsSingupMGMTSec">
+	   %{
+		noOfCategories = 0;
+		noOfColumns = 4 + noOfCategories;
+	   }%
+	<table cellspacing=0 cellpadding=0 class="tableWithBorder cmdsSignupTable">
+	   <tr>
+		<th class="big16">Classes</th>
+		<th class="big16">Openness</th>
+		<th class="big16">Payment Info</th>
+		<th class="addNewCategory">
+			<div class="addCategoryBtn big18">&{'ADD_SIGNUP_CATEGORY'}</div>
+			<div class="addCategoryDiv nonner">
+				<input class="addCategoryInput" placeholder="enter name and press enter"/>
+			</div>
+		</th>
+	   </tr>
+	   %{ programs = resp.result.list; }%
+	   #{list items:0..programs.length()-1,as:'index'}
+		%{
+			program=programs.get(index);
+            editable=true;
+            if(program.orgId != params.orgId){
+                editable = false
+            }
+		}%
+		<tr class="progTr">
+	   <!-- <tr class="progTr #{if !editable}nonEditRow#{/if}" #{if !editable} title= "Other organization program cannot be edited" #{/if}> -->
+		<td>
+		   <a class="big15 openProgramSections" data-prog-id="${program.id}">${program.name}</a>
+		   <div>Click program to see sections</div>
+		</td>
+		<td class="fetchRowByCol" colspan=${noOfColumns-1}>
+		</td>
+	   </tr>
+	   #{/list}
+	</table>
+   	<div style="padding:20px 0px;" class="centerText">
+		<span class="bigBlueButton submitExtSignup">&{'TXT_SUBMIT'}</span>
+		<span class="bigRedButton cancelSignupSubmit">&{'TXT_CANCEL'}</span>
+   	</div>
+   </div>
+   #{/if}
+   <div id="chooseCurrencySample" class="nonner">
+	<div class="chooseCurrencyPopup">
+	   <div class="big18 boldy">Choose Your Currency</div>
+	   <div class="margTop10">
+	   <select class="chooseCurrencySignup">
+	   #{list items:0..currencyArray.length()-1,as:'cIndex'}
+		%{ currency = currencyArray.get(cIndex);}%
+		<option #{if currency.default} selected #{/if}
+			title="${currency.country}(${currency.code})"
+		 	value="${currency.code}#${currency.symbol}"
+			>${currency.country} - ${currency.code}(${currency.symbol})</option>
+	   #{/list}
+	   </select>
+	    <span class="smallBlueButton selectCurrencyBtn margTop5">&{'TXT_SELECT'}</span>
+	   </div>
+	</div>
+   </div>
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrExtSignup.init();}
+        lazyLoad([{fname:"qrExtSignup.js",cb:fn}]);        
+    }();    
+</script>

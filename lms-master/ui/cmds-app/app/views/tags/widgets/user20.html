@@ -1,0 +1,35 @@
+#{if _user!=null}
+%{
+    user=_user;
+    if(user.has('userId')){
+        userId=user.userId;
+        user.put('id',userId);
+    }else{
+        userId=user.id;
+    }
+    if( !user.has('profile') ){
+      user.put('profile', '');
+    }
+    if( !user.has('thumbnail') ){
+      user.put('thumbnail', '');
+    }
+
+    getUserClassAndUrl=util.UrlFramer.getUserClassAndUrl(user,params.orgId); 
+    if( !getUserClassAndUrl.has('className') ){
+      getUserClassAndUrl.put('className', '');
+    }
+    if( !getUserClassAndUrl.has('url') ){
+      getUserClassAndUrl.put('url', '');
+    }
+
+}%
+
+<a class="img20Wrapper floatLeft cmdsaPush ${getUserClassAndUrl.className} margRight5" 
+   data-user-id="${userId}" href="${getUserClassAndUrl.url}" data-profile='${user.profile}'>
+    <img src="${user.thumbnail}" class="img20"/>
+</a>
+<a data-user-id="${userId}" class="cmdsaPush ${getUserClassAndUrl.className}"
+    href="${getUserClassAndUrl.url}" data-profile='${user.profile}'>
+    ${user.firstName+' '+user.lastName}
+</a>
+#{/if}

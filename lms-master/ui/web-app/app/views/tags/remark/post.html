@@ -1,0 +1,6 @@
+#{if data!=null && data.errorCode.isEmpty() && data.result.has('info')}
+	#{remark.one remark : data.result.info , user : data.result.info.addedBy /}
+#{/if}
+#{else}
+	<div class="centerText boldy">Remark Post Failed</div>
+#{/else}

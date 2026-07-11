@@ -1,0 +1,26 @@
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Email Verification' /}
+<div class="vedantuNameWrapper">
+	<div class="vedantuTitle"></div>
+</div>
+<div class="centry changePasswordHolder" style="font-size:14px;color:red;">
+    <input type="hidden" id="emailForVerify" value="${email}">
+    <div class="centry">You are trying to connect your account with us to Email-Id : <b>${params.email}</b> </div>
+    #{if resp.errorCode=='INVALID_VERIFICATION_CODE'}
+        <div class="userMessage">
+		<span>Your email verification key is either invalid / has expired / already verified, </span>
+		<!--*{<a id="resendEmailVerificationLink" data-user-id="${params.userId}">click here</a>
+		<span>to resend verification key</span>}*-->
+		<span>Try resend verification link again from your account settings.</span>
+	</div>
+    #{/if}
+    #{elseif resp.errorCode=='USER_NOT_FOUND'}
+        <div class="userMessage">Sorry this service is currently enabled for Private users only.</div>
+    #{/elseif}
+    #{elseif resp.errorCode=='ALREADY_VERIFIED'}
+        <div class="userMessage">Your email has already been verified, <a href="/register/index">click here</a> to login</div>
+    #{/elseif}
+    #{else}
+        <div class="userMessage">Some Error Occured, Resend verification link , and use the new email that you will recieve for verification.<a href="/register/index">click here</a> to login</div>
+    #{/else}
+</div>

@@ -1,0 +1,65 @@
+#{if data!=null && data.errorCode.isEmpty()}
+%{
+    testId = data.result.id;
+    boards = data.result.boards;
+}%
+<div class="test-subjective-question-section">
+<div class="test-subjective-questions-container">
+    <h2 class="centerText s-title">Grade Subjective Questions</h2>
+    <div class="border-lg padTB10LR30">
+    #{if !boards.equals(null)}
+    %{ qIndex=0; }%
+    #{list items:0..boards.length()-1, as:'index'}
+        %{
+            board = boards.get(index);
+        }%
+        #{if !board.questions.equals(null)}
+         #{list items:0..board.questions.length()-1, as:'boardIndex'}
+            %{
+                boardQuestion = board.questions.get(boardIndex);
+                qIndex++
+            }%
+            <div class="subjective-question-container">
+            #{if !boardQuestion.equals(null) && !boardQuestion.equals("null") && boardQuestion != "null" &&  boardQuestion != null}
+                <div class="test-subjective-question">
+                    <div class="index displayInline big16">Q${qIndex}.</div>
+                    <div class="question-type boldy floatRight">${boardQuestion.type}</div>
+                    <div class="displayInline big15">${boardQuestion.content.raw()}</div>
+                </div>
+            #{/if}
+            </div>
+             #{if !boardQuestion.equals(null) && !boardQuestion.equals("null") && boardQuestion != "null" &&  boardQuestion != null}
+            <div class="test-subjective-question-footer">
+                <div class="floatLeft">
+                    <div class="boardHeading greenBrdTopic boardSubject displayInBlock">
+                        ${board.name}
+                    </div>
+                    <div class="boardHeading displayInBlock margLeft10 margRight10">
+                            Attempts : ${boardQuestion.attempts}
+                    </div>
+                    %{
+                        gradedCount = boardQuestion.attempts - boardQuestion.notGradedCount;
+                        notGradedCount = boardQuestion.notGradedCount;
+                    }%
+                    <div class="boardHeading displayInBlock margLeft10 margRight10">
+                        Graded : ${gradedCount}
+                    </div>
+                    <div class="boardHeading displayInBlock ">
+                        Not Graded  : ${notGradedCount}
+                    </div>
+                </div>
+                <div class="grade-student-answers-container displayInBlock floatRight">
+                    <a class="openInstSubjectiveQuestion" href="/organization/${params.orgId}/test/${testId}/subjectivequestion/${boardQuestion.id}" data-org-id="${params.orgId}" data-test-id = "${testId}" data-q-id="${boardQuestion.id}"> Grade Student Answers</a>
+                </div>
+            </div>
+            #{/if}
+            <div class="cleaner_with_divider"></div>
+            <hr class="line">
+         #{/list}
+         #{/if}
+    #{/list}
+    #{/if}
+    </div>
+</div>
+</div>
+#{/if}

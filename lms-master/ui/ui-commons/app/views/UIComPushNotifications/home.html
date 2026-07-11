@@ -1,0 +1,57 @@
+#{if userInfo!=null && userInfo.errorCode.isEmpty()}
+%{
+	userInfo = userInfo.result.info;
+}%
+   #{if userInfo.email.equals(null) || userInfo.email.isEmpty()}
+   <div class="userPushNotifyPopupBody">
+        <p>
+                <div class="blueTextColor big14 boldy" style="padding-bottom:3px;">&{'usrMsg.EMAIL_NOT_REGISTERED_HEAD'}</div>
+                <div class="" style="color:#666;">&{'usrMsg.EMAIL_NOT_REGISTERED_BODY'}</div>
+        </p>
+	</br>
+        <div>
+                <span class="bigBlueButton regUserEmailNow">&{'BTN_REG_NOW'}</span>
+                <a class="closeUsrPushNotifyPopup redTextColor" style="padding:15px;">&{'TXT_REMIND_LATER'}</a>
+        </div>
+   </div>
+   #{/if}
+   #{elseif !userInfo.emailChangeRequested.equals(null) && !userInfo.emailChangeRequested.isEmpty() && !userInfo.isEmailVerified}
+   <div class="userPushNotifyPopupBody">
+        <p>
+                <div class="blueTextColor big14 boldy" style="padding-bottom:3px;">&{'usrMsg.EMAIL_NOT_VERIFIED_HEAD'}</div>
+                <div class="" style="color:#666;">&{'usrMsg.EMAIL_NOT_VERIFIED_BODY'}</div>
+        </p>
+	</br>
+        <div class="sendEmailVerifyLink">
+                <a class="resendEmailVerifyLink">&{'settings.RESEND_VERIFICATION_LINK'}</a>
+                <a class="closeUsrPushNotifyPopup redTextColor" style="padding:15px;">&{'TXT_REMIND_LATER'}</a>
+        </div>
+	<div class="emailVerifyLinkSent nonner">
+		<div class="greyTextColor">&{'settings.EMAIL_VERIFICATION_LINK_SENT'}</div>
+               	<a class="closeUsrPushNotifyPopup redTextColor">&{'TXT_CLOSE'}</a>
+	</div>
+   </div>
+   #{/elseif}
+</div>
+<script type="text/javascript">
+$(function(){
+	var doc = $(document).find("#userPushNotifyPopup");
+	doc.on("click",".closeUsrPushNotifyPopup",function(){
+		$(this).closest(".userPushNotifyPopupBody").remove();
+	}).on("click",".resendEmailVerifyLink",function(){
+		var $this = $(this);
+                $.get("/UIComRegister/resendVerifyLink",function(data){
+                        if(data && data.errorCode==""){
+                                var par = $this.closest(".sendEmailVerifyLink").addClass("nonner");
+                                par.siblings(".emailVerifyLinkSent").removeClass("nonner");
+                        }
+                });
+	}).on("click",".regUserEmailNow",function(){
+		if(instHeader && instHeader.settings){
+			instHeader.settings.regEmailPopupOpen();
+		}
+		$(this).closest(".userPushNotifyPopupBody").remove();
+	});
+});
+</script>
+#{/if}

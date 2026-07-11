@@ -1,0 +1,40 @@
+%{
+    orgId = _orgId;
+    programText = _programText;
+    categoryName = _categoryName;
+}%
+<div class="categoryProgramsHolder container pmbb-body" id="categoryProgramsSection" data-org-id="${orgId}" data-category-name="${categoryName}">
+    <div class="row">
+        #{if programText == null}
+                <div class="f-28">&{'TXT_PROGRAMS_CAPS'}</div>
+        #{/if}
+        #{else}
+                <!-- <span class="f-400 m-l-10" style="font-size: 27px;">${programText}</span> -->
+        #{/else}
+            <!-- <div class="col-sm-4 pull-right"> -->
+            <div class="m-l-15 pull-right" style="bottom: 30px;position: relative;">
+            <span class="big16 greyTextColor siteCategoryText hidden-xs">&{'TXT_CATEGORY_CAPS'}</span>
+                <select class="chooseCategory">
+                    <option value="" selected>All</option>
+                </select>
+            </div>
+    </div>
+            <!-- </div> -->
+    *{<!--<div class="typeOfProgSec">
+            <span class="progTypeTab active" data-type="PUBLIC">&{'TXT_PUBLIC_CAPS'}</span>
+            <span class="progTypeTab" data-type="PRIVATE">&{'TXT_PRIVATE_CAPS'}</span>
+    </div>
+    #{if session != null && session.userId != null}
+    <div class="typeOfProgSec">
+            <span class="progTypeTab active" data-type="CATEGORY">&{'category.AVAILABLE_PROGRAMS'}</span>
+            <span class="progTypeTab" data-type="MY_PROGRAMS">&{'category.MY_PROGRAMS'}</span>
+    </div>
+    #{/if}-->}*
+    <div class="container" style="padding: 0;">
+        <div class="row">
+            <div class="categoryProgramsContainer">
+            </div>
+        </div>
+    </div>
+    <div class="loadMoreSections nonner">&{'LOAD_MORE_item',"Programs"}</div>
+</div>

@@ -1,0 +1,485 @@
+@font-face {
+    font-family: Ubuntu;
+    src: url(../../../../public/fonts/Ubuntu-Regular.ttf);
+}
+
+body{
+    overflow-x: hidden!important;
+    width: 100%;
+    font-family: 'Ubuntu', sans-serif!important;
+}
+.footer,.popover-content{
+ font-family: 'Ubuntu', sans-serif!important;   
+}
+#main{
+    padding-top: 60px;
+}
+.institutes .launch-block{
+    background:#0a1a29;
+    padding-top:50px;
+}
+.institutes .launch-block .left-block{
+    top: -20px;
+}
+.institutes .launch-block .left-block .launch-heading{
+    font-size: 40px;
+    padding-top:20px;
+    color:white;
+    margin-left: 80px;
+}
+.institutes .launch-block .left-block .head-points{
+    font-size: 14px;
+    margin-top: 20px;
+    width: 100%;
+    color: #fff;
+    margin-left: 70px;
+}
+.header-feature{
+   padding: 0px;
+}
+.institutes .launch-block .left-block .head-points .header-feature-text{
+    display: inline-block;
+    position: relative;
+    top: 10px;
+    left: 5px;
+}
+.getInTouch{
+    font-size: 24px;
+    margin-top: 39px;
+    background:transparent;
+    letter-spacing: 2px;
+    margin-left: 95px; 
+    padding-left: 40px; 
+    padding-right: 40px;
+    color: white;
+    border: 2px solid green;
+    border-radius: 10px;
+}
+.getInTouch:hover{
+    background-color: green;
+    color: white;
+}
+.header-image{
+    float:right;
+    margin-right:-30px;
+}
+
+.features-block{
+    background: #42474a;
+}
+.feature-heading{
+    text-align: center;
+    font-size:24px;
+    text-transform: uppercase;
+    color:white;
+    letter-spacing: 2px;
+    padding: 20px 0px;
+}
+
+@media(max-width: 767px){
+    .header-image{
+        float:none;
+        margin:auto;
+    }
+    .institutes .launch-block .left-block .launch-heading{
+        margin-left: 10px;
+    }
+    .institutes .launch-block .left-block .head-points{
+        margin-left: -10px;
+        font-size: 13px;
+    }
+    .institutes .launch-block .left-block .head-points img{
+        width: 30px;
+        text-align: center;
+    }
+    .header-feature{
+      text-align: center;   
+    }
+  .getInTouchRow{
+    text-align: center;
+    }
+    .heading{
+        font-size: 24px;
+        line-height: 30px;
+    }
+    #marketing,#metrics{
+        padding: 20px!important;
+    }
+    .getInTouch{
+        margin-left: 0px;
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+    .subHeading{
+        font-size: 18px!important;
+        line-height: 30px;
+        margin-top: 15px;
+    }
+    .subsubHeading{
+        font-size: 14px!important;
+        line-height: 30px;
+        margin:10px 0px 20px 0px;
+    }
+    .institutes .launch-block .left-block .head-points .header-feature-text{
+        display: block;
+        text-align: center;
+    }
+}
+
+@media only screen and (min-width: 767px) and (max-width: 1145px){
+    #about .about-feature{
+        height: 155px;
+    }
+}
+
+@media only screen and (min-width: 767px) and (max-width: 992px){
+    #marketing .thumbnail{
+        height: 260px;
+    }
+}
+
+
+@media only screen and (min-width: 1145px) and (max-width: 1280px){
+    #about .about-feature{
+        height: 150px;
+    }
+}
+
+.about-feature{
+    transition: all .3s ease;
+    height: 136px;
+}
+.about-feature:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+}
+.cardUsage .pull-left{
+    padding: 0px;
+    margin-top: -10px;
+}
+.cardUsage ul{
+    margin:0px;
+    padding: 0px;
+}
+.cardUsage{
+    margin-top: 20px;
+    margin-left: 40px;
+}
+.media-heading{
+    font-weight: bold;
+}
+/*#appFeatures ul{
+    list-style: disc;
+}*/
+.metric{
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+.metric-count{
+    font-size: 36px;
+    font-weight: bold;
+}
+.metric-heading{
+    font-size: 14px;
+}
+.marketing{
+    box-shadow: 7px 10px 20px 0 rgba(46,61,73,.15);
+    transition: all .3s ease;
+    height: 200px;
+}
+.marketing:hover{
+    box-shadow: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*<!-- VIPUL LPSLIPER   -->*/
+.cleaner_with_divider {
+    clear: both;
+    width: 100%;
+    height: 10px;
+    font-size: 1px;
+}
+/*.fullWidth{
+    width:100%;
+}*/
+input{
+    min-height: 19px;
+    font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+    outline: none;
+}
+input[type="checkbox"]{
+    width: 14px;
+    height: 14px;
+    min-height: 14px;
+}
+ul{
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+}
+textarea{
+    resize:none;
+}
+.relative{
+    position:relative;
+}
+.absolute{
+    position:absolute;
+}
+.right{
+    float:right;
+}
+.left{
+    float:left;
+}
+.nonner{
+    display:none;
+}
+
+/* SPECIFIC */
+.sliderSprite,
+.spriteImg{
+    background-image:url('../../images/siteSprite.png');
+    background-repeat:no-repeat;
+    display:inline-block;
+    font-size:1px;
+}
+.sliderSprite{
+    background-image:url('../../images/sliderSprite_2.png');
+}
+.siteTopBar{
+    height:65px;
+    overflow:hidden;
+}
+.instThumbnailLogo {
+    max-height: 45px;
+    max-width: 150px;
+    margin-top: 8px;
+}
+.siteSignupSecTable{
+    padding:20px 0;
+}
+a.greyColor{
+    color:#666;
+    font-size:13px;
+}
+.orgButton{
+    background-color:blue;
+    padding:10px 50px;
+    font-weight:bold;
+    font-size:16px;
+    color:#FFF;
+    cursor:pointer;
+    border-radius:10px;
+}
+.topBarSignupLink{
+    cursor:pointer;
+}
+.orgSignupLink{
+    font-size:16px;
+    font-weight:bold;
+    position:relative;
+    top:-3px;
+}
+.orgSignupBtnTopLine{
+    width:100%;
+    height:5px;
+    position:relative;
+    top:-23px;
+}
+.signupPopupButton{
+    /*margin: 0 13px 0 30px;*/
+}
+.middleSliderSec{
+    position:relative;
+    width:100%;
+}
+.bgImageHolder{
+    text-align:center;
+    min-height:350px;
+    height: 100px;
+    overflow:hidden;
+}
+.bgImageBlackOut{
+    background-color:rgba(0,0,0,0.7);
+}
+.bgImageBlackOut,
+.middleSliderHolder{
+    position:absolute;
+    width:100%;
+    top:0px;
+}
+.sliderTable{
+    width:1000px;
+    padding-top:20px;
+    margin:0 auto;
+}
+.siteSlideTextHolder{
+    height:153px;
+    position:relative;
+}
+.sliderInfoSec{
+    position:absolute;
+    height:170px;
+    width:356px;
+    padding:0px 0px 12px;
+}
+.siteSlideTextFrame{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+.siteSlideText{
+    height:150px;
+    width:356px;
+}
+.googlePlayIcon{
+    background-position:-231px -18px;
+    height:51px;
+    width:180px;
+}
+.googlePlayIcon:hover{
+    background-position:-231px -81px;
+}
+.middleSliderHolder .signupPopupButtonHolder{
+    margin:20px 0px 95px;
+    position:absolute;
+    bottom: 0px;
+}
+.signupPopupButtonHolder .signupPopupButton{
+    display: inline-block;
+    margin-right:13px;
+    padding: 18px 65px 16px;
+}
+.slide-dots{
+    position:relative;
+    top: 35px;
+    text-align: center;
+    padding-left: 60px;
+}
+.slide-dot{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    border-radius:5px;
+    margin-right:5px;
+    background-color:rgba(255,255,255,0.5);
+    cursor:pointer;
+}
+.slide-dot:hover{
+    background-color:rgba(255,255,255,0.8);
+}
+.slide-dot.active{
+    background-color:#FFF;
+}
+.extTriangle{
+    position:absolute;
+    right:-30px;
+    top:0px;
+    width: 0; 
+    height: 0; 
+    border-top: 30px solid transparent;
+    border-left: 30px solid rgba(254,169,24,0.85);
+}
+.slideImgsHolder{
+    height:330px;
+    margin-left:35px;
+}
+#slideMobileHolder{
+    background-position:-30px -20px;
+    width:112px;
+    height:224px;
+    position:absolute;
+    bottom:0px;
+}
+#slideTabletHolder{
+    background-position:-164px -10px;
+    width:526px;
+    height:306px;
+    position:absolute;
+    bottom:15px;
+    margin-left:15px;
+}
+#slideTabletContainer{
+    background-color: #333;
+    margin: 16px 64px;
+    width: 400px;
+    height: 255px;
+    overflow:hidden;
+}
+#slideTabletContainer .sliderSprite{
+    width: 400px;
+    height: 255px;
+}
+#siteSlideTablet1{
+    background-position:-229px -27px;
+}
+#siteSlideTablet2{
+    background-position:-228px -323px;
+}
+#siteSlideTablet3{
+    background-position:-228px -578px;
+}
+#slideMobileContainer{
+    background-color: #FFF;
+    margin: 25px 4px 20px;
+    width: 101px;
+    height: 161px;
+    overflow:hidden;
+}
+#slideMobileContainer .sliderSprite{
+    width: 101px;
+    height: 178px;
+}
+#siteSlideMobile1{
+    background-position:-34px -45px;
+}
+#siteSlideMobile2{
+    background-position:-34px -265px;
+}
+#siteSlideMobile3{
+    background-position:-34px -441px;
+}
+#appFeatures h3{
+   color: #4CAF50;
+   text-transform: uppercase;
+   font-size: 16px;
+   font-weight: 700;
+   margin-bottom: 20px;
+   /*text-align: center;*/
+   margin-left: 40px;
+}
+.submit-btn{
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.cardUsage .pull-left{
+    display: none;
+}
+.cardUsage .media-heading{
+    color: #4CAF50;
+    text-transform: uppercase;
+}

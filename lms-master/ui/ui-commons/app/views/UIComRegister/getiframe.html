@@ -1,0 +1,44 @@
+<html>
+<head>
+	<title>Welcome</title>
+	<link rel="shortcut icon" id="favIcon" type="image/png" href="@{'/public/images/favicon.ico'}" class=""></link>
+	<style type="text/css">
+	body{
+		margin:0px;
+		height:100%;
+	}
+	iframe{
+		border:0px;
+		width:100%;
+		height:100%;
+		position:absolute;
+		min-height:100%;
+	}
+	</style>
+	<script type="text/javascript">
+		function loadClientFavIcon(){
+			var xmlhttp;
+			if (window.XMLHttpRequest){
+  				xmlhttp=new XMLHttpRequest();
+				xmlhttp.onreadystatechange=function(){
+  					if (xmlhttp.readyState==4 && xmlhttp.status==200){
+						var jsonObj = JSON.parse(xmlhttp.responseText);
+						document.getElementById("favIcon").href = jsonObj.icon;
+    					}
+  				}
+				xmlhttp.open("GET","/UIComRegister/getFavIconByReferer",true);
+				xmlhttp.send();
+  			}
+		}
+		new function(){
+			loadClientFavIcon();
+		}
+	</script>
+</head>
+<body>
+	<iframe src="${url}" id="frameHolder"></iframe>
+	<script type="text/javascript">
+		window.history.replaceState(null,null,location.origin);
+	</script>
+</body>
+</html>

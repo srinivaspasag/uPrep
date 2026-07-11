@@ -1,0 +1,66 @@
+<table class="headSecTable">
+  <thead>
+      <tr>
+          <td class="CTCBoxTd">
+            <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                <div class="gCBoxTicker"></div>                    
+            </div>   
+          </td>
+          <td class="CTInfoTd"></td>
+          <td class="CTTitleTd">TITLE</td>
+          <td class="CTPrdtTypeTd">Type</td>
+          <td class="CTStatusTd">Status</td>
+      </tr>          
+  </thead>
+</table>
+<div id="fixedSec">
+    <table class="cmdsTable">
+      <tbody>   
+         
+        %{   
+            contents=contents.result.contents;
+         }%
+        #{if contents.length()>0}
+         #{list items:0..contents.length()-1, as:'p'}          
+            %{
+                content=contents.get(p);
+                entityId=content.entityId;
+                entityType=content.entityType.toUpperCase();                            
+                
+                contentName=content.title; 
+            }%
+          <tr class="cmdsTr cmdsTr_${entityId}" data-entity-id="${entityId}" 
+              data-entity-type="${entityType}">
+              <td class="CTCBoxTd">
+                  <div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                      <div class="gCBoxTicker"></div>                      
+                  </div>                  
+              </td>
+              <td class="CTInfoTd">
+<!--                  <span class="cmdsItemInfo cmdsPrdtInfo" data-prdt-id="${entityId}"></span>-->
+              </td>
+              <td class="CTTitleTd">
+                  #{aTagMapper entityName:contentName,entityId:entityId,entityType:entityType/}
+              </td>
+              <td class="CTPrdtTypeTd">${entityType}</td>                 
+              <td class="CTStatusTd">
+                  #{if content.has('isPublished')&&content.isPublished}
+                  <span class="cmdsPrdtStatus" data-status="PUBLISHED">PUBLISHED</span>
+                  #{/if}
+                  #{else}
+                    <span class="cmdsPrdtStatus" data-status="INCOMPLETE">INCOMPLETE</span>
+                  #{/else}
+              </td>              
+          </tr>           
+          #{/list}
+          #{/if}
+          #{else}
+          <tr>
+            <td colspan="5">
+                <div class="userMessage">No Content available</div>
+            </td>
+          <tr>
+          #{/else}
+      </tbody>
+    </table> 
+</div>

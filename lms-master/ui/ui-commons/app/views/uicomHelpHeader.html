@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Help</title>
+    <meta charset="utf-8" />
+    <meta content="Learnpedia Web-App" name="application-name" />
+    <meta content="http://learn.learnpedia.in" name="application-url" />
+    <meta content="Knowledge Democratized" name="description" />
+    <meta content="Knowledge Democratized,knowledge,democratized,Learnpedia,books,library,course,playlist" name="keywords" />
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}"></link>        
+    #{gaTrackingCode /}
+    <script type="text/javascript">
+        var USERID="${session.get('userId')}",USERNAME="${session.get('username')}",PROFILEPIC="${session.get('profilePic')}",FULLNAME="${session.get('fullname')}";
+     </script>  
+     #{if play.mode.name()=='PROD' && play.Play.configuration.getProperty("application.name")=="web-app"}
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+        #{stylesheet media:'screen', src:'uicomMain.css' /}
+        #{stylesheet media:'screen', src:'helpCenter/o.main.css' /}
+        #{script src:'helpCenter/o.home.js', charset:'utf-8' /}
+     #{/if}
+     #{else}
+        #{stylesheet media:'screen', src:'uicomMain.css' /}
+        #{stylesheet src:'uicomCommon/buttonsAndTabs.css', charset:'utf-8' /}
+        #{stylesheet media:'screen', src:'uicomHelpCenter/main.css' /}
+        
+        #{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /}
+        #{script src:'uicomCommon/utils.js', charset:'utf-8' /}        
+        #{script src:'helpCenter/questionsData.js', charset:'utf-8' /}
+        #{script src:'helpCenter/topicsData.js', charset:'utf-8' /}
+        #{script src:'uicomHelpCenter/home.js', charset:'utf-8' /}
+     #{/else}
+  </head>
+  <body>
+    	#{common.vPopup/}
+    	<input type="hidden" id="serverTime" value="${new Date().getTime()}">
+    	<div id="topLoader" class="nonner">
+        	<span class="loadingSpanTop"></span>
+    	</div>
+	<div class="pageHolderM">
+	    <div class="helpTopBar">
+		<span>
+			<a class="goToHelpHome" href="/help">&{'help.HOME_TXT'}</a>
+		</span>
+		<span class="right"><a href="mailto:info@learnpedia.in">&{'help.CONTACT_SUPPORT'}</a></span>
+	    </div>
+	</div>
+	<div id="contentSectionHolder">
+		<div id="helpCenter">
+      			#{doLayout /}
+		</div>
+	</div>
+      	#{common.noscript/}
+    </body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        #{include 'UIComWidgets/rte.html' /}
+        <div id="FEWrapper">
+            <div id="FEContent" class="nonner"></div>
+        </div>
+        
+        
+<div id="main" contenteditable="true" style="border:solid 1px black; width:300px; height:300px"><div>Hello world!</div><div><br></div><div>This is a paragraph</div>
+</div>
+        
+        
+    <script type="text/javascript">
+        var asyncFnsStore=[];
+        var jsFileLogger=[];
+        var filesUpFront=[];
+        var cbfnUpFront;
+        var serverSystemTimeDelta=parseInt("${new Date().getTime()}")-(new Date().getTime());        
+    </script>                 
+        #{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /} 
+        #{script src:'uicomUtils.js', charset:'utf-8' /}    
+        #{script src:'uicomWidgets/newrte.js', charset:'utf-8' /}    
+        #{script src:'uicomWidgets/newfe.js', charset:'utf-8' /}   
+        #{stylesheet media:'screen', src:'uicomMain.css' /}
+        #{stylesheet media:'screen', src:'uicomWidgets/rte.css' /}
+        #{stylesheet media:'screen', src:'uicomWidgets/fe.css' /}    
+       <script type="text/x-mathjax-config">
+                MathJax.Hub.Config({
+                        extensions : [ "tex2jax.js" ],
+                        jax : [ "input/TeX", "output/HTML-CSS" ],
+                        tex2jax : {
+                                inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+                        },
+                        TeX: {
+                        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                                }
+                });
+        </script>     
+        <script type="text/javascript">
+            vRTE.init($(".RTEHolder"));
+        </script>
+            
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>         
+    </body>
+</html>
+
+

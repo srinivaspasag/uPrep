@@ -1,0 +1,76 @@
+#{if info.errorCode!=''}
+    *{#{common.errorCodes resp:info /}}*
+<div class="userMessage">
+    No Results found.
+</div>    
+#{/if}
+#{else}
+%{  
+    info=info.result;
+    if(info.has('products')){
+        items=info.products;
+        noMessage='This content is not added to any Products.';
+        heading='Added To Products';     
+        hasPrdts=true;
+    }else{
+        items=info.sources;
+        noMessage='No Results found.';
+        heading='Added From Sources';
+        hasPrdts=false;
+    }
+    target=params.target;
+}%
+<div class="cmdsPopupHead">${heading}</div>
+#{if items.length()>0}
+<table class="addedToTable" width="100%">
+    <thead>
+        <tr class="gHeading">
+            <td class="CTSrNo">Sr No.</td>
+            <td>TITLE</td>
+            <td class="CTPrdtTypeTd">TYPE</td>
+            <td class="CTAddedByTd">CREATED BY</td>
+            <td class="CTDateAddedTd">DATE CREATED</td>
+            #{if target!='QUESTION'}
+            <td class="ATTContentTd">CONTENT ADDED</td>
+            #{/if}
+        </tr>
+    </thead>
+    <tbody>
+        #{list items:0..items.length()-1,as:'p'}
+        %{
+            item=items.get(p);
+            entityType=item.type;
+            entityId=item.id;
+            if(!hasPrdts){
+                entityType="SOURCE";
+              }
+        }%
+        <tr>
+            <td>${p_index}</td>
+            <td>
+                #{aTagMapper entityName:item.title,entityId:entityId,entityType:entityType/}
+            </td>
+            <td>${entityType}</td>
+            <td>#{widgets.user20 user:item.user /}</td>
+            <td>${new Date(item.dateCreated).format('dd/MM/yyyy')}</td>
+            #{if target!='QUESTION'}
+            <td>
+                %{
+                    contentInfo=item.contentInfo;
+                }%
+                #{if contentInfo.length()>0}
+                    ${contentInfo.get(0).numContentAdded} Question${contentInfo.get(0).numContentAdded.pluralize()}
+                #{/if}
+            </td>
+            #{/if}
+        </tr>
+        #{/list}
+    </tbody>
+</table>
+#{/if}
+#{else}
+<div class="userMessage">
+    ${noMessage}
+</div>
+#{/else}
+#{/else}

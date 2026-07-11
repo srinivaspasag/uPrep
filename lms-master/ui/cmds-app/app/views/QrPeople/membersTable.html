@@ -1,0 +1,77 @@
+%{
+totalHits=people.result.totalHits;
+members=people.result.list;
+orgUserProfile=currentOrgInfo.getOrgUserProfile();
+}%    
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv">
+    <table class="headSecTable">
+        <thead>
+            <tr>
+                #{if orgUserProfile=="MANAGER"}
+                <td class="width16"></td>
+                <td class="width16"></td>
+                #{/if}                      
+                <td class="tdPadLeft5">Name</td>
+                <td class="width100 maxWidth100">Gender</td>
+                <td class="width120 maxWidth120">Profile</td>
+                <!-- <td class="width150 maxWidth150">Role</td> -->
+                <td class="width120 maxWidth120">Part Of</td>
+                <td class="width120 maxWidth120">&{'DEVICE_ASSIGNMENT'}</td>
+            </tr>          
+        </thead>
+    </table>    
+</div>
+<div id="fixedSec">
+    <table class="cmdsTable">
+        <tbody>
+            #{if members.length()>0}
+            #{list items:0..members.length()-1,as:'m'}
+            %{
+            member=members.get(m);
+            }%
+            <tr class="big13 memberTr">
+                #{if orgUserProfile=="MANAGER" && !"EXT_AUTH_ORG".equals(session.get("orgAuthType"))}
+                <td class="width16"> 
+                    <div class="editOrgMember editPeopleImg" 
+                         data-user-id='${member.userId}' data-user-profile="${member.profile}"></div>
+                </td>
+                #{/if}
+                #{if canImpersonate==true}
+                <td class="width16">
+		    #{if member.userId != session.get("userId")}
+                    <div class="browseAsUser" data-user-id='${member.userId}'
+                         data-user-profile="${member.profile}" ></div>
+		    #{/if}
+                </td>
+		#{/if}
+                <td class="tdPadLeft5">
+                    #{widgets.user20 user:member /} 
+		    #{people.userStatus user : member , orgUserProfile : orgUserProfile /}
+                </td>
+                <td class="width100 maxWidth100">${member.gender}</td>
+                <td class="width120 maxWidth120">${member.profile.toLowerCase().capitalizeWords()}</td>
+                <!-- <td class="width150 maxWidth150">-</td> -->
+                <td class="width120 maxWidth120">
+                    %{
+                    mappings=member.mappings.programs.length();
+                    }%
+                    <a class="showUserMappings" data-user-id='${member.userId}'>
+                        ${mappings} Program${mappings.pluralize()}
+                    </a>
+                </td>
+                <td class="width120 maxWidth120">NO</td>
+            </tr>   
+            #{/list}
+            #{/if}
+            #{else}
+            <tr class="noResultsTr">
+                <td colspan="7">
+                    <div class="userMessage">No members found.</div>
+                </td>
+            <tr>                              
+                #{/else}
+        </tbody>
+    </table> 
+    #{footer /}
+</div>       

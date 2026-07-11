@@ -1,0 +1,77 @@
+<script type="text/javascript">
+	var leaderBoardData_headers = "<th></th> ";
+</script>
+#{if toppersData.has('result') && toppersData.result.has('list') && toppersData.result.list.length()>0}
+	<div class="left relative leaderBoardHolderTable">
+		<table cellpadding="8" cellspacing="0" border="0" class="absolute leaderBoardHeaderTable">
+			<tr></tr>
+		</table>	
+		<div class="left relative leaderBoardScrollHolder">
+		<table cellpadding="8" cellspacing="0" border="0">
+			<tr style="height:0px;">
+			</tr>
+			#{list items:0..toppersData.result.list.length()-1,as:'tIndex'}
+			%{
+				topper = toppersData.result.list.get(tIndex);
+				user = topper.user;
+				info = topper.info;
+				analytics = info.measures;
+			}%
+			<tr>
+				<td>${topper.rank}</td>
+			#{if !topper.user.equals(null)}
+			%{
+				getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(topper.user);
+			}%
+				<td><a href="${getUserClassAndUrl.url}" data-user-id="${getUserClassAndUrl.id}"  class="${getUserClassAndUrl.className}">${user.firstName} ${user.lastName}</a></td>
+			#{/if}
+			#{else}
+				<td>Unknown User</td>
+			#{/else}
+				#{if info.has("boards") && info.boards.length()>0}
+					#{list items:0..info.boards.length()-1,as:'sIndex'}
+					%{
+						board = info.boards.get(sIndex);
+						percent = uicom.util.Utilities.calcPercentage(board.measures.score,board.totalMarks); 
+					}%
+					<td><span class="leaderBoardShowMarks">${board.measures.score}</span><span class="nonner leaderBoardShowPercentage">${percent} %</span></td>
+					#{/list}
+				#{/if}
+				#{else}
+					<td>N.A.</td>
+				#{/else}
+				%{
+					totalMarks = info.totalMarks;
+					if(data!=null){
+						totalMarks = data.totalMarks;
+					}
+					percent = uicom.util.Utilities.calcPercentage(analytics.score,totalMarks); 
+				}%
+				<td><span class="leaderBoardShowMarks">${analytics.score}</span><span class="nonner leaderBoardShowPercentage">${percent} %</span></td>
+				%{
+					timeObj=uicom.util.Utilities.getTimeFromMiliSec(analytics.timeTaken);
+				}%
+				<td>${timeObj.hrs}:${timeObj.mins} hrs</td>
+			</tr>
+			#{/list}
+		</table>
+		</div>
+	</div>
+	<div class="left relative chooseLeaderBoardMarksPercent">
+		<span class="bgImageSprite closeLeaderBoardPopup right absolute" style="padding:0px;"></span>
+		<input type="radio" name="selectMarksOrPercentage" class="left absolute showLeadersMarks" checked=true value="marks"/><span class="absolute left">Marks</span><br/>
+		<input type="radio" name="selectMarksOrPercentage" class="left absolute showLeadersPercentage" value="percentage"/><span class="absolute left">Percentage</span><br/>
+	</div>
+%{
+	boards = toppersData.result.info.metadata;
+}%
+<script type="text/javascript">
+	var leaderBoardData_headers = "<th>Rank</th><th>Name</th> ";
+        leaderBoardData_headers += "#{list items:0..boards.length()-1,as:'sIndex'}<th>${boards.get(sIndex).name}</th>#{/list} ";
+	leaderBoardData_headers += "<th>Total</th> <th>Time Taken</th>";
+</script>
+#{/if}
+#{else}
+	<span class="bgImageSprite closeLeaderBoardPopup right absolute" style="padding:0px;"></span>
+	<span class="relative left big14 boldy" style="margin-top:20px;text-align:center;width:100%">Leaders board will be updated soon</span>
+#{/else}

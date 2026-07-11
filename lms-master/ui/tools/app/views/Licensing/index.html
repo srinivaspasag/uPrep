@@ -1,0 +1,103 @@
+#{extends 'main.html' /}
+#{set title:'Tools:Licensing' /}
+<div id="allPricingPlansPage">
+    #{respStatus /}
+    <a class="redButton createPricingPlanBtn" href="/createpricingplan">Create new Pricing Plan</a>
+    <div class="toolsPageHeading">List of all Plans</div>
+    %{
+    plans=plans.result.list;
+    }%
+    #{if plans.length()>0}
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    Name of the plan  
+                </td>
+                <td style="width: 275px;"></td>
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:0..plans.length()-1,as:'i'}
+            %{
+            plan=plans.get(i);
+            }%
+            <tr>
+                <td>
+                    ${plan.name}
+                    <div class="planDetails">
+                        #{if plan.peruser}
+                        <div class="planDetail">
+                            <div class="planDetailsHead">Plan Type</div>
+                            <div class="planDetailsValue">User Based License</div>
+                        </div>
+                        <div class="planDetail">
+                            <div class="planDetailsHead">Cost of the Plan Per User Per Month(in $)*</div>
+                            <div class="planDetailsValue">${plan.cost}</div>
+                        </div>                        
+                        #{/if}
+                        #{else}
+                        <div class="planDetail">
+                            <div class="planDetailsHead">Plan Type</div>
+                            <div class="planDetailsValue">Non-User Based License</div>
+                        </div>
+                        <div class="planDetail">
+                            <div class="planDetailsHead">Maximum Number of users</div>
+                            <div class="planDetailsValue">${plan.users}</div>
+                        </div>                        
+                        <div class="planDetail">
+                            <div class="planDetailsHead">Cost Per user if the users exceed limit(in $)</div>
+                            <div class="planDetailsValue">${plan.additionalCost}</div>
+                        </div>                                              
+                        <div class="planDetail">
+                            <div class="planDetailsHead">Cost of the Plan Per Month(in $)</div>
+                            <div class="planDetailsValue">${plan.cost}</div>
+                        </div>                                                                      
+                        #{/else}                                                     
+                    </div>
+                </td>
+                <td>
+                    <div class="blueButton showPlanDetails">Show Details</div>                
+                    %{
+                    planState='';
+                    if(!plan.isNull('planState')){
+                    planState=plan.planState;
+                    }
+                    }%
+                    #{if planState=='OBSOLETE'}
+                    <b>OBSOLETE</b>
+                    #{/if}
+                    #{else}
+                    <select data-plan-id='${plan.id}' class="changePlanState" id='planSelect_${i}'>
+                        #{if plan.isNull('planState')}
+                        <option value="" selected></option>
+                        #{/if}
+                        <option value="DRAFT">DRAFT</option>
+                        <option value="OBSOLETE">OBSOLETE</option>
+                        <option value="ACTIVE">ACTIVE</option>
+                    </select>
+                    <script type="text/javascript">
+			var planState = "${planState}";
+			var planSelect = $('#planSelect_${i}');
+                        planSelect.val(planState);
+			if(planState == "ACTIVE"){
+				planSelect.find("option[value='DRAFT']").remove();
+			}
+                    </script>                    
+                    #{/else}
+                </td>
+            </tr>
+            #{/list}
+        </tbody>
+    </table>    
+    #{/if}
+    #{else}
+    <div class="userMessage">
+        There are no pricing plans added yet. <a href="@{Licensing.createPricingPlan}">Click here</a>
+        to create a pricing plan.
+    </div>
+    #{/else}
+</div>
+<script type="text/javascript">
+    $("#pricingMenu").addClass("activeMenuItem");
+</script>

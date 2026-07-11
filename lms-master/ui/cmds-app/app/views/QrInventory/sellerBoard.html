@@ -1,0 +1,77 @@
+<div id="qrOrgSellerDashboard">
+   <div class="pageHeadGrayDiv">
+	<div class="centerText">
+		<span class="big20">&{'SELLER_DASHBOARD'}</span>
+	</div>
+   </div>
+    <div id="leftSection">
+        <div class="leftSecHeadsDiv">
+            <div class="leftSecHead" id="showCmdsInventory">&{'INVENTORY_PAGE'}</div>
+            <div class="leftSecHead" id="showCmdsShipments">&{'SHIPMENTS_PAGE'}</div>
+            <div class="leftSecHead" id="showCmdsInvoices">&{'ORDERS_PAGE'}</div>   
+        </div>
+    </div>   
+    <div id="mainSection"></div>
+    <div class="cleaner_with_divider">&nbsp;</div>      
+</div>
+<script type="text/javascript">
+var sellerDashBoard = new function(){
+	var pageElemId;
+	var parDiv,contentHolder;
+	var CLICK = "click.sellerdashboard";
+	var replaceState = true;
+	var pageIdElemMap = {
+		"inventory" : "showCmdsInventory",
+		"orders" : "showCmdsInvoices",
+		"shipments" : "showCmdsShipments"
+	};
+	this.open = function(pageId){
+		if(pageIdElemMap[pageId]){
+			this.init(pageIdElemMap[pageId]);	
+		}
+	};
+	this.init = function(openPageId){
+		pageElemId = openPageId;
+		parDiv = $("#qrOrgSellerDashboard");
+		contentHolder = parDiv.find("#mainSection");
+		parDiv.off(CLICK)
+			.on(CLICK,"#showCmdsInventory",showCmdsInventory)
+			.on(CLICK,"#showCmdsShipments",showCmdsShipments)
+			.on(CLICK,"#showCmdsInvoices",showCmdsInvoices)
+		if(pageElemId){
+			parDiv.find("#"+pageElemId).trigger(CLICK);
+		}
+	};
+	var openPage = function(url,params,append,replaceState){
+		bigLoader(contentHolder);
+		showTopLoader();
+		if(replaceState){
+			history.replaceState(null, null, "/organization/"+cmdsOrgId+"/sellerdashboard/"+append);
+		}else{
+			pushHistory(null, null, "/organization/"+cmdsOrgId+"/sellerdashboard/"+append);
+		}
+		vReq.get(url,params||{},function(data){
+			contentHolder.html(data);
+		});
+	};
+	var showCmdsInventory = function(e){
+		parDiv.find("#showCmdsInventory").addClass("leftSecHeadActive").siblings().removeClass("leftSecHeadActive");
+		openPage("/QrInventory/inventory",{},"inventory",replaceState);
+		replaceState = false;
+	};
+	var showCmdsShipments = function(e){
+		parDiv.find("#showCmdsShipments").addClass("leftSecHeadActive").siblings().removeClass("leftSecHeadActive");
+		openPage("/QrInventory/shipments",{},"shipments",replaceState);
+		replaceState = false;
+	};
+	var showCmdsInvoices = function(e){
+		parDiv.find("#showCmdsInvoices").addClass("leftSecHeadActive").siblings().removeClass("leftSecHeadActive");
+		var params = {start: 0, size: 50, "customer.id": cmdsOrgId, "customer.type": "ORGANIZATION"};
+		openPage("/QrInvoices/sellerDashboard",params,"orders",replaceState);
+		replaceState = false;
+	};
+};
+$(function(){
+	sellerDashBoard.open("${openPageId}");
+});
+</script>

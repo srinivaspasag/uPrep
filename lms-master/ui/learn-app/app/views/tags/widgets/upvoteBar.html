@@ -1,0 +1,25 @@
+<div class="instUpvoteHolder wi-stats clearfix upvoteHolder" data-entity-id="${_entityId}" data-entity-type="${_entityType}">
+    <div class="pull-left comcontainer">
+    #{if _voted==false}
+        <a class="upvoteInstItem like"><i class="zmdi zmdi-thumb-up ics"></i> &{'TXT_UPVOTE'}</a>
+        <span class="upvotedInstItem nonner liked"><i class="zmdi zmdi-thumb-up ics"></i> &{'TXT_UPVOTED'}
+        </span>
+    #{/if}
+    #{else}
+        <span class="upvotedInstItem liked"><i class="zmdi zmdi-thumb-up ics"></i> &{'TXT_UPVOTED'}</span>
+    #{/else}
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a class="commentsInstFeed like"><i class="zmdi zmdi-comment ics" style="top: 2px;position: relative;"></i> Comment</a>
+    </div>
+    <div class="pull-right wis-numbers">
+        <span class="upvotesInstFeedCount" data-entity-count="${_upVotes}">
+            <span class="instImgs #{if _voted==true}voted #{/if}">
+            <i class="zmdi zmdi-thumb-up"></i></span>
+            <a class="upvotesCount upVoteItemCount">${_upVotes}</a>
+        </span>
+        <span class="commentsInstFeedCount commItemRepliesSec">
+        <i class="zmdi zmdi-comments"></i>
+            <a class="commentsCount">${_comments}</a>
+        </span>
+    </div>
+</div>

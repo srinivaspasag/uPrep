@@ -1,0 +1,46 @@
+@font-face{font-family:Kumbh Sans;src:url(KumbhSans-Light.ttf);}
+:root{--primary-color:#358B8D;}
+header{padding:4rem 1rem 0rem 1rem;}
+.nav-list,.nav-list-button,.banner-holder{display:none;}
+.inner-body{overflow-y:hidden;}
+.text-center{text-align:center;}
+header .btn-l{font-size:1.3rem;}
+@media only screen and (min-width:950px){.banner-holder{display:flex;align-items:center;margin:5%;}
+}
+@media only screen and (max-width:600px){.sub-title-l{font-size:1rem!important;}
+.footer-grid{width:50%;}
+}
+.hov-u.active{color:var(--primary-color);}
+@media only screen and (min-width:1024px){.nav-list{display:flex;font-size:20px;color:black;left:5%;position:relative;}
+.nav-list div{padding:0px 1.5rem;}
+.nav-list-button{display:flex;}
+.nav-list-button .btn{border-radius:10px;transition:all 0.4ms ease-in;border:1px solid #358B8D;padding:0.5rem 1.7rem;}
+.hov-u:hover{color:var(--primary-color);}
+.nav-list-button .btn:hover{background:white;color:#000;background-color:#fff;}
+.banner-text{margin-top:10%;}
+}
+@media only screen and (max-width:450px){header{padding:4rem 1rem;}
+}
+.ham{display:none!important;}
+@media only screen and (max-width:1023px){.ham{display:flex!important;}
+nav{max-height:80px;}
+.nav-inner img{max-width:100px;}
+}
+.nonner{display:none;}
+.sub-title-l{color:#7b7b8c;margin:10px 5px;font-size:1.3rem;}
+header button{margin:5px 0px;border-radius:10px;}
+footer{background:var(--primary-color);color:white;}
+footer .container{margin:auto;display:flex;justify-content:space-between;align-items:center;height:100%;flex-wrap:wrap;padding:2rem 1rem;}
+.footer-grid-title{text-transform:uppercase;border-bottom:1px solid white;margin-bottom:10px;display:inline;font-size:1.3rem;}
+footer ul{padding:5px 0px;}
+footer ul li{margin:10px 0px;}
+.footer-grid{align-self:stretch;}
+.social-media-links{display:flex;}
+.social-media-links a:first-child{margin:0px;}
+.social-media-links a{font-size:20px;padding:5px;margin:0px 10px;}
+.show-subject-container{display:flex;justify-content:center;}
+.subject-block{padding:10px 40px;border-radius:20px;margin:10px;box-shadow:0 9px 18px rgba(0,0,0,0.12), 0 5px 7px rgba(0,0,0,0.05);cursor:pointer;}
+.subject-block.active{background:teal;color:white;}
+@media screen and (max-width:767px){.subject-block{padding:5px 10px;margin:5px;}
+.show-subject-container{flex-wrap:wrap;}
+}

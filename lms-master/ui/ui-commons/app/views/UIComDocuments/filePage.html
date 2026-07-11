@@ -1,0 +1,144 @@
+#{if fileInfo!=null && fileInfo.errorCode.isEmpty()}
+<style>
+#resourceDocView{
+	position:relative;
+	padding:0 10px;	
+}
+.fileMetaInfo{
+	background-color:#eee;
+	padding:20px;	
+}
+.fileName{
+	padding-bottom:10px;
+	font-size:20px;
+	text-shadow:1px 1px #ccc;
+	color:#333;
+	max-width:900px;
+	display:inline-block;
+}
+.fileTags{
+	padding:8px 0;
+}
+.fileViewMain{
+	position:relative;
+}
+.filePdfContent iframe{
+	min-height:800px;
+}
+.fileDownloadSec{
+	position:relative;
+	padding:10px 15px;
+	background-color:#ccc;
+	display:inline-block;
+}
+.fileThumbnail{
+	display:inline-block;
+	width:75px;
+	height:75px;
+	background-image:url('/public/images/file-big-thumbnail.png');
+	background-repeat:no-repeat;
+	background-color:#fff;
+	margin-right:10px;
+}
+</style>
+<div id="resourceDocView" class="pageHolderNM">
+%{
+	file = fileInfo.result;
+        currentAppName=play.Play.configuration.getProperty("application.name");
+}%
+<section class="fileMetaInfo">
+	<table class="fullWidth">
+		<tr>
+			<td>				
+                                 #{if currentAppName=="cmds-app"}
+                                <div class="boldy fileName">
+                                    <span class="entityEditableName">${file.name}</span>
+                                    <a class="editEntityDetailsStyles editEntityDetails" 
+                                    title="Edit Details" data-entity-type="CMDSFILE" data-entity-id="${file.id}"
+                                    data-url-class="cmdsFiles"></a>
+                                </div>
+                                #{/if}
+                                #{else}
+                                    <div class="boldy fileName">${file.name}</div>
+                                #{/else}
+			</td>
+			<td class="alignTop">
+				<div class="right">
+				%{
+					user=file.user;
+				}%                    
+        			#{widgets.user20 user:user /}
+				</div>
+			</td>
+		</tr>
+	</table>
+	<div class="fileTags">
+	#{if file.has("boardTree") && !file.boardTree.equals(null) && file.boardTree.length()>0}
+                %{
+                        boards = file.boardTree;
+                }%
+                #{list items:0..boards.length()-1,as:'bIndex'}
+                %{
+                        subject = boards.get(bIndex);
+                }%
+                  <span class="resourceSubTag">${subject.name}</span>
+                  #{if subject.has("children") && !subject.children.equals(null) && subject.children.length()}
+                          #{list items:0..subject.children.length()-1,as:'cIndex'}
+                          %{
+                                  topic = subject.children.get(cIndex);
+                          }%
+                          <span class="resourceTopicTag">${topic.name}</span>
+                          #{/list}
+                  #{/if}
+                #{/list}
+        #{/if}
+	</div>
+	<p>
+		<div class="boldy greyTextColor">&{'TXT_DESCRIPTION'}</div>
+                <div class="entityEditableDesc">${file.description}</div>
+	</p>
+	<div class="fileDownloadSec">
+		<table class="fullWidth">
+			<tr>
+				<td rowspan=3>
+					<div class="fileThumbnail"></div>
+				</td>
+				<td>
+					<div class="big16">${file.originalFileName}</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="big14">type : <span class="boldy">${file.extension}</span></div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a class="fileDownloadLink" href="${file.url}" target="_blank">&{'TXT_DOWNLOAD'}</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+</section>
+<section class="fileViewMain">
+	<div class="loaderDiv"></div>
+	<div class="filePdfContent">
+	</div>
+</section>
+</div>
+<script>
+	$(function(){
+		$(".fileName").elipsifyText("big20 boldy");
+                condenseText($(".entityEditableDesc"),300);
+                if(window["markContentCompleted"] && "${params.get('userRole')}"=="STUDENT"){
+                    markContentCompleted();
+                }                                    
+	});
+</script>
+#{/if}
+#{elseif fileInfo!=null && !fileInfo.errorCode.isEmpty()}
+	#{common.messagePage msgTextColor : "redTextColor" , msg : fileInfo.errorMessage /}
+#{/elseif}
+#{else}
+	<div class="big14 centerText">File Not Found</div>
+#{/else}

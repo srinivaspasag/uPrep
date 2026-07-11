@@ -1,0 +1,67 @@
+<div class="big20 blueTextColor">${params.get('testName')}</div>
+#{if centers!=null && centers.errorCode.isEmpty() && centers.result.list.length()>0}
+<table class="table table-condensed table-bordered fullWidth tableInstTACenters" cellspacing=0 cellpadding=0 style="padding:20px 0;">
+   <tr>
+        <th>Date</th>
+        <th>Program</th>
+        <th>Center</th>
+        <th>Section</th>
+    </tr>
+#{list items:0..centers.result.list.length()-1,as:'sIndex'}
+%{
+    sch = centers.result.list.get(sIndex);
+    programs = sch.programs;
+}%
+    <tr>
+    %{
+        date = util.Utilities.getDateMonthYear(sch.schedule.startTime);
+        centerStr = "";
+        sectionStr = "";
+    }%
+    <td class="instTAProgItem">${date}</td>
+    #{if programs.length()>0}
+        <td>
+        #{list items:0..programs.length()-1,as:'index'}
+        %{
+            program = programs.get(index);
+        }%
+            #{if program.centers.length()>0}
+            #{list items:0..program.centers.length()-1,as:'cIndex'}
+                #{if cIndex == 0}
+                    <div class="instTAProgItem">${program.get("name")}</div>
+                #{/if}
+                #{else}
+                    <div class="instTAProgItem"></div>
+                #{/else}
+                %{
+                    center = program.centers.get(cIndex)
+                    centerStr = centerStr + "<div class='instTAProgItem'>"+center.name+"</div>";
+                }%
+                #{if center.sections.length()>0}
+                %{
+                    sectionStr = sectionStr + "<div class='instTAProgItem'>";
+                }%
+                #{list items:0..center.sections.length()-1,as:'sIndex'}
+                %{
+                    section = center.sections.get(sIndex)
+                    sectionStr = sectionStr + "<span>"+section.name+", </span>";
+                }%
+                #{/list}
+                %{
+                    sectionStr = sectionStr + "</div>";
+                }%
+                #{/if}
+            #{/list}
+            #{/if}
+            #{else}
+                <div class="instTAProgItem">${program.get("name")}</div>
+            #{/else}
+        #{/list}
+    </td>
+    <td>${centerStr.raw()}</td>
+    <td>${sectionStr.raw()}</td>
+    #{/if}
+    </tr>
+#{/list}
+</table>
+#{/if}

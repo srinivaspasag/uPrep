@@ -1,0 +1,138 @@
+@media(max-width: 768px){
+
+	.heading{
+		font-size: 25px;
+	}
+
+	.jumbotron h1{
+		margin-top: 50px;
+		font-size: 25px;
+	}
+	.jumbotron small{
+		font-size: 15px;
+	}
+
+
+	.journey .inner-heading{
+		font-size: 25px;
+		margin-top: 25px;
+	}
+	.journey .inner-description{
+		padding: 10px 0px;
+		margin-bottom: 25px;
+	}
+	.journey .video-heading{
+		left: 0;
+		bottom: 0;
+		width: 100%;
+	}
+	.journey .video-description{
+		bottom: 0px;
+		left: 0px;
+	}
+	.journey .challenge-heading{
+		right: 0px;
+		bottom: 0px;
+	}
+	.journey .challenge-description{
+		right: 0px;
+		bottom: 0px;
+	}
+	.journey .analytics-heading{
+		left: 0;
+		bottom: 0;
+		width: 100%;
+	}
+	.journey .analytics-description{
+		left: 0;
+		bottom: 0;
+	}
+	.journey .doubts-heading{
+		right: 0px;
+		bottom: 0px;
+	}
+	.journey .doubts-description{
+		right: 0px;
+		bottom: 0px;
+	}
+
+
+
+	.features{
+		margin:20px 10px;
+	}
+	.features .container{
+		max-width: 100%;
+	}
+	.feature-block{
+		height:200px;
+		position: relative;
+		overflow-y: hidden;
+		border: 2px solid #f7f7f7;
+		border-radius: 20px;
+		box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25);
+	}
+	.feature-block .feature-heading{
+		position: absolute;
+		/* margin-top: 20px; */
+		font-weight: bold;
+		font-size: 18px;
+		color: #0f2e3b;
+		top: 0;
+		right: 0;
+		left: 0;
+	}
+	.feature-block .feature-description{
+		position: relative;
+	}
+	.feature-block img{
+		max-width: 80px;
+		position: absolute;
+		top: 33%;
+	}
+
+	.features .feature-description p{
+		position: absolute;
+		top: 50px;
+		left: 94px;
+	}
+
+
+	.testimonials .container{
+		width: 85%;
+	}
+
+	.testimonials  .testimonial-left .zmdi-chevron-left{
+		font-size: 40px;
+	}
+	.testimonials  .testimonial-right .zmdi-chevron-right{
+		font-size: 40px;
+	}
+
+	.testimonials  .testimonial-content{
+		text-align: justify;
+	}
+
+	.video-row{
+		margin: 20px 0px 20px 0px;
+	}
+	.videoPopup{
+		width: 100vw;
+		padding: 5px!important;
+		box-sizing: border-box;
+	}
+	.btn-tv-play{
+		bottom: 110px;
+		border-radius:0.3125rem;
+		right: 12px;
+	    width: 50px;
+	    height: 50px;
+	    line-height: 46px!important;
+	}
+	.btn-tv-play i{
+		font-size: 28px;
+		top:3px;
+		position: relative;
+	}
+}
+

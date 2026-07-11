@@ -1,0 +1,51 @@
+#{if playlist!=null && playlist.has('result') && playlist.result.has('playlists') && playlist.result.playlists.length()>0}
+<input type="hidden" class="resultDataCount" value="${playlist.result.totalHits}" 
+	data-real-count="${playlist.result.totalHits}"/>
+#{list items:0..playlist.result.playlists.length()-1, as:'tIndex'}
+%{ playlistData = playlist.result.playlists.get(tIndex); }%
+<div class="left relative eachMyContentsPlaylist myContentsEachIconItems myContentsEachItem" 
+	title="Playlist: ${playlistData.title}" 
+	data-pl-id="${playlistData.playlistId}" data-entity-type="playlist" data-entity-id="${playlistData.playlistId}">
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+		*{#{if playlistData.followType == "NONE"}
+			<a class="right relative smallBlueButton myContentsButtonItem savePL" data-pl-id="${playlistData.playlistId}" data-callback-fn="saveBtnCallbackFn">Save</a>
+		#{/if}}*
+		#{if playlistData.followType == "OWNER"}
+			<a class="right relative smallBlueButton myContentsButtonItem editPlaylist doCStream" data-pl-id="${playlistData.playlistId}" data-title="${playlistData.title}" data-cs-name="EDIT">Edit</a>
+		#{/if}
+		*{#{elseif playlistData.followType == "FOLLOWING"}
+			<a class="right relative smallBlueButton myContentsButtonItem unsavePL" data-pl-id="${playlistData.playlistId}" data-callback-fn="removeFromMyContentCB" >Remove</a>
+		#{/elseif}}*
+                <a class="right relative smallBlueButton myContentsButtonItem openPLView doCStream" data-cs-name="OPEN"
+                   data-pl-id="${playlistData.playlistId}" href="${controllers.Playlists.getPLUrl(playlistData.title,playlistData.playlistId)}">Open</a>
+		<div class="right relative myContentsButtonItem">
+			#{widgets.followUnfollowEntity followType:playlistData.followType,entityType:'PLAYLIST',entityId:playlistData.playlistId/}
+		</div>
+		<span class="left absolute myContentsItemInfo"><b>Views - </b>${playlistData.views}</span>
+		<span class="right absolute myContentsShareIt doCStream" data-cs-name="SHARE">Share</span>
+	</div>
+	<img class="left relative playListIcon" alt="no preview" src="/public/images/playlist/plBack.png"/>
+	<div class="left relative myContentsPlaylistDetails">
+		<span class="left relative big12 boldy myContentsPltext blackTextColor singleLineText">${playlistData.title}</span>
+	#{if playlistData.has('user') && playlistData.user!=null}
+                      %{
+                        user=playlistData.user;
+                      }%
+		<span>by </span>
+		#{institute.memberName user : user , classNames : "left relative big12 myContentsPltext blueTextColor" /}
+	#{/if}
+		<span class="left relative myContentsRankingHolder" style="margin-left:10px;">
+			<span class="left relative myContentsRankingStars" style="width:${playlistData.avgRating*20}%"></span> 
+		</span>
+	</div><br>
+</div>
+#{/list}
+#{/if}
+*{#{elseif playlist==null}
+	#{include '/tags/comingSoon/playlist.html'/}
+#{/elseif}}*
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_PLAYLIST'}</div>
+#{/else}

@@ -1,0 +1,93 @@
+<style type="text/css">
+/* INST MYSCHEDULE WIDGET */
+.widEachSchedule{
+        padding:10px;
+        background-color:#fff;
+        border:1px solid #f0f0f0;
+        color:#666;
+        margin-bottom:7px;
+}
+.widEachSchedule:first-child{
+        background-color:#f9f9d3;
+        border:1px solid #e8e8c3;
+        color:#222;
+}
+.widSchDt{
+        font-size:28px;
+        font-weight:bold;
+        padding-right:5px;
+}
+.widSchDay{
+        font-size:11px;
+        line-height:13px;
+	font-weight:bold;
+}
+.widSchDy{
+        font-size:11px;
+        line-height:12px;
+}
+.widSchBottom{
+        padding-top:10px;
+        text-align:right;
+}
+.widSchSub{
+        font-size:12px;
+}
+</style>
+%{
+	data = _data;
+	dtStrArr = ["Today","Tomorrow",""];
+}%
+<div class="instWidget myScheduleWidget">
+	<div class="instWidHead">
+		<span class="instWidName">My Schedule</span>
+		<a class="right smally ${_scheduleOpenClass}" href="/organization/${_orgId}/myschedule">view full</a>
+	</div>
+	<div class="widgetContentHolder">
+		#{list items:0..data.length()-1,as:'index'}
+		%{
+			dt = Long.parseLong(params.fromTime);
+			dt = dt + (index*24*60*60*1000);
+			if(!data.has(dt.toString())){
+				continue;
+			}
+			eachData = data.getJSONArray(dt.toString());
+			dtObj = new Date(dt);
+			dtStr = "";
+			if(index<2){
+				dtStr = dtStrArr[index];
+			}
+		}%
+		<div class="widEachSchedule">
+			<div class="widSchTop">
+				<table cellspacing=0 cellpadding=0 border=0>
+					<tr>
+						<td rowspan=2 class="widSchDt">${dtObj.getDate()}</td>
+						<td class="widSchDay">${uicom.util.Utilities.getDay(dtObj)}</td>
+					</tr>
+					<tr>
+						<td class="widSchDy">${dtStr}</td>
+					</tr>
+				</table>	
+			</div>
+			<div class="widSchBottom">
+			#{if eachData.length()>0}
+			#{list items:0..eachData.length()-1,as:'ind'}
+				<div class="widSchSub">
+					<span class="boldy">${eachData.get(ind).course.name} </span>
+					%{
+						st = uicom.util.Utilities.getTimeArrFromMiliSec(eachData.get(ind).startTime);
+						en = uicom.util.Utilities.getTimeArrFromMiliSec(eachData.get(ind).endTime);
+					}%
+					<span>(${st.hrs}:${st.mins} - ${en.hrs}:${en.mins})</span>
+				</div>
+			#{/list}
+			#{/if}
+			#{else}
+				<div class="widSchSub">No Schedules for the day</div>
+			#{/else}
+			</div>
+		</div>
+		#{/list}
+	</div>
+</div>

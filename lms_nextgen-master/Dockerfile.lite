@@ -1,0 +1,27 @@
+# syntax=docker/dockerfile:1
+#
+# LITE build: only user-services + content-services, built against a
+# pre-populated local Maven repo (.mvnrepo) shipped in the build context.
+# This resolves the broken com.lms:* parent POMs offline and skips the
+# comm/social/event modules that have unresolvable parents.
+
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY . .
+# Build only the two lite services. Uses the shipped repo for com.lms:* parents
+# and falls back to Maven Central (online) for any missing third-party deps.
+RUN mvn -B -DskipTests -Dmaven.repo.local=/app/.mvnrepo \
+      -pl :user-services,:content-services \
+      clean package
+
+FROM eclipse-temurin:17-jre AS runtime
+WORKDIR /app
+COPY --from=build /app/user/user-services/target/user-services-0.0.1-SNAPSHOT.jar       /app/user-services.jar
+COPY --from=build /app/content/content-services/target/content-services-0.0.1-SNAPSHOT.jar /app/content-services.jar
+
+ENV SERVICE=user-services \
+    SERVER_PORT=8080 \
+    SPRING_PROFILES_ACTIVE=prod \
+    JAVA_OPTS="-Xms64m -Xmx200m"
+
+ENTRYPOINT ["sh","-c","exec java $JAVA_OPTS -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE -Dserver.port=$SERVER_PORT -jar /app/$SERVICE.jar"]

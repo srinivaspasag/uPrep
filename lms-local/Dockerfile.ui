@@ -1,0 +1,16 @@
+FROM --platform=linux/amd64 azul/zulu-openjdk:7
+
+# Play 1.2.4 ships a python2 launcher script
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends python2 unzip curl \
+ && ln -sf /usr/bin/python2 /usr/bin/python \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY play-1.2.4 /opt/play-1.2.4
+RUN chmod +x /opt/play-1.2.4/play && ln -sf /opt/play-1.2.4/play /usr/local/bin/play
+
+ENV JAVA_HOME=/usr/lib/jvm/zulu7
+ENV PATH="/opt/play-1.2.4:${PATH}"
+
+WORKDIR /root/lms/vedantu/zowie
+CMD ["bash"]

@@ -1,0 +1,120 @@
+#myClassroomConnect a .fc-title{
+    color:#fff!important;
+}
+.fc-time{
+    display: none;
+}
+.fc-content{
+    /*padding: 3px;*/
+    color:#666;
+    font-size: 12px;
+}
+.fc-content{
+    font-weight: bold;
+}
+.fc-row.fc-week.fc-widget-content{
+    height: 110px!important;
+}
+.fc-scroller.fc-day-grid-container {
+    height: auto!important;
+}
+a.fc-day-grid-event.fc-h-event.fc-event.fc-start.fc-end{
+    border: none!important;
+    background: none!important;
+}
+.fc-more{
+    background: lightblue;
+    padding: 2px;
+    border-radius: 4px;
+    text-transform: capitalize;
+    top:10px;
+    left: 8px;
+    color:#363636!important;
+}
+.fc th{
+    text-transform: uppercase;
+}
+.fc thead td{
+    border:none;
+}
+.fc th{
+    border:none;
+}
+#calendar{
+    max-width: 100%;
+    padding: 20px 40px;
+    margin: auto;
+}
+.myClassroomConnectHolder.institute{
+    min-height: 800px;
+    width: 94%;
+    margin: 0 auto;
+    /*font-family: 'Ubuntu',sans-serif;*/
+}
+.fc-past{
+    opacity: 0.4;
+}
+.fc-scroller {
+  height: auto !important;
+}
+.contentHolder{
+    margin-left: 4px;
+    bottom: 6px;
+    position: relative;
+}
+.contentHolder img{
+    width: 14px;
+}
+.contentHolder .count{
+    vertical-align: text-bottom;
+    font-size: 13px;
+    margin-left: 4px;
+    margin-right: 4px;
+    color:#999;
+}
+.removeContentFromClassroomConnect{
+    float: right;
+}
+.past-event{
+    opacity: 0.4;
+}
+.current-event .eventHolder{
+    color:#62b23b;
+}
+.eventHolder{
+    margin-left: 8px;
+    font-size: 14px;
+    bottom: 4px;
+    position: relative;
+    max-width: 90%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.eventDataHolder{
+    margin-bottom: 3px;
+}
+.imgContentHolder {
+    top: 2px;
+    position: relative;
+    left: 5px;
+}
+
+.fc-today-button{
+    text-transform: capitalize;
+}
+
+@media only screen and (min-width : 1500px) {
+    .eventHolder{
+        font-size: 15.5px;
+    }
+    .contentHolder img{
+        width: 15px;
+    }
+    .contentHolder .count{
+        margin-right: 8px;
+    }
+    .eventDataHolder{
+        margin-bottom: 0px;
+    }
+}

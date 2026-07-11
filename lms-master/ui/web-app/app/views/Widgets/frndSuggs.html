@@ -1,0 +1,37 @@
+#{if frnds!=null&&frnds.errorCode==""&&frnds.result.length()>0}
+%{
+    frnds=frnds.result;
+    frndsLength=frnds.length();
+}%
+<div class='frndSuggsHolder  widget' id=''>
+    <div class='widgetHead'>You may like to follow</div>
+    <div class='frndSuggsDiv'>
+        %{
+            if(frndsLength>=3)frndsLooper=3;
+            else frndsLooper=frndsLength;
+            loopStart=0;
+            loopEnd=frndsLooper-1;
+        }%
+        #{widgets.frndSuggItems frnds:frnds,loopStart:loopStart,loopEnd:loopEnd /}
+
+        #{if frndsLength>3}
+                %{
+                    loopStart=3;
+                    loopEnd=frndsLength-1;
+                }%
+                <div id="homeFrndSuggDataDiv">
+                    #{widgets.frndSuggItems frnds:frnds,loopStart:loopStart,loopEnd:loopEnd /}
+                </div>
+        #{/if}
+        <script type="text/javascript">
+                $("#homeFrndSuggDataDiv .frndSugg").each(function(){
+                    frndSuggsData.push($(this).html());
+                });
+                $(".frndSuggsDiv").find(".frndSugg").each(function(){
+                    frndSuggsCrossed.push($(this).find(".widgetItemName").data("userId"));
+                });
+                 $("#homeFrndSuggDataDiv").remove();
+        </script>        
+    </div>
+</div>
+#{/if}

@@ -1,0 +1,49 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="vBoardsStyles">
+    showNoTabSec("BOARD_SUBJECT");
+</script>
+#{/if}
+#{stylesheet media:'screen', src:'boards.css' /}
+%{
+            subjectInfo=subjectInfo.result;
+        }%
+<div id="boardPage">
+    <div id="BPTopBarHolder">
+        <div id="BPTopBar">
+<!--            <span class="greenButton BPBackToBoard">Back To Board</span>-->
+            <img src="/public/images/boards/${subjectInfo.name.toLowerCase()}.jpg"
+                 class="BSPBannerImg" alt="" />
+            <div class="BSPBannerTitle">${subjectInfo.name}</div>
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+    <div id="BP1002">
+        <div id="BSPLeftSec" class="CSWidget" data-widget="RELATED_EXAMS">
+            #{if subjectInfo.has('targets')&&subjectInfo.targets.boards.length()>0}
+            <div class="boldy margBot10 margTop20">Related Exams</div>
+            %{
+                exams=subjectInfo.targets.boards;
+            }%
+            #{list items:0..exams.length()-1,as:'e' }
+            <a class="boardExam ptr margBot10 ptrTag doCStream" data-brd-id="${exams.get(e).brdId}"
+               /*href="${controllers.Boards.getBoardUrl('exam',exams.get(e).brdId)}"*/ data-cs-name="BOARD_EXAM">
+                <span class="BEIcon30">
+                    <span class="BEIcon30Code">${exams.get(e).code}</span>
+                </span>
+                <span class="boldy">${exams.get(e).code}</span>                
+            </a>
+            #{/list}
+            #{/if}
+        </div>
+        <div id="BSPMiddleDiv">
+        #{boards.BSContents target:'BOARD_SUBJECT',subjectInfo:subjectInfo /}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){vBoards.init({targetPage:'BOARD_SUBJECT'});}
+        fetchScripts([{fname:"boards.js",cb:fn}]);   
+    }();         
+</script>  

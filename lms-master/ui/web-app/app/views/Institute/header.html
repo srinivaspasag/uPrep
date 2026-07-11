@@ -1,0 +1,50 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+	<script type="text/javascript">
+    		$(function(){
+        		showNoTabSec("MY_INSTITUTE");
+    		});
+	</script>
+#{/if}
+<script type="text/javascript">
+	$(function(){
+		instHeader.show("${params.orgId}");
+	});
+</script>
+#{stylesheet media:'screen', src:'institute/o.main.css' /}
+<div id="instituteHeader" class="pageFullWidth">
+    <div class="instLeftCol">
+	   #{institute.topNavBar myOrgInfo : myOrgInfo /}
+    </div>
+    <div class="instMainCol" style="position: relative; padding-top: 45px;">
+      <div class="relative" id="instituteHome">
+         #{include arg:includeInstFile /}
+      </div>
+    </div>
+</div>
+#{institute.pageFooter/}
+#{if play.mode.name()=='PROD'}
+  #{script src:'institute/o.home.js', charset:'utf-8' /}
+#{/if}
+#{else}
+  #{script src:'institute/home.js', charset:'utf-8' /}
+  #{script src:'institute/feedsUpVote.js', charset:'utf-8' /}
+  #{script src:'institute/testAnalytics.js', charset:'utf-8' /}
+  #{script src:'institute/library.js', charset:'utf-8' /}
+#{/else}
+
+<!-- Email Verification / Open Account Settings-->
+#{if emailVerifiedEntry!=null && emailVerifiedEntry.equals("done")}
+<script type="text/javascript">
+	var instHeadOpenTimer;
+        $(document).ready(function(){
+	   if(instHeadOpenTimer){clearInterval(instHeadOpenTimer);}
+           instHeadOpenTimer = setInterval(function(){
+		if(instHeader && instHeader.settings){
+	   		clearInterval(instHeadOpenTimer);
+        		instHeader.settings.accSettingsOpen();
+		}
+	   },10);
+	   history.replaceState(null,null,"/organization/${params.orgId}");
+	});
+</script>
+#{/if}

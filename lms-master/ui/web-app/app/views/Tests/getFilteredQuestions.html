@@ -1,0 +1,6 @@
+#{if questionList!=null && questionList.has('result')}
+	%{
+		qList = questionList.result.questions;
+	}%
+	#{questions.quesItems quesns:qList,target:'TEST_ADD' /}
+#{/if}

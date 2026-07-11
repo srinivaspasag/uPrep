@@ -1,0 +1,30 @@
+#{if remarks!=null && remarks.errorCode.isEmpty() && remarks.result.list.length()>0}
+%{
+    totalCount = remarks.result.totalHits;
+    remarks=remarks.result.list;
+}%
+#{list items:0..remarks.length()-1,as:'r'}
+    %{
+    	remark = remarks.get(r);
+	user = remark.addedBy;
+	if(params.providerId != null){
+		user = remark.addedFor;
+	}
+    }%
+    #{remark.one remark : remark , user : user /}
+#{/list}
+<input type="hidden" class="nonner instPrRemarksCount" value="${totalCount}"/>
+#{if totalCount > (Integer.parseInt(params.start)+Integer.parseInt(params.size)) }
+	<div class="loadMoreItems doCStream" name="LOAD_MORE_REMARKS">Load More</div>
+#{/if}
+#{/if}
+#{else}
+	<!--<div class="userMessage">No remarks found</div>-->
+	#{if params.userRole!=null && params.userRole.equals("STUDENT")}
+		#{institute.zeroLevel alt : play.i18n.Messages.get('TXT_NO_REMARKS') , src : "/public/images/zeroLevel/5remarks-student.jpg" /}
+	#{/if}
+	#{else}
+		#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+	#{/else}
+#{/else}
+

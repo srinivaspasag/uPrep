@@ -1,0 +1,17 @@
+                #{if options!=null&&options.length()>0}
+                        <div class="big15">${content.raw()}</div>
+                        <div class='quesOptions margTop'>
+                            #{list items:0..options.length()-1,as:'opt'}
+                            <div class='quesOption'>
+                                <span class="floatLeft">
+                                    ${uicom.util.Utilities.getOption((opt+1))}
+                                </span>
+                                <div class="margLeft20 quesOptionBody">${options.get(opt).raw()}</div>
+                            </div>
+                            #{/list}
+                        </div>
+                        <div class='cleaner_with_divider'>&nbsp;</div>
+                        #{/if}
+                        #{else}
+                        <div class="big15 margBot10">${content.raw()}</div>
+                        #{/else}

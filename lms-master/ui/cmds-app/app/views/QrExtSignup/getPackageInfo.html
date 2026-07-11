@@ -1,0 +1,64 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result!= null}
+%{
+    section = resp.result.info;
+    code = section.code;
+    packagesMap = section.packagesMap;
+    packages = null;
+    if(!packagesMap.equals(null)) {
+        if(packagesMap.has(params.orgId)) {
+          packages = packagesMap[params.orgId];
+        }
+    }
+    sectionId = section.id;
+    sectionName = section.name;
+    maxDiscount = section.maxDiscount;
+%}
+
+<div class="packageInfoPopup">
+    <div class = "centerText packageInfoHeading">&{'PACKAGES_TXT'} <b>${sectionName}</b></div>
+    <table class="packageInfoTable centerText" cellspacing=0 cellpadding=0>
+    <tr>
+       <th>&{'PACKAGE_DAYS'}</th>
+        <th>&{'PACKAGE_PRICE'}</th>
+    </tr>
+    #{if !packages.equals(null) && packages.length()>0}
+    #{list items:0..packages.length()-1,as:'cIndex'}
+    %{
+        costRate = packages.get(cIndex).costRate;
+        if (costRate.has("value") && !costRate.value.equals(null)){
+            if(costRate.value>0){
+                costValue = costRate.value/100;
+            }
+        }
+    }%
+    <tr class="packageTr packageDisplayTr">
+        <td class="numDaysCol">${packages.get(cIndex).numDays}</td>
+        <td class="costRateCol">${costValue}</td>
+        <td>
+            <span class="editPackageBtn packageActionBtn">Edit</span>
+        </td>
+        <td>
+            <span class="deletePackageBtn packageActionBtn">Delete</span>
+        </td>
+    </tr>
+    #{/list}
+    #{/if}
+    #{else}
+    <tr>
+        <div class="centerText noPackagesText">
+            <b>&{'NO_PACKAGES'}</b>
+        </div>
+    </tr>
+    #{/else}
+    </table>
+    <br>
+    <span>Max Discount Percentage:</span>
+    <input type="number" class="maxDiscountInput" value=${maxDiscount}></input>
+    <span class="packageActionBtn updateMaxDiscount" data-section-id="${sectionId}">Update</span>
+    <br>
+    <div colspan=2 class="centerText">
+        <span class="blueButton addNewPackage">Create Package</span>
+        <span class="blueButton submitPackages" data-section-id="${sectionId}">&{'TXT_SUBMIT'}</span>
+	</div>
+</div>
+#{/if}

@@ -1,0 +1,129 @@
+.vChoose{
+    display: inline-block;
+    position: relative;
+    text-align: left;
+}
+
+
+.vChooseHead,.upDownArrowDiv{
+    background-color: #EEEEEE;    
+    border: 1px solid transparent;
+    color: #666666;
+    cursor: pointer;
+    font-size: 12px;
+    min-width: 65px;
+    overflow: hidden;
+    padding: 5px 23px 5px 7px;
+    text-align: left;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+    border-radius: 5px;    
+}
+.vChooseHead:hover{
+    background-color: #F2F2F2;    
+}
+.vChooseActive .vChooseHead{
+    background-color: #DDDDDD;
+    border-color: #CCCCCC;    
+}
+
+
+
+.bigvChoose .vChooseHead{
+    background-color: #DDDDDD;
+}
+.bigvChoose .vChooseHead:hover{
+    background-color: #E8E8E8;
+}
+.bigvChoose.vChooseActive .vChooseHead{
+    background-color: #CCCCCC;
+    border-color: #999999;    
+}
+
+
+.bluevChoose .vChooseHead{
+    background-color: #33b5e5;
+    color: #FFFFFF;
+}
+.bluevChoose .vChooseHead:hover{
+    background-color: #59C8F2;
+}
+.vChooseActive.bluevChoose .vChooseHead{
+    background-color: #0099CC;
+    border-color: #006699;
+}
+
+.redvChoose .vChooseHead{
+    background-color: #F66663;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+.redvChoose .vChooseHead:hover{
+    background-color: #FF8987;
+}
+.vChooseActive.redvChoose .vChooseHead{
+    background-color: #EA5855;
+    border-color: #990000;
+}
+
+
+.bigvChoose .vChooseHead,.bluevChoose .vChooseHead,.redvChoose .vChooseHead{
+    font-size: 14px;
+    padding: 6px 47px 7px 22px;
+}
+
+
+
+.vChooseDownIcon{
+    background: url("/public/images/uicomCommon/dropDownArrow.png") no-repeat scroll 0 center transparent;
+    cursor: pointer;
+    display: inline-block;
+    height: 100%;
+    position: absolute;
+    right: 10px;
+    top: 0;
+    width: 11px;
+}
+.redvChoose .vChooseDownIcon{
+    background-image: url("/public/images/downArrowWhite.png");
+    right: 18px;
+}
+.vChooseDropDown{
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: none;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}
+.vChooseActive .vChooseDropDown{
+    display: block;
+}
+.vChooseOpt{
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    color: #333333;
+    cursor: pointer;
+    min-height: 16px;
+    overflow: hidden;
+    padding: 5px 7px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.bigvChoose .vChooseOpt,.bluevChoose .vChooseOpt,.redvChoose .vChooseOpt{
+    padding: 10px;
+}
+.noTickvChoose .vChooseOpt{
+    padding-left: 10px;
+}
+.vChooseOptActive{
+    background-color: #eeeeee;
+}
+.vChooseOptTicked{
+    color: #999999;
+}
+.vChooseActive .biggerRedButton{
+    background-color: #CC0000;
+}

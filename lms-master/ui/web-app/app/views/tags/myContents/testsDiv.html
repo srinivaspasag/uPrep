@@ -1,0 +1,38 @@
+
+<div class="left relative eachMyContentsTests myContentsEachListItems" data-test-id="${test.testId}" title="${test.name}">
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+		<input class="right absolute smallBlueButton myContentsButtonItem" type="button" value="Open"></input>
+		<span class="left absolute myContentsItemInfo">
+			<span class="left relative blackTextColor">Attempts <span class="redTextColor">${test.attempts}</span></span>
+			#{if test.duration <= 0}
+				<span class="left relative blackTextColor" style="padding-left:7px;">Time <span class="redTextColor">No Limit</span></span><br/>
+			#{/if}
+			#{else}
+				%{
+				timeObj=uicom.util.Utilities.getTimeFromMiliSec(test.duration);
+				}%
+				<span class="left relative blackTextColor" style="padding-left:7px;">Time <span class="redTextColor">${timeObj.hrs}:${timeObj.mins} hrs</span></span><br/>
+			#{/else}
+		</span>
+		<span class="right absolute myContentsShareIt big14">Share</span>
+	</div>
+	<img class="left relative testsIcon" alt="no preview" src="/public/images/questions/testRed.png"/>
+	<div class="left relative myContentsTestDetails">
+		<span class="left relative big12 boldy myContentsTestText blackTextColor" style="width:100%;">${test.name}</span><br/>
+	#{if test.has('user') && test.user!=null}
+		<span class="left relative big12 myContentsTestText blueTextColor" style="width:100%;">by ${test.user.firstName} ${test.user.lastName}</span><br/>
+	#{/if}
+		<span class="left relative myContentsRankingHolder" style="margin-left:4px;">
+			<span class="left relative myContentsRankingStars" style="width:${test.avgRating*20}%"></span> 
+		</span>
+        #{if test.has('target')}
+		<span class="left relative myContentsTestText blackTextColor">Target- 
+                        <a class="boardExam" /*href="${controllers.Boards.getBoardUrl('exam',test.target.brdId)}"*/
+                           data-brd-id="${test.target.brdId}">
+                            ${test.target.code}
+                        </a>
+                </span><br/>
+          #{/if}
+	</div>
+</div>	

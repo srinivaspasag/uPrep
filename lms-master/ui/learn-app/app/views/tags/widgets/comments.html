@@ -1,0 +1,10 @@
+<div class="instFeedsComments" data-root-id="${params.rootId}" data-root-type="${params.rootType}">
+    <div class="instFeedComContainer list-group">
+        #{include 'tags/widgets/commentList.html'/}
+    </div>
+    <div class="instFeedAddComment wic-form">
+        <div class="instFeedCommentInputHolder">
+            <textarea class="instFeedCommentInput autogrow" data-ma-action="wall-comment-open" placeholder="&{'WRITE_COMMENT'}" maxlength='500'></textarea>
+        </div>
+    </div>
+</div>

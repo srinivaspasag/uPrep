@@ -1,0 +1,144 @@
+/* INST SHARE BOX */
+.instShareInput{
+	border:1px solid #ccc;
+	font-size:14px;
+}
+.instShareInput.focus{
+	border:1px solid rgb(100, 125, 143);
+}
+.instShareLinkInput,
+.instShareVidInput,
+.instShareInputBox{
+	width:97.3%;
+	height:22px;
+	background-color:transparent;
+	direction:ltr;
+	font-size:13px;
+	outline:none;
+	border:0px solid transparent;
+}
+.instShareLinkInput,
+.instShareVidInput{
+	padding-left:10px;
+}
+.instShareInputBox{
+	max-width:500px;
+	height:18px;
+	margin:8px 0 5px 10px;
+}
+.instShareLinkInput[type="text"],
+.instShareVidInput[type="text"]{
+	height:20px;
+	font-size:smaller;
+	border-top:1px dotted #666;
+	background-color:#f2f2f2;
+}
+.instShareFileInput{
+	max-height:35px;
+	width:100%;
+	border:0px;
+	border-top:1px dotted #666;
+	background-color:#f2f2f2;
+}
+.instShareInputBox:focus{
+	border:0px solid transparent;
+}
+.instShareInputBox.focusBox{
+	height:44px;
+	min-height:44px;
+}
+/*.instShareInputBox::-webkit-input-placeholder*/
+.instShareInputBox .placeholder{
+        color:#ccc;
+        font-style: italic;
+        font-size:12px;
+}
+textarea.instShareInputBox:-moz-placeholder{
+        color:#ccc;
+        font-style: italic;
+        font-size:12px;
+}
+.instShrOptionsCol{
+	margin:8px 0;
+	opacity:0;
+	display:none;
+}
+.instShrLinkIco,
+.instShrPicIco,
+.instShrVidIco{
+	margin-left:12px;
+	cursor:pointer;
+	position:relative;
+	width:18px;
+	height:20px;
+	float:left;
+}
+.instShrLinkIco{
+	background-position:-192px 2px;
+}
+.instShrPicIco{
+	background-position:-231px 0px;
+}
+.instShrVidIco{
+	background-position:-268px 2px;
+}
+.instShrLinkIco.selected,
+.instShrLinkIco:hover{
+	background-position:-212px 2px;
+}
+.instShrPicIco.selected,
+.instShrPicIco:hover{
+	background-position:-250px 0px;
+}
+.instShrVidIco.selected,
+.instShrVidIco:hover{
+	background-position:-285px 2px;
+}
+.instShrVidIco.selected,
+.instShrPicIco.selected,
+.instShrLinkIco.selected{
+	box-shadow:2px 2px 5px 1px #f2f2f2;
+	background-color:#f9f9f9;
+}
+.shrWithBtn{
+	padding:6px 25px;
+	background-color:#3ab2e4;
+	font-size:13px;
+	color:#fff;
+	cursor:pointer;
+}
+#instCreateShrTable{
+	width:100%;
+}
+#instCreateShrTable td,
+#instCreateShrTable{
+	max-width:100%;
+	overflow:hidden;
+}
+.instNotValidImg,
+.instNotValidUrlTxt{
+	font-size:12px;
+	text-align:center;
+	color:#FE2E2E;
+}
+.instNotValidImg,
+.instNotValidUrlTxt div{
+	padding:15px 0;
+}
+.instAttachPreviewHold{
+	width:100%;
+	overflow:hidden;
+}
+.instImgPreviewCont{
+	padding:5px;
+	border:1px solid #eee;
+	display:inline-block;
+	max-width:430px;
+}
+#testShareLoadedImg{
+	visibility:hidden;
+	opacity:0;
+	max-height:1px;
+	max-width:1px;
+	overflow:hidden;
+}

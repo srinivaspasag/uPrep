@@ -1,0 +1,87 @@
+#{if modules.errorCode.isEmpty() &&modules.result.has('list')&& modules.result.list.length()>0}
+<input type="hidden" class="resultDataCount" value="${modules.result.totalHits}" data-real-count="${modules.result.totalHits}"/>
+#{list items:0..modules.result.list.length()-1, as:'tIndex'}
+%{ 
+	module = modules.result.list.get(tIndex);
+	moduleOpenUrl = webUtils.TemplateHelper._getModuleUrl(module,params.orgId);
+	sectionId = "";
+    if(params.sectionId != null){
+		sectionId = params.sectionId;
+		moduleUrl = moduleOpenUrl.url + "?sectionId="+sectionId;
+	}
+	caller = _caller == null ? "" : _caller;
+	recordState = module.has("recordState") && !module.recordState.equals(null) ? module.recordState : "ACTIVE";
+}%
+
+<div class="relative myContentsEachListItems myContentsEachItem" 
+	data-doc-id="${module.id}" data-entity-type="MODULE" data-entity-id="${module.id}">
+	<a class="${moduleOpenUrl.className} doCStream" data-id="${moduleOpenUrl.id}" href="${moduleUrl}" #{if sectionId != ""} data-section-id = "${sectionId}" #{/if} data-cs-name="OPEN">
+	<div class="left relative myContentsListLeft">
+		<span class="resourceIconMODULE"></span>
+		<span class="relative big12 boldy blackTextColor" title="${module.name}">${module.name}</span>
+		<!-- <div class="relative singleLineText">
+			#{if module.has('user') && !module.user.equals(null)}
+			%{
+				user=module.user;
+				userId = user.id;
+				if(user.has("orgId") && user.has("userId")){
+					userId = user.userId;
+				}
+				getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+			}%
+			<span class="blackTextColor">by</span>
+			<a class="relative big12 blueTextColor ${getUserClassAndUrl.className} doCStream" 
+				data-cs-name="UPLOADER"
+                   		style="padding-top:0px;" href="${getUserClassAndUrl.url}" data-user-id="${userId}">
+                    		 ${user.firstName} ${user.lastName}
+			</a>
+			#{/if}
+		</div> -->
+	</div>
+		<div class="left relative myContentsListMiddle greyTextColor">
+			<div class="boldy leftText"><b>No. of Contents</b> - ${module.totalContentCount}</div>
+		</div>
+	<div class="right relative myContentsListRight">
+		<span class="left relative myContentsDocumentsText">
+		%{
+			boards = module.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   #{if boards.length()<=2}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<span style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</span>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+		   	<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+	</span>
+                <a class="${moduleOpenUrl.className} right relative greenButton myContentsButtonItem  doCStream" data-id="${moduleOpenUrl.id}" href="${moduleUrl}" #{if sectionId != ""} data-section-id = "${sectionId}" #{/if} data-cs-name="OPEN">Open</a>
+	</div>
+   	</a>
+</div>
+#{/list}
+#{/if}
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_MODULES'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+#{/else}
+
+#{if params.orgId == "602ea5ee2736d6c753bd7772" || params.orgId == "58c244d9e4b0d17e65cab555" || params.orgId == "5551bf80e4b053fbc7baf90d" || params.orgId == "55f6b821e4b06863a03b2fcc" }
+#{if "STUDENT".equals(params.userRole)}
+		<div class="instNavCMDSLink right toolTipTitle" data-title="Click here to Download<br>Course Completion Certificate">
+			<a class="" href="/Institute/getCertificate?callingUserId=${params.myUserId}&userId=${params.myUserId}&sectionId=${params.sectionId}&programId=${params.programId}&orgId=${params.orgId}&callingApp=web-app&callingAppId=web-app&centreId=${params.centerId}" target="_blank">
+			 <span class="bigGreenButton blackTextColor">
+				 <span>Download Certificate</span>
+			 </span>
+			</a>
+		 </div>
+#{/if}
+#{/if}

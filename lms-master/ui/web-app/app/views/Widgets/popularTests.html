@@ -1,0 +1,46 @@
+#{if tests!=null&&tests.errorCode==""}
+    %{
+        tests=tests.result.tests;
+        testsLength=tests.length();
+    }%
+    <div class='popularTestsHolder widget CSWidget' data-widget='POPULAR_TESTS'>
+    	<div class='widgetHead'>
+            <span class="widgetHeadText">Tests</span>
+<!--            <span class="widgetMostPopular">Most Popular</span>-->
+        </div>
+        <div class='popularTestsDiv widgetPadding'>
+            %{
+                if(testsLength>=3)testsLooper=3;
+                else testsLooper=testsLength;
+                loopStart=0;
+                loopEnd=testsLooper-1;
+                target='HOME_PAGE_RECOS';
+            }%
+            #{test.testItems tests:tests,loopStart:loopStart,loopEnd:loopEnd,target:target,seeMore:true /}
+            #{if testsLength>3}
+            <!--        <a class='popularTestsSeeMore liner smally'>see more...</a>-->
+                    %{
+                        loopStart=3;
+                        loopEnd=testsLength-1;
+                        target='HOME_PAGE_RECOS';
+                    }%
+                    <div id="homePopularTestDataDiv">
+                        #{test.testItems tests:tests,loopStart:loopStart,loopEnd:loopEnd,target:target /}
+                    </div>
+            #{/if}
+            <script type="text/javascript">
+                    $("#homePopularTestDataDiv .popularTest").each(function(){
+                        popularTestsData.push($(this).html());
+                    });
+                    $(".popularTestsDiv").find(".testItem").each(function(){
+                        popularTestsCrossed.push($(this).find(".widgetItemName").data("testId"));
+                    });
+                     $("#homePopularTestDataDiv").remove();
+            </script>            
+            <div class='createBlock createTest doCStream' data-name="create_Test">
+            	<a class="createBlockImg"><img class='' src='/public/images/questions/createTest.png' alt='' /></a>
+                <span class='big16 boldy createBlockText'>Create Tests</span>
+            </div>
+        </div>
+    </div>
+#{/if}

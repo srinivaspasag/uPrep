@@ -1,0 +1,84 @@
+#{if cdpInfo.errorCode!=''}
+    #{common.errorCodes resp:cdpInfo /}
+#{/if}
+#{else}
+
+%{
+    cdpInfo=cdpInfo.result;
+}%
+<div id="cdpPage" data-cdp-id="${cdpInfo._id}">
+    <div id="cdpDetailsSection">  
+        <div class="cdpDetails">
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td class="grayHead width100">Title:</td>
+                        <td>
+                            <div>
+                                ${cdpInfo.name}
+                            </div>
+                        </td>                     
+                    </tr>
+                    #{if cdpInfo.has('description')&&cdpInfo.description!=""}
+                    <tr>
+                        <td class="grayHead width100 alignTop">Description:</td>
+                        <td>
+                            ${cdpInfo.description}
+                        </td>                     
+                    </tr>                 
+                    #{/if}
+                    <tr>
+                        <td class="grayHead width100">Added by:</td>
+                        <td>
+                            #{widgets.user20 user:cdpInfo.creator /}
+                        </td>                     
+                    </tr>                                
+                </tbody>
+            </table>
+        </div>
+        <div class="cdpPageBtns margTop">
+            #{if session.userRole=='SUPER_USER'||session.userRole=='ADMIN'}
+                #{if cdpInfo.has('isPublished')&&cdpInfo.isPublished}
+                <div class="boldy linBlk">Published</div>
+                #{/if}
+                #{else}
+                <div class="gRedButton publishCDP" data-cdp-id="${cdpInfo._id}">Publish</div>                
+                #{/else}
+            #{/if}
+            <div class="gButton createdNodeCDP" data-parent-id='${cdpInfo._id}'>
+                Add Subject/Topic
+            </div>
+            <div class="gButton getCDPLibraryContent" data-cdp-id='${cdpInfo._id}'>
+                Reference Content
+            </div>            
+        </div>                                  
+    </div>
+    <div class="cdpPageContent">
+        #{if cdpInfo.has('cdps')&&cdpInfo.cdps.length()>0}
+        %{
+            cdps=cdpInfo.cdps;
+        }%
+        <div class="cdpTopHeads centry">
+            #{list items:0..cdps.length()-1,as:'i'}
+            <div class="cdpTopHead gButton${(i_isFirst?' gButtonActive':'')}" 
+                 data-cdp-id='${cdps.get(i)._id}' title="${cdps.get(i).name}">
+                ${cdps.get(i).name}
+            </div>
+            #{/list}
+        </div>                
+        <div class="cdpHeadContent draggleElsHolder" id="fixedSec">
+        </div>      
+        #{/if}
+        #{else}
+        <div class="userMessage">There is no content in this program.</div>
+        #{/else}
+    </div>
+    <div class="cdpLibraryContent nonner"></div>
+ </div>
+<script type="text/javascript">
+    new function(){                    
+        var fn=function(){qrCDP.init();}
+        lazyLoad([{fname:"qrCDP.js",cb:fn}]);        
+    }();    
+</script>  
+#{/else}

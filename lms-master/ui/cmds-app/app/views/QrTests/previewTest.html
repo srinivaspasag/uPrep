@@ -1,0 +1,112 @@
+#{if finalResp.errorCode!=''}
+    #{common.errorCodes resp:finalResp /}
+#{/if}
+#{else}
+%{
+    testDetails=finalResp.result;    
+    testType='TEST';
+    if(testDetails.type=='ASSIGNMENT'){
+        testType='ASSIGNMENT';
+    }
+    testPublishStatusClass = 'preview';
+    if(testDetails.type == 'TEST' && testDetails.has("globalTestId") && !testDetails.globalTestId.equals(null)){
+        testPublishStatusClass = 'btnGroup';
+    }
+    if(testDetails.type == 'ASSIGNMENT' && testDetails.has("globalId") && !testDetails.globalId.equals(null)){
+        testPublishStatusClass = 'btnGroup';
+    }
+}%
+<div class="sec1002" data-test-id="${testDetails.id}" id="previewTestPage">
+    <div class="testPageDetails ${testType}" data-test-id="${testDetails.id}">
+        #{include 'QrTests/testPageDetails.html' /}
+        *{#{if isPublished&&testDetails.type=="ONLINE"}
+        <div class="testPageBtns">            
+            <div class="gBlueButton getAllSchedules"
+                 data-global-test-id="${testDetails.globalTestId}">
+                Show All schedules
+            </div>
+        </div>   
+        #{/if}*
+        #{if testDetails.has('enablePartialMarks') && !testDetails.enablePartialMarks.equals(null) && testDetails.enablePartialMarks == true}
+            <div class="greenColor partialText">Partial Marks are enabled for this test.
+                #{if !testDetails.partialMarksQTypes.equals(null)}
+                    (${testDetails.partialMarksQTypes})
+                #{/if}
+            </div>
+        #{/if}
+        #{if testDetails.has("globalTestId") && !testDetails.globalTestId.equals(null) && params.orgId == testDetails.contentSrc.id}
+        <div class="right hiddenOption">
+            <div class="instItemStgs">
+                <div class="instImgs"></div>
+            </div>
+            <div class="instItemStgsDropped nonner">
+                <div class="regenerateAnalytics" data-org-id="${params.orgId}" data-test-id="${testDetails.globalTestId}">Re-Generate Analytics</div>
+            </div>
+        </div>
+        #{/if}
+        <div class="testPageBtns ${testPublishStatusClass}">
+            <div class="gButton viewTestStats right">View Details</div>
+            <div class="cleaner_with_divider"></div>
+        #{if  !testDetails.pdfId.equals(null) && testDetails.has("pdfId")}
+            <div class="right" style="margin-top: 10px;">Pdf Attached : <a href="/organization/${params.orgId}/document/${testDetails.pdfId}">&{testDetails.pdf.name}</a></div>
+            <div class="cleaner_with_divider"></div>
+        #{/if}
+        #{else}
+            #{if testDetails.has("globalTestId") && !testDetails.globalTestId.equals(null)}
+            <a class="right" href="/qrTests/getQuestionPaper?id=${testDetails.globalTestId}&orgId=${params.orgId}" target="_blank">
+                <span class="gButton viewQuestionPaper">View Question paper</span>
+            </a>
+            <div class="cleaner_with_divider"></div>
+            <a class="right" href="/qrTests/getSolutionPaper?id=${testDetails.globalTestId}&orgId=${params.orgId}" target="_blank">
+                <span class="gButton viewSolutionPaper">View Solution paper</span>
+            </a>
+            <div class="cleaner_with_divider"></div>
+            #{/if}
+            #{else}
+                #{if testType == "TEST"}
+                <a class="right" style="margin-top: 10px;" href="/qrTests/getDraftPaper?testId=${testDetails.id}&orgId=${params.orgId}" target="_blank">
+                <span class="gButton">Question Paper</span>
+                </a>
+                <div class="cleaner_with_divider"></div>
+                <a class="right" style="margin-top: 10px;" href="/qrTests/getDraftSolutionPaper?testId=${testDetails.id}&orgId=${params.orgId}" target="_blank">
+                <div class="gButton">Solution Paper</div>
+                </a>
+                #{/if}
+                <div class="cleaner_with_divider"></div>
+            #{/else}
+       #{/else}
+       <div class="cleaner_with_divider"></div>
+        </div>
+    </div>  
+    %{
+        metadata=testDetails.metadata;
+    }%
+    #{if metadata.length()>0}
+    %{
+        courseId=metadata.get(0).id;
+    }%          
+    #{list items:0..metadata.length()-1,as:'s'}
+    %{
+        sub=metadata.get(s);
+    }%
+    <div class="showSubPreview gButton${s_isFirst?' gButtonActive':''}" 
+         data-course-id="${sub.id}" data-target-view="${params.target}">${sub.name}</div>
+    #{/list}
+    #{/if}    
+    <div class="LMHandlerDiv cmdsQuesnsDiv">
+        #{include 'QrQuestions/qrQuesns.html' /}
+    </div>
+    #{if testDetails.type == "ASSIGNMENT" && testDetails.has("globalId") && !testDetails.globalId.equals(null)}
+            #{widgets.CMDSRatings entityRatingCMDSInfo:entityRatingCMDSInfo, entityType:"CMDSASSIGNMENT" ,entityId:testDetails.id , entityName:testDetails.name/}
+       #{/if}
+    #{if testDetails.type == "TEST" && testDetails.has("globalTestId") && !testDetails.globalTestId.equals(null)}
+            #{widgets.CMDSRatings entityRatingCMDSInfo:entityRatingCMDSInfo, entityType:"CMDSTEST" ,entityId:testDetails.id , entityName:testDetails.name/}
+    #{/if}
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){qrTestDone.init({testType:"${params.testType}"});}
+        lazyLoad([{fname:"qrTestDone.js",cb:fn}]);
+    }();       
+</script> 
+#{/else}

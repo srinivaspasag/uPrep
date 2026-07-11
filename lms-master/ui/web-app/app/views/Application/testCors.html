@@ -1,0 +1,98 @@
+<html>
+<head>
+<title>CORS</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+<script>
+function createCORSRequest(method, url){
+    var xhr = new XMLHttpRequest();
+    if ("withCredentials" in xhr){
+        xhr.open(method, url, true);
+    } else if (typeof XDomainRequest != "undefined"){
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+    } else {
+        xhr = null;
+    }
+    return xhr;
+}
+$(function(){
+	
+});
+function viaJS(method,url){
+	var xhr = createCORSRequest(method,url);
+	xhr.onload = function() {
+    		var text = xhr.responseText;
+    		$("#corsResponse").text(text).css("color","#666");
+  	};
+	xhr.onerror = function() {
+    		var text = xhr.responseText;
+    		$("#corsResponse").text("ERROR :: "+text).css("color","red");
+  	};
+	xhr.onreadystatechange = function(){
+		$("#corsProcess").append("<div>Ready State Change:<b>"+xhr.readyState+"</b>, Status:<b>"+xhr.status+"</b></div>");	
+  		if (xhr.readyState==4){
+			if(xhr.status==200){
+    				$("#corsProcess").append("<div><b>SUCCESS</b>");
+    			}else{
+                       		$("#corsResponse").text("ERROR :: No Response ").css("color","red");
+			}
+  		}
+	}
+	xhr.send();
+}
+function viaJquery(method,url){
+	$.ajax({
+               type: method,
+               url: url,
+               contentType: 'text/plain',
+               xhrFields: {
+                       withCredentials: false,
+               },
+               headers:{
+               },
+               success:function(text){
+                       $("#corsResponse").text(text).css("color","#666");
+               },
+               error:function(){
+                       $("#corsResponse").text("ERROR").css("color","red");
+               }
+         });
+}
+$(document).on("click","#fetchCorsUrl",function(){
+	var url = $("#corsURL").val();
+	var method = $("#corsMethodType").val();
+	$("#corsProcess").html("");
+	$("#corsResponse").html("Loading...").css({"color":"black"});
+	if($("#cJquery").is(":checked")){
+		viaJquery(method,url);
+	}else{
+		viaJS(method,url);
+	}
+});
+</script>
+</head>
+<body>
+	<form action="" METHOD="POST">
+	</form>
+	<div>
+		<p>
+			<div><input type="radio" name="ctype" id="cJquery"/>jQuery</div>
+			<div><input type="radio" name="ctype" id="cJS" checked/>Java-script</div>
+		</p>
+		<select id="corsMethodType">
+			<option value="GET">GET</option>
+			<option value="POST">POST</option>
+			<option value="OPTIONS">OPTIONS</option>
+			<option value="PUT">PUT</option>
+			<option value="DELETE">DELETE</option>
+		</select>
+		<input type="url" id="corsURL" style="width:300px;background-color:#eee;"/>
+		<input type="button" id="fetchCorsUrl" value="FETCH">
+	</div>
+	<p>
+		<div><h3>CORS Response</h3></div>
+		<div id="corsProcess"></div>
+		<div id="corsResponse"></div>
+	</p>
+</body>
+</html>

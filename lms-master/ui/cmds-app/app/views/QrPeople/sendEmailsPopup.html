@@ -1,0 +1,29 @@
+%{
+    currentOrgInfo=_currentOrgInfo;
+}%
+<div class="sendEmailPopup">
+    <div class="emailPopupData"
+        data-program-id="${paramsMap.programId}" data-center-id='${paramsMap.centerId}'
+        data-section-id='${paramsMap.sectionId}'></div>
+    <span class="cmdsPopupHead">Recipents: Students of ${paramsMap.programName},
+        ${paramsMap.sectionName} in ${paramsMap.centerName} center.</span>
+    <table class="sendingEmailTable" cellspacing=0 cellpadding=2>
+        <tr>
+            <th>Subject :</th>
+            <td>
+                <input id="subjectForEmailSection" type="text" placeholder="Subject..."/>
+            </td>
+        </tr>
+        <tr>
+            <th>Message :</th>
+            <td>
+                <textarea rows="4" cols="100" id="messageForEmailSection" placeholder="Type the message here..."></textarea>
+            </td>
+        </tr>
+        <tr>
+        <td colspan=2 class="rightText">
+                <span class="blueButton submitSendEmail" data-action="${action}">Send Email</span>
+            </td>
+        </tr>
+    </table>
+</div>

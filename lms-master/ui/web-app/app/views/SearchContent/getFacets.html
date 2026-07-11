@@ -1,0 +1,36 @@
+#{if facetData!=null}
+#{list items:0..brdTypes.length-1,as:'brdIndex'}
+%{
+brdType = brdTypes.getAt(brdIndex);
+brdTag = brdTags.getAt(brdIndex);
+brdData = facetData.get(brdType);
+}%
+#{if brdData.length()>0}
+<div class="searchFacetsSubjects CSWidget" data-brd-type="${brdType}" data-brd-tag="${brdTag}" 
+	data-widget="SEARCH_CONTENT_FACETS">
+	<span class="boldy big14">${brdNames.getAt(brdIndex)}</span>
+	<div class="searchFacetsOptionsList">
+		#{if brdData.length()>1}
+		<div class="searchFacetsOptHolder">
+			<input type="checkbox" class="searchFacetTargetCheckbox selectAllChkBox doCStream" data-brd-tag="${brdTag}" value="select-all" data-cs-name="SELECT_ALL_CHKBOX"/> <span class="searchFacetBoldItemText">All</span> <br/>
+		</div>
+		#{/if}
+		#{if brdType == "tags"}
+			#{list items:0..brdData.length()-1,as:'index'}
+			<div class="searchFacetsOptHolder">
+				<input type="checkbox" class="searchFacetTargetCheckbox doCStream" data-brd-tag="${brdTag}" value="${brdData.get(index).obj}" data-cs-name="SELECT_TAGS_CHKBOX"/> <span class="searchFacetItemText">${brdData.get(index).obj} <span class="greyTextColor">(${brdData.get(index).count})</span></span> <br/>
+			</div>
+			#{/list}
+		#{/if}
+		#{else}
+			#{list items:0..brdData.length()-1,as:'index'}
+			<div class="searchFacetsOptHolder">
+				<input type="checkbox" class="searchFacetTargetCheckbox doCStream" data-brd-tag="${brdTag}" value="${brdData.get(index).obj.brdId}" data-cs-name="SELECT_BOARDS_CHKBOX"/> <span class="searchFacetBoldItemText">${brdData.get(index).obj.name} <span class="greyTextColor">(${brdData.get(index).count})</span></span> <br/>
+			</div>
+			#{/list}
+		#{/else}
+	</div>
+</div>
+#{/if}
+#{/list}
+#{/if}

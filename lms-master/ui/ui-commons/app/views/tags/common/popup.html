@@ -1,0 +1,99 @@
+<style type="text/css">
+.commonPopup{
+    background-color: #818181;
+    background-color: rgba(51, 51, 51, 0.6);
+    position: fixed;
+    padding: 6px;
+    border-radius: 2px;
+}
+#commonPopupHolder{
+    position: fixed;
+    margin: 0 auto;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 550px;
+    z-index: 2049;
+}
+.commonPopup{
+    top: 75px;
+    z-index: 2049;
+    position: relative;
+}
+.commonPopupBody{
+    overflow-x:hidden;
+    max-height:500px;
+}
+.commonPopupCase{
+    background-color: #ffffff;
+    padding: 10px;
+}
+</style>
+<div id='commonPopupHolder'>
+     <div class='commonPopup nonner'>
+          <div class="commonPopupCase">
+                <a class="cancelCommonPopup right">x close</a>
+                <div class="cleaner_with_divider">&nbsp;</div>
+                <div class="commonPopupBody"></div>
+         </div>
+     </div>
+</div>
+<script type="text/javascript">
+//commonPopup
+var getCommonPopupBody;
+var cancelAllCommonPopup;
+var cancelCommonPopup;
+new function($){
+	var commonPopupArr = [];        
+	getCommonPopupBody = function(holderWidth,holderHeight,allowToBeChild){
+                var commonPopupHolder=$("#commonPopupHolder");
+    		var commonPopup=commonPopupHolder.find(".commonPopup");
+		if(commonPopupArr.length > 0){
+			if(!allowToBeChild){
+				cancelAllCommonPopup();	
+    				commonPopup=$(".commonPopup");
+			}else{
+				commonPopup = commonPopup.clone();
+				commonPopupHolder.append(commonPopup);
+				$(commonPopupArr[commonPopupArr.length-1]).addClass("nonner");
+			}
+		}
+    		if(holderWidth) commonPopup.width(holderWidth);
+    		if(holderHeight) commonPopup.find('.commonPopupBody').css('min-height',holderHeight+'px');
+    		commonPopup.removeClass("nonner");
+    		commonPopup.data("popupIndex",commonPopupArr.length);
+    		commonPopup.find(".commonPopupBody").html("");
+    		commonPopupArr.push(commonPopup);
+    		return commonPopup.find(".commonPopupBody");
+	};
+	$(".cancelCommonPopup").live('click',function(e){
+    		var target = $(this).closest(".commonPopup");
+    		cancelCommonPopup(target);
+	});
+	cancelAllCommonPopup = function(){
+    		$($(".commonPopup").get(0)).siblings().remove();
+    		commonPopupArr = [];
+    		$(".commonPopup").addClass("nonner").find(".commonPopupBody").html("");
+	};
+	cancelCommonPopup = function(target){
+    		if(target){
+			var popupIndex = $(target).data("popupIndex");
+			commonPopupArr.splice(popupIndex,1);
+			$(target).addClass("nonner").find(".commonPopupBody").html("");
+    		}else{
+        		target = commonPopupArr.pop();
+    			$(target).addClass("nonner").find(".commonPopupBody").html("");
+    		}
+    		if($(target).data("popupIndex")>0){
+			$(target).remove();
+			$(commonPopupArr[commonPopupArr.length-1]).removeClass("nonner");
+    		}
+	};
+}(jQuery);
+function clearPopupsAndTimers(){
+    cancelCommonPopup();
+    insideOutClick();
+//    if(challengeTimer)clearInterval(challengeTimer);
+//    if(burstTimer)clearInterval(burstTimer);
+}
+</script>

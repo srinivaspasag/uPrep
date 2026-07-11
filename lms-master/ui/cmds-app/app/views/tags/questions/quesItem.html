@@ -1,0 +1,228 @@
+%{
+    ques=_ques;
+    visibilityStatus='INVISIBLE';
+    if(params.forLibrarySections=='true'&&ques.scope=='ORG'){
+        visibilityStatus='VISIBLE';
+    }    
+    if(ques.has('source')&&!ques.isNull('source')){
+        ques=ques.source;
+    }
+    if(ques.has('addedBy')){
+        user=ques.addedBy;
+    }
+    qid=ques.id;    
+    if(ques.has('detail')){
+        ques=ques.detail;
+    }
+    quesClone=ques;
+    if(_canEdit!=null)canEdit=_canEdit;
+    else canEdit=false;
+    if(params.orgId!=null && params.orgId != ques.contentSrc.id){
+        canEdit = false;
+    }
+    target=_target;
+    boards=ques.boardTree;
+    content=ques.questionBody.newText;
+    if(!ques.isNull('solutionInfo'))solutionInfo=ques.solutionInfo;
+    else solutionInfo=null;
+    if(solutionInfo!=null)options=solutionInfo.optionBody.newOptions;
+    if(ques.has('scope')&&!ques.isNull('scope')){
+        scope=ques.scope;
+        if(scope == "PRIVATE"){
+            canEdit = true;
+        }
+    }
+    else{
+        scope = "";
+    }
+    qType=ques.type;
+    if(qType == "TEXT"){
+        qType = "PARA";
+    }
+    else if(qType == "PARA"){
+        qType = "PARA_QUESTION";
+    }
+    if(ques.published)quesStatus="PUBLISHED";
+    else quesStatus='UNPUBLISHED';
+    globalQid="";
+    if(!ques.isNull('globalQid')){
+        globalQid=ques.globalQid;
+    }
+    completed = ques.completed!=null?ques.completed:true;
+    needCBox=false;
+    if(params.needCBox=="true"){
+        needCBox=true;    
+    }
+    if(target == "TEST_CREATION"){
+        quesClass = "getTestParaQuestions";
+    }
+    else if(target == "QUESTION_PAGE"){
+        quesClass = "nonner";
+    }
+    else if(target == "CHECK_DUPLICATES"){
+        quesClass = "getDuplicateParaQuestions";
+    }
+    else{
+        quesClass = "getParaQuestions";
+    }
+    
+    if(!ques.isNull('hints')&&ques.hints.hints.length()>0){
+        quesHints=ques.hints.hints;
+    }else{
+        quesHints=new org.json.JSONArray();
+    }
+}%
+<div class='ques ques_${qid} entity_${qid}' data-qid='${qid}' data-type="${ques.type}" 
+     data-global-qid="${globalQid}" data-status='${quesStatus}' data-entity-name="Question" 
+     data-entity-type="CMDSQUESTION" data-entity-id="${qid}" data-visibility-status='${visibilityStatus}' data-scope='${scope}'> 
+    #{if needCBox&&canEdit}
+        #{if qType!= "PARA_QUESTION"}
+            <div class="gCBox cmdsQuesngCBox" data-callback="cmdsTablegCBoxCheck">
+                <div class="gCBoxTicker"></div>
+            </div>
+        #{/if}
+    <div class="nonner quesHints">
+        #{if quesHints.length()>0}
+        %{
+            hints=ques.hints.hints;
+        }%
+        #{list items:0..hints.length()-1,as:'h'}
+        <div class="chlgHint">
+            <div class="chlgHintText"><span class="grayHead">${h_index+") "}</span>${hints.get(h).newText.raw()}</div>
+            <div class="floatRight">
+                <input size="1" class="chlgHintDeducVal" value="0"/>
+            </div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>                  
+        #{/list}
+        #{/if}
+    </div>            
+    #{/if}
+    <div class="quesBody">                
+        #{if target!='PREVIEW_QUESTIONS'}
+        <div class="quesHeadDiv">
+            Added by
+            #{widgets.user20 user:user /}
+            <label class="feedPipe">|</label>
+            <span class="quesCreatedTime"> 
+                on ${new Date(ques.timeCreated).format('dd/MM/yy')}
+            </span>             
+            <span class="quesStatus${quesStatus} quesStatus"> 
+                ${quesStatus}
+            </span>      
+            #{if target=='TEST_CREATION' && qType!="PARA"}
+            <div class="gGreenButton addQuesToTest">Add</div>
+            #{/if} 
+            #{elseif target=='TEST_CREATION_PREVIEW'}
+            <div class="gGreenButton removeQuesFromTest">Remove</div>
+            #{/elseif}
+            <div class="showQuesTail gButton floatRight">                
+                Show Details
+            </div>
+    	    #{if completed != true}
+		<span class="incompleteStateTag">&{'TXT_DRAFT'}</span>
+    	    #{/if}
+            #{if target!="PREVIEW_QUESTIONS"}
+                #{if params.sectionId!=null}
+                <div class="visibilityStatusDiv linBlk">
+                    #{if visibilityStatus=="VISIBLE"}
+                    <div class="boldy greenColor">Visible</div>
+                    #{/if} 
+                    #{else}
+                    <div class="boldy redColor">Not Visible</div>
+                    #{/else}
+                 </div>
+                #{/if}
+                #{else}
+                <div class="gButton getVisibilityStatus nonner">View Status</div>
+                #{if qType == "PARA"}
+                    <div class="gButton ${quesClass}" data-qid='${qid}' data-type="${ques.type}">View Questions</div>
+                #{/if}
+                #{/else}
+                #{if scope == "PRIVATE"}
+                    <span class="floatRight margRight10 margHalfTop greenColor boldy margLeft10">
+                        Learnpedia
+                    </span>
+                #{/if}
+                #{if canEdit}
+                    #{if qType != "PARA" && qType!="PARA_QUESTION"}
+                        <a class="editQuesTags liner floatRight margHalfTop" data-qid="${qid}">Add/Edit Tags</a>
+                    #{/if}
+                #{/if}
+                #{if params.orgId == play.Play.configuration.getProperty("learnpedia.id")}
+                    <a class="#{if target=='CHECK_DUPLICATES' || target =='TEST_CREATION_PREVIEW' || target =='TEST_CREATION' || target =='TEST_PREVIEW'}nonner#{/if}#{else}checkDuplicates#{/else}" title="Find duplicates"><img class="imageDuplicate floatRight" src="/public/images/duplicate.png"></a>
+                #{/if}
+            #{/if}             
+        </div>
+        #{/if}
+        #{else}
+        <div class="quesHeadDiv">
+            <div class="showQuesTail gButton">
+                *{<!--<img alt="" src="/public/images/edit.png">-->}*
+                Show Details
+            </div>                    
+        </div>
+        #{/else}
+        <div class="quesTextDivHolder">
+            <a class='quesTextDiv ptrTagInline blocky rteTextDiv' data-qid='${qid}'>
+                #{include 'tags/questions/quesText.html' /}
+            </a>
+        </div>                
+        <div class="quesMetatags">
+            <div class="floatRight color9 margTop10">
+                Type: <span class="boldy color6">${qType}</span>
+            </div>              
+            <table>
+                #{if boards.length()>0}
+                <tr>
+                    <td class="QDDHead">Subject</td>
+                    <td>
+                        %{
+                            sub=boards.get(0);
+                        }%
+                        <span data-brd-id="${sub.id}" class="quesCourse">${sub.name}</span>                               
+                    </td>
+                </tr>
+                %{
+                    topics=new org.json.JSONArray();
+                    if(sub.children.length()>0){
+                        topics=sub.children;
+                    }
+                }%
+                #{if topics.length()>0}
+                <tr>
+                    <td class="QDDHead">Topic</td>
+                    <td>
+                        #{list items:0..topics.length()-1,as:'t'}
+                        %{
+                        topic=topics.get(t);
+                        }%
+                        <span class="quesTopic" data-brd-id="${topic.id}">${topic.name}</span>
+                        ${t_isLast?'':'; '}
+                        #{/list}                                
+                    </td>
+                </tr>                
+                #{/if}
+                #{/if}
+            </table>          
+            *{<div class="quesExamAndLevel">
+               #{if ques.has('targets')&&ques.targets.length()>0}
+                <label class="smally">Target-</label>
+                #{list items:0..ques.targets.length()-1,as:'e'}
+                %{
+                exam=ques.targets.get(e);
+                }%
+                <a class='boardExam boldy margRight5' data-brd-id="${exam.id}"
+                   href="${controllers.Boards.getBoardUrl('exam',exam.id)}" data-element="BOARD_EXAM">
+                    ${exam.code}
+                </a>
+                #{/list}
+                #{/if}
+            </div>}*
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>
+    </div>
+    <div class="quesTailHolder">
+        #{include 'tags/questions/quesTail.html' /} 
+    </div>            
+</div>

@@ -1,0 +1,38 @@
+<link href="/public/stylesheets/fe.css" rel="stylesheet"/>
+<div id="FEWrapper" >
+    <div id="FEHead">
+        <span class="color6">Learnpedia</span>
+        <span class="color3">Formula Editor</span>
+    </div>
+    <div id="FEToolBar"></div>
+    <div id="FEFamilyClonable"  style="display: none">
+        <div class="FEFamily">
+            <div class="FEFamilyHead">
+                <div class="FEFamilyHeadTop"></div>
+                <div class="FEFamilyHeadContent"></div>
+            </div>
+            <div class="FEFamilySubFamilyContent"></div>
+        </div>
+    </div>
+    <div id="FEComposerAreaHolder">
+        <div id="FEComposerArea">
+            <div id="feBlock" class="feBlockClass">
+                <div contenteditable='true'  class='fePHTrans fePHTransInitial'></div>
+            </div>
+        </div>
+        <div id="FEPreview" class="nonner"></div>
+    </div>
+    <div>
+        <div style="font-size: 11px; color: rgb(136, 136, 136); text-align: left;">
+            Note: To write latex equation, write the equation in the editor area without \ [ and \ ]
+        </div>
+        <div class="feButton feSubmitEqn"><div class="feButtonTop"></div>Submit</div>
+        <!-- <div class="feButton feClose"><div class="feButtonTop"></div>Close</div> -->
+    </div>
+    <div id="feVerticalCursor"></div>
+    <div id="feHorizontalCursor"></div>
+    <div id="feSelectionMarker"></div>
+    <div id="feTestDivForStringWidth"></div>
+    <div id="feTestDivForExtenderHeight" style="display: none;"></div>
+</div>
+#{script src:'widgets/fe.js', charset:'utf-8' /}

@@ -1,0 +1,81 @@
+%{
+    target=_target;
+    exams=_exams;
+    subjects=_subjects;
+    uploadContentType=params.uploadContentType;
+}%
+<div class="UPTitleContentTypeDiv">
+    <table width='100%' class="uploadDetailsTable">
+        <tbody>
+            <tr>
+                <td>Add Title*</td>
+                <td>
+                    <div class="UPTitleDiv">
+                        <input type="text" class="UPFileTitle"/>
+                    </div>
+                    #{if uploadContentType!="VIDEO"}
+                    <div class="boldy margTop margBot5">Type of Content*</div>
+                    <span class="UPContentTypeDiv activeContentTypeDiv">
+                        <input type="radio" class="UPContentType" name="UPContentType" value="Book" checked="checked"/>Book
+                    </span>
+                    <span class="UPContentTypeDiv">
+                        <input type="radio" class="UPContentType" name="UPContentType" value="Note"/>Notes
+                    </span>
+                    <span class="UPContentTypeDiv">
+                        <input type="radio" class="UPContentType" name="UPContentType" value="Tutorial"/>Tutorial
+                    </span>
+                    #{/if}                
+                </td>            
+            </tr>
+            #{if uploadContentType=="VIDEO"}
+            <tr>
+                <td>Description</td>
+                <td>
+                    <div class="UPTitleDiv textareaDiv">
+                        <textarea type="text" class="UPFileDesc"></textarea>
+                    </div>                       
+                </td>
+            </tr>
+            <tr class="showPPBlockTr">
+                <td>Duration</td>
+                <td>
+                    #{common.timeDiv /}                      
+                    <div class="gButton showPPBlock margTop20">Add Passphrase</div>
+                </td>
+            </tr>
+            <tr class="ppBlockTr nonner">
+                <td>
+                    Passphrase
+                </td>
+                <td>
+                    <div class="UPTitleDiv textareaDiv">
+                        <textarea type="text" class="UPFilePP"></textarea>
+                    </div> 
+                    <div class="margTop">
+                        <div class="gButton generatePP margRight5">Generate Passphrase</div>
+                        <div class="gButton hidePPBlock">Remove Passphrase</div>                        
+                    </div>
+                    <div class="margHalfTop smallThinGray">
+                        Allowed Characters: A-Z,a-z,0-9.
+                        <br>
+                        Min Length: 30,Max Length: 256
+                    </div>
+                </td>
+            </tr>
+            #{/if}
+        </tbody>
+    </table>       
+</div>
+<div class="UPTaggingArea">
+    <div class="boldy margBot10">Choose atleast one subject*</div>
+    #{UIComWidgets.tagging /}
+</div>
+%{
+    uploadBtnClass='greenButton';
+    if(_upload=="CMDS_APP"){
+        uploadBtnClass='gGreenButton';
+    }
+}%
+<div class="centry margTop20">
+    <span id="startUploadingFiles" class="${uploadBtnClass}">Upload</span>
+</div>

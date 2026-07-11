@@ -1,0 +1,862 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+
+#common error messages
+COMMON_ERROR_MESSAGE=Sorry the request could not be processed.Please try again
+MISSING_PARAMETER=Something went wrong.Refresh the Page and try again.
+MISSING_PARAMETERS=Something went wrong.Refresh the Page and try again.
+NO_DATA_RECIEVED = Something went wrong.Refresh the Page and try again.
+UNKNOWN=Something went wrong.Refresh the Page and try again.
+INVALID_SESSION=Something went wrong.Refresh the Page and try again.
+PROCESS_FAILURE=Something went wrong.Refresh the Page and try again.
+TRY_AGAIN = please try again.
+IMG_NA = Image not available.
+SERVICE_ERROR = Server Error Occured. Please try again later.
+UNABLE_TO_OPEN = Unable To Open. Contact Administrator.
+NO_SUFFICIENT_RIGHTS = You donot have sufficient rights to access this page.
+MULTI_ORG_LOGIN_NOT_ALLOWED = Please enter the complete URL for your Institute to login.
+PAGE_ACCESS_DENIED = You do not have permission to view this page.
+
+#COMMON
+USER_U_R_BROWSING = You are currently browsing as <b>%s</b>.
+BACK_TO_MY_ACCOUNT = Back to my account
+INST_ID = Institute ID
+
+#DOC
+USE_ALTERNATIVE_VIEWER = Use Alternate Viewer
+USE_DEFAULT_VIEWER = Use Default Viewer
+BROWSER_PDF_PLUGIN_MISSING = It seems that you pdf plugin provided by your browser not working properly.Please use Default Viewer
+DEFAULT_VIEWER_NOT_WORKING = Current doc viewer not working Try - 
+LOADING_DOC = Loading Document ...
+
+#SEARCH
+SEARCH_BY_NAME = Search by name
+SELECT_INST_PROG = Select Institute Programs
+LOAD_MORE_item = Load More %s
+NO_item_FOUND = No %s found
+
+#SIMPLE TEXT
+TXT_NAME = Name
+TXT_MY_PROFILE = View Profile
+TXT_MY_PROGRAMS = MY PROGRAMS
+TXT_LOGOUT = Logout
+TXT_NOT_VERIFIED = Not Verified
+TXT_VERIFIED = Verified
+TXT_ADD = Add
+TXT_CHANGE = Change
+TXT_CLOSE = Close
+BTN_ADD_FORMULA = Add Formula
+BTN_ADD_IMAGE = Add Image
+BTN_REG_NOW = Register Now
+TXT_REMIND_LATER = Remind me later
+TXT_DESCRIPTION = Description
+TXT_DOWNLOAD = Download
+TXT_CANCEL = Cancel
+TXT_DELETE = Delete
+TXT_SAVE = Save
+TXT_RESET = Reset
+
+TXT_TITLE = Title
+TXT_DOUBT = Doubt
+TXT_TAGS = Tags
+TXT_ASK = Ask
+TXT_PUBLICALY = Publicly
+TXT_PRIVATELY = Privately
+TXT_TO = To
+TXT_SEND = Send
+TXT_SUB = Sub
+TXT_RECENT_ACTIVITY = Recent Activity
+TXT_DOUBTS = Doubts Forum
+TXT_SCHEDULE Schedule
+TXT_PEOPLE = People
+TXT_SHARE_WITH = Share With
+TXT_ATTACH = Attach
+TXT_RECENT = Recent
+TXT_POPULAR = Popular
+TXT_FOLLOWING = Following
+TXT_ASKED = Asked
+TXT_SEARCH = Search
+TXT_STUDENTS = Students
+TXT_TEACHERS = Teachers
+TXT_MANAGERS = Managers
+TXT_EDITORS = Editors
+TXT_SALESPERSONS = Salespersons
+TXT_OFFLINE_USER = Tablet Profile
+TXT_TEACHER = Teacher
+TXT_STUDENT = Student
+TXT_TEACHES = Teaches
+TXT_POINTS = Points
+IMG_NA = Image not available
+TXT_UPLOAD_IMG = Upload Image
+TXT_CHANGE_IMG = Change Image
+TXT_SUBJECTS = Subjects
+TXT_ALL = All
+TXT_PLAYLIST = Playlist
+TXT_DOCS = Documents
+TXT_VIDS = Videos
+TXT_FILES = Files
+TXT_MODULES = Modules
+TXT_TESTS = Tests
+TXT_ASSIGNMENTS = Assignments
+TXT_QUES = Questions
+TXT_ANSWERS = Answers
+TXT_ATTEMPTED = Attempted
+TXT_NOT_ATTEMPTED = Not Attempted
+TXT_UNATTEMPTED = Unattempted
+TXT_VIEW_ALL = view all
+TXT_VIEW = view
+TXT_CONTRIBUTE_QUES = Contribute Question
+TXT_SUBTOPICS = Subtopics
+TXT_PROGS = Programmes
+TXT_CENTERS = Centers
+TXT_SECTIONS = Sections
+TXT_SHOW = Show
+TXT_HIDE = Hide
+TXT_SUBMIT = Submit
+TXT_SELECT = Select
+TXT_INST = Institute
+TXT_BATCH = Program
+TXT_CENTER = Center
+TXT_SECTION = Section
+TXT_SUBJECT = Subject
+TXT_EMAIL = Email
+TXT_CONTACT = Contact
+TXT_HOMETOWN = Hometown
+TXT_AVG_SCORE = Avg. Score
+TXT_AVERAGE = Average
+TXT_SCORE = Score
+TXT_SPEED = Speed
+TXT_ACCURACY = Accuracy
+TXT_DOUBTS_ASKED = Doubts Asked
+TXT_REMARKS = Remarks
+TXT_POST_REMARKS = Post Remark
+TXT_REMARKS_POSTED = Remarks Posted
+TXT_BY = by
+TXT_ADDED = Added
+TXT_ADD = Add
+TXT_POSTS = Posts
+TXT_POSTED = Posted
+TXT_NO_REMARKS = No Remarks Found
+TXT_NOT_VERIFIED = Not Verified
+TXT_VERIFIED = Verified
+TXT_CHANGE = Change
+TXT_TOP_PERFORMERS = Top Performers
+TXT_FULL_SCQ = Single Choice Question
+TXT_FULL_MCQ = Multiple Choice Question
+TXT_FULL_NUMERIC = Numeric Question
+TXT_VIEW_DETAILS = View Details
+TXT_HIDE_DETAILS = Hide Details
+TXT_PERFORMANCE = Performance
+TXT_ASSIGNMENT = Assignment
+TXT_CREATED_BY = Created by
+TXT_DT_CREATED = Date Created
+TXT_ATTEMPTS = Attempts
+TXT_ATTEMPT = Attempt
+TXT_RESULT_SHEET = Result Sheet
+TXT_LEADER_BOARD = Leader Board
+TXT_SUGGS = Suggestions
+TXT_CORRECT_ANSWER = Correct Answer
+QUES_LIST = Question List
+TXT_ACTIVITY = RECENT ACTIVITY
+CLASSROOM_CONNECT = CLASSROOM CONNECT
+TXT_ANALYTICS = ANALYTICS
+TXT_LIBRARY = DIGITAL LIBRARY
+TXT_DOUBTS_FORUM = DOUBTS FORUM
+TXT_MANAGE_CONTENT = MANAGE CONTENT
+TXT_STATUS = Status
+TXT_VISIBILITY_STATUS = Visibility Status
+TXT_NO_CONTENT_TO_SHOW = No content to show
+TXT_DONE = Done
+TXT_PENDING = Pending
+TXT_QUESTION = Question
+TXT_ENCRYPTED = Encrypted
+TXT_MESSAGE = Message
+TXT_HOME = Home
+TXT_BACK = Back
+TXT_UNAVAILABLE = Un-Available
+ORG_MEMBER_INFO = Organization Member Info
+USER_INFO = User Info
+TXT_HERE = here
+TXT_TOTAL = TOTAL
+TXT_PROGRAMS_CAPS = PROGRAMS
+TXT_CATEGORY_CAPS = CATEGORY
+TXT_PUBLIC_CAPS = PUBLIC
+TXT_PRIVATE_CAPS = PRIVATE
+TXT_FEATURES_CAPS = FEATURES
+TXT_STUDENTS = Students
+TXT_COURSES = Courses
+TXT_OK = OK
+TXT_FREE = FREE
+TXT_NA = Not Applicable
+TXT_NAV = Not Available
+TXT_CUSTOM = Custom
+TXT_REORDERING = Reordering
+TXT_NOT_PROVIDED = Not Provided
+TXT_TEXT_NOT_PROVIDED = Text Not Provided
+TXT_NOT_APPLICABLE = Not Applicable
+TXT_MOVE = Move
+TXT_MOVING = Moving
+TXT_CURRENCY = Currency
+TXT_PRICE = Price
+TXT_ACCESS_CODE = Access Code
+TXT_ON = On
+TXT_OFF = Off
+TXT_OF = of
+TXT_MEMBER = Member
+TXT_SOLN = Solution
+TXT_SOLNS = Solutions
+
+#ADDRESS
+ADDR_ADDRESS = Address
+ADDR_STATE = State
+ADDR_COUNTRY = Country
+ADDR_PIN = Pin Code
+ADDR_CITY = City
+ADDR_PHONE = Phone
+
+#ENTITY NAME
+ENTITY_NAME_TEST = Test
+ENTITY_NAME_VIDEO = Video
+ENTITY_NAME_DOCUMENT = Document
+ENTITY_NAME_ASSIGNMENT = Assignment
+ENTITY_NAME_FILE = File
+ENTITY_NAME_MODULE = Module
+
+#PROFILE
+MEMBER_PROFILE_TEACHER = Teacher
+MEMBER_PROFILE_MANAGER = Manager
+MEMBER_PROFILE_EDITOR = Manager
+MEMBER_PROFILE_STUDENT = Student
+
+#PLAN
+MY_ORG_PLAN = Subscription Plan
+MY_ORG_INVOICE = Invoices
+PLAN_NAME = Plan Name
+PLAN_PRICE = Plan Price
+PER_ACTIVE_USER = per active user
+PER_no_USERS = per %s users
+MONTHLY_PLAN = Monthly Plan
+ANNUALY_PLAN = Annual Plan
+CURR_PLAN_FOR_ORG = Current Active Plan for <b>%s</b>
+OTHER_PLAN_FOR_ORG = Other Plans from <b>Learnpedia</b>
+NO_PLAN_ASSIGNED = Currently your Organization is not subscribed to any plan from Learnpedia.
+INVOICING_MONTHLY = Invoicing: Monthly
+VIEW_INVOICE = View Invoice
+RETRY_PROCESS = Retry Process
+
+#TEST
+PARENT_TEST = Parent Test
+
+DOC_UNDER_PROCESS = The document you are trying to view is in processing state, please revisit later
+VIDEO_UNDER_PROCESS = The video you are trying to view is in processing state. It may not work properly now.
+GET_SAMPLE_FILE_HERE = Download your sample template 
+
+#Settings
+settings.TITLE = Account Settings
+settings.ABOUT_APP = About App
+settings.BUILD_VER = Build Version
+settings.MY_ACCESS_CODES = My Access Codes
+settings.LOGINID = Login-ID
+settings.EMAIL_LOGINID = Email as Login-ID
+settings.CURR_PASSWORD = Enter Current Password
+settings.NEW_PASSWORD = Enter New Password
+settings.REENTER_NEW_PASSWORD = Re-Enter New Password
+settings.MSG_1 = You can login using your Institute-ID
+settings.MSG_3 = You can now login using your Email-ID only
+settings.SERVICE_MSG_PWD_NOT_MATCH = Password does not match
+settings.SERVICE_MSG_CURR_PWD_NOT_MATCH = Current Password does not match
+settings.SERVICE_MSG_CHNG_PWD_SUCCESS = Password changed successfully
+settings.SERVICE_ERROR = Please try again
+settings.SERVICE_MSG_PWD_LENGTH_ERROR = Password field should be of minimum 5 character
+settings.EMAIL = Email
+settings.REGISTER_EMAIL = Register Email-ID 
+settings.MSG_2 = Registering your email will keep you notified on activities happening in the system.\n \n Once registered , you can also use it as login ID.
+settings.EMAIL_VERIFICATION_LINK_SEND = A email verification link will be sent on this Email-Id.
+settings.RESEND_VERIFICATION_LINK = Resend Verification Link
+settings.EMAIL_VERIFICATION_LINK_SENT = Email Verification Link sent, check your mail account and revisit here.
+settings.USE_EMAIL_AS_LOGIN = Use as Login-ID
+settings.USE_EMAIL_AS_LOGIN_MSG = Note: You can now login ONLY using your E-mail ID. Login with Institute ID is no longer valid.
+settings.USE_EMAIL_AS_LOGIN_SUCCESS = Your Login Id Successfully Changed!
+settings.YOU_ARE_UNSUBSCRIBED_EMAIL = Currently you are unsubscribed for email notifications from Learnpedia.
+settings.YOU_ARE_SUBSCRIBED_EMAIL = Currently you are subscribed for email notifications from Learnpedia.
+settings.SUBSCRIBE_BTN = Subscribe Now
+settings.UNSUBSCRIBE_BTN = Unsubscribe
+webappcredits.ITEM_1 = Java
+webappcredits.ITEM_LINK_1 = http://www.java.com/
+webappcredits.ITEM_2 = Play Framework
+webappcredits.ITEM_LINK_2 = http://www.playframework.com/
+webappcredits.ITEM_3 = jQuery
+webappcredits.ITEM_LINK_3 = http://jquery.com/
+webappcredits.ITEM_4 = mozilla/pdf.js
+webappcredits.ITEM_LINK_4 = http://mozilla.github.io/pdf.js/
+webappcredits.ITEM_5 = video.js
+webappcredits.ITEM_LINK_5 = http://www.videojs.com/
+webappcredits.ITEM_6 = history.js
+webappcredits.ITEM_LINK_6 = https://github.com/browserstate/history.js/
+webappcredits.ITEM_7 = timeago.js
+webappcredits.ITEM_LINK_7 = http://timeago.yarp.com/
+webappcredits.ITEM_8 = fileuploader.js
+webappcredits.ITEM_LINK_8 = http://valums-file-uploader.github.io/file-uploader/
+
+webappcredits.ITEM_9 = commons-cli 
+webappcredits.ITEM_10 = commons-codec
+webappcredits.ITEM_11 = commons-collections
+webappcredits.ITEM_12 = commons-configuration
+webappcredits.ITEM_13 = commons-io
+webappcredits.ITEM_14 = commons-lang
+webappcredits.ITEM_15 = commons-logging
+webappcredits.ITEM_16 = commons-validator
+webappcredits.ITEM_17 = mail
+webappcredits.ITEM_18 = httpclient
+webappcredits.ITEM_19 = httpcore
+webappcredits.ITEM_20 = lucene
+webappcredits.ITEM_21 = lucene-analyzers
+webappcredits.ITEM_22 = lucene-core
+webappcredits.ITEM_23 = lucene-highlighter
+webappcredits.ITEM_24 = lucene-memory
+webappcredits.ITEM_25 = lucene-queries
+webappcredits.ITEM_26 = batik-transcoder
+webappcredits.ITEM_27 = aws-java-sdk
+webappcredits.ITEM_28 = morphia
+webappcredits.ITEM_29 = morphia-logging-slf4j
+webappcredits.ITEM_30 = pdfbox
+webappcredits.ITEM_31 = poi
+webappcredits.ITEM_32 = org.restlet
+webappcredits.ITEM_33 = org.restlet.ext.httpclient
+webappcredits.ITEM_34 = org.restlet.ext.json
+webappcredits.ITEM_35 = aspectjrt
+webappcredits.ITEM_36 = aspectjweaver
+webappcredits.ITEM_37 = jericho-html
+webappcredits.ITEM_38 = dom4j
+webappcredits.ITEM_39 = jodconverter
+webappcredits.ITEM_40 = jodconverter-cli
+webappcredits.ITEM_41 = elasticsearch
+webappcredits.ITEM_42 = freemarker
+webappcredits.ITEM_43 = geronimo-stax-api
+webappcredits.ITEM_44 = gson
+webappcredits.ITEM_45 = hadoop-core
+webappcredits.ITEM_46 = hbase
+webappcredits.ITEM_47 = json
+webappcredits.ITEM_48 = jsoup
+webappcredits.ITEM_49 = juh
+webappcredits.ITEM_50 = jurt
+webappcredits.ITEM_51 = log4j
+webappcredits.ITEM_52 = mongo
+
+webappcredits.ITEM_LINK_9 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_10 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_11 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_12 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_13 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_14 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_15 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_16 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_17 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_18 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_19 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_20 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_21 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_22 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_23 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_24 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_25 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_26 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_27 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_28 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_29 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_30 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_31 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_32 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_33 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_34 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_35 = http://www.apache.org/licenses/LICENSE-2.0.txt
+webappcredits.ITEM_LINK_36 = http://www.eclipse.org/legal/epl-v10.html
+webappcredits.ITEM_LINK_37 = http://www.eclipse.org/legal/epl-v10.html
+webappcredits.ITEM_LINK_38 = http://www.eclipse.org/legal/epl-v10.html
+webappcredits.ITEM_LINK_39 = http://dom4j.sourceforge.net/dom4j-1.6.1/license.html
+webappcredits.ITEM_LINK_40 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_41 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_42 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_43 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_44 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_45 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_46 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_47 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_48 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_49 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_50 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_51 = http://opensource.org/licenses/LGPL-2.1
+webappcredits.ITEM_LINK_52 = http://opensource.org/licenses/LGPL-2.1
+
+#USER MESSAGE
+usrMsg.EMAIL_NOT_REGISTERED_HEAD = Looks like you have not registered your Email-ID yet.
+usrMsg.EMAIL_NOT_REGISTERED_BODY = Register to get notified for acivities happening on the system.
+usrMsg.EMAIL_NOT_VERIFIED_HEAD = You have not verified your Email-ID.
+usrMsg.EMAIL_NOT_VERIFIED_BODY = Click on the link, sent to your submitted Email-ID or use "resend verify link".
+
+#login
+login.SIGNIN = Login
+login.SIGNIN_CAPS = LOGIN
+login.SIGNUP_CAPS = SIGN UP
+login.VALIDATE_OTP = VALIDATE
+login.SIGNIN_SMALL = using Email ID
+login.OTP_SMALL=using OTP
+login.UNSUBSCTIBE_EMAIL = Unsubscribe from Emails.
+login.INST_SIGNIN_SMALL = using Institute ID 
+login.USE_ACCESS_CODE_MSG = Please enter the required details. You will receive your LoginID and Password for future login on the email id provided by you.
+login.PASSWORD = Password
+login.CHNG_PASSWORD = Update Password
+login.CREATE_PASSWORD = Create Password
+login.PLACEHOLDER_USERNAME = Enter email-id
+login.PLACEHOLDER_FULLNAME=Enter your Name
+login.PLACEHOLDER_CONTACTNUMBER=Enter your Contact Number
+login.PLACEHOLDER_ACCESS_CODE = Enter Access Code
+login.PLACEHOLDER_USERENROLLID = Enter Institute ID
+login.PLACEHOLDER_FIRSTNAME = Your First Name
+login.PLACEHOLDER_LASTNAME = Your Last Name (Optional)
+login.PLACEHOLDER_TWITTER_ID = Your Twitter-ID (Optional)
+login.ENTER_ACCESS_CODE = Enter Access Code provided by your instructor.
+login.FORGOT_PASSWORD_TITLE = Forgot Password?
+login.PLACEHOLDER_INSTNAME = Enter & Choose Institute Name
+login.ENTER_EMAIL = Enter your email
+login.USE_ENROLL_ID = Using Institute ID
+login.USE_ACCESS_CODE = Using Access Code
+login.USE_EMAIL_ID = Using Email ID
+login.USE_OTP=Using OTP
+login.YOUR_INST = Your Institute
+login.EMAIL_VERIFY_SUCCESS_1 = You have successfully verified your Email-ID!
+login.EMAIL_VERIFY_SUCCESS_2 = Login and click settings to use it as your Login-ID
+login.NO_SUFFICIENT_RIGHTS=You do not have sufficient rights to access this application.
+login.HOW_TO_LOGIN = How to Login? 
+login.ORGANIZATION_MEMBER_NOT_FOUND = Organization Member not found.
+login.ORG_END_POINT_NOT_REACHABLE = Not able to communicate with your Institute server! Please contact your institute administrator.
+login.GET_PASSWORD_BTN = Generate New Password
+
+#HELP-CENTER
+help.TITLE = Learnpedia Help Center
+help.GUIDE_BTN = Help / Guide
+help.HOME_TXT = HELP CENTER HOME
+help.CONTACT_SUPPORT = CONTACT SUPPORT
+help.PRODUCT_GUIDE = PRODUCT GUIDE
+help.FREQUENTLY_ASKED_QUES = FREQUENT DOUBTS AND QUESTIONS
+
+
+#slides text
+login.SLIDES_TEXT_1 = Learnpedia combines interactive <b>game-learning</b> with rigorous analytics. Use Challenges feature on Learnpedia to run questions in a game-like environment. Supported with <b>hints</b> and <b>solutions</b>, these Challenges really make learning a lot more fun!
+login.SLIDES_TEXT_2 = Anyone can <b>ask and answer</b> questions on Learnpedia. Using Doubts feature, collaborative problem solving continues long after the class is over. Learnpedia makes it extremely easy to add <b>complex formulae</b> and using <b>image upload</b> feature, teachers can simply click a pic of their whiteboards with solution and upload for the students to refer to.
+login.SLIDES_TEXT_3 = New social learning tools available on Learnpedia enable you and your students to <b>engage</b> and <b>collaborate</b> on any academic subject. Learnpedia helps you stay connected beyond the classroom.
+login.SLIDES_TEXT_4 = Results on Learnpedia go a step beyond just displaying the regular marks and ranks. Learnpedia's intelligent <b>algorithms</b> give students their detailed <b>strength, weakness</b> analysis based on their attempt pattern across multiple Tests.
+
+INVALID_CREDENTIAL=There was some error.Refresh the page and try again.
+NOT_REGISTERED=You are not registered.Please sign up.
+login.INVALID_PASSWORD=Password is incorrect!
+login.INVALID_USERNAME=Either the username or password is incorrect.
+login.INVALID_MEMBERID=Either the member-id or password is incorrect.
+login.INVALID_DATE_FORMAT = Date entered by you is not in proper format.
+login.INVALID_EMAIL = Invalid Email Id. Please try again.
+login.BLANK_FIELD = Fields cannot be empty.
+login.BLANK_FIELD_ORG = Please provide us with your institute name.
+login.CHECK_MAILBOX = Your reset password link had been sent to your E-Mail address.
+login.UNKNOWN_USER = User not found!
+login.USER_NOT_VERIFIED = Email Id not verified, check your mail inbox for verification mail from us.
+login.UNKNOWN_ERROR = Unknown Error, please try later.
+login.AUTHENTICATION_FAILED=Login credentials provided are incorrect.
+login.NULL_RESPONSE=Something went wrong.Refresh the Page and try again.
+login.MISSING_PARAMETERS = You forgot to provide some field.
+login.INVALID_ACCESS_CODE = Access Code entered by you is In-Correct, please contact your Instructor.
+login.USER_ALREADY_EXISTS = User Already exist in system, registred with the same EmailID.
+login.ORG_SIGNUP_NOT_SUPPORTED = Signup not allowed from this organization.
+
+#Wrong Password
+login.WRONG_PASSWORD_TITLE = Your Login ID and Password did not match
+login.WRONG_PASSWORD_CHECK = Check for the following
+login.FIRST_LOGIN_B = 1. First Login?
+login.FIRST_LOGIN_MSG = Make sure you have used the following format
+login.EMAIL_LOGIN_B = 2. If you have made your Email as Learnpedia Login ID,
+login.EMAIL_LOGIN_MSG = make sure you are using your correct Email in the LoginID field
+login.WRONG_FORGOT_PASS_B = 3. Did you forget your password?
+login.WRONG_FORGOT_PASS_MSG = click on the 'Forgot Password' link on the Login screen.
+login.CONTACT_ADMIN = For further queries, please contact your Institute Administrator.
+login.INVALID_VERIFICATION_CODE = It seems that you have taken a long time to reset your password.Request for resetting your password again.
+login.INVALID_ID = You are not a registered member with us.
+login.PWD_MISMATCH = Password mis-match
+login.PWD_MIN_FIVE_CHAR = Password should be of minimum 5 characters.
+login.RETRY_RESET_PASS = Please try reset password again or
+login.MEMBER_IS_BLOCKED = Sorry, your account is currently de-activated. Please contact your Organization Administrator.
+
+#Organization
+org.NOT_PART_OF_PROG = Sorry,you are not part of any Program in this Institute.
+org.MEMBER_BLOCKED_BY_ADMIN = Your account has been suspended. Please contact your Account Manager to help with steps to recover your account.
+
+#TESTS
+TEST_TIME_OVER = Out of Time! Test has ended and your progress is submitted.
+TEST_INPROGRESS = Test is allready in progress.
+TEST_MAX_ATTEMPT = Maximum number of attempt for a test allowed is been reached.Your answers are successfully submitted.
+TEST_TRY_AGAIN = Something went wrong. Please try again!
+TEST_SUBMIT_ANSWER_ERR_SESSION = The Answer Not submitted. REASON = SESSION_INVALID 
+TEST_SUBMIT_ANSWER_ERR_TESTID = The Answer Not submitted. REASON = TESTID_INVALID
+TEST_SUBMIT_ANSWER_ERR_ATTEMPTID = The Answer Not submitted. REASON = TEST_ATTEMPTID_INVALID
+TEST_OFFLINE_ERROR = No Internet Connection Found! please check your internet connectivity. The test will resume automatically.
+
+#Other Error codes
+INVALID_ID = Identity Number not matched with our data.
+MISSING_FILE = File is missing.
+UNSUPPORTED_FILE_TYPE = Un-supported file.
+FILE_UPLOAD_ERROR = Failed to upload file.
+NO_STORAGE_FOUND = Failed to upload file.
+REINDEXING_FAILED = Resources not indexed yet.
+CAN_NOT_SECURITY_CREDENTIALS = user credential match failed.
+ALREADY_LOGGED_IN = User already logged in.
+ALREADY_LOGGED_OUT = User already logged out.
+USER_LOGIN_NOT_FOUND = User not logged in.
+USER_ALREADY_EXISTS = User Already exist in system.
+AUTHENTICATION_FAILED = User login credentials authentication failed.
+USER_NOT_FOUND = User does not exist in system.
+USER_NO_VERIFIED_EMAIL = User email not verified.
+INVALID_DATE_FORMAT = Invalid date.
+INVALID_VERIFICATION_CODE = Invalid Verification code entered.
+INCORRECT_UPDATE_DATA_PROVIDED = The field is not allowed to be updated.
+ACCESS_DENIED = Access denied for this page/feature.
+CONTENT_IN_TEMPORARY_STAGE = The Content is currently un-available. Contact your organization administrator.
+
+#Org Error Codes
+ORGANIZATION_ALREADY_EXISTS = Organization Already Exist.
+ORGANIZATION_NOT_FOUND = Organization not found.
+ORGANIZATION_ALREADY_APPROVED = Organization already approved.
+ORGANIZATION_MEMBER_NOT_FOUND = Organization Member not found.
+ORGANIZATION_MEMBER_ALREADY_EXISTS = Organization Member Already Exist.
+ORGANIZATION_MEMBER_MAPPING_NOT_FOUND = Organization Member not mapped properly.
+ORGANIZATION_MEMBER_MAPPING_ALREADY_EXISTS = Organization Member's same mapping already exist.
+ORGANIZATION_CENTER_NOT_FOUND = Organization Center not found.
+ORGANIZATION_CENTER_ALREADY_EXISTS = Organization Center Already Exist.
+ORGANIZATION_DEPARTMENT_NOT_FOUND = Organization department not found.
+ORGANIZATION_DEPARTMENT_ALREADY_EXISTS = Organization department already exist.
+ORGANIZATION_PROGRAM_NOT_FOUND = Organization program not found.
+ORGANIZATION_PROGRAM_ALREADY_EXISTS = Organization program already exist.
+ORGANIZATION_PROGRAM_CENTER_NOT_FOUND = Organization center not found for the selected program.
+ORGANIZATION_PROGRAM_CENTER_ALREADY_EXISTS = Organization center already exist for the selected program.
+ORGANIZATION_PROGRAM_SECTION_NOT_FOUND = Organization section not found for the selected program.
+ORGANIZATION_PROGRAM_SECTION_ALREADY_EXISTS = Organization section already exist for the selected program.
+ORGANIZATION_USER_ASSOCIATION_NOT_FOUND = User is not associated with the organization.
+STUDENT_FILE_UNPARSEABLE = Student file failed to parse.
+UNABLE_TO_CREATE_ORGANIZATION = Unable to create asked organization.
+ORGANIZATION_MISSING_MEMBER_ID_AND_EMAIL = Please provide with either Email-Id or Institute Id. This is used to generate login credentials for the member.
+ORGANIZATION_MEMBER_ID_PATTERN_NOT_ALLOWED = This pattern of institute id is not allowed.(Reserved pattern)
+
+#LICENSING ERROR CODE
+INVALID_LICENSING_PLAN = License plan is not valid
+LICENSING_PLAN_ALREADY_ACTIVE = Can not change state of plan from "ACTIVE" to "DRAFT".
+
+#ACTIVATE DEACTIVATE MEMBER
+FROM_DATE_TIME_LESS_THAN_CURRENT = 'From' date is less than today's date.
+TILL_DATE_TIME_LESS_THAN_CURRENT = 'To' date is less than today's date.
+FROM_DATE_GREATER_THAN_TILL_DATE = 'From' date is later to 'To' date.
+USER_ALREADY_ACTIVE = User is already in active state.
+USER_ALREADY_DEACTIVATED_WITH_NO_FUTURE_ACTIVATION = User is already deactivated permanently, You can schedule member for future Activation or Activate now.
+
+#question content and answer related errors
+INVALID_ANSWER_FORMAT = Answer format not valid.
+INVALID_QUESTION_FORMAT = Invalid format of question.
+QUESTION_NOT_FOUND = Question not found.
+ACCESS_DENIED = Access is denied.
+TAGS_NOT_SPECIFIED = Tags not specified the entity.
+
+#BOARD SERVICE ERROR
+BOARD_NOT_FOUND = Board Not found
+BOARD_FILE_UNPARSEABLE = Board file not parsing. Please check for error in the file or format mismatch.
+
+# ~~~ CMDS SERVICE ~~~
+PARENT_DIRECTORY_NOT_FOUND = Parent Directory not found.
+FOLDER_NOT_FOUND = Folder not found.
+FOLDER_ALREADY_EXISTS = A folder with this name , already exist in Organization Resources , please select another name.
+CAN_NOT_BE_REMOVED = Can Not Remove the item/entity.
+CAN_NOT_BE_UPDATED = Can Not Update Fields
+INCORRECT_ORGANIZATION_ENTITY = Incorrect Entity access.
+ALREADY_ADDED = Already added.
+FOLDER_CAN_NOT_BE_MOVED = Unable to move folder.
+CONTENT_CAN_NOT_BE_MOVED = Unable to move content.
+NOT_PUBLISHED = Entity Not Visible.
+INVALID_SECTION_ID = Invalid section id.
+ALREADY_PUBLISHED = Entity already visible.
+NO_BOARD_TREE_SPECIFIED = No board tree is specified in request.
+QUESTION_SUBJECT_CANNOT_BE_EDITED = Unable to update question subjects/topics in this scenario.
+QUESTION_OPTIONS_ARE_MISSING = Options missing for question.
+CONTENT_ASSOCIATED_WITH_QUESTION = Content associated with this question, unable to complete operation.
+CMDS_QUESTION_NOT_FOUND = Question not found.
+QUESTION_SET_CAN_NOT_BE_SAVED = Unable to save question set.
+QUESTION_SET_SIZE_NOT_MATCHED = Question Set size not matched.
+OPTION_DUPLICATION_OCCURED = Duplicate options found.
+
+UNKNOWN_QUESTION_TYPE = Unknown question type.
+NEW_SOLUTION_IS_MISSING = Soultion missing for the question.
+SOLUTION_EMPTY = Solution field is empty.
+INCORRECT_HINT_FORMAT = Incorrect hint format. please follow the format.
+INVALID_QUESTION_TYPE = Invalid question type.
+CAN_NOT_PUBLISH_QUESTION = Unable to make question visible.
+DIFFICULTY_NOT_SPECIFIED = Please specify the difficulty level for the question.
+ILLEGAL_QUESTION_OPTION_SPECIFIED = Please select a proper option for the question.
+INVALID_FOLDER_ID = Invalid folder acsess.
+INVALID_CENTER_ID = Invalid center selected.
+QUESTION_SET_NOT_FOUND = Question set not found.
+INVALID_START_SPECIFIED = Invalid request, start value incorrect.
+CAN_NOT_BE_PUBLISHED = Unable to make content visible.
+NO_SOLUTIONINFO_PROVIDED = No soultion info provided.
+INVALID_TYPE = Invalid type.
+ITEM_ALREADY_VERIFIED_WITH_DIFFERENT_DEVICE = Unable to use ,Item is already used in another device.
+ITEM_ALREADY_VERIFIED_FOR_DIFFERENT_USER = Unable to use ,Item is already consumed by another user.
+
+INVALID_JOB_ID = Job id incorrect, unable to track progress.
+UNSUPPORTED_CONTENT_TYPE = Un-supported content type.
+UNSUPPORTED_ORG_TYPE = Un-supported organization type.
+EMAIL_CAN_NOT_BE_SEND = Email Not Sent.
+NOT_VALID_CMDS_CONTENT = Not a valid cmds content.
+
+DOCUMENT_NOT_FOUND = Document not found
+ENCRYPTION_FAILED = Content encryption failed.
+NO_VIDEO_ID_PROVIDED = Please provide a proper video Id.
+VIDEO_INFO_NOT_EXTRACTED = Video info not found.
+VIDEO_NOT_FOUND = Video Not Found.
+DURATION_NOT_FOUND = Duration not specified.
+NOT_CONVERTED = Content Not Converted yet. Please re-visit later.
+VIDEO_FORMAT_NOT_SUPPORTED = Video format not supported.
+CONVERSION_FAILED = Content Conversion failed, contact administrator.
+CONTENT_NOT_VISIBLE = Content Not Visible.
+OPTIONS_NOT_SPECIFIED = Please specify options.
+SUBJECT_NOT_FOUND = Subject not found, in mentioned topic tree.
+TOPIC_NOT_FOUND = Topic Not found, in topic tree , under the specified subject.
+SUBTOPIC_NOT_FOUND = Topic Not found, in topic tree , under the specified topic.
+
+#SOCIAL ERRORS
+ALREADY_VOTED = Entity already voted by you.
+ALREADY_FOLLOWING = Already following the content.
+NOT_FOLLOWING = Not following
+ACTION_NOT_ALLOWED = Operation not allowed.
+NOT_ALLOWED = Not Allowed
+CAN_NOT_SHARE_WITH_SELF = Cannot share only with self.
+SHARING_NOT_ALLOWED = Sharing not allowed.
+
+# ~~~ CHALLENGE SERVICE ~~~
+MISSING_POINT_DEDUCTION_VALUE = Missing point deduction value.
+INVALID_POINT_DEDUCTION_VALUE = wrong point deduction value. specify numbers only.
+CHALLENGE_NOT_FOUND = Challenge not found.
+INVALID_LIFE_TIME = Duration time should be less than lifetime for the challenge.
+PRIVATE_CHALLENGE = Sorry , it is a private challenge. Access not allowed.
+CHALLENGE_ENDED = Sorry , Challenge ended!
+ALREADY_ATTEMPTED = You already attemped the challenge.
+ENTITY_NOT_FOUND = Entity not found.
+INVALID_TOKEN = Invalid token number.
+NO_HINT = No hint available.
+# ~~~ CHANNEL SERVICE ~~~
+CHANNEL_NOT_FOUND = Channel Not found
+CHANNEL_ALREADY_EXIST = Channel with name already, choose a new one.
+ALREADY_SHARED = Already shared.
+
+# ~~ offline test result upload
+INVALID_INPUT_DATA = Invalid Data Input.
+TEST_NOT_FOUND = Test not found in system.
+ASSIGNMENT_NOT_FOUND = Assignment Not Found.
+INCOMPLETE_TEST = Accessing incomplete test.
+INCOMPLETE_ASSIGNMENT = Accessing incomplete assignment.
+INVALID_METADATA = Invalid metadata specified. No entry found with us.
+METADATA_NOT_FOUND = Invalid metadata specified. No entry found with us.
+ADDQUESTOTEST_INVALID_METADATA = Question's Subject/Topic does not match with the selected Test's subject/topic.
+ADDQUESTOTEST_METADATA_NOT_FOUND = Question's Subject/Topic does not match with the selected Test's subject/topic.
+QUESTION_MAX_COUNT_EXCEED = Question maximum count exceeded. 
+
+#~~~ ANALYTICS SERVICE ~~~
+UNATTEMPTABLE_ENTITY = Entity is not attemptable.
+MULTI_ATTEMPTS_NOT_ALLOWED = Multiple attempts not allowed here.
+ATTEMPT_NOT_FOUND = Attempts not found.
+NOT_ATTEMPTED = Not attempted yet.
+INVALID_QUESTION_ID = Invalid question id.
+ANALYTICS_NOT_FOUND = No Analytics found for the selected entity.
+INCOMPLETE_PUBLISHABLE_STATE = Unable to make visible , state incomplete for the entity.
+
+INVALID_SLUG = Invalid Slub format
+SLUG_NOT_AVAILABLE = specified dlug not found,
+CAN_NOT_CONVERT_TO_PDF = Unable to convert the file to pdf.
+UNKNOWN_APP_TYPE = Unknown Application type.
+
+
+TNC.TXT_AGREED = Agree
+TNC.TXT_DONT_AGREE = Dont Agree
+TNC.TITLE = Terms & Conditions
+BUSINESS.AGREEMENT.TITLE = Business Agreement
+
+#INVOICE 
+#--------------------------------
+INVOICE_ITEM_PLAN = Plan
+INVOICE_ITEM_TABLET = Tablet
+INVOICE_ITEM_CONTENT = Content
+INVOICE_ITEM_SECTION = Program
+INVOICE_ITEM_SDCARDGROUP = SD-Card Group
+
+INVOICE_PAYMENT_STATE_UNPAID = Due
+INVOICE_PAYMENT_STATE_PAID = Paid
+INVOICE_PAYMENT_STATE_PROCESSING = Processing
+INVOICE_SHIP_TO = Ship To
+INVOICE_BILL_TO = Bill To
+
+#MICROSITE
+#---------------------------------
+GOTO_ORG_CAPS = GO TO %s
+DOWNLOAD_ANDROID_APP = DOWNLOAD ANDROID APP
+TXT_SIGN_UP_CAPS = SIGN UP
+TXT_LOGIN_CAPS = LOGIN
+TXT_JOIN_NOW_CAPS = JOIN NOW
+TXT_POWERED_BY = powered by
+ALREADY_A_MEMBER = Already a member?
+SHOW_PWD = Show Password
+
+microsite.SLIDER_1_TEXT_1 = Not just results but
+microsite.SLIDER_1_TEXT_2 = Analytics
+microsite.SLIDER_1_TEXT_3 = Not just regular marks and ranks, get detailed Strength & Weakness analysis based on your attempt pattern across multiple Tests.
+microsite.SLIDER_2_TEXT_1 = Take
+microsite.SLIDER_2_TEXT_2 = Tests
+microsite.SLIDER_2_TEXT_3 = Assess yourself by taking quick online/offline tests anytime, anywhere.
+microsite.SLIDER_3_TEXT_1 = Consume 
+microsite.SLIDER_3_TEXT_2 = Content
+microsite.SLIDER_3_TEXT_3 = Get access to study resources like Modules, Documents, Videos, Assignments etc. on the go.
+
+
+microsite.PRIVACY_POLICY = Privacy Policy
+microsite.CONTACT_US = Contact Us
+microsite.ENTER_YOUR_DETAILS = ENTER YOUR DETAILS
+microsite.JOIN_CAPS = FREE
+INPUT_INSTID_EMAIL = Institute Id / Email Id
+
+microsite.FEATURES_TITLE_1 = PREP-KIT
+microsite.FEATURES_DESC_1 = Access 4000+ videos (spanning over 800 hours) that simplify all the JEE concepts across Maths, Physics & Chemistry.
+microsite.FEATURES_TITLE_2 = CONTENT RECOMMENDATIONS
+microsite.FEATURES_DESC_2 = Get personalised content recommendations based on your learning behaviour.
+microsite.FEATURES_TITLE_3 = DOUBTS FORUM
+microsite.FEATURES_DESC_3 = Don’t let any doubt nag you anymore. Post it on Doubts Forum for others (peers, faculty, IITians, etc) to come to your rescue.
+microsite.FEATURES_TITLE_4 = DETAILED ANALYTICS
+microsite.FEATURES_DESC_4 = In addition to marks and ranks, get detailed analysis of your strengths & weaknesses based on your pattern across multiple tests.
+microsite.FEATURES_TITLE_5 = TEST-A-VAGANZA
+microsite.FEATURES_DESC_5 = Attempt over 1,200 tests (with hints & video solutions) to boost your confidence.
+microsite.FEATURES_TITLE_6 = DRILL MACHINE
+microsite.FEATURES_DESC_6 = Practise until every concept has been thoroughly drilled into your head. 15,000 Practice Questions & growing..
+
+signup.FIRST_NAME = Full Name
+signup.LAST_NAME = Last Name
+signup.DOB = Date of Birth
+signup.GENDER = Gender
+signup.EMAIL_ID = Email-Id
+signup.PWD = Password
+signup.CONFIRM_PWD = Confirm Password
+signup.COURSE = Course
+signup.CONTACT_NO = Contact Number
+signup.OTP = OTP
+signup.REFERRAL = Referral Code
+signup.PROMO = Promo Code
+
+signup.MALE = Male
+signup.FEMALE = Female
+signup.PWD_REQUISITE = Minimum 5 characters
+signup.CONFIRM_PWD_REQUISITE = Should match above entered password
+microsite.ENROLL_TO_PROGRAM = ENROLL TO THIS PROGRAM
+microsite.SIGNUP_NOW = SIGN UP NOW
+microsite.JOIN_NOW = JOIN NOW
+microsite.BUY_NOW = BUY NOW
+microsite.PROCEED = PROCEED
+microsite.ALREADY_PART_OF_PROG = Ah! You are already part of this program
+category.MY_PROGRAMS = ENROLLED
+category.AVAILABLE_PROGRAMS = AVAILABLE PROGRAMS
+payment.success = Payment was success
+payment.failed = Payment failed to process.
+payment.cancelled = Payment was cancelled.
+payment.TXT_PAYMENT_INFO = Payment Info
+payment.ORDER_ID = Order Id
+payment.TOTAL_AMOUNT = Total Amount
+payment.AMMOUNT_PAID = Ammount Paid
+payment.PAYMENT_DATE = Payment Date
+payment.FREE_PROGRAM = Payment info not found! It is a free program.
+payment.PAYMENT_RETRY_FAILED = Retry payment process failed! Please contact your organization admin refering the 'Order Id' = %s.
+payment.NOT_A_WEB_TRANSACTION = The transaction for order Id '%s' is not originated from web devices, Its from your mobile/tablet device, please visit there to retry!
+payment.PLEASE_NOTE_BELLOW_INFO = Please note the following information regarding your transaction.
+payment.CONTACT_EMAIL = info@learnpedia.in 
+payment.PROCEED = PROCEED
+payment.CONFIRM_EMAIL = Confirm your communication Email-ID
+payment.NO_REFRESH_CLOSE = > Please do not press browser refresh / back button during payment process. It will cancel the transaction.
+payment.CONFIRM_EMAIL_PLACEHOLDER = Email-Id for transaction status and invoice.
+AWAITING_PAYMENT = WAITING
+payment.COUPON_CODE = Coupon code
+payment.APPLY = Apply
+payment.ENTER_COUPON_CODE_PLACEHOLDER = Enter Coupon code
+
+#OTHERS
+ATTACH_VIDEO_SOL = Attach Video Solution
+VIDEO_SOL = Video Soution
+FETCH_VIDEO_SOLN = Fetch Video Solution (%s)
+
+#SIZE
+SIZE_GB = GB
+SIZE_KB = KB
+SIZE_MB = MB
+SIZE_BYTES = Bytes
+
+#INVENTORY
+#-------------------
+SELLER_DASHBOARD = Seller Dashboard
+ORDERS_PAGE = Orders
+INVENTORY_PAGE = Access Codes
+SHIPMENTS_PAGE = Shipments
+INVENTORY_PRODUCT_ITEM = Product / Item
+INVENTORY_SELLING_POINT = Selling Point
+INVENTORY_BUYING_POINT = Buying Point
+INVENTORY_SELLING_REF = Selling Reference Number
+INVENTORY_STATE = Shipment status
+INVENTORY_NO_RECORDS_FOUND = No records found
+INVENTORY_CREATE_BTN_TXT = New Entry
+REF_NO = Ref. Number
+SHIPMENT_STATUS_NOT_DISPATCHED = Not Shipped
+SHIPMENT_STATUS_DISPATCHED = Shipped
+SHIPMENT_STATUS_RECEIVED = Received
+SHIP_TO_SAME_BILL_TO = Same as billing address
+SHIPMENT_ADDRESS = Shipment Address
+ALLOWED_DEVICE_ID = Allowed Devices
+VIEW_DEVICE_IDS = View Devices
+
+#ENTITY TYPE TO TEXT
+ENTITY_NAME_CMDSTEST = Test
+ENTITY_NAME_CMDSASSIGNMENT = Assignment
+ENTITY_NAME_CMDSVIDEO = Video
+ENTITY_NAME_CMDSDOCUMENT = Document
+ENTITY_NAME_CMDSRESOURCE = Resource
+ENTITY_NAME_CMDSQUESTION = Question
+ENTITY_NAME_CMDSQUESTIONSET = Question Set
+ENTITY_NAME_SECTION = Section/Class
+ENTITY_NAME_SDCARD = SD Cards
+ENTITY_NAME_SDCARDGROUP = SD Card Group
+ENTITY_NAME_CMDSMODULE = Module
+
+#COUPONS
+COUPONS_DASHBOARD = Coupons Dashboard
+ACTIVE_COUPONS_PAGE = Active Coupons
+ALL_COUPONS_PAGE = All Coupons
+COUPONS_REPORT_PAGE = Usage Report
+COUPON_CREATE_BTN_TXT = New Coupon
+COUPON_CODE_TXT = Coupon Code
+COUPON_TYPE_TXT = Type
+COUPON_DESC_TXT = Discount
+COUPON_LIMIT_TXT = Disc. Limit
+COUPON_MIN_ORDER_VALUE_TXT = Min. Order Value
+COUPON_MAX_USAGE_TXT = Maximum Usage
+COUPON_USAGE_COUNT_TXT = Usage count
+DISCOUNT_VALUE_TXT = Discount (Rs.)
+DISCOUNT_PERCENTAGE_TXT = Discount (&#37.)
+MIN_ORDER_VALUE_TXT = Minimum Order Value
+MAX_DISCOUNT_TXT = Maximum Discount Applicable
+MAX_USAGE_COUNT_TXT = How many times coupon can be used?
+EXPIRY_DATE_TXT = Expiry Date
+COUPON_ACTIONS_TXT = Actions
+
+#External SignUp Mgmt
+PACKAGES_TXT = Manage Packages for
+PACKAGE_DAYS = Number of Days
+PACKAGE_PRICE = Price In Rs.
+NO_PACKAGES = No Packages added YET. Please add Some Package.
+
+CHOOSE_SUBSCRIPTION = Choose a subscription:

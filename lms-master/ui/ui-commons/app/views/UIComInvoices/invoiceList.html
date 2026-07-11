@@ -1,0 +1,82 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.list.length()>0}
+#{list items:0..resp.result.list.length()-1,as:'index'}
+%{
+	order = resp.result.list.get(index);
+}%
+#{list items:0..order.items.length()-1,as:'oIndex'}
+%{
+	item = order.items.get(oIndex);
+}%
+<div class="eachOrder">
+   <table cellspacing=0 cellpadding=0 class="fullWidth">
+     <tr>
+       <td style="width:70%;" class="big16">
+       	<div>	<span>Item : </span>
+     		<span class="boldy">&{'INVOICE_ITEM_'+item.category}</span>
+       		(<span class="boldy padTop5">${item.name}</span>)
+     	</div>
+       </td>
+       <td class="rightText">
+     	<div class="greyTextColor big14">
+		<span>Bill Date : </span>
+		<span class="updateClientTime" data-time="${order.orderTime}"></span>
+	</div>
+       </td>
+     </tr>
+     <tr>
+        #{if order.has("period") && !order.period.equals(null) && order.period.has("till")}
+        <td>
+       	<div class="big15 boldy margTop10">Period</div>
+     	<div class="big15">
+       	   <span class="updateClientTime" data-time="${order.period.from}" data-format="dd mmm, yyyy"></span>
+       	   <span class="big12"> &{'TXT_TO'} </span>
+       	   <span class="updateClientTime" data-time="${order.period.till}" data-format="dd mmm, yyyy"></span>
+     	</div>
+        </td>
+	#{/if}
+       <td class="rightText">
+	#{if order.has("invoiceInfo") && order.invoiceInfo.has("paymentState") && !order.invoiceInfo.paymentState.equals(null)}
+		%{
+		extraClassName = order.invoiceInfo.paymentState.equals("UNPAID")?"redTextColor":"greenTextColor";
+		}%
+     		<span class="${extraClassName} boldy big20">&{'INVOICE_PAYMENT_STATE_'+order.invoiceInfo.paymentState}</span>
+	#{/if}
+       </td>
+     </tr>
+     <tr>
+        <td>
+	#{if order.has("invoiceInfo") && !order.invoiceInfo.equals(null)}
+	%{
+		currencyCode = java.util.Currency.getInstance(order.invoiceInfo.currencyCode).getSymbol();
+	}%
+     	<div class="margTop10 big20">
+     		<span class="boldy">${currencyCode} ${uicom.util.Utilities.roundDecimals(order.invoiceInfo.total/100)}</span>
+     	</div>
+	#{/if}
+        </td>
+	<td class="rightText">
+     		<a class="right greenButton" href="/organization/${params.orgId}/order/${order.orderId}" target="_blank">&{'TXT_VIEW_DETAILS'}</a>
+        </td>
+     </tr>
+   </table>
+</div>
+#{/list}
+#{/list}
+   #{if checkForLoadMore == null || checkForLoadMore == true}
+   %{
+        totalHits = resp.result.totalHits;
+        lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+   }%
+	#{if totalHits > lastCount }
+	<div class="loadMoreDiv" style="padding-top:10px;">
+		<div class="loadMoreItems loadMoreOrders doCStream" name="LOAD_MORE_ORDERS" 
+			data-next-start="${lastCount}">&{'LOAD_MORE_item','Orders'}</div>
+	</div>
+	#{/if}
+   #{/if}
+#{/if}
+#{else}
+     <div class="centerText zeroLevelImg" style="padding:10px 0;">
+     	<img alt="No Invoices To Show" src="/public/images/zerolevel/general-no-content.jpg"/>
+     </div>
+#{/else}

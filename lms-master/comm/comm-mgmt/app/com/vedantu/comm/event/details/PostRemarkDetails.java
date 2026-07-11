@@ -1,0 +1,97 @@
+package com.vedantu.comm.event.details;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import play.data.validation.Constraints.Required;
+
+import com.vedantu.commons.constants.ConstantsGlobal;
+import com.vedantu.commons.enums.EntityType;
+import com.vedantu.commons.enums.EventType;
+import com.vedantu.commons.enums.UserActionType;
+import com.vedantu.commons.events.apis.IEventDetails;
+import com.vedantu.commons.news.EntityNewsInfo;
+import com.vedantu.commons.news.NewsActivity;
+import com.vedantu.commons.pojos.SrcEntity;
+import com.vedantu.commons.utils.JSONUtils;
+
+public class PostRemarkDetails implements IEventDetails {
+
+    public static final String PROVIDEE_ID = "provideeId";
+
+    public static final String PROVIDER_ID = "providerId";
+    public static final String REMARK_ID   = "remarkId";
+
+    public String              remarkId;
+    @Required
+    public String              providerId;
+
+    @Required
+    public String              provideeId;
+
+    @Required
+    public String              orgId;
+
+    @Override
+    public JSONObject toJSON() throws JSONException {
+
+        // TODO Auto-generated method stub
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(PROVIDER_ID, providerId);
+        jsonObject.put(PROVIDEE_ID, provideeId);
+        jsonObject.put(REMARK_ID, remarkId);
+        jsonObject.put(ConstantsGlobal.ORG_ID, orgId);
+
+        return jsonObject;
+
+    }
+
+    @Override
+    public void fromJSON(JSONObject json) {
+
+        // TODO Auto-generated method stub
+
+        remarkId = JSONUtils.getString(json, REMARK_ID);
+        providerId = JSONUtils.getString(json, PROVIDER_ID);
+        provideeId = JSONUtils.getString(json, PROVIDEE_ID);
+        orgId = JSONUtils.getString(json, ConstantsGlobal.ORG_ID);
+
+    }
+
+    @Override
+    public SrcEntity __getSrcEntity() {
+
+        // TODO Auto-generated method stub
+        return new SrcEntity(EntityType.REMARK, remarkId);
+    }
+
+    @Override
+    public NewsActivity toNewsActivity() {
+
+        // TODO Auto-generated method stub
+        NewsActivity activity = new NewsActivity();
+        activity.eType = EventType.POST_REMARK;
+        activity.src = new SrcEntity(EntityType.REMARK, remarkId);
+
+        activity.srcOwner = new SrcEntity(EntityType.USER, provideeId);
+        activity.actor = new SrcEntity(EntityType.USER, providerId);
+
+        activity.info = new EntityNewsInfo();
+        activity.info.actionType = UserActionType.ADDED;
+
+        return activity;
+    }
+
+    @Override
+    public boolean getNotificationEnabled() {
+
+        return true;
+    }
+
+    @Override
+    public boolean enableNotifcation(boolean value) {
+
+        return true;
+    }
+
+}

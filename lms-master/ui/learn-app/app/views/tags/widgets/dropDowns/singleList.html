@@ -1,0 +1,38 @@
+%{
+    list = _list;
+    selectedVal = _selectedVal;
+    selectedText = _selectedText;
+    showSelectAll = _showSelectAll;
+    listType = _listType;
+    orgId = params.get("orgId");
+}%
+<div class="nDropDown" data-value="${selectedVal}" data-item-value="" data-list-type="${listType}">
+    <div class="dropDownHead">
+        <span class="textCont">
+            #{if selectedText != null && !selectedText.isEmpty()} 
+                ${selectedText}
+            #{/if}
+            #{else}
+                &{'TXT_ALL'} ${listType}
+            #{/else}
+        </span>
+            <span class="instImgs noUserSelect"></span>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+    <div class="dropDownContainer nonner">
+        <div class="eachNonDropElement">&{listType}</div>
+        #{if showSelectAll==true}
+            <div class="eachDropedElement" data-value="" data-item-value='' 
+                data-text="&{'TXT_ALL'} &{listType}">&{'TXT_ALL'}</div>
+        #{/if}
+        #{if list!=null && list.length()>0}
+        #{list items:0..list.length()-1,as:'lIndex'}
+        <div class="dropElemPackage">
+        %{ item = list.get(lIndex); }%
+           <div class="eachDropedElement" data-item-value='${item.toString()}'
+              data-value="${item.id}">${item.name}</div>
+        </div>
+        #{/list}
+        #{/if}
+    </div>
+</div>

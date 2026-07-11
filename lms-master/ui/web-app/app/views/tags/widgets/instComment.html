@@ -1,0 +1,39 @@
+%{
+    comments=_comments;
+    loadMoreSize=_loadMoreSize;
+    rootType=_rootType;
+}%
+#{if comments.length()>0}
+#{list items:0..comments.length()-1,as:'c'}
+    %{
+        comm=comments.get(c);
+        user=comm.user;
+    }%
+    <div class="commItem CSWidget" data-widget="COMMENT" data-comm-id="${comm.id}">
+        <div class="commItemBody">
+            <div class="commItemLeftSec">
+                #{widgets.img30 user:user /}
+            </div>
+            <div class="itemContent40">
+                <div class="commItemWhity">
+                    <div class="margBot15">
+			 #{institute.memberName user : user , classNames : "big14" /}
+                        <span class="time">${new Date(comm.timeCreated).since(true)}</span>
+                    </div>
+                    <div class="big13">${comm.content.raw()}</div>
+                #{if rootType!='SOLUTION'}
+			#{institute.widgets.dbtComReply entityType:"COMMENT",entityId:comm.id,upVote:comm.upVotes,voted:comm.voted,replies:comm.comments /}
+                #{/if}
+                </div>
+            </div>
+        </div>
+        <div class="replyWidgetHolder"></div>
+    </div>    
+#{/list}
+        #{if loadMoreSize!= 0&& comments.length()==loadMoreSize}
+        <div class="loadMoreItems LMHandlerDivLoadMore doCStream"  data-cs-name="LOAD_MORE_COMMENTS">Load More Comments</div>
+        #{/if}
+#{/if}
+#{else}
+    <div class="userMessage">No answers yet</div>
+#{/else}

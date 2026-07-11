@@ -1,0 +1,59 @@
+%{
+  testsResult=tests.result;
+  totalHits=testsResult.totalHits;
+  tests=testsResult.list;
+}%
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv">
+    <table class="headSecTable">
+      <thead>
+          <tr>
+              <td class="tdPadLeft5">Title</td>
+              <td class="width170 maxWidth170">Added By</td>
+              <td class="width100 maxWidth100">Date Added</td>
+          </tr>          
+      </thead>
+    </table>                    
+</div>                
+<div id="fixedSec">
+                %{
+                    ileUrl=play.Play.configuration.getProperty("ile.url");
+                }%      
+    <table class="cmdsTable">
+      <tbody>
+          #{if tests.length()>0}
+          #{list items:0..tests.length()-1,as:'i'}
+          %{
+            test=tests.get(i);            
+            entityId=test.id;
+            entityName=test.name;
+          }%
+          <tr>
+            <td class="tdPadLeft5 color0">
+                <span class="resourceIconTEST"></span>
+                <a title="${entityName}" target="_blank"
+                   href="${ileUrl}/organization/${params.orgId}/test/${entityId}">
+                    ${entityName}
+                </a>             
+            </td>
+            <td class="width170 maxWidth170">
+                  #{widgets.user20 user:test.user /}
+            </td>
+            <td class="width100 color6 maxWidth100">
+                ${new Date(test.timeCreated).format('dd/MM/yyyy')}
+            </td>            
+          </tr>   
+          #{/list}
+          #{/if}
+        #{else}
+        <tr class="noResultsTr">
+          <td colspan="3">
+              <div class="userMessage">No tests found.</div>
+          </td>
+        <tr>                              
+        #{/else}         
+      </tbody>
+    </table>
+    #{footer /}
+</div>       
+    

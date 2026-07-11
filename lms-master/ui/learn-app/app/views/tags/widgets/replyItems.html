@@ -1,0 +1,43 @@
+%{
+    replies=_replies;
+    loadMoreSize=_loadMoreSize;
+}%
+
+#{if replies.length()>0}
+#{list items:0..replies.length()-1,as:'r'}
+    %{
+        reply=replies.get(r);
+        user=reply.user;
+    }%
+    <div class='replyItem CSWidget list-group-item media' data-widget="REPLY" data-reply-id="${reply.id}" >
+        #{if !user.equals(null)}
+        %{
+            getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+            userId=getUserClassAndUrl.id;
+        }%
+            <a class="img20Wrapper pull-left img20Round floatLeft ${getUserClassAndUrl.className} doCStream"
+               data-user-id="${userId}" href="${getUserClassAndUrl.url}" data-cs-name="USER_IMAGE">
+                   <img class="img20 lgi-img img20Round" src="${user.thumbnail}" title="${user.firstName} ${user.lastName}"
+                     alt="${user.firstName} ${user.lastName}"/>
+            </a>
+        #{/if}
+        #{else}
+            <a class="img20Wrapper pull-left img20Round floatLeft doCStream"
+                   data-cs-name="USER_IMAGE">
+                    <img class="img20 lgi-img" src="static/user/student-unknown.jpg" title="Anonymous"
+                         alt="Anonymous"/>
+            </a>
+        #{/else}
+        <div class='margBot10 media-body'>
+            #{commentMemberName user : user , timeCreated:reply.timeCreated /}
+        </div>
+        <div class="replyItemText">${reply.content.raw()}</div>
+    </div>
+#{/list}
+        #{if loadMoreSize != 0 && replies.length()==loadMoreSize}
+        <div class="view-more loadMoreItems LMHandlerDivLoadMore" data-cs-name="LOAD_MORE_REPLIES">Load More Replies</div>
+        #{/if}
+#{/if}
+#{else}
+    <div class="userMessage">No Replies found</div>
+#{/else}

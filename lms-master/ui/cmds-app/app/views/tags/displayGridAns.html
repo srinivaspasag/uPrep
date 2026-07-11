@@ -1,0 +1,15 @@
+#{if solutionInfo!=null && solutionInfo.gridAnswer!=null}
+%{ gridSoln=solutionInfo.gridAnswer; }%
+ #{list items:1..gridSoln.keys().size(),as:'alphaKey'}
+%{ jsonArray=gridSoln.get(Integer.toString(alphaKey)); 
+	aList = new ArrayList<String>();
+ }% 
+ #{list items:0..jsonArray.length()-1, as:'ja'}
+%{ 
+	aList.add(jsonArray.get(ja)); 
+}% 
+#{/list}
+ %{ Collections.sort(aList);}% 
+ <span class="margRight10"><label class="boldy">${alphaKey}:</label>${aList}</span>
+#{/list}
+#{/if}

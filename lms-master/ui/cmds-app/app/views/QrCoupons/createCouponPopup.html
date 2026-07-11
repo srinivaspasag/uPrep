@@ -1,0 +1,62 @@
+%{
+    if(couponInfo!=null){
+        isEditCoupon=true;
+        couponInfo=couponInfo.result.info;
+    }else{
+        isEditCoupon=false;
+    }
+}%
+<div class="newCouponPopup">
+    <table class="newCouponEntryTable" cellspacing=0 cellpadding=0>
+      <tr>
+        <th>&{'COUPON_CODE_TXT'}</th>
+        <td>
+          <input id="couponCodeInput" type="text" placeholder="LP100"/>
+        </td>
+      </tr>
+      <tr>
+        <th>&{'COUPON_TYPE_TXT'}</th>
+        <td>
+          <select id="couponTypeSelect" class="alignTop">
+            <option value="FLAT" selected="selected">FLAT</option>
+            <option value="PERCENTAGE">PERCENTAGE</option>
+          </select>
+        </td>
+      </tr>
+      <tr id="discountValueRow">
+        <th>&{'DISCOUNT_VALUE_TXT'}</th>
+        <td>
+          <input id="discountValueInput" type="text" placeholder="100" />
+        </td>
+      </tr>
+      <tr id="discountPercentageRow">
+        <th>&{'DISCOUNT_PERCENTAGE_TXT'}</th>
+        <td>
+          <input id="discountPercentageInput" type="text" placeholder="25"/>
+        </td>
+      </tr>
+      <tr>
+        <th>&{'MIN_ORDER_VALUE_TXT'}</th>
+        <td>
+          <input id="minOrderValueInput" type="text"/>
+        </td>
+      </tr>
+      <tr id="maxDiscountRow">
+        <th>&{'MAX_DISCOUNT_TXT'}</th>
+        <td>
+          <input id="maxDiscountInput" type="text"/>
+        </td>
+      </tr>
+      <tr>
+        <th>&{'MAX_USAGE_COUNT_TXT'}</th>
+        <td>
+          <input id="maxUsageCount" type="text" value=100 />
+        </td>
+      </tr>
+      <tr>
+        <td colspan=2 class="rightText">
+            <span class="blueButton submitNewCoupon">&{'TXT_SUBMIT'}</span>
+        </td>
+      </tr>
+    </table>
+</div>

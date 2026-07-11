@@ -1,0 +1,66 @@
+#{if data != null && data.errorCode.isEmpty() && data.result.list.length()>0}
+#{list items:0..data.result.list.length()-1,as:'index'}
+%{
+	item = data.result.list.get(index);
+	user = item.user;
+	getUser=(controllers.Profile.getUserClassAndUrl(user));
+	programs = user.mappings.programs;
+	measures = item.measures;
+}%
+<tr>
+	<td>
+		<div class="instProfilePicContainer">
+		    <a class="${getUser.className}" href="${getUser.url}" data-user-id="${getUser.id}">
+		    	<img class="instProfilePic" src="${user.thumbnail}" alt="${user.firstName}"/>
+		    </a>
+		</div>
+	</td>
+	<td>
+		<div class="big16 boldy">${user.firstName} ${user.lastName}</div>
+		#{if !programs.equals(null) && programs.length()>0}
+		<div class="greyTextColor">
+		 	#{list items:0..programs.length()-1,as:'pIndex'}
+                        	<span>${programs.get(pIndex).name}</span>
+                 	#{/list}	
+		</div>
+		#{/if}
+	</td>
+	<td>
+		%{
+			total = measures.attempts + measures.left;
+		}%
+		#{institute.analyticsHorizontalBar correct : measures.correct , incorrect : measures.incorrect , attempts : total /}
+	</td>
+	<td class="alignTop">
+		#{if item.has('lastAttempted') && item.lastAttempted > 0}
+			<div class="greyTextColor big14">${uicom.util.Utilities.getDateMonthYear(item.lastAttempted)}</div>
+		#{/if}
+		#{else}
+			<div class="greyTextColor big14">NA</div>
+		#{/else}
+	</td>
+	<td class="alignTop">
+		<div class="bigBlueButton viewStAsnAttempts" data-user-first-name="${user.firstName}'s"
+			data-target-user-id="${getUser.id}">&{'btn.VIEW_ATTEMPTS'}</div>
+	</td>
+</tr>
+#{/list}
+%{
+	totalHits = data.result.totalHits;
+	lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+}%
+#{if totalHits > lastCount }
+<tr class="loadMoreDivTR">
+        <td colspan=5 style="padding-top:20px;">
+                <div class="loadMoreItems doCStream" name="LOAD_MORE_QUESTIONS" data-next-start="${lastCount}">&{'LOAD_MORE_item','Data'}</div>
+        </td>
+<tr>
+#{/if}
+#{/if}
+#{else}
+<tr class="zeroLevelDivTR">
+        <td colspan=5 style="padding-top:20px;">
+		#{institute.zeroLevel alt : "No Data" , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+        </td>
+</tr>
+#{/else}

@@ -1,0 +1,49 @@
+%{
+    Date d=new Date();
+    yr=d.getYear()+1900;
+    month=d.getMonth()+1;
+    date=d.getDate();
+    yrValue=yr;
+    if(_date!=null)date=_date;
+    if(_month!=null)month=_month;
+    if(_year!=null){
+        yrValue=_year;
+    }
+    
+    yrStart=yr+5;
+    //if(_year instanceof Integer){
+    //    yrStart=_year; 
+    //}
+}%                                
+<div class="datevChooseDiv">
+    <div class="vChoose datevChoose margRight2" data-value="${date}">
+      <div class="vChooseHead overrideMinWidth"
+           style="width: 20px;">${date}</div>
+      <div class="vChooseDownIcon"></div>
+      <div class="vChooseDropDown dateDropDown">
+          #{list items:1..31,as:'i'}
+              <div class="vChooseOpt" data-value="${i}">${i}</div>
+          #{/list}           
+      </div>
+    </div>  
+    <div class="vChoose monthvChoose margRight2" data-value="${month}">
+      <div class="vChooseHead overrideMinWidth" 
+           style="width: 18px;">${month}</div>
+      <div class="vChooseDownIcon"></div>
+      <div class="vChooseDropDown dateDropDown">
+          #{list items:1..12,as:'i'}
+              <div class="vChooseOpt" data-value="${i}">${i}</div>
+          #{/list}           
+      </div>
+    </div>   
+    <div class="vChoose yearvChoose margRight2" data-value="${yrValue}">
+      <div class="vChooseHead overrideMinWidth" 
+           style="width: 40px;">${yrValue}</div>
+      <div class="vChooseDownIcon"></div>
+      <div class="vChooseDropDown dateDropDown">
+          #{list items:yrStart..1950,as:'i'}
+              <div class="vChooseOpt" data-value="${i}">${i}</div>
+          #{/list}           
+      </div>
+    </div>                                       
+</div>  

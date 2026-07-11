@@ -1,0 +1,193 @@
+<style>
+  @font-face {
+    font-family: Ubuntu;
+    src: url(../../../public/fonts/Ubuntu-Regular.ttf);
+} 
+.cursive {
+  font-family: "Ubuntu", cursive;
+}
+.sans {
+  font-family: "Ubuntu", sans-serif;
+}
+.text-center{
+    text-align: center;
+}
+.bold {
+  font-weight: bold;
+}
+.block {
+  display: block;
+}
+.underline {
+  border-bottom: 1px solid #777;
+  padding: 5px;
+}
+.margin-0 {
+  margin: 0;
+}
+.padding-0 {
+  padding: 0;
+}
+.pm-empty-space {
+  height: 40px;
+  width: 100%;
+}
+body {
+  padding: 20px 0;
+  background: #ccc;
+}
+.pm-certificate-container {
+  position: relative;
+  width: auto;
+  height: 600px;
+  background-color: #618597;
+  padding: 30px;
+  color: #333;
+  font-family: "Ubuntu", sans-serif;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.pm-certificate-container .outer-border {
+  width: 794px;
+  height: 594px;
+  position: absolute;
+  left: 50%;
+  margin-left: -397px;
+  top: 50%;
+  margin-top: -297px;
+  border: 2px solid #fff;
+}
+.pm-certificate-container .inner-border {
+  width: 730px;
+  height: 530px;
+  position: absolute;
+  left: 50%;
+  margin-left: -365px;
+  top: 50%;
+  margin-top: -265px;
+  border: 2px solid #fff;
+}
+.pm-certificate-container .pm-certificate-border {
+  position: relative;
+  width: 720px;
+  height: 520px;
+  padding: 0;
+  border: 1px solid #e1e5f0;
+  background-color: #ffffff;
+  background-image: none;
+  left: 50%;
+  margin-left: -360px;
+  top: 50%;
+  margin-top: -260px;
+}
+.pm-certificate-container .pm-certificate-border .pm-certificate-block {
+  width: 40em;
+  height: 10em;
+  position: relative;
+  left: 50%;
+  margin-left: -325px;
+  margin-top: 0;
+}
+.pm-certificate-container .pm-certificate-border .pm-certificate-title {
+  position: relative;
+}
+.pm-certificate-container .pm-certificate-border .pm-certificate-title h2 {
+  font-size: 34px !important;
+}
+.pm-certificate-container .pm-certificate-border .pm-certificate-body {
+  padding: 20px;
+}
+.pm-certificate-container .pm-certificate-border .pm-certificate-body .pm-name-text {
+  font-size: 20px;
+}
+.pm-certificate-container .pm-certificate-border .pm-earned {
+  margin: 15px 0 20px;
+}
+.pm-certificate-container .pm-certificate-border .pm-earned .pm-earned-text {
+  font-size: 20px;
+}
+.pm-certificate-container .pm-certificate-border .pm-earned .pm-credits-text {
+  font-size: 15px;
+}
+.pm-certificate-container .pm-certificate-border .pm-course-title .pm-earned-text {
+  font-size: 20px;
+}
+.pm-certificate-container .pm-certificate-border .pm-course-title .pm-credits-text {
+  font-size: 15px;
+}
+.pm-certificate-container .pm-certificate-border .pm-certified {
+  font-size: 12px;
+}
+.pm-certificate-container .pm-certificate-border .pm-certificate-footer {
+  width: 650px;
+  height: 100px;
+  position: relative;
+  left: 50%;
+  margin-left: -325px;
+}
+</style>
+#{if !data.result.studentName.equals(null)}
+    <body >
+        <div class="container pm-certificate-container">
+            <div class="outer-border"></div>
+            <div class="inner-border"></div>
+            
+            <div class="pm-certificate-border col-xs-12">
+              <div class="row pm-certificate-header">
+                <div class="pm-certificate-title col-xs-12 text-center">
+                  <h2>Course Completion Certificate</h2>
+                </div>
+              </div>
+              <div class="row pm-certificate-body">          
+                <div class="pm-certificate-block">
+                      <div class="row">
+                        <div class="pm-course-title col-xs-4 text-center">
+                            <span class="pm-earned-text block">This is to certify that</span>
+                          </div>
+                        <div class="pm-certificate-name underline margin-0 col-xs-8 text-center">
+                          <span class="pm-name-text bold">${data.result.studentName}</span>
+                        </div>
+                    </div>          
+                      <div class="row">
+                        <div class="pm-course-title col-xs-12 text-center">
+                          <span class="pm-earned-text block">for completing the course</span>
+                        </div>
+                    </div>
+        
+                    <div class="col-xs-12">
+                      <div class="row">
+                        <div class="pm-course-title underline col-xs-12 text-center">
+                          <span class="pm-credits-text block bold sans">${data.result.programName},${data.result.centreName},${data.result.sectionName}</span>
+                        </div>
+                      </div>
+                    </div>
+                </div>       
+                    <div class="pm-certificate-footer">
+                        <div class="col-xs-6 pm-certified col-xs-6 text-center">
+                         <br>
+                         <span><img id="inst_logo" src="https://imglearn.learnpedia.in/viewer/view/organization/img/${data.result.orgId}.org.img.conv.small.jpg" width="175px" height="50px"></span>
+                          <span class="block underline"></span>
+                          <span class="bold block">Institute :- ${data.result.orgName}</span>
+                        </div>
+                        <div class="col-xs-6 pm-certified col-xs-6 text-center">
+                          <span class="pm-empty-space block"></span>
+                          <span class="bold block" id="dateFormat"></span>
+                        </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            const milliseconds = ${data.result.completedDate}
+            const dateObject = new Date(milliseconds)
+            var humanDateFormat = dateObject.toLocaleString()
+            document.getElementById('dateFormat').innerHTML =  "Certificate Generated on :- "+humanDateFormat;
+            // document.getElementById("inst_logo").src = "
+          </script>
+          </body>
+          #{/if}
+          #{else}
+          <div class="pm-certificate-title col-xs-12 text-center">
+            <h2>You haven't completed the Course, Please go back to Digital Library and Complete the Course</h2>
+          </div>
+          #{/else}
+          

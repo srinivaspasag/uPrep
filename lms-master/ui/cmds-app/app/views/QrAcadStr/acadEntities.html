@@ -1,0 +1,140 @@
+#{if entities.errorCode==''&&renderInfo!=null}
+<div class="ASTResultsHolder"> 
+    %{
+        if(renderInfo!=null){
+        	entityType=renderInfo.entityType;
+        	astClass=renderInfo.astClass;
+        	addClass=renderInfo.addClass;
+        	notFoundMessage=renderInfo.notFoundMessage;
+        }
+        entities=entities.result.list;  
+        forAddAcademicSections=false;
+        if(params.targetTable=="ADD_PEOPLE_ACADEMICS"&&entityType=="SECTION"){
+            forAddAcademicSections=true;
+        }
+        orgUserProfile=currentOrgInfo.getOrgUserProfile();
+    }%     
+        <div class="ASTResultsDiv">
+            #{if entities.length()>0}                        
+            #{list items:0..entities.length()-1,as:'d'}
+                %{
+                    entity=entities.get(d);
+                    showOtherOrgProgram = true;
+                    if(entity.has("orgId") && !entity.orgId.equals(null) && params.targetTable == "EDIT_ACAD_STR"){
+                        if(params.orgId != entity.orgId){
+                            showOtherOrgProgram = false;
+                        }
+                    }
+                    title=entity.name;
+                    entityId=entity.id;
+                    code=entity.code;
+                    periodend="";
+                    if(entity.has("periodEnd") && !entity.periodEnd.equals(null)){
+                        periodend=entity.periodEnd;
+                    }
+                    isoffline=false;
+                    if(entity.has("isOffline")){
+                        isoffline=entity.isOffline;
+                    }
+                    sharedProgramAccess = false;
+                    if(entity.has('sharedProgramAccess')){
+                        sharedProgramAccess = entity.sharedProgramAccess;
+                    }
+                    category="";
+                    if(entity.has("category")){
+                        category=entity.category;
+                    }
+                    desc="";
+                    if(entity.has("desc") && !entity.desc.equals(null)){
+                        desc=entity.desc;
+                    }
+                    descriptionPoints="";
+                    if(entity.has("descriptionPoints") && !entity.descriptionPoints.equals(null)){
+                        descriptionPoints=entity.descriptionPoints;
+                    }
+                    thumbnail="";
+                    if(entity.has("thumbnail") && !entity.thumbnail.equals(null)){
+                        thumbnail=entity.thumbnail;
+                    }
+                    recordState=entity.recordState;
+                    astClasses='';
+                    if(recordState=="ACTIVE"){
+                        astClasses='activeASTItem';
+                    }else if(recordState=="DELETED"){
+                        astClasses='inactiveASTItem';
+                    }
+                    
+                    paidSection=false;
+                    if(entity.has('revenueModel')&&!entity.revenueModel.equals(null)&&entity.revenueModel=="PAID"){
+                        paidSection=true;
+                    }
+                }%
+                #{if showOtherOrgProgram}
+                <div class="ASTItem ASTItem_${entityId} ${astClass} ${astClasses}" data-${entityType.toLowerCase()}-id='${entityId}'
+                     data-${entityType.toLowerCase()}-name='${title.raw()}' data-entity-type='${entityType}' title='${title}'
+                     data-${entityType.toLowerCase()}-periodend='${periodend.raw()}'
+                     data-${entityType.toLowerCase()}-isoffline='${isoffline}'
+                     data-shared-program-access='${sharedProgramAccess}'
+                     data-${entityType.toLowerCase()}-category='${category}'
+                     data-${entityType.toLowerCase()}-code='${code.raw()}' data-entity-id='${entityId}'
+                     data-${entityType.toLowerCase()}-desc='${desc.raw()}' data-paid=${paidSection} 
+                     data-${entityType.toLowerCase()}-descriptionpoints='${descriptionPoints}'
+                     data-${entityType.toLowerCase()}-thumbnail ='${thumbnail}' >
+                    #{if forAddAcademicSections}
+                        <div class="gCBox" data-value="${entityId}">
+                            <div class="gCBoxTicker"></div>
+                        </div>                    
+                    #{/if}
+                    <div class="ASTItemName gCBoxText">
+                        ${title}
+                        #{if paidSection && forAddAcademicSections}
+                        <span class="smallThinGray margLeft5">(Paid)</span>
+                        #{/if}
+                    </div>
+                    <div class="ASTItemState">(deleted)</div>                    
+                    <div class="ASTItemImg"></div>
+                    #{if params.targetTable=="EDIT_ACAD_STR"&&orgUserProfile=="MANAGER"}
+                        #{if addType!='MAP'}
+                        <a class="editASTItem" title="Edit"></a>
+<!--                        <a class="removeASTItem" title="Remove"></a>
+                        <a class="reactivateASTItem" title="Reactivate">Reactivate</a>-->
+                        #{/if}
+                        #{elseif entityType == "COURSE"}
+                        	<a class="removeProgMapping" title="Remove Mapping"></a>
+                        #{/elseif}
+                    #{/if}
+                </div>
+                #{/if}
+            #{/list}                     
+            #{/if}
+            #{else}
+            <div class="acadEntityDefaultText">&{notFoundMessage}</div>
+            #{/else}            
+        </div>  
+    #{if orgUserProfile=="MANAGER" || orgUserProfile == "SALESPERSON"}
+        #{if params.targetTable=="EDIT_ACAD_STR"}
+        %{
+            addNewStr='ADD_NEW_ACAD_ENTITY_';
+            if(addType=="MAP"){
+                addNewStr='MAP_TO_A_';
+            }
+            addNewStr+=entityType;
+        }%
+        <div class="acadStrCreateDiv">
+            <div class="gButton &{addClass}">&{addNewStr}</div>                      
+        </div>    
+        #{/if}
+        #{if forAddAcademicSections}
+        <div class="biggerGreenButton finaliseSecsForMem">&{'FINALISE_SECTIONS_ADDITION'}</div>
+        #{/if}        
+    #{/if}
+    </div>
+#{/if}
+#{else}
+<div class="userMessage">
+    Some error occured.Refresh the page and try again.
+</div>
+#{/else}
+<script type="text/javascript">
+    
+</script>

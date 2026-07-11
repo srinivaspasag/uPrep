@@ -1,0 +1,80 @@
+%{
+    tests=_tests;
+    loopStart=_loopStart;
+    if(loopStart==null)loopStart=0;
+    loopEnd=_loopEnd;
+    if(loopEnd==null)loopEnd=tests.length()-1;
+    target=_target;
+    seeMore=_seeMore;
+}%
+#{if loopEnd >= loopStart}
+        #{list items:loopStart..loopEnd,as:'p'}
+            %{
+                test=tests.get(p);
+                callback='';
+                if(target=="HOME_PAGE_RECOS")callback='POPULAR_TEST';
+                testUrl=webUtils.TemplateHelper._getTestUrl(test);
+            }%
+        <div class='testItem crossXPa widgetItem'>
+            <div class='widgetWhiteBox'>
+                #{if target=="HOME_PAGE_RECOS"}
+                <a class='crossX widgetItemCrossX popularTestCross doCStream' data-name="REMOVE_TEST"></a>
+                #{/if}
+                <a class='img20Wrapper margHalfTop floatLeft openTestPage doCStream'
+                   data-test-id="${test.testId}" href="${testUrl}" data-name="TEST_IMAGE">
+                    <img src='/public/images/questions/testBack.png'  class='img20'/>
+                </a>
+                <div class='img20Lefter'>
+                    <span class="widgetItemFollow">
+                        #{widgets.followUnfollowEntity followType:test.followType,callback:callback,
+                        entityType:'TEST',entityId:test.testId/}
+                    </span>
+                    <a class='widgetItemName openTestPage doCStream' data-test-id="${test.testId}" href="${testUrl}"
+                        data-name="TEST_TITLE">
+                        ${test.name}
+                    </a>
+                    %{
+                        user=test.user;
+                    }%
+                    <span>
+                        <span>by </span>
+			#{institute.memberName user : user /}
+                    </span>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                    <div class="ratingStars floatLeft margHalfTop" style="width: ${uicom.util.Utilities.getStarsWidth(test.avgRating)}px"></div>
+                    #{if test.has('target')}
+                    <div  style="margin-top: 3px;">Target 
+                        <a class="boardExam doCStream" /*href="${controllers.Boards.getBoardUrl('exam',test.target.brdId)}"*/
+                           data-brd-id="${test.target.brdId}" data-name="BOARD_EXAM">
+                            ${test.target.code}
+                        </a>
+                    </div>
+                    #{/if}
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+            <div class='widgetItemStats'>
+                <span>Attempts </span> <span class="redTextColor">${test.attempts}</span>
+                <span>Time </span>
+                    %{
+                        if(test.duration<=0)timeText='No Limit';
+                        else {
+                            timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(test.duration);
+                            timeText= timeObj.hrs+':'+timeObj.mins+' hrs';
+                        }
+                    }%               
+                <span class="redTextColor">
+                    ${timeText}
+                </span>
+            </div>
+        </div>
+        #{/list}
+        #{if seeMore==true&&tests.length()==3}
+        <a class="smally liner goToExploreContent doCStream" href="/explorecontent" data-name="EXPLORE_CONTENT_TEST">see more</a>
+        #{/if}
+#{/if}
+#{elseif target=="QUESTION_PAGE"||target=="BOARD_PAGE"}
+<div class="userMessage">No Tests available</div>
+#{/elseif}
+
+

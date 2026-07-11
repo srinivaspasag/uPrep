@@ -1,0 +1,42 @@
+<div class="pageHolderNM">
+   <div id="planPage">
+	%{
+		curPlanId = "";
+	}%
+	<div class="big20 centerText greenTextColot">&{'MY_ORG_PLAN'}</div>
+	<div class="yourPlan">
+	#{if orgInfo!=null && orgInfo.errorCode.isEmpty() && !orgInfo.result.planInfo.equals(null)}
+	%{
+		plan = orgInfo.result.planInfo;
+		curPlanId = plan.id;
+	}%
+		<div class="fontRoboto greenTextColor big16">&{'CURR_PLAN_FOR_ORG',orgInfo.result.name}</div>
+		<div style="padding:5px 0;">
+			#{common.plan plan : plan /}
+		</div>
+	#{/if}
+	#{else}
+		<div class="centerText big16 redTextColor">&{'NO_PLAN_ASSIGNED'}</div>
+	#{/else}
+	</div>
+	
+	#{if plansResp!=null && plansResp.errorCode.isEmpty() && plansResp.result.list.length()>0}
+	%{
+		plans = plansResp.result.list;
+	}%
+	<div class="otherPlans">
+		<div class="fontRoboto big16" style="color:#666;">&{'OTHER_PLAN_FOR_ORG'}</div>
+		#{list items:0..plans.length()-1,as:'pIndex'}
+		%{
+			plan = plans.get(pIndex);
+		}%
+		#{if plan.id != curPlanId}
+		<div style="padding:5px 0;">
+			#{common.plan plan : plan /}
+		</div>
+		#{/if}
+		#{/list}
+	</div>
+	#{/if}
+   </div>
+</div>

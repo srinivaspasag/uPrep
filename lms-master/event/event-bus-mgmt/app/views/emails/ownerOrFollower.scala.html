@@ -1,0 +1,33 @@
+@(src:org.json.JSONObject)(details:org.json.JSONObject)
+@details.getString("why") match { 
+	case "OWNER" => {
+			 <span> you added on <b>@(new java.util.Date(src.getLong("timeCreated")).format("dd/MM/yyyy"))</b></span>
+		} 
+	case "ADDED_SOLUTION" => {
+			 <span> you added solution to </span>
+		} 
+	case "ATTEMPTED" => {
+			 <span> you attempted </span>
+		} 
+	case "COMMENTED" => {
+	   		@if(src.getString("type")=="DISCUSSION"){
+				<span> you answered <span>
+			}else{
+				 <span>  you commented </span>
+			}
+		} 
+	case "FOLLOWING_SOURCE" => {
+	   		<span> you are following </span>
+		} 
+
+        case "ROOT_OWNER" => {
+	   	@if(src.getString("type")=="SOLUTION"){
+			<span> added by you <span>
+		}else{
+		@defining(src.getJSONObject("rootDetails")) { rootDetails =>
+		         <span> added on <b>@(new java.util.Date(rootDetails.getLong("timeCreated")).format("dd/MM/yyyy"))</b></span>
+		}
+		}
+	}
+	
+}

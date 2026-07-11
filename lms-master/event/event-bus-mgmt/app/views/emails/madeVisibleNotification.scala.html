@@ -1,0 +1,36 @@
+@(emailDetails:com.vedantu.eventbus.email.details.MadeVisibleEntityEmailNotificationDetails)
+
+@appDomain( emailDetails) { host =>  
+@defining(emailDetails.details.getJSONObject("src")) { srcDetails =>
+@defining(srcDetails.getJSONObject("contentSrc").getString("id")) { orgId =>
+@defining(emailDetails.details.getJSONArray("sharedWith")) { sharedWith =>
+@defining( emailDetails.details.getJSONObject("actor")){ actor =>
+@defining( emailDetails.details.getJSONObject("srcOwner")){ srcOwner =>
+			<span>@userNewsDetails(host)(orgId)(actor) added the following</span> 
+			<b> @Messages("ENTITY_NAME_"+srcDetails.getString("type").toUpperCase()) </b>
+			<span>to your library :</span>
+			<div style="margin-top:10px;">
+			<div style="background-color:#F4F4F4;display:inline-block;max-width:350px;min-width:300px;">
+			<div style="padding:6px 10px 10px;">
+			   <div style="font-size:15px;font-weight:bold;">@getContentLink(host)(orgId)(srcDetails)(null)</div>
+			   @if( actor.getString("id") != srcOwner.getString("id") ){
+				<div style="font-size:12px;">by @userNewsDetails(host)(orgId)(srcOwner)</div> 
+			   }
+			</div>
+			@if( sharedWith.length() != 0 ){
+			<div style="background-color:#EAEAEA;padding:1px 10px 2px;">
+			 	@defining( sharedWith.getJSONObject(0)) { sharedWithEntity =>
+				   <span style="font-size:12px;"> @sharedWithEntity.getJSONObject("program").getString("name"), </span>
+				   <span style="font-size:12px;"> @sharedWithEntity.getJSONObject("center").getString("name"), </span>
+				   <span style="font-size:12px;"> @sharedWithEntity.getString("name")</span>
+			 	}
+			</div>
+			</div>
+			</div>
+			}
+		      }
+		    }	
+		}	
+ 	  }
+     } 
+}

@@ -1,0 +1,112 @@
+/*mark sheet page*/
+#fullMarksSheetPage{
+    margin: 0 auto;
+    padding:30px;
+}
+.marksSheetTable{
+    border-collapse: collapse;
+    color: #666666;
+    font-size: 14px;
+    margin-top: 30px;
+    width: 100%;
+}
+.marksSheetTable td{
+    border: 1px solid #CCCCCC;
+    border-bottom-color: #EEEEEE;
+    padding: 10px;   
+    text-align: center;
+    width: 58px;
+}
+.marksSheetTable tr:first-child td{
+    border-bottom-color: #CCCCCC;
+    text-align: left;
+    vertical-align: top;
+}
+.marksSheetTable td.testMarksUserTd{
+    text-align: left;
+    font-size: 13px;
+    width: 210px;
+}
+.marksSheetTable .subject1,
+.marksSheetTable .testNameTd{
+    border-left-width: 2px;
+}
+.outOfMarks{
+    color: #666666;
+    font-size: 12px;
+    font-weight: normal;
+}
+.marksSheetTable .totalTestMarksTd,.marksSheetTable .totalMarks{
+    font-weight: bold;
+    color: #333333;
+}
+.marksSheetTable .totalTestMarksTd, .marksSheetTable td:nth-child(3){
+    background-color: #FFFFDF;
+    width: 85px;
+}
+.marksSheetTable tr:nth-child(n+3):hover td{
+    background-color: #F4F4F4;
+}
+.marksSheetTable td:first-child{
+    width: 50px;
+}
+.marksSheetTable .nextShowTd,.marksSheetTable .nextShowPapersTd{
+    box-shadow: -10px 0 9px -6px #DDDDDD inset;
+}
+.marksSheetTable .prevShowTd,.marksSheetTable .prevShowPapersTd{
+    box-shadow: 10px 0 9px -6px #DDDDDD inset;
+}
+.testSubjectStats{
+    border-collapse: collapse;
+    margin: -10px;
+    width: 100%;
+}
+.testSubjectStats tr td{
+    font-size: 11px;
+    border: none;
+    padding: 5px;
+}
+.testSubjectStats td:nth-child(3){
+    border-right: 1px solid #CCCCCC;
+    background-color: #FFFFFF;
+}
+.studentResultView{
+	visibility:hidden;
+}
+.marksSheetTR:hover .studentResultView{
+	visibility:visible;
+}
+
+/*nonners for marksheet*/
+.nonnerForPapers,.nonnerForSubs{
+    display: none;
+}
+.showNextSubs,.showPrevSubs,.showNextPapers,.showPrevPapers{
+    background: url("/public/images/nextArrow.png") no-repeat scroll 0 0 transparent;
+    display: block;
+    float: right;
+    height: 10px;
+    left: 16px;
+    position: relative;
+    top: -18px;
+    width: 13px;
+}
+.showPrevSubs,.showPrevPapers{
+    background-image: url("/public/images/prevArrow.png");
+    float: left;
+    left: -10px;
+    top: -8px;
+}
+.showNextPapers,.showPrevPapers{
+    height: 52px;
+}
+.refreshResultSheet{
+	padding: 14px;
+	margin: 2px;
+	cursor: pointer;
+	display: inline-block;
+	background-position: -832px 2px;
+}
+.refreshResultSheet:hover{
+    	background-position:-802px 2px;
+}

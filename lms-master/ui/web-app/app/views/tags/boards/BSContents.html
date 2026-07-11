@@ -1,0 +1,51 @@
+    %{
+        subjectInfo=_subjectInfo;
+        target=_target;
+        if(target=='BOARD_EXAM')topicClass='BEPTopic';
+        else topicClass='boardTopic';
+    }%
+    #{if target=='BOARD_EXAM'}
+    <div class="BSBannerWrapper relativePos">
+        <img src="/public/images/boards/${subjectInfo.name.toLowerCase()}.jpg" class="BSBannerImg" alt="">
+        <div class="BSBannerTitle">${subjectInfo.name}</div>
+    </div>
+    #{/if}
+    <div class="BSTopicsList CSWidget" data-widget="TOPICS_LIST">
+    #{if subjectInfo.has('children')&&subjectInfo.children.boards.length()>0}    
+        <div class="margBot20 big20 boldy">Topics</div>
+            %{
+                topics=subjectInfo.children.boards;
+            }%
+            #{list items:0..topics.length()-1,as:'t'}
+                <a class="ptrTag BSTopicTr ${topicClass} doCStream" data-brd-id="${topics.get(t).brdId}"
+                            href="${controllers.Boards.getBoardUrl('topic',topics.get(t).brdId)}" data-cs-name="BOARD_TOPIC">
+                    <div class="floatLeft BSTopicName">${topics.get(t).name}</div>
+                    <div class="floatRight BSSubTopicNo">
+                        ${topics.get(t).childCount} Sub-Topic${topics.get(t).childCount.pluralize()}
+                    </div>
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </a>
+            #{/list}    
+    #{/if}
+    #{else}
+    <div class="userMessage">No Topics found</div>
+    #{/else}
+    </div>
+    <div class="BSPopulars">
+        <div class="BSPopularPLs"></div>
+        <div class="BSPopularTests"></div>
+    </div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+    <script type="text/javascript">
+        $(function(){
+            var boardPage=$("#boardPage"),brdIds=[];
+            if(boardPage.data("examId"))brdIds.push(boardPage.data("examId"));
+            brdIds.push("${subjectInfo.brdId}");
+            $.get("/widgets/popularTests",{allBrds:true,brdIds:brdIds,start:0,size:3},function(data){
+                boardPage.find(".BSPopularTests").html(data);
+            });
+            $.get("/widgets/popularPLs",{allBrds:true,brdIds:brdIds,start:0,size:3},function(data){
+                boardPage.find(".BSPopularPLs").html(data);
+            });
+        });
+    </script>

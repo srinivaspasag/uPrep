@@ -1,0 +1,370 @@
+<div class="testCreationHeader">
+	<span class="background"></span>
+	<span class="createTestText">Create Test</span>
+	<span class="separator"></span>
+	<span class="stepsToCreateTest">
+		<span class="eachStep">
+			<span class="stepNumber">1</span>
+			<span class="stepName">Test Details</span>
+			<span class="arrowDownSide"></span>
+		</span>
+		<span class="eachStep">
+			<span class="stepNumber">2</span>
+			<span class="stepName">Format</span>
+			<span class="arrowDownSide"></span>
+		</span>
+		<span class="eachStep">
+			<span class="stepNumber">3</span>
+			<span class="stepName">Add Questions</span>
+			<span class="arrowDownSide"></span>
+		</span>
+		<span class="eachStep">
+			<span class="stepNumber">4</span>
+			<span class="stepName">Assign</span>
+			<span class="arrowDownSide"></span>
+		</span>
+	</span>
+</div>
+<script type="text/javascript">
+var entryPageIndex = ${otherUiData.entryPageIndex};
+</script>
+#{if otherUiData.entryPageIndex == 0 && targetExam != null && targetExam.has('result') && targetExam.result.has('boards') && targetExam.result.length()>0}
+%{
+targetExams = targetExam.result.boards;
+}%
+<div class="testDetailsHolder nonner CSWidget" data-widget="DETAILS">
+	<div class="testDetailsBody">
+		<span class="leftAndRelative testName">
+				<span class="titleText">Test Name <span class="reqStar">*</span></span>
+				<input class="inputTestName customInputTextBox" type="text" value=""/>
+		</span>
+		<span class="testDescription">
+				<span class="titleText">Add Description<span class="optional">(Optional)</span></span>
+				<textarea class="inputTestDesc customInputTextBox" value="" rows="3"></textarea>
+		</span>
+		<span class="separator"></span>
+		<div class="lhs">
+			<div class="leftAndRelative testTargetExam">
+				<span class="titleText">Target Exam <span class="reqStar">*</span></span>
+				<div class="vselect vselectHide selectTargetExam vDropDown" onstatechange="detailsOnTargetExamChange" data-cs-name="SELECT_TARGET_EXAM">
+					<span class="vSelectHead">
+						<input type="text" class="vSelectText" value="Select Target Exam" readonly="readonly"/>
+						<span class="dropDownIcon noUserSelect" ></span>
+					</span>
+					<div class="vSelectListHolder">
+						<div class="vSelectList">
+						#{list items:0..targetExams.length()-1, as:'index'}
+							<span class="vSelectEach" data-targetexam-id="${targetExams.get(index).brdId}">${targetExams.get(index).code}</span>
+						#{/list}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="leftAndRelative selectCurriculum nonner">
+				<span class="big12 boldy leftAndRelative">Curriculum</span><span class="line leftAndRelative"></span><br/>
+				<span class="noCurriculumMsg leftAndRelative nonner greyTextColor boldy">No Curriculum data for the selected Target Exam</span>
+				<input class="leftAndRelative selectAllSubs doCStream" data-cs-name="ALL_SUBJECT_CHKBOX" type="checkbox"/><span class="selectText">All</span><br/>
+				#{list items:0..targetExams.length()-1, as:'index'}
+				<div class="nonner eachExamTypesCurriculums" id="${targetExams.get(index).brdId}">
+				<span class="leftAndRelative subs">
+					%{
+						courses = targetExams.get(index).targetOf; 	
+					}%
+					#{if courses!=null}
+					<input type="hidden" class="curriculumCount" value="${courses.length()}"/>
+					#{if courses.length()>0}
+					#{list items:0..courses.length()-1, as:'courseIndex'}
+					<span class="leftAndRelative eachSub" data-subject-id="${courses.get(courseIndex).brdId}" title="select topics">
+						<input class="leftAndRelative subCheckBox doCStream" data-name="SUBJECT_CHKBOX" data-sub-name="${courses.get(courseIndex).name}" type="checkbox"/><span class="selectText blueTextColor subName textStyles">${courses.get(courseIndex).name}<span class="dropDownArrow bgImageSprite"></span></span>
+						<span class="leftAndRelative selectTopics nonner">
+							<!--<input class="selectAllTopics" type="checkbox"/><span class="selectText">All</span><br/>
+							<input class="topicCheckBox" type="checkbox"/><span class="selectTopicText"></span><br/>-->
+						</span>
+					</span>
+					#{/list}
+					#{/if}
+					#{/if}
+				</span>
+				</div>
+				#{/list}
+			</div>
+		</div>
+		<div class="rhs">
+			<div class="left relative choosenTargetExamPreview nonner">
+				<span class="boldy big14">Target Exam</span><br/>
+				<span class="big14 boldy blueTextColor left testCreateDetailTargetExamName"></span>
+			</div>
+			<div class="leftAndRelative choosenCurriculumPreview nonner">
+				<span class="boldy big14">Curriculum Added</span><br/>
+				<span class="leftAndRelative eachSub nonner">
+					<span class="left subName blueTextColor big12 boldy"></span><br/>
+					<span class="left subTopicsList greyTextColor textStyles">
+						<!--Electrostatics<br/>Magnetics-->
+					</span>
+				</span>
+			</div>
+		</div>
+		<div class="testDetailsBtnHolder">
+			<input type="button" class="blueButton next doCStream" data-name="NEXT" value="Next"/>
+			<a class="cancelAndCloseTest doCStream" data-name="CANCEL">Cancel</a>
+		</div>
+	</div>
+</div>
+#{/if}
+<div class="leftAndRelative testCreationLeftBar nonner CSWidget" data-widget="LEFT_BAR">
+	<div class="leftAndRelative testDetails">
+		<span class="leftAndRelative testName"></span>
+		<span class="leftAndRelative testDuration nonner"><b>Duration - </b><span class="blueTextColor boldy">0</span></span>
+		<span class="leftAndRelative testTotalMarks nonner"><b>Total Marks - </b><span class="blueTextColor boldy">0</span></span>
+		<span class="leftAndRelative testDescription greyTextColor"></span>
+		<span class="leftAndRelative testTargetExam blackTextColor">
+			<span class="big14 boldy">Target Exam</span><br/>
+			<span class="name blueTextColor big14"></span></br>
+			<span class="fullName greyTextColor smally nonner"></span>
+		</span>
+	</div>
+	<div class="leftAndRelative testFormat nonner">
+	</div>
+	<div class="leftAndRelative testFormatPreview nonner">
+		<!--<span class="leaftAndRelative blueTextColor big14 boldy">Format</span>-->
+	</div>
+	<div class="leftAndRelative testCreationAddQuestions nonner">
+	</div>
+</div>
+
+<div class="leftAndRelative testCreationFormatHolder nonner CSWidget" data-widget="FORMAT">
+		<div class="leftAndRelative enterTotalQuestions">
+			<span class="leftAndRelative blueTextColor big14 boldy" style="padding-top:6px;">Total Questions<span class="reqStar">*</span></span>
+			<input class="leftAndRelative inputTotalQuestions customInputTextBox numberTextBox boldy doCStream" type="text" maxlength="3" value="" data-cs-name="TOTAL_QUESTION_INPUTBOX"/>
+		</div>
+		<div class="left relative choosenSubjectsHolder">
+		<div class="leftAndRelative choosenSubjects">
+			<span class="leftAndRelative eachSubject nonner smally" title="select question types for this subject"><!--add class selected for focus -->
+				<span class="subName"></span>
+				<input class="inputTotalQuestions customInputTextBox numberTextBox doCStream" type="text" maxlength="3" value="" data-cs-name="SUBJECT_TOTAL_QUES_INPUTBOX"/>
+				Questions
+				<!--<span class="dArrow bgImageSprite"></span>-->
+			</span>
+		</div>
+		</div>
+		<div class="leftAndRelative chooseQuesFormat nonner">
+			<span class="blueTextColor big12"><b>Add Question Format Details</b> <span class="reqStar">*</span></span>
+			<div class="leftAndRelative quesTypesFormat">
+				<table cellspacing="0" cellpadding="0" >
+					<tr>
+						<th class="tHeaderBorder cellWidthBig">Type of Question</th>
+						<th class="cellLeftBorder tHeaderBorder cellWidth">Number of Questions</th>
+						<th class="cellLeftBorder tHeaderBorder cellWidth">Marks per Question</th>
+						<th class="cellLeftBorder tHeaderBorder cellWidth">Negative Marks per Question</th>
+					</tr>
+					<tr class="tableRow" q-type='SCQ' q-type-index=0>
+						<td class="cellWidthBig big12"><b>SCQ</b>(single choice question)</td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="numberTextBox customInputTextBox inputNoOfQ"/></td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="markTextBox customInputTextBox inputMarksPerQ"/></td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="markTextBox customInputTextBox inputNegMarksPerQ"/></td>
+					</tr>
+					<tr class="tableRow" q-type='MCQ' q-type-index=1>
+						<td class="cellWidthBig big12"><b>MCQ</b>(multiple choice question)</td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="numberTextBox customInputTextBox inputNoOfQ"/></td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="markTextBox customInputTextBox inputMarksPerQ"/></td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="markTextBox customInputTextBox inputNegMarksPerQ"/></td>
+					</tr>
+					<tr class="tableRow" q-type='NUMERIC' q-type-index=2>
+						<td class="cellWidthBig big12"><b>Numerical</b>(number as answer)</td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="numberTextBox customInputTextBox inputNoOfQ"/></td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="markTextBox customInputTextBox inputMarksPerQ"/></td>
+						<td class="cellLeftBorder cellWidth"><input type="text" maxlength="3" class="markTextBox customInputTextBox inputNegMarksPerQ"/></td>
+					</tr>
+				</table>
+			</div>
+			<input class="left relative copyFormatBtn greenButton doCStream" 
+			data-cs-name="COPY_FORMAT_OTHER_SUB_BTN" type="button" value="copy format to other subjects"/>
+			<!--<div class="vselect vselectHide chooseAndAddTypes vDropDown" onstatechange="formatOnQuesTypeChange">
+				<span class="vSelectHead">
+					<span class="bgImageSprite plusIcon"></span>
+					<input type="text" class="vSelectText greyTextColor" value="choose a question type" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+						<span class="vSelectEach"></span>
+					</div>
+				</div>
+			</div>-->
+		</div>
+		<div class="absolute testFormatBtnHolder">
+			<a href="" class="back doCStream" data-cs-name="BACK">Back</a>
+			<input type="button" class="blueSubmitButton nextBtn big14 boldy doCStream" 
+				data-cs-name="CREATE_TEST" value="Next" disabled="true"/>
+		</div>
+</div>
+
+<div class="leftAndRelative testCreationQuestionList nonner CSWidget" data-widget="ADD_QUES">
+	<div class="leftAndRelative listTopBar">
+		<input type="text" class="leftAndRelative customInputTextBox searchQuestions doCStream" 
+			data-name="SEARCH_QUES_INPUTBOX" placeholder="search questions by tag"/>
+<!--		<span class="leftAndRelative addQuestion blueButton doCStream" data-cs-name="CREATE_ADD_QUESTION_BTN"><span class="icon bgImageSprite"></span>Add Question</span>
+		<span class="leftAndRelative big14 boldy blackTextColor orText">OR</span>
+		<span class="leftAndRelative autoGenerateTest greenButton doCStream" data-cs-name="AUTO_GENERATE_BTN"><span class="icon bgImageSprite"></span>Auto Generate Test</span>-->
+	</div>
+	<div class="leftAndRelative addQuestionSearchParams">
+	</div>
+	<input class="leftAndRelative loadPlaylistBtn greyButton doCStream" data-name="SEARCH_BTN" 
+		type="button" value="Search Questions"/>
+	<span class="testAddQuestionNext nonner"></span>
+	<span class="testAddQuestionPrev nonner"></span>
+	<div class="leftAndRelative addQuestionsHolder">
+		<!--<div class="leftAndRelative eachQuestion">
+			<input type="button" class="questionAddToListBtn smallBlueButton" value="Add"/>
+			<img class="qIdIcon" alt="" src=""/><span class="questionId blackTextColor">MTH/ALG/00537</span>
+			<span class="rightAndRelative greenTextColor qInfo">
+				<span class="bgImageSprite icon"></span>Practice, High Level, Multiple methods, Preparatory, functions, variables
+			</span>
+			<div class="questionBody">
+				<span class="questionTitle">
+				Let a  and b  be the real and distinct roots of the equation ax2  + bx + c = |c|, (a > 0) and p, q be the real and distinct roots of the equation ax2  + bx + c = 0. Then
+				</span>
+				<div class="quesOptions">
+					<span class="eachOption">(a) p and q lie between a  and b</span><br/>
+					<span class="eachOption">(b) p and q do not lie between a  and b</span><br/>
+					<span class="eachOption">(c) Only p lies between a  and b</span><br/>
+					<span class="eachOption">(d) Only q lies between a  and b</span><br/>
+				</div>
+				<div class="bottomBar">
+					<span class="subject">Subject - <span class="blueTextColor big12">Mathematics</span></span>
+					<span class="topic">Topic-<span class="blueTextColor big12">Algebra</span></span>
+					<span class="level">Level-<span class="blueTextColor big12">IIT-JEE</span></span>
+				</div>
+			</div>
+			<div class="qMoreInfo leftAndRelative">
+				<span class="leftAndRealtive"><b>1024</b> Attempts  |  <b>3</b> Solutions  |  <b>18</b> Discussions</span>
+				<span class="rightAndRelative">Added in <b>39</b> Playlists & <b>3</b> Tests</span>
+			</div>
+		</div>-->
+	</div>
+</div>
+<div class="leftAndRelative testCreationAssign nonner CSWidget" data-widget="ASSIGN">
+	<span class="leftAndRelative big14 boldy blackTextColor">Publish</span><br/>
+	<div class="leftAndRelative publishDesc nonner"><!-- schedule test not available-->
+		<input type="radio" name="shareTestWith" class="doCStream" data-cs-name="SHARE_PUBLIC_RADIOBTN" checked=true/><span class="big14 radioText blackTextColor">Publicaly</span><br/>
+		<input type="radio" name="shareTestWith" class="doCStream" data-cs-name="SHARE_PRIVATE_RADIOBTN"/><span class="big14 radioText blackTextColor">Privately</span><br/>
+		<div class="nonner selectedNamesHolder">
+			<span class="selectedNames"><span class="innerText"></span><span title="remove" class="cross bgImageSprite"></span></span>
+		</div>
+		<div class="customInputTextBox inputShareWithOnly nonner">
+			<input class="getName" type="text" placeholder="Type & add people to share with"/>
+		</div>
+		<div class="suggestionBox nonner">
+			<div class="inner">
+			</div>
+		</div>
+	</div>
+	<div class="leftAndRelative scheduleTest">
+		<input type="checkbox" class="noSchedule doCStream" data-cs-name="NO_SCHEDULE_CHKBOX"><span class="boldy big12 noSchduleText">No Schedule</span>
+		<div class="scheduleDetails">
+			<span class="startSchedule schedulePar" data-schedule-type="start">
+			<span class="big12 title">Start at</span> 
+			<input type="text" class="inputDate customInputTextBox doCStream" data-cs-name="START_DATE_INPUTBOX" maxlength="10" disabled='disabled'/><span title="use calender to pick date" class="calenderIcon bgImageSprite"></span>
+			<div class="vselect vselectHide inputHrs vDropDown" 
+				onstatechange="assignInputHrsChange" data-cs-name="SELECT_START_HRS">
+				<span class="vSelectHead">
+					<span class="bgImageSprite"></span>
+					<input type="text" class="vSelectText blackTextColor" value="12" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+					#{list items:1..12,as:'index'}
+						<span class="vSelectEach">${index}</span>
+					#{/list}
+					</div>
+				</div>
+			</div>
+			<div class="vselect vselectHide inputMins vDropDown" 
+				onstatechange="assignInputMinsChange" data-cs-name="SELECT_START_MINS">
+				<span class="vSelectHead">
+					<span class="bgImageSprite"></span>
+					<input type="text" class="vSelectText blackTextColor" value="00" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+					#{list items:0..otherUiData.minsStrList.length()-1 , as:'index'}
+						<span class="vSelectEach">${otherUiData.minsStrList.get(index)}</span>
+					#{/list}
+					</div>
+				</div>
+			</div>
+			<div class="vselect vselectHide inputMeridiem vDropDown" 
+				onstatechange="assignInputMeridiemChange" data-cs-name="SELECT_START_MERIDIEM">
+				<span class="vSelectHead">
+					<span class="bgImageSprite"></span>
+					<input type="text" class="vSelectText blackTextColor" value="AM" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+						<span class="vSelectEach" data-value=0>AM</span>
+						<span class="vSelectEach" data-value=1>PM</span>
+					</div>
+				</div>
+			</div>
+			</span>
+			<br/><br/>
+			<span class="endSchedule schedulePar" data-schedule-type="end">
+			<span class="big12 title">End at </span>
+			<input type="text" class="inputDate customInputTextBox doCStream" data-cs-name="END_DATE_INPUTBOX" maxlength="10" disabled='disabled'/><span title="use calender to pick date" class="calenderIcon bgImageSprite"></span>
+			<div class="vselect vselectHide inputHrs vDropDown" 
+				onstatechange="assignInputHrsChange" data-cs-name="SELECT_END_HRS">
+				<span class="vSelectHead">
+					<span class="bgImageSprite"></span>
+					<input type="text" class="vSelectText blackTextColor" value="12" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+					#{list items:1..12,as:'index'}
+						<span class="vSelectEach">${index}</span>
+					#{/list}
+					</div>
+				</div>
+			</div>
+			<div class="vselect vselectHide inputMins vDropDown" 
+				onstatechange="assignInputMinsChange" data-cs-name="SELECT_END_MINS">
+				<span class="vSelectHead">
+					<span class="bgImageSprite"></span>
+					<input type="text" class="vSelectText blackTextColor" value="00" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+					#{list items:0..otherUiData.minsStrList.length()-1 , as:'index'}
+						<span class="vSelectEach">${otherUiData.minsStrList.get(index)}</span>
+					#{/list}
+					</div>
+				</div>
+			</div>
+			<div class="vselect vselectHide inputMeridiem vDropDown" 
+				onstatechange="assignInputMeridiemChange" data-cs-name="SELECT_END_MERIDIEM">
+				<span class="vSelectHead">
+					<span class="bgImageSprite"></span>
+					<input type="text" class="vSelectText blackTextColor" value="AM" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+						<span class="vSelectEach" data-value=0>AM</span>
+						<span class="vSelectEach" data-value=1>PM</span>
+					</div>
+				</div>
+			</div>
+			</span>
+		</div>
+	</div>
+	<div class="leftAndRelative assignBtns">
+		<input class="redButton publishBtn doCStream" type="button" value="Publish" data-cs-name="PUBLISH_BUTTON"/>
+		<input class="blueSubmitButton scheduleLaterBtn doCStream" type="button" value="Save & Schedule Later" 
+			data-cs-name="SCHEDULE_LATER_BTN" />
+	</div>
+</div>
+<div class="nonner" id="ajaxDataReciever"></div>

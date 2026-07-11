@@ -1,0 +1,7 @@
+%{
+    searchType='';
+    if(params.searchType!=null){
+        searchType=params.searchType;
+    }
+}%
+#{search.mainWrapper target:params.target,searchType:searchType,cmdsResp:cmdsResp/} 

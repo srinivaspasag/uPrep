@@ -1,0 +1,28 @@
+%{              
+    tagsClass=' nonner';
+    if(!boards.equals(null) && boards.length()>0){
+        tagsClass='';
+    }
+}%            
+<div class='margTop moduleTagsDiv${tagsClass}'>
+    <label class='boldy'>Tags: </label>
+    <div class="linBlk moduleTagsSpans">
+        #{if !boards.equals(null)&& boards.length()>0}
+            #{list items:0..boards.length()-1,as:'b'}
+                %{
+                    brd=boards.get(b);                                
+                    topics=brd.children;
+                }%
+                <span>${brd.name}</span>${b_isLast?'':','}
+                #{if topics!=null&&topics.length()>0}
+                    #{list items:0..topics.length()-1,as:'d'}
+                    %{
+                        topic=topics.get(d);                                
+                    }%
+                    <span>${topic.name}</span>${d_isLast?'':','}
+                    #{/list}
+                #{/if}
+            #{/list}
+        #{/if}
+    </div>                
+</div>

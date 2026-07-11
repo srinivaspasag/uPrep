@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learnpedia-Contact Us</title>
+  <meta name="google-site-verification" content="6DhL-KLdd2mI5o_YprF32lNPpE56x8ig7Yc1SKtlQ-4" />
+  <meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+  <meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+  <meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+  <meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+  <link rel="manifest" href="/public/images/favicons/manifest.json">
+  <link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+  <meta name="theme-color" content="#ffffff">
+  <link href="@{'/public/outerAssets/assets/css/bootstrap.min.css'}" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+  <link href="@{'/public/stylesheets/material_style.css'}" rel="stylesheet">
+  <link href="@{'/public/outerAssets/assets/css/index.css'}" rel="stylesheet">
+  <style type="text/css">
+  .contact .container{
+    max-width: 90%;
+    padding: 20px 0px;
+  }
+  @media(max-width: 780px){
+    .contact .container{
+      max-width: 99%;
+    }
+  }
+</style>
+</head>
+<body>
+  #{include 'theme1/Application/header.html' /}
+  <section id="main" style="background: ghostwhite;">
+    #{include 'theme1/Application/sidebar.html' /}
+    <section class="contact">
+      <div class="container">
+        <div class="row">
+       
+      </div>
+      <div class="col-md-12">
+            <div class="card" style="padding-bottom: 0px;width: 420px;height: 500px;margin-bottom: 30px;">
+              <div class="card-header" style="background-color: #31A342;">
+                <h2 class="c-white" style="font-size: 30px;">
+                  Get In Touch
+                  <small class="c-white">Get in touch with us to give us a feedback or put forth a query or simply to chat.</small>
+                </h2>
+              </div>
+              <div class="card-body" style="margin-top: 25px;">
+                <div class="input-group  m-b-20">
+                  <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                  <div class="fg-line" id="name-group">
+                    <input id="full-name" type="text" class="form-control" placeholder="Full Name" required="">
+                    <span class="zmdi form-control-feedback" id="name-dialog" style="display: none;"></span> <small class="help-block" id="name-help"></small>
+                  </div>
+                </div>
+
+                <div class="input-group m-b-20">
+                  <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
+                  <div class="fg-line" id="email-group">
+                    <input class="form-control" id="email" name='email' placeholder="Enter your email" required="" type="email"> <!-- <div class="signupErrorDiv" style="color: red;"></div> -->
+                    <span class="zmdi form-control-feedback" id="email-dialog" style="display: none;"></span> <small class="help-block" id="email-help"></small>
+                  </div>
+                </div>
+                <div class="input-group  m-b-20">
+                  <span class="input-group-addon"><i class="zmdi zmdi-phone"></i></span>
+                  <div class="fg-line" id="number-group">
+                    <input id="number" type="text" class="form-control" placeholder="Mobile Number *" required="" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                    <span class="zmdi form-control-feedback" id="number-dialog" style="display: none;"></span> <small class="help-block" id="number-help"></small>
+                  </div>
+                </div>
+                <!-- <div class="input-group m-b-20">
+                  <span class="input-group-addon"><i class="zmdi zmdi-local-offer"></i></span>
+                  <div class="fg-line" id="subject-group">
+                    <input type="text" id="subject" name='subject' required="true" class="form-control" placeholder="Subject">
+                    <span class="zmdi form-control-feedback" id="subject-dialog" style="display: none;"></span> <small class="help-block" id="subject-help"></small>
+                  </div>
+                </div> -->
+                <div class="input-group m-b-20">
+                  <span class="input-group-addon"><i class="zmdi zmdi-assignment-o"></i></span>
+                  <div class="fg-line" id="message-group">
+                    <textarea class="form-control auto-size" id="message" name='message' required="true"
+                    placeholder="Your Query.."></textarea>
+                    <span class="zmdi form-control-feedback" id="message-dialog" style="display: none;"></span> <small class="help-block" id="message-help"></small>
+                  </div>
+                </div>
+                <div class="submit-btn" style="margin-top: 40px;text-align: center;">
+                  <button class="btn waves-effect" style="min-width: 200px;background-color: #31A342;color: white;" type="submit">SUBMIT</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+  </div>
+</section>
+    
+
+
+    <!-- Footer Section    -->
+    #{include 'theme1/Application/footer.html' /}
+  </section>
+</body>
+<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js">
+</script> 
+<script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js">
+
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/autosize/dist/autosize.min.js"></script>
+<script src="/public/assets/theme1/js/app.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.js"></script> 
+<script type="text/javascript">
+  $(".contact").on("click",".submit-btn",validation);
+  function validation(){
+    var name = $("#full-name");
+    var email = $("#email");
+    var number = $("#number");
+    var message = $("#message");
+    var validate = true;
+    if(name.val()=="" || name.val() == null){
+      $("#name-group").addClass("has-error");
+      $("#name-dialog").addClass("zmdi-alert-triangle");
+      $("#name-dialog").css("display","inline-block");
+      $("#name-help").html("Please Enter Something!");
+      validate = false;
+    }
+    else{
+      $("#name-group").removeClass("has-error");
+      $("#name-dialog").removeClass("zmdi-alert-triangle");
+      $("#name-dialog").css("display","none");
+      $("#name-help").css("display","none");
+    }
+    if(email.val()=="" || email.val() == null || validateEmail(email.val())===false){
+      $("#email-group").addClass("has-error");
+      $("#email-dialog").addClass("zmdi-alert-triangle");
+      $("#email-dialog").css("display","inline-block");
+      $("#email-help").html("Please Enter Correct Email!");
+      validate = false;
+    }
+    else
+    {
+      $("#email-group").removeClass("has-error");
+      $("#email-dialog").removeClass("zmdi-alert-triangle");
+      $("#email-dialog").css("display","none");
+      $("#email-help").css("display","none");
+    }
+
+    if(number.val()=="" || number.val() == null){
+      $("#number-group").addClass("has-error");
+      $("#number-dialog").addClass("zmdi-alert-triangle");
+      $("#number-dialog").css("display","inline-block");
+      $("#number-help").html("Please Enter Something!");
+      validate = false;
+    }
+    else{
+      $("#number-group").removeClass("has-error");
+      $("#number-dialog").removeClass("zmdi-alert-triangle");
+      $("#number-dialog").css("display","none");
+      $("#number-help").css("display","none");
+    }
+
+    if(message.val()=="" || message.val() == null){
+      $("#message-group").addClass("has-error");
+      $("#message-dialog").addClass("zmdi-alert-triangle");
+      $("#message-dialog").css("display","inline-block");
+      $("#message-help").html("Please Enter Something!");
+      validate = false;
+    }
+    else{
+      $("#message-group").removeClass("has-error");
+      $("#message-dialog").removeClass("zmdi-alert-triangle");
+      $("#message-dialog").css("display","none");
+      $("#message-help").css("display","none");
+    }
+
+
+    if(validate){
+     var params = {
+      "name" : name.val(),
+      "email" : email.val(),
+      "message" : message.val(),
+      "number" : number.val(),
+      "fromForm" : "EMAIL"
+    };
+    $.post("Application/sendEmail", params,function(result){
+      result = JSON.parse(result);
+      if(result.result == null){
+        swal({
+          title: "Something went wrong",
+          type: "error"
+        });
+        return;
+      }
+      if(result.result.success === true){
+        swal({
+          title: "Message Sent",
+          type: "success"
+        });
+        $("#full-name").val("");
+        $("#email").val("");
+        $("#number").val("");
+        $("#message").val("");
+      }else{
+        swal({
+          title: "Message Not Sent",
+          type: "error"
+        });
+      }
+    });
+  }
+}
+
+function validateEmail(sEmail) {
+
+  var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+  if (filter.test(sEmail)) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+</script>
+<script type="text/javascript" src="/public/javascripts/dropdown-on-hover.js"></script>
+</html>

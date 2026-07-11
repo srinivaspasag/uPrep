@@ -1,0 +1,17 @@
+#{if msgs!=null && msgs.errorCode.isEmpty() && msgs.result.list.length()>0}
+    #{list items:0..msgs.result.list.length()-1,as:'index'}
+    %{
+        data = msgs.result.list.get(index);
+    }%
+        #{msg msg:data,target:"INBOX" /}
+    #{/list}
+    <input type="hidden" id="msgInboxCountInput" value="${msgs.result.list.length()}"/>
+    <input type="hidden" id="msgInboxTotalHits" value="${msgs.result.totalHits}"/>
+#{/if}
+#{else}
+    <div class="container">
+        <div class="lgi-heading">&{'NO_RECENT_MSGS'}</div>
+    </div>
+    <input type="hidden" id="msgInboxCountInput" value="0"/>
+    <input type="hidden" id="msgInboxTotalHits" value="0"/>
+#{/else}

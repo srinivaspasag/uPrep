@@ -1,0 +1,55 @@
+<div id="homePageTSWidget" class="centry margTop">
+	<a class="goToTestSeriesPage ptrTagInline" data-test-series-id="">Lakshya Test Series</a>
+	#{common.testSeriesSuggestion/}
+</div>
+<div id="homePageChallengeWidget" class="widget CSWidget" data-widget="CHALLENGES_WIDGET">
+    <div id="HPCWScores">
+        <div class="boldy acacac">Your Points</div>
+        <div class="HPCWMyScore">-</div>
+        <div class="acacac">Earn more points through</div>
+        <a class="relativePos goToChallengesPage ptrTagInline doCStream" style="margin-top: 3px;" href="/challenges" 
+	data-name="CHALLENGES_TAB">
+            <div class="HPCWActiveCount">0 Active</div>
+            <span class="HPCWBtn">Challenge Arena</span>
+        </a>
+    </div>
+    <div id="homePageLeaderBoard"></div>
+</div>
+
+#{include 'Widgets/popularPLs.html' /}
+
+#{include 'Widgets/popularTests.html' /}
+
+#{include 'Widgets/whatsCooking.html' /}
+
+<div class="widget" id="detectClientMsg">
+</div>
+
+<script type="text/javascript">
+    $.get("/challenges/globalLeaderBoard",{target:"HOME_PAGE",start:0,size:5,rankType:"WEEKLY"},function(data){
+        $("#homePageLeaderBoard").html(data);
+    });
+    $.get("/challenges/homePageStats",function(data){
+       var widget= $("#homePageChallengeWidget");
+       if(data.hasOwnProperty("myPointsInfo")){
+           widget.find(".HPCWMyScore").text(data.myPointsInfo.result);
+       }
+       if(data.hasOwnProperty("statsInfo")){
+           var activeData=data.statsInfo.result;
+           if(activeData.hasOwnProperty("statusFacet")&&activeData.statusFacet.hasOwnProperty("active")){
+                widget.find(".HPCWActiveCount").text(activeData.statusFacet.active+" Active");
+           }               
+       }          
+    }); 
+    $.get("/subscription/getSubscribedTestSeries",{start:0,size:5},function(data){
+        var testSeriesList=data.result.testSeries;
+        if(testSeriesList.length>0){
+            var testSeries=testSeriesList[0];
+            $("#homePageTSWidget").html('<a class="goToTestSeriesPage ptrTagInline"\n\
+             data-test-series-id="'+testSeries.id+'" href="/testseries/'+testSeries.id+'">Lakshya Test Series</a>');
+        }
+    });    
+    $(function(){
+	vedantuClient.verifyClient($("#detectClientMsg"));
+    });
+</script>

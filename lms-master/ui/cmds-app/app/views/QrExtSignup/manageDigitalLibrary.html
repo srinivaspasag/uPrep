@@ -1,0 +1,86 @@
+<div id="cmdsCustomizeDigitalLibraryPage">
+	<div class="centerText pageHeadGrayDiv">
+		<span class="big20">Manage Digital Library</span>
+	</div>
+	<div class="cmdsDigitalLibrarySec">
+		<table cellspacing=0 cellpadding=0 class="tableWithBorder cmdsCustDigitalLibraryTable">
+			<tr>
+				<th class="big15">Type</th>
+				<th class="big15">Hide in Digital Library</th>
+			</tr>
+			%{
+				fields = resp.toString();
+			}%
+			<tr class="digitalLibraryField">
+				%{check = ""}%
+			#{if fields.contains('Video Lectures')}
+				%{
+					check ="checked";
+				}%
+			#{/if}
+			#{extSignUp.customizeDigitalLibraryTd name:"Video Lectures", checked : "${check}" /}
+			</tr>
+			<tr class="digitalLibraryField">
+				%{check = ""}%
+			#{if fields.contains('Tests')}
+				%{
+					check ="checked";
+				}%
+			#{/if}
+			#{extSignUp.customizeDigitalLibraryTd name:"Tests", checked : "${check}" /}
+			</tr>
+			<tr class="digitalLibraryField">
+				%{check = ""}%
+			#{if fields.contains('E-Books')}
+				%{
+					check ="checked";
+				}%
+			#{/if}
+			#{extSignUp.customizeDigitalLibraryTd name:"E-Books", checked : "${check}" /}
+			</tr>
+			<tr class="digitalLibraryField">
+				%{check = ""}%
+			#{if fields.contains('Videos')}
+				%{
+					check ="checked";
+				}%
+			#{/if}
+			#{extSignUp.customizeDigitalLibraryTd name:"Videos", checked : "${check}" /}
+			</tr>
+			<tr class="digitalLibraryField">
+				%{check = ""}%
+			#{if fields.contains('Assignments')}
+				%{
+					check ="checked";
+				}%
+			#{/if}
+			#{extSignUp.customizeDigitalLibraryTd name:"Assignments", checked : "${check}" /}
+			</tr>
+			<tr class="digitalLibraryField">
+				%{check = ""}%
+			#{if fields.contains('Files')}
+				%{
+					check ="checked";
+				}%
+			#{/if}
+			#{extSignUp.customizeDigitalLibraryTd name:"Files", checked : "${check}" /}
+			</tr>
+			<tr class="digitalLibraryField">
+				%{check = ""}%
+			#{if fields.contains('Questions')}
+				%{
+					check ="checked";
+				}%
+			#{/if}
+			#{extSignUp.customizeDigitalLibraryTd name:"Questions", checked : "${check}" /}
+		</table>
+		   	<div style="padding:20px 0px;" class="centerText">
+		<span class="bigBlueButton submitDigitalLibraryFields">&{'TXT_SUBMIT'}</span>
+		<span class="bigRedButton cancelDigitalLibrarySubmit">&{'TXT_RESET'}</span>
+   	</div>
+<script type="text/javascript">
+new function(){             
+	var fn=function(){qrExtSignup.initCustomizeDigitalLibrary();}
+	lazyLoad([{fname:"qrExtSignup.js",cb:fn}]);        
+}();    
+</script>

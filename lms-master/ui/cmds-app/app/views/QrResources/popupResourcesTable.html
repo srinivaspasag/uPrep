@@ -1,0 +1,72 @@
+%{
+    resourcesResult=resources.result;
+    totalHits=resourcesResult.totalHits;
+    resources=resourcesResult.list;    
+}%  
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv">
+    <table class="headSecTable">
+      <thead>
+          <tr>
+              <td class="width16 tdPadLeft5" style="padding-top: 20px;">
+                  #{if resources.length()>0}
+                    <div class="gCBox cmdsAllgCBox" data-callback='cmdsTableAllCheck'>
+                        <div class="gCBoxTicker"></div>                    
+                    </div>   
+                  #{/if}
+              </td>
+              <td class="tdPadLeft5 itemTitleTH">Title</td>
+              <td class="width150 maxWidth150"><span class="padLeft10">Added By<span></td>
+          </tr>	  
+      </thead>
+    </table>                    
+</div>                
+<div id="fixedSec">
+    <table class="cmdsTable">
+      <tbody>
+          #{if resources.length()>0}
+          #{list items:0..resources.length()-1,as:'i'}
+          %{
+            resource=resources.get(i);            
+            resource=resource.source;
+            entityId=resource.id;
+            entityName=resource.name;
+            entityType=resource.type;
+            converted = resource.has('converted')?resource.converted:true;
+            completed = resource.completed;
+          }%
+          <tr class="" data-entity-type="${entityType}" data-entity-id="${entityId}"
+              data-entity-name="${entityName}">
+            <td class="width16 tdPadLeft5">
+                  <div class="gCBox"  data-callback="cmdsTablegCBoxCheck">
+                      <div class="gCBoxTicker"></div>                      
+                  </div>  
+            </td>
+            <td class="tdPadLeft5 color0 entityTitleTd">
+                #{if entityType=='FOLDER'}
+                <div class="entityNameDiv">
+                    <span class="resourceIconFOLDER"></span>
+                    <a class="getPopupResourcesFolderPage" title="${entityName}"  data-entity-id="${entityId}" >
+                        <span class="singleLineText displayInBlock">${entityName}</span>
+                    </a>                       
+                </div>                
+                #{/if}
+                #{else}
+                    #{aTagMapper entityName:entityName,entityId:entityId,entityType:entityType,converted:converted,completed:completed/}
+                #{/else}             
+            </td>
+            <td class="width150 maxWidth150">
+                #{if resource.has('addedBy') && !resource.addedBy.equals(null)}
+                  #{widgets.user20 user:resource.addedBy /}
+                #{/if}
+            </td>
+          </tr>   
+          #{/list}
+          #{/if}
+          #{else}
+            #{sources.noResourcesFound colspan:7,target:'RESOURCES'/}                   
+          #{/else}          
+      </tbody>
+    </table>
+    #{footer /}
+</div> 

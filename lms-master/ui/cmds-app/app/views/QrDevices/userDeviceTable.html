@@ -1,0 +1,69 @@
+#{if devicesResp != null && devicesResp.errorCode.isEmpty() && devicesResp.result.list.length()>0}
+%{
+	totalHits = devicesResp.result.totalHits;
+        devices = devicesResp.result.list;
+}%
+	#{list items:0..devices.length()-1, as:'index'}
+	%{
+		device = devices.get(index);
+	}%
+	<tr class="deviceClass${device.deviceType}">
+		<td class="centerText">
+			#{if device.has('callingApp') && !device.callingApp.equals(null)}
+				<!-- <b>&{'DEVICE_'+device.callingApp.toUpperCase()}</b> -->
+			#{/if}
+				&{'DEVICE_TYPE_'+device.deviceType}
+		</td>
+		<!-- <td class="centerText">
+			<span class="big14 #{if device.status == 'LOGGED_IN'} greenTextColor #{/if}#{else} greyTextColor #{/else}">&{device.status}</span>
+		</td> -->
+		<td class="centerText" style="min-width:120px;">
+			#{common.clientTimeDate time : device.loginTime , format : "dd/mm/yyyy, hrs:min:sec" /}
+		</td>
+		<td class="centerText">
+		#{if !device.page.equals(null) && !device.userAction.equals(null)}
+			#{if !device.userAction.equals(null)}
+				<span class="big13">&{'ACTIVITY_'+device.userAction.toUpperCase()}</span>
+			#{/if}
+			*{#{if !device.entity.equals(null) && device.entity.has('id')}
+			%{
+				entity = device.entity;
+    				entityType = entity.type.toLowerCase();
+    				entityId = entity.id;
+    				entityName = entityType;
+			}%
+    				#{include arg:templateName /}
+			#{/if}
+			#{else}}*
+				<span class="boldy"> &{'PAGE_'+device.page}</span>
+			*{#{/else}}*
+			<span class="smally">
+				At #{common.clientTimeDate time : device.lastActivityTime , format : "dd/mm/yyyy, hrs:min:sec" /}
+			</span>
+		#{/if}
+		#{else}
+			<span>&{'NO_ACTIVITY_YET'}</span>
+		#{/else}
+		</td>
+	</tr>
+	#{/list}
+	%{
+        	totalHits = devicesResp.result.totalHits;
+        	lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+	}%
+	#{if totalHits > lastCount }
+	<tr class="loadMoreDivTR">
+        	<td colspan=4 style="padding-top:20px;">
+                	<div class="loadMoreItems" data-next-start="${lastCount}" 
+				data-user-id="${params.targetUserId}">&{'LOAD_MORE_item','Devices'}</div>
+        	</td>
+	<tr>
+	#{/if}
+#{/if}
+#{else}
+	<tr>
+	    <td colspan=4>
+		<div class="boldy big16 redTextColor">&{'NO_DEVICES_FOUND'}</div>
+	    </td>
+	</tr>
+#{/else}

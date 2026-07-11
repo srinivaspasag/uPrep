@@ -1,0 +1,258 @@
+<script type="text/javascript">
+	$("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+	$("#instPageNavigator").find(".instNavTab.openInstPage").addClass("clInstTab");
+</script>
+#{if flash.get('OPEN_DISCUSSION')=='true'}
+<script type="text/javascript">
+	var directDiscussion = true;
+</script>
+#{/if}
+#{else}
+<script type="text/javascript">
+	var directDiscussion = false;
+</script>
+#{/else}
+#{if institute.result.has('name')}
+%{
+	inst = institute.result;
+	userRole = params.userRole;
+	if(userRole == null){
+		userRole = "MEMBER";
+	}
+}%
+    <div class="bodyWhiteBg" style="min-height:800px">
+      <div class="relative pageHolderT">
+       	<div class="instDiscussionHeader">
+		<a class="instHideComments greenButton" href="/myinstitute">Back to question list</a>
+	</div>
+	<div class="left relative instLeftSec CSWidget" data-widget="LEFT_SECTION">
+		<div class="instDetails">
+			<div class="instCountDetails">
+				%{ totalStudents = inst.has('members')?inst.members:inst.member; }%
+				<div class="doCStream left instStdCount instOpenMembersPage" data-role="MEMBER" 
+					data-total="${totalStudents}" data-name="Students">
+					<span class="big22 boldy">${totalStudents}</span></br>
+					<span class="instCountText">Students</span>
+				</div>
+				%{ totalProfessors = inst.has('professors')?inst.professors:inst.professor; }%
+				<div class="doCStream left instTeachersCount instOpenMembersPage" data-role="PROFESSOR" 
+					data-total="${totalProfessors}" data-name="Teachers">
+					<span class="big22 boldy">${totalProfessors}</span></br>
+					<span class="instCountText">Teachers</span>
+				</div>
+				*{<div class="doCStream left instLibraryCount instOpenLibraryPage">
+					<span class="big22 boldy">150</span></br>
+					<span class="instCountText">Institute Library</span>
+				</div>}*
+        			<div class="cleaner_with_divider">&nbsp;</div>
+			</div>
+		</div>
+		#{if instMember.has('result') && instMember.result.has('programmes') && instMember.result.programmes.length()>0}
+		%{ 	memberProgs = instMember.result.programmes;
+			memberProg1 = memberProgs.get(0);
+			memberCenter1 = memberProg1.centers.get(0);
+			memberSection1 = memberCenter1.sections.get(0);
+		}%
+		<div class="instStdInfo CSWidget" data-widget="USER_ORG_RELATED_INFO" 
+			title="Batch : ${memberProg1.name} (${memberProg1.stream}), ${memberCenter1.name} , ${memberSection1.name}">
+			<div class="left instMyBatch">
+				<span class="left smally boldy" style="margin:15px 0 10px 10px;border-bottom:1px solid #ccc;width:115px;padding-bottom:4px;">MY BATCH</span>
+			#{if userRole != "PROFESSOR"}
+			<div class="instSelectBatchText" data-value="${memberProg1._id}">
+				${memberProg1.name} (${memberProg1.stream}) , ${memberCenter1.name} , ${memberSection1.name}
+			</div>
+			#{/if}
+			#{else}
+			<div class="vselect vselectHide instSelectBatch vDropDown" 
+				onstatechange="instBatchChanged" data-value="${memberProg1._id}">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText big14" 
+						value="${memberProg1.name} , ${memberCenter1.name} , ${memberSection1.name}" 
+						readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+			#{list items:0..memberProgs.length()-1,as:'pIndex'}
+			%{ memberProg = memberProgs.get(pIndex);}%
+				#{list items:0..memberProg.centers.length()-1,as:'cIndex'}
+				%{ memberCenters = memberProg.centers.get(cIndex);}%
+					#{list items:0..memberCenters.sections.length()-1,as:'sIndex'}
+					%{ memberSection = memberCenters.sections.get(sIndex);}%
+						<span class="vSelectEach" data-value="${memberProg._id}"  
+							data-courses=${memberSection.courses.raw()} 
+							title="${memberProg.name} , ${memberCenters.name} , ${memberSection.name}">
+						${memberProg.name} (${memberProg.stream}), ${memberCenters.name} , ${memberSection.name}</span>
+					#{/list}
+				#{/list}
+			#{/list}
+					</div>
+				</div>
+			</div>
+			#{/else}
+			</div>
+			#{if memberSection1.courses.length()>0}
+			<div class="left instMyCourses">
+				<span class="left smally boldy" style="margin:15px 0 0 10px;width:95px;padding-bottom:4px;">MY COURSES</span>
+				#{list items:0..memberSection1.courses.length()-1,as:'index'}
+				%{ memberCourse = memberSection1.courses.get(index);}%
+				<span class="instEachCourse" data-course-id="${memberCourse._id}">${memberCourse.name}</span>
+				#{/list}
+        			<div class="cleaner_with_divider">&nbsp;</div>
+			</div>
+			#{/if}
+        		<div class="cleaner_with_divider">&nbsp;</div>
+		</div>
+		#{/if}
+		*{<div class="intOtherPageBtns">
+			<span class="blueButton doCStream instOpenAnalytics" name="VIEW_ANALYTICS_TAB">Result Analytics</span>
+			<span class="blueButton doCStream instOpenMySchedule" name="VIEW_CALENDER_TAB">My Schedule</span>
+		</div>}*
+		<div class="instMembersBox">
+			#{if profResponse.result.has("users") && profResponse.result.users.length()>0}
+			<div class="instTeachers CSWidget" data-widget="PROFESSORS_WIDGET">
+				<div class="" style="border-bottom:1px solid #ccc;">
+					<span class="left smally">
+					#{if userRole == "PROFESSOR"}
+						<b>MY COLLEAGUES</b>
+					#{/if}
+					#{else}
+						<b>MY TEACHERS</b>
+					#{/else}
+					<span class="greyTextColor">(${profResponse.result.totalHits})</span></span>
+					#{if profResponse.result.totalHits>6}
+						<a class="right smally instMoreMembers doCStream" data-role="PROFESSOR" 
+							data-total="${profResponse.result.totalHits}" data-name="MY TEACHERS"
+							name="SEE_MORE_LINK">see all</a>
+					#{/if}
+        				<div class="cleaner_with_divider">&nbsp;</div>
+				</div>
+				<div class="instTeachersHolder">
+					#{list items:0..profResponse.result.users.length()-1,as:'index'}
+					%{ 
+						user = profResponse.result.users.get(index);
+						userCD = controllers.Profile.getUserClassAndUrl(user); 
+						userClass=userCD.className;
+						userUrl=userCD.url;
+					}%
+					<a href="${userUrl}" class="${userClass} doCStream" title="${user.firstName} ${user.lastName}" name="MEMBER_ICON_LINK" data-user-id="${user.has('_id')?user._id:user.userId}">
+						<img class="icon" src="${user.profilePic}" alt="${user.firstName}"/>
+					</a>
+					#{/list}
+				</div>
+			</div>
+			#{/if}
+			#{if memberResponse.result.has("users") && memberResponse.result.users.length()>0}
+			<div class="instStudents CSWidget" data-widget="MEMBERS_WIDGET">
+				<div class="" style="border-bottom:1px solid #ccc;">
+					<span class="left smally">
+					#{if userRole == "PROFESSOR"}
+						<b>MY STUDENTS</b>
+					#{/if}
+					#{else}
+						<b>MY FRIENDS</b> 
+					#{/else}
+					<span class="greyTextColor">(${memberResponse.result.totalHits})</span></span>
+					#{if memberResponse.result.totalHits>6}
+						<a class="right smally instMoreMembers doCStream" data-role="MEMBER" 
+							data-total="${memberResponse.result.totalHits}" data-name="MY FRIENDS"
+							name="SEE_MORE_LINK">see all</a>
+					#{/if}
+        				<div class="cleaner_with_divider">&nbsp;</div>
+				</div>
+				<div class="instStudentsHolder">
+					#{list items:0..memberResponse.result.users.length()-1,as:'index'}
+					%{ 
+						user = memberResponse.result.users.get(index); 
+						userCD = controllers.Profile.getUserClassAndUrl(user); 
+						userClass=userCD.className;
+						userUrl=userCD.url;
+					}%
+					<a href="${userUrl}" class="${userClass} doCStream" title="${user.firstName} ${user.lastName}" name="MEMBER_ICON_LINK" data-user-id="${user.has('_id')?user._id:user.userId}">
+						<img class="icon" src="${user.profilePic}" alt="${user.firstName}"/>
+					</a>
+					#{/list}
+				</div>	
+			</div>
+			#{/if}
+		</div>
+		*{<!-- Groups disabled -->
+		<div class="instGroupBox CSWidget" data-widget="GROUPS_WIDGET">
+			<div class="" style="border-bottom:1px solid #ccc;">
+				<span class="left smally"><b>MY GROUPS</b> <span class="greyTextColor">(4)</span></span>
+				<a class="right smally">see all</a>
+        			<div class="cleaner_with_divider">&nbsp;</div>
+			</div>
+			<div class="instGroupsHolder">
+				<div class="instEachGroup" style="height:45px;">
+					<img class="icon" src="/public/images/profileIcon.jpg" alt=""/>
+					<span class="right instEachGroupDetails">
+						<span class="boldy fullWidth">Physics</span></br>
+						<span class="smally greyTextColor fullWidth">23 Members</span>
+					</span>	
+				</div>
+			</div>	
+		</div>}*
+        	<div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+	<div class="left relative instCenterBody CSWidget nonner" data-widget="">
+		<!-- Center Body -->
+	</div>
+	<div class="left relative instMiddleSec CSWidget mcWidget" data-widget="INSTITUTE_QUESTION_DISCUSSION">		
+		<div class="centerText instiMainTabs" style="padding:20px 0 6px 0;">
+			<span class="simpleGreyTab big18 simpleGreyActiveTab doCStream instRefreshDiscussion" name="VIEW_Q&A_TAB">Q&A</span>
+			<span class="simpleTabDivider"></span>
+			<span class="simpleGreyTab big18 doCStream instiActivityTab" name="VIEW_ACTIVITY_TAB">Activity</span>
+		</div>
+                <div class="instiQAndASection">
+                    <input type="hidden" class="mcTab activemcTab"/>
+                    <div id="instSearchQueries" class="">
+                            <span class="instSearchQuery nonner"><span class="instTNm">Trending</span> <span class="crossIT doCStream" title="close" name="CROSS_SELECTED_TRENDING_TOPIC"></span></span>
+                    </div>
+                    <div id="instSearchDiscussion">
+                            <input type="text" class="customSearchBox relative mcSearchDivInput doCStream" data-param-name="query" placeholder="Search Q&A"/>
+                    </div>
+                    <div class="instTabHolder simpleBlackTabHolder mcSubTabs">
+                            <span class="greenButton instAskQuesBtn doCStream" name="ASK_QUES_BTN">Ask a Question</span>
+                            <div class="right" style="margin-top:10px;">
+                                    <span class="simpleBlackTab simpleBlackActiveTab doCStream mcSubTab activemcSubTab" name="SHOW_RECENT_S-TAB">Recent <span class="sBlckDivi">|</span></span>
+                                    <span class="simpleBlackTab doCStream mcSubTab" name="SHOW_POPULAR_S-TAB">Popular <span class="sBlckDivi">|</span></span>
+                                    <span class="simpleBlackTab doCStream mcSubTab" name="SHOW_FOLLOWING_S-TAB">Following</span>
+                            </div>
+                            <div class="cleaner_with_divider">&nbsp;</div>
+                    </div>
+                    #{if flash.get('OPEN_DISCUSSION')=="true"}
+                    <div id="instDiscusssionHolder" class="commentOpened CSWidget LMHandlerDiv" 
+                            data-widget="QUESTION_DISCUSSION_HOLDER">
+                            #{include 'tags/institute/directDiscussion.html' /}
+                    </div>
+                    #{/if}
+                    #{else}
+                    <div id="instDiscusssionHolder" class="CSWidget LMHandlerDiv" data-widget="QUESTION_DISCUSSION_HOLDER">
+                            *{#{include 'tags/institute/discussion.html' /}}*
+                    </div>
+                    #{/else}	
+                    <div class="instCommentWidgetHolder nonner"></div>
+                    <div class="cleaner_with_divider">&nbsp;</div> 
+                </div>
+                <div class="instiActivitySection nonner LMHandlerDiv"></div>
+	</div>
+	<div class="left relative instRightSec CSWidget instiQAndASection" data-widget="RIGHT_SECTION">
+		<!--facets holder-->
+	</div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+     </div>
+   </div>
+</div>
+<div class="instAddQuesPopup nonner">
+	<span class="big16 boldy">Ask a Question</span></br>
+	<div class="instRTEHolder"></div>
+	<div class="instAddQuesDetails">
+		<textarea class="customTextarea" placeholder="Add Details(optional)"></textarea>
+	</div>
+	<div class="instAddQuesTags">
+        	<span class="boldy big16 left fullWidth" style="padding:10px 20px;">Add Tags</span>
+               #{uicomWidgets.tagging target:'ADD_DISCUSSION',addTagsId:'addTagsForAddDisc'/}
+	</div>
+	<span class="greenButton right boly big14 doCStream" id="instPostQues">Post</span>
+#{/if}

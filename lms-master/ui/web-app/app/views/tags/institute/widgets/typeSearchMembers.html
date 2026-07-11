@@ -1,0 +1,25 @@
+%{
+	divClass = _divClass;
+	placeHolder = _placeHolder;
+	inputClass = _inputClass;
+	inputType = _inputType;
+	inputType = inputType==null?"text":inputType;
+}%
+<div class="${divClass} instTypeMembers">
+	<span class="instTpSrchMembers">
+		<!--*{<span class="instTpSrchMembr">
+			Anirban Dutta
+			<label class="instTpSrchMembrCross">X</label>
+		</span>}*-->
+	</span>
+	#{if inputType == "text"}
+		<input type="text" placeholder="${placeHolder}" class="${inputClass} instTpSrchMbrsInput"/>
+	#{/if}
+	#{else}
+		<textarea placeholder="${placeHolder}" class="${inputClass} instTpSrchMbrsInput"></textarea>
+	#{/else}
+	<div class="instTypMembrsSuggContainer nonner">
+		<div class="instTypMembrsSugg">
+		</div>
+	</div>
+</div>

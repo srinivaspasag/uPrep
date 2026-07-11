@@ -1,0 +1,357 @@
+#postTest,
+#preTest {
+	min-height:800px;
+}
+.testTakenSummary{
+	width:100%;
+	margin:5px 0 0 5px;
+}
+.testTakenSummary .avgTimeTaken,
+.testTakenSummary .attemptCount,
+.testTakenSummary .avgMarks{
+	min-width:80px;
+	float:left;
+	margin-left:5px;
+	padding-top:5px;
+	color:#686868;
+}
+.testTitle{
+	max-width:180px;
+	display:inline-block;
+}
+.takeTestBtn{
+	margin:20px 0 0 5px;
+	width:135px;
+	height:30px;
+	font-weight:bold;
+}
+.labTestKeyCode{
+	height:40px;
+	text-align:center;
+}
+.labTestKeyCode::-webkit-input-placeholder{
+        color:#ddd;
+        font-style: normal;
+        font-size:15px;
+}
+.labTestKeyCode:-moz-placeholder{
+        color:#ddd;
+        font-style: normal;
+        font-size:15px;
+}
+.labPreTest .takeTestBtn{
+	margin:20px 0 0 0;
+	width:175px;
+	height:15px;
+	font-weight:normal;
+	padding:10px 30px;
+	text-align:center;
+	text-shadow:1px 1px #777;
+}
+.separator{
+	width:95%;
+	height:1px;
+	background-color:#ccc;
+	margin:10px 0;
+}
+.leaderBoard{
+	margin:5px;
+}
+.leaderBoard .viewAll{
+padding-left:15px;
+}
+.leaderBoard .leadersList{
+width:100%;
+margin-top:10px;
+}
+.leaderBoard .leadersList .eachLeader{
+width:100%;
+height:52px;
+margin-top:15px;
+} 
+.leaderBoard .leadersList .eachLeader .icon{
+	width:35px;
+	height:35px;
+	padding:2px;
+	border:1px solid transparent;
+}
+.leaderBoard .leadersList .eachLeader:hover .icon{
+    /*box-shadow:0px 0px 10px 1px #28b3de;
+    webkit-box-shadow:0px 0px 10px 1px #28b3de;
+    ms-box-shadow:0px 0px 10px 1px #28b3de;*/
+	border:1px solid #999;
+}
+.leaderBoard .leadersList .eachLeader .rank{
+	float:left;
+	margin:13px 8px 0 3px;
+}
+.leaderBoard .leadersList .eachLeader .name{
+	float:left;
+	width: 95px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.leaderBoard .leadersList .eachLeader .marks{
+	float:left;
+	margin:2px 0 0 10px;
+}
+.centerBody{
+	width:79%;
+	min-height:200px;
+	border-right:1px solid #ccc;
+}
+.textCutLine{
+	width: 542px;
+	border-bottom: 1px solid #ccc;
+	margin: -3px 110px;
+}
+.labPreTest #preTest{
+	width:650px;
+	margin-left:22%;
+}
+.labPreTest{
+	background-color:#fff;
+	min-height:100%;
+}
+.labPreTest .centerBody{
+	width:100%;
+	border-right:none;
+}
+.labPreTest .labTestDetailsParSec{
+	box-shadow:1px 1px 1px 1px #ddd;
+	margin:25px 0;
+}
+.labPreTest .labTestDetailsLeftSec{
+	width:285px;
+	background-color:#f7f7f4;
+	min-height:100px;
+	padding:20px 30px;
+}
+.labPreTest .labTestDetailsRightSec{
+	width:235px;
+	padding:20px 35px;
+	height:123px;
+	background-color:#efefec;
+}
+.curriculumAndFormatBtn{
+font-size:14px;
+font-width:bold;
+width:200px;
+height:25px;
+margin:30px 0 0 200px;
+cursor:pointer;
+border-radius:2px 0 0 2px;
+}
+.readInstructionBtn{
+font-size:14px;
+font-width:bold;
+width:150px;
+height:25px;
+margin-left:-3px;
+border-left:1px solid #fff;
+cursor:pointer;
+border-radius: 0 2px 2px 0;
+}
+#postTest .btnSelected,
+#preTest .btnSelected{
+background:#cddfed;
+box-shadow:inset 1px 1px 3px 0px #d3d3d3;
+border:1px solid #d3d3d3;
+text-shadow:1px 1px #fff;
+}
+.centerBody .centerTestDetailsView{
+margin:10px 0 0 0;
+padding:20px 10px 10px 40px;
+background-color:#fff;
+box-shadow:1px 2px 2px 0px #ccc;
+}
+.centerBody .subjectList{
+width:100%;
+margin-top:20px;
+background-color:#fff;
+box-shadow:1px 2px 2px 0px #ccc;
+padding-bottom:20px;
+}
+.labPreTest .centerBody .subjectList{
+	margin-top:0px;
+	background-color:transparent;
+	box-shadow:none;
+}
+.labPreTest .centerBody .subjectList .eachSubject{
+	margin:20px 15px 0 0;
+	width:200px;
+}
+.centerBody .subjectList .eachSubject{
+margin:20px 0 0 50px;
+width:205px;
+}
+.centerBody .subjectList .eachSubject .curriculum,
+.centerBody .subjectList .eachSubject .format{
+width:80%;
+padding:5px 0 5px 0;
+margin:8px 0 7px 0;
+border-bottom:1px solid #ccc;
+}
+.centerBody .marksDistribution{
+margin-top:20px;
+width:100%;
+min-height:400px;
+background-color:#fff;
+box-shadow:1px 2px 2px 0px #ccc;
+}
+.centerBody .marksDistribution .title{
+padding: 40px 0 10px 0;
+width:100%;
+text-align:center;
+}
+.centerBody .marksDistribution .container{
+margin:2px 0 0 100px;
+height:250px;
+}
+.centerBody .marksDistribution .container .studentPercent{
+height:250px;
+width:24px;
+}
+.centerBody .marksDistribution .studentPercent .eachCount{
+font-size:11px;
+padding:0 5px 32px 0;
+float:right;
+}
+.centerBody .marksDistribution .container .barsHolder{
+height:250px;
+width:400px;
+border:0px solid #ccc;
+border-width:0 0 1px 1px;
+}
+.centerBody .marksDistribution .barsHolder .each{
+height:100%;
+float:left;
+background-color:transparent;
+width:50px;
+margin:0px;
+margin-left:4%;
+}
+.centerBody .marksDistribution .barsHolder .each .bar{
+height:50%;top:50%;
+float:left;position:relative;
+background-color:red;
+width:100%;
+}
+.centerBody .marksDistribution .container .marksPercent{
+height:20px;
+margin-left:25px;
+width:400px;
+}
+.centerBody .marksDistribution .marksPercent .eachCount{
+font-size:11px;
+width:50px;
+text-align:center;
+padding:5px 0 0 4%;
+float:left;
+}
+.testDetailsPopupHolder,
+.testLeaderBoardHolder{
+top:120px;
+min-width:400px;
+min-height:100px;
+border:6px solid #6E6E6E;
+border-radius:4px;
+background-color:#fff;
+left:440px;
+z-index:1005;
+}
+.closeTestDetailsPopup,
+.closeLeaderBoardPopup{
+width:8px;height:8px;
+float:right;margin:2px;
+background-position:-194px -15px;
+cursor:pointer;
+right:0px;
+}
+#postTest .testCreationLeftBar,
+#preTest .testCreationLeftBar{
+	background-color:transparent;
+	width:20%;
+	border-left: 1px solid #dadada;
+}
+.testTopicsWeightage{
+width:100%;
+margin:20px 0;
+background-color:#fff;
+box-shadow:1px 2px 2px 0px #ccc;
+padding-bottom:20px;
+}
+.topicWeightageChooseSub{
+background-color:transparent;
+border:0px;
+margin:10px 300px 0 330px;
+height:30px;
+width:120px;
+}
+.topicWeightageChooseSub .dropDownIcon{
+padding:15px 7px;
+}
+.testTopicsWeightageHolder{
+width:100%;
+margin:20px 0 0 0;
+}
+.testTopicsWeightageTable{
+text-align:center;
+}
+.testTopicsWeightageTable tr:nth-child(even){
+background-color: #e7eee7;
+}
+.testTopicsWeightageTable td{
+border-bottom:1px solid #ccc;
+}
+.testDetailsPopupHolder{
+z-index:1005;
+}
+.testDetailsPopupHolder .chooseQuesFormat{
+margin:10px;
+border:0px;
+top:0px;
+padding:0px;
+}
+.selectChildrenTest{
+	height:22px;
+	width:150px;
+	margin:20px 0 0 0;
+	text-align:left;
+}
+.selectChildrenTest .dropDownIcon{
+	padding:12px 7px;
+}
+.selectChildrenTest .vSelectText{
+	text-align:left;
+	padding-top:5px;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+}
+
+
+/*schedules list table*/
+.scheduleListTable{
+    border-collapse: collapse;
+    margin-left: 20px;
+}
+.scheduleListTable td{
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+}
+.openTestToppersPage{
+   font-weight: bold;
+   padding:7px 9px; 
+}
+#proceedToTakeTest{
+        padding:6px 40px;
+}
+.questionMark{
+	background-color:#EEE;
+}
+.qrCodeScan{
+	margin: 15px 25px;
+	right: 0px;
+}

@@ -1,0 +1,40 @@
+%{
+    reviews=_reviews;
+    loadMoreSize=_loadMoreSize;
+}%
+      #{if reviews.length()>0}
+            #{list items:0..reviews.length()-1,as:'i'}
+                %{
+                    review=reviews.get(i);
+                    user=review.user;
+                }%
+                <div class="reviewItem">
+                    <div class="commItemLeftSec">
+                        #{widgets.img30 user:user /}
+                        <div class="smally commReviewVoteDiv margHalfTop linBlk" data-comment-id="${review.commentId}">
+                           #{widgets.upVoteItem entityType:"REVIEW",
+                           entityId:review.commentId,upVote:review.upVotes,voted:review.voted /}
+                        </div>
+                    </div>
+                    <div class="itemContent40">
+                         <img class="commPtr" src="/public/images/uicomDocuments/commPtr.png" alt="" />
+			 #{institute.memberName user : user , classNames : "boldy" /}
+                         &nbsp;
+                         <span class="reviewItemText">${review.textContent.raw()}</span>
+                        <div>
+                            <span class="time">${new Date(review.timeCreated).since()}</span>
+                            <div class="ratingStars floatRight"
+                                 style="width: ${uicom.util.Utilities.getStarsWidth(review.rating)}px;margin-top:3px;">
+                           </div>
+                        </div>
+                        <div class='cleaner_with_divider'>&nbsp;</div>
+                    </div>
+                </div>
+            #{/list}
+            #{if loadMoreSize!= 0&& reviews.length()==loadMoreSize}
+            <div class="loadMoreItems LMHandlerDivLoadMore">Load More Reviews</div>
+            #{/if}
+        #{/if}
+        #{else}
+        <div class="userMessage">There are no reviews available</div>
+        #{/else}

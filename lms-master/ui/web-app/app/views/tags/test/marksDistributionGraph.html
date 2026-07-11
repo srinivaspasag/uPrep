@@ -1,0 +1,43 @@
+%{
+	marksDistribution = _marksDistribution;
+}%
+#{if marksDistribution!=null && marksDistribution.errorCode.isEmpty() && marksDistribution.result.list.length()>0}
+%{
+	distribution = marksDistribution.result.list;
+}%
+<div class="left marksDistribution">
+	<span class="left boldy big14 title">Attempts Marks Distibution</span>
+	<div class="left container">
+		<span class="left blueTextColor big12" style="width:100%;margin:0 0 16px -10px;">% students</span>
+		<div class="left studentPercent">
+			<span class="eachCount">100</span>
+			<span class="eachCount">80</span>
+			<span class="eachCount">60</span>
+			<span class="eachCount">40</span>
+			<span class="eachCount">20</span>
+			<span class="eachCount">0</span>
+		</div>
+		<div class="left barsHolder">
+		#{list items:0..distribution.length()-1, as:'mIndex'}
+		%{
+			mData = distribution.get(mIndex);
+			count = uicom.util.Utilities.calcPercentage(mData.count,marksDistribution.result.totalHits);
+		}%
+			<span class="each">
+				<span class="left relative fullWidth textCenter" style="top:${(100-count)-9}%;">${count}%</span>
+				<span class="bar" style="height:${count}%;top:${(100-count)-9}%" title="No. of students: ${mData.count}"></span>
+			</span>
+		#{/list}
+		</div>
+		<div class="marksPercent">
+		#{list items:0..distribution.length()-1, as:'mIndex'}
+		%{
+			mData = distribution.get(mIndex);
+		}%
+			<span class="eachCount">${Math.round(mData.from)} to ${Math.round(mData.to)}</span>
+		#{/list}
+			<span class="right blueTextColor big12" style="padding:5px 0 0 10px;">Marks</span>
+		</div>
+	</div>
+</div>
+#{/if}

@@ -1,0 +1,137 @@
+<head>
+<style type="text/css">
+    td{
+        border: 0!important;
+    }
+    .nonner{
+        display: none;
+    }
+    .simpleBlackActiveTab{
+        color: green;
+        font-weight: bold;
+    }
+    .instDbtTags li , .instEachTrTopic li{
+        background: #e1ecf4;
+    }
+    .instDbtTags li:hover , .instEachTrTopic li:hover{
+        background: #39739d;
+        color: white;
+        cursor: pointer;
+    }
+    .loadMoreItems{
+        font-size: 14px!important;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    .popover-demo .popover{
+        position: relative;
+        display: inline-block;
+        opacity: 1;
+        /*margin: 0 10px 30px;*/
+        z-index: 0;
+        max-width: inherit!important;
+    }
+    .instAskDbtHolder{
+        margin-left: 0!important;
+        margin-right: 0!important;
+    }
+</style>
+<link href="/public/stylesheets/fileuploader.css" rel="stylesheet">
+#{script src:'o.fileuploader.js', charset:'utf-8' /}
+</head>
+<div class="col-sm-8">
+    <div class="instDoubtsHolder">
+        <div class="instAskDbtHolder card row" style="padding:20px;">
+        <div class="askDoubtBtn visible-xs visible-sm greenButton btn btn-success waves-effect btn-block">&{'ASK_DOUBT'}</div>
+        <div class="popover-demo visible-xs visible-sm p-t-20">
+            <div class="popover bottom">
+                    <div class="arrow"></div>
+                    <h3 class="popover-title">&{'HAVE_DOUBT'}</h3>
+                    <div class="popover-content">
+                        <p>&{'ASK_DOUBT_CAPTION'}</p>
+                    </div>
+            </div>
+        </div>
+            <div class="col-sm-4 hidden-xs hidden-sm askDoubtBtn greenButton btn btn-success waves-effect" style="top:35px;position: relative;">&{'ASK_DOUBT'}</div>
+            <div class="instAskDbtInfo col-sm-8 popover-demo hidden-xs hidden-sm">
+                <div class="popover right">
+                    <div class="arrow"></div>
+                    <h3 class="popover-title">&{'HAVE_DOUBT'}</h3>
+                    <div class="popover-content">
+                        <p>&{'ASK_DOUBT_CAPTION'}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="doubtsFeed">
+            <div class="instFilterDoubts card" style="padding:15px;cursor: pointer;">
+                <span class="mangeDoubtsTab doCStream simpleBlackTab"
+                    data-cs-name="SHOW_RECENT_S-TAB" data-order-by="timeCreated" data-result-type="ALL">&{'TXT_RECENT'}
+                    <span class="sBlckDivi">|</span>
+                </span>
+                <span class="mangeDoubtsTab doCStream simpleBlackTab"
+                    data-cs-name="SHOW_RECENT_S-TAB" data-order-by="mostPopular" data-result-type="ALL">&{'TXT_POPULAR'}
+                    <span class="sBlckDivi">|</span>
+                </span>
+                <span class="mangeDoubtsTab doCStream simpleBlackTab"
+                    data-cs-name="SHOW_RECENT_S-TAB" data-order-by="timeCreated" data-result-type="CREATED">&{'TXT_ASKED'}
+                    <span class="sBlckDivi">|</span>
+                </span>
+                <span class="mangeDoubtsTab doCStream simpleBlackTab" 
+                    data-cs-name="SHOW_RECENT_S-TAB" data-order-by="timeCreated" data-result-type="FOLLOWING">
+                    &{'TXT_FOLLOWING'}
+                </span>
+                <div class="pull-right searchDbtsBtn">
+                    <span class="smally boldy hidden-xs">Search Doubts</span>
+                    <span class="visible-xs"><i class="zmdi zmdi-search" style="font-size: 18px;"></i></span>
+                </div>
+            </div>
+            <ul class="instDoubtSearchedTopics lgi-attrs"></ul>
+            <div class="instDoubtSearchBoxHolder">
+                <div class="instDoubtSearchBox nonner">
+                <div class="input-group TAAdmin">
+                    <span class="input-group-addon">
+                        <i class="zmdi zmdi-search"></i>
+                    </span>
+                    <div class="fg-line">
+                            <input type="text" class="searchDivBox doubtSearchBox doCStream form-control p-l-10" placeholder="Search"/>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="instDoubtsLists">
+                *{#{institute.widgets.doubt /}}*
+            </div>
+        </div>
+        #{askDoubt/}
+    </div>
+</div>
+<div class="instDoubtRightSec col-sm-4">
+</div>
+<div class="cleaner_with_divider">&nbsp;</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".instPageNavigator").find(".active").removeClass("active");
+        $(".instPageNavigator").find(".instNavTab.instDoubtsForum").closest("li").addClass("active");
+        institute.doubts.init(${params.isExtLoad});
+        subjects.init();
+        $('.html-editor').summernote({
+           height: 150
+        });
+        button = $(".note-insert button:nth-child(2)").css("display","none");
+        $(".note-insert").append('<div class="imageClick" style="display:inline-block;"><button type="button" class="btn btn-default btn-sm waves-effect"><i class="fa fa-picture-o"></i></button></div>');
+        $(".imageClick").on("click",imageClick);
+        $(".imageClick").attr("id","file-uploader");
+
+        formulaButton = $(".note-view button:nth-child(1)").addClass("formulaEditor");
+        $(".formulaEditor").on("click",formulaEditor);
+        $("#doubtTitle").on("keyup",function(){
+            if($(this).val().length<=30){
+                $(".doubtTitleHelp").removeClass("nonner");
+            }
+            else{
+                $(".doubtTitleHelp").addClass("nonner");
+            }
+        });
+    });
+</script>

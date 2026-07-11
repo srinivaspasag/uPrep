@@ -1,0 +1,281 @@
+#{if resp.errorCode!=''}
+    #{common.errorCodes resp:resp /}
+#{/if}
+#{else}
+<style type="text/css">
+.targetTopicSelect{
+    height: auto;
+    top: -5px;
+}
+.cmdsPopupBody td:first-child{
+    padding-top: 10px;
+}
+#cmdsPopup, #cmdsPopupAlt{
+    width: 1000px;
+}
+.ATTTTopicName{
+     max-width: 400px;
+}
+.nonner{
+    display: none;
+}
+.noBoardsWarning{
+    font-size: 20px;
+    text-align: center;
+    margin-top: 30px;
+}
+.boardsTable{
+    width: 100%;
+    margin-top: 30px;
+}
+.boardsTable th{
+    height: 40px;
+    font-size: 16px;
+    text-transform: capitalize;
+}
+.parentChildrenData{
+    width: 45%!important;
+}
+.targetChildrenData{
+    width: 45%!important;
+}
+.mappedTo{
+    width: 10%!important;
+}
+.parentCourseBoardChildren,.targetCourseBoardChildren {
+    padding: 10px 3px;
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-top: 1px solid;
+    height: 20px;
+}
+.parentCourseBoardChildren:last-child,.targetCourseBoardChildren:last-child{
+    border-bottom: 1px solid;
+}
+.mappingText{
+   border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-top: 1px solid white;
+    padding: 10px 3px;
+    height: 20px;
+    font-weight: bold;
+    width: 100%;
+}
+.saveMapping{
+    float: right;
+}
+
+</style>
+    %{
+        targetBoardDetails = resp.result.targetBoardDetails;
+        parentBoardDetails = resp.result.parentBoardDetails;
+    }%
+    #{if targetBoardDetails.length() == 0}
+        <div class="redColor noBoardsWarning">No boards found in this organization</div>
+    #{/if}
+    #{else}
+        <table class="boardsTable CTFTable">
+            <thead>
+                <th id="parentBoardName">Learnpedia Boards</th>
+                <th></th>
+                <th id="targetBoardName"></th>
+            </thead>
+            <tbody class="boardsTableBody">
+                <tr>
+                    <td style="width: 45%!important;text-align: center;">
+                        <select class="selectPicker parentBoardDetailsSelect">
+                            <option selected="selected" disabled="true">Choose Boards</option>
+                        #{list items:0..parentBoardDetails.length()-1, as:'index'}
+                            <option data-board='${parentBoardDetails.get(index)}'>
+                                ${parentBoardDetails.get(index).boardName}
+                            </option>
+                        #{/list}
+                        </select>
+                    </td>
+                    <td style="width: 10%!important;"></td>
+                    <td style="width: 45%!important;">
+                        <select class="selectPicker targetBoardDetailsSelect">
+                            <option selected="selected" disabled="true">Choose Boards</option>
+                        #{list items:0..targetBoardDetails.length()-1, as:'index'}
+                            <option data-board='${targetBoardDetails.get(index)}'>
+                                ${targetBoardDetails.get(index).boardName}
+                            </option>
+                        #{/list}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="parentChildrenData">
+                    </td>
+                    <td class="mappedTo"></td>
+                    <td class="targetChildrenData">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="bigGreenButton saveMapping">Submit</div>
+
+        <script type="text/javascript">
+            var parentCourseBoardChildren = [];
+            var targetCourseBoardChildren = [];
+            var parentCourseBoard = {};
+            var targetCourseBoard = {};
+            $(".parentBoardDetailsSelect").on("change",parentBoardDetailsSelectChange);
+            $(".targetBoardDetailsSelect").on("change",targetBoardDetailsSelectChange);
+            $(".targetChildrenData").on("change",".targetTopicSelect",addTargetTopicFromSelect);
+            $(".targetChildrenData").on("click",".ATTTRemoveTag",removeTag);
+            $(".saveMapping").on("click",saveMapping);
+
+
+
+            function parentBoardDetailsSelectChange(){
+                reset();
+                parentCourseBoard = $(".parentBoardDetailsSelect option:selected").data('board');
+                parentCourseBoardChildren = parentCourseBoard.children;
+                for (var i = parentCourseBoardChildren.length - 1; i >= 0; i--) {
+                   $(".parentChildrenData").append("<div class='parentCourseBoardChildren' data-topic = '"+JSON.stringify(parentCourseBoardChildren[i])+"'>"+parentCourseBoardChildren[i].boardName+"</div>")
+               }
+           }
+
+           function targetBoardDetailsSelectChange(){
+             resetTargetChildren();
+             targetCourseBoard = $(".targetBoardDetailsSelect option:selected").data('board');
+             targetCourseBoardChildren = targetCourseBoard.children;
+             if(parentCourseBoardChildren.length == 0){
+                showError("Please select Learnpedia Board first");
+                resetSelectPicker(".targetBoardDetailsSelect");
+                return;
+             }
+             if(targetCourseBoardChildren.length < parentCourseBoardChildren.length){
+                showError("Topic count is less than the selected Course's topic");
+                resetSelectPicker(".targetBoardDetailsSelect");
+                return;
+                }
+                for (var i = parentCourseBoardChildren.length - 1; i >= 0; i--) {
+                   var appendSelectText = addSelectBoxes(targetCourseBoardChildren);
+                   $(".mappedTo").append("<div class='mappingText'>----></div>")
+                   $(".targetChildrenData").append("<div class='targetCourseBoardChildren' data-parent-topic-id='"+parentCourseBoardChildren[i].boardId+"'>"+appendSelectText+"</div>");
+               }
+           }
+
+            function reset(){
+                $(".parentChildrenData").html("");
+                resetTargetChildren();
+                resetSelectPicker(".targetBoardDetailsSelect")
+            }
+
+            function resetTargetChildren(){
+                $(".targetChildrenData").html("");
+                $(".mappedTo").html("");
+                targetCourseBoard = {};
+                targetCourseBoardChildren = [];
+            }
+
+            function removeTag(){
+                var parent = $(this).parent().parent();
+                $(this).parent().remove();
+                parent.append(addSelectBoxes(targetCourseBoardChildren));
+            }
+
+            function resetSelectPicker(selectPicker){
+                var select = $(selectPicker);
+                select.val(select.children(":first").val());
+                $(selectPicker).val($(selectPicker).children(":first").val());
+            }
+
+            function addSelectBoxes(values){
+               var appendSelectText = "<select class='selectPicker targetTopicSelect'>"+
+                                      "<option selected='selected' disabled='true'> Choose topic </option>";
+
+               for (var i = values.length - 1; i >= 0; i--) {
+                appendSelectText += "<option data-topic='"+JSON.stringify(values[i])+"'>" +
+                                        values[i].boardName +
+                                    "</option>";
+                 }
+                 appendSelectText+="</select>";
+                 return appendSelectText;
+             }
+             function addTargetTopicFromSelect(){
+                var selectedTargetTopic = $(this).find("option:selected").data("topic");
+                var topicId = selectedTargetTopic.boardId;
+                var topicName = selectedTargetTopic.boardName;
+                var parentDiv = $(this).parent();
+                var alredySelected = false;
+                $(".targetChildrenData .targetCourseBoardChildren .ATTTTopicNameDiv").each(function(){
+                    if($(this).data("targetTopicId") == topicId){
+                        alredySelected = true;
+                        return;
+                    }
+                });
+                if(alredySelected){
+                    showError("Already selected this topic, Please verify");
+                    resetSelectPicker(".targetTopicSelect");
+                    return;
+                }
+                parentDiv.find(".targetTopicSelect").remove();
+                parentDiv.append(
+                    '<div class="ATTTTopicNameDiv" data-target-topic-id="'+topicId+'">'+
+                    '<span class="ATTTRemoveTopic ATTTRemoveTag ATRemImg"></span>'+
+                    '<span class="ATTTTopicName ATTTItemName">'+topicName+'</span>'+
+                    '</div>');
+            }
+
+         function saveMapping(){
+            var params = {};
+            var hasError = false;
+            params.parentOrgId = $("#parentBoardName").data("parentOrgId");
+            params.sharedToOrgId = $("#targetBoardName").data("targetOrgId");
+            boardMappings = [];
+            var boardMapping = {
+                parentBoardId : "",
+                sharedToBoardId : "",
+                boardType : ""
+            };
+            if(parentCourseBoard == null || parentCourseBoard == undefined || jQuery.isEmptyObject(parentCourseBoard) ||
+                $(".parentCourseBoardChildren").length == 0){
+                showError("Please Select Learnpedia Board");
+                hasError = true;
+                return;
+            }
+            if(targetCourseBoard == null || targetCourseBoard == undefined || jQuery.isEmptyObject(targetCourseBoard) ||
+                $(".targetCourseBoardChildren").length == 0){
+                var targetBoardName = $("#targetBoardName").text();
+                showError("Please Select "+targetBoardName);
+                hasError = true;
+                return;
+            }
+            boardMapping.parentBoardId = parentCourseBoard.boardId;
+            boardMapping.sharedToBoardId = targetCourseBoard.boardId;
+            boardMapping.boardType = "COURSE";
+            boardMappings.push(boardMapping);
+            $(".targetCourseBoardChildren").each(function(){
+                boardMapping = {};
+                var parentTopicId = $(this).data("parentTopicId");
+                var targetTopicId = $(this).find(".ATTTTopicNameDiv").data("targetTopicId");
+                if(targetTopicId == null || targetTopicId == undefined){
+                    showError("Please Select all topics");
+                    hasError = true;
+                    return;
+                }
+                boardMapping.parentBoardId = parentTopicId;
+                boardMapping.sharedToBoardId = targetTopicId;
+                boardMapping.boardType = "TOPIC";
+                boardMappings.push(boardMapping);
+            });
+            params.boardMappings = boardMappings;
+            if(!hasError){
+                console.log(params);
+                vReq.post("/QrBoards/saveMapping",params,function(data){
+                    console.log(data);
+                    if(data.errorCode != null){
+                        showError(data.errorMessage);
+                    }
+                    if(data.result.saved){
+                        shareQuestions();
+                    }
+                });
+            }
+         }
+        </script>
+    #{/else}
+#{/else}

@@ -1,0 +1,487 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UPrep</title>
+  <meta name="google-site-verification" content="6DhL-KLdd2mI5o_YprF32lNPpE56x8ig7Yc1SKtlQ-4" />
+  <meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+  <meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+  <meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+ <!--  <meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description"> -->
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/72.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicons/72.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicons/72.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="mask-icon" href="assets/images/favicons/72.png" color="#348c26">
+  <meta name="theme-color" content="#ffffff">
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/sweetalert2.min.css" rel="stylesheet">
+  <link href="assets/css/material-design-iconic-font.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Barlow:300,400,500,600,700,800,900&display=swap"
+        rel="stylesheet">
+  <link href="assets/css/app_1.min.css" rel="stylesheet">
+  <link href="assets/css/app_2.min.css" rel="stylesheet">
+  <link href="assets/css/material_style.css" rel="stylesheet">
+  <link href="assets/css/aboutUs.css" rel="stylesheet">
+</head>
+
+<body>
+  <header class="clearfix" data-ma-theme="blue" id="header" style=" min-height: 80px;">
+  <ul class="h-inner" style="padding: 0;">
+    <li class="hi-trigger ma-trigger" data-ma-action="sidebar-open" data-ma-target="#sidebar" style="top: 10px;">
+      <div class="line-wrap">
+        <div class="line top" style="background: black;"></div>
+        <div class="line center" style="background: black;" ></div>
+        <div class="line bottom" style="background: black;"></div>
+      </div>
+    </li>
+    <li class="hi-logo">
+      <a class="m-l-10" href="/"><img class="img-responsive" src="assets/images/uprep.png" style="width: 145px;top: 3px;left: 12px;position: relative;" id="banner" alt="logo"></a>
+    </li>
+    <li class="pull-left">
+      <div class="hi-menu" style="margin-left: 2em">
+        <nav class="ha-menu">
+          <ul>
+            <li id="home" >
+              <a href="/">Home</a>
+            </li>
+            <li id="students" class="">
+              <a href="/students">Students</a>
+            </li>
+                        <li id="programs" class="navlink dropdown ">
+              <a href="/packages">Programs<i class="caret"></i></a>
+              <ul class="dropdown-menu navlink-menu">
+                                                                                      <li><a href="/packages/JEE">JEE</a></li>
+                                                      <li><a href="/packages/NEET">NEET</a></li>
+                                                  <li><a href="/packages">ALL PROGRAMS</a></li>
+              </ul>
+            </li>
+                        <li id="exams"  class="dropdown  nonner" style="left: 8px;position: relative;cursor: pointer;">
+              <a href="/exams">Exams<i class="caret"></i></a>
+              <ul class="dropdown-menu navlink-menu">
+                <li><a href="/exam/aiims">AIIMS</a></li>
+                <li><a href="/exam/jeemain">JEE Main</a></li>
+                <li><a href="/exam/jeeadvanced">JEE Advanced</a></li>
+                <li><a href="/exam/neet">NEET</a></li>
+                <li><a href="/exam/bitsat">BITSAT</a></li>
+              </ul>
+            </li>
+            <li id="blog" class="nonner" style="left: 4px;position: relative;">
+              <a href="http://blog.learnpedia.in">Blog</a>
+            </li>
+            <!-- <li id="institutes" class="">
+              <a href="/institutes">Institutes</a>
+            </li> -->
+          </ul>
+        </nav>
+      </div>
+    </li>
+    <li class="pull-right   nonner " style="top: 15px; position: relative;right:60px;" id="buttonContainer">
+      <div class="hi-menu" style="margin-left: 2em">
+        <nav class="ha-menu" style="right: 3px;position: relative;">
+          <button class="btn btn-xs btn-light-green" id="signbtn" onclick="window.location.href='/signup'" style="top:-4px;border-radius:4px; width: 100px;height: 30px;font-weight:500!important;line-height: 1px;font-weight: normal;right:10px;font-size: 13px;box-shadow: none!important;" type="button">Signup</button>
+          <button class="btn btn-xs btn-light-green btn-bg" onclick="window.location.href='/login'" style="top:-4px;border-radius: 4px;width: 100px;height: 30px;line-height: 1px;font-weight:500!important;left:6px;font-weight:normal;background: #62b23b;font-size: 13px;box-shadow: none!important;" type="button">Login</button>
+        </nav>
+      </div>
+    </li>
+  </ul>
+</header>  <section id="main">
+
+    <div class="sideBarToggle" style="display: none;">
+  <aside class="sidebar sidebar-alt c-overflow" id="sidebar" style="top: 60px;">
+    <ul class="main-menu">
+      <li >
+        <a href="/"><i class="zmdi zmdi-home"></i> Home</a>
+      </li>
+            <li class="sub-menu ">
+        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-apps"></i> Programs</a>
+        <ul>
+                                                        <li><a href="/packages/JEE">JEE</a></li>
+                                    <li><a href="/packages/NEET">NEET</a></li>
+                                <li><a href="/packages">ALL PROGRAMS</a></li>
+      </ul>
+    </li>
+        <li class="sub-menu  nonner">
+      <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-assignment-o"></i>Exams</a>
+      <ul>
+        <li ><a href="/exam/aiims">AIIMS</a></li>
+        <li ><a href="/exam/jeemain">JEE Main</a></li>
+        <li ><a href="/exam/jeeadvanced">JEE Advanced</a></li>
+        <li ><a href="/exam/neet">NEET</a></li>
+        <li ><a href="/exam/bitsat">BITSAT</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="http://blog.learnpedia.in"><i class="zmdi zmdi-blogger"></i> Blog</a>
+    </li>
+    <!-- <li class="">
+        <a href="/institutes"><i class="zmdi zmdi-graduation-cap"></i> Institutes</a>
+      </li> -->
+      <li class="">
+        <a href="/students"><i class="zmdi zmdi-graduation-cap"></i> Students</a>
+      </li>
+    <li  >
+      <a href="/signup"><i class="zmdi zmdi-accounts-add"></i> Signup</a>
+    </li>
+    <li  >
+      <a href="/login"><i class="zmdi zmdi-accounts"></i> Login</a>
+    </li>
+  </ul>
+</aside>
+</div>
+    <section class="about" >
+      <div class="container">
+        <div class="row about-heading">
+          <div class="text-center about-heading">About Us</div>
+        </div>
+        <div class="row">
+          <div class="text-center about-description">Learnpedia is an edu-tech company that promises to make learning a fun and fascinating experience for students preparing to write various competitive exams. Its flagship products ScoreJEE & ScoreNEET are already redefining preparation for JEE & NEET.Headquartered in Hyderabad, Learnpedia is promoted by seasoned academicians with deep rooted understanding of the test-prep industry and a compelling passion to nurture next-gen talent. It aims to bridge all the gaps in traditional competitive exam preparation by providing engaging and interactive digital content.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vision">
+      <div class="container">
+        <div class="row">
+          <div class="heading text-center">
+            Vision
+          </div>
+          <div class="description">
+            "To be a leader in providing Tech enabled futuristic educational solutions to maximise student potential and build successful careers"
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="portfolio" >
+     <div class="container" id="team-info">
+      <div class="row" style="padding: 20px;">
+        <div class="text-center c-white heading">
+          Meet The Team
+        </div>
+        <div class="description">
+          Learnpedia is led by a team of spirited young professionals who firmly believe that education, driven via technology, will bring about the next wave of growth in the country.
+        </div>
+      </div>
+      <div class="row">
+       <div class="col-lg-12 text-center">
+       </div>
+     </div>
+     <div class="row">
+       <div class="col-md-6 col-sm-6 portfolio-item">
+        <div class="portfolio-link">
+         <div class="portfolio-hover ">
+          <div class="portfolio-hover-content" style="top:25%;">
+           University of Oxford – Said alumnus with 18+ yrs experience in education sector with companies such as IMS and Career Launcher. A serial entrepreneur with domain expertise in test-prep market and he loves building brands & teams.
+           <div id="social" style="" class="align-text-bottom">
+            <center>
+             <a href="http://in.linkedin.com/in/krish77" target="_blank"><i class="zmdi zmdi-linkedin-box"></i></a>
+           </center>
+         </div>
+       </div>
+     </div>
+     <img src="/public/outerAssets/images/team/team-43.jpg" class="img-responsive" alt="">
+   </div>
+   <div class="portfolio-caption">
+     <h4 style="color:white;font-weight: normal;">Krishna Rao Akula</h4>
+     <p class="text-muted" style="color:white;">Co-Founder &amp; CEO</p>
+   </div>
+ </div>
+ <div class="col-md-6 col-sm-6 portfolio-item ">
+  <div class="portfolio-caption">
+   <h4 style="color:white;font-weight: normal;">Deepak Bunde</h4>
+   <p class="text-muted" style="color:white;">Co-Founder &amp; COO</p>
+ </div>
+ <div class="portfolio-link">
+  <div class="portfolio-hover">
+    <div class="portfolio-hover-content" style="top:25%;">
+     <center>
+      <a href="https://www.linkedin.com/in/deepakbunde" target="_blank"><i class="zmdi zmdi-linkedin-box"></i></a>
+    </center>
+    IIM Indore alumnus with 7+ years of experience in building and leading young teams. He is adept at scaling businesses and with domain expertise in the non-formal digital education, he is keen on making Learnpedia a household name!
+  </div>
+</div>
+<img src="/public/outerAssets/images/team/team-42-42.jpg" class="img-responsive" alt="">
+</div>
+</div>
+</div>
+</div>
+</section> 
+
+
+<section class="advisors" id="portfolio-page">
+  <div class="container">
+    <div class="row">
+      <div class="text-center heading">Our Advisors</div>
+      <div class="advisors-description">
+        Veterans with diverse experience across industries guide us with their valuable insights and aid us in maximizing our potential.
+      </div>
+    </div>
+    <div class="row advisor-block">
+      <div class="card">
+        <div class="card-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4">
+                <img class="img-responsive img-circle avatar-img img-advisor" style="" src="/public/outerAssets/images/team/nikhilj.jpg">
+              </div>
+              <div class="col-sm-8">
+                <div class="advisor-name">
+                  Nikhil Jaipurkar
+                </div>
+                <div class="advisor-content">
+                  Nikhil Jaipurkar is an Entrepreneur with 14 years of startup work experience post his MBA from IIM Ahmedabad. He has worked across sectors such as education, retail, manufacturing, finance & renewable energy. 
+                  <br><br>
+                  Nikhil is advising Learnpedia in creating engaging promotional video content across social media with an intention to drive the B2C business.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row advisor-block">
+      <div class="card">
+        <div class="card-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4">
+                <img class="img-responsive img-circle avatar-img img-advisor" src="/public/outerAssets/images/team/Arthur.png">
+              </div>
+              <div class="col-sm-8">
+                <div class="advisor-name" >
+                  Arthur Bovsky
+                </div>
+                <div class="advisor-content">
+                  Arthur is a world-class marketer and business veteran from U.S. with over three decades of experience. He is the founder and CEO of several successful U.S. and Canadian companies in the health products industry. Simultaneously, he is now helping Learnpedia to adapt many of the proven-successful U.S. marketing ideas and techniques to the Indian market.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row advisor-block">
+      <div class="card">
+        <div class="card-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4">
+                <img class="img-responsive img-circle avatar-img img-advisor" src="/public/outerAssets/images/team/yousuf.jpg">
+              </div>
+              <div class="col-sm-8">
+                <div class="advisor-name">
+                  Mohammed Yousuf
+                </div>
+                <div class="advisor-content">
+                  Yousuf is an entrepreneur with over two decades of progressive experience in IT. He has worked with many premier engineering colleges and MNCs across India in bridging the gap between industry and academics. He recognises the potential of technology in improving education in India and is passionate about playing an active role in the transformation.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row advisor-block">
+      <div class="card">
+        <div class="card-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4">
+                <img class="img-responsive img-circle avatar-img img-advisor" src="/public/outerAssets/images/team/nikhilm.jpg">
+              </div>
+              <div class="col-sm-8">
+                <div class="advisor-name">
+                  Nikhil Mulchandani
+                </div>
+                <div class="advisor-content">
+                  Nikhil Mulchandani (Managing Partner, Ixora Ventures) has worked in the M&A domain in the MENA region with leading multinationals in energy infrastructure and also with KPMG Corporate Intelligence. Nikhil holds a joint degree in Law & Business from University of Warwick and a Master’s degree from IEBS Madrid.
+                  <br><br>
+                  At Ixora Ventures he focuses on lead analysis, deal structuring and portfolio management. Ixora Ventures is focused on seed and early stage companies in technology, education, healthcare and aerospace.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row advisor-block">
+      <div class="card">
+        <div class="card-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4">
+                <img class="img-responsive img-circle avatar-img img-advisor" src="/public/outerAssets/images/team/aravind.jpg">
+              </div>
+              <div class="col-sm-8">
+                <div class="advisor-name">
+                  Aravind Nayak
+                </div>
+                <div class="advisor-content">
+                  Aravind is a veteran in the field of communications and signal processing in the semiconductor industry. He works out of Pennsylvania.
+                  He is passionate about Learnpedia's initiatives in revolutionizing learning in India through technological initiatives. 
+                  Aravind holds a B.Tech in Electrical Engineering from IIT Madras and a PhD from Georgia Institute of Technology.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Footer Section    -->
+<link rel="stylesheet" href="/public/outerAssets/assets/css/footer.css">
+
+<footer> 
+  <div class="footer" style="margin-bottom: -110px;padding-bottom: 0px;width: 100%;">
+    <div class="container ">
+      <div class="row" style="margin-top: 50px;">
+                <div class="col-xs-6 col-sm-3">
+          <ul>
+            <li>
+              <a class="heading" href="/packages">Programs</a>
+            </li>
+                                                                  <li ><a class="sub-menu" href="/packages/JEE">JEE</a></li>
+                                          <li ><a class="sub-menu" href="/packages/NEET">NEET</a></li>
+                                      <li ><a class="sub-menu" href="/packages">ALL PROGRAMS</a></li>
+          </ul>
+        </div>
+                <div class="col-xs-6 col-sm-3">
+          <ul>
+            <li>
+              <a class="heading">Resources</a>
+            </li>
+            <li style="margin-top: 10px;">
+              <a class="sub-menu" href="http://blog.learnpedia.in">Blog</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="https://www.youtube.com/channel/UCpSlhIcpbaEaUYBhw2D0YQA">Videos</a>
+            </li>
+            <li>
+              <a class="sub-menu" style="color: rgb(27, 27, 27);pointer-events: none;cursor: default;" href="/faqs">Faqs</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-6 col-sm-3 nonner">
+          <ul>
+            <li>
+              <a class="heading" href="/exams">Exams</a>
+            </li>
+            <li style="margin-top: 10px;">
+              <a class="sub-menu" href="/exam/aiims">AIIMS</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/exam/neet">NEET</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/exam/bitsat">BITSAT</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/exam/jeemain">JEE Mains</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/exam/jeeadvanced">JEE Advanced</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+          <ul>
+            <li>
+              <a class="heading">Company</a>
+            </li>
+            <li style="margin-top: 10px;">
+              <a class="sub-menu" href="/about">About</a>
+            </li>
+            <li>
+              <!-- <a class="sub-menu" href="/institutes">Institutes</a> -->
+              <a class="sub-menu" href="/students">Students</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/franchise">Partner Us</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/about#team-info">Team</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/about#portfolio-page">Advisors</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/contactus">Contact Us</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/privacypolicy">Privacy Policy</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/terms">Terms of Use</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-12 col-sm-3 text-center" style="padding: 5px 65px;">
+          <div class="heading">
+            Contact Us
+          </div>
+          <div class="address c-white m-t-20">
+            <div>
+              6-3-596/69, Naveen Nagar,
+              Behind Hotel Taj Krishna, Khairathabad-500034,
+              Hyderabad , Telangana.
+            </div>
+            <div class="m-t-20">
+              info@learnpedia.in
+            </div>
+            <div class="m-t-20">
+              +91 8099777711
+            </div>
+          </div>
+          <div class="m-t-20">
+            <a title="facebook" href="https://www.facebook.com/learnpediaIN">
+              <i class="zmdi zmdi-facebook-box socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+            <a title="youtube" href="https://www.youtube.com/channel/UCpSlhIcpbaEaUYBhw2D0YQA">
+              <i class="zmdi zmdi-youtube-play socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+            <a title="twitter" href="https://twitter.com/learnpediaIN?lang=en">
+              <i class="zmdi zmdi-twitter socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+            <a title="blog" href="http://blog.learnpedia.in">
+              <i class="zmdi zmdi-blogger socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+            <a title="linkedin" href="https://www.linkedin.com/company/learnpedia?trk=tyah&amp;trkInfo=clickedVertical%3Acompany%2CclickedEntityId%3A2775301%2Cidx%3A2-1-3%2CtarId%3A1449744529921%2Ctas%3Alearnpedia" target="_blank">
+              <i class="zmdi zmdi-linkedin-box socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="row m-t-10 f-14 text-center"> 
+        <p>
+          2017 &copy; Learnpedia Edutech Pvt Ltd. ALL Rights Reserved
+        </p>
+      </div>
+    </div>
+  </div>
+</footer></section>
+</body>
+<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js">
+</script> 
+<script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js">
+</script>
+<script src="/public/assets/theme1/js/app.min.js">
+</script>
+<script type="text/javascript" src="/public/javascripts/dropdown-on-hover.js"></script>
+<script type="text/javascript" src="https://web.mxradon.com/t/Tracker.js"></script>
+<script type="text/javascript">
+  pidTracker('17140');
+</script>
+</html>

@@ -1,0 +1,84 @@
+#{extends 'main.html' /}
+#{set title:'Tools' /}
+<div class="toolsPageHeading">Create Pricing Plan</div>
+<div id="createPricingPlanForm">
+    <table class="pricingPlanTable">
+        <tr>
+            <td>Name*</td>
+            <td>
+                <div class="">
+                    <input type="text" name="name" class="formInput"/>
+                </div>                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Plan Type*
+            </td>
+            <td>
+                <div class="">
+                    <input type="radio"  name="peruser" value="peruser" checked/>
+		    <span class="alignTop">User Based License</span>
+                </div>                
+                <div class="">
+                    <input type="radio"  name="peruser" value="notperuser"/>
+		    <span class="alignTop">Non-User Based License</span>
+                </div>                
+            </td>
+        </tr> 
+        <tr class="perUserAmt">
+            <td>
+                Cost of the Plan Per User Per Month(in $)*
+            </td>
+            <td>
+                <div class="">
+                    <input type="text" name="cost" class="costPerUser"/>
+                </div>                
+            </td>
+        </tr>                 
+        <tr class="lumpSumUsersAmt" style="display: none">
+            <td>
+                Maximum Number of users*
+            </td>
+            <td>
+                <div>
+                    <input type="text" name="users" class="usersCount"/>
+                </div> 
+            </td>
+        </tr> 
+        <tr class="lumpSumUsersAmt" style="display: none">
+            <td>
+                Cost Per user if the users exceed limit(in $)*
+            </td>
+            <td>
+                <div>
+                    <input type="text" name="users" class="usersLimitExceedAmt"/>
+                </div> 
+            </td>
+        </tr>         
+        <tr class="lumpSumUsersAmt" style="display: none">
+            <td>
+                Cost of the Plan Per Month(in $)*
+            </td>
+            <td>
+                <div class="">
+                    <input type="text" name="cost" class="lumpSumCost"/>
+                </div>                
+            </td>
+        </tr> 
+        <tr>
+            <td>
+                Description  
+            </td>
+            <td>
+                <div class="">
+                    <textarea name="desc" class="formTextarea"></textarea>
+                </div>                
+            </td>
+        </tr>            
+    </table>
+    <input type="submit" value="Submit"  class="blueButton createPricingPlanSubmit"/>
+</div>
+<script type="text/javascript">
+    $("input[name=peruser]").eq(0).prop("checked",true);
+</script>

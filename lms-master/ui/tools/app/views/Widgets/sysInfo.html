@@ -1,0 +1,139 @@
+#{extends 'main.html' /}
+#{set title:'Tools:Release Info' /}
+<style type="text/css">
+    #releaseInfoPage {
+        font: 17px Times New Roman;
+    }
+    #releaseInfoPage table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #releaseInfoPage tr:nth-of-type(2n+1) {
+        background: none repeat scroll 0 0 #EEEEEE;
+    }
+
+    #releaseInfoPage th {
+        background: none repeat scroll 0 0 #333333;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    #releaseInfoPage td {
+        font-size: 18px;
+    }
+
+    #releaseInfoPage td,#releaseInfoPage th {
+        border: 1px solid #CCCCCC;
+        padding: 15px 6px;
+        text-align: left;
+    }
+
+    #releaseInfoPage .errorMessage {
+        color: #888888;
+        font-size: 13px;
+    }
+
+    #releaseInfoPage #fetchTime {
+        float: right;
+        font-size: 13px;
+        font-weight: normal;
+        margin-top: -18px;
+    }
+    .upDownImg{
+        margin-left: 7px;
+        display: none;
+    }
+    .orderedTh .upDownImg{
+        display: inline-block;
+    }
+    .ascOrder .upDownImg{
+        transform: rotate(180deg);
+    }
+</style>
+<div id=releaseInfoPage>
+    <div style="font-size: 30px;">Release Info</div>
+    <span id=fetchTime>Last updated at <label>${new
+            Date().format('dd/MM/yy hh:mm:ss')}</label>
+    </span>
+    <table style="margin-bottom: 30px;" id="releaseInfoTable">
+        <thead>
+            <tr>
+                <th>Service Name
+                    <img src="/public/images/downArrowWhite.png" class='upDownImg'></th>
+                <th>Build Version<img src="/public/images/downArrowWhite.png" class='upDownImg'></th>
+                <th>httpport<img src="/public/images/downArrowWhite.png" class='upDownImg'></th>
+                <th>Host Name<img src="/public/images/downArrowWhite.png" class='upDownImg'></th>
+                <th>Location<img src="/public/images/downArrowWhite.png" class='upDownImg'></th>
+            </tr>
+        </thead>
+        <tbody id="sysInfoTBody">#{include
+            'Widgets/sysInfoLatest.html' /}
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        var fetchTime = $("#fetchTime label");
+        var sysInfoTBody = $("#sysInfoTBody");
+        var releaseInfoTable=$("#releaseInfoTable");
+        $("#releaseInfoMenu").addClass("activeMenuItem");
+
+
+        var sortTable = function(tdIndex, order) {
+            var sysInfoTBody = $("#sysInfoTBody");
+            var rows = $("#sysInfoTBody").children("tr");
+            var store = [];
+            var inactiveStore = [];
+            for (var i = 0, len = rows.length; i < len; i++) {
+                var row = rows.eq(i);
+                var cell = row.children().eq(tdIndex);
+                if (cell.length === 0 || cell.hasClass("errorMessage")) {
+                    inactiveStore.push(row);
+                } else {
+                    var sortText = cell.text();
+                    store.push({row: row, sortText: sortText});
+                }
+
+            }
+            store.sort(function(x, y) {
+                if (order === "ASC") {
+                    return x.sortText > y.sortText;
+                } else {
+                    return x.sortText < y.sortText;
+                }
+            });
+            sysInfoTBody.html("");
+            for (var i = 0, len = store.length; i < len; i++) {
+                sysInfoTBody.append(store[i].row);
+            }
+            for (var i = 0, len = inactiveStore.length; i < len; i++) {
+                sysInfoTBody.append(inactiveStore[i]);
+            }
+        };        
+        releaseInfoTable.on("click", "th", function() {
+            sortThisTh($(this));
+        });
+        var sortThisTh=function(th){
+            var index = th.index();
+            var order = "ASC";
+            var finalClass = "ascOrder";
+            var ths = releaseInfoTable.find("th");
+            if (th.hasClass("ascOrder")) {
+                order = "DSC";
+                finalClass = "dscOrder";
+            }
+            ths.removeClass("ascOrder orderedTh dscOrder");
+            th.addClass("orderedTh " + finalClass);
+            sortTable(index, order);            
+        };
+        
+        sortThisTh(releaseInfoTable.find("th").first());
+        var fetchLatestSysInfo = function() {
+            $.get("/Widgets/sysInfoLatest", function(data) {
+                sysInfoTBody.html(data);
+                sortThisTh(releaseInfoTable.find("th").first());
+                fetchTime.text(new Date());
+            });
+        };
+        setInterval(fetchLatestSysInfo, 30000);        
+    </script>
+</div>

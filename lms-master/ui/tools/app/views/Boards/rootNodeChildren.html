@@ -1,0 +1,15 @@
+    #{if boards.result.list.length()>0}
+    %{
+        board=boards.result.list.get(0);
+        childNodes=board.children;
+    }%
+    #{if childNodes.length()>0}
+    #{printBoardNodes childNodes : childNodes , index : 1 , parentId : params.uiBoardId /}
+    #{/if}
+    #{else}
+    <h4>No children found</h4>
+    #{/else}
+    #{/if}
+    #{else}
+    <h4>No children found</h4>
+    #{/else}

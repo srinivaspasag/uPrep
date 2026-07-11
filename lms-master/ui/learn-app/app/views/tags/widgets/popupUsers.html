@@ -1,0 +1,33 @@
+#{if !users.equals(null) && users.errorCode.isEmpty() && users.result.has('list') && users.result.list.length()>0}
+    #{list items:0..users.result.list.length()-1,as:'index'}
+    %{
+        user = users.result.list.get(index);
+    }%
+    #{if !user.equals(null)}
+    %{
+        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+    }%
+    <div class="media">
+        <div class="pull-left">
+            <a class="${getUserClassAndUrl.className} doCStream closeVPopup" data-user-id="${getUserClassAndUrl.id}" data-cs-name="USER_FULLNAME">
+                    <img class="instUserPic lgi-img" src="${user.thumbnail}" alt="&{'IMG_NA'}"/>
+            </a>
+        </div>
+            #{memberName user : user , getUser : getUserClassAndUrl , timeCreated:"" /}
+    </div>
+    #{/if}
+    #{else}
+        <span class="memberName"><b>Anonymous</b></span>
+    #{/else}
+
+    #{/list}
+    %{
+        moreCount = Integer.parseInt(users.result.totalHits.toString()) - (Integer.parseInt(params.start.toString())+Integer.parseInt(params.size.toString()));
+    }%
+    #{if moreCount > 0 }
+        <div><a class="doCStream loadMorePopupUsers" name="LOAD_MORE_USERS">Load ${moreCount} Users More...</a></div>
+    #{/if}
+#{/if}
+#{else}
+    <div>None</div>
+#{/else}

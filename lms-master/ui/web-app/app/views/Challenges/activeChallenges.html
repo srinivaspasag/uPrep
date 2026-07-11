@@ -1,0 +1,29 @@
+%{
+        facet=challenges.result.facet;
+        if(facet.has('statusFacet')&&facet.statusFacet.has('active'))active=facet.statusFacet.active;
+        else active=0;
+
+        if(facet.has('statusFacet')&& facet.statusFacet.has('ended'))ended=facet.statusFacet.ended;
+        else ended=0;
+        
+        attempted=facet.attemptFacet.count;
+
+
+        if(facet.has('pointStatFacet')&&facet.pointStatFacet.has('total'))pointsForGrabs=facet.pointStatFacet.total;
+        else pointsForGrabs=0;
+
+    challenges=challenges.result.list;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+<div class="LMHandlerDiv" data-callback="ACTIVE_CHALLENGES" data-widget="ACTIVE_CHALLENGES_HOLDER">
+    #{challenges.challengeItems target:'ACTIVE_CHALLENGES',challenges:challenges,loadMoreSize:loadMoreSize/}
+</div>
+<script type="text/javascript">
+    $(function(){
+        try{
+            vChallenges.cpTabCbFns["ACTIVE_CHALLENGES"]({stats:{active:"${active}",closed:"${ended}",attempted:"${attempted}",
+                pointsForGrabs:"${pointsForGrabs}",nowActive:"${active}"}});
+        }catch(err){}       
+    });
+</script>

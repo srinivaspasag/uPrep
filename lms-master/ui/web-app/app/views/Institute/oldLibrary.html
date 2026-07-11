@@ -1,0 +1,199 @@
+#{if memberInfo.errorCode == "" && memberInfo.result.has('programmes') && memberInfo.result.programmes.length()>0}
+<div class="bodyWhiteBg" style="min-height:800px;overflow-x:hidden;width:100%;">
+  <div class="instLibraryHolder CSWidget" widget-name="LIBRARY">
+	<div class="pageHolderM">
+		<div class="instLibrarySec">
+		#{if params.userRole=="PROFESSOR"}
+			%{
+				progs = memberInfo.result.programmes;
+				prog1 = progs.get(0);
+			}%
+			<div class="vselect vselectHide instLibarySelBatch vDropDown" title="Select Programme" 
+				onstatechange="instLibraryBatchChanged" data-value="${prog1._id}">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText big14" readonly="readonly" 
+						value="${prog1.name}"/>
+					<span class="dropDownIcon noUserSelect"></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+					#{list items:0..progs.length()-1,as:'pIndex'}
+					    <span class="vSelectEach" data-value="${progs.get(pIndex)._id}"
+						title="Programme Name : ${progs.get(pIndex).name} (${progs.get(pIndex).stream})">
+							${progs.get(pIndex).name} (${progs.get(pIndex).stream})</span>
+					#{/list}
+					</div>
+				</div>
+			</div>
+		#{/if}
+		#{else}
+			%{
+				progs = memberInfo.result.programmes;
+				prog1 = progs.get(0);
+				centers = prog1.centers;
+				center1 = centers.get(0);
+				center1Sec1 = center1.sections.get(0);
+			}%
+			<div class="vselect vselectHide instLibarySelBatch vDropDown" 
+				onstatechange="instLibraryBatchChanged" style="width:160px;" 
+				title="My Batch : ${prog1.name} (${prog1.stream}), ${center1.name} , ${center1Sec1.name}" 
+				data-value="${prog1._id}" data-section="${center1Sec1.name}" data-center="${center1.name}">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText big14" readonly="readonly" 
+					   value="${prog1.name} (${prog1.stream}), ${center1.name} , ${center1Sec1.name}"/>
+					<span class="dropDownIcon noUserSelect"></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+					#{list items:0..progs.length()-1,as:'pIndex'}
+					%{ prog = progs.get(pIndex); }%
+					   #{list items:0..prog.centers.length()-1,as:'cIndex'}
+					   %{ center = prog.centers.get(cIndex); }% 
+						#{list items:0..center.sections.length()-1,as:'sIndex'}
+					   	%{ section = center.sections.get(sIndex); }% 
+						<span class="vSelectEach" data-value="${progs.get(pIndex)._id}"
+						  title="Batch: ${prog.name} (${prog.stream}), ${center.name} , ${section.name}">
+							${prog.name} (${prog.stream}), ${center.name} , ${section.name}</span>
+						#{/list}
+					   #{/list}
+					#{/list}
+					</div>
+				</div>
+			</div>
+		#{/else}
+			<!-- Not Applicable as per backend as total count difficult to find out
+			*{<div class="right">
+				<span class="left eachInstDetail greyTextColor centerText">
+					<font class="big16">230</font>
+					<font class="">Questions</font>
+				</span>	
+				<span class="left eachInstDetail greyTextColor centerText">
+					<font class="big16">230</font>
+					<font class="">Playlists</font>
+				</span>	
+				<span class="left eachInstDetail greyTextColor centerText">
+					<font class="big16">230</font>
+					<font class="">Documents</font>
+				</span>	
+				<span class="left eachInstDetail greyTextColor centerText">
+					<font class="big16">230</font>
+					<font class="">Videos</font>
+				</span>	
+				<span class="left eachInstDetail greyTextColor centerText">
+					<font class="big16">230</font>
+					<font class="">Tests</font>
+				</span>	
+			</div>}*-->
+        		<div class="cleaner_with_divider">&nbsp;</div>
+		</div>
+		<div class="absolute instLibararyControls">
+		    <div class="absolute instLibSlideHolder">
+			<div class="absolute instLibSlide" style="left:0px;">
+				*{#{include 'tags/institute/library/subjectBar.html'/}}*
+			</div>
+			<div class="absolute instLibSlide" style="left:1002px;">
+				*{#{include 'tags/institute/library/topicsBar.html'/}}*
+			</div>
+			<div class="absolute instLibSlide" style="left:2004px;">
+				#{include 'tags/institute/library/subTopicsBar.html'/}	
+			</div>
+        		<div class="cleaner_with_divider">&nbsp;</div>
+		    </div>
+		    <div class="absolute instLibPrevSlide nonner doCStream" name="PREV_SLIDE" title="Previous Slide"></div>
+		</div>
+		<div class="relative" style="height:255px;"></div>
+	</div>
+  </div>
+  <div class="instLibCenter">
+  	<div class="instLibCenterInitial absolute">
+		<div class="centerText absolute fullWidth">Select a Subject to view content</div>
+  	</div>
+	<div class="pageHolderM relative nonner">
+		<div class="instLibNavig">
+			<div class="upNavBarArrow"></div>
+			<span class="absolute big24" id="instLibNavBar">
+				<span class="instLibSelSubName"></span> 
+				<span class="otherVars"></span> 
+				<span class="instLibTopicName"></span> 
+				<span class="instLibSubTopicName big18"></span> 
+			</span>
+		</div>
+		<div class="relative instLibBottom">
+			<div class="left instLibFacetHolder">
+				<div class="showContentBy relative CSWidget" data-widget="LIBRARY_FACET_SHARE_BY">
+					<div class="big14 boldy">Show</div>
+					<div class="blueTextColor">
+						<input type="radio" name="instLibFilterBy" checked="checked"
+							data-share-by="ALL" class="doCStream"/>
+						<span>All</span>
+					</div>
+					<div>
+						<input type="radio" name="instLibFilterBy"
+							data-share-by="INSTITUTE" class="doCStream"/>
+						<span>Added by Institute</span>
+					</div>
+					<div>
+						<input type="radio" name="instLibFilterBy"
+							data-share-by="MEMBERS" class="doCStream"/>
+						<span>Shared by Others</span>
+					</div>
+					<div>
+						<input type="radio" name="instLibFilterBy"
+							data-share-by="ME" class="doCStream"/>
+						<span>My Saved</span>
+					</div>
+				</div>
+				<div class="rearrangeBy relative CSWidget" data-widget="LIBRARY_FACET_ORDER_BY">
+					<div class="big14 boldy">Rearrange By</div>
+					<div class="blueTextColor">
+						<input type="radio" name="instLibRearrangeBy" checked="checked" 
+							data-order-by="timeCreated" class="doCStream"/>
+						<span>Recently Added First</span>
+					</div>
+					<div>
+						<input type="radio" name="instLibRearrangeBy" data-order-by="views" 
+							class="doCStream"/>
+						<span>Most Popular First</span>
+					</div>
+				</div>
+				<div class="instLibSubSubTopics nonner">
+					<div class="big14 boldy">Sub sub-topics</div>
+					<div class="instLibFacetAllSubSubTopic blueTextColor">
+						<input type="checkbox" checked="checked"/>
+						<span>All</span>
+					</div>
+					<div class="instLibFacetSubSubTopic">
+					    <span class="instLibFacetSST">
+						<input type="checkbox"/>
+						<span class="SSTName"></span>
+					    </span>
+					</div>
+				</div>
+			</div>
+			<div class="left instLibContentHolder">
+				#{include 'tags/institute/library/home.html'/}	
+			</div>
+        		<div class="cleaner_with_divider">&nbsp;</div>
+		</div>
+	</div>
+  </div>
+</div>
+<script type="text/javascript">
+	var centerData;  
+	$(function(){
+		$("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+		$("#instPageNavigator").find(".instNavTab.instOpenLibraryPage").addClass("clInstTab");
+		#{if memberInfo.errorCode == "" && memberInfo.result.has('center')}
+			centerData = ${memberInfo.result.center.raw()};
+		#{/if}
+		instLibrary.init();
+	});
+</script>
+#{/if}
+#{else}
+<div class="pageHolderM">
+	<div style="padding:100px;" class="centerText">
+		<span class="big18">&{'org.NOT_PART_OF_PROG'}</span>
+	</div>
+</div>
+#{/else}

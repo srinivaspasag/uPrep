@@ -1,0 +1,214 @@
+#{if finalResp.errorCode!=''}
+    #{common.errorCodes resp:finalResp /}
+#{/if}
+#{else}
+%{
+    testDetails=finalResp.result;
+}%
+<div id="testPage" data-entity-id="${testDetails.id}">
+    <div class="testPageDetails" data-test-id="${testDetails.id}">       
+        #{include 'QrTests/testPageDetails.html' /}
+        *{#{if params.orgId == play.Play.configuration.getProperty("learnpedia.id")}}*
+            <div class="gBlueButton simplifySubjectNames nonner">
+                Simplify Subject Names
+            </div>
+        *{#{/if}}*
+        <div class="testSettings">
+            <div class="testSettingsToggle close">
+                <img src="/public/images/settings30.png">
+            </div>
+            <ul class="testOptionsSettings nonner">
+                <li class="previewTest ellipsis">Preview</li>
+                <li class="viewTestStats ellipsis">View Details</li>
+                <!-- <li class="saveTestState nonner" data-back-up-url="/organization/${params.orgId}/resources">Save & Add Later</li> -->
+                <li class="simplifySubjectNames ellipsis">Simplify Boards </li>
+                <li class="testPasswordHolder ellipsis">
+                    %{
+                        testPassword = testDetails.has("password") && !testDetails.password.equals(null) && !testDetails.password.equals("");        
+                        resultPassword = testDetails.has("resultPassword") && !testDetails.resultPassword.equals(null) && !testDetails.resultPassword.equals("");
+                    }%
+                    #{if testPassword}
+                        <input type='hidden' id="showTestPassword" data-id="${testDetails.password}">
+                    #{/if}
+                    #{if resultPassword}
+                        <input type='hidden' id="showTestResultPassword" data-id="${testDetails.resultPassword}">
+                    #{/if}
+                   #{if !testPassword && !resultPassword}
+                        <span class="protectWithPassword" >Test Password</span>
+                    #{/if}
+                    #{else}
+                        <span class="changeTestPassword" title="Change Password" >Change Password</span>
+                    #{/else}
+                </li>
+                {%
+                    subjectiveTest = false;
+                    if(testDetails.has('subjectiveTest') && testDetails.subjectiveTest){
+                        subjectiveTest = true;
+                    }
+                }%
+                <input type="hidden" name="subjectiveTest" class="subjectiveTest" value="${subjectiveTest}" />
+                #{if !subjectiveTest}
+                <li class="pdfOptionsHolder ellipsis">
+                    #{if testDetails.has("pdfId") && !testDetails.pdfId.equals(null)}
+                        <span class="pdfName"><a href="/organization/${params.orgId}/document/${testDetails.pdfId}" title="PDF Attached: &{testDetails.pdf.name}">&{testDetails.pdf.name}</a></span>
+                    #{/if}
+                   #{else}
+                        <span class="addPdfPopup" >Attach PDF</span>
+                    #{/else}
+                </li>
+                #{/if}
+            </ul>
+        </div>
+        <div class="cleaner_with_divider"></div>
+        <div class="testPageBtns">
+            <!-- <div class="gBlueButton previewTest">Preview</div>
+            <div class="gButton viewTestStats">View Details</div>
+            <a class="gButton saveTestState" data-back-up-url="/organization/${params.orgId}/resources">Save & Add Later</a> -->
+            <div class="boldy color3 margTop10 testState big15">Status:
+		   #{if testDetails.has("completed") && testDetails.completed == true}
+			<span class="boldy publishTest publishTestOk">Complete</span>
+		   #{/if}
+		   #{else}
+                	<span class="boldy publishTest">Incomplete</span>
+		   #{/else}
+            </div>
+            <!-- #{if testDetails.has("pdfId") && !testDetails.pdfId.equals(null)}
+            <div>Pdf Attached : <a href="/organization/${params.orgId}/document/${testDetails.pdfId}">&{testDetails.pdf.name}</a></div>
+            #{/if}
+           #{else}
+            <div class="big16 addPdfPopup blueButton" >Attach PDF</div>
+            #{/else} -->
+            <!-- %{
+                testPassword = testDetails.has("password") && !testDetails.password.equals(null) && !testDetails.password.equals("");        
+                resultPassword = testDetails.has("resultPassword") && !testDetails.resultPassword.equals(null) && !testDetails.resultPassword.equals("");
+            }%
+            #{if testPassword}
+                <div id="showTestPassword" data-id="${testDetails.password}"><br></div>
+            #{/if}
+            #{if resultPassword}
+                <div id="showTestResultPassword" data-id="${testDetails.resultPassword}"><br></div>
+            #{/if}
+           #{if !testPassword || !resultPassword}
+                <div class="big16 protectWithPassword blueButton" >Protect Test with Password</div>
+            #{/if}
+            #{else}
+                <div class="big16 changeTestPassword blueButton" >Change Password</div>
+            #{/else} -->
+            #{if testDetails.has("enablePartialMarks")}
+            %{
+                enablePartialMarks = testDetails.enablePartialMarks;
+                String[] options = ["MCQ","PARA","MATRIX"];
+                partialMarksQTypes = testDetails.partialMarksQTypes;
+                oneOrMoreMarksQTypes = testDetails.oneOrMoreMarksQTypes;
+            }%
+            <div class="checkBoxTestOptionsHolder " #{if !partialMarksQTypes.equals(null)} data-partial-marks-q-types = "${partialMarksQTypes}"#{/if} #{if !oneOrMoreMarksQTypes.equals(null)} data-one-or-more-marks-q-types = "${oneOrMoreMarksQTypes}"#{/if}>
+                <table class="multipleOptionsDiv">
+                    <tbody><tr>
+                        <td class="tableCellTitle">Enable one/more answers :</td>
+
+                        <td>
+                            #{list items:0..options.length-1, as:'index'}
+                                <label>
+                                    <input type="checkbox" name="${options[index]}" id="enableMultipleOptions" class="${options[index]}" value="${options[index]}" #{if options[index] == 'MCQ'} onclick="return false" #{/if}>${options[index]}
+                                </label>
+                            #{/list}
+                        </td>
+                        <td rowspan="2">
+                            <button class="gBlueButton checkBoxTestOptions">Submit</button>
+                        </td>
+                    </tr>
+                    <tr class="showCheckboxTestOptionsMessage nonner">
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="partialMarksOptionDiv">
+                <tbody><tr>
+                    <td class="tableCellTitle">Enable Partial Marks :</td>
+
+                    <td>
+                        #{list items:0..options.length-1, as:'index'}
+                            <label>
+                                <input type="checkbox" name="${options[index]}" id="enablePartialMarks" class="${options[index]}" value="${options[index]}">${options[index]}
+                            </label>
+                        #{/list}
+                    </td>
+                </tr>
+                <tr class="showCheckboxTestOptionsMessage nonner">
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- <table class="partialMarksOptionTable" style="top:12px;position: relative;left: 6px;">
+            <tr>
+            <td class="partialMarksTitle" style="width: 350px;">Enable partial marking for MCQ/PARA/MATRIX?</td>
+            <td class="partialMarksRadioDiv">
+                <input type="radio" name="enablePartialMarks" class="enablePartialMarks" value="true" #{if enablePartialMarks} checked#{/if}> Yes
+            </td>
+            <td class="partialMarksRadioDiv">
+                <input type="radio" name="enablePartialMarks" class="enablePartialMarks" value="false" #{if !enablePartialMarks} checked#{/if}> No
+            </td>
+            </tr>
+            #{if enablePartialMarks}
+                <tr>
+                <td class="greenColor radioEnableText">Partial Marks are enabled for this test.</td>
+                </tr>
+            #{/if}
+            #{else}
+                <tr>
+                <td class="redColor radioEnableText">Partial Marks are not enabled for this Test.</td>
+                </tr>
+            #{/else}
+        </table> -->
+        #{/if}
+        </div>
+    </div>
+    %{
+        target=_target;        
+        cmdsResp=_cmdsResp;
+    }%    
+    <div class="mcWidget">       
+        <div class="cmdsTableOptsAndSortDiv">
+            <div class="cmdsTableSearchDiv">
+                <div class="inputDiv cmdsTableSearchBox hasSearchImg">
+                    <input type="text" class="mcSearchDivInput" data-param-name="query" value="${params.keyWord}"/>
+                    <span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>                
+                </div>
+            </div>             
+          <div class="cmdsTableSortDiv"> 
+              #{common.lmArrowsDiv /}              
+                #{include 'Widgets/mcvChooseAlpha.html' /}  
+                #{include 'Widgets/mcvChooseLevel.html' /}
+                #{include 'Widgets/mcvChooseQuesType.html' /}               
+          </div>
+          <div class="cleaner_with_divider">&nbsp;</div>
+        </div>  
+        <div id="leftSection">
+            <div id="fixedLeftSecPortion">
+               #{common.courseTopicChooseDiv /}               
+            </div>                         
+        </div>
+        <div id="mainSection">
+            <div id="tableSection" class="cmdsContentTBody LMHandlerDiv">
+                <div class="userMessage">
+                    Loading questions..
+                </div>         
+            </div>                
+        </div>
+    </div>  
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){
+	   setTimeout(function(){
+		qrTests.init({testType:"${params.testType}",testId:"${testDetails.id}",
+                metadata:${testDetails.metadata.raw()}});
+	   },2000);
+	}
+        lazyLoad([{fname:"qrTests.js",cb:fn}]);
+    }();       
+</script> 
+#{/else}
+
+

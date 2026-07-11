@@ -1,0 +1,15 @@
+#{if submitResp.errorCode!=""}
+    <script type="text/javascript">
+        showError("${submitResp.errorCode}");
+    </script>
+#{/if}
+#{else}
+%{  submitResp=submitResp.result;
+    userAttemptedAns=submitResp.userAnswer;
+    type=params.type;
+    isCorrect=submitResp.isUserAnswerCorrect;
+    correctAnswer=submitResp.correctAnswer;
+}%
+#{questions.userAnsAndGraphBtn type:type,correctAnswer:correctAnswer,
+userAttemptedAns:userAttemptedAns,isCorrect:isCorrect /}
+#{/else}

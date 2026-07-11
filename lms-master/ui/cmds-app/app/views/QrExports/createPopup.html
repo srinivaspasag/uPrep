@@ -1,0 +1,167 @@
+%{
+	totalLibrarySizeGB = 0;
+	totalLibrarySize = 0;
+	if(sectionResp!=null && sectionResp.errorCode.isEmpty()){
+		totalLibrarySize = sectionResp.result.sectionInfo.size;
+		totalLibrarySizeGB = (double)(totalLibrarySize / (1024*1024*1024));
+	}
+	sizeUIObj = uicom.util.Utilities._getCalcSize(totalLibrarySize);
+}%
+<div id="sdCardCreatePopup">
+   <div class="sdCardCreateTopBar">
+	<div class="blackTextColor big18 boldy">&{'NEW_SDCARD_GROUP'}</div>
+	<div class="big18 greyTextColor" style="padding-top: 2px;">
+		<span>&{'TOTAL_LIBRARY_SIZE'}</span>
+		<span class="boldy">${sizeUIObj.value} ${sizeUIObj.text}</span>
+	</div>
+   </div>
+   <div class="sdCardCreateBody">
+	<div class="title">&{'ENTER_GRP_NAME'}</div>
+	<div class="inputDiv">
+		<input type="text" class="newSdCardGrpName">
+	</div>
+	<div class="title topMargin">&{'SEL_SD_CARD_SIZE'}</div>
+	<div class="createSdCardGrpSizes">
+	   <table class="fullWidth">
+	      <tr>
+		%{
+			val = 1;
+			lastVal = 0;
+		}%
+		#{list items:1..6,as:'index'}
+		%{
+			val *= 2;
+			disabled = "";
+			if(val > totalLibrarySizeGB && lastVal >= totalLibrarySizeGB){
+				disabled = "disabled";
+			}
+			lastVal = val;
+		}%
+		<td class="eachSDCardSize ${disabled}" data-size="${val}">
+		  	<div class="selectSdCardSize"></div>
+			<div class="sdCardSize">${val}</div>
+			<div class="sdCardSizeUnit">&{'SIZE_GB'}</div>
+		</td>
+		#{/list}
+	      <tr>	
+	   </table>
+	</div>
+	<div class="centerText" style="padding-top:60px;">
+		<div class="big14 italics greyTextColor">
+			Approx <span class="noOfSdCards">0</span>
+			SD Cards
+		</div>
+		<div style="padding-top:4px;" class="sgCreateBtnHolder">
+			<span class="blueButton createGroupNow">&{'GENERATE_GROUP'}</span>
+		</div>
+		<div class="sgCreateProgressHolder nonner">
+			<progress value="0" max="100" class="sgCreateProgressBar"></progress>
+			<div class="greyTextColor italics big14">&{'SDCARD_PLEASE_WAIT'}</div>
+		</div>
+	</div>
+   </div>
+</div>
+<script type="text/javascript">
+var createSDCardGroupPopup = new function(){
+	var parDiv;
+	var librarySize = ${totalLibrarySizeGB.raw()};
+	var gbInBytes = 1073741824;
+	var NAME_REGEXP = new RegExp("^[a-zA-Z0-9_ ]*$");
+	this.init = function(){
+		parDiv = $("#sdCardCreatePopup");
+		parDiv.off("click");
+		parDiv.on("click",".selectSdCardSize",selectSdCardSize)
+			.on("click",".createGroupNow",create);
+		parDiv.find(".newSdCardGrpName").focus();
+	};
+	var selectSdCardSize = function(){
+		var $this = $(this);
+		var par = $this.closest(".eachSDCardSize");
+		if(par.hasClass("disabled")){ return;}
+		var val = par.data("size");
+		par.addClass("selected").siblings().removeClass("selected");
+		var noOfCards = Math.ceil(librarySize / val);
+		parDiv.find(".noOfSdCards").text(noOfCards);
+	};
+	var create = function(){
+		var nameInputElem = parDiv.find(".newSdCardGrpName");
+		var name = $.trim(nameInputElem.val());
+		if(!name){
+			showError(i18nJS("SDCARD.PROVIDE_NAME"),function(){
+				nameInputElem.focus();
+			});
+			return;
+		}
+		if(!NAME_REGEXP.test(name)){
+			showError(i18nJS("SDCARD.PROVIDE_NAME_WRONG_FORMAT"),function(){
+				nameInputElem.focus();
+			});
+			return;
+		}
+		var size = parDiv.find(".eachSDCardSize.selected").data("size");		
+		if(!size){
+			showError(i18nJS("SDCARD.PROVIDE_SDCARD_SIZE"));
+			return;
+		}
+		size *= gbInBytes;
+		var params = {
+			name : name,
+			maxCardSize : size,
+			target : {
+				type : "SECTION",
+				id : qrProgram.sectionId
+			}
+		};
+		showTopLoader();
+		vReq.post("/QrExports/createSDGroup",params,function(data){
+			hideTopLoader();
+			if(data.result.jobId){
+				jobId = data.result.jobId;
+				groupId = data.result.recordInfo?data.result.recordInfo.id:"";
+				startFetchStatus();
+			}
+		});
+	};
+	var jobId;
+	var groupId;
+	var fetchStatusTimeoutObj;
+	var fetchStatusTime = 5000;
+	var startFetchStatus = function(){
+		if(fetchStatusTimeoutObj){
+			clearTimeout(fetchStatusTimeoutObj);
+		}
+		parDiv.find(".sgCreateBtnHolder").addClass("nonner");
+		parDiv.find(".sgCreateProgressHolder").removeClass("nonner");
+		fetchStatusTimeoutObj = setTimeout(fetchStatus,fetchStatusTime);
+	};
+	var fetchStatus = function(){
+		var params = {jobIds: [jobId]};
+		var holder = parDiv.find(".LMHandlerDiv");
+        	vReq.get("/qrExports/getPublishStatus", params, function(data) {
+            		if (data && data.result && data.result.list) {
+                		var item = data.result.list[0];
+				if(item.errorCode != "") {
+                        		var errMsg = this.errorMessage ? this.errorMessage : this.errorCode;
+                        		showError(errMsg);
+                    		} else if (item.numCompletedSteps >= item.numOfSteps) {
+					//groupId = item.id;
+					closeVPopup();
+                                	opencmdsSDCardGroup(groupId);
+				}else{
+					var percent = item.numCompletedSteps / item.numOfSteps * 100;
+					parDiv.find(".sgCreateProgressBar").val(percent);
+					startFetchStatus();
+				}
+			}
+		});
+	};
+	this.stopTimer = function(){
+		if(fetchStatusTimeoutObj){
+			clearTimeout(fetchStatusTimeoutObj);
+		}
+	};
+};
+$(function(){
+	createSDCardGroupPopup.init();
+});
+</script>

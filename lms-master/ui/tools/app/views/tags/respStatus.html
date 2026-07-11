@@ -1,0 +1,13 @@
+<div id="toolsResponse">
+    #{if flash.contains('errorCode')}
+    #{if flash.get("errorCode")!=''}
+    <div class="toolsErrorCode">Sorry,there was some problem.</div>
+    <div class="toolsErrorMessage">${flash.get('errorMessage')}</div>
+    #{/if}
+    #{else}
+    <div class="toolsSuccessMessage">
+        Successfully Done.
+    </div>
+    #{/else}
+    #{/if}
+</div>    

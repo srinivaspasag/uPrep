@@ -1,0 +1,28 @@
+#{if resp!=null && resp.errorCode=="" && resp.result.has("list") && resp.result.list.length()>0}
+	%{
+		newsFeeds = resp.result.list;
+	}%
+	#{list items:0..newsFeeds.length()-1,as:'index'}
+		%{
+			feed = newsFeeds.get(index);
+		}%
+		#{if params.needClustered == "true"}
+			#{institute.widgets.feedsContainer_clustered feedData:feed /}
+		#{/if}
+		#{else}
+			#{institute.widgets.feedsContainer feedData:feed /}
+		#{/else}
+	#{/list}
+	#{if resp.result.list.length() == Integer.parseInt(params.size)}
+        	<div class="loadMoreItems doCStream loadMoreOrgFeeds" 
+			data-cs-name="LOAD_MORE_DISCUSSIONS">&{'LOAD_MORE_FEEDS'}</div>
+	#{/if}
+#{/if}
+#{else}
+	#{if params.feedType == "OLD"}
+		<div class="relative boldy centerText" style="padding:20px 0;">&{'NO_MORE_FEEDS'}</div>
+	#{/if}
+	#{else}
+		#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/1recent-activity-zero.jpg" /}
+	#{/else}
+#{/else}

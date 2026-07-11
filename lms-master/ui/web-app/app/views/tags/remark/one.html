@@ -1,0 +1,41 @@
+%{
+	data = _remark;
+        user = _user;
+}%
+#{if !user.equals(null)}
+%{
+	getUser=(controllers.Profile.getUserClassAndUrl(user));
+        userClass = getUser.get("className");
+        userUrl = getUser.get("url");
+        userId = getUser.get("id");
+}%
+<div class="instPrRemark" data-id="i${data.id}">
+	<table class="fullWidth">
+	   <tr>
+		<th style="width:40px;"></th>
+		<th style="width:300px;"></th>
+	   </tr>
+	   <tr>
+		<td rowspan=3 class="alignTop" style="width:40px;">
+		   <a class="${userClass} doCStream ptrTag instProfilePicContainer" href="${userUrl}" data-user-id="${userId}">
+			<img class="instRemarkProfilePic" alt="" src="${user.thumbnail}"/>
+		   </a>
+		</td>
+		<td>
+			#{institute.memberName user : user , getUser : getUser /}
+		</td>
+	   </tr>
+	   <tr>
+		<td>
+			<div class="instPrRemarkContent">${data.content.raw()}</div>
+			</div>
+		</td>
+	   </tr>
+	   <tr>
+		<td>
+			<div class="smally greyTextColor">${new Date(data.timeCreated).since(false)}</div>
+		</td>
+	   </tr>
+	</table>
+</div>
+#{/if}

@@ -1,0 +1,41 @@
+%{
+	qIndex = _qIndex;
+	qType = _qType;
+	quesBody = _quesBody;
+	subData = _subData;
+	allowOpen = _dontAllowOpen == true ? false : true;
+        alphabets=['(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'];
+}%
+<div class="postTestEachQues left">
+	<div>
+		<span class="big15 left" style="min-width:50px;padding:5px 0px;">Q${qIndex}.</span>
+		<span class="big14 right" style="padding:5px 30px;">${qType}</span>		
+	</div>
+	#{if !quesBody.equals(null) && !quesBody.content.equals(null) && !quesBody.content.isEmpty()}
+	   #{if allowOpen == true}
+	   <a class="questionBody blackTextColor openQuesPage disableAccess ptrTagInline" data-qid="${quesBody.id}"
+		href="${controllers.Questions.getQuesUrl(quesBody.id)}" data-org-id="${params.orgId}">
+	   #{/if}
+	   #{else}
+	   <a class="questionBody blackTextColor ptrTagInline" data-qid="${quesBody.id}" 
+		data-org-id="${params.orgId}">
+	   #{/else}
+		<div class="questionText">${quesBody.content.raw()}</div>
+		#{if !quesBody.options.equals(null) && quesBody.options.length()>0}
+		<div class="choices">
+			#{list items:0..quesBody.options.length()-1,as:'optIndex'}
+				<div class="eachOptHolder">
+					<div class="eachOpt">${alphabets[optIndex]} ${quesBody.options.get(optIndex).raw()}</div>
+				</div>
+			#{/list}
+		</div>
+		#{/if}
+	   </a>
+	#{/if}
+	#{if !subData.equals(null)}
+	<span class="postTestQuesInfo">
+		<a class="big12 greenBrdTopic boardSubject ptrTagInline" data-brd-id="${subData.id}">${subData.name}</a> 
+	</span>
+	#{/if}
+	<span class="postTestQuesShowSoln #{if quesBody.solutions == 0}disabled greyTextColor#{/if}#{else}showCursor#{/else}" data-qid="${quesBody.id}" data-count="${quesBody.solutions}">Solution</span>
+</div>

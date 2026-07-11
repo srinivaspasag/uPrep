@@ -1,0 +1,153 @@
+<!-- Left Bar Information on test details starts -->
+#{if data!=null}
+	#{if data.has('name')}
+		#{include '/tags/test/testDetailsLeftBar.html' /}
+	#{/if}
+
+<!-- Left bar test Information on subject level ui starts -->
+	<div class="leftAndRelative testCreationAddQuestions nonner">
+		<span class="leftAndRelative btnsCollection">
+			<input class="doneWithAdd blueSubmitButton doCStream" 
+				data-cs-name="NEXT_Btn" type="button" value="Done"/>
+			<input class="saveAndAddLater cancelAndCloseTest greenButton doCStream" 
+				data-cs-name="Save_And_Add_Later_Btn" type="button" value="Save & Add Later"/>
+			<!--<center><a href="" class="back">Back</a></center>-->
+		</span>
+		<!-- Subject lists starts-->
+		#{if data.has('metadata') && data.metadata!=null && data.metadata.length()>0}
+		#{list items:0..data.metadata.length()-1, as:'index'}
+		%{ 
+			subData = data.metadata.get(index);
+			subsQuesCount = 0;
+			if(subData.has('qids')) subsQuesCount = subData.qids.length();
+		}%
+		<div class="leftAndRelative subjectList" data-subject-id="${subData.brdId}" id="${subData.brdId}">
+		    <div class="addQuesEachSub">
+			<br/><span class="leftAndRelative blueTextColor big14 boldy textStyles" style="max-width:75%;">${subData.name}</span>
+			<span class="rightAndRelative blueTextColor boldy"><span class="subQuesCount" data-ques-count="${subsQuesCount}" data-ques-total="${subData.qusCount}">${subsQuesCount}/${subData.qusCount}</span> <span class="greyTextColor"> questions</span></span></br>
+			<div class="leftAndRelative quesTypes">
+				#{if subData.details!=null && subData.details.length()>0}
+				#{list items:0..subData.details.length()-1, as:'typeIndex'}
+				%{ 
+					subDetails = subData.details.get(typeIndex);
+					detailsQuesCount = 0;
+					if(subDetails.has('qids')) detailsQuesCount = subDetails.qids.length();
+				}%
+				<div class="leftAndRelative eachQType ${subDetails.type}" data-q-type="${subDetails.type}">
+					<span class="leftAndRelative dropBtn doCStream" 
+		data-cs-name="open_subject_curriculum" data-send="subject = ${subData.name} , type = ${subDetails.type}">
+						<span class="blackTextColor big12 boldy">${subDetails.type}</span>
+						<span class="noOfQuestionEachType redTextColor boldy big14" data-ques-count="${detailsQuesCount}" data-ques-total="${subDetails.qusCount}">${detailsQuesCount}/${subDetails.qusCount}</span>
+						<span class="greyTextColor">questions added</span>
+						<span class="dropDownArrow bgImageSprite"></span>
+					</span>
+					<span class="leftAndRelative curriculumList nonner">
+						#{if subData.has('children') && subData.children.length()>0}
+						#{list items:0..subData.children.length()-1, as:'childIndex'}
+						%{	qusCount=0;
+							if(subData.children.get(childIndex).has('questions') && subData.children.get(childIndex).questions.length()>0){
+								qusCount = subData.children.get(childIndex).questions.length();
+							}
+
+						}%
+						<span class="leftAndRelative eachCurriculum">
+							<span class="leftAndRelative big12 curriculumName" data-topic-name="${subData.children.get(childIndex).name}" data-ques-count=${qusCount} id="${subData.children.get(childIndex).brdId}">${subData.children.get(childIndex).name} #{if qusCount>0}(${qusCount})#{/if}</span><!--Thermodynamics (3)-->
+							<!--<span class='leftAndRelative quesAdded'><span class='qt'>"+response.quid+"</span> <a class='removeQues' data-qid='"+response.qid+"'>remove</a></span>-->
+					#{if subData.children.get(childIndex).has('questions') && subData.children.get(childIndex).questions.length()>0}
+						#{list items:0..subData.children.get(childIndex).questions.length()-1, as:'quesIndex'}
+							#{if subData.children.get(childIndex).questions.get(quesIndex).type == subDetails.type}
+							<span class='leftAndRelative quesAdded'><span class='qt'>${subData.children.get(childIndex).questions.get(quesIndex).quid}</span> <a class='removeQues doCStream' data-cs-name='remove_question_link' data-send='QID = ${subData.children.get(childIndex).questions.get(quesIndex)._id}' data-qid='${subData.children.get(childIndex).questions.get(quesIndex)._id}'>remove</a></span>
+							#{/if}
+						#{/list}
+					#{/if}
+						</span>
+						#{/list}
+						#{/if}
+						<!--<span class="leftAndRelative eachCurriculum">
+							<span class="leftAndRelative big12 curriculumName">Force</span>
+						</span>-->
+					</span>
+				</div>
+				#{/list}
+				#{/if}
+			</div>
+			<span class="leftAndRelative bottomBorder bgImageSprite"></span>
+		   </div>
+		</div>
+		#{/list}
+		#{/if}
+		<!-- each subject ends -->
+	</div>
+
+<!-- Exam Filter Ui starts-->
+	<div class="leftAndRelative addQuestionSearchParams CSWidget" data-widget="FILTER_ADD_QUESTION_TO_TEST">
+		#{if data.has('metadata') && data.metadata.length()>0}
+		<div class="vselect vselectHide selectSubject vDropDown" onstatechange="addQuesSubChange" data-subject-id="${data.metadata.get(0).brdId}" data-cs-name="SELECT_SUBJECT">
+			<span class="vSelectHead">
+				<input type="text" class="vSelectText" value="${data.metadata.get(0).name}" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect" ></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+				#{list items:0..data.metadata.length()-1, as:'index'}
+					<span class="vSelectEach" data-subject-index="${index}" data-subject-id="${data.metadata.get(index).brdId}">${data.metadata.get(index).name}</span>
+				#{/list}
+				</div>
+			</div>
+		</div>
+		<div class="vselect vselectHide selectTopics vDropDown" onstatechange="addQuesTopicChange" data-cs-name="SELECT_TOPIC">
+			<span class="vSelectHead">
+				<input type="text" class="vSelectText" value="All Topics" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect" ></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+					<span class="vSelectEach" data-topic-id="">All Topics</span>
+				#{if data.metadata.get(0).has('children') && data.metadata.get(0).children.length()>0}
+				#{list items:0..data.metadata.get(0).children.length()-1, as:'index'}
+					<span class="vSelectEach" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-topic-id="${data.metadata.get(0).children.get(index).brdId}">${data.metadata.get(0).children.get(index).name}</span>
+				#{/list}
+				#{/if}
+				</div>
+			</div>
+		</div>
+		#{if data.metadata.get(0).has('details') && data.metadata.get(0).details.length()>0}
+		<div class="vselect vselectHide selectQuesType vDropDown" onstatechange="addQuesTypeChange" data-question-type="${data.metadata.get(0).details.get(0).type}" data-cs-name="SELECT_QUESTION_TYPE">
+			<span class="vSelectHead">
+				<input type="text" class="vSelectText" value="${data.metadata.get(0).details.get(0).type}" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect" ></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+				#{list items:0..data.metadata.get(0).details.length()-1, as:'index'}
+					<span class="vSelectEach" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-topic-id="${data.metadata.get(0).details.get(index).type}">${data.metadata.get(0).details.get(index).type}</span>
+				#{/list}
+				</div>
+			</div>
+		</div>
+		#{/if}
+		<div class="vselect vselectHide selectExams vDropDown" onstatechange="addQuesExamChange" data-cs-name="SELECT_TARGET_EXAM">
+			<span class="vSelectHead">
+				<input type="text" class="vSelectText" value="Select Level" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect" ></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+					<span class="vSelectEach" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-targetexam-id="">All Exams</span>
+				#{if targetExam != null && targetExam.has('result') && targetExam.result.has('boards') && targetExam.result.boards.length()>0}
+				%{
+					targetExams = targetExam.result.boards;
+				}%
+				#{list items:0..targetExams.length()-1, as:'index'}
+					<span class="vSelectEach" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-targetexam-id="${targetExams.get(index).brdId}">${targetExams.get(index).code}</span>
+				#{/list}
+				#{/if}
+				</div>
+			</div>
+		</div>
+		#{/if}
+	</div>
+<script type="text/javascript">
+var tempCreateTestJson = '${data.raw()}';
+</script>
+#{/if}

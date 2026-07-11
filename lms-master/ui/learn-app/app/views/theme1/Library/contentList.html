@@ -1,0 +1,116 @@
+%{
+  moduleResponse = resp.result.moduleResult;
+  testResponse = resp.result.testRes;
+  documentResponse = resp.result.documentRes;
+}%
+<h3 class="chapterName m-l-20 m-b-20" style="margin-top: 40px;"></h3>
+<div class="params" data-chapter-id="${chapterId}" data-program-id="${programId}" data-subject-id="${parentId}"></div>
+<ul class="tab-nav tn-justified tn-icon content-tabs" role="tablist">
+    <li class="active" role="presentation">
+        <a aria-controls="lectures" class="col-sx-6" data-toggle="tab" data-tab-history="true"
+        data-tab-history-changer="replace" href="#lectures" role="tab" aria-expanded="true">
+            <span class="hidden-xs">Lectures</span>
+            <i class="zmdi zmdi-folder visible-xs"></i>
+        </a>
+    </li>
+    <li role="presentation">
+        <a  aria-controls="e-Book" class="col-xs-6" data-toggle="tab"  data-tab-history="true"
+        data-tab-history-changer="replace" href="#books" role="tab" aria-expanded="false">
+            <span class="hidden-xs">E-books</span>
+            <i class="zmdi zmdi-collection-pdf visible-xs"></i>
+        </a>
+    </li>
+    <li role="presentation">
+        <a aria-controls="test" class="col-xs-6" data-toggle="tab"  data-tab-history="true"
+        data-tab-history-changer="replace" href="#tests" role="tab" aria-expanded="false">
+            <span class="hidden-xs">Tests</span>
+            <i class="zmdi zmdi-assignment visible-xs"></i>
+        </a>
+    </li>
+</ul>
+<div class="tab-content p-20">
+    <div class="tab-pane animated fadeIn in active" role="tabpanel" id="lectures">
+        #{if moduleResponse!=null && !moduleResponse.equals(null)}
+            #{include 'theme1/Library/modulePage.html', moduleResponse:moduleResponse /}
+        #{/if}
+        #{else}
+        <div class="block-header text-center m-t-25">
+            <h2>You don't have any Lectures.</h2>
+        </div>
+        #{/else}
+    </div>
+    <div class="tab-pane animated fadeIn in " role="tabpanel" id="books">
+        #{if documentResponse.list.length()>0}
+        <div class="documents" data-total-hits="${documentResponse.totalHits}">
+            <div id="document-content-body">
+                #{include 'theme1/Library/documents.html', resp:resp /}
+            </div>
+        </div>
+        <center>
+            <div class="page-selection-document"></div>
+        </center>
+        #{/if}
+        #{else}
+        <div class="block-header text-center m-t-25">
+            <h2>You don't have any Documents.</h2>
+        </div>
+        #{/else}
+    </div>
+    <div class="tab-pane animated fadeIn in " role="tabpanel" id="tests">
+        #{if testResponse.list.length()>0}
+        <div class="tests" data-total-hits="${testResponse.totalHits}">
+            <div id="test-content-body">
+                #{include 'theme1/Library/tests.html', resp:resp /}
+            </div>
+        </div>
+        <center>
+            <div class="page-selection-test"></div>
+        </center>
+        #{/if}
+        #{else}
+        <div class="block-header text-center m-t-25">
+            <h2>You don't have any Tests.</h2>
+        </div>
+        #{/else}
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var moduleCount = $(".modules").data("total-hits");
+        var testCount = $(".tests").data("total-hits");
+        var documentCount = $(".documents").data("total-hits");
+        $('.page-selection-test').bootpag({
+            total: Math.ceil(testCount/10)
+        }).on("page", function(event, num){
+            $data = $(".params").data();
+            params = {
+                parentId : $data.parentId,
+                programId: $data.programId,
+                brdIds : [$data.chapterId],
+                start : (num * 10) -10,
+                size : 10
+            };
+            $.get("/MyContents/getTests",params,function(data){
+                $("#test-content-body").html(data);
+                library.init();
+            });
+        });
+
+        $('.page-selection-document').bootpag({
+            total: Math.ceil(documentCount/10)
+        }).on("page", function(event, num){
+            $data = $(".params").data();
+            params = {
+                parentId : $data.parentId,
+                programId: $data.programId,
+                brdIds : ["5715f31244ae2f21e7f242f8"],
+                start : (num * 10) -10,
+                size : 10
+            };
+            $.get("/MyContents/getDocuments",params,function(data){
+                $(".documents").html(data);
+                library.init();
+            });
+        });
+    } );
+</script>

@@ -1,0 +1,12 @@
+#{if similarQuesns!=null && similarQuesns.errorCode.isEmpty() && similarQuesns.result.list.length()>0}
+%{
+    quesns = similarQuesns.result.list;
+    lastCount = Integer.parseInt(params.start)+similarQuesns.result.list.length();
+}%
+	<input type="hidden" id="similarQuesCount" value="${lastCount}" data-total-hits="${similarQuesns.result.totalHits}"/>
+	#{questions.similarQuesns quesns:quesns /}
+#{/if}
+#{else}
+	<input type="hidden" id="similarQuesCount" value="${params.start}" data-total-hits="0"/>
+	<div class="big14 boldy centerText">&{'NO_SIMILAR_QUESTIONS'}</div>
+#{/else}

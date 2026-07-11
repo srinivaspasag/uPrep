@@ -1,0 +1,79 @@
+%{
+    if(memberInfo!=null){
+        isEditStudent=true;
+        memberInfo=memberInfo.result.info;
+    }else{
+        isEditStudent=false;
+    }
+}%
+<div id="addEditPeoplePage" class="addEditOfflineUserPage">
+    <div class="addMemHead">Add &{'TXT_OFFLINE_USER'}</div>
+    <div class="addMemStepHead nonner" rel='PROFILE'>
+        <a class="floatRight smally">Edit</a>
+        <span class="big18">Step 1</span>
+    </div>
+    <div class="addMemStepBody nonner" rel='PROFILE'>
+        <div class="addMemStepBodyHead1">Step 1/2</div>
+        <div class="addMemStepBodyHead2">Fill Details</div>
+        <div class="addMemStepBodyMain addMemDetailsDiv">
+            <div id="editBasicInfo">
+                <div class="editStudentInfoHead">&{'ORG_MEMBER_INFO'}</div>
+                #{people.editBasicProfileInfo info:memberInfo,target:"ADD_EDIT_OFFLINE_USER" , isEditMember : isEditStudent /}
+                <div class="submitStudentInfoDiv">
+                    <span class="cmdsPopupError nonner margTop margRight10">Fields marked with * are compulsory</span>
+                        %{
+                            basicProfileDoneText='Add';
+                            if(isEditStudent){
+                                basicProfileDoneText='Done Editing';
+                            }
+                        }%                    
+                    <div class="gBlueButton addEditOfflineUserSubmit">${basicProfileDoneText}</div>
+                </div>                  
+            </div>
+        </div>
+    </div>
+    %{
+        step2HeadClass='';
+        if(!isEditStudent){
+            step2HeadClass=' nonner';
+        }
+    }%
+    <div class="addMemStepHead${step2HeadClass}" rel='ACADEMICS'>
+        <a class="floatRight smally">Edit</a>
+        <span class="big18">Step 2</span>
+    </div>  
+    <div class="addMemStepBody nonner" rel='ACADEMICS'>
+        <div class="addMemStepBodyHead1">Step 2/2</div>
+        <div class="addMemStepBodyHead2">Assign Courses and Sections</div>
+        <div class="addMemStepBodyMain">
+            <div class="coursesvChooseDiv">
+                <div class="smallThinGray">Loading courses..</div>
+            </div>
+            #{acadStr.acadStrTable target:"ADD_PEOPLE_ACADEMICS" /}
+            <div class="boldy big16 color6 margTop20">Added</div>
+            <div id="addMemAddedAcademics">
+                #{people.addedMappings peopleInfo:memberInfo /}
+            </div>
+            <div class="margTop20">
+                <div class="gButton openCoursevChoose nonner">Add Another Course</div>
+                <div class="gBlueButton addMemAcademicsSubmit">Done</div>
+            </div>
+        </div>
+    </div>    
+</div>
+%{
+    if(memberInfo==null){
+        subTarget='ADD_OFFLINE_USER';
+    }else{
+        subTarget='EDIT_OFFLINE_USER';
+    }
+}%
+<script type="text/javascript">
+    new function(){
+        var fn1=function(){qrAddEditPeople.init({target:"ADD_EDIT_OFFLINE_USER",subTarget:"${subTarget}",
+                targetUserId:"${params.targetUserId}",targetOrgMemberId:'${memberInfo?.id}',
+                profile:'OFFLINE_USER'});};
+        var fn2=function(){qrAcadStr.init({targetTable:"ADD_PEOPLE_ACADEMICS"});};
+        lazyLoad([{fname:"qrAddEditPeople.js",cb:fn1},{fname:"qrAcadStr.js",cb:fn2}]);
+    }();       
+</script> 

@@ -1,0 +1,16 @@
+%{
+catergoryName = catergoryName;
+shortDescription = shortDescription;
+shortDescription = shortDescription;
+thumbnail = thumbnail;
+}%
+<div class="category-holder" data-name="${catergoryName}">
+	<div class="category-icon">
+		<img src="${thumbnail}" class="img-responsive" alt="Category" onerror="this.onerror=null;this.src='/public/outerAssets/images/newIndex/jee.png';">
+	</div>
+	<div class="category-info">
+		<h2 class="text-center c-green category-name">${catergoryName}</h2>
+		<p class="description c-black f-14">${shortDescription}</p>
+	</div>
+	<a class="exploreMore" href="packages/${catergoryName}">Explore More</a>
+</div>

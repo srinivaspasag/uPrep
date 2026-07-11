@@ -1,0 +1,79 @@
+%{
+    subjectInfo=subCDPInfo.result;
+}%    
+<div class="margBot5 rightText">
+    <div class="gGreenButton createdNodeCDP" data-parent-id='${params.cdpId}'>
+        Add Topic/SubTopic
+    </div>          
+    <a class="removeCDPSubNode smallThinGray" 
+       data-cdp-id='${params.cdpId}' data-node-type='SUBJECT' title="Remove ${params.cdpName}">
+        Remove ${params.cdpName}
+    </a>
+</div>   
+#{if subjectInfo.has('cdps')&&subjectInfo.cdps.length()>0}
+%{
+    cdps=subjectInfo.cdps;
+}%
+#{list items:0..cdps.length()-1,as:"t"}
+    %{
+        topic=cdps.get(t);
+        topicId=topic._id;
+        topicName=topic.name;        
+    }% 
+    <div class="cdpTopicDiv dragItem" data-cdp-id="${topicId}" data-drag-id='TOPIC'>
+        <div class="cdpTopicHeading">                    
+            <a class="removeCDPTopicNode" data-cdp-id='${topicId}' data-node-type='TOPIC' 
+               title="Remove ${topicName}">
+                Delete
+            </a>
+            <div class="cdpTopicHeadingText">${topicName}</div>                                        
+        </div>
+        <ul class="margBot20 cdpTopicBody">
+            #{if topic.has('cdps')&&topic.cdps.length()>0}
+            #{list items:0..topic.cdps.length()-1,as:'c'}
+            %{
+                contentNode=topic.cdps.get(c);
+            }%
+            #{if contentNode.has('contents')&&contentNode.contents.length()>0}
+            %{
+                content=contentNode.contents.get(0);
+            }%
+            <li class="cdpContentDiv dragItem" data-drag-id='CONTENT'>
+                <div class="cdpContentHeading">
+                    #{aTagMapper entityName:contentNode.name+' ('+content.title+')',
+                    entityId:content.entityId,entityType:content.entityType/}
+                </div>
+                <div class="cdpContentBody">
+<!--                    added on 30/04/3201 -->
+                    <span class="margLeft20 color8">
+                        Status:<span class="acacac boldy">
+                            #{if content.has('isPublished')&&content.isPublished}
+                            Published
+                            #{/if}
+                            #{else}
+                            Unpublished
+                            #{/else}
+                        </span>                                    
+                    </span>
+                    <a class="removeCDPContentNode" data-cdp-id='${contentNode._id}' data-node-type="CONTENT" >
+                       Delete 
+                    </a>
+                </div>
+            </li> 
+            #{/if}
+            #{/list}                    
+            #{/if}
+            #{else}
+            <li class="userMessage">No content is added to this topic.</li>
+            #{/else}
+            *{<li class="margBot20 margLeft">                
+                    #{products.createPrdtvChoose targetPage:"CDP"/}
+            </li>                    }*
+        </ul>
+        <a class="cdpTopicDivViewToggle collapsecdpContent">Collapse</a>
+    </div>
+    #{/list}
+    #{/if}
+    #{else}
+    <div class="userMessage">There is no content added to this subject.</div>
+    #{/else}

@@ -1,0 +1,29 @@
+#{if org!=null && org.errorCode.isEmpty() && org.result!=null}
+    %{
+        org = org.result;
+        googlePlayLink = "";
+        if(org.has("appInfos") && !org.appInfos.equals(null) && org.appInfos.length()>0){
+            for(i=0;i<org.appInfos.length();i++){
+                appInfo = org.appInfos.get(i);
+                if(appInfo!=null && appInfo.type == "GOOGLE_PLAY"){
+                    googlePlayLink = appInfo.url;
+                }
+            }
+        }
+    }%
+
+    #{if !googlePlayLink.isEmpty()}
+        <input type="hidden" value="${googlePlayLink}" id="googlePlayLink">
+    #{/if}
+    #{else}
+        <input type="hidden" value="https://play.google.com/store/apps/developer?id=ScoreLp" id="googlePlayLink">
+    #{/else}
+
+<script type="text/javascript">
+   window.onload = function(){
+        //alert("hey");
+        var downloadLink = document.getElementById("googlePlayLink").value;
+        window.location.href = downloadLink;
+    }
+</script>
+#{/if}

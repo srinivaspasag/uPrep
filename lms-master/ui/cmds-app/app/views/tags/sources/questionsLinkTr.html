@@ -1,0 +1,18 @@
+%{
+    colspan=_colspan;
+    msg = _msg;
+    questionsCount=_questionsCount;
+    paraHits = _paraHits;
+}%
+#{if questionsCount>0}
+<tr class="questionsLinkTr">
+  <td colspan="${colspan}">
+      <a class="getQuesnsContent" data-question-type="NOT_PARA">${questionsCount} Question${questionsCount.pluralize()}</a>
+        #{if paraHits > 0}
+            , <a class="getQuesnsContent" data-question-type="PARA">${paraHits} Paragraph${paraHits.pluralize()} </a>
+        #{/if}
+      </a>
+      <span class="big12">${msg}</span>
+  </td>
+</tr>
+#{/if} 

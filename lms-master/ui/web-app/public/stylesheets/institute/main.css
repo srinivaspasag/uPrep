@@ -1,0 +1,1232 @@
+.instLeftCol{
+	float: left;
+	padding: 45px 0 0 2px;
+    /*position: relative;*/
+    position: fixed;
+    /*border-right: 1px solid #ccc;*/
+    width: 175px;
+    height: 100%;
+    word-wrap: break-word;
+}
+@media screen and (max-width: 992px) {
+    .instLeftCol{
+        position: relative;
+        float: left;
+        padding: 45px 0 0 2px;
+        width: 175px;
+        height: 100%;
+        word-wrap: break-word;
+    }
+    .instMainCol{
+        position: absolute!important;
+        width: 100%;
+    }
+}
+.instMainCol{
+    	display: block;
+        margin-left: 185px;
+        /*min-height: 1000px;*/
+	   background-color:#fff;
+}
+.instLibarySelMyProg .nDropDown{
+background:#ed3237 !important;
+border-radius: 10px;
+}
+#openGuideButton, #feedBackButton{
+background:#ed3237 !important;
+}
+a, .showVoteUpDetails, .aTagClass{
+color:#393939 !important;
+}
+.resendEmailVerifyLink {
+color:#fff !important;
+}
+.redTextColor {
+color:#fff !important;
+}
+.redTextColorTest {
+color:#cc6666;
+}
+.orgHomePg{
+color:#fff !important;
+}
+.instLibMainHolder .activeLibTab{
+background:#8cc750 !important;}
+.instLibFltrTab:hover{background:#8cc750 !important;}
+.instChlWidgTop{background-color:#8cc750;border:1px solid #7fa955;padding:10px 15px;text-align:center}
+.active .tabText{
+color:#8cc750;}
+.userPushNotifyPopupBody{
+background:#393939 !important;
+}
+.activityContainer{
+	min-height:200px;
+	padding-left: 18px;
+	padding-right: 25px;
+	width: 511px;
+}
+.instWidget{
+	padding-right:10px;
+}
+#instHomeWidgetsContainer{
+	margin-top:30px;
+}
+.instWidName{
+	font-size:16px;	
+}
+.instWidHead{
+	padding:5px 0;
+	border-bottom:1px solid #ccc;
+}
+.widgetContentHolder{
+	padding:15px 0;	
+}
+.instHomeTab{
+	padding:5px 0 10px 10px;
+	font-size:14px;
+	color:#a4a4a4;
+	cursor:pointer;
+	clear:both;
+	border:1px solid transparent;
+}
+.instNavTab {
+    padding: 10px 0 10px 10px;
+    font-size: 14px;
+    color: #a4a4a4;
+    cursor: pointer;
+    clear: both;
+    border: 1px solid transparent;
+}
+.instHomeTab.active{
+	border:1px solid #ccc;
+	background-color:#ffffff;
+	border-right-width:0px;
+	font-weight:bold;
+	color:#1c1c1c;
+	float:left;
+	width:190px;
+}
+.instHomeTab .instImgs{
+	padding:10px;
+	opacity:0.4;
+}
+.instHomeTab.active .instImgs{
+	opacity:1;
+}
+.instHomeTab:hover .instImgs{
+	opacity:1;
+	transition: opacity 500ms linear;
+	-webkit-transition: opacity 500ms linear;
+	-moz-transition: opacity 500ms linear;
+	-o-transition: opacity 500ms linear;
+}
+.instRATab .instImgs{
+	background-position:-22px 0;
+}
+.instRATab:hover .instImgs,
+.instRATab.active .instImgs{
+	background-position:0 0;
+}
+.instDbtTab .instImgs{
+	background-position:-66px 0;
+}
+.instDbtTab:hover .instImgs,
+.instDbtTab.active .instImgs{
+	background-position:-44px 0;
+}
+.instSchTab .instImgs{
+	background-position:-110px 0;
+}
+.instSchTab:hover .instImgs,
+.instSchTab.active .instImgs{
+	background-position:-88px 0;
+}
+.instPplTab .instImgs{
+	background-position:-154px 0;
+}
+.instPplTab:hover .instImgs,
+.instPplTab.active .instImgs{
+	background-position:-132px 0;
+}
+
+.instHomeTab .tabText{
+	margin-left:10px;
+	position:relative;
+	top:5px;
+}
+
+/* Middle Section*/
+.instOneDbtContainer,
+.instDoubtsHolder,
+.instShareFeedsHold{
+	width:65%;
+	float:left;
+	padding:15px 2% 30px 2%;
+	min-height:600px;
+	/*border-right:1px solid #eee;*/
+}
+.instShareFeedsHold{
+	width:62%;
+}
+.instSingleFeed.instShareFeedsHold{
+	width:70%;
+	border-right:0px;
+	padding-top:0px;
+}
+.instHomeWidgets{
+	float:right;
+	width:27%;
+	min-height:600px;
+	/*height: 100%;*/
+	padding:30px 16px;
+	/*position: fixed;*/
+	border-left: 1px solid #eee;
+	/*right: 0px;*/
+}
+
+/* ACTIVITY FEED */
+.instActivityImg{
+	background-position:-175px -2px;
+	padding:8px;
+	float:left;
+}
+.instUserPic{
+	width:30px;
+	opacity:0;
+	/*height:30px;*/
+}
+.instActivitySelMyBatch{
+	margin:2px;
+	margin-top:18px;
+	color:#666;
+}
+.instActivitySelMyBatch .dropDownHead .textCont{
+	color:#999;
+	font-size:12px;
+}
+.instActivitySelMyBatch .dropDownHead{
+	background-color:#fff;
+}
+.instFeedsContainer{
+	margin:25px 5px 30px 6px;
+	padding:20px 0;
+	border-top:1px solid #ccc;
+}
+.instSingleFeed .instFeedsContainer{
+	border-top:0px;
+	margin-top:0px;
+}
+/* BODY */
+.eachInstFeedHolder{
+	padding:10px 0 30px 0;
+	overflow:hidden;
+	border-bottom:1px solid rgb(236, 232, 232);
+	opacity:0;
+	-webkit-transition: background-color 1000ms linear;
+     	-moz-transition: background-color 1000ms linear;
+     	-o-transition: background-color 1000ms linear;
+     	-ms-transition: background-color 1000ms linear;
+     	transition: background-color 1000ms linear;
+}
+.eachInstFeedHolder.feedJustAdded,
+.instFeedPostContainer{
+	background-color:#f9f9c4;
+}
+.eachInstFeedHolder .instProfilePicContainer{
+	margin-right:10px;
+}
+.instFeedProfilePic{
+	width: 100%;
+    height: 100%;
+}
+.instFeedProfileName{
+	color:#3474a4;
+	font-size:12px;
+}
+.instFeedShareScope{
+	padding:0 10px;
+	color:#999;
+	font-size:1px;
+	visibility:hidden;
+	}
+	.instAnalyticsSelMyProg .nDropDown{background-color:#8cc750;border-radius: 10px;}
+	.instLibFltrTab:hover,.instLibFltrTab.activeLibTab:hover,.instLibFltrTab.activeLibTab{background-color:#ed3237;}
+	.instLibFltrTab:hover{background-color:#8cc750}
+.instFeedShareScope .instImgs{
+	padding:9px 3px;
+	background-position:-493px -5px;
+	margin-right:8px;
+	border-radius: 10px;
+}
+
+/* BUTTON INST */
+#instPostDoubt,
+#instituteHome .greenButton{
+	color: #fff !important;;
+    	background-color: #ed3237;
+	border:1px solid #ed3237;
+	background-image:none;
+	border-radius:10px;
+}
+#instituteHome .blueButton{
+	color:#1d4159;
+    	background-color: #337999;
+	border:1px solid #8cabbf;
+}
+/* DOUBT SECTION */
+.instDoubtsHolder{
+	padding-top:0px;
+	/*top: 23px;*/
+	position: relative;
+}
+.instDoubtRightSec{
+	float:right;
+	/*right: 0px;
+	position: fixed;*/
+	width:23%;
+	border-left: 1px solid #eee;
+	min-height:600px;
+	padding:50px 1.4%;
+}
+.instFilterDoubts{
+	border-bottom:1px solid #ccc;
+	padding:10px 0;
+	margin-top:20px;
+}
+.instAskDbtHolder{
+	padding:20px 30px;
+	background-color:#eee;
+}
+.askDoubtBtn{
+	padding:8px 0;	
+	font-size:13px;
+	width:100%;
+	border-radius: 10px;
+}
+.instAskDbtInfo{
+	background-color:#fff;
+	padding:10px;
+	margin-left:20px;
+	color:#666;
+}
+.instAskDbtArr{
+	width: 0;
+	height: 0;
+	border-bottom: 15px solid transparent;
+	border-top: 15px solid transparent;
+	border-right: 15px solid #fff;
+	top:18px;
+	position:relative;
+	margin-left:10px;
+}
+.instDoubtSearchBoxHolder{
+	margin:20px 0px;
+}
+.instDoubtSearchBox{
+	width:46%;
+}
+.instDoubtSearchBox .searchDivBox,
+#instituteHome .searchInputBox{
+	background-color: #edeef0;
+	border: 1px solid #e0e0e0;
+	height: 14px;
+	outline: none;
+	padding: 7px 2px 7px 40px;
+	overflow-y: hidden;
+	font-size:14px;
+	white-space: nowrap;
+}
+.instDoubtSearchBox .searchDivBox{
+	padding-left: 35px;
+}
+#instituteHome .searchInputBox:focus,
+.instDoubtSearchBox .searchDivBox:focus{
+	border:1px solid #666;
+	background-color:#fff;
+}
+#instituteHome .searchInputBox.txtFilled,
+.instDoubtSearchBox .searchDivBox.txtFilled{
+	background-color:#fff;
+}
+.instDoubtSearchBox .searchDivBox .placeHolder{
+	font-size:12px;
+	color:#888;
+}
+.searchDbtsBtn{
+	cursor:pointer;
+}
+.searchDbtsBtn .instImgs{
+	padding:10px 9px;
+	background-position: -564px -1px;
+	top:-3px;
+	margin-right:5px;
+}
+.instDoubtSearchedTopics{
+	padding-top:10px;
+}
+.instDoubtSearchedTopics .instDbtTopicSeld{
+	font-size:11px;
+	background-color:#DEEBF4;
+	color:#369;
+	font-size:12px;
+	padding:0px 5px;
+	margin-right:5px;
+	display:inline-block;
+	border:1px solid rgb(179,197,216);
+	border-radius:2px;
+	padding-bottom:3px;
+}
+.instDbtTopicSeld .closeDbtTopic{
+	font-size:16px;
+	padding:0 5px;
+	cursor:pointer;
+}
+.instDbtTopicSeld .closeDbtTopic:hover{
+	color:rgb(216,29,29);
+}
+#instituteHome .searchInputDiv .instImgs{
+	margin: 10px 12px;
+	z-index:1000;
+}
+#instituteHome .searchInputDiv .instImgs,
+.instDoubtSearchBox .instImgs{
+	width: 18px;
+	height: 20px;
+	background-position: -564px -1px;
+	position: absolute;
+}
+.instDoubtSearchBox .instImgs{
+	margin: 5px;
+}
+.instDoubtsLists{
+	margin:20px 0;
+}
+.instEachDbt.fadeAnim{
+	opacity:1;
+	transition: opacity 200ms linear;
+	-webkit-transition: opacity 200ms linear;
+	-moz-transition: opacity 200ms linear;
+	-o-transition: opacity 200ms linear;
+}
+/* EACH DOUBT STYLES */
+.instEachDbt{
+	padding:10px 0 35px 0;
+	border-bottom:1px solid rgb(230, 230, 230);
+	opacity:0;
+	overflow-x:hidden;
+}
+.instEachDbt .instProfilePicContainer{
+	margin-right:12px;
+}
+.instDbtProfilePic{
+	width:40px;
+	/*height:40px;*/
+}
+.instDbtPostNm{
+	color:rgb(153, 153, 153);
+	font-size:12px;
+}
+.instDbtPostNm:hover{
+	color:#006699;
+}
+.instDbtAgeH{
+	color:rgb(153, 153, 153);
+	vertical-align:top;
+	white-space:nowrap;
+	padding:0px 0 0 10px;
+	text-align:right;
+}
+.instDbtAgeH .instImgs{
+	padding:13px 10px;
+	background-position:-546px 0;
+	margin-right:6px;
+}
+.instDbtTitle{
+	padding:3px 0;
+	min-width:412px;
+}
+.instDbtTitle img{
+	max-width:100px;
+}
+.instDbtDesc{
+	padding:5px 0;
+	font-size:12px;
+	color:#494949;
+	max-width:480px;
+}
+.instDbtTitleSubNm{
+	color:#31699a;
+	font-size:16px;
+	font-weight:bold;
+}
+.instDbtTitle .txtBd{
+	font-size:16px;
+	text-decoration:none;
+	color:#333;
+}
+.instDbtTitle .txtBd:hover{
+	background-color:#f2f2f2;
+}
+.instDbtTags{
+	padding:5px 0;
+}
+.instTrTopicText.instDbtTag{
+	margin-right:5px;
+	margin-bottom:3px;
+	font-size:11px;
+	padding:0px 2px;
+}
+.followInstDbt .greenButton{
+	right:0px;
+	padding:4px 30px;
+	font-size:13px;
+	border-radius: 10px;
+}
+.followInstDbt{
+	opacity:0;
+	filter:alpha(opacity=0);
+}
+.followInstDbt .unfollowEntity{
+	background-color:transparent;
+	color:#cc6666;
+	font-size:11px;
+	background-image:none;
+	border-width:0px;
+}
+.followInstDbt .unfollowEntity:hover{
+	text-decoration:underline;
+	cursor:pointer;
+}
+.instEachDbt:hover .followInstDbt{
+	opacity:1;
+	filter:alpha(opacity=100);
+}
+/* DOUBT RIGHT FACETS */
+.instTopicHead,
+.instDbtFacets .titleTxt{
+	padding-bottom:5px;
+	border-bottom: 1px solid #ccc;
+	color: #666;
+	font-size:13px;
+}
+.instDbtFacets{
+	padding-bottom:3px;
+	border-bottom:1px solid rgba(216,216,216,0.63);
+}
+.dbtFacetsSubs{
+	padding:5px 0;
+}
+.dbtFacetSub{
+	padding:5px;
+	background-color:#f1f1f1;
+	margin-top:5px;
+}
+.dbtFacetSub .facetSubTxt{
+	color:#656565;
+	top:-3px;
+	position:relative;
+}
+.dbtFacetSub .instImgs{
+	padding: 6px;
+	background-position: -460px 0px;
+	cursor: pointer;
+	opacity: 0.65;
+}
+.dbtFacetSub.selected{
+	background-color:#dfecf5;
+}
+.dbtFacetSub.selected .facetSubTxt{
+	color:#000;
+	font-weight:bold;
+}
+.dbtFacetSubjTopicsHolder{
+	height:0px;
+	position:relative;
+	overflow:hidden;
+	background-color:rgba(247, 247, 247, 0.8);
+}
+.dbtFacetSubjTopicsHolder.anim{
+	transition: height 200ms linear;
+	-webkit-transition: height 200ms linear;
+	-moz-transition: height 200ms linear;
+	-o-transition: height 200ms linear;
+	height:initial;
+}
+.dbtFacetSubjTopics{
+	padding:3px 5px 12px 26px;
+}
+.dbtFacetSubjTopics .dbtFacetTopic{
+	margin-bottom:4px;
+}
+.instDbtPopularTags{
+	padding:20px 0;
+}	
+.instRightSec{
+	width:192px;
+	margin-left:36px;
+	overflow:hidden;
+	margin-top:68px;
+}
+.instPageFacets{
+	padding-bottom:20px;
+}
+.instTopicTree{
+	margin-top:10px;
+}
+.instEachTrTopic{
+	width:100%;
+	/*padding:5px;*/
+	margin:4px 0;
+	cursor:pointer;
+	float:left;
+}
+.instTrTopicCount,
+.instEachTrTopic:hover .instTrTopicCount,
+.instEachTrTopicSelect .instTrTopicCount{
+	font-size:12px;
+	color:#316796;
+	padding-left:2px;
+}
+.instDiscussTag{
+    background-color: #DEEBF4;
+    color: #336699;
+    display: inline-block;
+    margin: 0 2px 4px 0;
+    padding: 0 3px;
+}
+.instDiscussTag:hover,
+.instDbtTag:hover,
+.dbtFacetTopic:hover .instTrTopicText,
+.instEachTrTopic:hover .instTrTopicText{
+	background-color:#488bb2;
+	color:#fff;
+}
+.instTrTopicText{
+	background-color:#DEEBF4;
+	color:#369;
+	font-size:12px;
+	padding:1px 2px;
+	cursor:pointer;
+	border:1px solid rgb(179,197,216);
+	border-radius:3px;
+}
+.instEachTrTopicSelect,
+.instDbtTag.instEachTrTopicSelect:hover,
+.dbtFacetTopic:hover .instTrTopicText.instEachTrTopicSelect,
+.instEachTrTopic:hover .instTrTopicText.instEachTrTopicSelect{
+	border-color:#e7e7e7;
+	background-color:#DEEBF4;
+	color:#666;
+	cursor:default;
+	opacity:0.75;
+	filter:alpha(opacity=75);
+}
+
+/* ASK DOUBT POPUP*/
+.instAddDoubtPopup{
+	min-width:530px;
+	max-width:1200px;
+}
+.instRTEHolder{
+	margin-bottom:20px;
+	max-width:600px;
+}
+.instAddDoubtTags{
+}
+.instAddDoubtTitle{
+	margin-bottom:20px;
+}
+.instAddDoubtTitle input{
+	border:1px solid transparent;
+	outline:none;
+	height:30px;
+	width:98%;
+	background-color:#eee;
+	padding-left:10px;
+	font-size:12px;
+}
+.instAddDoubtTags{
+}
+.instAskDoubtTtlTxt{
+	font-size:15px;
+	color:#000;
+	padding:10px 12px;
+	vertical-align:top;
+}
+.instAddDoubtTags .addTagsWrapper{
+	min-height:50px;
+	margin-top:5px;
+}
+.instAddDoubtTags .addTagsWrapper .ATHolder{
+	margin:0 20px 20px 0;
+	min-width:130px;
+}
+.instAddDoubtTags .ATSelectBoxHeadIcon{
+	padding-top:5px;
+}
+.instAddDoubtTags .ATHolder:first-child{
+	display:none;
+}
+.instAddDoubtTags .ATHolder .ATTTTopic{
+	margin:6px 0;
+}
+.instAddDoubtTags .ATHolder .ATTTTopic .linBlk{
+	display:none;
+}
+.instAddDoubtTags .ATHolder .ATTTItemName{
+	background-color:#eee;
+	border:0px;
+}
+.instAddDoubtTags .addTagsWrapper .ATSelectBoxHead{
+	padding:6px 15px;
+	border:0px solid;
+	background-color:#eee;
+	font-size:14px;
+	border-radius: 5px;
+}
+#instPostDoubt{
+	padding:6px 25px;
+	cursor:pointer;
+}
+.instHideComments{
+	color:#336699;
+	padding:2px 5px;
+	border-radius:0px;
+}
+.instAskDbtScope{
+	margin-right:25px;
+}
+.instAskDbtScope .txt{
+	position:relative;
+	top:-3px;
+	color:#222;
+}
+
+/* SINGLE DOUBT PAGE */
+.instDoubtOpen .instOneDbtContainer{
+	width:64%;
+}
+.instDoubtOpen .instDoubtRightSec{
+	padding-top:40px;
+	width:25%;
+	overflow-x:hidden;
+}
+.instDoubtOpen .instDbtTitle{
+	min-width:380px;
+}
+.instDoubtOpen .instEachDbt{
+	padding-bottom:20px;
+}
+.instSimilarQues{
+	margin-bottom:20px;
+}
+.instSimQues{
+	margin:10px 0 0 0;
+	overflow:hidden;
+	position:relative;
+}
+.instSimQues.animHeight{
+	transition: opacity 200ms linear;
+	-webkit-transition: height 200ms linear;
+	-moz-transition: opacity 200ms linear;
+	-o-transition: opacity 200ms linear;
+}
+.eachSimQues{
+	padding:8px 10px;
+	border-bottom:1px solid #eee;
+}
+.eachSimQues img{
+	display:none;
+}
+.eachSimQues .instSimQuesBody{
+	font-weight:bold;
+	font-size:13px;
+	color:#222;
+}
+/* COMMENT WIDGET CSS OVERWRITE */
+.instCommentWidgetContainer{
+	margin-top:20px;
+}
+.instCommentWidgetHolder .inputerHat{
+	display:none;
+}
+.instCommentWidgetHolder .commItem{
+	border-bottom:1px solid #eee;
+	padding-bottom:25px;
+	opacity:0;
+}
+.instCommentWidgetHolder .commItemBody{
+	box-shadow:none;
+	padding:10px 10px 0 10px;
+}
+.instCommentWidgetHolder .commInputer{
+	box-shadow:none;
+	border-bottom:1px solid #eee;
+	padding-left:10px;
+}
+.instCommentWidgetHolder .commItemBody .itemContent40{
+	margin-left:30px;
+}
+.instCommentWidgetHolder .commItemWhity:hover,
+.instCommentWidgetHolder .replyItemWhity:hover,
+.instCommentWidgetHolder .commItemWhity,
+.instCommentWidgetHolder .replyItemWhity{
+	border:0px;
+	background-color:transparent;
+	padding:0 10px 0;
+}
+.instCommentWidgetHolder .img20Round,
+.instCommentWidgetHolder .img20DummyRound,
+.instCommentWidgetHolder .img30Round,
+.instCommentWidgetHolder .img30DummyRound{
+	border-radius:0px;
+}
+.instCommentWidgetHolder .RTEHolder{
+	border: 1px solid #e0e0e0;
+}
+.instCommentWidgetHolder .inputerRTE .RTEArea{
+	background-color: #edeef0;
+	border: 0px;
+	box-shadow:none;
+	height:35px;
+}
+.instCommentWidgetHolder .replyWidget .inputerRTE .RTEArea{
+	height:16px;
+	overflow:hidden;
+}
+.instCommentWidgetHolder .replyWidget .inputerRTE.activeInputerRTE .RTEArea{
+	min-height:60px;
+}
+.instCommentWidgetHolder .inputerRTE.activeInputerRTE .RTEArea{
+	background-color: #fff;
+	border: 1px solid #ccc;
+	min-height:100px;
+}
+.instCommentWidgetHolder .commItemWhity .time{
+	font-style:normal;
+	padding-left:6px;
+	font-size:11px;
+}
+.instCommentWidgetHolder .openMyProfile,
+.instCommentWidgetHolder .commItemWhity .openMyProfile.big14{
+	font-size:12px;
+	color:rgb(51, 102, 153);
+	font-weight:bold;
+}
+.instCommentWidgetHolder .commItemWhity .margBot15{
+	margin-bottom:6px;
+}
+.instCommentWidgetHolder .itemHorn{
+	display:none;
+}
+.instCommentWidgetHolder .commWidget,
+.instCommentWidgetHolder .replyWidget{
+	margin:8px 0;
+}
+.instCommentWidgetHolder .submitReplyInput.blueSubmitButton,
+.instCommentWidgetHolder .submitCommInput.blueSubmitButton{
+	color:#fff;
+    	background-color: #99cc65;
+	border:1px solid #88ad5f;
+	background-image:none;
+	border-radius:0px;
+	padding:3px 12px;
+}
+#instituteHome .upvotedInstItem,
+#instituteHome .upvoteInstItem{
+	background:none;
+	height:initial;
+	width:initial;
+}
+#instituteHome .upvotedInstItem{
+	color:#666;
+	text-decoration:none;
+}
+#instituteHome .replyToCommItem,
+#instituteHome .commWidgetHideReplies{
+	display:inline-block;
+	text-decoration:none;
+	margin-left:0;
+	font-size:11px;
+}
+#instituteHome .replyToCommItem:hover,
+#instituteHome .commWidgetHideReplies:hover{
+	text-decoration:underline;
+}
+#instituteHome .commRepliesNum,
+#instituteHome .upVoteItemCount{
+	font-size:11px;
+}
+#instituteHome .commRepliesNum{
+	color:rgb(51, 102, 153);
+}	
+.RTEImageDiv{
+	display:inherit;
+}
+.RTEImageDiv img{
+	max-width:100%;
+	border:1px solid transparent;
+}
+.RTEImageDiv img:hover{
+	cursor:pointer;
+	border:1px solid #81BEF7;
+}
+.instCommentFilterDiv{
+	margin-right:10px;
+}
+.instCommentFilterDiv .nDropDown{
+	width:110%;
+	border-radius: 10px;
+}
+.instCommentWidgetHolder .replyWidgetHolder{
+	margin-left:40px;
+	background-color:rgb(250, 250, 250);
+	
+}
+.instCommentWidgetHolder .replyItem .itemContent30{
+	border-bottom:1px solid rgba(216,216,216,0.4);
+}
+
+/* MEMBERS CSS */
+.instMembersInfo{
+	padding:20px 3.5%;
+}
+.chooseMembersTabs{
+	padding-bottom:20px;
+	height:40px;
+}
+.instMembersType{
+	font-size:26px;
+	color:#ccc;
+	float:left;
+	margin-right:20px;
+	cursor:pointer;
+}
+.instMembersType .instImgs{
+	background-position: -520px -5px;
+	position: relative;
+	width: 16px;
+	height: 10px;
+	margin-top: 22px;
+	margin-left: -60px;
+	float: left;
+	opacity:0;
+	filter:alpha(opacity=0);
+}
+.instMembersType:hover,
+.instMembersType.selected{
+	color:#006699;
+}
+.instMembersType.selected .instImgs{
+	opacity:1;
+	filter:alpha(opacity=100);
+}
+.instMembersFilterHold{
+	height:40px;
+}
+.instMemberSearch{
+	width:40%;
+	margin-right:1%;
+	float:left;
+}
+#instituteHome .instMemberSearch .searchInputBox{
+	width:86%;
+	padding-top:6px;
+	padding-bottom:6px;
+	height:14px;
+}
+#instituteHome .instMemberSearch .instImgs{
+	margin:6px 10px;
+}
+.instMembersCount{
+	padding:1px 6px;
+	background-color:#FFF;
+	position:absolute;
+	font-size:15px;
+	top:15px;
+	font-family:Roboto;
+	font-weight:400;
+}
+.instMembersHolder .loadMoreItems,
+.instEachMember,
+.instMembersBySub{
+	opacity:0;
+	filter:alpha(opacity=0);
+}
+.instMembersBySub .nDropDown,
+.instMembersByDept .nDropDown{
+	float:left;
+	margin-right:20px;
+	min-width:230px;
+	border-radius: 10px;
+}
+.instMembersBySub .dropDownHead,
+.instMembersByDept .dropDownHead{
+	padding:8px 0;
+}
+.instMembersHolder{
+	padding:25px 0;
+	margin-top:25px;
+	border-top:1px solid #ccc;
+}
+.instEachMember{
+	width:45.8%;
+	overflow:hidden;
+	margin:10px 10px 0 0;
+	padding:10px;
+}
+.instEachMember .instMemHovOpts{
+	right:0px;
+	z-index:100;
+	top:10px;
+	position:relative;
+	display:none;
+}
+.instEachMember:hover{
+	background-color:#eee;
+}
+.instEachMember:hover .instMemDetails{
+	max-width:51%;
+}
+.instEachMember:hover .instMemHovOpts{
+	display:inline;
+}
+.instEachMember .useMemberProfile,
+.instEachMember .msgInstMember,
+.instEachMember .openInstMemberPro{
+	padding:8px 10px;
+	background-color:#d0d0d0;
+	margin-right:6px;
+	cursor:pointer;
+}
+.instEachMember .useMemberProfile{
+	padding:6px 8px;
+}
+.instEachMember .msgInstMember .instImgs,
+.instEachMember .openInstMemberPro .instImgs{
+	padding:10px;
+}
+.instEachMember .msgInstMember .instImgs{
+	background-position:-382px 0;
+}
+.instEachMember .msgInstMember:hover .instImgs{
+	background-position:-404px 0;
+}
+.instEachMember .openInstMemberPro .instImgs{
+	padding:10px 7px;
+	background-position:-596px -2px;
+}
+.instEachMember .openInstMemberPro:hover .instImgs{
+	background-position:-611px -2px;
+}
+.img60Holder{
+	height:60px;
+	width:60px;
+}
+.instEachMember .icon{
+	/*height:60px;*/
+	height:initial;
+	width:60px;
+	border-radius:0px;
+}
+.instMemDetails{
+	max-width:77%;
+	padding-top:5px;
+	padding-left:15px;
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.instMemName{
+	color:#333;
+	font-size:14px;
+	font-weight:bold;
+	text-decoration:none;
+}
+.instMemInfo{
+	color:#999;
+	font-size:12px;
+}
+.instMembersHolder .loadMoreItems{
+	margin-top:20px;
+}
+.instProfilePicContainer,
+#instituteHome .instProfilePicContainer{
+	background-color:rgb(228,228,228);
+	min-width:30px;
+	min-height:30px;
+	height:30px;
+	overflow:hidden;
+}
+#instituteHome .instOneDbtContainer .instProfilePicContainer,
+#instituteHome .instDoubtsLists .instProfilePicContainer{
+	height:40px;
+	min-width:40px;
+	display:block;
+}
+#instituteHome .instFeedPostContainer .instProfilePicContainer,
+#instituteHome .instFeedsContainer .instProfilePicContainer{
+	height:50px;
+	min-width:50px;
+	display:block;
+}
+#instituteHome .instMembersHolder .instProfilePicContainer{
+	height:60px;
+	min-width:60px;
+	display:block;
+}
+#instituteHome .instFeedsComments .instProfilePicContainer{
+	height:30px;
+	min-width:30px;
+	display:block;
+}
+#instituteHome .instProfilePicContainer.imgLoaded{
+	background-color:transparent;
+	width:initial;
+	min-width:initial;
+	min-height:initial;
+}
+.instProfilePicContainer{
+}
+#instituteHome .instProfilePic,
+#instituteHome .instDbtProfilePic,
+#instituteHome .instFeedProfilePic,
+#instituteHome .instFeedCommentPic{
+	opacity:0;
+}
+
+/* MY SCHEDULE */
+#instituteHome #myScheduleContent{
+	padding:0 15px;
+	float:left;
+}
+#instituteHome .myScheduleMonth,
+#instituteHome #myScheduleContent #myScheduleLeftSec{
+	display:none;
+}
+#instituteHome #myScheduleMainSec{
+	min-width:825px;
+	max-width:1000px;
+	min-height:initial;
+	float:none;
+}
+/* FEED CONTAINER */
+.eachInstFeedHolder .instItemPreview{
+	padding:8px;
+	margin-left:0px;
+}
+.eachInstFeedHolder .instItemPreview.instImgPreview{
+	padding:0px;
+}
+.eachInstFeedHolder .instTextPreview.instItemPreview{
+	padding:2px 0;
+	max-width:530px;
+}
+.eachInstFeedHolder .instAttachLinkImgContainer,
+.eachInstFeedHolder .instAttachLinkAllImgs{
+	max-height:initial;
+}
+.eachInstFeedHolder .instAttachLinkImg{
+	max-height:120px;
+}
+.eachInstFeedHolder .instAttachTxtArea{
+	border:0px;
+	max-height:50px;
+}
+.instFeedsComments{
+	opacity:0;
+}
+.instImgPreview{
+	max-width:100%;
+}
+.instImgPreview img{
+	max-width:100%;
+}
+.videoThumbWrapper{
+	border:1px solid transparent;
+}
+.videoThumbWrapper img{
+	border:0px;
+	outline:0px;
+}
+.eachInstFeedHolder .videoThumbWrapper:hover,
+.eachInstFeedHolder .instImgPreviewCont:hover{
+	cursor:pointer;
+	border:1px solid rgb(113, 159, 179);
+}
+.eachInstFeedHolder.feedJustAdded .instLinkPreview,
+.eachInstFeedHolder.feedJustAdded .instVideoPreview,
+.instFeedPostContainer .instLinkPreview,
+.instFeedPostContainer .instVideoPreview{
+	background-color:transparent;
+}
+.instFeedPostContainer .instActFeedImg,
+.instFeedsContainer .instActFeedImg{
+	opacity:0;
+}
+.instFeedPostContainer .instActFeedImgHolder,
+.instFeedsContainer .instActFeedImgHolder{
+	display:inline-block;
+	background-color:rgb(228,228,228);
+}
+.instFeedsContainer .instActFeedImgHolder.imgLoaded{
+	background-color:transparent;
+}
+.instEachDbt:hover .instItemStgs,
+.instEachDbt:hover .instItemStgsDropped,
+.eachInstFeedHolder:hover .instItemStgs,
+.eachInstFeedHolder:hover .instItemStgsDropped{
+	visibility:visible;
+}
+.instEachDbt:first-child .instItemStgs,
+.eachInstFeedHolder:first-child .instItemStgs{
+	margin-top:0px;
+}
+.publishedEntity .myContentsEachIconItems{
+	margin:0px;
+	padding-top:10px;
+}
+.publishedEntity .myContentsEachIconItems{
+	background-color:transparent;
+	border:0px;
+	border-radius:0px;
+}
+.publishedEntity .feedEntityHolder{
+	background-color:#D4EDF6;
+}
+.publishedEntity .myContentsVideoDur{
+	right:230px;
+}
+.publishedEntity .feedEntityHolder{
+	width:400px;
+}
+.publishedEntity .myContentsTestsDetails,
+.publishedEntity .myContentsDocumentsDetails,
+.publishedEntity .myContentsDocumentsDetails{
+	width:290px;
+}
+.publishedEntity .myContentsVideoText{
+	max-width:370px;
+}
+.publishedEntity .myContentsEachItem,
+.publishedEntity .eachMyContentsDocuments, 
+.publishedEntity .eachMyContentsTests, 
+.publishedEntity .eachMyContentsPlaylist{
+	width:390px;
+}
+.publishedEntity .myContentsTestDetails,
+.publishedEntity .eachMyContentsTests .myContentsTestText,
+.publishedEntity .eachMyContentsDocuments .myContentsDocumentsText{
+	max-width:280px;
+	width:initial;
+	min-width:initial;
+}
+.publishedEntity .eachMyContentsVideos{
+	height:150px;
+}
+.publishedEntity .eachMyContentsVideos .myContentsVideoDur{
+	top:115px;
+}
+.publishedEntity .entityComments{
+	visibility:hidden;
+}

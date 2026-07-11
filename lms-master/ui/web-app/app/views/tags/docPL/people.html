@@ -1,0 +1,24 @@
+<div class="peopleWidget">
+    <div class="peopleWidgetHead">
+        <span class="boldy">Common </span>(<label class="peopleWidgetCount">${commons.result.totalResults}</label>)
+    </div>
+    <div class="peopleWidgetPeople">
+        %{
+                commons=commons.result.users;
+        }%
+        #{widgets.userItems users:commons /}
+    </div>
+</div>
+
+<div class="peopleWidget">
+    <div class="peopleWidgetHead">
+        <span class="boldy">Saved by </span>(<label class="peopleWidgetCount">${allFollowers.result.total}</label>)
+    </div>
+    <div class="peopleWidgetPeople">
+    %{
+            allFollowers=allFollowers.result.followSet;
+    }%
+    #{widgets.userItems users:allFollowers /}
+    </div>
+</div>
+

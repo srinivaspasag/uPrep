@@ -1,0 +1,372 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+
+TXT_DRAFT = Draft State
+TXT_UNDER_CONVERSION = Conversion in-progress
+TXT_SUBMIT = Submit
+
+LEARN_NETWORK = Learning Network
+LEARN_NETWORK_TOOL_TIP = &lt;div class=centry&gt;Learnpedia's Collaborative&lt;/br&gt;Learning Platform &lt;/br&gt;&lt;b&gt;(Learn)&lt;/b&gt;&lt;/br&gt;&lt;/div&gt;
+
+#common error messages
+COMMON_ERROR_MESSAGE=Something went wrong.Refresh the Page and try again.
+MISSING_PARAMETER=Something went wrong.Refresh the Page and try again.
+
+#ENTITY TYPE TO TEXT
+ENTITY_NAME_CMDSTEST = Test
+ENTITY_NAME_CMDSASSIGNMENT = Assignment
+ENTITY_NAME_CMDSVIDEO = Video
+ENTITY_NAME_CMDSDOCUMENT = Document
+ENTITY_NAME_CMDSRESOURCE = Resource
+ENTITY_NAME_CMDSQUESTION = Question
+ENTITY_NAME_CMDSQUESTIONSET = Question Set
+ENTITY_NAME_SECTION = Section/Class
+ENTITY_NAME_SDCARD = SD Cards
+ENTITY_NAME_SDCARDGROUP = SD Card Group
+ENTITY_NAME_CMDSMODULE = Module
+
+#ENTITY INSTITUTE RESOURCES
+INSTITUTE_RESOURCES_CMDSTEST = Institute Test Resources
+INSTITUTE_RESOURCES_CMDSASSIGNMENT = Institute Assignment Resources
+INSTITUTE_RESOURCES_CMDSVIDEO = Institute Video Resources
+INSTITUTE_RESOURCES_CMDSDOCUMENT = Institute Document Resources
+INSTITUTE_RESOURCES_CMDSRESOURCE = Institute Resource Resources
+INSTITUTE_RESOURCES_CMDSQUESTIONSET = Institute Question Set Resources
+
+#SPECIFIC ERROR MESSAGES
+NOT_CONVERTED = Resource is still under process , please try again after sometime.
+INCOMPLETE_PUBLISHABLE_STATE = Unable to make visible , state incomplete for the entity. Please make it complete first.
+FOLDER_ALREADY_EXISTS = A folder with this name , already exist in Organization Resources , please select another name.
+NOT_COMPLETED = Resource is in <b>Draft</b> (In-Complete) state. Please open and complete it, before you make it Visible. 
+
+#API ERROR CODE
+DELETERESOURCES_ALREADY_PUBLISHED = Unable to delete already visible contents.
+
+#MODULE
+TXT_MODULE_TITLE = MODULE
+TXT_CURRICULUM = Curriculum
+TXT_REF_CONTENT = Reference Content
+TXT_SETTIGNS = Settings
+MODULE_TITLE_INPUT_CAPTION = Provide us with the TITLE for the below Module
+TXT_TIPS = Tips
+MODULE_TIPS_CAPTION = Start adding the curriculum for your Module
+MODULE_TIP_1 = Its allways better to plan out a structure first by sequentially adding topics and sub-topic names, you can add all the content later.
+#MODULE TOPIC
+ADD_TOPIC = + Add Topic
+ADD_SUB_TOPIC = + Add Sub-Topic
+MODULE_ADD_CONTENT = + Add Content
+CHOOSE_CONTENT_TYPE = Choose Type of Content
+TXT_MULTIMEDIA = Video
+TXT_DOCUMENT = Documents
+TXT_FILE = File
+TXT_ASSIGNMENT = Assignment
+TXT_TEST = Test
+TXT_CANCEL = Cancel
+ADD_A_MODULE_CONTENT = Add a %s Content
+ADDED_MODULE_CONTENT = Content added %s
+ADD_FROM_RESOURCE = Add from existing resources
+CREATE_MODULE_CONTENT = Create And Add Content
+
+#PROGRAMS
+CHOOSE_OPERATION = Choose Operation
+MAKE_VISIBLE = Make Visible on learn/device
+MAKE_DOWNLOADABLE = Enable Download on device
+TXT_MORE = More
+MAKE_HIDDEN = Make In-Visible on learn/device
+MAKE_NON_DOWNLOADABLE = Disable Download on device
+ADD_TO_PROGRAMS = Add To Programs
+REMOVE_FROM_PROGRAM = Remove From Program
+REMOVE_FROM_CENTER = Remove From Center
+REMOVE_FROM_SECTION = Remove From Section
+MOVE_CONTENT = Move/Reorder Content
+
+#PEOPLE_MNGMNT
+DEVICE_ASSIGNMENT = Device Assigned
+OFFLINE_USERS_PAGE = Offline Tablet Profile
+NO_OFFLINE_USERS = No tablet profiles found
+DOB_CHANGE_WARNING = You are trying to modify Date of Birth, which may lead to password reset to default combination of 'Institute-ID + DOB' for member in case he/she is using 'Institute-ID' for login into system.</br></br> <b>Do you want to continue?</b>
+EDIT_PROFILE = Edit Profile
+DEACTIVATE_MEMBER = De-activate Member
+ACTIVATE_MEMBER = Activate Member
+DEACTIVATE_NOW = De-activate Member Now
+SCHEDULE_DEACTIVATE = Schedule Activation Duration
+ACTIVATE_NOW = Activate Member Now
+STATUS_DEACTIVATED = currently deactivated
+CURRENT_SCHEDULE_DETAILS = Currently member is scheduled to be active from 
+CURRENTLY_NO_SCHEDULE_DETAILS = No schedule found active for this member.
+CURRENTLY_SCHEDULED_INDEFINITLY = Currently member is scheduled to be active for indefinite period.
+
+#Device Management
+DEVICE_MGMNT = Device Management
+NO_DEVICES_FOUND = No Devices Found Active
+DEVICE_TYPE_WEB = Website
+DEVICE_TYPE_MOBILE = Mobile Device
+DEVICE_WEB-APP = Learn
+DEVICE_CMDS-APP = CMDS
+DEVICE_TABAPP = Tablet
+LOGGED_OUT = Offline
+LOGGED_IN = Online
+UNKNOWN = Unknown
+ACTIVITY_OPEN = Opened
+ACTIVITY_EDIT = Edited
+ACTIVITY_VIEW = Viewed
+ACTIVITY_COMMENT = Commented
+ACTIVITY_DELETE = Deleted
+ACTIVITY_ATTEMPTED = Attempted
+ACTIVITY_ADD = Added
+ACTIVITY_MAKE_VISIBLE = Made visibile/downloadable
+ACTIVITY_PUBLISH = Published
+ACTIVITY_UPLOAD = Uploaded
+ACTIVITY_MOVE = Moved
+ACTIVITY_CHANGE = Changed
+ACTIVITY_DEACTIVATED_ACTIVATED = Deactivated / Activated
+ACTIVITY_ACTIVATED = Activated
+NO_ACTIVITY_YET = No Activity recorded, in your Organization's page
+
+#PAGES
+#--------------------
+PAGE_DOCUMENT = Document Single Page
+PAGE_FILE = Downloadable File Single Page
+PAGE_VIDEO = Video Single Page
+PAGE_DISCUSSION = Doubt Single Page
+PAGE_QUESTION = Question Single Page
+PAGE_CHALLENGE = CHALLENGE Single Page
+PAGE_TEST = Test Page
+PAGE_ASSIGNMENT = Assignment Page
+PAGE_NEW_ENTITY = UNKNOWN ENTITY Page
+PAGE_STATUS_FEED = Status Feed Page
+PAGE_DOUBTS = Doubts Page
+PAGE_MEMBERS = Members Page
+PAGE_SCHEDULE = Schedule Page
+PAGE_LIBRARY = Library Page
+PAGE_TEST_LEADERS = Test leaders Page
+PAGE_ANALYTICS = Overall Analytics Page
+PAGE_INSTITUTE_HOME = Institute Home Page
+PAGE_CHALLENGES = Challenges Page
+PAGE_PROFILE = Profile Page
+PAGE_MSG_INBOX = Message Inbox
+PAGE_MSG_CONVERSATION = Message Single Conversation
+PAGE_USER_SETTINGS = User Settings
+PAGE_TEST_ATTEMPT = Test Attempt page
+PAGE_PRE_TEST = Pre Test Page
+PAGE_TEST_ANALYTICS = Single Test Analytics
+#-----------CMDS_PAGES--------
+PAGE_ORGANIZATION_INFO = Organization Info Page
+PAGE_PROGAM_LIBRARY = Program Library Page
+PAGE_QUESTIONS = Questions Page
+PAGE_MARKS_SHEET = Test Marks-Sheet Page
+PAGE_FOLDER = Folder Page
+PAGE_RESOURCE = Organization Resources Page
+PAGE_ADD_CONTENT = Add Content Page 
+PAGE_ADD_QUESTION = Add Question Page
+PAGE_QUESTION_SET = Questions Set Page
+PAGE_QUESTION_SOLUTION = Question Solution
+PAGE_EDIT_QUESTION = Edit Question Page
+PAGE_TEST_CREATION = Test Creation Popup
+PAGE_ASSIGNMENT_CREATION = Assignment Creation Popup
+PAGE_TEST_SERIES_CREATION = Test Creation page
+PAGE_TEST_SERIES = Test series page
+PAGE_HELP_CENTER = Help Center
+PAGE_ACADEMIC_STRUCTURE = Organization Academic Structure
+PAGE_PROGRAM = Organization Programs
+PAGE_CENTER = Organization Centers
+PAGE_SECTION = Organization Sections
+PAGE_BOARDS = Organization Boards
+PAGE_STUDENT = Students Page
+PAGE_OFFLINE_USER = Tablet Profile Page
+PAGE_MEMBER = Member(Teacher/Manager/Editor) Page
+PAGE_MEMBER_PWD = Member Password
+PAGE_MEMBER_USERNAME = Member Username
+PAGE_DEVICE_MGNT = Device Management Page
+PAGE_DEVICE_ACTIVITY = Decive Management User Activity logs Page
+PAGE_PLANS = Subscription plan details page
+PAGE_DEACTIVATION_POPUP = Member de-activation popup
+PAGE_INVOICES = Invoice page in Seller dashboard.
+PAGE_EXT_SIGNUP = External SignUp Management Page
+PAGE_MODULE = Modules Page
+PAGE_MODULE_ENTRY = Modules Entry Page
+PAGE_INVENTORY = Access Codes Page in Seller dashboard.
+PAGE_SHIPMENTS = Shipments Tracking Page in Seller dashboard.
+
+#login
+INVALID_CREDENTIAL=Sorry, Invalid credential
+NOT_REGISTERED=Sorry, not registered
+INVALID_PASSWORD=Sorry, invalid password
+INVALID_USERNAME=Sorry, invalid username
+
+#sources
+SOURCEID_INVALID=The contents you are trying to access are not currently available.<br>Please refresh the page and try again.
+PUBLISH_STATUS_QUESTION_STATUS_INCOMPLETE=<span class='redColor'>This question is incomplete</span>
+PUBLISH_STATUS_PUBLISHED=<span class='greenColor'>Done !</span>
+
+#Test creation and preview
+TEST_IS_NOT_ACTIVE=This test is not active currently.
+ADDSCHEDULE_TEST_IS_NOT_ACTIVE=Schedule not added.<br>You cannot add a schedule after the last schedule has expired.
+BOARD_NOT_FOUND=An error occured.<br> The question you are trying to add does not belong to the subject/topic specified for the test.
+ALREADY_ADDED=Either this question is already added or the question number limit for this subject/topic is exceeded or the question type does not match the format of the test.
+DIFFICULTY_NOT_SPECIFIED=One of the questions does not have the difficulty level specified.Add the difficulty level and retry again.
+TEST_ALREAY_PRESENT=Test code is already in use, please provide a unique code
+
+#added by Shankar
+ASSIGNMENT_ALREAY_PRESENT=Assignment code is already in use, please provide a unique code
+
+#moving content
+INVALID_MOVE=Failed.You are trying to move the contents of a parent to a child or to the same folder.
+
+
+#package
+EXPORTPACKAGE_TEST_NOT_PUBLISHED=One of the test added in the package is not published yet.Please publish the test and try again.
+
+
+
+
+#Academic Structure
+DEPARTMENT_NOT_FOUND=There are no departments in this institute.<div class='acadStrTableNotFound'>Click below to add Department.</div> 
+PROGRAM_NOT_FOUND=No Programs were found.<div class='acadStrTableNotFound'> Click below to add a program to the Department.</div>  
+CENTER_NOT_FOUND=There are no centers in this institute.<div class='acadStrTableNotFound'>Click below to add Center.</div> 
+PROGRAM_CENTER_NOT_FOUND=This program is not run in any center.<div class='acadStrTableNotFound'>Click below to assign this program to a center.</div> 
+PROGRAM_COURSE_NOT_FOUND=There are no courses added to this program.<div class='acadStrTableNotFound'>Click below to assign a course to this program.</div> 
+SECTION_NOT_FOUND=There are no sections in this center.<div class='acadStrTableNotFound'>Click below to add a section to this center.</div> 
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#headings academic structure
+
+ADD_NEW_ACAD_ENTITY_DEPARTMENT=+ Add New Department
+ADD_NEW_ACAD_ENTITY_PROGRAM=+ Add New Program
+ADD_NEW_ACAD_ENTITY_CENTER=+ Add New Center
+ADD_NEW_ACAD_ENTITY_SECTION=+ Add New Section
+MAP_TO_A_CENTER=Assign a Center
+MAP_TO_A_COURSE=Assign a Course
+FINALISE_SECTIONS_ADDITION=Submit
+
+ADD_COURSES_TO_PROGRAMME_HEAD=Add Courses to Programme
+ADD_COURSES_TO_PROGRAMME_CHOOSE_COURSES=Choose Courses
+ADD_COURSES_TO_PROGRAMME_ALL_COURSES=All Courses
+ADD_COURSES_TO_PROGRAMME_NO_COURSES=No Courses are added in this institute.
+
+#VIDEO
+ADD_VIDEO = Add Video
+ADD_VIDEO_URL = Add Video Url
+UPLOAD_VIDEO_FILE = Upload Video File
+PASTE_VIDEO_URL_PLACEHOLDER = Please enter YouTube / Vimeo url only
+SUPPORTED_VIDEO_FORMAT_INFO =NOTE : Currently we support only "webm" and "MP4" files, please provide us with the same.
+
+#Upload
+PASTE_URL = Paste Url
+DESCRIPTION = Description
+TAGS = Tags
+DONE_ADD = Done/Add
+UPLOAD = Upload
+TITLE = Title
+CANCEL = Cancel
+UPLOADED = Uploaded
+
+TXT_RETRY = Retry
+UPLOAD_FAILED = Upload Failed
+
+#DOCUMENT
+ADD_DOC = Add Document
+UPLOAD_DOC_FILE = Upload Document File
+SUPPORTED_DOC_FORMAT_INFO =Supported Formats ( .pdf )
+
+#QUESTION
+QUES_CONFIRM_ON_EDIT = Please confirm the operation regarding associations of the question with the following:
+DONOT_UPDATE_QUES = Do not update the question in Test, Create a New Copy
+DO_UPDATE_QUES = Update the question in Test
+
+#FILE
+ADD_FILE = Add File
+SUPPORTED_FILE_FORMAT_INFO =NOTE : Can upload any type of file, whoose size is less than 100 MB.
+
+#EXPORTS
+#----------------
+LIBRARY_EXPORT = Library Exports
+CREATE_EXPORT = + Create New Export
+STARTED_AT = Started at
+FAILED_TO_EXPORT = Failed to export section library
+EXPORT_CONFIRM_MESSAGE = *Note : Only visible contents of the selected library will be exported !
+TXT_CONFIRM_EXPORT = Confirm Export
+CONFIRM_EXPORT_HEADER = Confirmation of your export
+EXPORT_MAPPING_LIST = The following section library is going to be exported
+NO_EXPORTS_FOUND = No Exports Found.
+EXPORT_CONTENT_LIST = Below is the list of contents , packaged.
+
+#AUTH TYPE
+VEDANTU_AUTH_TYPE = Learnpedia System for Authentication
+EXTERNAL_AUTH_TYPE = External System for Authentication
+
+#SIGN UP MGMT
+EXT_SIGN_UP_MGMNT = External Sign Up Management
+CUSTOMIZE_SIGNUP = Customize Signup Form
+ADD_SIGNUP_CATEGORY = + Category
+ADD_SIGNUP_FIELD = + New Field
+SIGNUP.FIELD_NAME = Field Name
+SIGNUP.FIELD_TYPE = Field Type
+SIGNUP.FIELD_VALUES = Field Values
+SIGNUP.SHOW_IN_FORM = Show in form
+SIGNUP.FIELD_REQ = Required Field
+SIGNUP.ADD_EDIT = Add/Edit
+SIGNUP.PLACEHOLDER = Field PlaceHolder
+SIGNUP.SELECT_DEFAULT_VALUE = Select Default Value
+
+SIGNUP.FIELD_TYPE_TEXT = Text
+SIGNUP.FIELD_TYPE_DECIMAL = Decimal
+SIGNUP.FIELD_TYPE_WHOLE_NUMBER = Number
+SIGNUP.FIELD_TYPE_EMAIL = Email
+SIGNUP.FIELD_TYPE_DATE = Date
+SIGNUP.FIELD_TYPE_PHONE_NO = Phone No
+SIGNUP.FIELD_TYPE_PASSWORD = Password
+SIGNUP.FIELD_TYPE_DROP_DOWN = Drop Down
+SIGNUP.FIELD_TYPE_REGEXP = Regular Expression
+
+#MODULE
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+MODULE_TITLE_HEAD=Create a Module
+MODULE_MODULE_TITLE_HEAD=Name your Module
+MODULE_TITLE_INPUT_PLACE_HOLDER=Type and press Enter
+MODULE_MAKE_MODULE_SEQUENTIAL=Make Module sequential
+MODULE_CONTENTS=Contents
+MODULE_ADD_CONTENT=+Add Content
+MODULE_ADD_TITLE=Add Title
+
+#APP STORE LINKS
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+APP_STORE_LINKS = App Store Links
+ANDROID_APP_LINK = Android App Link
+
+REORDERING_CONTENT_GUIDE_BOTTOM = Click on 'Move here' to reorder the selected content to desired position.
+MOVE_HERE = Place Here
+PLACING_TO = Placing to
+TXT_POSITION = Position
+
+#SD Cards Export
+#---------------
+SD_CARD_GROUP = SD Card Group
+SD_CARDS = SD Cards
+SD_CARDS_OF_SIZE = SD cards of size
+CREATE_SD_CARD_GROUP = + Create New Group
+VIEW_SD_CARD_GROUPS = View Existing Groups
+NEW_SDCARD_GROUP = New SD Card Group
+TOTAL_LIBRARY_SIZE = Total library size :
+ENTER_GRP_NAME = Enter Group Name
+SEL_SD_CARD_SIZE = Select SD-Card Size
+SIZE_GB = GB
+GENERATE_GROUP = Generate Group
+SD_CAPACITY = Capacity
+CREATESDGROUP_NOT_PUBLISHED = All contents are not published yet for the provided <b>Class</b>.
+SDCARD_PLEASE_WAIT = Please wait while we create the SD-Card group for you.
+SDCARD_USED = Used
+SDCARD_FREE = Free
+EXISTING_GROUPS = Existing Groups
+SD_CONTENT_MOVE_HELP = Please select from the below sd-cards where you want to move. Please choose the card which has enough free size to afford the moving content.
+CONTENT_SIZE = Content Size
+SDCARD_STATE_COST = Allow for sale, and apply cost
+SDCARD_SPECIFY_PRICE = Specify price
+ENABLE_SD_CARD_CREATION = Enable/Disable SD cards creation
+
+#Notification
+SEND_TO_GCM = Send Push Notification
+Notification = Notify

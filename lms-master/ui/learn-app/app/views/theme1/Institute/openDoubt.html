@@ -1,0 +1,97 @@
+<head>
+<style type="text/css">
+    .instDbtTags li , .instEachTrTopic li{
+        background: #e1ecf4;
+    }
+    .instDbtTags li:hover , .instEachTrTopic li:hover{
+        background: #39739d;
+        color: white;
+        cursor: pointer;
+    }
+    .RTEImageDiv img{
+        width: 100%;
+    }
+    .RTELatex{
+        display: inline-block;
+        padding: 0 5px;
+    }
+</style>
+<link href="/public/stylesheets/fileuploader.css" rel="stylesheet">
+#{script src:'o.fileuploader.js', charset:'utf-8' /}
+</head>
+<div class="instDoubtOpen">
+    #{if discussion!=null && discussion.errorCode.isEmpty()}
+    <div class="instOneDbtContainer col-sm-8">
+        #{institute.widgets.doubt data:discussion.get('result'),drawDesc:true /}
+        <div class="instCommentWidgetContainer nonner">
+        <div class="m-l-10 f-16 " style="border-bottom: 1px solid #ccc;"><span style="bottom: 5px;position: relative;">Answers</span></div>
+            <div>
+               <!-- <span class="big16 boldy">Answers</span> -->
+               <div class="instCommentFilterDiv right displayInline">
+                  %{
+                        sortType0 = sortTypeList.get('list').get(0);
+                   }%
+                        *{#{widgets.dropDowns.singleList list : sortTypeList.get('list') , selectedVal : sortType0.get('id') , selectedText : sortType0.get('name') , listType : "Sort" , showSelectAll : false /}}*
+               </div>
+               <div class="cleaner_with_divider">&nbsp;</div>
+            </div>
+            <div class="instCommentWidgetHolder"></div>
+        </div>
+    </div>
+    <div class="instDoubtRightSec col-sm-4">
+    </div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+    <script type="text/javascript">
+    var instHmPgOpenTimer;
+    $(function(){
+        // if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+        //     instHmPgOpenTimer = setInterval(function(){
+        //     if(institute && institute.activities.open){
+                // clearInterval(instHmPgOpenTimer);
+                institute.oneDbt.init();
+            // }
+        // },10);
+        $(".followInstDbt").find(".followEntity").removeClass("blueSubmitButton").addClass("greenButton");
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub,$("instOneDbtContainer").find(".instDbtDesc").get(0)]);
+    });
+    </script>
+    #{/if}
+    #{else}
+        <div class="c-red redTextColor f-16" style="padding:30px 0;">
+            <div class="text-center">${discussion.errorMessage}</div>
+        </div>
+    <!-- <script type="text/javascript">
+    var instHmPgOpenTimer;
+    $(function(){
+        if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+            instHmPgOpenTimer = setInterval(function(){
+            if(institute){
+                clearInterval(instHmPgOpenTimer);
+                institute.init();
+            }
+        },10);
+    });
+    </script> -->
+    #{/else}
+</div>
+#{script src:'o.openDoubtHelpers.js', charset:'utf-8' /}
+#{script src:'o.doubts.js', charset:'utf-8'/}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".rte-editor").summernote({
+            height:60,
+            placeholder:"Add a comment"
+        });
+    $(".instPageNavigator").find(".active").removeClass("active");
+    $(".instPageNavigator").find(".instNavTab.instDoubtsForum").closest("li").addClass("active");
+    button = $(".note-insert button:nth-child(2)").css("display","none");
+    $(".note-insert").append('<div class="imageClick" style="display:inline-block;"><button type="button" class="btn btn-default btn-sm waves-effect"><i class="fa fa-picture-o"></i></button></div>');
+    $(".imageClick").on("click",imageClick);
+    $(".imageClick").attr("id","comment-image");
+
+    formulaButton = $(".note-view button:nth-child(1)").addClass("formulaEditor");
+    $(".formulaEditor").on("click",formulaEditor);
+
+    comment.init();
+});
+</script>

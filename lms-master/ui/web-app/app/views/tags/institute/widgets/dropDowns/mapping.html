@@ -1,0 +1,77 @@
+%{
+	memberInfo = _memberInfo;
+	showSecs = _showSections;
+	showCenters = _showCenters;
+	selectedVal = _selectedVal;
+	selectedText = _selectedText;
+	showSelectAll = _showSelectAll;
+	
+	progs = memberInfo.get("programs");
+	orgId = params.get("orgId");
+}%
+	<div class="nDropDown" data-value=${selectedVal}>
+        	<table class="dropDownHead fullWidth">
+		    <tr>
+			<td class="textCont">
+				#{if selectedText != null && !selectedText.isEmpty()} 
+					<span>${selectedText}</span>
+				#{/if}
+				#{else}
+					<span>&{'TXT_ALL'} &{'TXT_PROGS'}</span>
+				#{/else}
+			</td>
+                	<td class="instImgs noUserSelect"></td>
+		    </tr>
+        	</table>
+		<div class="dropDownContainer nonner">
+			<div class="eachNonDropElement">&{'TXT_PROGS'}</div>
+			#{if showSelectAll==true}
+				<div class="eachDropedElement" data-value="" data-item-value='' 
+					data-text="&{'TXT_ALL'} &{'TXT_PROGS'}">&{'TXT_ALL'}</div>
+			#{/if}
+			#{if progs!=null && progs.length()>0}
+			#{list items:0..progs.length()-1,as:'pIndex'}
+			<div class="dropElemPackage">
+			%{ prog = progs.get(pIndex); }%
+			   <div class="eachDropedElement" 
+			      data-value="${prog.id}" data-item-value={"type":"PROGRAM","id":"${prog.id}"}>${prog.name}</div>
+			   
+			   #{if showCenters == true && prog.centers.length()>0 }
+			   <!--EXT POPUP CENTER-->
+			   <div class="eachDroperElemHolder" data-append-text="${prog.name}, ">
+			   <div class="eachNonDropElement">&{'TXT_CENTERS'}</div>
+				#{if showSelectAll==true}
+				<div class="eachDropedElement" 
+				  data-value="${prog.id}" data-item-value={"type":"PROGRAM","id":"${prog.id}"}>&{'TXT_ALL'}</div>
+				#{/if}
+			   #{list items:0..prog.centers.length()-1,as:'cIndex'}
+			   <div class="dropElemPackage">
+			   %{ center = prog.centers.get(cIndex); }% 
+				<div class="eachDropedElement" 
+				  data-value="${center.id}" data-item-value={"type":"CENTER","id":"${prog.id}#${center.id}"}>${center.name}</div>
+			   		
+			   		#{if showSecs == true && center.sections.length()>0 }
+			   		<!--EXT POPUP SECTIONS-->
+					<div class="eachDroperElemHolder" data-append-text="${prog.name}, ${center.name}, ">
+			   		   <div class="eachNonDropElement">&{'TXT_SECTIONS'}</div>
+					   #{if showSelectAll==true}
+					   <div class="eachDropedElement" 
+				  		data-value="${center.id}" data-item-value={"type":"CENTER","id":"${prog.id}#${center.id}"}
+							>&{'TXT_ALL'}</div>
+					   #{/if}
+					   #{list items:0..center.sections.length()-1,as:'sIndex'}
+			   		   %{ section = center.sections.get(sIndex); }% 
+						<div class="eachDropedElement" 
+				  			data-value="${section.id}">${section.name}</div>
+					   #{/list}
+					</div>
+					#{/if}
+			   </div>
+			   #{/list}
+			   </div>
+			   #{/if}
+			</div>
+			#{/list}
+			#{/if}
+		</div>
+	</div>

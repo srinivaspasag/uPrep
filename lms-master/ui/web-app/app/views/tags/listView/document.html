@@ -1,0 +1,64 @@
+#{if docData!=null && docData.has('title')}
+<div class="left relative eachDocList eachListViewItem">
+	<img class="left relative listDocumentsIcon" alt="" src="${docData.thumbnail}"/>
+	<div class="left relative listContentsDetails">
+		<span class="left relative listDocumentsType listContentsText">${docData.type.raw()}</span>
+		<br/>
+		<span class="left relative big12 boldy listContentsText blackTextColor">${docData.title.raw()}</span>
+		<br/>
+	#{if docData.has('user') && docData.user!=null}
+		<span class="left big12 listContentsText">by </span>
+		#{institute.memberName user : docData.user , classNames : "left relative big12 listContentsText blueTextColor fullWidth" /}
+	#{/if}
+		<br/>
+		<span class="left relative listContentsRankingHolder">
+			<span class="left relative listContentsRankingStars" style="width:${docData.avgRating*20}%"></span> 
+		</span>
+	</div>
+	<div class="left relative listContentsMiddle">
+		<span class="left relative listContentsText blackTextColor">Views - <b>${docData.views}</b> Pages - <b>${docData.pages}</b> Saved - <b>${docData.follower}</b> </span>
+		<span class="left relative listContentsText blackTextColor" style="width:100%;">
+			#{if docData.has('boards') && docData.boards.length()>0}
+			#{list items:0..docData.boards.length()-1,as:'indx'}	
+				#{if docData.boards.get(indx).type=="COURSE"}
+					<span class="listMatchingTagsParent">${docData.boards.get(indx).name.raw()}</span> 
+				#{/if}
+				#{else}
+					<span class="listMatchingTags">${docData.boards.get(indx).name.raw()}</span>
+				#{/else}
+				#{if indx < (docData.boards.length()-1)}
+					<b>></b>
+				#{/if}
+			#{/list}
+			#{/if}
+		</span>
+		#{if docData.has('targets') && docData.targets.length()>0}
+		<span class="left relative big12 boldy listContentsText greyTextColor">Target - <span class="blueTextColor big14">
+			#{list items:0..docData.targets.length()-1,as:'indx'}
+			<a /*href="${controllers.Boards.getBoardUrl('exam',docData.targets.get(indx).brdId)}"*/
+				data-brd-id="${docData.targets.get(indx).brdId}" 
+				class="boardExam name blueTextColor big14 doCStream" data-cs-name="BOARD_EXAM">
+				${docData.targets.get(indx).code.raw()}</a>,
+			#{/list}
+			</span>
+		</span>
+		#{/if}
+	</div>
+	<div class="right relative listContentsRight">
+		<a class="greenButton listContentBtn openDocPage doCStream" data-cs-name="OPEN_DOC" data-doc-id="${docData.docId}">Open</a><br/>
+		<div class="onHoverListContentsItems">
+			<div class="listContentBtn">
+				#{widgets.followUnfollowEntity followType:docData.followType,entityType:'DOCUMENT',entityId:docData.docId/}
+			</div>
+			<span class="listContentsShareIt big14">Share</span>
+		</div>
+	</div>
+	#{if docData.has('tocs') && docData.tocs.length()>0}
+		<div class="left absolute listViewTOC boldy">Includes in TOC : 
+		#{list items:0..docData.tocs.length()-1,as:'indx'}
+			${docData.tocs.get(indx).raw()},
+		#{/list}
+		</div>
+	#{/if}
+</div>
+#{/if}

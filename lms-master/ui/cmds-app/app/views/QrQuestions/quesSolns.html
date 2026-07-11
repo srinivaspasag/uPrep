@@ -1,0 +1,21 @@
+%{
+    solutions=solutions.result.solutions;
+}%
+<div class="cmdsPopupHead">
+    Solutions:
+</div>
+#{if solutions.length()>0}
+    #{list items:0..solutions.length()-1,as:'i'}
+    <div class="quesSoln margBot20">
+        <div class="quesSolnNo">
+            ${i_index}
+        </div>
+        <div class="quesSolnBody">
+            ${solutions.get(i)}
+        </div>        
+    </div>
+    #{/list}
+#{/if}
+#{else}
+<div class="userMessage">There are no solutions for this question.</div>
+#{/else}

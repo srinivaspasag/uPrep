@@ -1,0 +1,91 @@
+%{
+	myOrgInfo = _myOrgInfo;
+}%
+<div id="instPageNavigator" class="relative CSWidget" data-widget="TOP_NAVGATION_BAR">
+	<!-- <div class="pageHolderNM big15">
+		%{ instLogo = uicom.util.Utilities.getInstLogo(myOrgInfo.getString('instLogo'));}%
+		<div class="instThumbnailLogoHolder left">
+		   <a class="openInstPage">
+			<img src="${instLogo}" alt="${myOrgInfo.getString('instFullName')} Logo"
+				class="instThumbnailLogo"/>
+		   </a>
+		</div> -->
+		<div class="instNavTabHold">
+			<div class="instNavTab instOpenLibraryPage" name="INSTITUTE_LIBRARY_TAB">
+				<span class="tabText">&{'TXT_LIBRARY'}</span>
+			</div>
+			#{if params.userRole == "STUDENT"}
+			<div class="instNavTab openInstAvailPrograms" name="INSTITUTE_PROGRAMS_TAB">
+				<span class="tabText">&{'TXT_PROGRAMS_CAPS'}</span>
+			</div>
+			#{/if}
+			#{if myOrgInfo.doubtsForumMode != "HIDDEN"}
+			<div class="instNavTab instDoubtsForum" name="INSTITUTE_DOUBTS_FORUM_TAB">
+				<span class="tabText">&{'TXT_DOUBTS_FORUM'}</span>
+			</div>
+			#{/if}
+			<div class="instNavTab instOpenAnalytics" name="INSTITUTE_RESULT_ANALYTICS_TAB">
+				<span class="tabText">&{'TXT_ANALYTICS'}</span>
+			</div>
+			%{
+		        enableRecentActivity = true;
+		        //Disable recent activity for students of Trividyaa organization.
+		        if(params.orgId == "5bacb325e4b0ff57ab848e07" && params.userRole == "STUDENT"){
+		            enableRecentActivity = false;
+		        }
+		    }%
+		    #{if enableRecentActivity}
+			<div class="instNavTab instRATab" name="INSTITUTE_HOME_TAB">
+				<span class="tabText">&{'TXT_ACTIVITY'}</span>
+			</div>
+			#{/if}
+			#{if myOrgInfo.showClassroomConnect == "true"}
+			<div class="instNavTab openClassroomConnectTab" name="INSTITUTE_HOME_TAB">
+				<span class="tabText">&{'CLASSROOM_CONNECT'}</span>
+			</div>
+			#{/if}
+
+			<!-- <div class="instNavTab instOpenChallenges" name="INSTITUTE_CHALLENGES_TAB">
+					<span class="tabText">CHALLENGES</span>
+			</div> -->
+			<!-- <span class="instNavTab instOpenLibraryPage doCStream" name="INSTITUTE_LIBRARY_TAB">
+				Digital Library -->
+				<!-- <span class="instImgs"></span> -->
+			<!-- </span>
+			<span class="instNavTab instOpenAnalytics doCStream" name="INSTITUTE_RESULT_ANALYTICS_TAB">
+				Analytics -->
+				<!-- <span class="instImgs"></span> -->
+			<!-- </span> -->
+		</div>
+		#{if !"STUDENT".equals(params.userRole)}
+		%{ 
+			cmdsUrl=play.Play.configuration.getProperty("cmds.url");
+		}%
+		<!-- Disable manage content option for Edupertz Teacher -->
+		<div class="instNavCMDSLink right toolTipTitle #{if params.orgId == '5baf23ffe4b0e503e9731079' && params.userRole == 'TEACHER' }nonner#{/if}" data-title="&{'MANAGE_CONTENT_TOOL_TIP'}">
+		   <a class="" href="${cmdsUrl}" target="_blank">
+			<span class="bigGreenButton blackTextColor">
+				<span>&{'TXT_MANAGE_CONTENT'}</span>
+<!-- 				<span class="rightWhiteArrow absolute" style="right:4px;top:7px;"></span>
+				<span class="rightWhiteArrow absolute" style="right:9px;top:7px;"></span> -->
+			</span>
+		   </a>
+		</div>
+		#{/if}
+
+		
+
+
+		<div class="cleaner_with_divider">&nbsp;</div>
+		<!--<span class="instNavTab instOpenMySchedule doCStream" name="INSTITUTE_SCHEDULE_TAB">
+				Schedule</span>-->
+	<!-- </div> -->
+</div>
+<script type="text/javascript">
+	$(function(){
+		if ('function' == typeof window.institute) {
+		} else {
+		   institute.init();
+		}
+	});
+</script>

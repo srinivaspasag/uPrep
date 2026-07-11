@@ -1,0 +1,41 @@
+%{
+	data = _data;
+	className = _className;
+}%
+#{if data!=null && !data.equals(null)}
+<table class="shipmentAddressTable ${className}">
+  <tr>
+     <th>Name : </th>
+     <td>${data.name}</td>
+  </tr>
+  <tr>
+     <th>Contact Number : </th>
+     <td>${data.contactNo}</td>
+  </tr>
+  <tr>
+     <th>Email : </th>
+     <td>${data.email}</td>
+  </tr>
+  <tr>
+     <th class="width100">Address : </th>
+     <td>${data.address}</td>
+  </tr>
+  #{if !data.location.equals(null)}
+  <tr>
+     <th>City : </th>
+     <td>${data.location.city}</td>
+  </tr>
+  <tr>
+     <th>Country : </th>
+     <td>${data.location.country}</td>
+  </tr>
+  #{/if}
+  <tr>
+     <th class="width100">Pin Code : </th>
+     <td>${data.pinCode}</td>
+  </tr>
+</table>
+#{/if}
+#{else}
+<div class="centerText redTextColor big14">Not Found</div>
+#{/else}

@@ -1,0 +1,78 @@
+#{if resp!=null}
+%{
+  baseUrl = resp.baseUrl;
+}%
+#{/if}
+<head>
+<style type="text/css">
+    .button{
+        color:#F44336!important;
+        border:1px solid #F44336!important;
+    }
+    .button:hover{
+        background-color: #F44336!important;
+        color: white!important;
+        transition: all 0.2s ease-in-out;
+    }
+</style>
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}">
+    <title>Institute Learning Environment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="Learnpedia Web-App" name="application-name" />
+    <meta content="http://www.Learnpedia.in" name="application-url" />
+    <meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+    <meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description">
+    <!-- Vendor CSS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/public/images/favicons/manifest.json">
+    <link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+    <meta name="theme-color" content="#ffffff">
+    <link href="/public/assets/theme1/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+            <!-- CSS -->
+    <link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+</head>
+
+<header id="header" class="clearfix" style=" min-height: 60px;background:white;">
+<ul class="h-inner">
+    <li class="hi-logo">
+        #{if session!=null && session.userId!=null}
+        <a href="/home" class="m-l-10"><img src="/public/images/lplogo.png" class="img-responsive" style="width: 145px;bottom: 10px;position: relative;"/></a>
+        #{/if}
+
+        #{else}
+        <a href="/" class="m-l-10">
+            <img src="/public/images/lplogo.png" class="img-responsive" style="width: 145px;bottom: 10px;position: relative;"/>
+        </a>
+        #{/else}
+    </li>
+</ul>
+</header>
+<section id="main">
+    <div class="container">
+        <div class="card col-sm-6 col-sm-offset-3 p-20" style="border-radius: 5px;">
+            <center>
+            <img src="/public/images/lptagline.png" class="img-responsive">
+            <br/>
+            <span style="font-size:20px;color: black;"><b>The requested page was not found.</b></span>
+            <br><br>
+            <span class="f-16">You may have mistyped the url. Some urls are case sensitive.
+            </span>
+            #{if session!=null && session.userId!=null}
+                <h4 class="p-t-10"><a href="/home" class="btn btn-default waves-effect button"><i class="zmdi zmdi-home f-14"></i> Go Home</a></h4>
+            #{/if}
+
+            #{else}
+                <h4><a href="/"><u>Exit from here</u></a></h4>
+            #{/else}
+            </center>
+        </div>
+    </div>
+</section>
+<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js"></script>

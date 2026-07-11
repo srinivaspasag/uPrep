@@ -1,0 +1,112 @@
+%{
+  orgUserProfile=currentOrgInfo.getOrgUserProfile();
+}%
+#{if resources.errorCode!=''}
+#{common.errorCodes resp:resources /}
+#{/if}
+#{else}
+<div id="folderPage" class="mcWidget relativePos" data-folder-id="${params.folderId}">     
+    <div id="leftSection">
+        <div class="leftSecHeadsDiv">
+            <p class="leftSecHead leftSecHeadActive cmdsaPush blocky" >Institute Resources</p>
+            <!--<div class="leftSecHead">Public Resources</div>-->                
+        </div>
+        <div id="fixedLeftSecPortion">
+            #{common.courseTopicChooseDiv /}               
+        </div>           
+    </div>   
+    <div id="mainSection">
+        %{
+        folderInfo=resources.result.folderInfo;
+        folderName=folderInfo.name;
+        folderParents=folderInfo.parents;
+        folderId=folderInfo.id;
+        isEditable=true;
+        if(folderName=='/'){
+        folderName='Institute Resources';
+        isEditable=false;
+        }
+        }%        
+        <div class="folderTitleDiv">        
+            <div class="inputDiv cmdsTableSearchBox hasSearchImg floatRight margRight10 whiteInputDiv">
+                <input type="text" class="mcSearchDivInput" data-param-name="query" value="${params.query}"
+                       placeholder="Search Resources"/>
+                <span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>                
+            </div>                  
+            <div class="srcDetTitleDiv" data-name='${folderName}'>
+                <span class="entityEditableName">${folderName}</span>
+                #{if isEditable}                
+                <a class="editEntityDetailsStyles editEntityDetails" 
+           title="Edit Details" data-entity-type="FOLDER" data-entity-id="${folderId}"
+           data-url-class="cmdsResources"></a> 
+                #{/if}
+                
+            </div>
+            #{if folderParents.length()>0}
+            <div class="folderParents">
+                #{list items:0..folderParents.length()-1,as:'f'}
+                %{
+                folderPa=folderParents.get(f);
+                folderPaName=folderPa.name;
+                folderPaId=folderPa.id;
+                }%
+                #{if f_isFirst}
+                <a class="goToResources color6 cmdsaPush" href="/organization/${params.orgId}/resources">
+                    Institute Resources
+                </a>                      
+                #{/if}
+                #{else}
+                <a class="getFolderPage color6 cmdsaPush" data-entity-id='${folderPaId}' 
+                   href="/organization/${params.orgId}/folder/${folderPaId}">
+                    > ${folderPaName}
+                </a>                    
+                #{/else}
+                #{/list}
+                <span class="getFolderPage color6" data-entity-id='${folderId}'>
+                    > <span class="blueColor">${folderName}</span>
+                </span>
+            </div>
+            #{/if}
+        </div>
+        <div class="cmdsTableOptsAndSortDiv">
+            <div class="cmdsTableCheckedOpts floatLeft" data-opts-type="RESOURCES"></div>  
+            <div class="cmdsTableSortDiv">                                         
+                #{if !orgUserProfile.equals("SALESPERSON")}
+                    #{sources.addResource addText:'+ Add Content',
+                    addFolder:true,cbfn:'onAddResource'/}
+                #{/if}
+                #{common.mcvChooseContentTypes target:"RESOURCES"/}
+                <span class="questionType nonner">
+                    #{include 'Widgets/mcvChooseQuesType.html' /}
+                </span>
+                <span class="questionFilter nonner">
+                    #{include 'Widgets/mcvChooseLevel.html' /}
+                </span>
+                #{include 'Widgets/mcvChooseAlpha.html' /}    
+                #{common.lmArrowsDiv /}  
+            </div>
+        </div>
+        <div id="tableSection" class="LMHandlerDiv">
+            #{if params.includes=='CMDSQUESTION'}
+                %{
+                    questions=resources;
+                }%
+                #{include 'QrQuestions/qrQuesns.html' /}
+            #{/if}
+            #{else}
+                #{include 'QrResources/resourcesTable.html' /}
+            #{/else}            
+        </div>                
+    </div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<script type="text/javascript">
+    new function() {
+        var fn = function() {
+            qrResources.init({target: "FOLDER_PAGE", mainResourcesPage: true,
+                folderId: "${params.folderId}", courseId: "${params.get('courseId')}"});
+        }
+        lazyLoad([{fname: "qrResources.js", cb: fn}]);
+    }();
+</script>  
+#{/else}

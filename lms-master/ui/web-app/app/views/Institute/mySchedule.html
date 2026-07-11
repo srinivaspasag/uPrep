@@ -1,0 +1,152 @@
+#{if myProgrammes.errorCode=="" && myProgrammes.result.has('programmes') && myProgrammes.result.programmes.length()>0}
+#{stylesheet media:'screen', src:'institute/mySchedule.css' /}
+#{stylesheet media:'screen', src:'uicomWidgets/calendar.css' /}
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="myScheduleStyles">
+    showNoTabSec("MY_SCHEDULE");
+</script>
+#{/if}
+%{
+    msColors=['#3399cc','#339933','#cc3333','#cccc33','#3333cc','#33cc99','#9933cc','#cc9933','#993333','#999999','#3399cc','#339933','#cc3333','#cccc33','#3333cc','#33cc99','#9933cc','#cc9933','#993333','#999999'];
+    msColorsIndex=0;
+}%
+<div id="myScheduleWrapper">
+    <div id="myScheduleContent">     
+      <div id="myScheduleLeftSec">
+          <div class="myScheduleCoursesDiv">
+              %{
+                 programmes=myProgrammes.result.programmes;
+                 hasProgramme=false;
+                 if(params.userRole=='MEMBER')isMember=true;
+              }%
+              #{if programmes.length()>0}
+              %{
+                hasProgramme=true;
+              }%
+              #{list items:0..programmes.length()-1,as:'i'}
+              %{
+                programme=programmes.get(i);
+              }%
+              
+              <div class="MSBatchHead">${programme.name}</div>
+                  #{if programme.centers.length()>0}
+                  #{list items:0..programme.centers.length()-1,as:'c'}
+                      %{
+                        center=programme.centers.get(c);                        
+                      }%                                           
+                      #{if center.sections.length()>0}
+                      #{list items:0..center.sections.length()-1,as:'s'}
+                          %{
+                            sec=center.sections.get(s);
+                          }% 
+                          #{if isMember}
+                          <div class="MSCenterSec">
+                              ${sec.name}-${center.name}
+                          </div>                      
+                          #{/if}
+                          #{else}
+                          <div class="MSCenterSec MSCBoxDiv">
+                              <input type="checkbox" checked="checked" rel="${sec.name}-${center.name}"/>
+                              <span class="MSCBoxName" style="color: ${msColors[msColorsIndex]}">${sec.name}-${center.name}</span>
+                              %{
+                                msColorsIndex++;
+                              }%
+                          </div>                           
+                          #{/else}
+                      #{/list}
+                      #{/if}
+                  #{/list}
+                  #{/if}              
+              #{/list}
+              #{/if}              
+              #{if isMember&&hasProgramme&&programmes.get(0).centers.length()>0
+              &&programmes.get(0).centers.get(0).sections.length()>0}
+                 %{
+                    sec=programmes.get(0).centers.get(0).sections.get(0);                    
+                 }%
+                 #{if sec.courses.length()>0}    
+                      <div class="myScheduleCourses">
+                          #{list items:0..sec.courses.length()-1,as:'cou'}
+                          %{
+                            course=sec.courses.get(cou);
+                          }%
+                          <div class="MSCourse MSCBoxDiv">
+                              <input type="checkbox" checked="checked" rel="${course.brdId}"/>
+                              <span class="MSCBoxName" style="color: ${msColors[msColorsIndex]}">${course.name}</span>
+                              %{
+                                msColorsIndex++;
+                              }%                              
+                          </div>
+                          #{/list}
+                      </div>                   
+                 #{/if}
+              #{/if}              
+         </div>
+         <div class="myScheduleJumpTo">
+              <div class="MSBatchHead">Jump To</div>
+              <div class="MSJumpToDiv">
+                  %{
+                    d=new Date();
+                    month=d.getMonth()+1;
+                    if(month<10)month="0"+month.toString();
+                    else month=month;
+                    if(d.getDate()<10)date="0"+d.getDate().toString();
+                    else date=d.getDate();
+                  }%
+                  <input type="text" class="MSJumpToDate" maxlength="2" size="2" value="${date}"/>/
+                  <input type="text" class="MSJumpToMonth" maxlength="2" size="2" value="${month}"/>/
+                  <input type="text" class="MSJumpToYear" maxlength="4" size="4" value="${d.getYear()+1900}"/>
+              </div>
+        </div>        
+      </div>
+      <div id="myScheduleMainSec">
+          <div id="" class="calendarHead">
+              <div class="myScheduleToday">
+                  <div class="MSTDate"></div>
+                  <div class="MSTDetails">
+                      <div class="MSTItem"></div>
+                      <div class="MSTItem"></div>
+                  </div>
+              </div>
+              <div class="myScheduleMonth centry">
+                  <div class="MSMHead">MY Calendar</div>
+              </div>
+          </div>
+          <div id="myScheduleTable"></div>
+          <div class="MSCIDetStore nonner">
+                <div class="STIDHead STIDItem" rel="name"><label class="STIDValue">-</label></div>
+<!--                <div class="STIDKeyVlaue STIDItem" rel="topic"><span class="boldy margRight5">Topic</span><label class="STIDValue">-</label></div>
+                <div class="STIDKeyVlaue STIDItem" rel="subtopic"><span class="boldy margRight5">Sub-Topic</span><label class="STIDValue">-</label></div>-->
+                <div class="STIDKeyVlaue STIDItem" rel="time"><span class="boldy margRight5">Time</span><label class="STIDValue">-</label></div>
+                <div class="STIDKeyVlaue STIDItem" rel="teacher"><span class="boldy margRight5">Teacher</span><label class="STIDValue">-</label></div>
+                <!--<div class="STIDKeyVlaue STIDItem" rel="totalStudents"><span class="boldy margRight5">Total Students</span><label class="STIDValue">-</label></div>-->
+                <div class="STIDNote STIDItem" rel="note">
+                    <div class="boldy">Note</div>
+                    <div class="acacac STIDValue">-</div>
+                </div>
+          </div>
+      </div>
+      <div class="cleaner_with_divider">&nbsp;</div>
+  </div>
+</div>      
+<script type="text/javascript">
+    new function(){
+        var fn=function(){mySchedule.init({programmes:${programmes.raw()},userRole:"${params.userRole}"});}
+        fetchScripts([{fname:"institute/mySchedule.js",cb:fn}]);   
+	
+	if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+        instHmPgOpenTimer = setInterval(function(){
+		if(institute && institute.activities.open){
+			clearInterval(instHmPgOpenTimer);
+			institute.schedules.init();
+		}
+	},10);
+    }();     
+</script>
+#{/if}
+#{else}
+	<div style="padding:100px;" class="centerText">
+		<span class="big18">&{'org.NOT_PART_OF_PROG'}</span>
+	</div>
+#{/else}
+

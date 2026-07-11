@@ -1,0 +1,9 @@
+#{if session.userId == data.user.id}
+<div class="left big14 boldy" style="margin:15px 5px 0 0px;">
+        <a class="blueSubmitButton doCStream openTestToppersPage" 
+	href="/organization/${params.orgId}/testleaders/${testIdStr}" data-org-id="${params.orgId}"
+        data-cs-name="TEST_CREATOR_VIEW_ANALYTICS" data-test-id="${testIdStr}"
+	title="&{'TEST_CREATOR_OVERALL_ANALYTICS'}">
+		&{'TEST_BTN_OVERALL_ANALYTICS'}</a>
+</div>
+#{/if}

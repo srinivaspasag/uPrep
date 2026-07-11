@@ -1,0 +1,63 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+# Remarks
+GET     /                           						controllers.Application.index()
+
+#ping
+GET    /application/ping                           controllers.Application.ping()
+
+# this is common controller across all services and will provide information about currently deployed build
+POST    /sysinfo/get                              controllers.SysInfo.getInfo()
+
+POST    /remarks/addRemark         							controllers.Remarks.addRemark()
+POST    /remarks/getRemarksForUser  						controllers.Remarks.getRemarksForUser()
+
+# Messages
+
+POST    /messageMigrator/updateConversations				controllers.MessageMigrator.updateConversations()
+POST    /messageMigrator/updateUserConversations				controllers.MessageMigrator.updateUserConversations()
+
+
+# Messages 2
+
+POST    /messageCenter/getConversationSummary 				controllers.MessageCenter2.getConversationSummary()
+POST    /messageCenter/getConversationSummaries 			controllers.MessageCenter2.getConversationSummaries()
+POST    /messageCenter/sendMessage 				        controllers.MessageCenter2.sendMessage()
+POST    /messageCenter/markConversation 			        controllers.MessageCenter2.markConversation()
+POST    /messageCenter/deleteConversation 				controllers.MessageCenter2.deleteConversation()
+POST    /messageCenter/getConversation 					controllers.MessageCenter2.getConversation()
+POST    /messageCenter/getConversationUsers 				controllers.MessageCenter2.getConversationUsers()
+POST    /messageCenter/getMessageSummary 				controllers.MessageCenter2.getMessageSummary()
+POST    /messageCenter/getMessageSummaries 				controllers.MessageCenter2.getMessageSummaries()
+POST    /messageCenter/getMessageSummariesBefore 			controllers.MessageCenter2.getMessageSummariesBefore()
+POST    /messageCenter/getMessage 					controllers.MessageCenter2.getMessage()
+POST    /messageCenter/getUserMailBoxInfo 				controllers.MessageCenter2.getUserMailBoxInfo()
+POST    /messageCenter/updateMailBoxInfoNew				controllers.MessageCenter2.updateMailBoxInfo()
+
+
+# Status Feed
+POST    /statusFeeds/addStatusFeed 	controllers.StatusFeeds.addStatusFeed()
+POST    /statusFeeds/uploadImage 	controllers.StatusFeeds.uploadFile()
+POST	/statusFeeds/getStatusFeed	controllers.StatusFeeds.getStatusFeed()
+POST	/statusFeeds/delete			controllers.StatusFeeds.delete()
+
+
+# News feeds
+
+POST 	/newsFeeds/getActivityFeeds			controllers.NewsFeeds.getActivityFeeds()
+POST 	/newsFeeds/getOlderActivityFeeds	controllers.NewsFeeds.getOlderActivityFeeds()
+POST 	/newsFeeds/getNewsFeeds				controllers.NewsFeeds.getNewsFeeds()
+POST 	/newsFeeds/getNotifcations			controllers.NewsFeeds.getNotifications()
+POST 	/newsFeeds/getOlderNotifications	controllers.NewsFeeds.getOlderNotifications()
+POST 	/newsFeeds/getNotifcationsSummary	controllers.NewsFeeds.getNotificationsSummary()
+
+GET	/newsFeeds/getNewsFeed			controllers.NewsFeeds.getNewsFeed()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# ~~~ FOR UPLOADING TEMP IMAGES ~~~
+POST   /uploads/uploadImage                        	    			controllers.Uploads.uploadImage()

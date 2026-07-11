@@ -1,0 +1,261 @@
+#{extends 'Subscription/header.html'/}   
+<script type="text/javascript">
+	var totalMembers = 0;
+	var memberIndex = 0;
+	var params = {start:0};
+</script>
+    <style type="text/css">
+	#signUpMembersForm{
+		border-radius:10px;
+		margin:50px 10px;
+		color:#2E2E2E;
+	}
+	.testSeriesFilterBy,
+	.testSignUpInputBox{
+		line-height:13px;
+		font-size:13px;
+		padding-left:4px;
+		height:18px;
+		margin-right:8px;
+		max-width:140px;
+    		color: #373737;
+		overflow:hidden;
+		float:left;
+		text-overflow:ellipsis;
+		white-space:nowrap;
+	}
+	.filterByTestSeriesId,
+	.testSeriesFilterBy{
+		background-color:#f1f1f1;
+	}
+	.testSignUpInputBox::-webkit-input-placeholder{
+        	font-size:12px;
+	}
+	.testSignUpInputBox:-moz-placeholder{
+        	font-size:12px;
+	}
+	.button,
+	.blueButton,
+	.redButton{
+		padding:2px 12px;
+		margin-left:6px;
+		font-size:13px;
+	}
+	table td,
+	table th{
+		border:1px solid #efefef;
+		background-color:#fff;
+	}
+	table th{
+		background-color:#D8D8D8;
+	}
+	.loadMoreTSMembers{
+		padding:5px 0;
+		background-color:#F0EEEE;
+		border:2px solid #eee;
+		text-align:center;
+		font-weight:bold;
+		font-size:13px;
+		cursor:pointer;
+		margin-top:15px;
+	}
+	.filterByTestSeriesId{
+		border:1px solid #efefef;
+		border-radius:4px;
+		font-size:13px;
+		padding-left:4px;
+		width:110px;
+		height:20px;
+	}
+	.searchCell{
+		background-color:#A9BCF5;
+	}
+    </style>
+</head>
+<body>
+	<div class="pageHolderM">
+	   <div style="padding:15px;font-size:16px;text-align:center;">Members List</div>
+	   <form id="signUpMembersForm" autocomplete="on" autofocus action="javascript:updateMemberInfo();" method="POST"
+		class="CSWidget" data-widget="SUBSCRIBED_MEMBERS_TABLE">
+		<table cellspacing="0" cellpadding="3">
+			<tr>
+				<th>Member Id</th>
+				<th>Student Name</th>
+				<th>Test Series</th>
+				<th>Phone Number</th>
+				<th>Email Id</th>
+				<th>Action</th>
+			</tr>
+	    		 #{if testSeries.errorCode=="" && testSeries.result.has('testSeries') 
+				&& testSeries.result.get('testSeries').length()>0}
+			<tr>
+				<td class="searchCell">
+					<input class="testSeriesFilterBy" data-filter-type="targetMemberId" 
+						style="width:70px;" placeholder="Member Id"/>
+				</td>
+				<td class="searchCell">
+					<input class="testSeriesFilterBy" data-filter-type="firstName" 
+						placeholder="first name"/>
+					<input class="testSeriesFilterBy" data-filter-type="lastName" 
+						placeholder="last name"/>
+				</td>
+				<td class="searchCell">
+					<select class="filterByTestSeriesId" data-filter-type="testSeriesId">
+						<option selected value="">All</option>
+						#{list items:0..testSeries.result.testSeries.length()-1,as:'index'}
+						%{ testSr = testSeries.result.testSeries.get(index);}%	
+							<option value="${testSr.id}">${testSr.name}</option>
+						#{/list}
+					</select>
+				</td>
+				<td class="searchCell">
+					<input class="testSeriesFilterBy" data-filter-type="contactNo" 
+						placeholder="contact Number"/>
+				</td>
+				<td class="searchCell">
+					<input class="testSeriesFilterBy" data-filter-type="email" style="max-width:164px;"
+						placeholder="email id"/>
+				</td>
+				<td class="searchCell">
+					<input type="button" class="blueButton right testSeriesFilterByBtn doCStream" 
+						value="Search" data-name="SEARCH_BTN"/>
+					</br>
+					<input type="button" class="redButton right nonner testSeriesFilterByReset doCStream" 
+						value="Reset" style="padding:2px 15px;" data-name="SEARCH_RESET_BTN"/>
+				</td>
+			</tr>
+	     		#{/if}
+			#{include 'Subscription/members.html'/}
+		</table>
+		<div class="loadMoreTSMembers nonner">Load More</div>
+	    </form>
+	</div>
+<script type="text/javascript">
+	function doneUpdate(tr){
+		tr = $(tr);
+		tr.find(".testSignUpInputBox").prop("disabled",true);
+		tr.find("#updateTestSignUp,#cancelUpdateSignUp").addClass("nonner");
+		tr.find("#editTestSignUp").removeClass("nonner");
+		tr.find(".firstNameInput").data("orgVal",row.find(".firstNameInput").val());
+		tr.find(".lastNameInput").data("orgVal",row.find(".lastNameInput").val());
+		tr.find(".mobileNo").data("orgVal",row.find(".mobileNo").val());
+	}
+	function editData(){
+		var tr = $(this).closest("tr");
+		tr.find(".testSignUpInputBox").prop("disabled",false);
+		tr.find(".firstNameInput").focus();
+		tr.find("#updateTestSignUp,#cancelUpdateSignUp").removeClass("nonner");
+		tr.find("#editTestSignUp").addClass("nonner");
+	}
+	function reset(row){
+		row = $(row);
+		row.find(".firstNameInput").val(row.find(".firstNameInput").data("orgVal"));
+		row.find(".lastNameInput").val(row.find(".lastNameInput").data("orgVal"));
+		row.find(".mobileNo").val(row.find(".mobileNo").data("orgVal"));
+	}
+	function updateSignUp(){
+		var params = {};
+		var tr = $(this).closest("tr");
+		params['targetUserId'] = tr.data("userId");
+		params['subscriptionId'] = tr.data("subscriptionId");
+		params['newFirstName'] = tr.find(".firstNameInput").val();
+		params['newLastName'] = tr.find(".lastNameInput").val();
+		params['newContactNo'] = tr.find(".mobileNo").val();
+		if(params['newContactNo'].length<10){ alert("Contact Number minimum of 10 characters"); return;}
+		
+		$("#signUpMembersForm").css("opacity","0.3");
+		$.post("/subscription/updateSignUp",params,function(data){
+			$("#signUpMembersForm").css("opacity","1");
+			if(data){
+			    if(data.errorCode == ""){
+					alert("Successfully Updated");
+					doneUpdate(tr);
+					return;
+				}else{
+					alert("ERROR : "+data.errorMessage);
+				}
+			}else{
+				alert("Please Re-try Later :(");
+			}
+			reset(tr);
+		});
+	};
+	function cancelUpdateSignUp(){
+		var tr = $(this).closest("tr");
+		reset(tr);
+		doneUpdate(tr);
+	}
+	$(function(){
+		$(document).on("click","#editTestSignUp",editData)
+		.on("click","#updateTestSignUp",updateSignUp)
+		.on("click","#cancelUpdateSignUp",cancelUpdateSignUp)
+		.on("click",".loadMoreTSMembers",loadMoreMembers)
+		.on("change",".filterByTestSeriesId",filterByTestSeriesId)
+		.on("click",".testSeriesFilterByBtn",testSeriesFilterByBtn)
+		.on("keydown",".searchCell input",onSearchEnter)
+		.on("click",".testSeriesFilterByReset",testSeriesFilterByReset);
+		decideLoadMore();
+	});
+	function onSearchEnter(e){
+		if(e.which && e.which == 13){
+			testSeriesFilterByBtn(e);
+		}
+	}
+	function loadMoreMembers(){
+		$(this).text("Loading...");
+		fetchMembers(true);
+	};
+	function fetchMembers(pushData){
+		params["start"]=memberIndex;
+		var frm = $("#signUpMembersForm");
+		if(!pushData){frm.css("opacity","0.3");}
+		params["isSearch"]=true;
+		$("#noUserFoundCell").remove();
+		$.get("/Subscription/getSubscribedMembers",params,function(data){
+			frm.css("opacity","1");
+			if(!pushData){
+				frm.find("tr:gt(1)").remove();	
+			}
+			$("#signUpMembersForm").find("table").append(data);
+			decideLoadMore();
+		});
+	};
+	function decideLoadMore(){
+		if(memberIndex < totalMembers){
+			$(".loadMoreTSMembers").removeClass("nonner").text("Load More");	
+		}else{
+			$(".loadMoreTSMembers").addClass("nonner");	
+		}
+	};
+	function filterByTestSeriesId(){
+		params["testSeriesId"] = $(this).val();
+		paramsFetch();
+		$(".testSeriesFilterByReset").removeClass("nonner");
+	};
+	function paramsFetch(){
+		totalMembers = 0;
+		memberIndex = 0;
+		fetchMembers(false);
+	}
+	function testSeriesFilterByBtn(){
+		$(".testSeriesFilterBy").each(function(){
+			$this = $(this);
+			if($this.val()){
+				params[$this.data("filterType")] = $this.val();
+			}else{
+				$(params).removeProp($this.data("filterType"));
+			}
+		});
+		paramsFetch();
+		$(".testSeriesFilterByReset").removeClass("nonner");
+	};
+	function testSeriesFilterByReset(){
+		$(".testSeriesFilterBy").val("");	
+		$(".filterByTestSeriesId").val("");	
+		params = {"start":0};
+		paramsFetch();
+		$(this).addClass("nonner");
+	};
+	function updateMemberInfo(){
+	};
+</script>

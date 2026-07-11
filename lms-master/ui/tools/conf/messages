@@ -1,0 +1,63 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+
+DELETEPLAN_CAN_NOT_BE_REMOVED = Cannot remove the plan, as it is already in use, try deprecating it.
+
+
+#add organization
+FORM_HEAD = Provide your <b>Organization</b> details
+
+FIELD_NAME = Organization Name*
+FIELD_NAME_INFO = A Short Name which will help identify your organization on Vedantu.
+
+FIELD_FULL_NAME = Organization Full Name*
+FIELD_FULL_NAME_INFO = 
+
+FIELD_TYPE = Organization Type*
+FIELD_TYPE_INFO = 
+
+FIELD_SLUG = Your organization on Vedantu*
+FIELD_SLUG_INFO = The url of your Organization which will be generated on the basis of input provided.
+
+FIELD_WEBSITE = Website*
+FIELD_WEBSITE_INFO = 
+
+FIELD_EMAIL_DOMAIN = Email Domain
+FIELD_EMAIL_DOMAIN_INFO = Email domain used in your organization.(Optional)
+
+FIELD_ADMIN_DETAILS = Admin Details*
+FIELD_ADMIN_DETAILS_INFO = These are the details required for creating the First User Account of your Organization's administrator on Vedantu.
+
+FIELD_CONTACT = Contact Number*
+FIELD_CONTACT_INFO = 
+
+FIELD_LOCATIONS = Locations*
+FIELD_LOCATIONS_INFO = 
+
+FIELD_ADDRESS = Address*
+FIELD_ADDRESS_INFO = 
+
+FIELD_DESC = Description
+FIELD_DESC_INFO = Describe your organization in few words.
+
+FIELD_ENC = Encrypt Content
+FIELD_ENC_INFO = Encrypt and store your institute content with us.
+
+FIELD_CAPTCHA_INFO = Type the characters (case sensitive)*
+
+FIELD_TERMS_CONDITIONS = Terms and Conditions
+
+FORM_SUBMIT_NOTE = Submit your organization creation request with us. We will process and create it for you. Keep an eye on your Email account.
+
+TXT_MONTHLY = Monthly Plan
+TXT_ANNUALY = Annual Plan
+
+ORG_CREATED_MSG_1 = Thank you for requesting access to our invite-only beta program of Vedantu! 
+ORG_CREATED_MSG_2 = We will get back to you once your request is approved
+ORG_CREATED_MSG_3 = Check your inbox for further information.
+UNIQUE_ORG_URL = https://learn.vedantu.com/org/%s
+
+PLANS_DETAILS = Plans Offered by Vedantu
+SINGLE_PLAN_DETAILS = Plan Details
+INVOICING_MONTHLY = Invoicing: Monthly

@@ -1,0 +1,46 @@
+<div class="vidSuggHolder">
+	#{if videos != null && videos.errorCode.isEmpty() && videos.result.list.length()>0 }
+	<div class="big18">&{'TXT_SUGGS'}</div>
+	#{list items:0..videos.result.list.length()-1,as:'index'}
+	%{
+		vid = videos.result.list.get(index);
+		vidUrl = webUtils.TemplateHelper._getVidUrl(vid,params.orgId);
+		duration = vid.has('duration') ? vid.duration : 0;
+		timeObj=uicom.util.Utilities.getTimeFromMiliSec(duration);
+	}%
+	<div class="eachVidSugg">
+		<a class="${vidUrl.className} ptrTag" data-id="${vidUrl.id}" href="${vidUrl.url}">
+		<div class="vidThumbHold">
+			<div class="vidThumbImg">
+				<img alt="&{'IMG_NA'}" src="${vid.has('thumbnail') ? vid.thumbnail : ''}"/>
+			</div>
+			<div class="vidThumbInfo">
+				<div class="vidPlayIcon"><span></span></div>
+				<div class="vidThumbDuration">
+					#{if timeObj.getInt("hrs") > 0}
+                        			${timeObj.hrs}:
+                			#{/if}
+                        		${timeObj.mins}:${timeObj.secs}
+				</div>
+			</div>
+		</div>
+		</a>
+		<div class="big16">${vid.name}</div>
+		<div class="greyTextColor">
+			#{if vid.has("boardTree") && !vid.boardTree.equals(null) && vid.boardTree.length()>0}
+                        	#{list items:0..vid.boardTree.length()-1,as:'bIndex'}
+                                	<span style="padding-right:12px;">${vid.boardTree.get(bIndex).name}</span>
+                                #{/list}
+                	#{/if}
+		</div>
+		#{if vid.has('user') && !vid.user.equals(null)}
+                %{
+                	user=vid.user;
+                }%
+                   	<span style="padding-right:2px">by</span>
+		    	#{institute.memberName user : user , classNames : "smally" /}
+		#{/if}
+	</div>
+	#{/list}
+	#{/if}
+</div>

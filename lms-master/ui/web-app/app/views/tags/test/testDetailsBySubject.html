@@ -1,0 +1,44 @@
+<div class="left subjectList">
+#{list items:0..data.metadata.length()-1, as:'sIndex'}
+%{
+	subData = data.metadata.get(sIndex);
+}%
+<span class="left eachSubject">
+
+	<span class="left blueTextColor big14 boldy">${subData.name}</span>
+	<span class="left format big12"><b>Format</b><a class="right relative showTestDetails doCStream" data-cs-name="VIEW_DETAILS_LINK" data-subject-id="${subData.id}">View details</a></span>
+	<span class="left greyTextColor"><span class="blueTextColor boldy">${subData.qusCount}</span> Questions</span>
+
+
+	<span class="left greyTextColor" style="padding:0 0 8px 10px;"><span class="blueTextColor boldy">${subData.totalMarks}</span> Marks</span>
+	#{if data.has('isNTAPattern') && !data.isNTAPattern.equals(null)}
+				#{if data.isNTAPattern==true}
+				<div>
+				<span class="left greyTextColor" style="padding:0 0 8px 0px;"><span class="blueTextColor boldy">${subData.maxQuestionsToBeAttemptedForBoard}</span> Questions to be Attempted</span>
+			    </div>
+				#{/if}
+	#{/if}
+
+	<!-- #{if subData.has('details') && subData.details.length()>0}
+	#{list items:0..subData.details.length()-1, as:'dIndex'}
+		#{if subData.details.get(dIndex).maxQuestionsTobeAttempted > 0 && subData.details.get(dIndex).qusCount > 0}
+		<span class="left blackTextColor"><b>${subData.details.get(dIndex).type} </b><span class="greyTextColor">${subData.details.get(dIndex).qusCount} Questions 
+		${subData.details.get(dIndex).maxQuestionsTobeAttempted } MaxQuestionsTobeAttempted
+		${subData.details.get(dIndex).maxQuestionsTobeAttempted*subData.details.get(dIndex).marks.positive} Marks</span>
+		</span>
+		#{/if}
+		
+	#{/list}
+	#{/if}
+ -->
+	#{if subData.has('children') && !subData.children.equals(null) &&subData.children.length()>0}
+	<span class="left curriculum big14">Curriculum</span></br>
+	<span class="left boldy big12 greyTextColor" style="width:100%;"> 
+	#{list items:0..subData.children.length()-1, as:'cIndex'}
+		${subData.children.get(cIndex).name} <br/>
+	#{/list}
+	</span>
+	#{/if}
+</span>
+#{/list}
+</div>

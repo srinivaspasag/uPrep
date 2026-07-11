@@ -1,0 +1,13 @@
+#testDataTable th,td{
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+.submitAllTests{
+    width: 50%;
+    margin: auto;
+    display: none;
+}
+.submitEachTest{
+    padding: 6px 20px;
+}

@@ -1,0 +1,69 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.list.length()>0}
+
+#{if unread!=null && unread.errorCode.isEmpty() && unread.result.unreadConversationCount>0}
+	<div class="centerText boldy smally" style="padding:6px;"><span class="big14">${unread.result.unreadConversationCount}</span> &{'TXT_UNREAD_MSGS'}</div>
+#{/if}
+
+#{list items:0..resp.result.list.length()-1,as:'index'}
+%{
+	msg = resp.result.list.get(index);
+	user = msg.get('mostRecentSender');
+	getUser=(controllers.Profile.getUserClassAndUrl(user));
+    userId = getUser.get("id");
+	rdClass = msg.status=="UNREAD"?"convUnRead":"";
+	amISender = false;
+	if(userId == session.userId){
+		amISender = true;
+	}
+}%
+<a href="/conversation/${msg.userConversationId}" class="openMsgConversation ptrTag list-group-item" data-conversation-id="${msg.conversationId}" data-user-conversation-id="${msg.userConversationId}">
+	<div class="msgNotiEachOne ${rdClass} media">
+	   <!-- <table class="msgNotiEachTable">
+		<tr> -->
+			<!-- <td rowspan=2 class="leftMsgNotiImgTD"> -->
+			    <div class="msgProfilePicCont pull-left">
+					<img class="msgProfilePic lgi-img" src="${user.thumbnail}" alt=""/>
+			    </div>
+			<!-- </td> -->
+				<div class="leftMsgNotiTD media-body">
+					<div class="msgRecieverNtLst lgi-heading">
+						#{memberName user : user , classNames : "msProfileNm blueTextColor" , noLink : true /}
+						#{if msg.numOfParticipants>1}
+							#{if amISender == true}
+								and ${msg.numOfParticipants-1} others
+							#{/if}
+							#{else}
+								<!-- <span class="msgRecieverNtLst"> -->
+									<span>to me </span>
+									#{if msg.numOfParticipants>2}
+										<span>and ${msg.numOfParticipants-2} others</span>
+									#{/if}
+								<!-- </span> -->
+							#{/else}
+						#{/if}
+						<span class="msgTime smally pull-right">${new Date(controllers.TemplateHelper._getClientTimeOffsetCalc(msg.mostRecentMessageTiming,params.clientServerTimeDelta)).format('hh:mm a')}</span>
+					</div>
+				<!-- <td class="rightMsgNotiTD pull-right">
+					
+				</td> -->
+		<!-- </tr> -->
+		<!-- <tr> -->
+					<div class="leftMsgNotiTD lgi-text">
+						<div class="shrtMsgTitle">${msg.subject}
+							<span class="msgDate smally pull-right">${new Date(controllers.TemplateHelper._getClientTimeOffsetCalc(msg.mostRecentMessageTiming,params.clientServerTimeDelta)).format('dd/MM/yyyy')}</span>
+						</div>
+					</div>
+					<!-- <td class="rightMsgNotiTD ">
+						
+					</td> -->
+		<!-- </tr>
+	   </table> -->
+				</div>
+	</div>
+</a>
+#{/list}
+#{/if}
+#{else}
+	<div class="text-center greyTextColor">&{'NO_RECENT_MSGS'}</div>
+#{/else}
+

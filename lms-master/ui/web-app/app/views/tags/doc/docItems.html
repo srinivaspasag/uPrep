@@ -1,0 +1,61 @@
+%{
+    docs=_docs;
+    loopStart=_loopStart;
+    if(loopStart==null)loopStart=0;
+    loopEnd=_loopEnd;
+    if(loopEnd==null)loopEnd=docs.length()-1;
+    target=_target;
+    seeMore=_seeMore;
+}%
+#{if target!="HOME_PAGE_RECOS"}
+#{comingSoon.document /}
+#{/if}
+*{#{if loopEnd >= loopStart}
+        #{list items:loopStart..loopEnd,as:'d'}
+            %{
+                doc=docs.get(d);
+                callback='';
+                if(target=="HOME_PAGE_RECOS")callback='POPULAR_DOC';
+                docUrl=controllers.Doc.getDocUrl(doc.title,doc.docId);
+            }%
+        <div class='docItem crossXPa widgetItem'>
+            <div class='widgetWhiteBox'>
+                #{if target=="HOME_PAGE_RECOS"}
+                <a class='crossX widgetItemCrossX popularDocCross'></a>
+                #{/if}
+                <span class="widgetItemFollow">
+                    #{widgets.followUnfollowEntity followType:doc.followType,callback:callback,
+                    entityType:'DOCUMENT',entityId:doc.docId/}
+                </span>
+                #{if doc.has('type')&&doc.type!="UNKNOWN"}
+                <span class="docItemType">${doc.type}</span>
+                #{/if}
+                <a class="openDocPage" href="${docUrl}" data-doc-id="${doc.docId}">
+                    <img class='floatLeft' src='/public/images/questions/docBack.png' alt='' />
+                </a>
+                <div class='img50Lefter'>
+                    <a class='widgetItemName openDocPage' data-doc-id="${doc.docId}" href="${docUrl}">${doc.title}</a>
+                      %{
+                        user=doc.user;
+                        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                      }%
+                      <span class='smally'>
+                          by <a data-user-id="${user.id}" class="${getUserClassAndUrl.class}" href="${getUserClassAndUrl.url}">
+                            ${user.firstName+' '+user.lastName}</a>
+                      </span>
+                   <div class="ratingStars" style="width: ${uicom.util.Utilities.getStarsWidth(doc.avgRating)}px"></div>
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+            <div class='widgetItemStats'>                
+                <span class='boldy'>Views- </span>${doc.views}
+            </div>
+        </div>
+        #{/list}
+        #{if seeMore==true&&docs.length()==3}
+        <a class="smally liner">see more</a>
+        #{/if}
+#{/if}
+#{elseif target=="QUESTION_PAGE"||target=="BOARD_PAGE"}
+<div class="userMessage">No Documents available</div>
+#{/elseif}}*

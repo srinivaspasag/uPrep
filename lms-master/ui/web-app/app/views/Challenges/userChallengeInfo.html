@@ -1,0 +1,67 @@
+    #{if challengeInfo!=null&&challengeInfo.errorCode==''}
+    %{
+        cInfo=challengeInfo.result;
+        if(cInfo.has('multiplierPower')){
+            if(cInfo.multiplierPower=='SINGLE')mul='x1';
+            else if(cInfo.multiplierPower=='DOUBLE')mul='x2';
+            else if(cInfo.multiplierPower=='TRIPLE')mul='x3';  
+            else mul='';
+        }
+        else mul='';
+    }%
+    <table class="QPChallengeStatsTable" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                #{if cInfo.success}
+                <div class="QAPGraphCorrectAns">Cracked!</div>
+                #{/if}
+                #{else}
+                <div class="QAPGraphWrongAns">Lost</div>
+                #{/else}
+            </td>
+            <td>
+                <div style="width: 50px;margin-top: 10px;float: left;line-height: 13px;">Points Earned</div>
+                <div class="img50Lefter centry" style="vertical-align: middle">
+                   #{if cInfo.success}
+                    <div class="redColor">${cInfo.basePoint}${mul}</div>
+                    <div class="blueColor margHalfTop" style="font-size: 35px;font-family: digit">${cInfo.totalPoint}</div>
+                    #{/if}
+                    #{else}
+                    <div class="blueColor margHalfTop" style="font-size: 35px;margin-top: 14px;font-family: digit">0</div>
+                    #{/else}
+                </div>
+            </td>
+            <td>
+                %{
+                    if(cInfo.timeTaken>0){
+                        timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(cInfo.timeTaken);
+                        timeText= timeObj.mins+':'+timeObj.secs+' mins';                      
+                    }
+                    else{
+                        timeText='NA';
+                    }                    
+                }%
+                Time taken
+                <div class="boldy">${timeText}</div>
+            </td>
+            <td>
+                <div class="centry">
+                    #{if cInfo.success}
+                        #{if cInfo.hint<3}
+                            #{list items:2..cInfo.hint}
+                                <span class="challengeHat"></span>
+                            #{/list}
+                            <div>${cInfo.hint} hint${cInfo.hint.pluralize()} taken</div>
+                        #{/if}
+                        #{else}
+                            3 hints Taken
+                        #{/else}
+                    #{/if}
+                    #{else}
+                        <div>${cInfo.hint} hint${cInfo.hint.pluralize()} taken</div>
+                    #{/else}
+                </div>
+            </td>
+        </tr>
+    </table>
+    #{/if}

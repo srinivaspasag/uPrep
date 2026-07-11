@@ -1,0 +1,64 @@
+%{
+	data = _data;
+	items = data.items;
+}%
+#{if !data.shipmentStatus.equals(null)}
+<tr class="eachShipmentInfo" data-id="${data.id}">
+	<td class="width150 maxWidth150">
+		<div>
+			#{if data.userInfo.equals(null)}
+				<span class="color3 big14">${data.buyerContactDetails.email}</span>
+			#{/if}
+			#{else}
+				#{widgets.user20 user : data.userInfo /}
+			#{/else}
+		</div>
+		<div class="color6 big12" style="padding-top:6px;"><span class="updateClientTime"
+			data-format="dd/mmm/yyyy hrs:min" data-time=${data.timeCreated}>${data.timeCreated}</span></div>
+	</td>
+	<td>
+		#{qrInventory.items items : items /}
+	</td>
+	<td class="width130 maxWidth130">
+		%{
+			statusList = util.TemplateHelper.SHIPMENT_STATUS;
+		}%
+		<select class="invShipmentState state${data.shipmentStatus}" data-old-val="${data.shipmentStatus}">
+			#{list items:0..statusList.length-1,as:'index'}
+			%{ 
+				status = statusList[index]; 
+				selected = "";
+				if(status == data.shipmentStatus){
+					selected = "selected";
+				}
+			}%
+			<option value="${status}" ${selected}>&{'SHIPMENT_STATUS_'+status}</option>
+			#{/list}
+		</select>
+	</td>
+	<td class="centerText width40 maxWidth40">
+		<a class="viewShipAddress">&{'TXT_VIEW'}</a>
+		<div class="shipmentAddressValue nonner">
+		   <table>
+		     <tr>
+			<td class="alignTop">
+			<div class="boldy big16">&{'INVOICE_BILL_TO'}</div>
+			#{qrInventory.addressTable data : data.buyerContactDetails.billingAddress , className : "shipmentAddressBillTo" /}
+			</td>
+			<td class="alignTop">
+			<div class="boldy big16">&{'INVOICE_SHIP_TO'}</div>
+			#{qrInventory.addressTable data : data.buyerContactDetails.shipmentAddress , className : "shipmentAddressShipTo" /}
+			</td>
+		     </tr>
+		   </table>
+		</div>
+	</td>
+	<td class="width100 maxWidth75">
+		<div class="boldy big16 centerText">${data.code}</div>
+		<div class="centerText" style="padding-top:8px;">
+			<span class="greyButton resendAccessCodeEmail"
+				data-email="${data.buyerContactDetails.email}">Resend Email</span>
+		</div>
+	</td>
+</tr>
+#{/if}

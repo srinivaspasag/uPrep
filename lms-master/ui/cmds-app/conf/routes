@@ -1,0 +1,144 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+#login
+GET     /org/{orgSlugId}/?                        UIComRegister.indexSlug
+GET     /login/organization/{orgId}/?             UIComRegister.index
+GET     /login/?                                  UIComRegister.index
+GET     /showuserblockmsg/{orgId}/?               UIComRegister.showUserBlockMsg
+GET     /termsandconditions                       TNC.termsAndConditions
+GET     /business-agreement/?                     TNC.businessAgreement
+GET     /access-denied/?                          TNC.accessDenied
+GET 	/noteligible				  Application.notEligible
+GET 	/noorgsfound				  Application.noOrgsFound
+GET 	/directaccess				  Security.directaccess
+
+GET    /                                          Widgets.main
+GET    /home                                      Widgets.main
+
+#programs
+GET    /organization/{orgId}/program/{programId}/{areaType}/?         QrPrograms.programDirect
+GET    /organization/{orgId}/program/{programId}/?                    QrPrograms.programDirect
+
+#resources
+GET    /organization/{orgId}/resources/?                              QrResources.resourcesDirect
+GET    /organization/{orgId}/folder/{folderId}/?                      QrResources.folderDirect
+GET    /organization/{orgId}/addcontent/?                             QrAddContent.addContentDirect
+GET    /organization/{orgId}/cdp/{cdpId}/?                            QrCDPPlans.cdpDirect
+GET    /organization/{orgId}/package/{packageId}/?                    QrProducts.packageDirect
+GET    /organization/{orgId}/questionset/{questionSetId}/?            QrQuestions.questionSetDirect
+GET    /organization/{orgId}/question/{questionId}/?                  QrQuestions.questionDirect
+GET    /organization/{orgId}/challenge/{challengeId}/?                QrQuestions.challengeDirect
+GET    /organization/{orgId}/test/{testId}/?                          QrTests.testDirect
+GET    /organization/{orgId}/reviews/{entityId}/?                     QrTests.getCMDSEntityReviewsDirect
+GET    /organization/{orgId}/assignment/{assignmentId}/?              QrTests.assignmentDirect
+GET    /organization/{orgId}/testseries/{testSeriesId}/?              QrTests.testSeriesDirect
+GET    /organization/{orgId}/document/{id}/?                          QrDocuments.docPageDirect
+GET    /organization/{orgId}/file/{id}/?                              QrDocuments.filePageDirect
+GET    /organization/{orgId}/video/{id}/?                             QrDocuments.videoPageDirect
+GET    /pdfviewer                                                     UIComDocuments.pdfViewer
+GET    /organization/{orgId}/sharequestions/?                         QrBoards.shareQuestionsDirect
+
+#MODULE
+GET    /organization/{orgId}/module/                                     QrModules.direct
+GET    /organization/{orgId}/module/{id}/?                               QrModules.direct
+
+#GENERATE TEST
+GET    /organization/{orgId}/generatetest                               QrTests.generateTestDirect
+GET    /organization/{orgId}/generatetest/{testId}                      QrTests.autoGenerateTestChaptersListDirect
+
+#CHECK DUPLICATE QUESTIONS
+
+GET   /organization/{orgId}/checkduplicates                              QrQuestions.checkDuplicatesDirect
+
+#HELP
+GET     /help                                    UIComHelpCenter.home
+GET     /helptopics                              UIComHelpCenter.topicsDirect
+GET     /ping                                     UIComHelpCenter.ping
+GET     /terms/get/{name}                        TNC.getTerm
+
+#institute settings
+GET    /organization/{orgId}/academicstructure/?                      QrAcadStr.acadStrDirect
+GET    /organization/{orgId}/instituteinfo/?                          QrAcadStr.instituteInfoDirect
+GET    /organization/{orgId}/coursemanagement/?                       QrBoards.coursemanagementDirect
+GET    /organization/{orgId}/schedule/?                               QrSchedule.scheduleDirect
+
+
+#members
+GET    /organization/{orgId}/people/?                                 QrPeople.peopleDirect
+GET    /organization/{orgId}/student/{targetUserId}/?                 QrPeople.studentDirect
+GET    /organization/{orgId}/offlineuser/{targetUserId}/?             QrPeople.offlineUserDirect
+GET    /organization/{orgId}/member/{targetUserId}/?                  QrPeople.memberDirect
+GET    /organization/{orgId}/addmember/?			                  QrPeople.addMemberDirect
+GET    /organization/{orgId}/editmember/?			                  QrPeople.editMemberDirect
+
+#PLANS
+GET    /organization/{orgId}/orgplans/?                               QrPlans.orgPlansDirect
+
+#INVOICES
+GET    /organization/{orgId}/invoices/?                               QrInvoices.orgInvoicesDirect
+GET    /organization/{orgId}/order/{orderId}/?                        UIComInvoices.invoicePage
+GET    /organization/{orgId}/orgorders/?                              QrInvoices.sellerDashboardDirect
+
+#NotificationGCM
+GET    /organization/{orgId}/sendPushNotification/?				      QrNotification.direct
+
+#INVENTORY
+GET    /organization/{orgId}/sellerdashboard/?                        QrInventory.direct
+GET    /organization/{orgId}/sellerdashboard/inventory/?              QrInventory.direct
+GET    /organization/{orgId}/sellerdashboard/orders/?                 QrInventory.directOrders
+GET    /organization/{orgId}/sellerdashboard/shipments/?              QrInventory.directShipments
+
+#COUPONS
+GET    /organization/{orgId}/couponsdashboard/?                       QrCoupons.direct
+GET    /organization/{orgId}/couponsdashboard/active                  QrCoupons.direct
+
+#SALE DETAILS
+GET    /organization/{orgId}/saledetails/?                              QrSaleDetails.direct
+
+#BILLING DETAILS
+GET    /organization/{orgId}/billing/?                           QrBilling.direct
+
+# EXTERNAL SIGN UP
+GET    /organization/{orgId}/managesignup/?                           QrExtSignup.direct
+GET    /organization/{orgId}/customizesignup/?                        QrExtSignup.customizeSignupDirect
+GET    /organization/{orgId}/customizecategories/?                    QrExtSignup.customizeCategoriesDirect
+
+# Manage Digital Library
+GET    /organization/{orgId}/managedigitallibrary/?                   QrExtSignup.manageDigitalLibraryDirect
+
+#tablets
+GET    /organization/{orgId}/devices/?                                QrDevices.direct
+
+#Exports
+GET    /organization/{orgId}/exports/?                                QrExports.direct
+GET    /organization/{orgId}/sdcardgroup/{groupId}/?                  QrExports.directSdCardGroup
+GET    /organization/{orgId}/sdcardgroups/{sectionId}/?               QrExports.directSdCardGroupsPage
+
+#institute offerings
+GET    /organization/{orgId}/channels/?                               QrChannels.channelsDirect
+
+#usersettings
+GET   /organization/{orgId}/profile/?                                 QrPeople.profileDirect
+
+GET   /formulaeditor                                 Application.newfe
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+#Upload Images
+GET     /uploadImg                                                     Application.uploadImg
+
+
+
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+GET     /pdfjs/                                 staticDir:pdfjs
+
+GET     /organization/{orgId}/getReferredUsersData                   QrReferrals.getReferredUsersData
+GET     /organization/{orgId}/referralUsers                          QrReferrals.direct
+
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}

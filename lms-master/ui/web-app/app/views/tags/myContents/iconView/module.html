@@ -1,0 +1,71 @@
+%{ 
+	module = _module; 
+        moduleOpenUrl = webUtils.TemplateHelper._getModuleUrl(module,params.orgId);
+	caller = _caller == null ? "" : _caller;
+	recordState = module.has("recordState") && !module.recordState.equals(null) ? module.recordState : "ACTIVE";
+	targetUrl = "";
+	target = _target;
+	if(target != null){
+		targetUrl = "?sectionId="+target.id;
+	}
+}%
+<div class="left relative eachMyContentsModule myContentsEachIconItems myContentsEachItem" 
+	data-doc-id="${module.id}" data-entity-type="MODULE" data-entity-id="${module.id}">
+	#{if recordState == "TEMPORARY"}
+	<div class="absolute contentUnavailable">
+		<div class="contentUnavailableMsg">&{'TXT_UNAVAILABLE'}</div>
+	</div>	
+	#{/if}
+	#{elseif caller != "EXT" }
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+                <a class="right relative greenButton doCStream myContentsButtonItem ${moduleOpenUrl.className}"
+                   data-id="${moduleOpenUrl.id}" href="${moduleOpenUrl.url}${targetUrl}" data-cs-name="OPEN" #{if target != null} data-section-id="${target.id}" #{/if}>Open</a>
+                #{if module.isNull('views')}
+		<span class="left absolute myContentsItemInfo"><b>Views - </b>${module.views}</span>
+                #{/if}
+		<span class="right absolute myContentsShareIt">Share</span>
+	</div>
+	#{/elseif}
+	<span class="left relative moduleThumbnail"></span>
+	<div class="left relative myContentsDocumentsDetails">
+		#{if caller != "EXT" }
+		<span class="left relative big12 boldy myContentsDocumentsText blackTextColor singleLineText toolTipTitle"
+			data-title="${module.name}" >${module.name}</span>
+		#{/if}
+		#{else}
+		<a class="left relative big12 boldy myContentsDocumentsText blackTextColor singleLineText toolTipTitle ${moduleOpenUrl.className}" 
+		data-id="${moduleOpenUrl.id}" href="${moduleOpenUrl.url}${targetUrl}" data-cs-name="OPEN" #{if target != null} data-section-id="${target.id}" #{/if}
+			data-title="${module.name}">${module.name}</a>
+		#{/else}
+		<br/>
+		%{
+			boards = module.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   <span class="left relative myContentsDocumentsText" style="width:100%;">
+		   #{if boards.length()<=2}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<span style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</span>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+		   	<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+		#{if module.has('user') && !module.user.equals(null)}
+                      %{
+                        user=module.user;
+                      }%
+			<span class="left relative myContentsDocumentsText">
+				<span>by </span>
+				#{institute.memberName user : user , classNames : "blueTextColor" /}
+			</span><br/>
+		#{/if}
+	</div>
+</div>	

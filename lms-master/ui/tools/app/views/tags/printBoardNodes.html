@@ -1,0 +1,31 @@
+%{
+    index=_index;
+    childNodes=_childNodes;
+    parentBoardId = _parentId;
+}%
+    #{if childNodes.length()>0}
+    #{list items:0..childNodes.length()-1,as:'b'}
+    %{
+        boardPa=childNodes.get(b);
+        boardInfo=boardPa.board;
+        childrenNodes=boardPa.children;
+	isRemoved = false;
+	classNmForBrd = "";
+	if(boardInfo.recordState == "DELETED"){
+		isRemoved = true;
+		classNmForBrd = "deletedItem";
+	}
+    }%
+    <div class="boardNode" style="margin-left:${index*50}px">
+        <span class="brdName ${classNmForBrd}">${boardInfo.name}</span>
+        <span class="treeName">(${boardInfo.treeName})</span>
+	#{if isRemoved != true}
+	<span class="removeBoard crossIcon" 
+		data-brd-id="${boardInfo.id}" 
+		data-parent-brd-id="${parentBoardId}" 
+		data-org-id="${params.orgId}"></span>
+	#{/if}
+    </div>   
+    #{printBoardNodes childNodes : childrenNodes , index : (index+1) , parentId : boardInfo.id /}
+    #{/list}
+    #{/if}

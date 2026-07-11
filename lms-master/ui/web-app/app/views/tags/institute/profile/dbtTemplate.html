@@ -1,0 +1,42 @@
+#{if discussions.has('result') && discussions.result.has('list') && discussions.result.list.length()>0}
+%{
+	dicussionsData = discussions;
+	totalCount = discussions.result.totalHits;
+	discussions = discussions.result.list;
+}%
+#{list items:0..discussions.length()-1, as:'index'}
+%{
+    discuss = discussions.get(index);
+    dissId=discuss.id;
+    orgId = params.orgId;
+}%
+<div class="instPrEachDbtAsked">
+	<div>
+		#{if discuss.has('boards') && !discuss.boards.equals(null) && discuss.boards.length()>0 }
+		%{ board = discuss.boards.get(0);}%
+		<a class="instDbtTitleSubNm boardSubject" data-brd-id="${board.brdId}"
+			/*href="${controllers.Boards.getBoardUrl('subject',board.brdId)}"*/>
+			${board.code}:</a>
+		#{/if}
+		
+		<a class="instPrDbtTitle openInstDoubtExt doCStream" data-diss-id="${dissId}"
+		data-cs-name="DISCUSSION_TITLE"
+		href="/organization/${orgId}/discussion/${dissId}">
+		${discuss.name.raw()}
+		</a>
+	</div>
+	<div class="instDbtAgeH">
+		<span class="instImgs"></span>
+		<span class="smally">${new Date(discuss.timeCreated).since(false)}</span>
+	</div>
+</div>
+#{/list}
+<input type="hidden" class="nonner instDiscussionCount" value="${totalCount}"/>
+#{if totalCount > (Integer.parseInt(params.start)+Integer.parseInt(params.size)) }
+	<div class="loadMoreItems doCStream" name="LOAD_MORE_DISCUSSIONS">Load More</div>
+#{/if}
+#{/if}
+#{else}
+	<!--<div class="userMessage">No &{'TXT_DOUBTS_ASKED'}</div>-->
+	#{institute.zeroLevel alt : play.i18n.Messages.get('TXT_NO_REMARKS') , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+#{/else}

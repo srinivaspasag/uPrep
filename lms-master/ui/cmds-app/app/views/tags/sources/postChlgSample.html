@@ -1,0 +1,106 @@
+        <div class="cmdsPopupHead">Post Challenge</div>        
+        <table class="margLeft20" width="95%">
+            <tbody>
+                <tr>
+                    <td class="grayHead">Choose Channel*</td>
+                    <td>
+                        <div class="channelsvChooseDiv"></div>
+                    </td>
+                </tr>                  
+                <tr>
+                    <td class="grayHead">Title*</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="name" data-req='true'/>
+                            <input type="hidden" class="formInput" name="scope" value="ORG"/>
+                            <input type="hidden" class="formInput" name="publishType" value="ORG"/>
+                        </div>
+                    </td>
+                </tr>  
+                <tr>
+                    <td class="grayHead">
+                        Level
+                    </td>
+                    <td>
+                        <div class="vChoose formvChoose mcvChoose"
+                             data-value="EASY" data-param-name='difficulty'>
+                            <div class="vChooseHead">
+                                Easy
+                            </div>
+                            <div class="vChooseDownIcon"></div>
+                            <div class="vChooseDropDown">
+                                <div class="vChooseOpt" data-value="EASY">Easy</div>
+                                <div class="vChooseOpt" data-value="MODERATE">Moderate</div>
+                                <div class="vChooseOpt" data-value="TOUGH">Tough</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>                  
+               *{ <tr>
+                    <td class="grayHead">
+                        Scope of challenge
+                    </td>
+                    <td>
+                        <div class="vChoose formvChoose" data-value="PUBLIC" data-param-name="scope">
+                            <div class="vChooseHead">Public</div>
+                            <div class="vChooseDownIcon"></div>
+                            <div class="vChooseDropDown">
+                                <div class="vChooseOpt" data-value="PUBLIC">Public</div>
+                                <div class="vChooseOpt" data-value="ORG">Organization</div>
+                                <div class="vChooseOpt" data-value="PRIVATE">Private</div>                                
+                            </div>
+                        </div> 
+                    </td>
+                </tr> }* 
+                <tr>
+                    <td class="grayHead">Maximun points*</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput numberTextBox" name="maxBid" data-req='true'/>
+                        </div>
+                    </td>
+                </tr>                 
+                <tr class="popupQuesHintsTr nonner">
+                    <td class="grayHead">
+                        Hints Deductions*
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="grayHead">
+                        Duration*
+                    </td>
+                    <td class="chlgDuration">
+                        #{common.timeDiv /}
+                    </td>
+                </tr> 
+                <tr>
+                    <td class="grayHead">
+                        Lifetime*
+                    </td>
+                    <td class="chlgLifeTime">
+                        #{common.timeDiv /}
+                    </td>
+                </tr>   
+               *{ <tr>
+                    <td class="grayHead">
+                        Publish Type*
+                    </td>
+                    <td>
+                        <div class="vChoose formvChoose" data-value="PUBLIC" 
+                             data-param-name="publishType" data-req='true'>
+                            <div class="vChooseHead">Public</div>
+                            <div class="vChooseDownIcon"></div>
+                            <div class="vChooseDropDown">
+                                <div class="vChooseOpt" data-value="PUBLIC">Public</div>
+                                <div class="vChooseOpt" data-value="ORG">Organization</div>
+                                <div class="vChooseOpt" data-value="PRIVATE">Private</div>                                
+                            </div>
+                        </div> 
+                        <div class="blocky smallThinGray">
+                            (The scope of this question after the challenge bursts)
+                        </div>
+                    </td>
+                </tr>      }*             
+            </tbody>
+        </table> 

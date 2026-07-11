@@ -1,0 +1,205 @@
+#{if playlist==null||(playlist.has('errorCode')&& playlist.errorCode!='')||!playlist.has('errorCode')}
+    <script type="text/javascript">
+        showError(COMMON_ERROR_MESSAGE);
+    </script>
+#{/if}
+#{else}
+#{stylesheet media:'screen', src:'playlist.css' /}
+%{
+    PL=playlist.result;
+    PLId=PL._id;
+}%
+
+<div class='PLTopBarHolder' rel="${PLId}">
+    %{
+        user=PL.user;
+        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+    }%
+    <div class='PLTopBar CSWidget' data-widget="TOP_BAR">
+        <div class='PLNameAndTags'>
+                 <input type="text" class='big16 boldy PLInputChange PLNameChange doCStream' data-cs-name="EDIT_PLAYLIST_TITLE" value="${PL.title}" rel="${PL.title}"/>
+                 <div>-by <a class="${getUserClassAndUrl.className}" data-user-id="${user._id}" href="${getUserClassAndUrl.url}"
+                             >${user.firstName+' '+user.lastName}</a></div>
+        </div>
+        <div id='closeMin_${PLId}' class='docCloseMin'>
+            <a class="ptrTagInline blueSubmitButton closePLAndView doCStream" data-cs-name="VIEW_PLAYLIST" data-pl-id="${PLId}" data-title="${PL.title}">View Playlist</a>
+            <a class="ptrTagInline greenButton addTagsToPL doCStream" data-cs-name="PUBLISH_PLAYLIST" data-pl-id="${PLId}" data-title="${PL.title}">Publish</a>
+            <img src='/public/images/uicomDocuments/minimize.png' alt='minimize' class="minimizeTab doCStream" data-cs-name="MINIMIZE_PLAYLIST" style="vertical-align: bottom"/>
+            <img src='/public/images/crossTab.png' alt='close' class="closeTabFromTop doCStream" data-cs-name="CLOSE_PLAYLIST"  style="vertical-align: bottom"/>
+        </div>
+    </div>
+</div>
+<div class='cleaner_with_divider'>&nbsp;</div>
+<div class='DTPL1002'>
+    <div class='DTPLLeft'>
+        <div class="PLTOC" rel="${PLId}">
+            <div class="PLTOCHeading">Table of Contents</div>
+            #{if PL.topics.length()>0}
+                #{list items:0..PL.topics.length()-1,as:'i'}
+                    %{
+                        topic=PL.topics.get(i);
+                    }%
+                    <div class="PLTOCTopic ${i_isFirst ? 'activePLTopic' : ''}">
+                        <div class="boldy PLTTNameDiv dragTopicSec" rel="${topic._id}" lang="PLTOCTOPIC">
+                            <label class="PLTTNo margRight5">${i+1}</label>.
+                            <span class="PLTTName">${topic.heading}</span>
+                        </div>
+                        %{
+                            secs=topic.sections;
+                        }%
+                        #{if secs.length()>0}
+                             #{list items:0..secs.length()-1,as:'j'}
+                                %{
+                                    sec=secs.get(j);
+                                    if(sec.has('secType'))secType=sec.secType;
+                                    else secType='';
+                                }%
+                                #{if sec.has('_id')}
+                                    <div class="PLTOCSec dragTopicSec" rel="${sec._id}" lang="PLTOCSEC">
+                                        <span class="PLSecHeadIcon PLSecHeadIcon${secType}"></span>
+                                        <span class="headName">${sec.heading}</span>
+                                    </div>
+                                #{/if}
+                            #{/list}
+                        #{/if}
+                    </div>
+                #{/list}
+            #{/if}
+            #{else}
+                <div class="userMessage">No contents in this Playlist</div>
+            #{/else}
+            <div class="addNewTopicDiv"><span class="addNewPLTopic PLAddButton greenButton">add new topic</span></div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>
+    </div>
+    <div class='DTPLMiddle CSWidget' rel="${PLId}" data-widget="ADD_CONTENT"></div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<div class="PLWriteDummyHTML">
+        <div class='PLCompo PLWrite'>
+                <div class='PLWriteToolHead'>Choose type of content to add</div>
+                <div class='PLWriteOptions'>
+                    <div class='PLOpt addEssayPL doCStream' data-cs-name="ADD_TEXT" rel='TEXT'>Text</div>
+                    <div class='PLOpt addQuesPL doCStream' data-cs-name="ADD_QUESTIONS" rel='QUESTION'>Questions</div>
+                    <div class='PLOpt addImagePL doCStream' data-cs-name="ADD_IMAGES" rel='IMAGE'>Image</div>
+                    <div class='PLOpt addLinkVideoPL doCStream' data-cs-name="ADD_LINKS_VIDEOS" rel='LINK_VIDEO'>Links/Videos</div>
+                    <div class='PLOpt addTestPL doCStream' data-cs-name="ADD_TEST" rel='TEST'>Tests</div>
+<!--                    <div class='PLOpt addDocPL' rel='DOCUMENT'>Add Document</div>-->
+                    <div class="floatRight PLWriteSubmitOptions" style="margin-top: 25px;">
+                        <input type='submit' value='Delete' class='PLSecDelete blueSubmitButton doCStream' data-cs-name="DELETE_SECTION_BUTTON" />
+                        <input type='submit' value='Done' class='PLSecSubmit greenButton doCStream' data-cs-name="SUBMIT_SECTION_BUTTON" />
+                        <input type='submit' value='Preview' class='PLSecPreview yellowButton doCStream' data-cs-name="PREVIEW_SECTION_BUTTON" />
+                        <input type='submit' value='Cancel' class='PLSecCancel greyButton doCStream' data-cs-name="CANCEL_SECTION_BUTTON" />
+                    </div>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                </div>
+                <div class='PLWriteHeadDiv'><span class='headDot'></span><input type='text' class='PLWriteHead' placeHolder='Add Heading' /></div>
+                <div class='PLWriteBody'>
+                    <div class='PLRTEDiv'>
+                        #{include  'UIComWidgets/rte.html' /}                      
+                    </div>
+                </div>
+        </div>
+</div>
+<div id="PLCurateAddTagsPopup" class="nonner">
+    %{
+        if(PL.has('targets'))examTags=PL.targets;
+        subjectTags=PL.boards;
+    }%
+    #{UIComWidgets.tagging exams:examTags,subjects:subjectTags,tags:PL.tags,target:'PL_EDIT',addTagsId:'addTagsForPL_EDIT' /}
+</div>
+<div class="PLAQTDummyHTML">
+    <table class='nonner addedPLQuesnsTable'>
+        <tbody>
+            <tr class='boldy bigger'>
+                <td colspan=2>Added Quesns<td>
+            </tr>
+       </tbody>
+    </table>
+    <div class='PLAddQuesnsTestsHolder CSWidget' data-widget="ADD_QUESTIONS">
+        <div class='centry'>
+            <span class="PLSearchQTInputDiv">
+                <input type='text' class='PLSearchQTInput doCStream' data-cs-name="SEARCH_QUESTIONS" placeHolder="Search Questions"/>
+                <span class="PLSearchQTInputImg doCStream" data-cs-name="SEARCH_QUESTIONS_IMG"></span>
+            </span>            
+        </div>
+        <div class='PLAQTDropDownsDiv'>
+            <div class="vselect vselectHide PLAQTSelectExam" data-value="-1" onstatechange="PLAQTExamChange" 
+			data-cs-name="SELECT_EXAM">
+                    <span class="vSelectHead">
+                            <input type="text" class="vSelectText" value="All Exams" readonly="readonly"/>
+                            <span class="dropDownIcon noUserSelect" ></span>
+                    </span>
+                    <div class="vSelectListHolder">
+                            <div class="vSelectList">
+                                <span class="vSelectEach" data-value="-1">All Exams</span>
+                               #{if exams!=null&&exams.errorCode==""}
+                                    %{
+                                        exams=exams.result.boards;
+                                    }%
+                                    #{if exams.length()>0}
+                                    #{list items:0..exams.length()-1,as:'ex'}
+                                    <span class="vSelectEach" data-value="${exams.get(ex).brdId}">${exams.get(ex).code}</span>
+                                    #{/list}
+                                    #{/if}
+                                #{/if}
+                            </div>
+                    </div>
+            </div>
+            <div class="vselect vselectHide PLAQTSelectSub" data-value="-1" onstatechange="PLAQTSubChange" 
+		data-cs-name="SELECT_SUBJECT">
+                    <span class="vSelectHead">
+                            <input type="text" class="vSelectText" value="All Subjects" readonly="readonly"/>
+                            <span class="dropDownIcon noUserSelect" ></span>
+                    </span>
+                    <div class="vSelectListHolder">
+                            <div class="vSelectList">
+                                <span class="vSelectEach" data-value="-1">All Subjects</span>
+                            </div>
+                    </div>
+            </div>
+            <div class="vselect vselectHide PLAQTSelectTopic" data-value="-1" onstatechange="PLAQTTopicChange" 
+		data-cs-name="SELECT_TOPIC">
+                    <span class="vSelectHead">
+                            <input type="text" class="vSelectText" value="All Topics" readonly="readonly"/>
+                            <span class="dropDownIcon noUserSelect" ></span>
+                    </span>
+                    <div class="vSelectListHolder">
+                            <div class="vSelectList">
+                                <span class="vSelectEach" data-value="-1">All Topics</span>
+                            </div>
+                    </div>
+            </div>
+            <div class="vselect vselectHide PLAQTSelectSubTopic" data-value="-1" data-cs-name="SELECT_SUBTOPIC">
+                    <span class="vSelectHead">
+                            <input type="text" class="vSelectText" value="All SubTopics" readonly="readonly"/>
+                            <span class="dropDownIcon noUserSelect" ></span>
+                    </span>
+                    <div class="vSelectListHolder">
+                            <div class="vSelectList">
+                                <span class="vSelectEach" data-value="-1">All SubTopics</span>
+                            </div>
+                    </div>
+            </div>
+            <a class='blueSubmitButton getPLAQT margRight5 doCStream' data-cs-name="LOAD_QUESTIONS">Load</a>
+            <a class="liner resetPLAQT doCStream" data-cs-name="RESET_QUESTIONS">reset</a>
+        </div>
+        <div class='centry PLAQSortQuesns margTop margBot20'>
+            <span class='PLAQAllQuesns activeBlackTab blackTab doCStream' data-cs-name="ALL_QUESTIONS" data-result-type="ALL">All</span>
+            <span class='PLAQTakenQuesns blackTab doCStream' data-cs-name="ATTEMPTED_QUESTIONS" data-result-type="ATTEMPTED">Taken by You</span>
+            <span class='PLAQMyQuesns blackTab doCStream' data-cs-name="CREATED_QUESTIONS" data-result-type="CREATED">Created by You</span>
+        </div>
+        <div class='LMHandlerDiv PLAddQuesnsList'></div>
+    </div>
+</div>
+    <script type="text/javascript">
+    new function(){
+        var fn=function(){vPlaylist.init({topicId:"${PL.topics.get(0)._id}",playlistId:"${PLId}",
+            viewType:"PL_EDIT",topicCount:"${PL.topics.length()}"});}
+        fetchScripts([{fname:"playlist.js",cb:fn}]);   
+    }();          
+    </script>    
+#{/else}
+
+
+

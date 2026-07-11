@@ -1,0 +1,325 @@
+#{if categoryDetails.errorCode == ''}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Learnpedia-Programs</title>
+	<meta name="google-site-verification" content="6DhL-KLdd2mI5o_YprF32lNPpE56x8ig7Yc1SKtlQ-4" />
+	<meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+	<meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+	<meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+	<meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+	<meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+	<link rel="manifest" href="/public/images/favicons/manifest.json">
+	<link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+	<meta name="theme-color" content="#ffffff">
+	<link href="@{'/public/outerAssets/assets/css/bootstrap.min.css'}" rel="stylesheet">
+	<link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+	<link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+	<link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+	<link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+	<link href="/public/assets/theme1/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+	<link href="@{'/public/outerAssets/assets/css/intlTelInput.css'}" rel="stylesheet">
+	<link href="@{'/public/stylesheets/material_style.css'}" rel="stylesheet">
+	<link href="@{'/public/outerAssets/assets/css/categoryPrograms.css'}" rel="stylesheet">
+	<style type="text/css">
+	body{
+		background: none;
+	}
+</style>
+</head>
+<body>
+	#{include 'theme1/Application/header.html' /}
+	<section id="main">
+		#{include 'theme1/Application/sidebar.html' /}
+		<section id="programs-section" style="margin-top: -40px;">
+			<div class="container">
+				<div class="row">
+					<div class="modal fade" id="otpErrorModal">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button class="close" data-dismiss="modal" type="button"></button> <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+									<!--  Preparing For! -->
+								</div>
+								<div class="modal-body">
+									<center>
+										<img class="img-responsive" height="100px" src="/public/outerAssets/images/error-icon.png" width="100px">
+									</center><span style="font-size: 14px;color: #777;font-weight: 600;">Your Contact Number is Not Verified, Please Login Through Your Email/InstituteID and Verify Your Contact Number Or Contact our Customer Support</span>
+									<center>
+										<br>
+										<span class="btn btn-primary"><a href="/login" style="color: white;">&{'login.SIGNIN'}</a></span>
+									</center>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+						<div class="modal-dialog" style="max-width:400px;margin: 10px auto;">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title"></h4>
+									<img class="closeBtn" src="/public/assets/theme1/vendors/bower_components/summernote/src/icons/close.svg" style="width: 20px;position: absolute;right: 20px;top: 20px;cursor: pointer;">
+								</div>
+								<div class="modal-body">
+									<div class="container">
+										<div id="l-register" style=" margin-bottom: 25px;">
+											<!-- <div class="lcb-form"> -->
+												<div style="margin-bottom: 30px;">
+													<center>
+														<img class="img-responsive" id="lpimage" src="/public/outerAssets/images/vedantutm.png">
+													</center>
+												</div>
+												<div >
+
+													<form  method="post" name="registration" id="otpForm">
+														<div class="input-group m-b-20" id="telgroup">
+															<span class="input-group-addon"><i class="zmdi zmdi-phone"></i></span>
+															<div class="fg-line" id="contactNumbergroup">
+																<input type="tel" class="form-control" id="contactNumber" name="contactNumber" placeholder="Enter Contact Number"  onkeypress='return event.charCode >= 48 && event.charCode <= 57' >
+																<span class="zmdi form-control-feedback" id="contactNumberDialog" style="display: none;"></span> <small class="help-block" id="contactNumberHelp"></small>
+															</div>
+														</div>
+														<div class="input-group m-b-20">
+															<span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+															<div class="fg-line" id="usernamegroup">
+																<input type="text" class="form-control" required name="firstName" id="loginusername" placeholder="Enter your name" >
+																<span class="zmdi form-control-feedback" id="name-dialog" style="display: none;"></span> <small class="help-block" id="name-help"></small>
+															</div>
+														</div>
+														<div class="input-group m-b-20 hidden" id="otpformgroup">
+															<span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+															<div class="fg-line">
+																<input type="text" class="form-control" name="userOTP" id="userotp" placeholder="Enter OTP">
+															</div>
+														</div>
+														<center>
+															<span id="otpcodeerror" class="redTextColor text-center hidden">Otp is Invalid</span>
+														</center>
+
+														<center>
+															<button type="button" id="otpButton" class="btn btn-block btn-success waves-effect">Send Otp</button>
+															<button type="submit" id="loginButton" class="btn btn-block btn-success waves-effect hidden" >Login</button>
+															<button type="button" id="validateButton" class="btn btn-block btn-success waves-effect hidden">Sign Up</button>
+														</center>
+														%{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+														<input type="hidden" value="${learnpediaOrgId  }" id="orgId" name="orgId" />
+														<input type="hidden" value="" id="sectionId" name="sectionId" />
+														<input type="hidden" value="" id="packageDays" name="packageDays" />
+														<input type="hidden" value=true name="isOTPlogin" id="isOTPlogin" />
+														<input type="hidden" name="isOTPsignup" id="isOTPsignup"/>
+														<input type="hidden" value="" name="username" id="uname" />
+														<input type="hidden" id="countryCode" name="countryCode" />
+														<input type="hidden" id="type" name="progType" />
+														<div class="loginPopupBtn text-center resendOTP hidden" id="resendOTP" style="margin-top: 10px;"><a >Resend OTP</a></div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+				</div>
+				<div class="row">
+					#{if categoryDetails.result.category.has("banner") && !categoryDetails.result.category.banner.equals(null)}
+					<div class="banner">
+						<img class="img-responsive" style="margin: auto;" src="${categoryDetails.result.category.banner}" alt="banner">
+					</div>
+					#{/if}
+				</div>
+				<div class="row m-b-20 m-t-20">
+					<h1 class="c-black text-center text-uppercase">
+						${categoryDetails.result.category.name}
+					</h1>
+				</div>
+				<div class="row m-b-20">
+					<div class="col-sm-6 text-center m-t-20">
+						<select class="selectpicker" id="programs">
+			                <optgroup label="Programs">Programs
+			                 #{list items:0..categoriesResponse.result.list.length()-1,as:'index'}
+					          %{
+					            catergoryName = categoriesResponse.result.list.get(index).name;
+					          }%
+		                    <option class="c-black" value="${catergoryName}" data-program-name="${catergoryName}" 
+			                    #{if catergoryName == categoryDetails.result.category.name}
+			                    selected="true" 
+			                    #{/if} >
+		                    	${catergoryName}
+		                    </option>
+	                		#{/list}
+	                		</optgroup>
+	                	</select>
+					</div>
+					<div class="col-sm-6 text-center m-t-20">
+						<div class="year
+									#{if categoryDetails.result.category.name.toUpperCase() != 'TEST SERIES'}
+										active
+									#{/if} 2year" data-year="2year">
+							<div class="selector"></div>
+							<div class="f-18 c-black">
+								2 Years
+							</div>
+							<small class="nonner">
+								#{if categoryDetails.result.category.name.toUpperCase() == 'CAMPUS'}
+									For Pre-Final Year
+								#{/if}
+								#{else}
+									For XI
+								#{/else}
+							</small>
+						</div>
+						<div class="year
+									#{if categoryDetails.result.category.name.toUpperCase() == 'TEST SERIES'}
+										active
+									#{/if} 1year" data-year="1year">
+							<div class="selector"></div>
+							<div class="f-18 c-black">
+								1 Year
+							</div>
+							<small class="nonner">
+								#{if categoryDetails.result.category.name.toUpperCase() == 'CAMPUS'}
+									For Final Year
+								#{/if}
+								#{else}
+									For XII
+								#{/else}
+							</small>
+						</div>
+					</div>
+				</div>
+				<div class="row categoryRow">
+					#{if categorySectionsRes!=null && categorySectionsRes.errorCode.isEmpty()}
+				    %{
+				        list = categorySectionsRes.result.list;
+				        noOfPatternsAvailable = 3
+				    }%
+					    #{if list.length()>0}
+					    	#{list items:0..list.length()-1,as:'index'}
+					    		%{
+							        item = list.get(index);
+							        program = item.programInfo;
+							        center = item.centerInfo;
+							        section = item.sectionInfo;
+							        descriptionPoints = section.descriptionPoints;
+							        if(item.has("description")){
+							            description = item.description;
+							        }
+							        else{
+							            description = null;
+							        }
+							        name = program.name;
+							        desc = section.desc;
+							        packages = null;
+							        price;
+							        flag=true;
+							        //Now doing for learnpedia...might have to change in future
+									learnpediaId = play.Play.configuration.getProperty("learnpedia.id");
+							        packageOrgId = learnpediaId;
+					                if (section.has("packagesMap")) {
+					                    packagesMap = section.packagesMap;
+					                    if (!packagesMap.equals(null)) {
+					                        if (section.packagesMap.has(learnpediaId)) {
+					                            packages = section.packagesMap.getAt(learnpediaId);
+					                        }
+					                        if (packages.equals(null) || packages.length() == 0) {
+					                            packageOrgId = section.orgId;
+					                            if(section.packagesMap.has(section.orgId)){
+													packages = section.packagesMap.getAt(section.orgId);
+												}
+					                        }
+					                    }
+			                		}
+							        costValue = 0;
+							        currencySymbol = "from Rs.";
+							        if(section.revenueModel == "PAID"){
+							            costRate = section.costRate;
+					                    if(costRate.has("currencyCode") && !costRate.currencyCode.equals(null)){
+					                            currency = util.Utilities._getCurrencyByCode(costRate.currencyCode);
+					                    }
+
+					                    if(costRate.has("value") && !costRate.value.equals(null)){
+				                            if(costRate.value>0){
+			                                costValue = costRate.value/100;
+			                            	}
+				                    	}
+							        }
+							        startingValue = 0;
+							        if (section.has("startingRates")) {
+							            startingRates = section.startingRates;
+							            startingRate = null;
+							            if(!startingRates.equals(null)) {
+							                if (startingRates.has(learnpediaId)) {
+							                    startingRate = startingRates.get(learnpediaId);
+							                }
+							                if(startingRate.equals(null) && startingRates.has(section.orgId)) {
+							                    startingRate = startingRates.get(section.orgId);
+							                }
+							                if (!startingRate.equals(null) && startingRate.value > 0) {
+							                    startingValue = startingRate.value/100;
+							                }
+							            }
+							        }
+							    }%
+				    	
+					    		#{if !packages.equals(null)}
+						    		%{
+										count2018 = 0;
+										count2019 = 0;
+						    		}%
+						    		#{list items:0..packages.length()-1,as:'index'}
+								    	#{if packages.get(index).displayDays.equals("2 Years")}
+										<div class="col-md-4 col-sm-6 2yearpackage m-t-20
+									#{if categoryDetails.result.category.name.toUpperCase() == 'TEST SERIES'}
+										hidden
+									#{/if}">
+								    			#{include 'theme1/Application/singleSectionProgram.html' /}
+								    		</div>
+								    	#{/if}
+								    	#{elseif packages.get(index).displayDays.equals("1 Year")}
+										<div class="col-md-4 col-sm-6 1yearpackage #{if categoryDetails.result.category.name.toUpperCase() != 'TEST SERIES'}
+												hidden
+											#{/if} m-t-20">
+								    			#{include 'theme1/Application/singleSectionProgram.html' /}
+								    		</div>
+								    	#{/elseif}
+				                	#{/list}
+							    #{/if}
+							#{/list}
+						#{/if}
+						#{else}
+							<div class="text-center padTopBottom">
+						        <img src="/public/images/no-results.png" alt="No Programs To Show"/>
+						    </div>
+					    #{/else}
+	    			#{/if}
+				</div>
+		    </div>
+		</section>
+	</section>
+		<!-- Footer Section    -->
+		#{include 'theme1/Application/footer.html' /}
+		<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js"></script>
+		<script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+		<script src="/public/assets/theme1/js/app.min.js"></script>
+		<script type="text/javascript" src="/public/javascripts/category.js"></script>
+		<script type="text/javascript" src="/public/javascripts/dropdown-on-hover.js"></script>
+		<script type="text/javascript" src="/public/assets/theme1/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+		<script src="@{'/public/outerAssets/assets/js/categoryPrograms.js'}"></script>
+		<script type="text/javascript" src="https://web.mxradon.com/t/Tracker.js"></script>
+		<script src="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.js"></script>
+		<!-- <script src="/public/javascripts/application.js"></script> -->
+		<script src="@{'/public/outerAssets/assets/js/o.intlTelInput-min.js'}"></script>
+</body>
+</html>
+#{/if}
+#{else}
+	#{include 'errors/pageNotFound.html' /}
+#{/else}

@@ -1,0 +1,179 @@
+    #{if quesStats.errorCode==""&&quesStats.result.info.measures.attempts>0} 
+    %{        
+        stats=quesStats.result.info;
+        attemptCount=stats.measures.attempts;
+        correctAttempts=stats.correctAnswerGivenCount.count;
+        isCorrect=stats.isUserAnswerCorrect;
+    }%
+    <div id='quesAnalyticsPopup'>              
+        <div class="QAPGraph">
+            #{if params.type=='SCQ'||params.type=='MCQ'}
+            <div class="BGYAxisName">% People</div>
+            <div class="BGYAxisDiv"></div>
+            <div class="barGraphAreaHolder">
+                <div class="barGraphArea">
+                    <div class="BGBarsHolder"></div>
+                    <div class="BGXAxisDiv"></div>
+                    <div class="BGXAxisName centry margTop20">Options Marked</div>
+                </div>                
+            </div>
+            #{/if}
+            #{elseif params.type=='NUMERIC'}
+            <table class="QAPTable"cellpadding="0" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td>Answered By</td>
+                    </tr>             
+                    %{
+                        correctAnswerGivenCount=stats.correctAnswerGivenCount
+                        correctAnswerList=correctAnswerGivenCount.answerGiven;
+                    }%
+                    #{if correctAnswerList.length()>0}
+                    <tr>
+                        <td class="QAPTableTdBottomBorder  QAPTableTdRightBorder QAPTableCorrectTd">
+                            <div class="QAPTableCorrectAnsDiv">
+                                <span class="boldy">Correct Answer</span>
+                                <div class="boldy color8">
+                                    ${correctAnswerList.join(',')}
+                                </div>
+                            </div>
+                            #{if isCorrect == "CORRECT"}
+                            <div class="QAPTableCorrectAnsText">You answered Correctly</div>
+                            #{/if}
+                        </td>
+                        %{
+                            correctAttempts=correctAnswerGivenCount.count;
+                            correctPercent=(int)(correctAttempts*100/attemptCount);
+                        }%
+                        <td class="QAPTableTdBottomBorder">
+                            <div class="margLeft">
+                                <div class="QAPTableCorrectAnsPercent">
+                                    ${correctPercent}%
+                                </div>
+                                <span class="color8">People</span>
+                            </div>
+                        </td>
+                    </tr>
+                    #{/if}
+                    %{
+                        userAnswerGivenCount=stats.userAnswerGivenCount
+                        userAnswerList=userAnswerGivenCount.answerGiven;
+                        userAttempts=userAnswerGivenCount.count;
+                    }%                    
+                    #{if userAttempts>0 && isCorrect!="CORRECT"}
+                    <tr>
+                        <td class="QAPTableTdBottomBorder  QAPTableTdRightBorder QAPTableCorrectTd">
+                            <div class="QAPTableMyWrongAnsDiv">
+                                <span class="boldy">Your Answer</span>
+                                <div class="boldy color8">
+                                    ${userAnswerList.join(',')}
+                                </div>
+                            </div>
+                        </td>
+                        %{
+                            userPercent=(int)(userAttempts*100/attemptCount);
+                        }%                        
+                        <td class="QAPTableTdBottomBorder">
+                            <div class="margLeft">
+                                <div class="QAPTableCorrectAnsPercent">
+                                    ${userPercent}%
+                                </div>
+                                <span class="color8">People</span>
+                            </div>
+                        </td>
+                    </tr>
+                    #{/if}
+                    <tr>
+                        <td class="QAPTableTdRightBorder">
+                            <div class="margTop boldy"> People also answered</div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    #{if stats.answerGivenCounts.length()>0}
+                    #{list items:0..stats.answerGivenCounts.length()-1,as:'i'}                    
+                    %{
+                        ans=stats.answerGivenCounts.get(i);
+                        percent=(int)(ans.count*100/attemptCount);
+                    }%
+                    #{if ans.answerGiven.length()>0}
+                    <tr>
+                        <td class="QAPTableTdBottomBorder boldy QAPTableTdRightBorder">
+                            <div class="margLeft color8">${ans.answerGiven.join(',')}</div>
+                        </td>
+                        <td class="QAPTableTdBottomBorder">
+                            <div class="margLeft">
+                                <div>${percent}%</div>
+                                <span class="color8">People</span>
+                            </div>
+                        </td>
+                    </tr>
+                    #{/if}
+                    #{/list}
+                    #{/if}
+                </tbody>
+            </table>
+            #{/elseif}
+        </div>
+        <div class="QAPStats">
+            <div class="QAPMyAnsStatusDiv">
+                #{if isCorrect == "CORRECT"}
+                    #{if params.accessType=="CHALLENGES_ANALYTICS"}
+                        <div class="QAPGraphCorrectAns">Cracked!</div>
+                    #{/if}
+                    #{else}
+                        <div class="QAPGraphCorrectAns">Correct!</div>
+                    #{/else}
+                #{/if}
+                #{else}
+                    #{if params.accessType=="CHALLENGES_ANALYTICS"}
+                        <div class="QAPGraphWrongAns">Wrong Answer :(</div>
+                        <span class="boldy">Better luck next time</span>
+                    #{/if}
+                    #{elseif stats.userAnswerGivenCount.count <= 0}
+                        <div class="QAPGraphWrongAns">Not Attempted!</div>
+                    #{/elseif}
+                    #{else}
+                        <div class="QAPGraphWrongAns">Incorrect!</div>
+                    #{/else}
+                #{/else}
+            </div>
+            <div class="QAPAttemptsDiv">
+                <div class="boldy">Total Attempts <span class="QAPStatColor">${attemptCount}</span></div>
+                <div class="boldy">Correct <span class="QAPStatColor">${correctAttempts}</span></div>
+            </div>
+
+            <div class="margTop QPAPLTestsCount"></div>
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+        <div class="acacac" style="font-size: 10px; text-align: center; margin-top: 37px;">
+            #{if params.accessType!='CHALLENGE_ANALYTICS'}
+            *Cumulative Analytics of normal attempts, challenges and tests.
+            #{/if}
+        </div>        
+    </div>
+    <script type="text/javascript">
+        $(function(){
+           if("${params.type}"=='MCQ'||"${params.type}"=='SCQ'){
+               var qStats=$.parseJSON('${stats.raw()}');
+               vQuestions.createQAGraph(qStats);
+           }
+        });
+    </script>
+    #{/if}
+    #{elseif attemptCount==0}
+    <div class="userMessage">No Attempts have been made on this question yet.</div>
+    #{/elseif}
+    #{elseif quesStats.errorCode=="NO_USER_ATTEMPT"}
+    <div class="userMessage">Question Analytics processing is taking place. Please wait for sometime.</div>
+    #{/elseif}
+    #{elseif quesStats.errorCode==""&&params.accessType=='CHALLENGE_ANALYTICS'&&attemptCount==0}
+    <div class="userMessage">No user has taken this challenge.</div>
+    #{/elseif}  
+    #{else quesStats.errorCode!=''}
+        <div class="userMessage">
+		<div>There is some error in fetching the analytics.</div>
+        	<div class="boldy">${quesStats.errorMessage}</div>        
+        	<br>
+        </div>
+    #{/else}

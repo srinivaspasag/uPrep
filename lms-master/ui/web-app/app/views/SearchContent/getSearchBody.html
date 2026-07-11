@@ -1,0 +1,58 @@
+#{if searchResponse.result.has("totalHits")}
+	<input type="hidden" value="${searchResponse.result.totalHits}" class="globalSearchHitCount"/>
+	<span class="left relative big12 greyTextColor" style="width:100%;">About <b>${searchResponse.result.totalHits}</b> results</span><br/>
+#{/if}
+	#{if searchResponse.result.has("questions")}
+	<div class="CSWidget" data-widget="SEARCH_RESULT_QUESTIONS">
+		%{quesns = searchResponse;}%
+		#{include '/Questions/quesItems.html'/}
+		<script type="text/javascript">
+			$(document).ready(function(){
+				loadMJEqns($("#searchContentPage").get(0));
+			});
+		</script>
+	</div>
+	#{/if}
+	#{elseif searchResponse.result.has("documents") && searchResponse.result.documents.length()>0}
+	<div class="CSWidget" data-widget="SEARCH_RESULT_DOCUMENTS">
+		#{if subResponseType=="VIDEO"}
+			#{list items:0..searchResponse.result.documents.length()-1,as:"dIndex"}
+				%{videoData = searchResponse.result.documents.get(dIndex);}%
+				#{include '/tags/listView/video.html'/}
+			#{/list}
+		#{/if}
+		#{else}
+			#{list items:0..searchResponse.result.documents.length()-1,as:"dIndex"}
+				%{docData = searchResponse.result.documents.get(dIndex);}%
+				#{include '/tags/listView/document.html'/}
+			#{/list}
+		#{/else}
+	</div>
+	#{/elseif}
+	#{elseif searchResponse.result.has("tests") && searchResponse.result.tests.length()>0}
+	<div class="CSWidget" data-widget="SEARCH_RESULT_TESTS">
+		#{list items:0..searchResponse.result.tests.length()-1,as:"tIndex"}
+			%{testData = searchResponse.result.tests.get(tIndex);}%
+			#{include '/tags/listView/test.html'/}
+		#{/list}
+	</div>
+	#{/elseif}
+	#{elseif searchResponse.result.has("playlists") && searchResponse.result.playlists.length()>0}
+	<div class="CSWidget" data-widget="SEARCH_RESULT_PLAYLISTS">
+		#{list items:0..searchResponse.result.playlists.length()-1,as:"pIndex"}
+			%{playlistData = searchResponse.result.playlists.get(pIndex);}%
+			#{include '/tags/listView/playlist.html'/}
+		#{/list}
+	</div>
+	#{/elseif}
+	#{elseif searchResponse.result.has("users") && searchResponse.result.users.length()>0}
+	<div class="CSWidget" data-widget="SEARCH_RESULT_USERS">
+		#{list items:0..searchResponse.result.users.length()-1,as:"uIndex"}
+			%{userData = searchResponse.result.users.get(uIndex);}%
+			#{include '/tags/listView/user.html'/}
+		#{/list}
+	</div>
+	#{/elseif}
+	#{else}
+		<center><span class="left relative big12 boldy fullWidth">No Matches Found</span></center>
+	#{/else}

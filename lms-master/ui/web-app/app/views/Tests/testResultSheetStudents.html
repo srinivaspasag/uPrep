@@ -1,0 +1,106 @@
+%{
+    testFullDetailsResult=testFullDetails.result;
+    students=testFullDetailsResult.list;
+    testInfo=testFullDetailsResult.info;    
+    utilities=uicom.util.Utilities;
+    applicationUtils=controllers.Tests;
+    testHasPapers=false;
+    if(utilities.isJSONArrayNotEmpty(testInfo,'children')){
+        testHasPapers=true;
+    }
+}%
+            #{if students.length()>0}
+            <tr>
+                <span class="countStudents nonner" style="left: 20px;position: relative;">Number of Students: ${students.length()}</span>
+            </tr>
+            #{list items:0..students.length()-1,as:'u'}
+            %{
+                student=students.get(u);
+                studentTestInfo=student.info;
+            }%
+            <tr class="marksSheetTR">
+                <td class="color3">${student.rank}</td>
+            #{if !student.user.equals(null)}
+             %{
+                getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(student.user);
+             }%
+                <td class="testMarksUserTd">
+                    #{widgets.img30 user:student.user/}
+                     <div class="left" style="padding:2px 10px;">
+                     	<div>
+        			         <a class="${getUserClassAndUrl.className} blackTextColor" href="${getUserClassAndUrl.url}" 
+        				        data-user-id="${getUserClassAndUrl.id}">${student.user.firstName} ${student.user.lastName} </a>
+            		     	</div>
+            			%{
+            				timeObj=uicom.util.Utilities.getTimeFromMiliSec(studentTestInfo.measures.timeTaken);
+            			}%
+            			<div class="big13" style="color:#666;">
+            				<span>${timeObj.hrs} Hr : ${timeObj.mins} Mins : ${timeObj.secs} Secs</span>
+            			</div>
+                     	<div class="studentResultView">
+                            #{test.linkToStudentResult user : student.user , testId : testInfo.id /}
+            		    </div>
+        		     </div>
+        		</td>
+            #{/if}
+            #{else}
+                <td style="text-align: left;">Unknown User</td>
+            #{/else}
+                <td class="totalMarks">
+                   ${studentTestInfo.measures.score}
+                </td>
+                
+                
+                
+                #{if testHasPapers}
+                %{
+                    studentTestPapers=new org.json.JSONArray();
+                    if(utilities.isJSONArrayNotEmpty(studentTestInfo,'children')){
+                        studentTestPapers=studentTestInfo.children;
+                    }
+                    testsPapers=testInfo.children;
+                }%
+                ${applicationUtils.getStudentsMarksHTML(testsPapers,studentTestPapers,"totalMarks",-1).raw()}
+                #{/if}                    
+                #{else}
+                    %{
+                    
+                        testMetadata=new org.json.JSONArray();
+                        if(utilities.isJSONArrayNotEmpty(testInfo,'metadata')){
+                            subjects=testInfo.metadata;
+                            testMetadata=subjects;                    
+                        }
+                        boards=new org.json.JSONArray();
+                        if(utilities.isJSONArrayNotEmpty(studentTestInfo,'boards')){
+                            boards=studentTestInfo.boards;
+                        }
+                    }%
+                    ${applicationUtils.getStudentsMarksHTML(testMetadata,boards,"subject",0).raw()}
+                    <td class="totalMarks totalMarksSinglePaper paper1 paper">
+                        ${studentTestInfo.measures.score}
+                    </td>                    
+                #{/else}                  
+                
+            </tr>
+            #{/list}
+            %{
+                start=Integer.parseInt(params.start);
+                size=Integer.parseInt(params.size);
+                totalHits=testFullDetailsResult.totalHits;
+            }%
+            #{if (start+size)< totalHits}
+            <tr class="loadMoreItems LMHandlerDivLoadMore doCStream" data-name="LOAD_MORE_STUDENTS" 
+                        data-start="${start+size}" data-size="${size}">
+                <td colspan='10'>
+                <div>Load More Students</div>                                    
+                </td>
+            </tr>
+            #{/if}            
+            #{/if}
+            #{else}
+            <tr>
+                <td colspan='10'>
+                    <div class="userMessage">No Students have taken this test.</div>
+                </td>
+            </tr>
+            #{/else}

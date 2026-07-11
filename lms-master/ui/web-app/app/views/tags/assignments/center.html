@@ -1,0 +1,22 @@
+%{
+	userRole = _userRole;
+	data = _data;
+}%
+<table class="fullWidth asnQuesTable" cellspacing=0 cellpadding=0>
+	<tr>
+		<th>
+			<div class="left">&{'TXT_QUES'}</div>
+			#{if data != null && data.errorCode.isEmpty()}
+			<div class="asnQuestionsSortBySubDrop left" data-user-role="${userRole}">
+				#{institute.widgets.dropDowns.singleList list : data.result.metadata , selectedText : "All Subjects" , listType : "Subjects" , showSelectAll : true /}
+                        </div>
+			#{/if}
+		</th>
+		#{if userRole == "STUDENT"}
+			<th style="text-align:center;padding-left:0px;">&{'TXT_ANSWERS'}</th>
+		#{/if}
+		#{else}
+			<th>&{'TXT_PERFORMANCE'}</th>
+		#{/else}
+	</tr>
+</table>

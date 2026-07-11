@@ -1,0 +1,23 @@
+<div class="instShareFeedsHold instSingleFeed" style="float:none;">
+	#{if resp!=null && resp.errorCode=="" && resp.result.has("info")}
+		%{
+			feed = resp.result;
+			feed.put("src",feed.info);
+			feed.put("newsFeedId","");
+			feed.put("newsActivityId","");
+			feed.put("srcOwner",feed.info.srcOwner);
+			feed.put("time",feed.info.time);
+		}%
+		<div class="instFeedsContainer">
+			#{institute.widgets.feedsContainer feedData:feed /}
+		</div>
+	#{/if}
+	#{else}
+		<div class="relative boldy centerText" style="padding:20px 0;">&{'ACTIVITY_UNAVAILABLE'}</div>
+	#{/else}
+</div>
+<script type="text/javascript">
+	$(function(){
+		institute.activities.initSingle();
+	});
+</script>

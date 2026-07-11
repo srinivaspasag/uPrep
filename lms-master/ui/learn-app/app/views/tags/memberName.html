@@ -1,0 +1,42 @@
+%{
+    user = _user;
+    classNames = _classNames;
+    getUser = _getUser;
+    noLink = _noLink == true ? true : false;
+    profileName = "";
+    linkClassName = "";
+}%
+    #{if !user.equals(null)}
+%{
+    if(getUser == null && noLink == false){
+            getUser = controllers.Profile.getUserClassAndUrl(user);
+    }
+    if(user.has("profile") && !user.profile.equals("null")){
+        profile = user.profile;
+        if(!"STUDENT".equals(profile) && !profile.equals(null)){
+            profileName = "(" + play.i18n.Messages.get("MEMBER_PROFILE_"+profile) + ")"; 
+            linkClassName = "greenLink";
+        }
+    }
+}%
+#{if noLink == false}
+<div class="media-body top-body">
+<a class="${classNames} ${getUser.className} ${linkClassName}" data-user-id="${getUser.id}">
+    <h2 class="memberName titleTable">${user.firstName.raw()} ${user.lastName.raw()} ${profileName}
+    #{if !_timeCreated.equals("")}
+        <small>${new Date(_timeCreated).since(true)}</small>
+    #{/if}
+    </h2>
+</a>
+</div>
+#{/if}
+#{else}
+<div class="media-body">
+    <h2><span class="memberName  ${linkClassName} ${classNames}"
+            data-user-id="${user.id}">${user.firstName.raw()} ${user.lastName.raw()} ${profileName}</span></h2>
+</div>
+#{/else}
+#{/if}
+#{else}
+    <span class="memberName"><b>Anonymous</b></span>
+#{/else}

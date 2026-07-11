@@ -1,0 +1,1016 @@
+.instiTopBarHolder{
+    padding: 10px 0;
+    background-color: #f1efe8;
+    width: 100%;
+    height: 70px;
+    box-shadow: 1px 1px 2px #ccc;
+}
+.instiPicWrapper{
+    width: 180px;
+    float: left;
+}
+.instiPicHolder{
+    float: left;
+    width: 176px;
+}
+.instiPicHolder img{
+    max-width: 100%;
+}
+.instiDetails{
+    margin-left: 230px;
+}
+.instiTeacherWrapper,
+.instiMemberWrapper{
+    float: left;
+    width: 225px;
+}
+.instiMemberWrapper{
+    margin-left: 30px;
+}
+.instiNotes{
+    float: left;
+}
+.instiContent{
+    margin: auto;
+    width: 760px;
+}
+ul.detailsList{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.detailsList li{
+    float: left;
+    list-style: none;
+    padding: 4px;
+}
+.detailsList li:hover{
+    background: #fff;
+    border-radius: 5px;
+}
+.studentIcon,
+.teacherIcon,
+.libraryIcon{
+    float: left;
+    margin-top: 3px;
+}
+p.studentStrength,
+.teacherStrength,
+.noOfBooks{
+    margin: 0;
+    float: left;
+    margin-left: 2px;
+    font-size: 11px;
+    width: 40px;
+    color: #373737;
+    font-weight: bold;
+}
+.titleForStudent,
+.titleForTeacher,
+.titleForLibrary{
+    float: left;
+    font-size: 11px;
+    margin: 0;
+    margin-left: 2px;
+    color: #757575;
+}
+.noOfStudents,
+.noOfTeachers,
+.noOfLibraryBooks{
+    width: 80px;
+}
+.noOfLibraryBooks{
+    width: 105px;
+    display: none;
+}
+
+
+
+.mainInstituteContents{
+    width: 730px;
+    margin: 0 auto;
+}
+
+.leftInstituteContents{
+    float: left;
+    width: 700px;
+    min-height: 600px;
+}
+.rightInstituteWidgets{
+    float: left;
+    width: 200px;
+    padding: 10px;
+}
+.instituteTeachersList,
+.instituteStudentsList{
+    border-top: 1px solid #fff;
+}
+.instituteTeachersList .img30Wrapper,
+.instituteStudentsList .img30Wrapper{
+    margin: 5px 1px 0 5px;
+}
+
+.instituteTeachersList li a,
+.instituteStudentsList li a{
+    display: block;
+    width: 40px;
+    height: 40px;
+}
+.instituteTeachersList li a img,
+.instituteStudentsList li a img{
+    max-width: 100%;
+    border-radius: 40px;
+}
+.headerForTeachers,
+.headerForStudents{
+    margin: 0;
+    font-size: 12px;
+    color: #373737;    
+    line-height :20px;
+    border-bottom: 1px solid #ccc;
+}
+
+
+.submitDiscussion,
+.cancelDiscussion{
+    display: none;
+}
+.commentToDiscItem,
+.hideDiscComments{
+    font-weight: bold;
+    margin-right: 2px;
+}
+
+/*Style for the disussion part */
+.discTopic{
+    float: left;
+    margin: 10px 0 0 20px;
+    font-size: 16px;
+    color: #333;
+    width: 90%;
+    font-weight: bold;
+}
+.discItem .margHalfTop{
+    float: left;
+}
+.discItem .inputerHat{
+    border: none;
+}
+.discContentWrapper{
+    padding-bottom: 10px;
+    overflow: hidden;
+    border-bottom: 2px solid #bfd5dd;
+}
+.discBottomWrapper{
+    margin-top: 25px;
+    overflow: hidden;
+    float: left;
+    clear: left;
+}
+.commIcon{
+    background: url("/public/images/LMS/comment.png") no-repeat;
+    float: left;
+    width: 15px;
+    height: 15px;
+    margin-right: 2px;
+}
+.initiatedWrapper{
+    float: left;
+}
+.discCommentsNum {
+    float: left;
+}
+.secondWrapper{
+    clear: left;
+    float: left;
+    overflow: hidden;
+    width: 100%;
+}
+.discItem .likeCommItem{
+    float: left;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+#discBubble{
+    background: url("/public/images/chat/CMBTail.png") no-repeat;
+    width: 18px;
+    height: 16px;
+    float: left;
+    display: block;
+    margin: 7px 5px 0 0;
+}
+.discRapper{
+    /*background: -moz-linear-gradient(center top , #D8E7EF, #BED8E5) repeat scroll 0 0 transparent;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#D8E7EF', endColorstr='#BED8E5');
+    background: -webkit-gradient(linear, left top, left bottom, from(#D8E7EF), to(#BED8E5))*/
+    background: #deeff6;
+    border: 1px solid #BACCD1;
+    box-shadow: 0px 1px 1px #CCCCCC;
+    padding: 8px;
+}
+.discRapper h4{
+    font-weight: bold;
+    color: #666;
+    font-size: 20px;
+    margin: 0;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+.discRapper .discInputArea{
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #C9DCE3;
+    margin-left: 10px;
+    padding: 5px;
+    vertical-align: middle;
+    width: 90%;
+}
+
+.commentWidgetHolder{
+    
+}
+.discItem{
+    /*border-bottom: 3px dotted #ccc;*/
+    margin: 0 auto;
+    padding: 12px 20px;
+    background: #fff;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+}
+.discItem .commWidget{
+    width: 90%;
+    margin: 0 auto;
+    padding: 10px 0;
+}
+.commToDiscItem{
+    float: left;
+}
+.initiatedWrapper .img30Wrapper{
+    margin-right: 15px;
+}
+.discItem .commentWidgetHolder{
+    margin: 0 auto;
+    background: #f0f0f0;
+    width: 90%;
+
+}
+/*End of discussion style sheet */
+
+/*==============My Schedule====================*/
+
+#myScheduleWrapper{
+    width: 990px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+.activeDay{
+    background: yellow;
+}
+.batchContainer{
+    float: left;
+    min-height: 300px;
+    padding-top: 20px;
+}
+
+#batchName{
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+}
+
+.mycalendarWrapper{
+    float: left;
+    padding: 20px 0 0 20px;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+.mycalendarWrapper .ui-datepicker{
+    width: 800px;
+    padding: 4px;
+}
+.mycalendarWrapper .ui-datepicker th{
+    display: inline-block;
+    width: 110px;
+    height: 20px;
+    padding: 0;
+}
+
+#datepicker .ui-datepicker th{
+    text-transform: uppercase;
+    color: #666;
+    font-weight: normal;
+    margin-top: 10px;
+}
+
+#lecturePicker .ui-widget-header,
+#datepicker .ui-widget-header,
+#datepicker .ui-widget-content,
+#firstCalendar .ui-widget-header,
+#secondCalendar .ui-widget-header{
+    background: none;
+    border: none;
+}
+
+.mycalendarWrapper .ui-datepicker td{
+    display: inline-block;
+    width: 110px;
+    height: 90px;
+    padding: 0;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    position: relative;
+    opacity: 1;
+}
+.subjects.Chemistry,
+.subjects.Chemistry .subjInfo h4{
+    color: #88c336;
+}
+.subjects.Chemistry:hover{
+    background: rgba(136,195,54,.4);
+}
+.subjects.Mathematics,
+.subjects.Mathematics .subjInfo h4{
+    color: #12a0be;
+}
+.subjects.Mathematics:hover{
+    background: rgba(18,160,190,.4);
+}
+.subjects.Physics,
+.subjects.Physics .subjInfo h4{
+    color: #cc9933;
+}
+.subjects.Physics:hover{
+    background: rgba(204,153,51,.4);
+}
+.subjInfo div{
+    color: #666;
+    padding: 5px 0;
+}
+.mycalendarWrapper .ui-datepicker tr td:last-child,
+#lecturePicker tr td:last-child,
+#firstCalendar tr td:last-child,
+#secondCalendar tr td:last-child{
+    border-right: 1px solid #ccc;
+}
+.mycalendarWrapper .ui-datepicker tr:last-child td,
+#lecturePicker tr:last-child td ,
+#firstCalendar tr:last-child td,
+#secondCalendar tr:last-child td{
+    border-bottom: 1px solid #ccc;
+}
+#myCalen{
+    font-size: 18px;
+    text-align: center;
+    margin: 0;
+}
+
+#datepicker .ui-datepicker-next{
+    right: 40%;
+}
+#datepicker .ui-datepicker-prev{
+    left: 40%;
+}
+#datepicker .ui-datepicker-month,
+#datepicker .ui-datepicker-year {
+    color: #666;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+.mycalendarWrapper .ui-datepicker td a,
+.mycalendarWrapper .ui-datepicker td span{
+    display: inline;
+    float: right;
+    cursor: pointer;
+}
+#datepicker .ui-datepicker td a{
+    font-weight: bold;
+}
+.subjInfo h4{
+    border-bottom: 1px solid #ccc;
+}
+.mycalendarWrapper .ui-datepicker td .subjects{
+    float: right;
+    clear: right;
+}
+.jumpTo{
+    float: left;
+    margin-top: 20px;
+    clear: left;
+}
+.jumpToWrapper input{
+    text-align: center;
+    color: #666;
+}
+
+.mycalendarWrapper .ui-state-hover{
+    border: 0;
+    background: none;
+}
+.subjInfo{
+    display: none;
+    position: absolute;
+    padding: 4px;
+    border: 1px solid #ccc;
+    top: -30px;
+    background: #fff;
+    z-index: 99;
+    width: 200px;
+}
+.subjectCheck{
+    float: left;
+    width: 100%;
+    padding-top: 10px;
+    border-top: 1px solid #fff;
+}
+
+.subjectCheck input{
+    float: left;
+    clear: left;
+}
+.subjectCheck span{
+    float: left;
+    line-height: 27px;
+}
+
+.jumpToWrapper{
+    padding-top: 10px;
+    border-top: 1px solid #fff;
+    width: 100%;
+    margin-right: 5px;
+}
+#jumpTo{
+    margin: 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #ccc;
+}
+.mycalendarWrapper .ui-datepicker .ui-state-default{
+    background: none;
+    border: none;
+}
+.calendarContainer .subjects{
+    width: 100%;
+    /*position: relative;*/
+}
+/*demo datepicker CSS */
+
+/* Layout
+   -------------------------------- */
+
+.layout-grid {
+    width: 960px;
+}
+
+.layout-grid td {
+    vertical-align: top;
+}
+
+.layout-grid td.left-nav {
+    width: 140px;
+}
+
+.layout-grid td.normal {
+    border-left: 1px solid #eee;
+    padding: 20px 24px;
+    font-family: "Trebuchet MS", "Helvetica", "Arial",  "Verdana", "sans-serif";
+}
+
+.layout-grid td.demos {
+    background: url('/images/demos_bg.jpg') no-repeat;
+    height: 337px;
+    overflow: hidden;
+}
+
+/* Normal
+   -------------------------------- */
+
+.normal h3,
+.normal h4 {
+    margin: 0;
+    font-weight: normal;
+}
+
+.normal h3 {
+    padding: 0 0 9px;
+    font-size: 1.8em;
+}
+
+.normal h4 {
+    padding-bottom: 21px;
+    border-bottom: 1px dashed #999;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.normal p {
+    font-size: 1.2em;
+}
+
+
+
+/*end of datepicker CSS */
+/* CSS for class update */
+.classUpdateHeader,
+.scheduleCompareHeader{
+    width: 100%;
+    background: #F1EFE8;
+     padding: 10px 0;
+}
+
+.wrapClassUpdate,
+.classUpdateContents{
+    width: 990px;
+    margin: 0 auto;
+}
+.wrapClassUpdate h3{
+    float: left;
+    margin: 0;
+    line-height: 20px;
+    padding-right: 15px;
+    border-right: 2px solid #999;
+}
+.batchSelect{
+    float: left;
+    margin-left: 15px;
+}
+.masterPlanBtn{
+    float: right;
+}
+.masterPlanBtn a,
+.lectureInfo a{
+    display: block;
+    padding: 8px 6px;
+    background: -moz-linear-gradient(center top , #CC6666, #B84747) repeat scroll 0 0 transparent;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#CC6666', endColorstr='#B84747');
+    background: -webkit-gradient(linear, left top, left bottom, from(#CC6666), to(#B84747));
+    border-radius: 2px;
+    color: #fff;
+}
+
+#classTopicWidget{
+    float: left;
+    width: 250px;
+    min-height: 400px;
+    padding-top: 15px;
+}
+#classTopicWidget h4{
+    margin: 0;
+    float: left;
+}
+.lectureContainer{
+    float: left;
+    padding: 7px 0 0 20px;
+    border-left: 1px solid #ccc;
+}
+.lectureInfo{
+    padding: 8px 2px;
+    border-bottom: 1px solid #ccc;
+    width: 300px;
+}
+.startedWrap,
+.ongoingWrap{
+    float: left;
+}
+.lectureCalendarWrapper{
+    width: 580px;
+}
+#lecturesList{
+    clear: right;
+}
+.lecturesWrapper{
+    margin: 10px 0;
+    position: relative;
+}
+.editLect{
+    position: absolute;
+    top: 20px;
+    right: 0;
+}
+.lecturesListWrapper{
+    width: 330px;
+    float: left;
+    padding: 10px 0;
+}
+#addLecture{
+    float: right;
+    margin-right: 35px;
+    background: #88d9a1;
+    padding: 4px 8px;
+    color: #666;
+    border-radius: 2px;
+}
+.lectureCalendar{
+    float: right;
+    margin: 20px 0 0 20px;
+}
+
+.classStarted,
+.classOngoing{
+    float: left;
+    font-weight: bold;
+}
+.submitHtml a{
+    float: right;
+}
+#submitLecture{
+    display: block;
+    padding: 4px;
+    margin-right: 5px;
+}
+.cancelLecture,
+.cancelEditLec{
+    line-height: 25px;
+}
+
+.submitHtml{
+    width: 89%;
+}
+.startedDate,
+.ongoingDays{
+    clear: left;
+    float: left;
+}
+ul.topicLists{
+    clear: left;
+    padding-top: 5px;
+}
+.topicLists li{
+    float: right;
+    clear: right;
+    padding: 10px 0;
+    width: 95%;
+    padding-left: 10px;
+}
+.topicLists li a{
+    color: #999;
+    font-weight: bold;
+}
+.ongoingWrap{
+    margin-left: 70px;
+}
+.STholder .SU-done span{
+    text-decoration: line-through;
+}
+.SUOngoing{
+    float: right;
+    display: block;
+    padding: 2px 4px;
+    background: #88D9A1;
+    color: #fff;
+    border-radius: 2px;
+    font-size: 11px;
+}
+.SU-done .ST-link,
+.SU-done .ST-link:hover{
+    text-decoration: none;
+    cursor: default;
+}
+#lecturesList .SUEditing{
+    /*border: 1px solid #33a3d7 !important;*/
+    box-shadow: 0px 0px 5px #33a3d7;
+}
+.STholder li a{
+    color: #999;
+}
+.topicLists .activeTopic{
+    border: 1px solid #ccc;
+    background: #f1f1f1;  
+    border-right: none;
+}
+.topicLists .CU-done a{
+    text-decoration: line-through;
+}
+.topicLists .activeTopic a{
+    color: #12A0BE;
+}
+
+.topicLists .activeTopic .viewST{
+    color: #999;
+    font-size: 11px;
+    display: block;
+    text-decoration: underline;
+}
+
+.topicLists .strikeTopic{
+    text-decoration : line-through;
+}
+
+.lectureInfo a{
+    float: right;
+    padding: 4px 6px;
+}
+.STwrapper .addST{
+    float: left;
+    color: #c33;
+}
+.addSub{
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+}
+
+.lectures,
+.tmp-lectures{
+    background: #fff;
+    padding: 6px;
+    margin: 10px 0 5px 0;
+    border: 1px solid transparent;
+    width: 85%;
+    float: left;
+    clear: left;
+    position: relative;
+}
+.tmp-lectures{
+    background: #BEE1E8;
+    display: none;
+}
+.lectureHeader span:nth-child(3),
+.lectureHeader span:nth-child(2){
+    float: right;
+    color: #999;
+    font-weight: bold;
+}
+.lectureHeader span.dTag{
+    float: right;
+}
+.lectureHeader span.editLD{
+    cursor: pointer;
+    text-decoration: underline;
+    color: #12a0be;
+}
+.leditWrapper{
+    display: inline-block;
+    float: right;
+}
+.leditWrapper input{
+    text-align: center;
+    box-shadow: 0 0 4px #ccc;
+}
+#noOfLectures{
+    font-weight: bold;
+}
+.STwrapper div{
+    font-size: 11px;
+    font-weight: bold;
+}
+.STwrapper{
+    margin: 10px 0 0 10px;
+}
+.STwrapper span{
+    /*display: block;*/
+    float: left;
+    clear: left;
+}
+.delSub{
+    float: left;
+    width: 14px;
+    height: 14px;
+    background: url('/public/images/activeTabHover.png') no-repeat;
+    display: block;
+    margin-left: 4px;
+}
+#lecturePicker .ui-datepicker,
+#firstCalendar .ui-datepicker,
+#secondCalendar .ui-datepicker{
+    width: 218px;
+    padding: 6px;
+    background: #f3f0eb;
+}
+#lecturePicker .ui-widget-content,
+#firstCalendar .ui-widget-content,
+#secondCalendar .ui-widget-content{
+    border: none;
+    box-shadow: 1px 2px 1px #999;
+}
+#lecturePicker .ui-datepicker .ui-state-default,
+#firstCalendar .ui-datepicker .ui-state-default,
+#secondCalendar .ui-datepicker .ui-state-default{
+    border: none;
+    background: none;
+}
+#lecturePicker tbody,
+#firstCalendar tbody,
+#secondCalendar tbody{
+    background: #fff;
+}
+#lecturePicker .ui-datepicker td,
+#firstCalendar .ui-datepicker td,
+#secondCalendar .ui-datepicker td{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    opacity: 1;
+    overflow: hidden; /*temporary to hide extra lectures in a day */
+}
+#lecturePicker .ui-datepicker th,
+#firstCalendar .ui-datepicker th,
+#secondCalendar .ui-datepicker th{
+    display: inline-block;
+    width: 31px;
+    height: 16px;
+    padding: 0;
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 10px;
+}
+#lecturePicker .ui-datepicker td a,
+#firstCalendar .ui-datepicker td a,
+#secondCalendat .ui-datepicker td a{
+    font-size: 11px;
+}
+
+#lecturePicker .ui-datepicker td span,
+#firstCalendar .ui-datepicker td span,
+#secondCalendar .ui-datepicker td span{
+    color: #12A0BE;
+    padding: 0;
+    font-weight: bold;
+    text-align: center;
+    position: relative;
+    top: -5px;
+}
+
+#firstCalendar .ui-datepicker td,
+#secondCalendar .ui-datepicker td{
+    position: relative;
+}
+
+#firstCalendar .ui-datepicker td span,
+#secondCalendar .ui-datepicker td span{
+    position: absolute;
+}
+.STholder{
+    background: #fff;
+    border: 2px solid #aaa;
+    border-radius: 2px;
+    position: absolute;
+    right: -188px;
+    top: 20px;
+    z-index: 99;
+    max-width: 210px;
+}
+
+.STholder li{
+    float: left;
+    clear: left;
+    width: 95%;
+    padding: 5px;
+}
+
+.STholder li:nth-child(odd){
+    background: #f1f1f1;
+}
+
+#closeST{
+    position: absolute;
+    display: block;
+    width: 30px;
+    height: 30px;
+    background: url("/public/images/crossTab.png") no-repeat;
+    right: -15px;
+    top: -15px;
+}
+/* end of clas update CSS */
+
+#scheduleCompareWrapper{
+    width: 830px;
+    margin: 0 auto;
+}
+
+.compareWrapper{
+    width: 575px;
+    float: left;
+    padding: 15px 0 0 15px;
+}
+
+.planHeader,
+.statusHeader{
+    width: 265px;
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    margin-left: 10px;
+    float: left;
+}
+
+.topicPlan,
+.topicState{
+    padding: 10px 15px;
+    background: #fff;
+    margin: 3px;
+    border-radius: 2px;
+    width: 240px;
+    float: left;
+    min-height: 58px;
+    /*border: 1px solid transparent;*/
+}
+
+.calendarsWrapper{
+    float: left;
+    margin-top: 40px;
+}
+
+#firstCalendar .ui-datepicker td span.statusColor,
+#firstCalendar .ui-datepicker td span.planColor,
+#secondCalendar .ui-datepicker td span.statusColor,
+#secondCalendar .ui-datepicker td span.planColor{
+    display: block;
+    height: 7px;
+    background: #D96D6B;
+    bottom: 7px;
+    width: 100%;
+    top: auto;
+}
+
+#firstCalendar .ui-datepicker td span.planColor,
+#secondCalendar .ui-datepicker td span.planColor{
+    background : #5EC87D;
+    bottom: 0;
+}
+
+.topicName{
+    font-weight: bold;
+    line-height: 24px;
+}
+
+#topicLabel{
+    float: left;
+    color: #b6b6b6;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 20px;
+    text-transform: capitalize;
+    display: block;
+    width: 100%;
+}
+#lecStatus{
+    float: left;
+    clear: left;
+    color: #d35b5c;
+    font-size: 16px;
+
+}
+
+.topicStatus{
+    padding: 20px 0 10px 0;
+    border-bottom: 1px solid #ccc;
+ 
+}
+#byDays,
+#byLec{
+    float: left;
+    font-size: 16px;
+    padding: 0 4px;
+}
+
+.dateDetails{
+    float: left;
+}
+
+.lectNum{
+    float: right;
+    font-weight: bold;
+}
+
+.planDetails .lectNum{
+      color: #5ec87d;
+}
+
+.statusDetails .lectNum{
+    color : #d96d6b;
+}
+
+.dMes{
+    color : #d96d6b;
+}
+
+.SDate,
+.EDate{
+    float: left;
+    clear: left;
+    color: #666;
+}
+.stateSD, 
+.stateED,
+.planSD,
+.planED{
+    font-size: 11px;
+}
+
+.topicCompare .activeStatus{
+    background: #dff2f6;
+}
+
+.topicCompare .hoverEffect{
+    /*background : rgba(223,242,246,.6) ;*/
+    border-radius: 2px;
+    box-shadow: 1px 1px 5px #999;
+    cursor: pointer;
+}
+#initialMessage{
+    color: #D96D6B;
+    font-size: 16px;
+    line-height: 36px;
+}

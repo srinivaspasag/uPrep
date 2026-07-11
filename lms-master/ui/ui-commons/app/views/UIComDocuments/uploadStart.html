@@ -1,0 +1,65 @@
+%{
+    if(play.Play.configuration.getProperty("application.name")=="web-app"){
+        domain='WEB_APP';
+    }else{
+        domain='CMDS_APP';
+    }
+    if(contentType==null){
+       contentType="DOC";
+    }    
+}%
+#{stylesheet src:'uicomDocuments/docUpload.css' /}
+<div class="uploadPageHolder relativePos" id="uploadPageWrapper">
+    <div class="UPListDiv">
+        <div id="UPStartInfo">
+            <div id="uploadDocs"></div>
+            #{if params.uploadContentType!="VIDEO"}
+            <div class="uploadInstructDiv">
+                <div class="uploadPopHead margTop">Choose content to Upload</div>
+                <a class="blocky acacac liner uploadInstruct smally">want to club multiple pages to form a notebook?</a>
+                <div class="acacac margTop20 smally nonner">
+                Choose the first one,
+                <br>
+                and you can add rest in the next step
+                </div>
+            </div>
+            #{/if}
+            #{else}
+            <div class="smallThinGray">
+                Only .mp4,.webm,.ogg videos supported.
+            </div>
+            #{/else}
+        </div>
+    </div>    
+    <div class="UPProgressDiv nonner">        
+        #{if domain=='WEB_APP'}
+        <span class='minimizeTab uploadMinimize boldy'><span class="minimizePic"></span> minimize</span>
+        #{/if}
+        <div id="uploadProgressBar" class="UPProgressBar"></div>
+        <div id="uploadProgressPercent" class="UPProgressPercent"></div>
+    </div>
+    <div class='cleaner_with_divider'>&nbsp;</div>
+    <div class="nonner UPTagFillDiv">        
+        #{UIComDocuments.templatetag exams:exams,subjects:subjects,target:'UPLOAD',domain:domain /}
+    </div>
+    <div id="selectFilesBodySample" class="nonner">
+        <div class='selectedFilesBody'>
+            <div class='big16 boldy inliny'>Selected Files</div>
+            <div id='publicPrivateDoc' class='ppDoc'>
+                <input type='radio' name='uploadScope' checked='checked' value='PUBLIC' class='docScope publicDoc' />Public
+                <input type='radio'  name='uploadScope' value='PRIVATE' class='docScope privateDoc' />Private
+            </div>
+            <div class='UPFileListHolder margBot10'>
+                <div class='UPFileListDummy nonner'></div>
+                <div id='uploadFileList' class='UPFileList'></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){docUpload.init({domain:"${domain}",contentType:"${contentType}"});}
+        lazyLoad([{fname:"uicomDocuments/docUpload.js",cb:fn}]);
+    }();       
+</script> 
+

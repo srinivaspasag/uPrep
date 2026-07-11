@@ -1,0 +1,51 @@
+%{
+if (_keys) {
+    ymessages = util.MessagesForJSFiles.find(play.i18n.Lang.get(), _keys as Set);
+} else {
+    ymessages = util.MessagesForJSFiles.all(play.i18n.Lang.get());
+}
+js_messages=new com.google.gson.Gson().toJson(ymessages);
+}%
+#{if !_noScriptTag}
+<script type="text/javascript">
+#{/if}
+var i18nMessagesForJS;
+try{
+    i18nMessagesForJS = {"NEWS_FEED_ADDED":"added","NEWS_FEED_RESULT_OF":"The result of the ","TXT_DONE":"Done","TXT_ADD":"add","COMMENTED_BY":"commented by","USER_MSGS_REPLY_CONTENT_MISSING":"You might have forgot to add a reply content!","NEWS_FEED_UPVOTED":"upvoted","HRS_LEFT":"Hours left","ENTITY_FEED":"Feed","NEWS_FEED_ANSWERED":"answered","ENTITY_TEST":"Test","TXT_COMMENT":"comment","PROFILE_MANAGER":"Manager","VIEW_ANALYTICS":"View Ananlytics","PLEASE_ENTER_TEXT":"Please Enter Some Text!","TEST_END_PROBLEM":"Problem With End Test , Please contact admin.","NEWS_FEED_SHARED":"shared","CHAL_TIME_ELAPSED":"Sorry, The time alloted for the challenge has expired before you submitted your answer!","NO_FEEDS_AVAILABLE":"No feeds available!","BROWSER_SPECIFIC_SUPPORT_DEPENDENCY":"Sorry your browser does not support this feature. Use latest versions of Firefox/Chrome.","NEWS_FEED_ATTEMPTED":"attempted","USER_MSGS_SENT_SUCCESSFULLY":"Message sent successfully","NEWS_FEED_NEW_SOLUTION_TO":"new solution to","NEWS_FEED_ASKED":"asked","ANSWER_SUBMITTED_SUCCESSFULLY":"Your answer is successfully submitted.","TXT_ANSWER":"answer","RESULTS_PENDING":"Results Pending","DOUBT_EXPLAIN_FURTHER":"Please explain further your doubt!","ENTITY_DOCUMENT":"Document","NEWS_FEED_IMAGE_IN_FEED":"Image in status feed","NEWS_FEED_NEW":"new","ENTER_ATLEAST_SUBJECT_TOPIC":"Please select atleast one Subject and Topic!","COMMON_ERROR_MESSAGE":"Something went wrong.Refresh the Page and try again.","TXT_SUBMITTED":"Submitted","SOLUTION_ADDED_BY":"solution added by","CANNOT_OPEN_TEST":"Can not open the selected test!","ADD_ANSWER":"Add an answer","PROFILE_STUDENT":"Student","TXT_ALL_SUBJECTS":"All Subjects","TEST_BROWSER_SPECIFIC_SUPPORT_DEPENDENCY":"Taking Test Not Supported In Your Browser. Try, Firefox,Chrome,Safari.","NEWS_FEED_FOLLOWING":"following","DOUBT_CLICK_TO_OPEN":"Click to open this doubt","TXT_MARKS":"Marks","NOT_A_VALID_EMAIL_ID":"Not a valid email-id, please re-enter.","BLANK_CONTANT_NOT_ALLOWED":"Can not post blank content!","SHARED_BY":"shared by","USER_MSGS_PROVIDE_SUBJECT_BODY":"Please specify a subject and a body for your conversation","NEWS_FEED_FOLLOWED":"followed","TXT_YOUR":"Your","TXT_YOU":"You","FEW_SECONDS_LEFT":"Few seconds left!","CHAL_ANS_SUBMIT_FAILED":"Sorry, Your answer could not be submitted due to unknown reasons!","TRANSACTION_FAILED_TO_EXECUTE":"Transaction failed to execute, Try again later!","CHAL_RESULT_TIME":"You will be able to view the answer in ","NEWS_FEED_PROVIDED_SOULTION":"provided a solution to","TXT_AVERAGE":"Average","ENTITY_MODULE":"Module","TXT_HIGHEST":"Highest","ENTITY_DOUBT":"Doubt","POST_REMARK_FAILED":"Post Remark Failed!","VIEW_CHALLENGE":"View Challenge","TXT_NOT_APPLICABLE":"Not Applicable","FAILED_TO_UPLOAD_PROFILE_PIC":"Failed to upload profile pic, Please try again later!","TXT_ON":"on","NEWS_FEED_VIDEO_IN_FEED":"Video in status feed","ADDED_BY":"added by","NEWS_FEED_ADDED_A_NEW":"added a new","TXT_OK":"OK","TXT_A_MEMBER":"A Member","NO_RECENT_NOTIFICATION":"No Recent Notifications.","NEWS_FEED_RESULTS_OUT_CHECK_OUT":"is out. Check it out!","DUPLICATE_VALUE_FOUND":"Duplicate value found. Please enter unique value.","MOST_RECENT":"Most Recent","ENTITY_CHALLENGE":"Challenge","ALL_TYPES":"All Types","DOUBT_NEED_A_TITLE":"Doubt need a title!","NEWS_FEED_NEW_STATUS_FEED":"new status feed","NEWS_FEED_ADDED_TO_YOUR_LIB":"to your library","CHAL_FORFEIT_ASK":"Are you sure you want to forfeit the challenge?","TXT_MORE":"More","NEWS_FEED_WEB_PAGE_IN_FEED":"Web Page Link in status feed","USER_MSGS_PROVIDE_MEMBER":"Please provide with the members from suggested list only , to whom the message will be delivered.","NEWS_FEED_COMMENTED":"commented","FOLLOWED_BY":"followed by","CONFIRM_DELETE_POPUP_TXT":"Are you sure to delete, process can not be un-done !","ALL_LEVELS":"All Levels","TRY_REFRESHING_THE_PAGE":"Try Refreshing the page.","TXT_CUSTOM":"Custom","ALPHANUMERIC_WRONG_FORMAT":"Please provide the value in alpha-numeric format. Special characters are not allowed!","SUCCESSFULLY_JOINED_PROGRAM":"Successfully joined the program, click OK to continue","ENTITY_QUES":"Question","PROFILE_EDITOR":"Manager","ENTITY_FILE":"File","TXT_SEARCH":"Search","TXT_RANK":"Rank","ERROR_OCCURRED":"Error Occurred!","TXT_NOT_AVAIALABLE":"Not Available","SUFFICIENT_RIGHT_MISSING":"You do not have sufficient rights for this.","SD_MOVE_CONTENT_SRC_DEST_SAME":"Source card and destination card can not be same!","ERROR_WHILE_JOINING":"Error occurred while joning","VIEW_TEST":"View Test","ATTEMPTED_BY":"attempted by","ALL_SUBJECTS":"All Subjects","ERROR_BR_REFRESH_PAGE":"Error!!\u003cbr\u003e Refresh page","PROFILE_TEACHER":"Teacher","TYPE_AND_ENTER_TO_SEARCH":"Type \u0026 press \u0027Enter\u0027 to search","ENTITY_ASSIGNMENT":"Assignment","FAILED_TO_UPDATE":"Failed to update. try agan later!","RESULTS_NOT_OUT_YET":"Results not available yet. Will update them soon.","NEWS_FEED_ADDED_BY":"added by","TXT_SUCCESS":"Success","SHOW_MORE":"Show More","NEWS_FEED_COMMENTED_ON":"commented on","NEWS_FEED_ON":"on","ENTITY_REMARK":"Remark","TXT_REMOVE":"remove","ENTITY_VIDEO":"Video","NEWS_FEED_CREATED_BY":"created by","LOADING":"Loading...","TXT_SOLUTION":"solution","FAILED_TO_LOAD_IMAGE":"Failed to load image selected by you!"};
+}catch(err){
+    console.error("ERROR IN i18nMessagesForJS : "+err);
+}
+
+/**
+ * Fixme : only parse single char formatters eg. %s
+ */
+var i18nJS = function(code) {
+    var message = i18nMessagesForJS && i18nMessagesForJS[code] || code;
+    // Encode %% to handle it later
+    message = message.replace(/%%/g, "\0%\0");
+    if (arguments.length > 1) {
+        // Explicit ordered parameters
+        for (var i=1; i<arguments.length; i++) {
+            var r = new RegExp("%" + i + "\\$\\w", "g");
+            message = message.replace(r, arguments[i]);
+        }
+        // Standard ordered parameters
+        for (var i=1; i<arguments.length; i++) {
+            message = message.replace(/%\w/, arguments[i]);
+        }
+    }
+    // Decode encoded %% to single %
+    message = message.replace("\0%\0", "%");
+    // Imbricated messages
+    var imbricated = message.match(/&\{.*?\}/g);
+    if (imbricated) {
+        for (var i=0; i<imbricated.length; i++) {
+            var imbricated_code = imbricated[i].substring(2, imbricated[i].length-1).replace(/^\s*(.*?)\s*$/, "$1");
+            message = message.replace(imbricated[i], i18nMessagesForJS[imbricated_code] || "");
+        }
+    }
+    return message;
+};
+#{if !_noScriptTag}
+</script>
+#{/if}

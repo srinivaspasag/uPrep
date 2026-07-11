@@ -1,0 +1,70 @@
+@(emailDetails:com.vedantu.eventbus.email.details.AbstractEmailNotificationDetails)
+
+@header()
+@defining(emailDetails.appProtocol +"://"+ emailDetails.appDomain) { host =>  
+
+@defining(emailDetails.details.getJSONObject("src").getJSONObject("contentSrc").getString("id")) { orgId =>
+
+<div
+	style="text-align: center; font-size: 12px; line-height: 16px; 
+	font-family: arial, sans-serif; color: #363636; background-color: #f7f7f7;">
+	<div 
+		style="padding: 20px 40px 60px 40px; text-align: left; display: inline-block;">
+		Hello <b style="font-size: 15px;">@emailDetails.user.firstName</b> <b>@emailDetails.user.lastName</b>
+		<div style="margin: 10px 0 10px">Seems your content is getting
+			popular !</div>
+		
+		<div>				
+			@defining(emailDetails.details.getJSONObject("src")) { src =>
+			
+
+				@if(src.getString("type")=="COMMENT"){
+				@emails.comment.comment(emailDetails)
+				}else{
+				@emails.comment.reply(emailDetails)
+				}					
+				
+				@defining(emailDetails.details.getJSONObject("actor")) { actor =>
+					<a style="color: #33bad7; text-decoration: none" href="@host/@orgId/profile/@actor.getString("id")">
+						<b>@actor.getString("firstName") @actor.getString("lastName")</b>
+					</a>
+				}
+			
+				upvoted the 
+			
+				@if(src.getString("type")!="QUESTION"){
+					@src.getString("type").toLowerCase()
+					<a style="color: #33bad7; text-decoration: none" 
+						href="@host/@orgId/@src.getString("type").toLowerCase()/@src.getString("id")">
+						<b>@src.getString("name")</b>
+					</a>	
+					} else {
+					<a style="color: #33bad7; text-decoration: none" 
+						href="@host/@orgId/@src.getString("type").toLowerCase()/@src.getString("id")">
+						<b>@src.getString("type").toLowerCase()</b>
+					</a>
+					}
+			
+				@src.getString("why") match { 
+				case "OWNER" => {
+						you added 
+					} 
+				case "FOLLOWING_SOURCE" => {
+				   	your are following
+					}			 
+				}
+		</div>
+		
+		<div style="color: #33bad7; font-size: 13px; margin-top: 20px;">
+			<a
+				style="color: #33bad7; text-decoration: underline"
+				href="@host/@orgId/@src.getString("type").toLowerCase()/@src.getString("id")"><b>View Content</b></a>
+		</div>
+		<div style="margin: 25px 0; font-size: 13px;">Looking forward to
+			your activities on Vedantu.</div>
+	</div>
+</div>
+		}
+	}
+}
+@footer()

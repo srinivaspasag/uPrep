@@ -1,0 +1,35 @@
+%{
+	data = _data;
+	testAnalytics = _testAnalytics;
+}%
+	<div class="testDetails">
+		<div class="testName">
+			<span class="instImgs"></span>
+			<span class="testTitle">${data.name}</span>
+		</div>
+		<div style="padding-top:10px;">
+		#{if data.has('duration') && data.duration>0}
+			%{
+					timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.duration);
+                        }%
+			<span style="color:#888;padding-right:20px;">
+				<span class="blueTextColor big14">${timeObj.hrs}:${timeObj.mins}</span> hrs</span>
+		#{/if}
+		<span style="color:#888;"><span class="blueTextColor big14">${data.totalMarks}</span> Marks</span>
+		</div>
+                #{if data.has('targets') && data.targets.length()>0}
+		%{
+			target = data.targets.get(0);
+		}%
+		<span class="testTargetExam blackTextColor" data-target-exam-id="${target.id}">
+			<span class="big13 boldy">Target Exam - </span>
+			<a /*href="${controllers.Boards.getBoardUrl('exam',target.id)}"*/ data-brd-id="${target.id}" class="boardExam name blueTextColor big14">${target.name}</a></br>
+			<span class="fullName greyTextColor smally nonner">${target.name}</span>
+		</span>
+                #{/if}
+		#{if testAnalytics!=null}
+		<div class="padTop10 fullWidth">
+			<!-- #{widgets.upVoteItem upVote:data.upVotes,voted:data.voted,entityType:'TEST',entityId:data.id /}		 -->
+		</div>
+		#{/if}
+	</div>

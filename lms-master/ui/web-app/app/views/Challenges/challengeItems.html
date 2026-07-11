@@ -1,0 +1,7 @@
+%{
+    challenges=challenges.result.list;
+    target=params.target;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+#{challenges.challengeItems challenges:challenges,target:target,subTarget:params.subTarget,loadMoreSize:loadMoreSize /}

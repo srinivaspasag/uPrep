@@ -1,0 +1,119 @@
+#{stylesheet media:'screen', src:'institute/o.myPrograms.css' /}
+#{if resp!=null && resp.errorCode.isEmpty()}
+	%{
+		list = resp.result.list;
+		noOfPatternsAvailable = 3
+	}%
+	#{if list.length()>0}
+	#{list items:0..list.length()-1,as:'index'}
+	%{
+		item = list.get(index);
+		program = item.programInfo;
+		center = item.centerInfo;
+		section = item.sectionInfo;
+		//Show only programName in UPrep.
+		if(params.orgId == "5df8a0d0e4b0897459b25d86"){
+			name = program.name;
+		}
+		else{
+			name = program.name + ", " + center.name + ", " + section.name;
+		}
+		desc = section.desc;
+		
+		costValue = 0;
+		currencySymbol = "from Rs.";
+		if(section.revenueModel == "PAID"){
+			costRate = section.costRate;
+                	if(costRate.has("currencyCode") && !costRate.currencyCode.equals(null)){
+                        	currency = uicom.util.Utilities._getCurrencyByCode(costRate.currencyCode);
+                	}
+
+                	if(costRate.has("value") && !costRate.value.equals(null)){
+                        	if(costRate.value>0){
+                                	costValue = costRate.value/100;
+                        	}
+                	}
+		}
+		startingValue = 0;
+		if (section.has("startingRates")) {
+			startingRates = section.startingRates;
+			startingRate = null;
+			if(!startingRates.equals(null)) {
+			    if (startingRates.has(params.orgId)) {
+			        startingRate = startingRates.get(params.orgId);
+			    }
+			    if(startingRate.equals(null) && startingRates.has(section.orgId)) {
+			        startingRate = startingRates.get(section.orgId);
+			    }
+			    if (!startingRate.equals(null) && startingRate.value > 0) {
+			        startingValue = startingRate.value/100;
+			    }
+			}
+		}
+	}%
+	<div class="siteProgramHolder" data-section-id="${section.id}">
+	    <div class="siteProgramName pattern${(index)%noOfPatternsAvailable}">
+		<span class="sectionTitle">${name}</span>
+	    	#{if desc!=null && !desc.equals(null) && !desc.isEmpty()}
+	    	<div class="siteProgramDesc">
+			<div class="descHolder">${desc}</div>
+	    	</div>
+	    #{/if}
+	    </div>
+	    <table class="siteProgramBottomSec" cellspacing=0 cellpadding=0>
+	      <tr>
+		<td>
+		<!--   <div class="spriteImg sitePeopleIcon"></div>
+		   <span class="siteProgStudentsCount">${section.memberCount}</span>
+		   <span class="siteProgStudentsTxt">
+			#{if section.memberCount == 1}
+				&{'TXT_STUDENT'}
+			#{/if}
+			#{else}
+				&{'TXT_STUDENTS'}
+			#{/else}
+		   </span>  // commented to remove student count display on 14aug2015 -->
+		</td>
+		<td class="">
+		#{if showUserPaymentInfo == true}
+		   <div class="nonner">
+		   #{if section.revenueModel == "FREE"}
+		   	<span class="right showUserPaymentInfo freeProgram">&{'TXT_FREE'}</span>
+		   #{/if}
+		   #{else}
+		   	<span class="showUserPaymentInfo right" 
+				data-price="${currencySymbol}${startingValue}">&{'payment.TXT_PAYMENT_INFO'}</span>
+		   #{/else}
+		   </div>
+		#{/if}
+		#{else}
+		#{if section.revenueModel == "FREE"}
+		   <span class="joinProgButton right">&{'microsite.JOIN_CAPS'}</span>
+		#{/if}
+		#{elseif section.revenueModel == "PAID"}
+		   <span class="joinPaidProgButton right">${currencySymbol}${startingValue}</span>
+		#{/elseif}
+		#{/else}
+		</td>
+	      </tr>
+	    </table>
+	</div>
+	#{/list}
+	#{/if}
+	#{else}
+	<div class="centerText padTopBottom">
+		<img src="/public/images/microsite/no-results.png" alt="No Programs To Show"/>
+	</div>
+	#{/else}
+	<input type="hidden" id="totalPrograms" value="${resp.result.totalHits}"/>
+	#{if params.myPrograms == "true"}
+		<script type="text/javascript">
+			var myProgramsList = ${resp.result.raw()}
+		</script>
+	#{/if}
+#{/if}
+#{else}
+<div class="centerText padTopBottom">
+	<img src="/public/images/microsite/no-results.png" alt="No Programs To Show"/>
+</div>
+#{/else}

@@ -1,0 +1,35 @@
+%{
+	msg = _firstMsg;
+	users = _users;
+}%
+#{if msg!=null && msg.errorCode.isEmpty()}
+%{
+	msgBody = msg.result.message;
+}%
+<div class="msgConvPrimaryMsg left">
+	<div class="big16 boldy" style="padding-bottom:7px;">${msgBody.subject.raw()}</div>
+        <div class="big13">${msgBody.content.raw()}</div>
+</div>
+#{/if}
+#{if users!=null && users.errorCode.isEmpty() && users.result.has('list') && users.result.list.length()>0}
+<div class="msgConvParticipants right">
+	<div class="big13">&{'TXT_CONV_MEMBERS'}</div>
+        <div class="msConvMemberCloset">
+		#{list items:0..users.result.list.length()-1,as:'index'}
+			%{
+				user = users.result.list.get(index);
+				getUser=(controllers.Profile.getUserClassAndUrl(user));
+        			userClass = getUser.get("className");
+        			userUrl = getUser.get("url");
+				userId = getUser.get("id");
+			}%
+			<div class="msConvMemberHolder">
+			<a class="${userClass} displayInBlock" href="${userUrl}" data-user-id="${userId}">
+       				<img class="msConvMember" alt="NA" src="${user.thumbnail}" title="${user.firstName} ${user.lastName}"/>
+			</a>
+			</div>
+		#{/list}
+        </div>
+</div>
+#{/if}
+<div class='cleaner_with_divider'>&nbsp;</div>

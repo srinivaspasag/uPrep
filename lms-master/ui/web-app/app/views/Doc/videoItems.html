@@ -1,0 +1,5 @@
+%{
+    videos=videos.result.documents;
+    target=params.get('target');
+}%
+#{doc.videoItems videos:videos,target:target /}

@@ -1,0 +1,272 @@
+%{
+	name = name!=null?name:"";
+	fullName = fullName!=null?fullName:"";
+	website = webiste!=null?website:"";
+	slug = slug!=null?slug:"";
+	//emailDomain = emailDomain!=null?emailDomain:"";
+	contactNumber = contactNumber!=null?contactNumber:"";
+	type = type!=null?type:"";
+	address = address!=null?address:"";
+	description = description!=null?description:"";
+}%
+<form id="addOrgForm" action="@{Organizations.submitOrg}" METHOD="POST">
+    <div class="addOrgHeading centerText">&{'FORM_HEAD'}</div>
+    <div class="greyTextColor right relative" style="width:130px;">
+	<span class="fs16">*</span>
+	<span class="relative fs11" style="top:-5px;"> are compulsory fields.</span>
+    </div>
+    <div style="width: 100%;overflow-x: auto;">
+        <table cellspacing=0 cellpadding=0 style="margin-top:25px;" id="planHolder">
+            #{plans resp : plansResp /}
+        </table>
+    </div>
+    <table class="orgTable">
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_NAME'}</span>
+		<span class="whatIsThisField" title="&{'FIELD_NAME_INFO'}" data-text="&{'FIELD_NAME_INFO'}"></span>
+	    </td>
+            <td class="formTdInput">
+                <div class="">
+                    <input type="text" class="cstTextBox orgShortName" required name="name" value="${name}"/>
+                </div>                
+            </td>
+        </tr>
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_FULL_NAME'}</span>
+	    </td>
+            <td class="formTdInput">
+                <div class="">
+                    <input type="text" class="cstTextBox orgFullName" required name="fullName" value="${fullName}"/>
+                </div>                
+            </td>
+        </tr> 
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_TYPE'}</span>
+            </td>
+            <td class="formTdInput">    
+                <select name="type" data-value="${type}">
+                    <option selected value="COLLEGE">College</option>
+                    <option value="SCHOOL">School</option>
+                    <option value="UNIVERSITY">University</option>
+                    <option value="INSTITUTE">Institute</option>
+                    <option value="COMPANY">Company</option>
+                </select>
+            </td>
+        </tr>              
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_SLUG'}</span>
+		<span class="whatIsThisField" title="&{'FIELD_SLUG_INFO'}" data-text="&{'FIELD_SLUG_INFO'}"></span>
+	    </td>
+            <td class="formTdInput">
+                <div class="checkSlugAvailability">
+		%{
+			LEARN_URL = play.Play.configuration.getProperty("LEARN_ORG_URL");
+			CMDS_URL = play.Play.configuration.getProperty("CMDS_ORG_URL");
+		}%
+		  <table>
+		    <tr>
+		    	<td>
+		    		<div class="fs16 fontRoboto">${LEARN_URL}</div>
+			</td>
+			<td>	
+                    		<input type="text" required class="cstTextBox" name="slug" placeholder="eg: your organization name"
+					value="${slug}" list="suggSlugs"/>
+		    		<datalist id="suggSlugs">
+		    		</datalist>
+			</td>
+			<td rowspan="2" class="alignTop">
+		    		<span class="slugCheckStatus nonner"></span>
+			</td>
+		    </tr>
+		    <tr>
+			<td colspan="2">
+		    		<div class="fs16 fontRoboto">
+					<span>${CMDS_URL}</span>
+					<span class="slugVal"></span>
+				</div>
+			</td>
+		    </tr>
+		  </table>
+                </div> 
+            </td>
+        </tr> 
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_WEBSITE'}</span>
+            </td>
+            <td class="formTdInput">
+                <div class="">
+                    <input type="url" required name="website" class="cstTextBox websiteInputField" 
+			placeholder="Your company website (should be unique with us)" value="${website}"/>
+                </div>                
+            </td>
+        </tr> 
+        *{<!--<tr>
+            <td class="formTdName">
+		<span>&{'FIELD_EMAIL_DOMAIN'}</span>
+		<span class="whatIsThisField" data-text="&{'FIELD_EMAIL_DOMAIN_INFO'}"></span>
+            </td>
+            <td class="formTdInput">
+                <div class="">
+                    <input type="text" placeholder="eg. gmail.com" class="cstTextBox emailDomainTextBox" name="emailDomain" 
+			value="${emailDomain}" />
+                </div>                
+            </td>
+        </tr>-->}*
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_ADMIN_DETAILS'}</span>
+		<span class="whatIsThisField" title="&{'FIELD_ADMIN_DETAILS_INFO'}" data-text="&{'FIELD_ADMIN_DETAILS_INFO'}"></span>
+            </td>
+            <td class="formTdInput adminDetailsTd">
+                <div class="eachInputRow">
+                    <input type="text" placeholder="First Name" class="cstTextBox" required name="representative.firstName" />
+                </div>
+                <div class="eachInputRow">
+                    <input type="text" placeholder="Last Name" class="cstTextBox" name="representative.lastName" />
+                </div>
+                <div class="eachInputRow">
+                    <input type="email" placeholder="Email Id" class="cstTextBox" required name="representative.email" />
+                </div>                                
+            </td>
+        </tr>
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_CONTACT'}</span>
+            </td>
+            <td class="formTdInput">
+                <div class="">
+                    <input type="text" placeholder="" required name="contactNumber" class="cstTextBox contactNumberTextBox" 
+			value="${contactNumber}" pattern="^[6-9][0-9]{9}$"/>
+                    <div class="smallThinGray">Enter a contact number of the format 9898977777,9997778325</div>
+                </div>                
+            </td>
+        </tr>      
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_LOCATIONS'}</span>
+	    </td>
+            <td class="locationsTd formTdInput">
+                <div class="locationDiv">
+                    <input type="text" required class="cstTextBox width250" name="locations[0].country" placeholder="Country" rel='country'>
+                    <input type="text" required class="cstTextBox width250" name="locations[0].state" 
+			placeholder="State / District / Province" rel='state'>
+                    <input type="text" required class="cstTextBox width250" name="locations[0].city" placeholder="City" rel='city'>
+                    <a class="addNewLocation">Add More</a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="formTdName req">
+		<span>&{'FIELD_ADDRESS'}</span>
+            </td>
+            <td class="formTdInput">
+                <div class="">
+                    <textarea name="address" class="cstTextBox" required>${address}</textarea>
+                </div>                
+            </td>
+        </tr>    
+        <tr>
+            <td class="formTdName">
+		<span>&{'FIELD_DESC'}</span>
+		<span class="whatIsThisField" title="&{'FIELD_DESC_INFO'}" data-text="&{'FIELD_DESC_INFO'}"></span>
+            </td>
+            <td class="formTdInput">
+                <div class="">
+                    <textarea name="description" class="cstTextBox">${Description}</textarea>
+                </div>                
+            </td>
+        </tr>
+        <tr>
+            <td class="formTdName">
+                <span>Is New UI ?</span>
+            </td>
+            <td>
+                <input class="isNewUI" type="radio" name="isNewUI" value="true" required/>Yes
+                <input class="isNewUI" type="radio" checked name="isNewUI" value="false" required/>No
+            </td>
+        </tr>
+        <tr>
+            <td class="formTdName">
+                <span>Show Shared Subjects ?</span>
+            </td>
+            <td>
+                <input class="showSharedSubjects" type="radio" name="showSharedSubjects" value="true" required/>Yes
+                <input class="showSharedSubjects" type="radio" checked name="showSharedSubjects" value="false" required/>No
+            </td>
+        </tr>
+        <tr class="themeSelection">
+
+        </tr>
+        *{<!--<tr>
+            <td class="formTdName">
+                <span>&{'FIELD_ENC'}</span>
+            </td>
+            <td class="formTdInput">
+                <input type="checkbox" style="width:20px;height:20px;margin:0px;position:relative;top:5px;" name="isEnc" checked/>
+                <span class="smallThinGray">&{'FIELD_ENC_INFO'}</span>
+            </td>
+        </tr>-->}*
+	<tr>
+    		<input name="scope" value="PUBLIC" type="hidden"/>
+                <input type="hidden" name="encLevel" value="NA"/>
+	</tr>
+	<tr>	
+		<td class="formTdName req">
+            		<div style="width:150px;">&{'FIELD_CAPTCHA_INFO'}</div>
+		</td>
+		<td class="formTdInput">
+		   <div class="captchaDiv">
+            		<img alt="" src="" />
+            		<input type="text" name="code" class="cstTextBox code" required/>
+            		<input type="hidden" name="randomId" value="${randomId}" 
+				class="randomId"/>
+           	 	<a class="refreshCaptcha"></a>
+		   </div>
+		</td>
+	</tr>
+	<tr>
+	   <td colspan=2 class="fontRoboto" style="color:#666;">
+    		<div style="padding:12px 0;font-size:15px;">
+			<input type="checkbox" style="width:20px;height:20px;margin:0px;" name="tncVersion" value="${tncVersion}" required/>
+			<span style="position:relative;top:-5px;left:8px;">I agree to <a class="showTermsConditions">&{'FIELD_TERMS_CONDITIONS'}</a></span>
+    		</div>
+	   </td>	
+	</tr>
+	<tr>
+	   <td colspan=2>
+    		<div class="centerText" style="padding-top:20px;">
+			<input type="submit" value="Submit"  class="blueButton addOrgSubmit"/>
+    		</div>
+		<div class="smallThinGray centerText">&{'FORM_SUBMIT_NOTE'}</div>
+	   </td>	
+	</tr>
+    </table>
+</form>
+<script type="text/javascript">
+    var theme = '<td class="formTdName">'
+            +       '<span>Theme</span>'
+            +   '</td>'
+            +   '<td>'
+            +       '<input type="radio" checked name="theme" value="1" required/>Theme 1'
+            +       '<input title="coming soon" type="radio" disabled name="theme" value="2" required/>Theme 2'
+            +   '</td>'
+    $(document).ready(function(){
+        var isNewUI = $('input[name=isNewUI]:checked').val();
+        if(isNewUI === "false"){
+        }
+    });
+    $(".isNewUI").on("change",function(){
+        var isNewUI = $('input[name=isNewUI]:checked').val();
+        if(isNewUI === "false"){
+           $(".themeSelection").empty();
+        }
+        else{
+            $(".themeSelection").append(theme);
+        }
+    });
+</script>

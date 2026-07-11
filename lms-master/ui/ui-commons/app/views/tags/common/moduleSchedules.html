@@ -1,0 +1,77 @@
+%{
+    schedule = _schedule;
+    showCloseTimer = _showCloseTimer;
+    attempted = _attempted!=null?_attempted:false;
+    isWebReq = _isWebReq;
+    moduleTestStartsIn = 0;
+    if(!schedule.startTime.equals(null)){
+        moduleTestStartsIn = schedule.startTime - new Date().getTime();
+        if(moduleTestStartsIn <0){
+            moduleTestStartsIn = 0;
+        }
+    }
+    moduleTestEndsIn = 0;
+    testExpired = false;
+    if(!schedule.endTime.equals(null)){
+        moduleTestEndsIn = schedule.endTime - new Date().getTime();
+        if(moduleTestEndsIn <0){
+            moduleTestEndsIn = 0;
+            testExpired = true;
+        }
+    }
+    moduleTestClosesIn = 0;
+    testClosed = false;
+    if(!schedule.closeTime.equals(null)){
+        moduleTestClosesIn = schedule.closeTime - new Date().getTime();
+        if(moduleTestClosesIn <0){
+            moduleTestClosesIn = 0;
+            testClosed = true;
+        }
+    }
+    Timers = [moduleTestStartsIn,moduleTestEndsIn];
+    if(showCloseTimer){
+        Timers.add(moduleTestClosesIn);
+    }
+}%
+<div class="showTimer #{if moduleTestStartsIn !=0 && moduleTestStartsIn > 0 && !attempted && params.userRole == 'STUDENT' || (testExpired && !attempted && params.userRole == 'STUDENT') } timer-active #{/if}">
+#{list items:0..Timers.size(), as:'index'}
+    #{if Timers[index] !=0 && Timers[index] >0}
+         %{
+            shouldRunTimer = false;
+            timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(Timers[index]);
+            if(timeObj.getInt("hrs") > 24){
+                day = Math.round(timeObj.getInt("hrs")/24);
+                if(day > 1){
+                    timeBlock = day + ' days';
+                }else{
+                    timeBlock = day + ' day';
+                }
+                shouldRunTimer = false;
+            }
+            else if(timeObj.getInt("hrs") >= 0){
+                timeBlock = timeObj.hrs+':'+timeObj.mins+' hrs';
+                shouldRunTimer = true;
+            }
+        }%
+        <div class="scheduleBlock entityRemainingTimeBlock #{if index == 1} endTestBlock #{/if} #{elseif index == 2} closeTestBlock #{/elseif}#{else} startTestBlock#{/else}">
+            <div class="displayInBlock">
+                <span>#{if index == 1} Ends #{/if} #{elseif index == 2} Closes #{/elseif} #{else} Starts #{/else} in </span>
+                &nbsp;
+                <span class="#{if shouldRunTimer} scheduleTimer #{/if} entityRemainingTime" data-time-block-in = "${Timers[index]}">
+                    ${timeBlock}
+                </span>
+            </div>
+            <img src="/public/images/alarm-white.png" style="position: relative;top:3px;right: 2px;">
+        </div>
+    #{/if}
+#{/list}
+</div>
+#{if isWebReq && testExpired && !attempted}
+    <span class="test-expired">Test Expired</span>
+#{/if}
+#{if isWebReq && testClosed && attempted}
+    <span class="test-expired">Test Expired</span>
+#{/if}
+#{if !isWebReq && moduleTestStartsIn ==0 && moduleTestClosesIn == 0 && moduleTestEndsIn == 0}
+    <span class="greenColor test-schedule-message">This Test is scheduled.</span>
+#{/if}

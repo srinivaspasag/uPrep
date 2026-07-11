@@ -1,0 +1,184 @@
+%{
+    boards = questions.result.boards;
+}%
+%{
+    alphabets=['(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'];
+}%
+<div class="container">
+    <div class="row" >
+    <div class="q_list col-xs-12 col-sm-3" style="background-color: #f9f9f9; overflow: scroll; max-height: 400px; overflow-x: hidden;overflow-y: auto;">
+            %{qIndex = 1;}%
+            #{list items:0..boards.length()-1,as:'index'}
+            %{ subData = boards.get(index);}%
+            #{if boards.get(0).questions.length()>0}
+            #{list items:0..subData.questions.length()-1, as:'qTypeIndex'}
+            %{ qTypeQuestions = subData.questions.get(qTypeIndex);}%
+                <button id="questionButton"
+                class="col-xs-6 each_question m-l-5 m-t-5 m-b-5
+                #{if qTypeQuestions.isCorrect == 'CORRECT'}
+                    btn bgm-lightgreen waves-effect
+                #{/if}
+                #{elseif qTypeQuestions.status == 'LEFT'}
+                    btn btn-default waves-effect
+                #{/elseif}
+                #{else}
+                    btn bgm-red waves-effect
+                #{/else}"
+                data-cs-name="SHOW_QUES_LINK" data-qIndex="Q${qIndex}" data-id="${qTypeQuestions.info.id}" style="min-width: 40px; max-width: 48px;text-align: center;">Q${qIndex}</button>
+                %{qIndex++;}%
+            #{/list}
+            #{/if}
+            #{/list}
+        </div>
+
+        <div id = "test" class="col-xs-12 col-sm-9 questionBody">
+            %{qIndex = 0;}%
+            #{list items:0..boards.length()-1,as:'index'}
+            %{ subData = boards.get(index);}%
+                #{list items:0..subData.questions.length()-1,as:'qIndx'}
+                %{
+                    ques = subData.questions.get(qIndx);
+                    qIndex++; className = "";
+                    if(ques.isCorrect == "CORRECT"){ className="correct";}
+                    else if(ques.status == "ATTEMPTED"){ className="inCorrect";}
+                    else{ className="notAttempted";}
+                    quesBody = ques.info;
+                }%
+
+            <div class="m-t-20  card #{if qIndex > 1 }hidden#{/if} libraryShadow border8px" id="questionBody_${quesBody.id}">
+                <div class="card-header padding10 border8px">
+                <div class="row m-b-10 m-l-5 m-r-5" style="background: #F9F9F9;">
+                            #{if ques.status == "ATTEMPTED"}
+                                %{
+                                    answer = ques.get('answer');
+                                    answerGiven = answer.get('answerGiven');
+                                }%
+                                #{if "NUMERIC" == quesBody.type}
+                                    %{
+                                        yourAnswer = answerGiven.get(0);
+                                    }%
+                                #{/if}
+                                #{else}
+                                %{
+                                    yourAnswer = "";
+                                    for(ansIndex=0;ansIndex< answerGiven.length()-1;ansIndex++){
+                                        yourAnswer+=alphabets[Integer.parseInt(answerGiven.get(ansIndex))-1]+",";
+                                    }
+                                    yourAnswer+=alphabets[Integer.parseInt(answerGiven.get(ansIndex))-1];
+                                }%
+                                #{/else}
+                            <div class="col-xs-6 text-center m-t-10 m-b-10">
+                                <div class="f-14">Your Answer</div>
+                                    <span class="solution${className} f-500 text-center f-16">
+
+                                    #{if className == 'correct'}
+                                    <i class="zmdi zmdi-check c-green" ></i>
+                                    #{/if}
+
+                                    #{else}
+                                    <i class="zmdi  zmdi-close-circle-o c-red"></i>
+                                    #{/else}
+
+                                    ${yourAnswer}
+                                    </span>
+                            </div>
+                            #{/if}
+                            #{else}
+                            <div class="col-xs-6 text-center m-t-10 m-b-10">
+                                <div class="f-14">Your Answer</div>
+                                <div class="$solution{className} f-16 f-500 c-black">N.A.</div>
+                            </div>
+                            #{/else}
+                        #{if !ques.answer.equals(null) && !ques.answer.correctAnswer.equals(null) && ques.answer.correctAnswer.length()>0}
+                            #{if "NUMERIC" == quesBody.type}
+                                %{
+                                    correctAnswer = ques.answer.correctAnswer.get(0);
+                                }%
+                            #{/if}
+                            #{else}
+                            %{
+                                correctAnswer = "";
+                                answerIndex = 1;
+                                ansIndex=0;
+                                for(ansIndex=0;ansIndex<ques.answer.correctAnswer.length()-1;ansIndex++){
+                                    answerIndex = Integer.parseInt(ques.answer.correctAnswer.get(ansIndex));
+                                    answerIndex = answerIndex>=1?answerIndex-1:0;
+                                    correctAnswer+=alphabets[answerIndex]+",";
+                                }
+                                answerIndex = Integer.parseInt(ques.answer.correctAnswer.get(ansIndex));
+                                answerIndex = answerIndex>=1?answerIndex-1:0;
+                                correctAnswer+=alphabets[answerIndex];
+                            }%
+                            #{/else}
+                            <div class="col-xs-6 text-center m-t-10 m-b-10">
+                                <div class="f-16">Correct Answer</div>
+                                <div class="f-18 f-500 c-black">${correctAnswer}</div>
+                           </div>
+                            #{/if}
+                        </div>
+                    <span class="m-l-5 c-18 c-black" >Q${qIndex}.</span>
+                    <span class="c-14 pull-right c-gray">${quesBody.type}</span>
+                </div>
+                    <div class="card-body">
+                        <div class="row f-15 m-l-15">
+                            <div class="col-xs-12">
+                            ${quesBody.content.raw()}
+                            </div>
+                        </div>
+                        <div class="row m-b-20">
+                            #{if !quesBody.options.equals(null) && quesBody.options.length()>0}
+                            <div class="m-t-10 m-l-15">
+                                #{list items:0..quesBody.options.length()-1,as:'optIndex'}
+                                <div class=" col-md-6 m-t-20">
+                                    <div>${alphabets[optIndex]} ${quesBody.options.get(optIndex).raw()}</div>
+                                </div>
+                                #{/list}
+                            </div>
+                            #{/if}
+                        </div>
+                        <div class="row">
+                            #{if !subData.equals(null)}
+
+                                <span class="postTestQuesInfo">
+                                    <span class="f-12 m-l-25" style="background: #eee;padding: 5px; color: black;" data-brd-id="${subData.id}">${subData.name}</span>
+                                </span>
+                            #{/if}
+                            #{if quesBody.solutions == 0}
+
+                                <button class="c-white pull-right m-r-20 m-b-10 btn bgm-gray waves-effect" disabled="disabled">${quesBody.solutions} Solution</button>
+                            #{/if}
+                            #{elseif quesBody.solutions == 1}
+
+                                <a class="postTestQuesShowSoln pull-right m-r-20 m-b-10 btn bgm-lightgreen waves-effect" data-qid="${quesBody.id}"
+                                    data-count="${quesBody.solutions}">${quesBody.solutions} Solution</a>
+                            #{/elseif}
+                            #{else}
+
+                                <a class="postTestQuesShowSoln pull-right m-r-20 m-b-10 btn bgm-lightgreen waves-effect" data-qid="${quesBody.id}"
+                                    data-count="${quesBody.solutions}">${quesBody.solutions} Solutions</a>
+                            #{/else}
+                        </div>
+                    </div>
+                </div>
+
+                #{/list}
+
+
+            #{/list}
+            <div class="hidden solutionData">
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  CommonHTML: { linebreaks: { automatic: true } },
+  "HTML-CSS": { linebreaks: { automatic: true } },
+         SVG: { linebreaks: { automatic: true } }
+});
+</script>
+<script>
+    $(document).ready(function() {
+         MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+      });
+</script>

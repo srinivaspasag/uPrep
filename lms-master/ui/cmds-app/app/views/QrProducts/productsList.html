@@ -1,0 +1,82 @@
+         
+        %{   
+            products=products.result.products;
+            prdtStart=0;
+            if(params.start!=null)prdtStart=Integer.parseInt(params.start);
+            target=params.target;
+         }%
+        #{if products.length()>0}
+         #{list items:0..products.length()-1, as:'p'}          
+            %{
+                product=products.get(p);
+                user=product.user;                
+                prdtId=product._id; 
+                if(product.has('productType')){
+                    entityType=product.productType.toUpperCase();
+                }else if(product.has('type')){
+                    entityType=product.type.toUpperCase();
+                }
+                
+                
+                if(entityType=="ONLINE_GROUP")entityType="TEST_SERIES";                              
+                else if(entityType=="ONLINE")entityType="TEST";
+                
+                globalPrdtId='';
+                if(product.has('globalTestId')){
+                    globalPrdtId=product.globalTestId;
+                }else if(product.has('challengeId')&&product.challengeId.length()>0){
+                    globalPrdtId=product.challengeId.get(0);
+                }
+                
+                productName='untitled';
+                if(product.has('name')){
+                    productName=product.name;
+                }else if(product.has('title')){
+                    productName=product.title;
+                }
+            }%
+          <tr class="cmdsTr cmdsTr_${prdtId}" data-entity-id="${prdtId}" 
+              data-global-entity-id="${globalPrdtId}" data-entity-type="${entityType}"
+              data-entity-title="${productName}">
+              <td class="CTCBoxTd">
+                  #{if target=='TEST_SERIES'}
+                  ${p_index+prdtStart}
+                  #{/if}
+                  #{else}
+                  <div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                      <div class="gCBoxTicker"></div>                      
+                  </div>                  
+                  #{/else}
+              </td>
+              <td class="CTInfoTd">
+                  <span class="cmdsItemInfo cmdsPrdtInfo"
+                                         data-entity-id="${prdtId}"></span>
+              </td>
+              <td class="CTTitleTd">
+                  #{aTagMapper entityName:productName,entityId:prdtId,entityType:entityType/}
+              </td>
+              <td class="CTPrdtTypeTd">${entityType}</td>     
+              <td class="CTAddedByTd">
+                #{widgets.user20 user:user /}
+              </td>              
+              <td class="CTStatusTd">
+                  #{if product.has('isPublished')&&product.isPublished}
+                  <span class="cmdsPrdtStatus" data-status="PUBLISHED">PUBLISHED</span>
+                  #{/if}
+                  #{else}
+                    <span class="cmdsPrdtStatus" data-status="INCOMPLETE">INCOMPLETE</span>
+                  #{/else}
+                  #{if product.has('isSharable')}
+                  <input type="hidden" class="cmdsPrdtShareStatus" data-shareable="${product.isSharable}" />
+                  #{/if}
+              </td>              
+          </tr>           
+          #{/list}
+          #{/if}
+          #{else}
+          <tr>
+            <td colspan="5">
+                <div class="userMessage">No results found.</div>
+            </td>
+          <tr>
+          #{/else}

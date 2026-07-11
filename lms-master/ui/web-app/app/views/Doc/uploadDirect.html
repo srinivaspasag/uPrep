@@ -1,0 +1,13 @@
+#{extends 'header.html' /}
+<div id="contentSectionHolder">
+    <div id="noTabSection" class="toBeClosed"></div>
+    <div id='DTDiv_UPLOAD' class='toBeClosed DTUPLOAD'>
+        #{include 'UIComDocuments/uploadStart.html' /}
+    </div>
+    <div class="cleaner_with_divider DBTabPositioner">&nbsp;</div>
+</div>
+<script type="text/javascript" id="vUploadStyles">
+    footTab["UPLOAD"]();
+    tabNotFound("UPLOAD","UPLOAD");
+    clearMenu();    
+</script>

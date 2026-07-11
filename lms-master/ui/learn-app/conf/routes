@@ -1,0 +1,97 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+#GET    /                                       Application.newIndex
+GET     /                                       Application.institutes
+GET     /about                                  Application.aboutUs
+GET     /blog                                   Application.blog
+GET     /franchise                              Application.franchisee
+GET     /privacypolicy                          Application.privacyPolicy
+GET     /privacy                                Application.privacyPolicy
+GET     /signup                                 Application.signup
+GET     /login                                  Application.login
+GET     /terms                                  Application.terms
+GET     /packages                               Application.packages
+GET     /contactus                              Application.contactus
+#GET    /institutes                             Application.institutes
+GET     /students                               Application.newIndex
+GET     /faqs                                   Application.faqs
+GET     /ping                                   Application.ping
+GET     /packages/{name}                        Application.categoryPrograms
+GET     /singleProgramPopup                     Application.singleProgramPopup
+GET     /business-pricing                                Application.pricing
+
+#Exams
+
+#GET     /exams                                  Application.exams
+
+#GET     /exam/aiims                             Application.aiims
+#GET     /exam/jeemain                           Application.jeemain
+#GET     /exam/jeeadvanced                       Application.jeeadvanced
+#GET     /exam/neet                              Application.neet
+#GET     /exam/bitsat                            Application.bitsat
+
+#GET     /aiims                                  Institute.aiimsDirect 
+#GET     /jeemain                                Institute.jeemainDirect
+#GET     /jeeadvanced                            Institute.jeeadvancedDirect
+#GET     /neet                                   Institute.neetDirect
+#GET     /bitsat                                 Institute.bitsatDirect
+
+GET     /home                                   Security.learnpediaLoading
+
+# Institute
+GET     /library                                Institute.libraryDirect
+GET     /library/program/{programId}            Institute.libraryDirect
+GET     /programs                               Institute.programsDirect
+GET     /discussions                            Institute.doubtsDirect
+GET     /discussion/{id}/?                      Institute.directDoubt
+GET     /activities                             Institute.activitiesDirect
+GET     /analytics                              Institute.analyticsDirect
+GET     /profile                                Institute.profileDirect
+GET     /organization/{orgId}/profile/{targetUserId}/?  Institute.othersProfileDirect
+GET     /referral                               Institute.getReferralPageDirect
+GET     /library/program/{programId}/subject/{parentId}?            MyContents.subjectDirect
+GET     /library/program/{programId}/subject/{parentId}/chapter/{chapterId}?           MyContents.chapterDirect
+GET     /referralTerms                          Institute.referralTermsDirect
+
+#Payment
+GET     /postPaymentAddSection                  Institute.payAndAddMemberToSection
+
+# Messages
+# GET     /conversation/{userConversationId}      UserMessages.conversationDirect
+# GET     /messages                               UserMessages.inboxDirect
+
+# Notifications
+GET     /notifications                          Institute.allNotificationsDirect
+
+#Invoices
+GET    /order/{orderId}/?                       Invoices.invoicePage
+
+#utilities  like reset password,verify email error
+GET     /resetpassword                            Register.resetpassword
+GET     /verifyEmail                              Register.verifyEmail
+GET     /emailVerified/{userId}                   Institute.emailVerifiedPage
+
+#Contents
+GET    /module/{id}/?                       MyContents.modulePageDirect
+GET    /pretest/{id}/?                      MyContents.preTestPageDirect
+GET    /test/{id}/?                         MyContents.testPageDirect
+GET    /test/attempt/{id}/?                 Tests.attempt
+GET    /document/{id}/?                     MyContents.documentPageDirect
+GET    /video/{id}/?                        MyContents.videoPageDirect
+#ErrorPages
+GET     /noOrgFound                             Institute.noOrgFound
+GET     /noAccess                               Institute.noAccess
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+GET     /pdfjs/                                 staticDir:pdfjs
+GET     /images/                                staticDir:images
+
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}

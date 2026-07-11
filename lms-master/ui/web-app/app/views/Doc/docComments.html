@@ -1,0 +1,80 @@
+%{
+    commentNo=commentsResp.result.totalHits;
+    comments=commentsResp.result.comments;
+}%
+    <div class="inputer">
+        <a class="img30Wrapper img30Round floatLeft openMyProfile"  href="/myprofile">
+            <div class="img30DummyWrapper img30DummyRound">
+                <img src="${session.profilePic}" class="img30 img30Round"/>
+            </div>
+        </a>
+        <div class="inputerContent40">
+            <div class="inputerDiv textareaDiv">
+                <textarea class="inputerArea"  placeholder="Add your comment"
+                          style="background-color: #EDF6FA;"></textarea>
+            </div>
+            <div class="inputerBtns">
+                <span class="blueSubmitButton submitDocPageComment">Submit</span>
+                <span class="greyButton margRight5 cancelInputer">Cancel</span>
+            </div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>
+    </div>
+    <div class="LMHandlerDiv">
+        #{doc.commItems comments:comments /}
+    </div>    
+
+
+
+
+
+
+
+
+       *{ <div class="docComments" id="docComments_${docId}">
+            <div class="heading" id="commAllMCHead_${docId}">
+                <span class="docCommAllSpan activeTab">All<label class="countNo"> (${commentNo})</label></span>
+                <span class="docCommMCXSpan">My Comments</span>
+            </div>
+            <div class="cleaner_with_divider activeTabBorder margHalfTop">&nbsp;</div>
+            <div class="commentDirectDiv">
+
+
+
+                
+                <div class='floatLeft smallImgWrapper'>
+                    <a class="smallImgHold" rel="${session.userId}">
+                        <img src="${session.profilePic}" alt="${session.fullname}"  rel="${session.userId}" class="smallImg dragSearchUser openUserImg" />
+                    </a>
+                </div>
+                <div rel="${docId}" class="noHLCommentBox">
+                   <img class="commPtr" src="/public/images/uicomDocuments/commPtr.png" alt="" />
+                   <textarea class="commDirectInput" placeHolder="Add Comment"></textarea>
+                   <div class="commDirectOpt commDirectButtons nonner">
+                       <select class="commentType">
+                           <option value="public" selected="selected">Public</option>
+                           <option value="private">Private</option>
+                       </select>
+                       <span class="blueSubmitButton submitNoHLComment" rel='PAGE'>Submit</span>
+                   </div>
+                </div>
+            </div>
+            <div class="AllMCBodyHolder">
+                <div class="bodi  scroll-pane" id="commAllMCBody_${docId}">
+                    <div id="docCommAll_${docId}">
+
+                  </div>
+                 <div id="docCommMCX_${docId}"></div>
+                </div>
+            </div>
+        </div>
+<script type="text/javascript">
+    $(function(){
+        var parentLoadId="${docId}";
+        if($("#docCommAll_"+parentLoadId+" .docViewComment").length>0){
+            commentConvertAfter("docCommAll_"+parentLoadId,parentLoadId);
+        }
+    })
+</script>}*
+
+

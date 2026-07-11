@@ -1,0 +1,111 @@
+#{if questions!=null && questions.errorCode.isEmpty() && questions.result.boards.length()>0}
+%{
+        alphabets=['(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'];
+	qNo = 0;
+}%
+#{list items:0..questions.result.boards.length()-1,as:'bIndex'}
+%{
+	quesList = questions.result.boards.get(bIndex).questions;
+	board = questions.result.boards.get(bIndex);
+}%
+	#{if !quesList.equals(null) && quesList.length()>0}
+	#{list items:0..quesList.length()-1,as:'qIndex'}
+	%{
+		ques = quesList.get(qIndex);
+		qNo++; className = "";
+                if(ques.isCorrect == "CORRECT"){ className="correct";}
+                else if(ques.status == "ATTEMPTED"){ className="inCorrect";}
+                else{ className="notAttempted";}
+                quesBody = ques.info;
+		dontAllowOpen = ques.status == "ATTEMPTED" ? false : true;
+	}%
+	<tr class="asnEachQuesTR asnQuesTRBrd-${board.id}">
+		<td class="asnEachQuesList">
+                        #{test.analyticQues qIndex : qNo , qType : quesBody.type , quesBody : quesBody , subData : subData , dontAllowOpen : dontAllowOpen /}
+			<div class="cleaner_with_divider">&nbsp;</div>
+			#{if ques.status != "ATTEMPTED"}
+			<div class="asnQuesAttemptDiv">
+				#{questions.quesAnsDiv ques:quesBody , target:'ASSIGNMENT_PAGE' /}					
+			</div>
+			#{/if}
+                </td>
+		#{if ques.status == "ATTEMPTED"}
+                        %{
+                                answer = ques.get('answer');
+                                answerGiven = answer.get('answerGiven');
+                        }%
+                        #{if "NUMERIC" == quesBody.type}
+                                %{
+                                        yourAnswer = answerGiven.get(0);
+					correctAnswer = answer.correctAnswer.get(0); 
+                                }%
+                        #{/if}
+                        #{else}
+                        %{
+                                yourAnswer = "";
+				correctAnswer = "";
+                                for(ansIndex=0;ansIndex<answerGiven.length()-1;ansIndex++){
+                                        yourAnswer+=alphabets[Integer.parseInt(answerGiven.get(ansIndex))-1]+",";
+                                }
+                                yourAnswer+=alphabets[Integer.parseInt(answerGiven.get(ansIndex))-1];
+				if(ques.isCorrect != "CORRECT"){
+					answerIndex = 1;
+					for(ansIndex=0;ansIndex<ques.answer.correctAnswer.length()-1;ansIndex++){
+                                        	answerIndex = Integer.parseInt(ques.answer.correctAnswer.get(ansIndex));
+                                        	answerIndex = answerIndex>=1?answerIndex-1:0;
+                                        	correctAnswer+=alphabets[answerIndex]+",";
+                                	}
+                                	answerIndex = Integer.parseInt(ques.answer.correctAnswer.get(ansIndex));
+                                	answerIndex = answerIndex>=1?answerIndex-1:0;
+                                	correctAnswer+=alphabets[answerIndex];
+				}
+                        }%
+                        #{/else}
+                        <td class="asnResultEachCellValue borderBottom">
+				<div><span class="big14 boldy ${className}">${yourAnswer}</span></div>
+				#{if ques.isCorrect != "CORRECT"}
+					<div class="big12 blackTextColor">&{'TXT_CORRECT_ANSWER'} : ${correctAnswer}</div>
+				#{/if}
+			</td>
+                #{/if}
+                #{elseif params.targetUserId == session.userId}
+                        <td class="asnResultEachCellValue borderBottom">
+				<div class="bigBlueButton attemptAsnQues boldy" data-q-id="${quesBody.id}">&{'TXT_ATTEMPT'}</div>
+				<div class="asnQuesAttempted nonner">
+					<div class="big14 boldy"><span class="yourAnsHold"></span></div>
+					<div class="">
+						<span>&{'TXT_CORRECT_ANSWER'} : </span>
+						<span class="correctAnsHold"></span>
+					</div>
+				</div>
+			</td>
+                #{/elseif}
+		#{else}
+                        <td class="asnResultEachCellValue boldy borderBottom"><span class="${className}">&{'TXT_NOT_ATTEMPTED'}</span></td>
+		#{/else}
+	</tr>
+	#{/list}
+	#{/if}
+#{/list}
+<!--BACK-END SUPPORT MISSING*{
+%{
+        totalHits = 12;
+        lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+}%
+#{if totalHits > lastCount }
+<tr class="loadMoreDivTR nonner">
+        <td colspan=5 style="padding-top:20px;">
+                <div class="loadMoreItems doCStream" name="LOAD_MORE_TEST" data-target-user-id="${params.targetUserId}"
+			data-next-start="${lastCount}">&{'LOAD_MORE_item','Questions'}</div>
+        </td>
+<tr>
+#{/if}
+}*-->
+#{/if}
+#{else}
+<tr class="zeroLevelDivTR">
+        <td colspan=5 style="padding-top:20px;">
+		#{institute.zeroLevel alt : "No Data" , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+	</td>
+</tr>
+#{/else}

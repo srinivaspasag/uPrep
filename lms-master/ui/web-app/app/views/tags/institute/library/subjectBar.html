@@ -1,0 +1,24 @@
+<div class="instLibrarySubs CSWidget" data-widget="LIB_SUBJECTS_HOLDER">
+	<div class="big20 instLibNavColor">&{'TXT_SUBJECTS'}</div>
+	<div class="greyTextColor" style="padding-top:6px;">&{'SEL_TO_VIEW_CONTENT_SUBJECT'}</div>
+	<div style="margin-top:10px;" class="instSubHolder" >
+	#{if data!=null && data.errorCode=="" && data.result.has('list') && data.result.list.length()>0}
+		#{list items:0..data.result.list.length()-1,as:'index'}
+		%{ course = data.result.list.get(index);}%
+		#{if course.has("recordState") && "ACTIVE".equals(course.recordState)}
+		<span class="instLibEachSub whiteTextColor doCStream" data-id="${course.id}" title="${course.name}" id="SUBJECT${course.id}"
+			name="SUBJECT"
+			data-brd-id="${course.id}" 
+			data-dept-id="${params.programId}">
+			*{<!--<span class="instLibNewSub">12 New</span>-->}*
+			<span class="instLibSubTxt" data-id="${course.id}">${course.name}</span>
+		</span>
+		#{/if}
+		#{/list}
+	#{/if}
+	#{else}
+		<div class="centerText instLibNoItemTxt">&{'NO_SUBS_FOUND'}</div>
+	#{/else}
+		<div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+</div>

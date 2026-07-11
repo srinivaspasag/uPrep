@@ -1,0 +1,88 @@
+%{
+    pkgInfo=pkgInfo.result.packages;
+    folders=pkgInfo.folders;
+}%
+<div id="packagePage" data-pkg-id="${pkgInfo.packageId}">
+    <div id="packageDetailsSection">  
+        <div class="pkgDetails">
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td class="grayHead width100">Title:</td>
+                        <td>
+                            <div>
+                                ${pkgInfo.name}
+                            </div>
+                        </td>                     
+                    </tr>
+                    #{if pkgInfo.has('desc')&&pkgInfo.desc!=""}
+                    <tr>
+                        <td class="grayHead width100">Description:</td>
+                        <td>
+                            ${pkgInfo.desc}
+                        </td>                     
+                    </tr>                 
+                    #{/if}
+                    <tr>
+                        <td class="grayHead width100">Added by:</td>
+                        <td>
+                            #{widgets.user20 user:pkgInfo.user /}
+                        </td>                     
+                    </tr>                                
+                </tbody>
+            </table>
+        </div>
+        <div class="pkgPageBtns">
+            <div class="pkgPageBtnsBody">
+                #{if session.userRole=='SUPER_USER'||session.userRole=='ADMIN'}
+                    #{if pkgInfo.status=="EXPORT_IN_PROGRESS"}
+                    <div class="userMessage leftText">Exporting under progress</div>
+                    #{common.publishProgressBar /}
+                    #{/if}
+                    #{else}
+                    <div class="gRedButton exportPackage" data-pkg-id="${pkgInfo.packageId}">Export</div>                
+                    #{/else}
+                #{/if}                
+            </div>
+            #{if pkgInfo.has('exportInfo')}
+                #{products.packageHistory exportInfo:pkgInfo.exportInfo,packageName:pkgInfo.name/}
+            #{/if}            
+        </div>                                  
+    </div>
+    <div id="packagePageContent">
+        <div class="packagePageTabs nonner">
+<!--            <div class="gButton togglePkgFolderList">Package Content</div>-->
+            <!--<div class="gButton gButtonActive togglePkgFolderContent">Library Content</div>-->
+        </div>
+        <div class="packageContentsList">
+            #{if folders.length()>0}
+            <div class="big16 grayHead">Contents in package</div>
+            <ul class="pkgListUl">
+                %{
+                    firstFolderId=folders.get(0).folderId;
+                }%
+                #{list items:0..folders.length()-1,as:'f'}
+                    %{
+                        folder=folders.get(f);                              
+                    }%
+                    <li>
+                        <a class="getPkgFolderContent" data-folder-id="${folder.folderId}">
+                            ${folder.name}
+                        </a>
+                    </li>
+                #{/list}                
+            </ul>
+            #{/if}
+            #{else}
+            <div class="userMessage">There is no content in this package.</div>
+            #{/else}
+        </div>
+        <div class="pkgFolderContent nonner"></div>   
+    </div>     
+</div>
+<script type="text/javascript">
+    new function(){        
+        var fn=function(){qrPackages.init({folderId:"${firstFolderId}",exportStatus:"${pkgInfo.status}",jobId:"${pkgInfo.jobId}"});}
+        lazyLoad([{fname:"qrPackages.js",cb:fn}]);        
+    }();    
+</script>  

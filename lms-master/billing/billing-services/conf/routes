@@ -1,0 +1,46 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           				controllers.Application.index()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               				controllers.Assets.at(path="/public", file)
+
+#ping
+GET    /application/ping                           controllers.Application.ping()
+
+POST	/counters/increment	   						controllers.Counters.increment()
+POST	/counters/incrementCounter	   				controllers.Counters.incrementCounter()
+POST	/invoices/generate	   						controllers.Invoices.generate()
+POST	/invoices/getBuyOrders      				controllers.Invoices.getBuyOrders()
+POST	/invoices/getSellOrders      				controllers.Invoices.getSellOrders()
+POST	/invoices/getOrder      					controllers.Invoices.getOrder()
+
+#
+GET		/payments/pay      							controllers.Payments.pay()
+POST    /payments/confirmPayment                    controllers.Payments.confirmPayment()
+GET     /paymentGateway.html                        controllers.Assets.at(path="/public", file="paymentGateway.html")
+POST	/payments/onPaymentReceived      			controllers.Payments.onPaymentReceived()
+GET 	/payments/onPaymentReceivedEBS      		controllers.Payments.onPaymentReceived()
+
+POST	/payments/startTransaction      			controllers.Payments.startTransaction()
+POST	/payments/getTransactionStatus      		controllers.Payments.getTransactionStatus()
+POST	/payments/getOrderItemInfo      			controllers.Payments.getOrderItemInfo()
+POST	/payments/updateTransaction      			controllers.Payments.updateTransaction()
+POST    /payments/applyCoupon                       controllers.Payments.applyCoupon()
+
+# Coupon Codes
+POST    /couponCodes/addCouponCode                  controllers.CouponCodes.addCouponCode()
+POST    /couponCodes/updateCouponCode               controllers.CouponCodes.updateCouponCode()
+POST    /couponCodes/deleteCouponCode               controllers.CouponCodes.deleteCouponCode()
+POST    /couponCodes/getActiveCodes                 controllers.CouponCodes.getActiveCodes()
+POST    /couponCodes/getCouponCode                  controllers.CouponCodes.getCouponCode()
+
+# LP Credits
+POST	/payments/applyLPCredits					controllers.Payments.applyLPCredits()
+POST	/payments/removeLPCredits					controllers.Payments.removeLPCredits()
+
+# Sales details
+POST   /sales/getSaleDetailsDisplayInfo             controllers.Sales.getSaleDetailsDisplayInfo()

@@ -1,0 +1,263 @@
+#{if testFullDetails!=null && testFullDetails.errorCode.isEmpty()}
+%{
+    testFullDetailsResult=testFullDetails.result.list;
+    totalhits = testFullDetails.result.totalhits;
+    testProgressCount = testFullDetails.result.testProgressCount;
+    testPausedCount = testFullDetails.result.testPausedCount;
+    testResumedCount = testFullDetails.result.testResumedCount;
+    testCompletedCount = testFullDetails.result.testCompletedCount;
+    start = Integer.parseInt(params.start);
+    size = Integer.parseInt(params.size);
+    showStart = totalhits >0 ? start+1 : start;
+    showSize = (start+size > totalhits ? totalhits : start+size);
+}%
+
+<style type="text/css">
+    .LMPrevActive,.LMNextActive{
+        opacity: 1;
+    }
+    .LMNextActive .LMAArrowImg{
+        background-image: url(/public/images/LMNextArrowActive.png);
+    }
+    .LMPrevActive .LMAArrowImg{
+        background-image: url(/public/images/LMPrevArrowActive.png);
+    }
+    #queryText{
+        transition: all 0.3s ease-out;
+        width: 200px;
+        height: 30px;
+        border-radius: 5px;
+        font-size: 16px;
+        padding: 0px 40px;
+    }
+    #queryText:focus{
+        border: 1px solid grey;
+    }
+    .attemptCount{
+        margin:5px 0px;
+    }
+</style>
+
+<div id="fullAttemptSheetPage" style="margin: 0 auto;padding: 0px 30px;">
+    <div id="testStatusLoader" class="nonner">
+        <span class="loadingSpanTop"></span>
+    </div>
+    <div class="big14 margBot10 nonner">Total Test Attempts : ${totalhits}</div>
+    <div class="showTestStatus" style="float: left;font-weight: bold;">
+        <div class="showTestResumedCount attemptCount nonner" style="color: #27BCEC;"></div>
+        <div class="showTestPausedCount attemptCount nonner" style="color:#ead300;"></div>
+    </div>
+    <div class="showTestStatus" style="float:right;font-weight: bold;">
+        <div class="showTestCompletedCount attemptCount nonner" style="color: green;"></div>
+        <div class="showTestProgressCount attemptCount nonner" style="color:red;"></div>
+    </div>
+    <div class="clear_with_divider" style="clear: both;"></div>
+    <div>
+        <div class="searchBoxHolder" style="position: relative;top:20px;">
+            <input type="text" name="queryText" id="queryText" value="${params.queryText}" placeholder="Search"/>
+            <span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>
+        </div>
+        <span class="refreshStudentsAttemptsList instImgs" style="position: absolute;right: 30px;"></span>
+        <div class="right" style="top: 40px;position: relative;margin-bottom: 25px;margin-top: 5px;">
+            <span class="LMArrowsDiv">
+                <span class="LMArrowsDivText ">
+                    <label class="LMAStart">${showStart}</label>
+                    -
+                    <label class="LMAStop">${showSize}</label>
+                    of
+                    <label class="LMATotal">${totalhits}</label>
+                </span>
+
+                <div class="LMPrevArrow LMArrowCheck #{if start ==0  }#{/if}#{else}LMPrevActive LMActive#{/else}">
+                    <span class="LMAArrowImg"></span>
+                </div>
+
+                <div class="LMNextArrow LMArrowCheck #{if start + size <totalhits}LMNextActive LMActive#{/if}#{else}#{/else}">
+                    <span class="LMAArrowImg"></span>
+                </div>
+            </span>
+        </div>
+    </div>
+    <div class="cleaner_with_divider"></div>
+    <div class="showTime" style="font-weight: bold;"></div>
+    <table class="marksSheetTable testStatusTable">
+        <tbody class="LMHandlerDiv">
+            <tr class="boldy color3">
+                <td>
+                    MemberId
+                </td>
+                <td>
+                    Student Details
+                </td>
+                <td class="totalTestMarksTd">
+                    Test Status
+                </td>
+                <td>
+                    Reset/End Test
+                </td>
+                <td>
+                    Start Time
+                </td>
+            </tr>
+             #{if testFullDetailsResult.length()>0}
+                #{list items:0..testFullDetailsResult.length()-1,as:'u'}
+                %{
+                    student=testFullDetailsResult.get(u);
+                }%
+                #{if !student.user.equals(null)}
+                 %{
+                    getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(student.user);
+                 }%
+                <tr>
+                    <td class="studentId">${student.memberId}</td>
+                    <td class="testMarksUserTd">
+                        <!-- #{widgets.img30 user:student.user/} -->
+                        <div class="left" style="padding:2px 10px;">
+                            <div>
+                                 <a class="${getUserClassAndUrl.className} blackTextColor" href="${getUserClassAndUrl.url}" 
+                                    data-user-id="${getUserClassAndUrl.id}">${student.user.firstName} ${student.user.lastName} </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="status">
+                        #{if student.testStatus == "FINISHED"}
+                            <span style="color: #31d331;font-weight: bold;"><center>COMPLETED</center></span>
+                        #{/if}
+                        #{elseif student.testStatus == "PAUSED"}
+                            <span style="color: #ead300;font-weight: bold;"><center>PAUSED</center></span>
+                        #{/elseif}
+                        #{elseif student.testStatus == "ONGOING"}
+                            <span style="color:red;font-weight: bold;"><center>IN-PROGRESS</center></span>
+                        #{/elseif}
+                        #{elseif student.testStatus == "RESUMED"}
+                            <span style="color:#27BCEC;font-weight: bold;"><center>RESUMED</center></span>
+                        #{/elseif}
+                    </td>
+                    <td class="buttonHolder">
+                        #{if student.testStatus == "FINISHED"}
+                            <span class="bigBlueButton editStudentTest #{if student.processed == false } disabled #{/if}" data-test-status="COMPLETED" style="background:#65c765" title="#{if student.processed == false } Analytics are currently being generated.Please wait #{/if}">Reset Test</span>
+                             <span class="bigBlueButton editStudentTest margTop10 margBot10 #{if student.processed == false } disabled #{/if}" data-test-status="REGENERATE_ANALYTICS" title="#{if student.processed == false } Analytics are currently being generated.Please wait #{/if}">Regenerate Analytics</span>
+                        #{/if}
+                        #{elseif student.testStatus == "ONGOING" || student.testStatus == "RESUMED"}
+                            <span class="bigBlueButton editStudentTest" data-test-status="PAUSED" style="margin-bottom:10px;background: #ead300">Pause Test</span>
+                            <span class="bigBlueButton editStudentTest" data-test-status="IN-PROGRESS" style="background: #d62c2c;">End Test</span>
+                        #{/elseif}
+                        #{elseif student.testStatus == "PAUSED"}
+                            <span class="bigBlueButton editStudentTest" data-test-status="RESUMED" style="margin-bottom:10px;">Resume Test</span>
+                            <span class="bigBlueButton editStudentTest" data-test-status="IN-PROGRESS" style="background: #d62c2c;">End Test</span>
+                        #{/elseif}
+                    </td>
+                    %{
+                        startTimeObj=uicom.util.Utilities.getDateMonthYearTime(student.startTime);
+                    }%
+                    <td>
+                        ${startTimeObj}
+                    </td>
+                </tr>
+                #{/if}
+                #{/list}
+             #{/if}
+             <input type="hidden" name="testProgressCount" class="testProgressCount" value="${testProgressCount}">
+             <input type="hidden" name="testCompletedCount" class="testCompletedCount" value="${testCompletedCount}
+             ">
+             <input type="hidden" name="testPausedCount" class="testPausedCount" value="${testPausedCount}">
+             <input type="hidden" name="testResumedCount" class="testResumedCount" value="${testResumedCount}
+             ">
+             #{else}
+                <tr>
+                    <td colspan='10'>
+                        <div class="userMessage">No Students have attempted this test.</div>
+                    </td>
+                </tr>
+             #{/else}
+        </tbody>
+    </table>
+</div>
+#{/if}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        var testId = $(".incommingTestId").val();
+        var orgId = $("#myInstitutePage").data("orgId");
+        $(".LMActive").off("click")
+                      .on("click",handlePagination)
+        var queryText = "${params.queryText}";
+        var oldQuery = "${params.queryText}";
+        $("#fullAttemptSheetPage").on("keypress","#queryText",queryEnterText)
+                                  .on("focusin","#queryText",searchDivFocus)
+                                  .on("blur","#queryText",searchDivBlur);
+
+        function searchDivFocus(e){
+            vtooltip.show(e,i18nJS("TYPE_AND_ENTER_TO_SEARCH"));
+        }
+        function searchDivBlur(e){
+            vtooltip.hide();
+        }
+        function queryEnterText(e){
+            if(e.which == 13){
+                vtooltip.hide();
+                var start = 0;
+                var size = "${size}";
+                queryText = $("#queryText").val();
+                if(queryText !== oldQuery){
+                    showTopLoader();
+                    console.log("Enter is pressed");
+                    callRequest(start,size,queryText);
+                }
+            }
+        }
+
+        function handlePagination(){
+            showTopLoader();
+            var start = "${start}";
+            var size = "${size}";
+            if($(this).hasClass("LMNextActive")){
+                start = parseInt(start) + parseInt(size);
+            }
+            else if($(this).hasClass("LMPrevActive")){
+                start = parseInt(start) -parseInt(size);
+            }
+            // var queryText = $("#queryText").val();
+            callRequest(start,size,queryText)
+        }
+
+        function callRequest(start,size,queryText){
+            var holder = $(".handleTest").removeClass("nonner");
+            // var queryText = $("#queryText").val();
+            var params = {
+                orgId:orgId,
+                entity:{
+                    type:"TEST",
+                    id:testId
+                },
+                start:start,
+                size:size
+            };
+            params.queryText = queryText;
+            vReq.get("/Tests/testStudentsAttemptsList",params,function(data){
+                hideTopLoader();
+                holder.html(data);
+            });
+        }
+
+        var testProgressCount = $(".testProgressCount").val();
+        var testCompletedCount = $(".testCompletedCount").val();
+        var testPausedCount = $(".testPausedCount").val();
+        //console.log(testPausedCount);
+        var testResumedCount = $(".testResumedCount").val();
+        $(".showTime").text("Last updated at "+new Date().toLocaleString());
+        if(testProgressCount > 0){
+            $(".showTestProgressCount").removeClass("nonner").html("Test In Progress: "+testProgressCount);
+        }
+        if(testCompletedCount > 0){
+            $(".showTestCompletedCount").removeClass("nonner").html("Test Completed: "+testCompletedCount);
+        }
+        if(testPausedCount > 0) {
+            //console.log("I m being paused");
+            $(".showTestPausedCount").removeClass("nonner").html("Test Paused: "+testPausedCount);
+        }
+        if(testResumedCount > 0){
+            $(".showTestResumedCount").removeClass("nonner").html("Test Resumed: "+testResumedCount);
+        }
+    });
+</script>

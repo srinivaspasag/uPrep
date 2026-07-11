@@ -1,0 +1,38 @@
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Unsubscribe' /}
+<style type="text/css">
+body{
+	background-color:#f6f6f6;
+}
+.mainRegHolder {
+	background-color:transparent;
+	box-shadow:none;
+}
+</style>
+<div class="unsubscribeEmailWrapper">
+        <input type="hidden" value="${userId}" id="userId"/>
+        <input type="hidden" value="${mailCategory}" id="mailCategory"/>
+	<div class="vedantuNameWrapper">
+        	<div class="vedantuTitle"></div>
+        </div>
+        <div class="unsubscribeContent">
+            <div class="centerText" style="padding:20px 0;font-size:20px;font-weight:bold;">&{'login.UNSUBSCTIBE_EMAIL'}</div>
+	    <div class="regInputBoxHolder">
+            	<textarea type="text" id="unsubscribeReason" placeholder="Reason" 
+			style="width:100%;height:50px;" name="" ></textarea>
+		<div class="smally greyTextColor">Please let us know, your reason to unsubscribe.</div>
+	    </div>
+	    <div class="centerText" style="padding:30px 0;">
+            	<span class="unsubscribeEmail">Submit</span>
+	    </div>
+        </div>
+	<div class="errorWrapperDiv">
+        	<div class="errorWrapper centerText">
+            		<span class="blankError" style="display:none;">&{'login.BLANK_FIELD'}</span>
+        	</div>
+        	<div class="serverErrorMsg centerText">
+            		<span>Please drop us a mail regarding email unsubscription to : </span>
+            		<a href="mailto:info@learnpedia.in">contact us</a>
+        	</div>
+	</div>
+</div>

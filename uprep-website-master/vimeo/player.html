@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vimeo Player - Digital Students</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171772510-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-171772510-2');
+</script>
+</head>
+<body oncontextmenu="return false">
+<div>Vimeo Video Player Utility</div>
+<div id="made-in-ny" oncontextmenu="return false"></div>
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+	  var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+    return false;
+};
+
+var Videoid = getUrlParameter('id');
+console.log(Videoid);
+    var options = {
+        id: Videoid,
+        width: 1200,
+        loop: true
+    };
+
+    var madeInNy = new Vimeo.Player('made-in-ny', options);
+
+</script>
+<script type="text/javascript">
+window.oncontextmenu = function() {return false;}
+</script>
+
+</body>
+</html>

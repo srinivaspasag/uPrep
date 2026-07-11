@@ -1,0 +1,75 @@
+%{
+    allowInstShare = params.allowAllShare == "true" ? true : false;
+}%
+<div class="middleSec CSWidget" data-widget="SHARE_WITH_INSTITUTE">
+    <div class="instSharedDetails nonner">
+        <div class="instEachSharedHolder">
+        <div class="instEachSharedCenter nonner">
+            <span class="txt"></span><!--Sankalp - Non-Medical / Patiala / S1-->
+            <span class="right crossIt"></span>
+        </div>
+        </div>
+        <div style="padding-bottom:25px;">
+            <a class="instShareAddMore right smally">Add More</a>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+        </div>
+        <div class="fullWidth borderBottom"></div>
+    </div>
+    <div class="instShareBatches">
+        <span class="big12 boldy">Program</span>
+        #{if data!=null && data.programs.length()>0}
+                <select class="vChoose instSelectShareBatch" title="Select Batch"
+             data-default-text="#{if allowInstShare == true}All#{/if}#{else}None#{/else}"
+             data-default-val="#{if allowInstShare == true}ORG#{/if}"
+             data-value="#{if allowInstShare == true}ORG#{/if}"
+                     data-cs-name="SELECT_BATCH" data-onchange="instShareBatchChanged">
+                  <div class="vChooseHead width220">
+            #{if allowInstShare == true}
+                All
+            #{/if}
+            #{else}
+                None
+            #{/else}
+           </div>
+                  <div class="vChooseDownIcon"></div>
+                  <div class="vChooseDropDown">
+            #{if allowInstShare == true}
+                        <option class="vChooseOpt" data-value="ORG"
+                             title="Whole Organization">All</option>
+            #{/if}
+                        #{list items:0..data.programs.length()-1,as:'index'}
+                        %{
+                                program = data.programs.get(index);
+                        }%
+                        <option class="vChooseOpt" data-value="${program.id}"
+                             data-opt-params='{"batchIndex":"${index}"}'
+                             title="${program.name}">
+                            ${program.name}
+                        </option>
+                        #{/list}
+                  </div>
+                </select>
+        #{/if}
+        #{else}
+            <div class="smally boldy singleLineText redTextColor centerText">
+                No programs Found.
+            </div>
+        #{/else}
+    </div>
+    <div class="instShareCentersHolder">
+        *{#{include 'tags/institute/shareWith/centers.html'/}}*
+    </div>
+    *{<!-- NO GROUPS Avalibale now, disabling group share
+    <div style="padding:10px;" class="centerText boldy big12">Or With</div>
+    <div style="padding:12px 112px;">
+            <span class="big12 boldy">Groups</span>
+            <div class="vChoose instSelectShareGroup">
+              <div class="vChooseHead">None</div>
+              <div class="vChooseDownIcon"></div>
+              <div class="vChooseDropDown">
+                  <div class="vChooseOpt" data-value="">None</div>
+              </div>
+            </div>
+    </div>
+    -->}*
+</div>

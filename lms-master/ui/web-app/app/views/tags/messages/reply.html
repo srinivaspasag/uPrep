@@ -1,0 +1,31 @@
+<table cellpadding=0 cellspacing=0 class="msgConvPostReplyTable">
+*{
+	myProfileLink = "/myprofile";
+	myProfileClass = "openMyProfile";
+	myUserId = session.get('userId');
+	if(params.orgId!=null && !params.orgId.isEmpty()){
+		myProfileLink = "/organization/+"params.orgId+"/profile/"+session.get('userId');
+		myProfileClass = "openInstProfile";
+	} 
+}*
+<tr>
+  <td style="vertical-align:top;">
+      <a id="profilePage" href="${myProfileLink}" class="ptrTagInline doCStream ${myProfileClass}"
+           data-cs-name="MY_PROFILE_TAB" data-user-id="${myUserId}">
+              <img src='${session.profilePic}'  class='img30'
+                      data-user-id='${session.userId}' alt="" title="${session.fullname}" />
+      </a>
+  </td>
+  <td>
+  <div class="msgConvPostReply RTEClosed" data-sender-id="${session.userId}">
+      <div class="placeHolderRTE">&{'CONV_MSG_REPLY'}</div>
+      <div class="msgConvPostRTE">
+      </div>
+      <div class="msgConvPostBtns">
+              <span class="greenButton submitMsgConvReply">&{'TXT_SUBMIT'}</span>
+              <span class="redTextColor cancelMsgConvReply">&{'TXT_CANCEL'}</span>
+      </div>
+  </div>
+  </td>
+</tr>
+</table>

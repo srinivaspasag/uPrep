@@ -1,0 +1,33 @@
+<div class="cmdsPopupHead">
+    Status
+</div>
+#{if resp.result.length()>0}
+<table class="cmdsQuesnsPopup">
+    <thead class="grayHead">
+        <tr>
+            <td>Question</td>
+            <td style="width: 25%">Status</td>
+        </tr>
+    </thead>
+    <tbody>
+        #{list items:0..resp.result.length()-1,as:'i'}
+            %{
+                ques=resp.result.get(i);
+            }%
+            <tr>
+                <td class="popupQues_${ques.qid}"></td>
+                <td>
+                    #{if ques.errorMessage==""}
+                    #{/if}
+                    #{else}
+                    
+                    #{/else}
+                </td>
+            </tr>
+        #{/list}
+    </tbody>
+</table>
+#{/if}
+#{else}
+<div class="userMessage">No Questions Found</div>
+#{/else}

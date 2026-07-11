@@ -1,0 +1,787 @@
+@font-face {
+    font-family: "Symbola";
+    src:url('../../Symbola.eot?#iefix') format('embedded-opentype'),
+        url('../../Symbola.ttf') format('truetype')
+
+        
+}
+
+@font-face {
+    font-family: Ubuntu;
+    src: url(../fonts/Ubuntu-Regular.ttf);
+}
+.cleaner_with_divider {
+    clear: both;
+    width: 100%;
+    height: 0px;
+    font-size: 1px;
+}
+.centry{
+    text-align: center;
+}
+.hider{
+    visibility: hidden;
+}
+
+.linBlk{
+    display: inline-block;
+}
+::selection {
+    background-color: transparent;
+    color: #373737;
+}
+
+::-moz-selection {
+    background-color: transparent;
+    color: #373737;
+}
+
+::-webkit-selection {
+    background-color: transparent;
+    color: #373737;
+}
+
+
+#feBlock{
+    background: none repeat scroll 0 0 transparent;
+    position: relative;
+    z-index: 11;
+}
+
+
+
+/*feholder*/
+#FEWrapper{
+    background-color: #E4E4E4;
+    font-family: 'Ubuntu',tahoma,verdana,arial,sans-serif;
+    margin: 5px auto 0;
+    max-width: 750px;
+    min-height: 100px;
+    padding: 15px 35px 40px;
+    position: relative;
+}
+#FEHead{
+    color: #333333;
+    font-size: 17px;
+    margin-bottom: 25px;
+    position: relative;
+    text-align: center;
+}
+.feHeadImg{
+    vertical-align: bottom;
+}
+.FEFamily {
+    float: left;
+    margin-bottom: 2px;
+    margin-right: 2px;
+    position: relative;
+    vertical-align: middle;
+}
+.FEFamilyHead{
+    background-color: #FFFFFF;
+    border: 1px solid #E4E4E4;
+    border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    font-size: 18px;
+    height: 46px;
+    line-height: 200%; /*no logic used, an adjustment to align vertically center*/
+    position: relative;
+    text-align: center;
+    transition: background 0.2s ease 0s;
+    width: 83px;
+}
+.FEFamilyClicked .FEFamilyHead{
+    border-color: #CCCCCC #CCCCCC #FFFFFF;
+    border-radius: 4px 4px 0 0;
+    z-index: 101;
+}
+.FEFamilyHead:hover{
+    background-color: #66CCFF;
+}
+.FEFamilyClicked .FEFamilyHead:hover{
+    background-color: #FFFFFF;
+}
+.FEFamilyHeadTop {
+    background-color: #F4F4F4;
+    border-radius: 35px 35px 0 0;
+    height: 3px;
+}
+.FEFamilyHead:hover .FEFamilyHeadTop{
+    background-color: #56D1BF;
+}
+.FEFamilyClicked .FEFamilyHead:hover .FEFamilyHeadTop{
+    background-color: #F4F4F4;
+}
+.FEFamilySubFamilyContent{
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    display: none;
+    font-size: 18px;
+    line-height: 100%;
+    min-height: 100px;
+    position: absolute;
+    top: 47px;
+    z-index: 100;
+}
+.FEFamilyClicked .FEFamilySubFamilyContent{
+    display: block;
+}
+.FETBSubItem,.FETBMatrixCountItem,.FETBSubItemForFamilyHead,.FETBSubItemSymbol{
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 7px;
+    text-align: center;
+    transition: background 0.2s ease 0s;
+}
+.FETBSubItem{
+    margin: 0;
+    text-align: left;
+}
+.FETBSubItem:hover,.FETBSubItemSymbol:hover{
+    background-color: #66CCFF;
+}
+.FETBSubItem .feSmallPH,.FETBSubItemForFamilyHead .feSmallPH{
+    min-width: 2px !important;
+    min-height: 1px !important;
+    background-color: #000000;
+}
+.FEFamily .feEqnParent{
+    margin: 0;
+}
+.FEFamily .feSmallPH,.FEFamily .fePH{
+    border-style: solid;
+}
+.FETBSubItemSymbol {
+    margin-right: 0;
+    padding: 7px 5px 8px 7px;
+    width: 20px;
+    text-align: left;
+}
+
+/*adjustments made for different types of families to show them right on tool bar*/
+.FETBSubItemForFamilyHead .feEqnParent{
+    font-size: 11px;
+    line-height: 100%;
+}
+.FEFamilySubFamilyContent .FETBSubItem {
+    font-size: 7px;
+    line-height: 100%;
+}
+.FEFamilySymbols{
+    font-family: Times New Roman;
+}
+.FEFamilySymbols .FEFamilySubFamilyContent{
+    width: 130px;
+}
+.FEFamilyBRACES{
+    clear: both;
+}
+.FEFamilyBRACES .FEFamilySubFamilyContent{
+    width: 130px;
+}
+.FEFamilyBRACES .FETBSubItem {
+    color: #000000;
+    font-size: 10px;
+    height: 25px;
+    padding-top: 5px;
+    text-align: center;
+    width: 30px;
+}
+.FEFamilyBRACES .feIcon {
+    position: relative;
+    top: -0.1em;
+}
+.FEFamilyFRAC_ROOT .FETBSubItem {
+    font-size: 11px;
+    padding: 3px 0 3px 5px;
+    width: 30px;
+}
+.FEFamilySIGMA .FEFamilySubFamilyContent{
+    width: 110px;
+}
+.FEFamilySIGMA .FETBSubItem {
+    height: 30px;
+    text-align: center;
+    width: 27px;
+}
+.FEFamilySIGMA .feEqnParent {
+    margin-top: 10px;
+}
+.FEFamilySIGMA .feEqnParentTOP_BOTTOM_LIMITS{
+    margin-top: 0;
+}
+.FEFamilySIGMA .feEqnParentADJACENT_LIMITS{
+    margin-top: 5px;
+}
+.FEFamilyINTEGRAL .FEFamilySubFamilyContent{
+    width: 120px;
+}
+.FEFamilyINTEGRAL .FETBSubItem {
+    height: 30px;
+    text-align: center;
+    width: 30px;
+}
+.FEFamilyINTEGRAL .feEqnParent {
+    margin-top: 8px;
+}
+.FEFamilyINTEGRAL .feEqnParentSINGLE_WITH_TOP_LIMITS{
+    margin-top: 0;
+}
+.FEFamilyINTEGRAL .feEqnParentSINGLE_WITH_ADJACENT_LIMITS{
+    margin-top: 3px;
+}
+.FEFamilyINTEGRAL .feEqnParentSINGLE_WITH_BOTTOM_LIMIT{
+    margin-top: 7px;
+}
+.FEFamilyINTEGRAL .feEqnParentSINGLE_WITH_ADJACENT_BOTTOM_LIMIT,
+.FEFamilyINTEGRAL .feEqnParentDOUBLE_WITH_ADJACENT_BOTTOM_LIMIT,
+.FEFamilyINTEGRAL .feEqnParentTRIPLE_WITH_ADJACENT_BOTTOM_LIMIT,
+.FEFamilyINTEGRAL .feEqnParentSINGLE_CIRCULAR_WITH_ADJACENT_BOTTOM_LIMIT,
+.FEFamilyINTEGRAL .feEqnParentDOUBLE_CIRCULAR_WITH_ADJACENT_BOTTOM_LIMIT,
+.FEFamilyINTEGRAL .feEqnParentTRIPLE_CIRCULAR_WITH_ADJACENT_BOTTOM_LIMIT{
+    margin-top: 11px;
+}
+
+
+
+.FEFamilyINTEGRAL .feEqnParentSINGLE_WITH_ADJACENT_LIMITS{
+    margin-top: 3px;
+}.FEFamilyINTEGRAL .feEqnParentSINGLE_WITH_ADJACENT_LIMITS{
+    margin-top: 3px;
+}
+.FEFamilyINTEGRAL .feEqnParentSINGLE_WITH_ADJACENT_LIMITS{
+    margin-top: 3px;
+}
+
+
+.FEFamilyARROWS .FEFamilySubFamilyContent{
+    width: 140px;
+}
+.FEFamilyARROWS .FETBSubItem {
+    font-size: 13px;
+    height: 35px;
+    text-align: center;
+    width: 45px;
+}
+.FEFamilyARROWS .feEqnParent {
+    margin-top: -3px;
+}
+.FEFamilyARROWS  .feEqnParentRIGHT_ARROW_BOTTOM,
+.FEFamilyARROWS  .feEqnParentLEFT_ARROW_BOTTOM,
+.FEFamilyARROWS  .feEqnParentLEFT_RIGHT_ARROW_BOTTOM,
+.FEFamilyARROWS  .feEqnParentRIGHT_OVER_LEFT_ARROW_BOTTOM,
+.FEFamilyARROWS  .feEqnParentLEFT_OVER_RIGHT_ARROW_BOTTOM,
+.FEFamilyARROWS  .feEqnParentREVERSIBLE_ARROW_BOTTOM{
+    margin-top: 8px;
+}
+
+
+
+
+
+.FEFamilyEX .FEFamilySubFamilyContent {
+    width: 100px;
+}
+.FEFamilyEX .FETBSubItem {
+    font-size: 10px;
+    height: 30px;
+    text-align: center;
+    width: 30px;
+}
+.FEFamily .feULEX_ADJACENT_LIMITS {
+    padding-bottom: 0.5em;
+}
+.FEFamily .feLLEX_ADJACENT_LIMITS {
+    padding-top: 0.8em;
+}
+.FEFamilyEX .feEqnParentBASE_BOTTOM,.FEFamilyEX .feEqnParentBASE{
+    margin-top: 7px;
+}
+
+
+.FEFamilyCAP .FEFamilySubFamilyContent{
+    width: 150px;
+}
+.FEFamilyCAP .FETBSubItem {
+    text-align: center;
+    height: 30px;
+    width: 30px;
+}
+.FEFamilyCAP .feEqnParent {
+    margin-top: 7px;
+}
+.FEFamilyCAP .feEqnParentPRODUCT_WITH_TOP_LIMITS,
+.FEFamilyCAP .feEqnParentCOPRODUCT_WITH_TOP_BOTTOM_LIMITS,
+.FEFamilyCAP .feEqnParentINTERSECTION_WITH_TOP_BOTTOM_LIMITS,
+.FEFamilyCAP .feEqnParentUNION_WITH_TOP_BOTTOM_LIMITS{
+    margin-top: 0;
+}
+.FEFamilyCAP .feEqnParentPRODUCT_WITH_ADJACENT_BOTTOM_LIMIT,
+.FEFamilyCAP .feEqnParentCOPRODUCT_WITH_ADJACENT_BOTTOM_LIMIT,
+.FEFamilyCAP .feEqnParentINTERSECTION_WITH_ADJACENT_BOTTOM_LIMIT,
+.FEFamilyCAP .feEqnParentUNION_WITH_ADJACENT_BOTTOM_LIMIT{
+    margin-top: 12px;
+}
+
+
+
+
+
+/*composer area*/
+#FEComposerAreaHolder{
+    background-color: #FFFFFF;
+    border-radius: 4px 4px 4px 4px;
+    clear: both;
+    height: 160px;
+    margin: 10px 0 17px;
+    overflow: auto;
+    padding: 10px;
+    position: relative;
+}
+#FEComposerArea {
+    font-size: 26px;
+    line-height: 100%;
+}
+
+
+
+/*cursor position related styles*/
+#feVerticalCursor{
+    background-color: #373737;
+    display: none;
+    height: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 2px;
+    z-index: 12;
+}
+#feHorizontalCursor{
+    background-color: #373737;
+    display: none;
+    height: 2px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: 12;
+}
+#feSelectionMarker{
+    background-color: #33BAD7;
+    display: none;
+    left: 0;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: 13;
+}
+#feTestDivForStringWidth{
+    float: left;
+    font-family: Times New Roman;
+    font-size: 26px;
+    font-style: italic;
+    position: absolute;
+    visibility: hidden;
+    white-space: pre;
+}
+
+
+
+.feSmallPH,.fePH,.fePHTrans{
+    font-size: 100%;
+    font-style: italic;
+    line-height: 100%;
+    outline: 0 none;
+    vertical-align: middle;
+    white-space: pre;
+}
+#feBlock,.feEqnParent table,.fePHDiv,.alignerBlock{
+    display: inline-block;
+}
+.alignerBlockBalancer{
+    display: inline-block;
+    width: 0;
+}
+.feEqnParent {
+    display: inline-block;
+    margin: 0.1em;
+    position: relative;
+}
+.feEqnParent.feEqnParentBSDel{
+    background-color: #63E0FF;
+}
+.feSmallPH,.fePH, .fePHTrans, .fePHTrans.fePHTransInitial{
+    border: 1px dashed #888888;
+    cursor: text;
+    display: inline-block;
+    font-family: Times New Roman;
+    min-height: 1em;
+    min-width: 0.5em;
+}
+.feSmallPHDiv{
+    display: inline-block;
+    font-size: 57.5%;
+    letter-spacing: normal;
+    line-height: 100%;
+    margin: 0.2em;
+    position: relative;
+    text-align: left;
+}
+.fePHMatured,.fePHTransInitial.fePHMatured{
+    border: 1px solid transparent;
+    min-width: 0 !important;
+}
+.fePHTrans{
+    border: none;
+    min-width: 3px;
+    position: relative;
+}
+.fePHDivMatured{
+    min-width: 0 !important;
+}
+.fePH:focus,.feSmallPH:focus,.fePHTransInitial:focus{
+    background-color: #F4F4F4;
+}
+.feLL{
+    float: left;
+}
+.feEqnParent td{
+    line-height: 0;
+}
+
+/*for integral*/
+.feIconINTEGRAL {
+    font-family: FreeSerif;
+    font-size: 200%;
+    line-height: 100%;
+    margin-bottom: -0.05em;
+    margin-top: 0.05em;
+}
+.alignerBlockINTEGRAL{
+    margin-right: 0.2em;
+    vertical-align: -0.1em;
+}
+.alignerBlockINTEGRAL_TOP_BOTTOM_LIMITS{
+    text-align: center;
+}
+.feULINTEGRAL{
+    margin-left: 0.8em;
+}
+.feULINTEGRAL_ADJACENT_LIMITS{
+    margin-left: 2.2em;
+}
+.feIconINTEGRAL_ADJACENT_LIMITS{
+    line-height: 45%;
+}
+/*subfamily specific styles*/
+.feLLSINGLE_WITH_TOP_LIMITS,
+.feLLSINGLE_WITH_BOTTOM_LIMIT,
+.feLLDOUBLE_WITH_BOTTOM_LIMIT,
+.feLLTRIPLE_WITH_BOTTOM_LIMIT,
+.feLLSINGLE_CIRCULAR_WITH_BOTTOM_LIMIT,
+.feLLDOUBLE_CIRCULAR_WITH_BOTTOM_LIMIT,
+.feLLTRIPLE_CIRCULAR_WITH_BOTTOM_LIMIT{
+    text-align: center;
+    width: 100%;
+}
+.feLLSINGLE_WITH_ADJACENT_LIMITS,
+.feLLSINGLE_WITH_ADJACENT_BOTTOM_LIMIT,
+.feLLSINGLE_CIRCULAR_WITH_ADJACENT_BOTTOM_LIMIT{
+    margin-left: 1.5em;
+}
+.feLLDOUBLE_WITH_ADJACENT_BOTTOM_LIMIT,
+.feLLDOUBLE_CIRCULAR_WITH_ADJACENT_BOTTOM_LIMIT{
+    margin-left: 2.5em;
+}
+.feLLTRIPLE_WITH_ADJACENT_BOTTOM_LIMIT,
+.feLLTRIPLE_CIRCULAR_WITH_ADJACENT_BOTTOM_LIMIT{
+    margin-left: 3.7em;
+}
+
+
+/*sigma*/
+.feIconSIGMA{
+    font-family: FreeSerif;
+    font-size: 275%;
+    line-height: 72%;
+    margin-bottom: -0.07em;
+}
+.feIconSIGMA_ADJACENT_LIMITS{
+    line-height: 25%;
+}
+.alignerBlockSIGMA{
+    vertical-align: -0.6em;
+}
+.alignerBlockSIGMA_TOP_BOTTOM_LIMITS{
+    text-align: center;
+}
+.feULSIGMA_TOP_BOTTOM_LIMITS,
+.feLLSIGMA_TOP_BOTTOM_LIMITS{
+    text-align: center;
+    width: 100%;
+}
+.feULSIGMA_ADJACENT_LIMITS,
+.feLLSIGMA_ADJACENT_LIMITS{
+    margin-left: 3em;
+}
+
+
+/*product intersection union*/
+.feIconCAP {
+    font-family: FreeSerif;
+    font-size: 220%;
+    line-height: 90%;
+    margin-bottom: -0.05em;
+}
+.feIconCAP_ADJACENT_LIMITS{
+    line-height: 30%;
+}
+.alignerBlockCAP {
+    margin-right: 0.1em;
+    vertical-align: -0.2em;
+}
+.alignerBlockCAP_TOP_BOTTOM_LIMITS {
+    text-align: center;
+}
+.feULCAP_TOP_BOTTOM_LIMITS,
+.feLLCAP_TOP_BOTTOM_LIMITS {
+    text-align: center;
+    width: 100%;
+}
+.feULCAP_ADJACENT_LIMITS,
+.feLLCAP_ADJACENT_LIMITS{
+    margin-left: 3.3em;
+}
+.feULUNION_WITH_ADJACENT_LIMITS,
+.feLLUNION_WITH_ADJACENT_LIMITS,
+.feLLUNION_WITH_ADJACENT_BOTTOM_LIMIT,
+.feULINTERSECTION_WITH_ADJACENT_LIMITS,
+.feLLINTERSECTION_WITH_ADJACENT_LIMITS,
+.feLLINTERSECTION_WITH_ADJACENT_BOTTOM_LIMIT{
+    margin-left: 2.9em;
+}
+.feLLINTERSECTION_WITH_BOTTOM_LIMIT,
+.feLLINTERSECTION_WITH_TOP_BOTTOM_LIMITS,
+.feLLUNION_WITH_BOTTOM_LIMIT,
+.feLLUNION_WITH_TOP_BOTTOM_LIMITS{
+    margin-top: -0.1em;
+}
+.feULINTERSECTION_WITH_BOTTOM_LIMIT,
+.feULINTERSECTION_WITH_TOP_BOTTOM_LIMITS,
+.feULUNION_WITH_BOTTOM_LIMIT,
+.feULUNION_WITH_TOP_BOTTOM_LIMITS{
+    margin-bottom: -0.1em;
+}
+
+
+
+
+/*e power x*/
+.alignerBlockEX_ADJACENT_LIMITS{
+    line-height: 0;
+}
+.feEqnParentEX_TOP_BOTTOM_LIMITS {
+    text-align: center;
+}
+.feULEX_TOP_BOTTOM_LIMITS,.feLLEX_TOP_BOTTOM_LIMITS {
+    margin: 0.2em 0;
+    text-align: center;
+    width: 100%;
+}
+.feULEX_ADJACENT_LIMITS{
+    display: block;
+}
+
+
+/*fractions*/
+.feEqnParentFRACTION {
+    margin: 0.5em;
+    vertical-align: -0.55em;
+}
+.feSubFamilyFRACTION {
+    padding: 0 0.2em;
+    vertical-align: -0.5em;
+}
+.feEqnFRAC_ROOT_UL {
+    display: block;
+    margin-bottom: 0.15em;
+    padding: 0 0.2em;
+    text-align: center;
+}
+.feEqnFRAC_ROOT_LL {
+    border-top: 1px solid;
+    float: right;
+    margin-right: -0.2em;
+    padding: 0.1em 0.2em 0;
+    text-align: center;
+    width: 100%;
+}
+.alignerBlockANY_ROOT {
+    margin-right: -0.5em;
+    position: relative;
+    vertical-align: -0.5em;
+    z-index: 1;
+}
+.feULANY_ROOT{
+    display: block;
+}
+
+/*square roots and division*/
+.feIconSQUARE_ROOT,.feIconANY_ROOT {
+    color: #373737;
+    display: inline-block;
+    font-family: Georgia;
+    transform: scale(1, 1.3);
+    -webkit-transform: scale(1, 1.3);
+    -moz-transform: scale(1, 1.3);
+    -ms-transform: scale(1, 1.3);
+    -o-transform: scale(1, 1.3);
+    -webkit-transform-origin: center top 0;
+    -moz-transform-origin: center top 0;
+    -ms-transform-origin: center top 0;
+    -o-transform-origin: center top 0;
+    transform-origin: center top 0;
+    vertical-align: top;
+}
+.feCoreSQUARE_ROOT,.feCoreANY_ROOT {
+    border-top: 1px solid #373737;
+    padding: 0.1em 0.2em 0.2em;
+}
+.feIconDIVISION,.feIconDIVISION_WITH_QUOTIENT{
+    display: inline-block;
+    font-family: Times New Roman;
+    margin-right: -0.3em;
+    transform: scale(1, 1.9);
+    -webkit-transform: scale(1, 1.9);
+    -moz-transform: scale(1, 1.9);
+    -ms-transform: scale(1, 1.9);
+    -o-transform: scale(1, 1.9);
+    -webkit-transform-origin: center bottom 0;
+    -moz-transform-origin: center bottom 0;
+    -ms-transform-origin: center bottom 0;
+    -o-transform-origin: center bottom 0;
+    transform-origin: center bottom 0;
+    vertical-align: bottom;
+}
+.alignerBlockDIVISION,.alignerBlockDIVISION_WITH_QUOTIENT{
+    border-bottom: 1px solid;
+    line-height: 0;
+    margin-bottom: -0.05em;
+    padding: 0 0 0 0.1em;
+    text-align: center;
+    width: 100%;
+}
+.feULDIVISION,.feULDIVISION_WITH_QUOTIENT{
+    text-align: center;
+}
+.feCoreDIVISION,.feCoreDIVISION_WITH_QUOTIENT{
+    border-top: 1px solid;
+    padding: 0.15em 0 0.2em 0.5em;
+    text-align: center;
+}
+.feCoreDIVISION{
+    padding-left: 0.3em;
+}
+
+
+
+
+/*braces*/
+.feIconBRACES {
+    display: inline-block;
+    font-family: Times New Roman;
+    transform: scale(1, 1.5);
+    -webkit-transform: scale(1, 1.5);
+    -moz-transform: scale(1, 1.5);
+    -ms-transform: scale(1, 1.5);
+    -o-transform: scale(1, 1.5);
+    -webkit-transform-origin: center bottom 0;
+    -moz-transform-origin: center bottom 0;
+    -ms-transform-origin: center bottom 0;
+    -o-transform-origin: center bottom 0;
+    transform-origin: center bottom 0;
+    vertical-align: bottom;
+}
+.feCoreBRACES {
+    margin: 0 0.075em;
+    padding: 0.2em 0;
+}
+
+.feEqnParentARROWS {
+    text-align: center;
+    vertical-align: -0.2em;
+}
+.feIconARROWS {
+    display: inline-block;
+    font-family: Times New Roman;
+    font-size: 125%;
+    line-height: 50%;
+    margin: 0 0.4em;
+    transform: scale(2, 1);
+    -webkit-transform: scale(2, 1);
+    -moz-transform: scale(2, 1);
+    -ms-transform: scale(2, 1);
+    -o-transform: scale(2, 1);
+}
+.feULARROWS {
+    margin: 0;
+    position: relative;
+    text-align: center;
+    top: 0.3em;
+    width: 100%;
+    z-index: 20;
+}
+.feLLARROWS {
+    bottom: 0.3em;
+    margin: 0;
+    position: relative;
+    text-align: center;
+    width: 100%;
+}
+
+
+
+.feFamilyVariantsHolder{
+    background-color: #FFFFFF;
+    padding: 5px;
+}
+.feButton{
+    border-radius: 4px 4px 4px 4px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 15px;
+    height: 30px;
+    margin-top: 5px;
+    min-width: 94px;
+    text-align: center;
+    transition: background 0.2s ease 0s;
+}
+.feButtonTop{
+    background-color: #78CF78;
+    border-radius: 35px 35px 0 0;
+    height: 4px;
+    margin-bottom: 1px;
+}
+.feSubmitEqn,.getPlayEqn{
+    background-color: #7FD87F;
+    float: right;
+}
+.feSubmitEqn:hover,.getPlayEqn:hover{
+    background-color: #78CF78;
+}
+.feClose{
+    background-color: #7D7D7D;
+}
+.feClose .feButtonTop,.feClose:hover{
+    background-color: #6C6C6C;
+}
+.RTELatex {
+    display: inline-block;
+    padding: 0 5px;
+}
+#FEWrapperHolder{
+    bottom: 25px;
+    position: relative;
+}

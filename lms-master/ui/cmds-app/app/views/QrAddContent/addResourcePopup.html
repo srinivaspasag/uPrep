@@ -1,0 +1,47 @@
+<div id="addResourcePopupContainer">
+    <div class="big20" style="padding-bottom:30px;" id="uploadResourceTitle">&{'ADD_'+TYPE}</div>
+<div class="" id="addResourcePopupDiv">
+	<table class="fullWidth" cellpadding=0 cellspacing=0>
+		<tr class="">
+			<td class="big16 addResourcePopupTd">&{'TITLE'}</td>
+			<td class="addResourcePopupInputTd">
+				<div>
+					<input type="text" class="inputDiv addResourcePopupTitleInput" maxlength="256"/>
+				</div>
+			</td>
+		</tr>
+		<tr class="">
+			<td class="big16 addResourcePopupTd">&{'UPLOAD'}</td>
+			<td class="addResourcePopupInputTd">
+				<div class="uploadResourcePopupDiv"></div>
+				#{widgets.corsUpload/}
+			</td>
+		</tr>
+		<tr class="">
+			<td></td>
+			<td class="redTextColor smally" id="uploadResourceSupportedText">&{'SUPPORTED_'+TYPE+'_FORMAT_INFO'}</td>
+		</tr>
+		<tr class="">
+			<td class="big16 addResourcePopupTd">&{'DESCRIPTION'}</td>
+			<td class="addResourcePopupInputTd">
+				<div>
+					<textarea class="textareaDiv addResourcePopupDesc"/>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="big16 addResourcePopupTd">&{'TAGS'}</td>
+			<td class="addResourcePopupInputTd">
+			   <div class="addTagsForResourcePopup">
+               			#{UIComWidgets.tagging target:'POPUP_ADD_RESOURCE',addTagsId:'addTagsForAdd'+TYPE/}
+			   </div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2>
+				<div class="right bigGreenButton" id="doneAddResourcePopup">&{'DONE_ADD'}</div>
+			</td>
+		</tr>
+	</table>
+</div>
+</div>

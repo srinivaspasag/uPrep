@@ -1,0 +1,14 @@
+#{if documents!=null && documents.errorCode.isEmpty() && documents.result.list.length()>0}
+<input type="hidden" class="resultDataCount" value="${documents.result.totalHits}" data-real-count="${documents.result.totalHits}"/>
+#{list items:0..documents.result.list.length()-1, as:'tIndex'}
+%{ 
+	documentsData = documents.result.list.get(tIndex); 
+}%
+	#{myContents.iconView.document document : documentsData /}
+#{/list}
+#{/if}
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_DOCS'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/3library-docs-zero.jpg" /}
+#{/else}

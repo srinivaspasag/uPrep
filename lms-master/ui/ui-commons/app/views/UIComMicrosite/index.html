@@ -1,0 +1,523 @@
+#{extends 'UIComMicrosite/header.html'/}
+#{set title:'Welcome to Learnpedia' /}
+%{
+	appName = play.Play.configuration.getProperty("application.name");
+        if(appName=='cmds-app'){
+            pageHolderClass='cmdsLoginPage';
+        }else{
+            pageHolderClass='webAppLoginPage';
+        }
+}%
+#{if org!=null && org.errorCode.isEmpty() && org.result!=null}
+#{script src:'uicomMicrosite/o.home.js', charset:'utf-8' /}
+%{
+	org = org.result;
+	
+	loginError = flash.get('loginError');
+	lastUserName = flash.get('lastUsername');
+        lastMemberId = flash.get('lastMemberId');
+	lastSectionId = flash.get("lastSectionId");
+	if(loginError == null){
+		if(params.loginError != null){
+			loginError = params.loginError;
+			lastUserName = params.lastUserName;
+			lastMemberId = params.lastMemberId;
+			lastSectionId = params.lastSectionId;
+		}
+	}
+	signupError = flash.get('signupError');
+	if(signupError == null){
+		if(params.signupError != null){
+			signupError = params.signupError;
+		}
+	}
+
+	emailVerified = flash.get('emailVerified');
+	if(emailVerified == null){
+		if(params.emailVerified==true || params.emailVerified == "true"){
+			emailVerified = "done";
+		}
+	}
+	
+	googlePlayLink = "";
+	if(org.has("appInfos") && !org.appInfos.equals(null) && org.appInfos.length()>0){
+		for(i=0;i<org.appInfos.length();i++){
+			appInfo = org.appInfos.get(i);
+			if(appInfo!=null && appInfo.type == "GOOGLE_PLAY"){
+				googlePlayLink = appInfo.url;
+			}
+		}
+	}
+}%
+<div id="micrositePage" data-org-id="${org.id}">
+<div class="siteTopBar">
+   <div class="pageHolder1000">
+	<a href="/org/${org.slug}">
+		<img class="instThumbnailLogo" src="${org.orgThumbnail}" alt="${org.name}"/>
+	</a>
+	<div class="right">
+	   <table class="siteSignupSecTable">
+	      <tr>
+		%{
+			clientTopBarImage = play.Play.configuration.getProperty("microsite.client."+org.slug+".topBarImg");
+		}%
+		#{if clientTopBarImage!=null && !clientTopBarImage.isEmpty()}
+		<td>
+			#{include 'UIComMicrosite/clients/'+clientTopBarImage /}
+		</td>
+		#{/if}
+		<td>
+		   <a class="greyColor" target="_blank" href="${org.website}" style="padding-right:30px;">
+			&{'GOTO_ORG_CAPS',org.fullName.toUpperCase()}</a>
+		</td>
+		<td>
+		   <div class="topBarSignupLink signupPopupButton" style="margin-right:20px;">
+		   	<div class="orgSignupBtnTopLine topBarSignupBGColor"></div>
+		   	<div class="orgSignupLink topBarSignupColor">&{'TXT_SIGN_UP_CAPS'}</div>
+		   </div>
+		</td>
+		<td>
+		   <div class="topBarSignupLink loginPopupLink">
+		   	<div class="orgSignupBtnTopLine orgSiteBgColor"></div>
+		   	<div class="orgSiteColor orgSignupLink">&{'TXT_LOGIN_CAPS'}</div>
+		   </div>
+		   *{<!--<div class="big12" style="color:#BBB;">&{'ALREADY_A_MEMBER'}</div>
+		   <div>
+			<a class="big14 loginPopupLink">&{'login.SIGNIN'}</a>
+		   </div>-->}*
+		</td>
+	      </tr>
+	   </table>
+	</div>
+   </div>
+</div>
+<div class="middleSliderSec">
+   <div class="bgImageHolder">
+	<img class="bgImage" src="/public/images/microsite/defaultBG.jpg" alt=""/>
+	<div class="bgImageBlackOut"></div>
+   </div>
+   <div class="middleSliderHolder">
+	%{
+		noOfSlides = 3;
+	}%
+	<table class="sliderTable">
+	   <tr>
+	     <td style="width:420px;" class="alignTop">
+		<div class="sliderInfoSec">
+		    <div class="siteSlideTextFrame">
+		    	<table class="siteSlideTextHolder" cellpadding=0>
+			   <tr>
+				#{list items:1..noOfSlides,as:'sIndex'}
+		    		<td id="slide-text-${sIndex}" class="siteSlideTextTD alignTop">
+				   <div class="siteSlideText whiteTextColor">
+		    			<div class="fontRobotoSlab big35 singleLineText ">&{'microsite.SLIDER_'+sIndex+'_TEXT_1'}</div>
+		    			<div class="fontRobotoSlab boldy big55 singleLineText">&{'microsite.SLIDER_'+sIndex+'_TEXT_2'}</div>
+					    <div class="big16" style="padding:10px 10px 0 0;">
+						<span>&{'microsite.SLIDER_'+sIndex+'_TEXT_3'}</span></div>
+				   </div>
+		    		</td>
+				#{/list}
+			    </tr>
+			</table>
+		    </div>
+		    <!--<div class="extTriangle"></div>-->
+		</div>
+		<div class="signupPopupButtonHolder">
+		   <table class="fullWidth" cellspacing=0 cellpadding=0>
+			<tr>
+			<td>
+			   <div>
+				<span class="orgButton signupPopupButton">&{'TXT_SIGN_UP_CAPS'}</span>
+			   </div>
+			   <div style="padding:5px 0 0 8px;">
+		   		<span class="big15" style="color:#BBB;">&{'ALREADY_A_MEMBER'}</span>
+				<a class="big15 loginPopupLink orgSiteColor boldy">&{'TXT_LOGIN_CAPS'}</a>
+			   </div>
+			</td>
+			<td class="alignTop">
+				#{if !googlePlayLink.isEmpty()}
+				<a class="spriteImg googlePlayIcon" href="${googlePlayLink}" target="_blank"></a> 
+				#{/if}
+			</td>
+			</tr>
+		   </table>
+		</div>
+	     </td>
+	     <td class="alignTop">
+		    <div class="slide-dots">
+			<span class="slide-dot active" data-slide="1"></span>
+			<span class="slide-dot" data-slide="2"></span>
+			<span class="slide-dot" data-slide="3"></span>
+		    </div>
+	     	<div class="slideImgsHolder">
+		   <div id="slideTabletHolder" class="sliderSprite">
+			<div id="slideTabletContainer">
+			   <table cellspacing=0 cellpadding=0 id="slideTabletTable" class="relative">
+			      <tr>
+				#{list items:1..noOfSlides,as:'sIndex'}
+				<td id="slide-tablet-${sIndex}" class="siteSlideTabletTD alignTop">
+				   <div class="sliderSprite" id="siteSlideTablet${sIndex}"></div>
+				</td>
+				#{/list}
+			      </tr>
+			   </table>
+			</div>
+		   </div>
+		   <div id="slideMobileHolder" class="sliderSprite">
+			<div id="slideMobileContainer">
+			   <table cellspacing=0 cellpadding=0 id="slideMobileTable" class="relative">
+			      <tr>
+				#{list items:1..noOfSlides,as:'sIndex'}
+				<td id="slide-mobile-${sIndex}" class="siteSlideMobileTD alignTop">
+				   <div class="sliderSprite" id="siteSlideMobile${sIndex}"></div>
+				</td>
+				#{/list}
+			      </tr>
+			   </table>
+			</div>
+		   </div>
+		</div>
+	     </td>
+	   </tr>
+	</table>
+   </div>
+</div>
+<div class="siteProgramsSection">
+   <div class="pageHolder1000">
+	#{UIComWidgets.categorySections orgId : org.id, categoryName: categoryName /}
+   </div>
+</div>
+<div class="siteFeatureSec">
+   <div class="pageHolder1000">
+	<table cellspacing=0 cellpadding=0 class="fullWidth">
+	   <tr>
+		<td>
+		   <div class="dividerLine1px" style="margin-left:25px;"></div>
+		</td>
+		<td>
+		   <div class="big28 fontRobotoLight featureText">&{'TXT_FEATURES_CAPS'}</div>
+		</td>
+		<td>
+		   <div class="dividerLine1px" style="margin-right:25px;"></div>
+		</td>
+	   </tr>
+	</table>
+	%{
+		noOfFeatures = 6;
+		noOfColsPerRow = 3;
+		noOfRows = Math.ceil(noOfFeatures / noOfColsPerRow);
+		fIndex = 0;
+	}%
+	<table class="siteFeaturesContainer" cellspacing=13 cellpadding=0>
+	   #{list items:1..noOfRows,as:'rIndex'}
+	   <tr>
+		%{
+			tmp = rIndex * noOfColsPerRow;
+			noOfCols = tmp > noOfFeatures ? (tmp - (noOfFeatures + 1)) : noOfColsPerRow;
+		}%
+		#{list items:1..noOfCols,as:'cIndex'}
+		%{
+			fIndex++;
+		}%
+		<td class="siteFeatureBlock">
+		   <table class="fullWidth" cellspacing=0 cellpadding=0>
+		    #{if fIndex != 3 || org.doubtsForumMode != "HIDDEN"}
+		      <tr>
+				<td style="width:40px;">
+					<div class="spriteImg siteFeatureIcon" id="siteFeatureIcon${fIndex}"></div>
+				</td>
+				<td>
+				   <div class="siteEachFeatureHolder">
+					<div class="siteFeatureName">
+						<span>&{'microsite.FEATURES_TITLE_'+fIndex}</span>
+						<span class="fullHeight"></span>
+					</div>
+					<div class="siteFeatureDesc">
+						<span>&{'microsite.FEATURES_DESC_'+fIndex}</span>
+						<span class="fullHeight"></span>
+					</div>
+				   </div>
+				</td>
+		      </tr>
+		    #{/if}
+		   </table>
+		</td>
+		#{/list}
+	   </tr>
+	   #{/list}
+	</table>
+	<div class="centerText" style="margin:20px 0;">
+		<span class="orgButton joinPopupButton">&{'TXT_JOIN_NOW_CAPS'}</span>
+	</div>
+   </div>
+</div>
+<div class="siteAboutOrg">
+   <div class="pageHolder1000">
+	<table class="fullWidth" cellspacing=0 cellpadding=0>
+	   <tr>
+		<td class="alignTop">
+			<div class="big14 siteAboutOrgTitle">ABOUT ${org.fullName.toUpperCase()}</div>
+			#{if org.has('description') && !org.description.equals(null) && !org.description.isEmpty()}
+				<div class="big13 siteAboutOrgDesc">${org.description.raw()}</div>
+			#{/if}
+		</td>
+		<td class="alignTop">
+		    <!--<div class="siteAboutOrgRightTD">
+			<div class="smally poweredByTxt">&{'TXT_POWERED_BY'}</div>
+			<img class="vedantuIcon" alt="Vedantu" src="/public/images/vedantu.png"/>
+		    </div>-->
+		</td>
+	   </tr>
+	   <tr>
+		<td class="alignTop padTopBottom15">
+			#{if !googlePlayLink.isEmpty()}
+			<a class="spriteImg googlePlayIcon" href="${googlePlayLink}" 
+				style="margin-right:30px;" target="_blank"></a> 
+			#{/if}
+			<a class="siteGoToOrgBtn" href="${org.website}" target="_blank">&{'GOTO_ORG_CAPS',org.name.toUpperCase()}</a>
+		</td>
+		<td class="siteAboutOrgRightTD">
+		#{if org.has("socialMedia") && !org.socialMedia.equals(null)}
+			%{ socialMedia = org.socialMedia; }%
+			#{if !socialMedia.facebook.equals(null) && !socialMedia.facebook.isEmpty() }
+				<a class="left spriteImg siteFbIcon" href="${socialMedia.facebook}" target="_blank"></a> 
+			#{/if}
+			#{if !socialMedia.twitter.equals(null) && !socialMedia.twitter.isEmpty() }
+				<a class="left spriteImg siteTwitterIcon" href="${socialMedia.twitter}" target="_blank"></a> 
+			#{/if}
+			#{if !socialMedia.blogger.equals(null) && !socialMedia.blogger.isEmpty() }
+				<a class="left spriteImg siteBlogIcon" href="${socialMedia.blogger}" target="_blank"></a> 
+			#{/if}
+			#{if !socialMedia.youtube.equals(null) && !socialMedia.youtube.isEmpty() }
+				<a class="left spriteImg siteYouTubeIcon" href="${socialMedia.youtube}" target="_blank"></a> 
+			#{/if}
+                        #{if !socialMedia.linkedin.equals(null) && !socialMedia.linkedin.isEmpty() }
+				<a class="left spriteImg siteLinkedInIcon" href="${socialMedia.linkedin}" target="_blank"></a> 
+			#{/if}                     
+                        
+		#{/if}
+		</td>
+	   </tr>
+	   %{
+		clientBottomBar = play.Play.configuration.getProperty("microsite.client."+org.slug+".bottomBar");
+		clientDomainUrl = play.Play.configuration.getProperty("microsite.client."+org.slug+".domainUrl");
+	   }%
+	   #{if clientBottomBar!=null && !clientBottomBar.isEmpty() && clientDomainUrl!=null}
+	   <tr>
+		<td colspan=2>
+			<div id="clientBottomBar">#{include 'UIComMicrosite/clients/'+clientBottomBar /}</div>
+		</td>
+	   </tr>
+	   #{/if}
+	   #{else}
+	   <tr>
+		<td colspan=2 style="padding-top:30px;border-bottom:0px;">
+			<span class="siteAboutOrgSmallText">
+				<span>${new Date().format('yyyy')}</span>
+				<span>${org.fullName}</span>	
+			</span>
+			<span class="siteAboutOrgSmallTextDivider"></span>
+			%{
+				policyUrl = play.Play.configuration.getProperty("enduser.agreement.external.url");
+			}%
+			%{
+				uprepOrgId = "5df8a0d0e4b0897459b25d86";
+			}%
+			#{if org.id == uprepOrgId}
+				<a class="siteAboutOrgSmallText" href="/uprepterms" target="_blank">&{'microsite.PRIVACY_POLICY'}</a>
+			#{/if}
+			#{else}
+				<a class="siteAboutOrgSmallText" href="${policyUrl}" target="_blank">&{'microsite.PRIVACY_POLICY'}</a>
+			#{/else}
+			<span class="siteAboutOrgSmallTextDivider"></span>
+			<a class="siteAboutOrgSmallText" id="orgContactUsLink">&{'microsite.CONTACT_US'}</a>
+		</td>
+	   </tr>
+	   #{/else}
+	</table>
+   </div>
+</div>
+</div>
+<div id="siteUiSamples" style="display:none;">
+   <div id="loginPopup">
+     <div class="loginPopup">
+	<div class="orgSiteColor big20">&{'microsite.ENTER_YOUR_DETAILS'}</div>
+	#{if loginError!=null}
+	<div class="loginErrorMsg">
+		<span class="">&{'login.'+loginError}</span>
+	</div>
+	#{/if}
+	<form action="@{Security.authentifyMember}" method="POST" id="memberLoginForm">
+	    <table cellspacing=0 cellpadding=0 class="memberLoginTable">
+	    <tr>
+		<td style="width:100px;">
+		   <span class="loginFieldTitle">&{'INPUT_INSTID_EMAIL'} <span class="redTextColor">*</span></span>
+		</td>
+		<td>
+		   <input type="text" class="loginInputField" required name="memberId" id="userLoginId"/>
+		</td>
+	    </tr>
+	    <tr>
+		<td>
+			<span class="loginFieldTitle">&{'login.PASSWORD'} <span class="redTextColor">*</span></span>
+		</td>
+		<td>
+			<input type="password" id="userPassword" class="loginInputField" 
+				required name="password" data-shown="password"/>
+                        <input type="text" id="userPasswordText" class="nonner loginInputField" autocomplete="off"/>
+		</td>
+	    </tr>            
+            #{if org.authType!="EXT_AUTH_ORG"}
+	    <tr>
+		<td>
+		</td>
+		<td>
+                	<input type="checkbox" class="left showPasswordCheckbox"/>
+                	<span class="left showPassword">&{'SHOW_PWD'}</span>
+			<a class="forgotPass right">&{'login.FORGOT_PASSWORD_TITLE'}</a>
+		</td>	
+	    </tr>
+            #{/if}
+	    </table>
+	    <div>
+	    	<span class="left greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span>
+	    </div>
+	    <input type="hidden" value="${org.id}" name="orgId"/>
+	    <input type="hidden" value="" name="sectionId"/>
+	    <div class="centerText" style="padding-top:27px;">
+            	<input class="loginButton orgButton" id="clickToLogin" value="&{'login.SIGNIN_CAPS'}" type="submit"/>
+	    </div>
+	</form>
+     </div>
+   </div>
+   <!-- FORGOT PASSWORD POPUP -->
+   <div id="forgotPassPopup">
+     <div class="forgotPasswordPopup">
+	<div class="orgSiteColor big20">&{'login.FORGOT_PASSWORD_TITLE'}</div>
+	<div class="loginErrorMsg nonner"></div>
+	<table class="forgotPassTable" cellspacing=0 cellpadding=0>
+	    <tr>
+		<td style="width:100px;">
+		   <span class="loginFieldTitle">&{'INPUT_INSTID_EMAIL'} <span class="redTextColor">*</span></span>
+		</td>
+		<td>
+		   <input type="text" class="loginInputField" required name="memberId" id="userLoginId"/>
+		</td>
+	    </tr>
+	</table>
+	<div class="centerText" style="padding-top:27px;">
+        	<span class="orgButton" id="clickToGeneratePassword">&{'TXT_SUBMIT'}</span>
+	</div>
+     </div>
+   </div>
+   <!-- VERIFIED EMAIL POPUP-->
+   <div id="verifyEmailDone">
+      <div class="centerText" style="padding:40px 15px;">
+	<div style="font-size:14px;color:rgb(84, 128, 39);padding-bottom:3px;">&{'login.EMAIL_VERIFY_SUCCESS_1'}</div>
+	<div style="font-size:12px;color:rgb(15, 64, 116);">&{'login.EMAIL_VERIFY_SUCCESS_2'}</div>
+      </div>
+   </div>
+   <!-- SIGN UP -->
+   <div id="signupPopup">
+	<div class="orgSiteColor big14 centerText" style="padding:30px 10px;">Fetching sign-up form...</div>
+   </div>
+   <div id="contactUsPopup">
+	<div class="orgSiteColor big20">&{'microsite.CONTACT_US'}</div>
+	<table class="contactUsTable" cellspacing=0 cellpadding=0 style="width:400px;">
+	    <tr>
+		<td class="contactUsTD">
+		   <img class="instThumbnailLogo" src="${org.orgThumbnail}" alt="${org.name}" style="margin:0 10px 0 0;"/>
+		</td>
+		<td>
+		   <span class="big14 orgSiteColor">${org.fullName}</span>
+		</td>
+	    </tr>
+	    <tr>
+		<td class="contactUsTD">
+		   <span class="greyTextColor big12">Phone Number </span>
+		</td>
+		<td>
+		   <span style="color:#333" class="big14">${org.contactNumber}</span>
+		</td>
+	    </tr>
+	    <tr>
+		<td class="contactUsTD">
+		   <span class="greyTextColor big12">Our Website </span>
+		</td>
+		<td>
+		   <a style="color:#333" class="big14" href="${org.website}">${org.website}</a>
+		</td>
+	    </tr>
+	    <tr>
+		<td class="contactUsTD">
+		   <span class="greyTextColor big12">Address  </span>
+		</td>
+		<td>
+		   <span style="color:#333" class="big14">${org.address}</span>
+		</td>
+	    </tr>
+	    <tr>
+		<td class="contactUsTD">
+		   <span class="greyTextColor big12">We are located at </span>
+		</td>
+		<td>
+		   #{if org.has("locations") && !org.locations.equals(null) && org.locations.length()>0}
+		   <ul style="list-style-type: circle;padding-left: 19px;">
+		   #{list items:0..org.locations.length()-1,as:'lIndex'}
+			%{ loc = org.locations.get(lIndex); }%
+		   	<li style="color:#333" class="big14">${loc.city}, ${loc.state}, ${loc.country}</li>
+		   #{/list}
+		   </ul>
+		   #{/if}
+		</td>
+	    </tr>
+	</table>
+   </div>
+   <input type="hidden" name="popup" class="popup" value="${params.popup}">
+</div>
+%{
+	favIconUrl = play.Play.configuration.getProperty("microsite.client."+org.slug+".favIconUrl");
+}%
+<script type="text/javascript">
+	var orgData = ${org.raw()};
+	var loginError = "${loginError}";
+	var lastUserName = "${lastUserName}";
+	var lastMemberId = "${lastMemberId}";
+	var emailVerified = "${emailVerified}";
+	var lastSectionId = "";
+	#{if lastSectionId != null}
+		lastSectionId = "${lastSectionId}";
+	#{/if}
+	var signupError = "";
+	#{if signupError != null}
+		signupError = "&{'login.'+signupError}";
+	#{/if}
+	var categoryName = "${categoryName}";
+	history.replaceState(null,null,"/org/"+orgData.slug);
+	window.top.document.title = "Welcome to "+orgData.name;
+	#{if favIconUrl!=null}
+		$("#favIcon").attr("href","${favIconUrl}");
+	#{/if}
+	#{if categoryName!=null && !categoryName.isEmpty()}
+	    $('html, body').animate({
+	        scrollTop: $("#categoryProgramsSection").offset().top
+	    }, 200);
+	#{/if}
+</script>
+#{/if}
+<!-- END -->
+#{else}
+	#{extends 'uicomRegisterHead.html'/}
+	#{set title:'Welcome to Learnpedia' /}
+        <div class="vedantuNameWrapper">
+        	<div class="vedantuTitle"></div>
+        </div>
+	<div class="centerText big16">
+		<div class="boldy redTextColor">Organization not found with us,</div>
+		</br>
+		<div>Please check the url, Or contact your Organization Admin</div>
+	</div>
+<script type="text/javascript">
+	window.top.document.title = "No Organization Found";
+</script>
+#{/else}

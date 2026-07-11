@@ -1,0 +1,23 @@
+    #{if users.length()>0}
+      #{list items:0..users.length()-1, as:'k'}
+        %{
+            if(users.get(k).has('user'))user=users.get(k).user;
+            else user=users.get(k)
+            getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+	    userId = getUserClassAndUrl.id;
+        }%
+        <div class="peoplePopupItem">
+            #{widgets.img30 user:user /}
+            <div class="img30Lefter">
+                <a class="${getUserClassAndUrl.className} doCStream"
+                   data-user-id="${userId}" href="${getUserClassAndUrl.url}"
+                   data-cs-name="USER_FULLNAME">${user.firstName+' '+user.lastName}
+                </a>
+            </div>
+            <div class='cleaner_with_divider'>&nbsp;</div>
+        </div>
+      #{/list}
+      #{if Integer.parseInt(params.size)==users.length()}
+        <div class="loadMoreItems LMHandlerDivLoadMore">Load More</div>
+      #{/if}
+    #{/if}    

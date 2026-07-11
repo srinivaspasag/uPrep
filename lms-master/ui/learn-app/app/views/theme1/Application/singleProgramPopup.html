@@ -1,0 +1,53 @@
+<div class="singleProgramPopup">
+#{if resp!=null && resp.errorCode.isEmpty()}
+    %{
+        item = resp.result;
+        program = item.programInfo;
+        center = item.centerInfo;
+        section = item.sectionInfo;
+        courses = item.courseInfo;
+        name = program.name;
+        desc = section.desc;
+        packages = null;
+        packageOrgId = params.orgId;
+        if (section.has("packagesMap")) {
+            packagesMap = section.packagesMap;
+            if (!packagesMap.equals(null)) {
+                if (section.packagesMap.has(params.orgId)) {
+                    packages = section.packagesMap.getAt(params.orgId);
+                }
+                if (packages.equals(null) || packages.length() == 0) {
+                    packageOrgId = section.orgId;
+                    packages = section.packagesMap.getAt(section.orgId);
+                }
+            }
+        }
+    }%
+    #{if item.isPartOf == false}
+    <div class="c-black f-20">${name}</div>
+    <div class="catProgramDetailInfo" style="padding: 20px;background: #f1f1f1;">
+            #{if desc!=null && !desc.equals(null) && !desc.isEmpty()}
+        <div class="f-14 c-black">Description : </div>
+        <pre class="preDesc" "="">            
+            <div class="catProgramDesc">
+                <div class="f-14" style="overflow: hidden;width: 100%;text-align: justify;">${desc}</div>
+            </div>
+        </pre>
+        #{/if}
+        #{if courses.length()>0}
+                <div class="f-14 m-t-20 c-black" style="text-align: left;margin-left: 10px;">Courses : </div>
+        <ul class="catProgramCourses" style="text-align: left;">
+            #{list items:0..courses.length()-1,as:'cIndex'}
+            %{ course = courses.get(cIndex);}%
+            <li class="c-black">${course.name}</li>
+            #{/list}
+        </ul>
+        #{/if}
+        <div style="margin-top:10px;">
+            <span class="orgButton btn btn-primary waves-effect signUpNowBtn signupPopupButton" 
+                data-section-id="${section.id}">Sign up and Buy</span>
+        </div>
+    </div>
+    #{/if}
+#{/if}
+</div>

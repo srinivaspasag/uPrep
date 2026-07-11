@@ -1,0 +1,27 @@
+#{if tests.errorCode!=''}
+<input id="respErrorCode" value="${tests.errorCode}" type="hidden"/>
+<input id="respErrorMessage" value="There is some problem in fetching 
+       offline tests uploaded" type="hidden"/>
+#{/if}
+#{else}
+<div>
+    <div class="cmdsTableOptsAndSortDiv rightText cmdsTableSortDiv">   
+        <div class="big20 margTop floatLeft">List of Offline Tests Uploaded</div>
+        <div class="vChoose vChooseAlpha mcvChoose" data-value="timeCreated" data-onchange="onmcvChooseChange"
+             data-param-name="orderBy">
+            <div class="vChooseLabel">Sort By</div>
+            <div class="vChooseHead">Date Added</div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt" data-value="timeCreated">Date Added</div>
+                <div class="vChooseOpt" data-value="lastUpdated">Last Modified</div>
+            </div>
+        </div>
+
+        #{common.lmArrowsDiv /}  
+    </div>
+    <div id="tableSection" class="LMHandlerDiv">
+        #{include 'QrPrograms/offlineTestsTable.html' /}
+    </div>     
+</div>
+#{/else}

@@ -1,0 +1,31 @@
+v3.8.3
+1. add seller in all ordered items (run script in  environment/scripts/release_3.8.3 )
+
+v3.6
+1.ReIndex all cmds and ile tests to add parentId and childrenIds to the search index 
+
+2.Question migrations
+run migrate_question script_release_3.6.js from environment/prod directory 
+
+mongo localhost/27017 migrate_question script_release_3.6.js
+curl --request POST ‘http://localhost:19014/cmdsUpgrades/updateCMDSQuestions’
+curl --request POST ‘http://localhost:19014/cmdsUpgrades/moveQuestionImages’
+curl --request POST ‘http://localhost:19014/cmdsUpgrades/moveSolutionImages’
+
+
+:
+3.Messages 
+
+create hbase tables:
+
+create 'message_table_v2', { NAME => 'messages', VERSIONS => 1 }
+create 'user_message_table_v2', { NAME => 'messages', VERSIONS => 1 }
+
+run following curl calls
+
+curl  --request POST 'http://localhost:19017/messageMigrator/updateConversations' 
+curl  --request POST 'http://localhost:19017/messageMigrator/updateUserConversations' 
+curl  --request  POST 'http://localhost:19017/messageCenter/updateMailBoxInfoNew' --data 'userId=51962eeee4b08eceb4024a23&callingUserId=DUMMY_USER&callingAppId=DUMMY_APP_ID&callingApp=DUMMY_APP'
+
+
+3.change the smtp port to 587 from 25 and check out the changes made in production for the same

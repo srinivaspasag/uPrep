@@ -1,0 +1,40 @@
+<style type="text/css">
+body{
+	margin:0px;
+	background-color: #f4f4f4;height: 100%;width: 100%;position: absolute;
+     font-size: 13px;word-spacing: 2px;font-family: arial;
+}
+#instTopBar{
+	width: 100%;
+	height: 45px;
+	background-color: rgb(40, 40, 40);
+	z-index: 5;
+	top: 0px;
+}
+</style>
+<div id="instTopBar">
+   <div style="width:1200px;margin:0 auto;">
+    <div class="vedHold" style="width:122px;top:10px;position:relative;">
+        <a id="" href="/" class="doCStream" data-cs-name="HOME_PAGE_TAB">
+                <img src="/public/images/vedantu.png" alt="Vedantu"/>
+        </a>
+    </div>
+   </div>
+</div>
+<div id="pageNotFound">
+    <div style="padding-top: 30px;text-align: center;width: 100%;top:30px;">
+        <img src="/public/images/vedantu.png" alt="Vedantu" />
+        <img src="/public/images/knowledge.png" alt="Making Knowledge Democratized" 
+             style="margin-left: 15px;position: relative;top: 10px;" />
+    </div>
+    <div style="width: 100%;text-align: center;top:150px;">
+        #{doLayout /}
+    </div>
+    <div style="text-align:center;padding:30px;">
+	<a href="/">Exit from here</a>
+	</br>
+    	#{if session!=null && session.userId!=null}
+	<a href="/security/logout?orgId=${params.orgId}">Logout & try login again</a>
+	#{/if}
+    </div> 
+</div>

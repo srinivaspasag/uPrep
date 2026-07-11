@@ -1,0 +1,11 @@
+#{if data.has('result') && data.result.length()>0 }
+#{list items:0..data.result.length()-1, as:'index'}
+%{
+	user=data.result.get(index).user;
+}%
+<span class="eachSuggestion" data-user-id="${user.id}">
+	<img class="profileImg" alt="X" src="${user.thumbnail}"/>
+	<span class="name">${user.firstName} ${user.lastName}</span>
+</span>
+#{/list}
+#{/if}

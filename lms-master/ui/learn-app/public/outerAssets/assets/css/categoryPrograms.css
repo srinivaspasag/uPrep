@@ -1,0 +1,118 @@
+.btn-group.bootstrap-select{
+	border: 1px solid #999;
+	padding: 10px;
+	border-radius: 15px;
+}
+.bootstrap-select>.btn-default{
+	border-bottom: none!important;
+}
+.intl-tel-input.separate-dial-code.allow-dropdown.iti-sdc-3 .selected-flag{
+	top: -10px;
+	left: 10px;
+}
+.intl-tel-input.separate-dial-code.allow-dropdown.iti-sdc-4 .selected-flag{
+	top: -10px;
+	left: 10px;
+}
+.year{
+	border: 2px solid #c3c6c9;
+	border-radius: 6px;
+	width: 140px;
+	padding: 10px 20px;
+	color: #8BC34A;
+	cursor: pointer;
+	box-shadow: 2px 2px 1px rgba(0,0,0,.15);
+	display: inline-block;
+	position: relative;
+}
+.selector{
+	height: 20px;
+	width: 20px;
+	background: white;
+	border-radius: 50%;
+	border:3px solid #c3c6c9;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+}
+.active .selector{
+	background: #8BC34A;
+	border: 3px solid #f1f1f1;
+}
+.year:hover > .selector{
+	border: 3px solid #f1f1f1;
+	background: #8BC34A !important;
+}
+.year.active{
+	background:#8BC34A;
+	color: white;
+	box-shadow: none;
+	border:1px solid #f1f1f1;
+}
+.categoryRow{
+	width: 80%;
+	margin: auto;
+}
+.singleProgram{
+	height: 650px;
+	max-width: 350px;
+	box-shadow: 7px 10px 20px 0 rgba(46,61,73,.15);
+	transition: all .3s ease; 
+}
+.singleProgram:hover{
+	box-shadow: 0 4px 8px 0 rgba(46,61,73,.12);
+	cursor: pointer;
+}
+.singleProgram .description{
+	text-align: justify;
+	color: #464646;
+	padding: 0px 5px;
+	line-height: 1.6;
+}
+.pt-inner .pti-body .ptib-item:not(:last-child) {
+    border-bottom: 1px solid #eee;
+    height: 150px;
+}
+a.readMore{
+	text-decoration: none;
+	font-size: 12px;
+	cursor: pointer;
+}
+.pricing{
+	font-size: 20px;
+	color: black;
+}
+.buyButton{
+	margin-top: 20px;
+	font-size:  18px;
+	border-radius: 8px;
+}
+.ptih-title{
+	top:0!important;
+	font-size: large;
+}
+.nonner{
+	display: none;
+}
+
+.swal2-modal{
+	max-width: 800px;
+    min-width: 300px;
+}
+.pt-inner .pti-header {
+	padding: 70px 10px 70px;
+}
+.ptih-title{
+	top:0!important;
+	font-size: large;
+}
+@media(max-width:767px){
+	.swal2-modal{
+		min-width: inherit;
+	}
+}
+@media(max-width:1024px){
+	.categoryRow{
+		width: 100%;
+	}
+}

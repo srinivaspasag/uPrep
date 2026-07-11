@@ -1,0 +1,106 @@
+        %{            
+            docPL=_docPL;
+            entityType=_entityType;
+            docPLId=_docPLId;
+            ratingInfo=docPL.ratingInfo;
+        }%
+    <div id="rateAndReviewBox">
+        <div class="rateBrkUp floatLeft">
+            %{
+                ratingDetails=ratingInfo.ratingDetails;
+                votes=ratingInfo.totalVote;
+            }%
+            #{list items:0..4,as:'d'}
+                %{
+                    if(votes!=0){
+                        widthPixels=(ratingDetails[d_index.toString()]*65)/votes;
+                    }
+                    else widthPixels=0;                    
+                }%
+                <div class="reviewStar">
+                    <label>${d_index}</label><div class="starBase"></div>
+                    <div class="starTop" style="width: ${widthPixels}px"></div>
+                </div>
+            #{/list}
+        </div>
+        <div class="avgRateAndCreateReview">
+            <div class="docPLReviewBoxStats">
+                <div class="floatLeft">
+                    <label style='margin-top: 10px;display: block;'>Your Rating</label>
+                    <div class='ratingWidget doCStream' data-cs-name="RATING_STARS" data-my-rating="${ratingInfo.ratingByMe}"
+                         data-entity-type="${entityType}" data-entity-id="${docPLId}">
+                        #{list items:0..4,as:'r'}
+                            %{
+                                if(r_index<=ratingInfo.ratingByMe)rateClassName="Yellow";
+                                else rateClassName="White";
+                            }%
+                            <div class='floatLeft'><img class='rateStar${r_index}' src='/public/images/rate${rateClassName}.png' alt=''/></div>
+                        #{/list}
+                    </div>
+                </div>
+                <div class="floatRight" style="margin: 8px 0 0 0;">
+                    <div>Overall</div>
+                    <div class='rateCircle floatRight'>${uicom.util.Utilities.getAvgRating(ratingInfo.avgRating)}</div>
+                </div>
+            </div>
+            <span class="margTop blueSubmitButton addDocPLReview doCStream" data-cs-name="REVIEW_BTN">Review</span>
+        </div>
+    </div>
+    <div class="LMHandlerDiv"></div>
+    <div id="DPLSImgHider" class="nonner">
+            <div id="docPLReviewBox">
+                #{if entityType=='DOCUMENT'}
+                <a class="openDocPage doCStream" data-cs-name="OPEN_DOC_PAGE" data-doc-id="${docPLId}" 
+			href="${controllers.Doc.getDocUrl(docPL.title,docPLId)}">
+                    <img class='floatLeft' src='/public/images/questions/docBack.png' alt='' />
+                </a>
+                #{/if}
+                #{elseif entityType=='PLAYLIST'}
+                    <a class='img60Wrapper floatLeft'
+                       data-pl-id="${docPLId}" href="${controllers.Playlists.getPLUrl(docPL.title,docPLId)}">
+                        <img src='/public/images/playlist/plBack.png'  class='img60'/>
+                    </a>
+                #{/elseif}
+                <div class='img60Lefter'>
+                    <div class='boldy DPRBTitle'>${docPL.title}</div>
+                    %{
+                        user=docPL.user;
+                        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                    }%
+                    by <a class="ptrTagHovered DPRBName ${getUserClassAndUrl.className}" href="${getUserClassAndUrl.url}">
+                            ${user.firstName+' '+user.lastName}
+                        </a>
+                    <div class="docPLReviewBoxStats">
+                        <div class="floatLeft">
+                            <label style='margin-top: 10px;display: block;'>Your Rating</label>
+                            <div class='ratingWidget doCStream' data-cs-name="RATING_STARS" 
+				data-my-rating="${ratingInfo.ratingByMe}"
+                                 data-entity-type="${entityType}" data-entity-id="${docPLId}">
+                                #{list items:0..4,as:'r'}
+                                    %{
+                                        if(r_index<=ratingInfo.ratingByMe)rateClassName="Yellow";
+                                        else rateClassName="White";
+                                    }%
+                                    <div class='floatLeft'><img class='rateStar${r_index}' src='/public/images/rate${rateClassName}.png' alt=''/></div>
+                                #{/list}
+                            </div>
+                        </div>
+                        <div class="floatRight">
+                            <div>Overall</div>
+                            <div class='rateCircle floatRight'>${uicom.util.Utilities.getAvgRating(ratingInfo.avgRating)}</div>
+                        </div>
+                        <div class='cleaner_with_divider'>&nbsp;</div>
+                    </div>
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+                <div class="reviewInputerDiv textareaDiv">
+                    <textarea class="reviewInputer"></textarea>
+                </div>
+                <div class="floatRight">
+                    <input type='submit' class='blueSubmitButton submitDocPLReview doCStream' data-cs-name="SUBMIT_REVIEW" 
+			value='Submit'/>
+                    <a class="smally liner margLeft5 cancelCommonPopup doCStream" data-cs-name="CANCEL_REVIEW">Cancel</a>
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+    </div>

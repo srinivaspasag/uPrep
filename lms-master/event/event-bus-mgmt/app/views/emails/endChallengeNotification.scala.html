@@ -1,0 +1,35 @@
+@(emailDetails:com.vedantu.eventbus.email.details.EndChallengeEmailNotificationDetails)
+
+@import emails._
+@appDomain( emailDetails) { host =>  
+
+@defining(emailDetails.details.getJSONObject("src").getJSONObject("contentSrc").getString("id")) { orgId =>
+
+	@defining(emailDetails.details.getJSONObject("src")) { src =>
+			
+		@defining(emailDetails.details.getJSONObject("actor")) { actor =>
+
+				<span>Challenge @src.getString("name")</span>
+			  @emailDetails.details.getString("why") match {
+        			case "OWNER" => {
+                         		<span> you added on <b>@(new java.util.Date(src.getLong("timeCreated")).format("dd/MM/yyyy"))</b></span>
+                		}
+        			case "ATTEMPTED" => {
+                         		<span> you attempted </span>
+                		}
+			  }
+                         		<span> ended now </span>
+      	
+			}
+			 
+			<br> 
+			@if( src.has("qId") ){
+  			<a href="@host/organization/@orgId/question/@src.getString("qId")"
+                        style="color:4699CF;text-decoration:none;">
+		        View results	
+                   </a>
+		 }
+
+		}
+	}
+}

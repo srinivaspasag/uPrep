@@ -1,0 +1,393 @@
+<style type="text/css">
+    .intl-tel-input.allow-dropdown .flag-container,.intl-tel-input.separate-dial-code .flag-container {
+  right: auto;
+  left: -12px;
+}
+</style>
+    %{
+        loginType='';
+        signInLeft='0px';
+	loginError = flash.get('loginError');
+        if(flash.get('loginType')=='MEMBER_LOGIN'){
+            loginType='MEMBER_LOGIN';
+            signInLeft='-440px';
+            emailLoginClass=' nonner';
+            accessCodeLoginClass=' nonner';
+        }else if(flash.get('loginType')=='EMAIL_LOGIN'){
+            loginType='EMAIL_LOGIN';
+            signInLeft='-440px';
+            memberLoginClass=' nonner';
+            accessCodeLoginClass=' nonner';
+        }else if(flash.get('loginType')=='ACCESS_CODE'){
+            loginType='accessLogin';
+            signInLeft='-440px';
+            memberLoginClass=' nonner';
+            emailLoginClass=' nonner';
+        }        
+	lastUserName = flash.get('lastUsername');
+        lastMemberId = flash.get('lastMemberId');      
+	lastFirstName = flash.get('lastFirstName');
+	lastLastName = flash.get('lastLastName');
+	lastTwitterHandle = flash.get('lastTwitterHandle');
+	lastAccessCode = flash.get('lastAccessCode');
+    }%
+<div id="signInWrapper" style="left:${signInLeft}">
+    <div id="loginChooserHolder" class="centerText">
+        <div class="loginChooser">
+            <div class="loginChooserHead">Login</div>
+            <div style="padding-left: 14px;">
+                <span class="loginChooserButton" id="loginWithEmailId"
+                      data-login-type='EMAIL_LOGIN'>
+                    &{'login.USE_EMAIL_ID'}
+                </span>
+                <span class="loginChooserButton" id="loginWithMemberId"
+                      data-login-type='MEMBER_LOGIN'>
+                    &{'login.USE_ENROLL_ID'}
+                </span>
+            </div>
+<!-- 	    #{if appName == "web-app"}
+	    <div style="margin-top: 30px;">
+                <div class="loginAccessCodeBtn" id="showAccessCode">
+                    &{'login.USE_ACCESS_CODE'}
+                </div>
+		<div class="loginCodeForm nonner regInputBoxHolder">
+			<input type="text" placeholder="&{'login.PLACEHOLDER_ACCESS_CODE'}" class="loginCodeInput displayInBlock"/>
+			<span type="text" id="loginWithAccessCode" class="loginChooserButton" data-login-type='ACCESS_CODE'>&{'TXT_SUBMIT'}</span>
+			<div class="smally greyTextColor">&{'login.ENTER_ACCESS_CODE'}</div>
+		</div>
+	    </div>
+	    #{/if} -->
+        #{if appName == "web-app"}
+            <br>
+            <center>
+            <span class="loginChooserButton nonner" id="loginWithOTP"
+                          data-login-type='OTP_LOGIN' style="width: 150px;">
+                        &{'login.USE_OTP'}
+            </span>
+            </center>
+        #{/if}
+        </div>
+            #{if appName == "web-app"}
+            <div class="right" style="bottom: -15px;position: relative;">
+              <span class="big12" style="color:#666;">Not a Member ?</span>
+              <span class="big14 blueLoginButton loginPopupBtn"><a href="/signup">Signup</a></span>
+            </div>
+            #{/if}
+    </div>
+    <div id="loginFormDiv">
+        <span class="backToLoginStart"></span>
+        <div id="memberLoginDiv" class="loginDiv${memberLoginClass}">
+	    <div class="orgInfoToolTip hider">
+		<table class="orgToolTipTable" cellspacing=0 cellpadding=0>
+		   <tr>
+			<td class="alignTop orgData"><img src="" alt="" class="orgInfoPic"/></td>
+			<td class="alignTop orgData padLeft5">
+				<div class="orgInfoSmallName boldy big16"></div>
+				<div class="orgInfoFullName big14"></div>
+				<!--*{<div class="big12" style="margin-top:6px;">
+					<span>Learnpedia Url : </span>
+					<span class="orgInfoSlug boldy"></span>
+				</div>
+				<div class="big12" style="margin-bottom:6px;">
+					<span>Website : </span>
+					<a class="orgInfoWebsite"></a>
+				</div>
+				<div class="orgInfoDesc greyTextColor smally"></div>}*-->
+			</td>
+		   </tr>
+		</table>
+		<div class="bottomBlueArrow"></div>
+	    </div>
+            <form action="@{Security.authentifyMember}" method="POST" id="memberLoginForm">
+                <input type="hidden" name="loginType" value="MEMBER_LOGIN">
+                <div class="loginPageWrapper">
+                        <div class="loginContent">
+                                <div class="regFormTxt" style="padding-bottom:15px;">
+                                    <span style="font-size:24px;">&{'login.SIGNIN'}</span>
+                                    <span style="font-size:15px;">&{'login.INST_SIGNIN_SMALL'}</span>
+                                </div>                                 
+                                #{if org!=null && org.errorCode.isEmpty()}
+                                <div class="regInstLoginSec freezeInstLogin">
+                                   <div class="regInputBoxHolder">
+                                        <input type="text" id="loginOrgName" placeholder="&{'login.PLACEHOLDER_INSTNAME'}" 
+                                               value="${org.result.fullName}" disabled/>
+                                        <input type="hidden" id="loginOrgId" name="orgId" value="${org.result.id}"/>
+					%{
+						allowMultiOrgLogin = Boolean.parseBoolean(play.Play.configuration.getProperty("allow.multiple.org.login"));	
+					}%
+					#{if allowMultiOrgLogin}
+                                        <div style="text-align:right;font-size:11px;">
+                                            <a href="/login">Choose Another Institute</a>
+                                        </div>
+					#{/if}
+                                   </div>
+                                </div>
+					#{if org.result.has("authType") && !"EXT_AUTH_ORG".equals(org.result.authType)}
+						<style type="text/css">
+						#loginMemberId,#forgetPassMemberId{
+							text-transform:uppercase;
+						}
+						</style>
+                                	#{/if}
+                                #{/if}
+                                #{else}
+                                <div class="regInstLoginSec">   
+                                   <div class="regInputBoxHolder">
+                                        <input type="text" id="loginOrgName" placeholder="&{'login.PLACEHOLDER_INSTNAME'}" value="" 
+                                                autocomplete="off" class="suggOrgName"/>
+                                        <input type="hidden" id="loginOrgId" name="orgId" class="suggOrgId"/>
+                                        <div class="regInstSuggHolder nonner"></div>
+                                   </div>
+                                </div>
+                                #{/else}                           
+                                <div class="regInputBoxHolder">
+                                        <input type="text" id="loginMemberId" placeholder="&{'login.PLACEHOLDER_USERENROLLID'}" 
+                                               name="memberId" value="${lastMemberId}" class="loginPageInput"/>
+                                </div>
+                                <div class="regInputBoxHolder">
+                                        <input type="password" id="userPasswordMEMBER_LOGIN" placeholder="&{'login.PASSWORD'}" name="password" 
+                                                data-shown="password"  class="loginPageInput"/>
+                                        <input type="text" id="userPasswordTextMEMBER_LOGIN" class="nonner loginPageInput" 
+						placeholder="&{'login.PASSWORD'}" autocomplete="off" />
+                                </div>
+                                <div class="regSubmitHolder">
+                                        <div style="padding-bottom:20px;">
+                                                <input type="checkbox" class="left showPasswordCheckbox" style="margin-top:0px;"/>
+                                                <span class="left showPassword">Show Password</span>
+                                                <a class="forgotPass right" data-login-type="MEMBER">Forgot Password?</a>
+                                                <div class="cleaner_with_divider">&nbsp;</div>
+                                        </div>
+                                        <input class="loginButton" id="clickToLogin" value="Submit" type="submit"/>
+                                </div>
+                        </div> 
+                </div>
+            </form>  
+            <div class="forgotPassWrap forgotPassMember">
+                <div class="forgotPassHolder" data-url="memberForgotPass" data-login-type="MEMBER">
+                        <div style="font-size:16px;color:#888;">&{'login.FORGOT_PASSWORD_TITLE'}</div>
+                        <div class="regInputBoxHolder" style="margin:20px 0 0 0;">
+                                <input type="text" id="forgotPassOrgName" placeholder="&{'login.PLACEHOLDER_INSTNAME'}" value="" 
+                                        autocomplete="off" required class="suggOrgName"/>
+                                <input type="hidden" id="forgotPassOrgId" name="orgId" required class="suggOrgId"/>
+                                <div class="regInstSuggHolder nonner">
+                                        <!--*{<div class="regInstSugg">Lakhya Institute</div>}*-->
+                                </div>
+                        </div>
+                        <div class="regInputBoxHolder" style="width:300px; padding:20px 0 0px;">
+                                <input type="text" id="forgetPassMemberId" placeholder="&{'login.PLACEHOLDER_USERENROLLID'}" name="forgotPassword"/>
+                        </div>
+                        <div class="regSubmitHolder centerText">
+                                <input class="loginButton" id="clickToSend" value="Submit" type="submit"/>
+                        </div>
+                </div>
+            </div>            
+        </div>        
+        <div id="emailLoginDiv" class="loginDiv${emailLoginClass}">            
+            <form action="@{Security.authentify}" method="post" id="loginForm">
+                <input type="hidden" name="loginType" value="EMAIL_LOGIN">
+                <div class="loginPageWrapper">
+                        <div class="loginContent">
+                                #{if org!=null && org.errorCode.isEmpty()}
+                                <input type="hidden" id="loginOrgId" name="orgId" value="${org.result.id}"/>
+                                #{/if}                                  
+                                <div class="regFormTxt" style="padding-bottom:15px;">
+                                    <span style="font-size:24px;">&{'login.SIGNIN'}</span>
+                                    <span style="font-size:15px;">&{'login.SIGNIN_SMALL'}</span>
+                                </div>
+                                <div class="regInputBoxHolder">
+                                        <input type="email" id="loginUsername" placeholder="&{'login.PLACEHOLDER_USERNAME'}" name="username"
+                                               value="${lastUserName}" class="loginPageInput" />
+                                </div>
+                                <div class="regInputBoxHolder">
+                                        <input type="password" id="userPasswordEMAIL_LOGIN" placeholder="&{'login.PASSWORD'}" name="password" 
+                                                data-shown="password" autocomplete="off"
+                                                 class="loginPageInput" />
+                                        <input type="text" id="userPasswordTextEMAIL_LOGIN" 
+                                               class="nonner loginPageInput" placeholder="&{'login.PASSWORD'}" autocomplete="off"/>
+                                </div>
+                                <div class="regSubmitHolder">
+                                        <div style="padding-bottom:20px;">
+                                                <input type="checkbox" class="left showPasswordCheckbox" style="margin-top:0px;"/>
+                                                <span class="left showPassword">Show Password</span>
+                                                <a class="forgotPass right" data-login-type="EMAIL">Forgot Password?</a>
+                                                <div class="cleaner_with_divider">&nbsp;</div>
+                                        </div>
+                                        <input class="loginButton" id="clickToLogin" value="Submit" type="submit"/>
+                                </div>
+                        </div> 
+                </div>
+            </form>
+            <div class="forgotPassWrap forgotPassUser">
+                <div class="forgotPassHolder" data-url="userNameForgotPass" data-login-type="EMAIL">
+                        <div style="font-size:16px;color:#888;">&{'login.FORGOT_PASSWORD_TITLE'}</div>
+                        <div class="regInputBoxHolder" style="width:300px; padding:20px 0 0px;">
+                                <input type="text" id="forgotPassEmail" placeholder="&{'login.PLACEHOLDER_USERNAME'}" name="forgotPassword"/>
+                        </div>
+                        <div class="regSubmitHolder centerText">
+                                <input class="loginButton" id="clickToSend" value="Submit" type="submit"/>
+                        </div>
+                </div>
+             </div>                
+        </div>
+
+         <div id="OTPLoginDiv" class="loginDiv nonner">
+                <input type="hidden" name="loginType" value="OTP_LOGIN">
+                <div class="loginPageWrapper">
+                        <div class="loginContent">
+                                #{if org!=null && org.errorCode.isEmpty()}
+                                <input type="hidden" id="loginOrgId" name="orgId" value="${org.result.id}"/>
+                                #{/if}
+                                <div class="regFormTxt" style="padding-bottom:15px;">
+                                    <span style="font-size:24px;">&{'login.SIGNIN'}</span>
+                                    <span style="font-size:15px;">&{'login.OTP_SMALL'}</span>
+                                </div>
+                                <br>
+                                <form name="registration" method="POST" id="memberSignupForm" style="margin-top: 0em;display: block;">
+                                <!-- <table cellpadding="0" cellspacing="0" class="memberSignupTable">
+                                    <tr> -->
+                                    <div class="regInputBoxHolder">
+                                       <!--  <td class="signupTitleTd">
+                                            <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span>
+                                        </td> -->
+                                        <!-- <td> -->
+                                            <input type="text" class="loginPageInput" required name="firstName" id="username" placeholder="&{'login.PLACEHOLDER_FULLNAME'}" />
+                                       <!--  </td> -->
+                                        </div>
+                                    <!-- </tr>
+                                    <tr> -->
+                                        <!-- <td class="signupTitleTd">
+                                            <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span>
+                                        </td> -->
+                                        <div class="regInputBoxHolder">
+                                        <!-- <td> -->
+                                            <input type="tel" class="loginPageInput" required name="contactNumber" placeholder="&{'login.PLACEHOLDER_CONTACTNUMBER'}" id="contactNumber" style="width:340px;height:40px;" />
+                                        <!-- </td> -->
+                                        </div>
+                                <!--     </tr>
+                                </table> -->
+                                <div>
+                                    <!-- <span class="left greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span> -->
+                                    <span class="redTextColor" id="contactlength" style="left:46px;position: relative;"></span>
+                                </div>
+                                %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+                                <input type="hidden" value="${learnpediaOrgId  }" name="orgId" id="orgId"/>
+                                <input type="hidden" value="" name="sectionId" />
+                                <div class="centerText" style="padding-top:27px;">
+                                    <input class="loginButton orgButton" id="clickToSignUp" value="Submit" type="button" onclick="otpProcess.otpsend();" />
+                                </div>
+                                <input type="hidden" id="progType" name="progType" />
+                            </form>
+
+            <!-- <div class="forgotPassWrap forgotPassUser">
+                <div class="forgotPassHolder" data-url="userNameForgotPass" data-login-type="EMAIL">
+                        <div style="font-size:16px;color:#888;">&{'login.FORGOT_PASSWORD_TITLE'}</div>
+                        <div class="regInputBoxHolder" style="width:300px; padding:20px 0 0px;">
+                                <input type="text" id="forgotPassEmail" placeholder="&{'login.PLACEHOLDER_USERNAME'}" name="forgotPassword"/>
+                        </div>
+                        <div class="regSubmitHolder centerText">
+                                <input class="loginButton" id="clickToSend" value="Submit" type="submit"/>
+                        </div>
+                </div>
+             </div>     -->
+        </div>
+        </div>
+        </div>
+	#{if appName == "web-app"}
+        <div id="accessCodeLoginDiv" class="loginDiv ${accessCodeLoginClass}">            
+            <form action="@{Security.authentifyAccessCodeMember}" method="post" id="accessLoginForm">
+                <input type="hidden" name="loginType" value="ACCESS_CODE"/>
+                <div class="loginPageWrapper">
+                        <div class="loginContent">
+                                <input type="hidden" id="loginAccessCode" name="accessCode" value="${lastAccessCode}"/>
+                                <div class="regFormTxt" style="padding-bottom:15px;">
+                                    <span style="font-size:24px;">&{'login.SIGNIN'}</span>
+                                    <span style="font-size:15px;">&{'login.USE_ACCESS_CODE'}</span>
+                                </div>
+                                <div class="regFormTxt" style="padding-bottom:15px;">
+                                    <span style="font-size:14px;">&{'login.USE_ACCESS_CODE_MSG'}</span>
+                                </div>
+                                <div class="regInputBoxHolder">
+                                        <input type="text" id="accessFirstName" placeholder="&{'login.PLACEHOLDER_FIRSTNAME'}" name="firstName"
+                                               value="${lastFirstName}" class="loginPageInput" required/>
+                                </div>
+                                <div class="regInputBoxHolder">
+                                        <input type="text" id="accessLastName" placeholder="&{'login.PLACEHOLDER_LASTNAME'}" name="lastName"
+                                               value="${lastLastName}" class="loginPageInput" />
+                                </div>
+                                <div class="regInputBoxHolder">
+                                        <input type="email" id="loginAccessEmail" placeholder="&{'login.PLACEHOLDER_USERNAME'}" name="email"
+                                               value="${lastUserName}" class="loginPageInput" required />
+                                </div>
+                                <div class="regInputBoxHolder">
+                                        <input type="text" id="twitterHandle" placeholder="&{'login.PLACEHOLDER_TWITTER_ID'}" name="twitterHandle"
+                                               value="${lastTwitterHandle}" class="loginPageInput"/>
+                                </div>
+                                <div class="regSubmitHolder">
+                                        <input class="loginButton" id="clickToAccessLogin" value="Submit" type="submit"/>
+                                </div>
+			</div>
+		</div>
+	    </form>
+	</div>
+	#{/if}
+        <div class="errorWrapperDiv">
+            <div class="errorWrapper"></div>
+        </div>       
+        #{if loginError!=null}
+	    #{if loginError=="AUTHENTICATION_FAILED"}
+            <script type="text/javascript">
+                    $(function(){
+                            showWrongPassPopup();
+                    });
+            </script>
+	    #{/if}
+            <div class="serverErrorDiv">
+                <div class="serverError">
+                &{'login.'+loginError}
+                </div>            
+            </div>            
+        #{/if}        
+    </div>
+    <div class="wrongPassWrap nonner">
+      <div class="wrongPassHolder">
+        <div style="color:#c33430;" class="centerText">&{'login.WRONG_PASSWORD_TITLE'}</div>
+        <div style="color:rgb(47, 142, 168);padding:15px 0;" class="centerText">&{'login.WRONG_PASSWORD_CHECK'}</div>
+    	<div class="wrongPassSec">
+		<div class="wrongPassSecTitle">
+			<b>&{'login.FIRST_LOGIN_B'}</b>
+			<span class="big16">&{'login.FIRST_LOGIN_MSG'}</span>
+		</div>
+		<img src="/public/images/loginSlides/wrong-password1.jpg" alt="&{'IMG_NA'}" />
+	</div>
+    	<div class="wrongPassSec">
+		<div class="wrongPassSecTitle">
+			<div><b>&{'login.EMAIL_LOGIN_B'}</b></div>
+			<div class="big16" style="padding:5px 0 0 18px;">&{'login.EMAIL_LOGIN_MSG'}</div>
+		</div>
+		<img src="/public/images/loginSlides/wrong-password2.jpg" alt="&{'IMG_NA'}" />
+	</div>
+    	<div class="wrongPassSec">
+		<div class="wrongPassSecTitle">
+			<b>&{'login.WRONG_FORGOT_PASS_B'}</b>
+			<div class="big12" style="padding:5px 0 0 18px;">&{'login.WRONG_FORGOT_PASS_MSG'}</div>
+		</div>
+	</div>
+	<div>
+		<span class="smally left">&{'login.CONTACT_ADMIN'}</span>
+		<span class="right greenButton crossVPopup" style="padding:7px 50px;">OK</span>
+	</div>
+      </div>
+    </div>
+    <div class="successWrapper">
+	<span>&{'login.CHECK_MAILBOX'}</span>
+    </div>
+</div>
+<script type="text/javascript">
+    loginProcess.init({loginType:"${loginType}"});
+    otpProcess.init();
+    var loginErrors={
+        emailError:"&{'login.INVALID_EMAIL'}",
+        blankError:"&{'login.BLANK_FIELD'}",
+	missingOrg:"&{'login.BLANK_FIELD_ORG'}"
+    };
+</script>

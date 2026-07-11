@@ -1,0 +1,188 @@
+/* PROGRAMS SECTION */
+.siteProgramsSection{
+	padding-top:50px;
+	background-color:#f0f0f0;
+	padding-bottom:30px;
+}
+.siteCategoryText{
+	padding-right: 16px;
+	position: relative;
+	top: 8px;
+}
+.chooseCategory{
+	border:0px;
+	padding:5px 10px;
+	font-size:16px;
+	color:#666;
+	font-family:Roboto;
+	background-color:#FFF;
+	min-width: 200px;
+	position: relative;
+	top: -5px;
+}
+.typeOfProgSec{
+	padding:28px 0 25px;
+}
+.progTypeTab{
+	cursor:pointer;
+	font-size:18px;
+	color:#888888;
+	margin-right:30px;
+	padding:0 10px;
+}
+.progTypeTab.active{
+	color:#333;
+	font-weight:500;
+	border-bottom:4px solid #0099CC;
+}
+.categoryProgramsContainer{
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+	padding-bottom:20px;
+	position:relative;
+	/* TODO */
+	margin-top:30px;
+}
+.loadMoreSections{
+	padding:10px 0;
+	text-align:center;
+	background-color:#CCC;
+	color:#666;
+	font-size:14px;
+	font-weight:bold;
+	cursor:pointer;
+	width:460px;
+	margin:0 auto;
+}
+.loadMoreSections:hover{
+	background-color:#A8A8A8;
+	color:#FFF;
+}
+.padTopBottom{
+	padding:50px 0;
+}
+.loadingIcon{
+	position:relative;
+	z-index:1000;
+	padding:50px;
+}
+.siteProgramHolder{
+    display: table-cell;
+    height: 250px;
+	display:inline-block;
+	width:225px;
+	background-color:#FFF;
+	cursor:pointer;
+	border:1px solid #D8D8D8;
+	/*margin-right:13px;
+	margin-bottom:13px;*/
+	position:relative;
+	-webkit-transition: -webkit-transform 150ms;
+	transition: transform 150ms;
+	-ms-transition: -ms-transform 150ms;
+	z-index:100;
+}
+.siteProgramHolder:hover{
+	box-shadow:0px 0px 4px 2px #DDD;
+	-ms-transform: scale(1.05); /* IE 9 */
+	-webkit-transform: scale(1.05); /* Chrome, Safari, Opera */
+	transform: scale(1.05);
+	z-index:200;
+}
+.siteProgramName{
+	min-height:60px;
+	padding:20px 20px 30px;
+	background-color:#EEE;
+	background-image:url('/public/images/microsite/patterns/1.jpg');
+}
+.siteProgramName .sectionTitle{
+	font-size:22px;
+	line-height:24px;
+	font-weight:400;
+	color:#FEA918;
+	text-transform: uppercase;
+}
+.siteProgramName.pattern0{
+	background-image:url('/public/images/microsite/patterns/1.jpg');
+}
+.siteProgramName.pattern1{
+	background-image:url('/public/images/microsite/patterns/2.jpg');
+}
+.siteProgramName.pattern2{
+	background-image:url('/public/images/microsite/patterns/3.jpg');
+}
+.siteProgramDesc{
+	font-size:13px;
+	color:#666;
+}
+.siteProgramDesc .descHolder{
+	margin-top:10px;
+	max-height:50px;
+	overflow:hidden;
+}
+.siteProgramBottomSec{
+	padding:10px 20px 13px;
+	width:100%;
+}
+.sitePeopleIcon{
+	background-position:-262px -168px;
+	width:24px;
+	height:18px;
+}
+.siteProgStudentsCount{
+	font-size:13px;
+	color:#333;
+	padding-left: 2px;
+}
+.siteProgStudentsTxt{
+	font-size:11px;
+	color:#868686;
+}
+.siteProgStudentsTxt,
+.siteProgStudentsCount{
+	position:relative;
+	top:-3px;
+}
+.showUserPaymentInfo,
+.joinPaidProgButton,
+.joinProgButton{
+	background-color:#8CC92D;
+	padding:2px 11px 2px 12px;
+	border-radius:20px;
+	font-size:13px;
+	line-height:17px;
+	color:#FFF;
+    position: absolute;
+    float: right;
+    bottom: 12px;
+    right: 10px;
+}
+.showUserPaymentInfo{
+	background-color:#1F98D4;
+	padding:2px 6px;
+	visibility:hidden;
+}
+.showUserPaymentInfo.freeProgram{
+	background-color:#8CC92D;
+}
+.joinPaidProgButton{
+	background-color:#F01C0A;
+}
+.siteProgramHolder:nth-child(3n-1){
+    background-image:url('/public/images/microsite/patterns/1.jpg');
+}
+.siteProgramHolder:nth-child(3n){
+    background-image:url('/public/images/microsite/patterns/2.jpg');
+}
+.siteProgramHolder:nth-child(3n+1){
+    background-image:url('/public/images/microsite/patterns/3.jpg');
+}
+.descHolder{
+    display: -webkit-box;
+   -webkit-line-clamp: 3;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+/* PROGRAMS SECTION END */

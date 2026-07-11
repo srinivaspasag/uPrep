@@ -1,0 +1,75 @@
+<div id="libraryExports">
+   <div class="pageHeadGrayDiv">
+	<div class="centerText">
+		<span class="big20">&{'LIBRARY_EXPORT'}</span>
+      		<div class="cmdsTableSortDiv">
+        		#{common.lmArrowsDiv /}
+		</div>
+      	</div>
+    	<div class="cmdsTableOptsAndSortDiv centry"> 
+		<div class="floatLeft redButton boldy margLeft10" id="createExportBtn">&{'CREATE_EXPORT'}</div>
+      		#{common.filterProgCenterSecDiv /}
+		<div class="vChoose mcvChoose vChooseExportState margLeft10 alignMiddle bigvChoose" 
+			data-value="" data-onchange="onmcvChooseChange" 
+			data-param-name="state">
+                	<div class="vChooseHead">ALL</div>
+                	<div class="vChooseDownIcon"></div>
+        		<div class="vChooseDropDown">
+                        	<div class="vChooseOpt" data-value="">All</div>    
+                        	<div class="vChooseOpt" data-value="RUNNING">In-Progress</div>
+                        	<div class="vChooseOpt" data-value="FINISHED">Finished</div>    
+                        	*{<!--<div class="vChooseOpt" data-value="CANCELLED">Cancelled</div>-->}*
+        		</div>
+    		</div>
+    	</div>
+   </div>
+   <div id="fixedSec">
+     <div class="libraryExportsHolder LMHandlerDiv">
+     </div>
+   </div>
+ <div class="nonner">
+   <div class="postExportPopup big14">
+	<p class="centerText">
+		<span class="big20 boldy">&{'CONFIRM_EXPORT_HEADER'}</span>
+	</p>
+	<div style="padding:20px;border:1px solid #CCC;">
+		<div>
+			<span>&{'TXT_NAME'} : </span>
+			<input type="text" class="inputDiv createExportName" style="width:400px;" value="" maxlength="400"/>
+		</div>
+		<div class="big16" style="padding:20px 0 10px;">&{'EXPORT_MAPPING_LIST'}</div>
+		<table class="fullWidth tableWithBorder" cellspacing=0 cellpadding=0>
+		   <tr>
+			<td class="greyTextColor big16">&{'TXT_BATCH'}</td>
+			<td class="greyTextColor big16">&{'TXT_CENTER'}</td>
+			<td class="greyTextColor big16">&{'TXT_SECTION'}</td>
+		   </tr>
+		   <tr>
+			<td class="expProgName boldy"></td>
+			<td class="expCenterName boldy"></td>
+			<td class="expSectionName boldy"></td>
+		   </tr>
+		</table>
+		<!--*{<div style="padding-top:10px;">
+			<span class="big15">Encrypt Content</span>
+			<input type="checkbox" class="encContentInput" checked style="width:18px;height:18px;" />
+		</div>}*-->
+	</div>
+	<div style="padding:20px 10px;" class="big16 redTextColor centerText">
+		&{'EXPORT_CONFIRM_MESSAGE'}
+	</div>
+	<p>
+		<div class="centerText">
+			<span class="bigGreenButton confirmExportBtn">&{'TXT_CONFIRM_EXPORT'}</span>
+			<span class="bigRedButton closecmdsPopup">&{'TXT_CANCEL'}</span>
+		</div>
+	</p>
+   </div>
+  </div>
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrExports.init();}
+        lazyLoad([{fname:"qrExports.js",cb:fn}]);        
+    }();    
+</script>

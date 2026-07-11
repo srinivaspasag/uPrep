@@ -1,0 +1,45 @@
+#{if videoInfo.errorCode==""&&videoInfo.result.videoId!=""}
+%{
+    videoInfo=videoInfo.result;
+    videoUrl=videoInfo.url;
+    timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(videoInfo.duration*1000);
+    if(timeObj.hrs=="00")hrsTime='';
+    else hrsTime=timeObj.hrs+':';
+    videoTime= hrsTime+timeObj.mins+':'+timeObj.secs;                             
+    url = videoInfo.url;
+    url = url.replace("http://", "https://");
+    domainUrl = url.substring(0,url.indexOf('/',url.lastIndexOf('.')));
+}%
+<table>
+<tr>
+<td class="alignTop">
+    <a rel="${videoUrl}" class="videoThumbWrapper playvVideo">
+        <img alt="Image not available" src="${videoInfo.image}">
+        <div rel="${videoInfo.duration}" class="videoDuration">${videoTime}</div>
+    </a>            
+</td>
+<td class="vVideoContent alignTop">
+    <a href="${videoUrl}" target="_blank" class="boldy vVideoTitle">
+        ${videoInfo.title}
+    </a>
+    <a class="blocky" target="_blank" href="${videoUrl}">
+        ${videoUrl}
+    </a>
+    <div contenteditable=true style="background-color:white" class="vVideoDesc margTop">${videoInfo.description.trim().raw()}</div>
+    <input type="hidden" class="formInput" name="title" value="${videoInfo.title}">
+    <input type="hidden" class="formInput" name="thumbnail" value="${videoInfo.image}">
+    <input type="hidden" class="formInput" name="videoId" value="${videoInfo.videoId}">
+    <input type="hidden" class="formInput" name="videoUrl" value="${videoUrl}">
+    <input type="hidden" class="formInput" name="srcName" value="${videoInfo.site_name}">
+    <input type="hidden" class="formInput" name="videoEmbedUrl" value="${videoInfo.video}">
+    <input type="hidden" class="formInput" name="duration" value="${videoInfo.duration}">
+    <input type="hidden" class="formInput" name="requestUrl" value="${params.url}">
+    <input type="hidden" class="formInput" name="domainName" value="${videoInfo.site_name}">
+    <input type="hidden" class="formInput" name="domainUrl" value="${domainUrl}">
+</td>
+</tr>
+</table>
+#{/if}
+#{else}
+<div class="userMessage">There was some error in fetching the video info.Please try again.</div>
+#{/else}

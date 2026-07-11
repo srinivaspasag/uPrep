@@ -1,0 +1,66 @@
+<head>
+  <!-- Latest compiled and minified CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="/public/stylesheets/responsivesignup.css">
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Welcome to Learnpedia' /}
+%{
+  appName = play.Play.configuration.getProperty("application.name");
+        if(appName=='cmds-app'){
+            pageHolderClass='cmdsLoginPage';
+        }else{
+            pageHolderClass='webAppLoginPage';
+        }
+}%
+
+<!-- <div class="pageHolder ${pageHolderClass}"> -->
+<div class="container-fluid">
+<div class="row">
+<div class="col-sm-7 visible-lg" style="padding-left: 8%;">
+        #{UIComRegister.slides /}
+        </div>
+        <!-- <div class="mainLoginBox right"> -->
+            <!-- <div class="vedantuNameWrapper"> -->
+            <div class="col-sm-5 " style="padding-top: 40px;">
+            <br>
+                    <!-- <div class="vedantuTitle"></div> -->
+                     <!-- </div> -->
+            #{if additionalResp!=null && additionalResp.has('errorCode') && additionalResp.errorCode.isEmpty()}
+              #{include 'UIComRegister/newSignupForm.html'/}
+            #{/if}
+            #{else}
+              <div class="card" style="margin: 10px auto 50px auto;">
+                <div class="card-header">
+                    <center>
+                      <img class="img-responsive" id="lpimage" src="/public/images/vedantutm.png">
+                    </center>
+                  </div>
+                  <div class="card-body text-center" style="margin:40px 0px;padding: 20px 0px;box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;background: white;">
+                      #{if additionalResp!=null && additionalResp.has('errorMessage') && additionalResp.errorMessage != null}
+                        <div style="font-size: 20px;line-height: 2;">${additionalResp.errorMessage}</div>
+                      #{/if}
+                  </div>
+              </div>
+            #{/else}
+            </div>
+            </div>
+        <!-- </div>                -->
+  <!-- <div class="cleaner_with_divider">&nbsp;</div> -->
+<!-- </div> -->
+</div>
+%{
+  emailVerified = flash.get('emailVerified');
+}%
+#{if emailVerified!=null && emailVerified.equals("done")}
+<div id="verifyEmailDone" class="nonner">
+    <div class="centerText" style="padding:40px 15px;">
+  <div style="font-size:14px;color:rgb(84, 128, 39);padding-bottom:3px;">&{'login.EMAIL_VERIFY_SUCCESS_1'}</div>
+  <div style="font-size:12px;color:rgb(15, 64, 116);">&{'login.EMAIL_VERIFY_SUCCESS_2'}</div>
+    </div>
+</div>
+
+#{/if}

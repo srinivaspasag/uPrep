@@ -1,0 +1,26 @@
+#{if questions.errorCode!=''}
+        #{common.errorCodes resp:questions/}
+#{/if}
+#{else}
+%{             
+    totalQuestions=0;
+    result=questions.result;
+    quesns=result.list;
+    totalQuestions=result.totalHits
+
+    canEdit=true;
+}%
+<input type="hidden" class="totalHitsHider" value="${totalQuestions}"/>
+#{if quesns!=null && quesns.length()>0}
+#{list items:0..quesns.length()-1,as:'q'}
+%{
+    ques=quesns.get(q);
+    target=params.target;
+}%
+#{questions.quesItem ques:ques,target:target,canEdit:canEdit /}
+#{/list}
+#{/if}
+#{else}
+<div class="userMessage noResultsTr">No questions found.</div>
+#{/else}
+#{/else}        

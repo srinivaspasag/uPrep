@@ -1,0 +1,46 @@
+#{if docs!=null&&docs.errorCode==""}
+%{
+    docs=docs.result.documents;
+    docsLength=docs.length();
+}%
+<div class='popularDocsHolder  widget' id=''>
+    <div class='widgetHead'>
+        <span class="widgetHeadText">Contents</span>
+<!--        <span class="widgetMostPopular">Most Popular</span>-->
+    </div>
+    <div class='popularDocsDiv widgetPadding'>
+        %{
+            if(docsLength>=3)docsLooper=3;
+            else docsLooper=docsLength;
+            loopStart=0;
+            loopEnd=docsLooper-1;
+            target='HOME_PAGE_RECOS';
+        }%
+        #{doc.docItems docs:docs,loopStart:loopStart,loopEnd:loopEnd,target:target,seeMore:true /}
+        #{if docsLength>3}
+                <!--        <a class='popularDocsSeeMore liner smally'>See More..</a>-->
+                %{
+                    loopStart=3;
+                    loopEnd=docsLength-1;
+                    target='HOME_PAGE_RECOS';
+                }%
+                <div id="homePopularDocDataDiv">
+                    #{doc.docItems docs:docs,loopStart:loopStart,loopEnd:loopEnd,target:target /}
+                </div>
+        #{/if}
+        <script type="text/javascript">
+                $("#homePopularDocDataDiv .docItem").each(function(){
+                    popularDocsData.push($(this).html());
+                });
+                $(".popularDocsDiv").find(".docItem").each(function(){
+                    popularDocsCrossed.push($(this).find(".widgetItemName").data("docId"));
+                });
+                 $("#homePopularDocDataDiv").remove();
+        </script>        
+        <div class='createBlock uploadContent'>
+            	<a class="createBlockImg"><img class='' src='/public/images/questions/uploadContent.png' alt='' /></a>
+                <span class='big16 boldy createBlockText'>Upload Content</span>
+        </div>
+    </div>
+</div>
+#{/if}

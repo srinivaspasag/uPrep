@@ -1,0 +1,18 @@
+%{
+    contentType="VIDEO";
+}%
+#{include 'UIComDocuments/uploadStart.html' /}
+<div class="boldy centry cmdsVidSep">or</div>
+<div class="vVideoHolder">
+    <div class="vVideoTitleBody">
+        <div class="inputDiv">
+            <input type="text" class="vVideoUrlInput" placeholder="Enter Youtube or Vimeo url"
+                   data-callback="cmdsVideoInfoAdded"/>
+        </div>        
+    </div>
+    <div class="vVideoInfoBody"></div>
+    <div class="margTop nonner cmdsAddVideoBtns">
+        <div class="gBlueButton submitAddcmdsVideo">Add Video</div>
+        <div class="gButton cancelAddcmdsVideo">Cancel</div>
+    </div>    
+</div>

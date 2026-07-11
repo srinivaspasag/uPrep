@@ -1,0 +1,14 @@
+#{if files!=null && files.errorCode.isEmpty() && files.result.list.length()>0}
+<input type="hidden" class="resultDataCount" value="${files.result.totalHits}" data-real-count="${files.result.totalHits}"/>
+#{list items:0..files.result.list.length()-1, as:'tIndex'}
+%{ 
+	file = files.result.list.get(tIndex); 
+}%
+	#{myContents.iconView.file file : file /}
+#{/list}
+#{/if}
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_DOCS'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+#{/else}

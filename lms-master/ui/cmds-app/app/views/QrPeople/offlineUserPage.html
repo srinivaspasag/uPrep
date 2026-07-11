@@ -1,0 +1,44 @@
+#{if memberInfo.errorCode!=''}
+    #{common.errorCodes resp:memberInfo/}
+#{/if}
+#{else}
+%{
+    info=memberInfo.result.info;
+}%
+<div id="peoplePage" class="studentPage">
+    <div class="memberPageHead">
+        <div class="img50Wrapper">
+            <img class="img50" src="${info.thumbnail}">
+        </div>
+        %{
+            orgUserProfile=currentOrgInfo.getOrgUserProfile();
+        }%
+        <div class="linBlk">
+	    <div class="margLeft10" style="display:inline-block;">
+            	<div class="big24 color3">${info.firstName+' '+info.lastName}</div>
+            	<div style="padding-top:3px;">
+			#{people.userStatus user : info , orgUserProfile : orgUserProfile /}
+		</div>
+	    </div>
+            #{if orgUserProfile=="MANAGER"}
+		#{if !"EXT_AUTH_ORG".equals(session.get("orgAuthType"))}
+            	<div class="grayButton margLeft20 editOrgOfflineUser" data-user-id="${info.userId}">Edit Profile</div>
+            	#{/if}
+	    	#{people.deactivateBtn user : info /}
+            #{/if}
+        </div>
+    </div>
+    <div class="peoplePageLeftSec">
+        #{people.basicProfileInfo info:info,target:"OFFLINE_USER_PAGE",orgUserProfile:orgUserProfile/}
+        <div class="color3 margBot20 big22 margTop20">Institute Info</div>
+        #{widgets.mappingsTable programs:info.mappings.programs,targetProfile:"OFFLINE_USER"/}
+    </div>
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrPeople.init({target:"STUDENT_PAGE",
+                targetUserId:"${info.userId}",targetOrgMemberId:"${info.id}"});}
+        lazyLoad([{fname:"qrPeople.js",cb:fn}]);        
+    }();    
+</script>  
+#{/else}

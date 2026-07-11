@@ -1,0 +1,428 @@
+#{if /*profileResp!=null && profileResp.errorCode.isEmpty() && */ memberInfo!=null && memberInfo.errorCode.isEmpty()}
+%{
+    memberInfo = memberInfo.result.info;
+    if(userInfo!=null && userInfo.errorCode.isEmpty()){
+        userInfo = userInfo.result.info;
+    }
+    targetUserRole = memberInfo.get("profile");
+    targetUserProgId = null;
+    if(memberInfo.mappings.has('programs') && memberInfo.mappings.programs.length()>0){
+        targetUserProgId = memberInfo.mappings.programs.get(0).get("id");
+    }
+    org = myOrgInfo;
+    userRole = myOrgInfo.get('userRole');
+}%
+<link href="/public/stylesheets/o.profile.css" rel="stylesheet"/>
+<link href="/public/stylesheets/o.intlTelInput.css" rel="stylesheet"/>
+#{script src:'o.fileuploader.js', charset:'utf-8' /}
+
+<div class="card" id="instProfilePage" data-profile-user-id="${params.targetUserId}"
+    data-profile-member-id="${memberInfo.id}"
+    data-profile-user-role="${targetUserRole}">
+    <div id="profile-main" style="min-height: 640px;">
+        <div class="pm-overview c-overflow">
+
+            <div class="pmo-pic">
+                <div class="p-relative">
+                    #{if play.Play.configuration.getProperty("environment").equals("local")}
+                    <a href="" class="instPrPicHolder">
+                        <img class="img-responsive instPrPic" alt="&{'IMG_NA'}" src="/public/images/no_image.jpg">
+                    </a>
+                    #{/if}
+                    #{else}
+                        %{
+                            thumbnail = memberInfo.has('thumbnail')?memberInfo.thumbnail:'';
+                        }%
+                        <a href="">
+                            <img class="img-responsive" alt="&{'IMG_NA'}" src="${thumbnail}">
+                        </a>
+                    #{/else}
+                    <div class="dropdown pmop-message">
+                        <a data-toggle="dropdown" href="" class="btn bgm-white btn-float z-depth-1">
+                            <i class="zmdi zmdi-comment-text-alt"></i>
+                        </a>
+
+                        <div class="dropdown-menu">
+                            <textarea placeholder="Write something..."></textarea>
+
+                            <button class="btn bgm-green btn-float"><i class="zmdi zmdi-mail-send"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <a class="pmop-edit instChngPicHold">
+                        <i class="zmdi zmdi-camera"></i> <span
+                            class="hidden-xs">Update Profile Picture</span>
+                    </a>
+                </div>
+
+
+                <div class="pmo-stat bgm-bluegray">
+                    <h4 class="m-0 c-white">${memberInfo.firstName.toUpperCase()} ${memberInfo.lastName.toUpperCase()}</h4>
+                    &{'ROLE_'+memberInfo.profile}
+                </div>
+            </div>
+
+            <div class="pmo-block pmo-contact hidden-xs">
+                <h2>Contact</h2>
+
+                <ul>
+                    <li>
+                        <i class="zmdi zmdi-phone"></i>
+                        #{if memberInfo.contactNumber.equals(null) || memberInfo.contactNumber.isEmpty()}
+                            &{'PROFILE_DATA_NOT_PROVIDED'}
+                            <!-- <a class="c-red registerContactNumber pull-right">&{'PROFILE_REGISTER_CONTACT_NUMBER'}</a> -->
+                        #{/if}
+                        #{else}
+                            ${memberInfo.contactNumber}
+                            <!-- #{if userInfo.isPhoneVerified!=true}
+                                <a class="c-yellow registerContactNumber pull-right">&{'PROFILE_VERIFY_CONTACT_NUMBER'}</a>
+                            #{/if}
+                            #{else}
+                                <span class="c-green pull-right">Verified</span>
+                            #{/else} -->
+                        #{/else}
+                    </li>
+                    <li>
+                        <i class="zmdi zmdi-email"></i>
+                        #{if memberInfo.email.equals(null) || memberInfo.email.isEmpty()}
+                            &{'PROFILE_DATA_NOT_PROVIDED'}
+                            <a class="c-red registerEmail pull-right">&{'PROFILE_REGISTER_EMAIL'}</a>
+                        #{/if}
+                        #{else}
+                            ${memberInfo.email}
+                            #{if userInfo.isEmailVerified!=true}
+                                <a class="verifyEmail pull-right c-yellow">&{'PROFILE_EMAIL_NOT_VERIFIED'}</a>
+                            #{/if}
+                            #{else}
+                                <span class="c-green pull-right">Verified</span>
+                            #{/else}
+                        #{/else}
+                    </li>
+                    <li><i class="zmdi zmdi-city"></i>${myOrgInfo.getString('instFullName')}</li>
+                    #{if memberInfo.mappings.has('programs') && memberInfo.mappings.programs.length()>0}
+                    %{
+                        programs = memberInfo.mappings.programs;
+                        viewMore = false;
+                        progLength = programs.length();
+                        if(progLength>1){
+                            viewMore = true;
+                        }
+                        progLength = 1;
+                        program = programs.get(progLength-1);
+                    }%
+                        <li>
+                            <i class="zmdi zmdi-label"></i>
+                            ${program.name}
+                            #{if viewMore == true}
+                                <a class="viewMemberMappings pull-right" data-user-name="${memberInfo.firstName} ${memberInfo.lastName}"
+                                    data-user-id="${targetUserId}">&{'VIEW_MORE'}</a>
+                            #{/if}
+                        </li>
+                        #{if program.has('centers') && program.centers.length()>0}
+                        %{
+                            center = program.centers.get(0);
+                        }%
+                        <li><i class="zmdi zmdi-globe"></i>${center.name}</li>
+                        #{/if}
+                    #{/if}
+                    #{else}
+                        <li><i class="zmdi zmdi-label"></i>No Programs<button class="openInstAvailPrograms pull-right btn btn-success waves-effect" style="bottom: 6px;">Upgrade</button></li>
+                    #{/else}
+                </ul>
+            </div>
+        </div>
+
+        <div class="pm-body clearfix" role="tabpanel">
+            <ul class="tab-nav tn-justified" role="tablist">
+                <li class="active"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">About</a></li>
+                #{if targetUserRole == "STUDENT"}
+                    <li><a href="#performance" aria-controls="performance" role="tab" data-toggle="tab">Performance</a></li>
+                #{/if}
+                <li><a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Recent Activity</a></li>
+                <li><a href="#doubts" aria-controls="doubts" role="tab" data-toggle="tab">Doubts Asked</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="about" role="tabpanel" class="tab-pane active">
+                    <div class="col-sm-12">
+                        <div class="pmb-block">
+                            <div class="pmbb-header">
+                                <h2><i class="zmdi zmdi-account m-r-10"></i> Basic Information</h2>
+                            </div>
+                            <div class="pmbb-body p-l-30">
+                                <div class="pmbb-view">
+                                    <dl class="dl-horizontal">
+                                        <dt>Full Name</dt>
+                                        <dd>${memberInfo.firstName.toUpperCase()} ${memberInfo.lastName.toUpperCase()}</dd>
+                                    </dl>
+                                    <dl class="dl-horizontal">
+                                        <dt>Gender</dt>
+                                        <dd>Unknown</dd>
+                                    </dl>
+                                    <dl class="dl-horizontal">
+                                        <dt>D.O.B</dt>
+                                        <dd>Unknown</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pmb-block">
+                            <div class="pmbb-header">
+                                <h2><i class="zmdi zmdi-phone m-r-10"></i> Contact Information</h2>
+                            </div>
+                            <div class="pmbb-body p-l-30">
+                                <div class="pmbb-view">
+                                    <dl class="dl-horizontal">
+                                        <dt>Mobile Phone</dt>
+                                        <dd class="mobileNumberDiv">
+                                            #{if memberInfo.contactNumber.equals(null) || memberInfo.contactNumber.isEmpty()}
+                                                &{'PROFILE_DATA_NOT_PROVIDED'}
+                                                <a class="c-red registerContactNumber pull-right">&{'PROFILE_REGISTER_CONTACT_NUMBER'}</a>
+                                            #{/if}
+                                            #{else}
+                                                ${memberInfo.contactNumber}
+                                                #{if userInfo.isPhoneVerified!=true}
+                                                    <a class="c-yellow registerContactNumber pull-right">&{'PROFILE_VERIFY_CONTACT_NUMBER'}</a>
+                                                #{/if}
+                                                #{else}
+                                                    <span class="c-green pull-right">Verified</span>
+                                                #{/else}
+                                            #{/else}
+                                        </dd>
+                                        <dd class="numberHolderDiv hidden">
+                                            <div class="fg-line" style="bottom: 10px;">
+                                                <input type="tel" class="form-control" id="registerNumber" name="contactNumber" placeholder="Enter Contact Number" >
+                                          </div>
+                                          <div class="fg-line hidden" id="otpHolderDiv">
+                                            <input type="text" class="form-control" id="otpField" name="otp" placeholder="Enter OTP">
+                                          </div>
+                                          <input type="hidden" id="countryCode" name="countryCode" />
+                                          <button class="btn btn-primary waves-effect pull-right" id="submitNumber">Submit</button>
+                                          <button class="btn btn-primary waves-effect hidden pull-right" id="postOtp" style="top:10px;position: relative;">Submit</button>
+                                        </dd>
+                                    </dl>
+                                    <dl class="dl-horizontal">
+                                        <dt>Email Address</dt>
+                                        <dd>
+                                            #{if memberInfo.email.equals(null) || memberInfo.email.isEmpty()}
+                                                &{'PROFILE_DATA_NOT_PROVIDED'}
+                                                <a class="c-red registerEmail pull-right">&{'PROFILE_REGISTER_EMAIL'}</a>
+                                            #{/if}
+                                            #{else}
+                                                ${memberInfo.email}
+                                                #{if userInfo.isEmailVerified!=true}
+                                                    <a class="verifyEmail pull-right c-yellow">&{'PROFILE_EMAIL_NOT_VERIFIED'}</a>
+                                                #{/if}
+                                                #{else}
+                                                    <span class="c-green pull-right">Verified</span>
+                                                #{/else}
+                                            #{/else}
+                                        </dd>
+                                    </dl>
+                                    <dl class="dl-horizontal">
+                                        <dt>Institute</dt>
+                                        <dd>
+                                            ${myOrgInfo.getString('instFullName')}
+                                        </dd>
+                                    </dl>
+                                    #{if memberInfo.mappings.has('programs') && memberInfo.mappings.programs.length()>0}
+                                    %{
+                                        programs = memberInfo.mappings.programs;
+                                        viewMore = false;
+                                        progLength = programs.length();
+                                        if(progLength>1){
+                                            viewMore = true;
+                                        }
+                                        progLength = 1;
+                                        program = programs.get(progLength-1);
+                                    }%
+                                        <dl class="dl-horizontal">
+                                            <dt>Program</dt>
+                                            <dd>
+                                                ${program.name}
+                                                #{if viewMore == true}
+                                                    <a class="viewMemberMappings pull-right" data-user-name="${memberInfo.firstName} ${memberInfo.lastName}"
+                                                        data-user-id="${targetUserId}">&{'VIEW_MORE'}</a>
+                                                #{/if}
+                                            </dd>
+                                        </dl>
+                                        #{if program.has('centers') && program.centers.length()>0}
+                                        %{
+                                            center = program.centers.get(0);
+                                        }%
+                                        <dl class="dl-horizontal">
+                                            <dt>Center</dt>
+                                            <dd>
+                                                ${center.name}
+                                            </dd>
+                                        </dl>
+                                        #{/if}
+                                    #{/if}
+                                    #{else}
+                                        <dl class="dl-horizontal">
+                                            <dt>Program</dt>
+                                            <dd>
+                                                No Programs
+                                                <button class="openInstAvailPrograms pull-right btn btn-success waves-effect" style="bottom: 6px;">Upgrade</button>
+                                            </dd>
+                                        </dl>
+                                    #{/else}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="performance" role="tabpanel" class="tab-pane">
+                    #{if profileAnalytics!=null && profileAnalytics.errorCode.isEmpty()}
+                    %{
+                        profile = profileAnalytics.result;
+                        speed = "-";
+                        accuracy = "-";
+                        attempts = 0;
+                        if(!profile.measures.equals(null)){
+                            if(profile.measures.timeTaken > 0){
+                                speed = (profile.measures.timeTaken/60000) / profile.measures.attempts;
+                                speed = util.Utilities.roundDecimals(speed);
+                            }
+                            acc = util.Utilities.calcPercentage(profile.measures.correct,profile.measures.attempts);
+                            accuracy = acc + "%";
+                            attempts = profile.measures.attempts;
+                        }
+                    }%
+                    <div class="col-sm-6">
+                        <div class="pmb-block">
+                            <div class="pmbb-header">
+                                <h2>&{'TXT_TESTS'} &{'TXT_ATTEMPTED'}</h2>
+                            </div>
+                            <div class="pmbb-body">
+                                <div class="mini-charts-item bgm-bluegray">
+                                    <div class="clearfix">
+                                        <div class="chart chart-pie">
+                                            <img src="/public/images/statsImages/testsAttempted.png" class="chart-image">
+                                        </div>
+                                        <div class="count">
+                                            <small>&{'TXT_TESTS'} &{'TXT_ATTEMPTED'}</small>
+                                            <h2>${profile.totalAttempts}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pmb-block">
+                            <div class="pmbb-header">
+                                <h2>&{'TXT_QUES'} &{'TXT_ATTEMPTED'}</h2>
+                            </div>
+                            <div class="pmbb-body">
+                                <div class="mini-charts-item bgm-bluegray">
+                                    <div class="clearfix">
+                                        <div class="chart chart-pie">
+                                            <img src="/public/images/statsImages/questionsAttempted.png" class="chart-image">
+                                        </div>
+                                        <div class="count">
+                                            <small>&{'TXT_QUES'} &{'TXT_ATTEMPTED'}</small>
+                                            <h2>${attempts}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pmb-block">
+                            <div class="pmbb-header">
+                                <h2>&{'TXT_AVERAGE'} &{'TXT_SCORE'}</h2>
+                            </div>
+                            <div class="pmbb-body">
+                                <div class="mini-charts-item bgm-bluegray">
+                                    <div class="clearfix">
+                                        <div class="chart chart-pie">
+                                            <img src="/public/images/statsImages/averageScore.png" class="chart-image">
+                                        </div>
+                                        <div class="count">
+                                            <small>&{'TXT_AVERAGE'} &{'TXT_SCORE'}</small>
+                                            <h2>${Math.round(profile.percentage)}%</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="pmb-block">
+                            <div class="pmbb-header">
+                                <h2>&{'TXT_AVERAGE'} &{'TXT_SPEED'}</h2>
+                            </div>
+                            <div class="pmbb-body">
+                                <div class="mini-charts-item bgm-bluegray">
+                                    <div class="clearfix">
+                                        <div class="chart chart-pie">
+                                            <img src="/public/images/statsImages/averageSpeed.png" class="chart-image">
+                                        </div>
+                                        <div class="count">
+                                            <small>mins/question</small>
+                                            <h2>${speed}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pmb-block">
+                            <div class="pmbb-header">
+                                <h2>&{'TXT_AVERAGE'} &{'TXT_ACCURACY'}</h2>
+                            </div>
+                            <div class="pmbb-body">
+                                <div class="mini-charts-item bgm-bluegray">
+                                    <div class="clearfix">
+                                        <div class="chart chart-pie">
+                                            <img src="/public/images/statsImages/averageAccuracy.png" class="chart-image">
+                                        </div>
+                                        <div class="count">
+                                            <small>&{'TXT_AVERAGE'} &{'TXT_ACCURACY'}</small>
+                                            <h2>${accuracy}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    #{/if}
+                    #{else}
+                    <div class="pmb-block">
+                        <div class="pmbb-header">
+                            <h2><i class="zmdi zmdi-account m-r-10"></i>Some Thing Went Wrong</h2>
+                        </div>
+                    </div>
+                    #{/else}
+                </div>
+                <div id="activity" role="tabpanel" class="tab-pane">
+                    <div class="pmb-block">
+                        <div class="pmbb-header">
+                            <h2 id="activityHeader">Your Activity</h2>
+                        </div>
+                        <div class="pmbb-body activityContainer list-group">
+                        </div>
+                    </div>
+                </div>
+                <div id="doubts" role="tabpanel" class="tab-pane">
+                    <div class="pmb-block">
+                        <div class="pmbb-header doubtsContainer"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#{/if}
+#{script src:'o.profile.js', charset:'utf-8' /}
+#{script src:'o.utils.js', charset:'utf-8' /}
+#{script src:'o.intlTelInput.js', charset:'utf-8' /}
+<script type="text/javascript">
+    instProfile.init();
+    $(".instPageNavigator").find(".active").removeClass("active");
+    $(".instPageNavigator").find(".instNavTab.instProfilePage").closest("li").addClass("active");
+    $("#registerNumber").intlTelInput({
+          initialCountry:"in",
+          formatOnDisplay:false,
+          separateDialCode: false
+    });
+</script>

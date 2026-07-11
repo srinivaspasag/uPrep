@@ -1,0 +1,12 @@
+#{list items:sysInfos,as:'resp'}
+<tr>
+	#{if resp.errorCode==''} %{ info=resp.result; }%
+	<td>${info.appName}</td>
+	<td>${info.buildVersion}</td>
+	<td>${info.httpPort}</td>
+	<td>${info.hostname}</td>
+	<td>${info.cwd}</td> #{/if} #{elseif resp.urlHit!=null}
+	<td colspan="5" class="errorMessage">Could not fetch info for
+		${resp.urlHit}</td> #{/elseif}
+</tr>
+#{/list}

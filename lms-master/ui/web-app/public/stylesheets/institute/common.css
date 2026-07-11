@@ -1,0 +1,800 @@
+/* Institute Top Bar */
+@font-face {
+    font-family: Ubuntu;
+    src: url(../../fonts/Ubuntu-Regular.ttf);
+} 
+#instTopBar{
+	color:#666;
+}
+.scorelogo_sec{
+color: #fff;
+    margin: 0 auto;
+    padding: 4px 0 !important;
+    text-align: center;
+    width: 53% !important;
+}
+.scorelogo{
+}
+.scorelogo img{
+float: right;
+    height: 42px;
+    text-align: right;
+    vertical-align: middle;
+}
+.vChooseHead, .upDownArrowDiv, .bluevChooseHead, .smallvChooseHead, .redvChooseHead{
+	padding:5px 30px 5px 10px;
+	min-height:16px;
+	border-radius: 5px;
+}
+.openQuesPage{
+color:#363636;
+}
+.showVoteUpDetails{
+color:blue;
+}
+.ptrTag{
+	display:initial;
+}
+#instTopBar{
+	opacity:0;
+}
+.topBarSeperator{
+	height: 28px;
+	width: 1px;
+	background-color: #555;
+	margin: 10px 10px 0 0;
+}
+#instMsgNotiHolder,#instReferHolder,
+#instNotiHolder{
+    height: 35px;
+    position: relative;
+    float:right;
+    margin-right:15px;
+}
+.instMsgNotiHead,.instReferHead,
+.instNotiHead{
+    cursor: pointer;
+} 
+.instMsgNotiHead .instImgs,
+.instNotiHead .instImgs{
+    margin:12px 0;
+    padding: 10px 7px 11px 12px;
+    background-position:-424px 2px;
+    float:left;
+}
+/* Add envelope and notification images */
+.instMsgNotiHead .instEnvelope{
+    margin:-1px 0;
+    padding: 10px 0px 10px 3px;
+    /*background-position:-424px 2px;*/
+    float:left;
+}
+
+.instNotiHead .instWorld{
+	margin:2px 0;
+    padding: 10px 0px 10px 3px;
+    /*background-position:-424px 2px;*/
+    float:left;
+}
+
+#instImgWorld img:last-child{
+	display:none;
+}
+#instImgWorld:hover img:first-child{
+	display:none;
+}
+
+#instImgWorld:hover img:last-child{
+	display:inline-block;
+}
+
+#instNotiHolder.clicked img:first-child{
+	display: none;
+}
+
+#instNotiHolder.clicked img:last-child{
+	display: inline-block;
+}
+
+#instNotiHolder.notify img:first-child{
+	display: none;
+}
+
+#instNotiHolder.notify img:last-child{
+	display: inline-block;
+}
+
+#instMsgEnvelope img:last-child{
+	display:none;
+}
+
+#instMsgEnvelope:hover img:first-child{
+	display:none;
+}
+
+#instMsgEnvelope:hover img:last-child{
+	display:inline-block;
+	margin: 0px 0;
+}
+
+#instMsgNotiHolder.clicked img:first-child{
+	display: none;
+}
+
+#instMsgNotiHolder.clicked img:last-child{
+	display: inline-block;
+	margin: 0px 0;
+}
+
+#instMsgNotiHolder.notify img:first-child{
+	display: none;
+}
+
+#instMsgNotiHolder.notify img:last-child{
+	display: inline-block;
+	margin: 0px 0;
+}
+
+/* End of css for envelope and notification images */
+
+#instReferHolder.clicked .button,
+.instReferHead .button:hover{
+	background-position: -651px 4px;
+}
+#instMsgNotiHolder.clicked .instImgs,
+.instMsgNotiHead .instImgs:hover{
+    /*background-position:-681px 3px;*/
+}
+#instNotiHolder.clicked .instImgs,
+.instNotiHead .instImgs:hover{
+    /*background-position:-700px 2px;*/
+}
+.instMsgNotiHead .instImgs{
+    background-position:-382px 3px;
+}
+#instMsgNotiHolder.notify .instMsgNotiHead .instImgs{
+    background-position:-404px 3px;
+}
+#instNotiHolder.notify .instNotiHead .instImgs{
+    background-position:-443px 2px;
+}
+#instReferHolder.notify .instReferHead .button{
+    background-position:-364px 4px;
+}
+.instNotificationsH{
+	overflow:hidden;
+	margin:5px 0;
+}
+.instMsgNotiDiv,
+.instNotiDiv{
+    position: absolute;
+    top: 45px;
+    width: 400px;
+    right: -130px;
+    z-index: 2000;
+    border-top:0px;
+}
+.instMsgNotiDiv .whiteBg,
+.instNotiDiv .whiteBg,
+.instSettingsOptions .whiteBg{
+    	border:1px solid #999;
+	background:#fff;
+	background-color:#fff;
+	-moz-box-shadow: 0 2px 4px #C3C3C3;
+	-webkit-box-shadow: 0 2px 4px #C3C3C3;
+	box-shadow: 0 2px 4px #C3C3C3;
+}
+.instNotiDiv{
+    right: -90px;
+}
+.instMsgNotiDiv{
+    right: -130px;
+}
+.instSettingsOptions,
+.instMsgNotiDiv,
+.instNotiDiv{
+	opacity:0;
+	height:0px;
+    	display:none;
+}
+.instSettingsOptions.blockNow,
+.instMsgNotiDiv.blockNow,
+.instNotiDiv.blockNow{
+	height:initial;
+}
+.instNotiDiv .upArrowIco,
+.instMsgNotiDiv .upArrowIco{
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	position:absolute;
+	/*border-bottom: 10px solid #fff;*/
+	border-bottom: 9px solid #3E4B5C;
+	top:-8px;
+	right:128px;
+}
+.instNotiDiv .upArrowIco{
+	/*right:90px;*/
+	right: 93px;
+}
+#instMsgCount,
+#instTickerCount{
+        position: absolute;
+        right: -10px;
+        top: 6px;
+        padding: 1px 5px 0px;
+        background-color: #B40404;
+	border-radius:0px;
+        color: #fefefe;
+        font-size: 10px;
+        font-weight: bold;
+	display:none;
+}
+#instMsgNotiHolder.notify #instMsgCount,
+#instNotiHolder.notify #instTickerCount{
+	display:inline-block;
+}
+#instUserDetails.clicked .instSettingsImg:hover,
+.instSettingsImg{
+	margin: 10px 3px;
+	width: 13px;
+	height: 17px;
+	background-image: url('/public/images/LMS/inst-sprite.png');
+	background-repeat: no-repeat;
+	font-size: 1px;
+	background-position: -460px 0px;
+}
+.instOpenSettingsDrop{
+	cursor:pointer;
+	height:30px;
+	overflow:hidden;
+}
+.instSettingsImg:hover,
+.instSettingsImg.toggleClick {
+	background-color:transparent;
+	background-image: url('/public/images/LMS/inst-sprite.png');
+	background-position: -472px 0px;
+}
+#instUserDetails{
+	margin-right: 15px;
+	position:relative;
+	float:right;
+	height:44px;
+}
+#instUserDetails.clicked{
+	background-color:#f2f2f2;
+}
+.instSettingsOptions{
+    background: white;
+    background-color: #fff;
+    position: absolute;
+    top: 45px;
+    min-width: 230px;
+    right: -1px;
+    z-index: 2000;
+    border-top:0px;
+}
+.instSettingsOpt{
+	padding:9px 12px 5px;
+	border-bottom: 1px solid #ddd;
+}
+.instSettingsOpt a{
+	color:#666;
+	font-size:15px;
+}
+.instSettingsOpt:hover{
+	background-color:#ccc;
+}
+.instSettingsTable{
+	width:100%;
+	padding:10px;
+	background-color:#f2f2f2;
+	cursor:default;
+	border-bottom: 1px solid #ddd;
+}
+.instSettingsPicHolder{
+	width:50px;
+	height:50px;
+	background-color:#ccc;
+	overflow:hidden;
+}
+.instSettingsPic{
+	width:50px;
+	min-height:50px;
+}
+#instTopBar .instDropDown {
+	float:left;
+}
+#instTopBar .instDropDown a {
+	display: inline-block;
+	margin: 14px -18px;
+}
+#instTopBar #orgSelectDrop{
+	padding: 0px 34px 5px;
+	margin-left: 0px;
+}
+#instTopBar .instNotiTop,
+#instTopBar .instMsgNotiTop{
+	padding:10px 12px;
+	border-bottom:1px solid #ccc;
+}
+.instNotiSeeAll,
+.instMsgSeeAll{
+	color:#999;
+	background-color:#eee;
+	margin-top:20px;
+	padding:10px 0;
+	text-align:center;
+	cursor:pointer;
+}
+.instNameInTop{
+	width: 70%;
+	margin: 0 auto;
+	padding: 12px 0;
+	color: #fff;
+}
+/* Home Tab nav bar CSS */
+#msgHeader,.orgHomePg,
+#instituteHeader{
+	/*font-family:lucida grande, sans-serif;*/
+	font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+	width: 100% !important;
+}
+/*#msgNavigator,
+#instPageNavigator{
+	background-color:#fff;
+	border-bottom:1px solid #ccc;
+}*/
+#msgNavigator .msgNavTab,
+#instPageNavigator .instNavTab{
+	text-align:center;
+	/*margin:0 24px;*/
+	cursor:pointer;
+	color:#999;
+	font-size:14px;
+	font-weight:normal;
+	text-align: left;
+    line-height: 1.5;
+}
+#instPageNavigator .instThumbnailLogo{
+	max-height:45px;
+	max-width:168px;
+}
+#instPageNavigator .instThumbnailLogoHolder{
+	height: 70px;
+    width: 170px;
+    display: inline-block;
+    left: 10px;
+    position: relative;
+    top: 10px;
+}
+.instNavCMDSLink{
+	margin-top:8px;
+	position: fixed;
+	bottom: 2%;
+	left: 1%;
+}
+#msgNavigator .msgNavTabHold,
+#instPageNavigator .instNavTabHold{
+	text-align:center;
+	padding:17px 0;
+	/*max-height:18px;*/
+}
+#instPageNavigator .instNavTabHold{
+	width:100%;
+}
+#msgNavigator .msgNavTab:hover,
+#instPageNavigator .instNavTab:hover{
+	color:#333;
+}
+#msgNavigator .clMsgTab:hover,
+#msgNavigator .clMsgTab,
+#instPageNavigator .clInstTab:hover,
+#instPageNavigator .clInstTab{
+	/*color:#ed3237;*/
+	color: black;
+	/*color:#62a43a;*/
+	font-weight: bold;
+	left: 10px;
+    border-left: 3px solid #62a43a;
+    /* left: 0px; */
+    position: relative;
+}
+.instBasicBg{
+	background-color: transparent;
+}
+.instPad{
+	padding:3px 0 0 5px;
+}
+
+.instImgs{
+	background-image:url('/public/images/LMS/inst-sprite.png');
+	background-repeat:no-repeat;
+	font-size:1px;
+}
+.msgNavTabHold .msgNavTab .instImgs,
+.instNavTabHold .instNavTab .instImgs{
+	position: relative;
+	padding: 4px 7px;
+	top: 25px;
+	left: -36px;
+	z-index: 200;
+	background-position: 20px 0;
+}
+.msgNavTabHold .msgNavTab.clMsgTab .instImgs,
+.instNavTabHold .instNavTab.clInstTab .instImgs{
+	background-position: -581px -6px;
+}
+.msgNavTabHold .msgNavTab.openMsgInbox .instImgs{
+	left:-85px;
+}
+.msgNavTabHold .msgNavTab.msgSentTab .instImgs{
+	left:-60px;
+}
+.instNavTabHold .instNavTab.instOpenLibraryPage .instImgs{
+	left:-40px;
+}
+.instNavTabHold .instNavTab.instOpenAnalytics .instImgs{
+	left:-50px;
+}
+.itlPlaceHolder::-webkit-input-placeholder{
+        color:#a7a7a5;
+        font-style: italic;
+        font-size:11px;
+}
+.itlPlaceHolder:-moz-placeholder{
+        color:#a7a7a5;
+        font-style: italic;
+        font-size:11px;
+}
+
+/* SEARCH MEMBER CSS */
+.instTpSrchMbrsInput:focus,
+.instTpSrchMbrsInput{
+	background-color:transparent;
+	border:0px;
+	outline:none;	
+}
+.instTpSrchMembers{
+}
+.instTypeMembers{
+	padding-top:5px;
+}
+.instTpSrchMembr{
+	background-color:#ccc;
+	font-size:11px;
+	padding:1px 5px;
+	border:1px solid #666;
+	margin-right:7px;
+	display:inline-block;
+	margin-bottom:4px;
+}
+.instTpSrchMembrCross{
+	padding-left:5px;
+}
+.instTpSrchMembrCross:hover{
+	color:red;
+	cursor:pointer;
+}
+.instTypMembrsSuggContainer{
+	background-color:rgb(212, 215, 219);
+	border:1px solid #ccc;
+	min-height:50px;
+	position:absolute;
+	z-index:200;
+	padding-bottom:6px;
+	max-height:300px;
+	max-width:500px;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+.instTypMembrsSugg{
+	min-width:300px;
+	top:0px;
+	position:relative;
+}
+.instTypEachMembrSugg{
+	margin:8px 6px 0 6px;
+	padding:5px;
+	background-color:rgb(236, 236, 236);
+	border:1px solid transparent;
+	cursor:pointer;
+}
+.instTypEachMembrSugg.selectInstMember{
+	background-color:#fff;
+	border:1px solid #eee;
+}
+.instTypEachMembrSugg .instMemberSuggInfo{
+	max-width:350px;
+}
+.instTypEachMembrPic{
+	width:30px;
+	height:30px;
+}
+
+/* NEW DROP-DOWN */
+.nDropDown{
+}
+table.dropDownHead{
+	margin-top:-3px;
+	border-radius: 10px;
+}
+.dropDownHead{
+	cursor:pointer;
+	direction:ltr;
+	padding-left:10px;
+}
+.dropDownHead .textCont{
+}
+.dropDownHead .instImgs{
+	float: right;
+	padding: 8px;
+	background-position: -520px 0px;
+	margin:-2px 5px 0 5px;
+}
+.dropDownContainer{
+	float:right;
+	z-index:2000;
+	margin-left:10px;
+	border-radius: 10px;
+}
+.dropDownContainer,
+.dropDownContainer .eachDroperElemHolder{
+	position:absolute;
+	border:1px solid #ccc;
+	padding:5px;
+	background-color:#fff;
+}
+.dropDownContainer .eachNonDropElement{
+	font-size:13px;
+	font-weight:bold;
+	border-bottom:1px solid #ccc;
+	padding:0 5px;
+	margin-top:5px;
+	cursor:pointer;
+}
+/*.dropDownContainer .eachDroperElement{
+	padding:2px 5px;
+	cursor:pointer;
+	background-color:rgb(225, 247, 203);
+	border-radius:3px;
+}*/
+.dropDownContainer .eachDroperElemHolder{
+	display:none;
+	left:95%;
+	margin-top:-20px;
+	z-index:2000;
+}
+.dropDownContainer .dropElemPackage:hover{
+}
+.dropDownContainer .dropElemPackage:hover .eachDropedElement:first-child{
+	background-color:#ccc;
+}
+.dropDownContainer .dropElemPackage:hover .eachDroperElemHolder{
+	display:block;
+}
+.dropDownContainer .dropElemPackage:hover .eachDroperElemHolder .dropElemPackage .eachDropedElement{
+	background-color:#fff;
+}
+.dropDownContainer .dropElemPackage:hover .eachDroperElemHolder .dropElemPackage .eachDroperElemHolder{
+	display:none;
+}
+.dropDownContainer .dropElemPackage:hover .eachDroperElemHolder .dropElemPackage:hover .eachDroperElemHolder{
+	display:block;
+}
+.dropDownContainer .dropElemPackage:hover .eachDroperElemHolder .dropElemPackage:hover .eachDropedElement:first-child{
+	background-color:#ccc;
+}
+.dropDownContainer .eachDropedElement{
+	max-width:400px;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	padding:2px 8px;
+	margin-top:3px;
+	/*background-color:#eee;*/
+	color:#666;
+	font-size:13px;
+	cursor:pointer;
+}
+.dropDownContainer .dropElemPackage:hover .eachDropedElement:first-child:hover,
+.dropDownContainer .dropElemPackage:hover .eachDroperElemHolder .dropElemPackage:hover .eachDropedElement:hover,
+.dropDownContainer .eachDropedElement.selected,
+.dropDownContainer .eachDropedElement:hover{
+	color:#fff;
+	background-color:#3ab2e4;
+}
+.instUsersPopup{
+	min-width:400px;
+	margin-top:25px;
+	width:400px;
+}
+.usersPopupTitle{
+	background-color:rgb(56, 129, 238);
+	font-size:16px;
+	font-weight:bold;
+	color:#fff;
+	padding:10px 20px;
+	border-bottom:1px solid #333;
+}
+.popupUsersList{
+	margin:10px 0;
+	max-height:500px;
+	padding-right:30px;
+	overflow-x:hidden;
+	overflow-y:auto;
+	padding-top:12px;
+}
+.eachUsersPopupItem{
+	padding:5px 20px 5px 10px;
+	margin-bottom:15px;
+	border-bottom:1px solid #ccc;
+	background-color:rgba(230,230,230,0.5);
+}
+.eachUsersPopupItem:hover{
+	background-color:rgb(230,230,230);
+}
+.popupUserName{
+	font-size:14px;
+	text-decoration:none;
+	padding-left:10px;
+}
+.loadMorePopupUsers{
+	text-decoration:italic;
+	font-size:13px;
+	margin:15px 10px;
+}
+textarea{
+	resize: none;
+}
+/* HORIZONTAL ANALYTICS BAR */
+.analyticsHorizontalBarHolder{
+	width:190px;
+	height:15px;
+	display:inline-block;
+	background-color:#ccc;
+}
+.analyticsHorizontalBar{
+	height:100%;
+	float:left;
+}
+.analyticsHorizontalBar.correct{
+	background-color:#66CC66;
+}
+.analyticsHorizontalBar.partial{
+	background-color:orange;
+}
+.analyticsHorizontalBar.incorrect{
+	background-color:#E64949;
+}
+#contentSectionHolder{
+	min-height:800px;
+}
+/* Board Disabled */
+.boardExam,
+.boardSubject,
+.boardTopic{
+	cursor:default;
+}
+/* Board Disabled End */
+.refreshQues.instImgs{
+	padding:14px;
+	margin:2px;
+	cursor:pointer;
+	display:inline-block;
+	background-position:-832px 2px;
+}
+.refreshQuesTest.instImgs{
+    padding: 14px;
+    cursor: pointer;
+    display: inline-block;
+    background-position: -832px 2px;
+    float: right;
+    position: relative;
+    top: -9px;
+    right: 2px;
+}
+.refreshQues.instImgs.nonner,.refreshQuesTest.instImgs.nonner{
+	display:none;
+}
+.refreshQues.instImgs:hover,.refreshQuesTest.instImgs:hover{
+    	background-position:-802px 2px;
+}
+.memberMappingsPopup{
+	padding:20px;
+}
+.memberMappingsPopup table{
+}
+.memberMappingsPopup table td,
+.memberMappingsPopup table th{
+	border:1px solid #CCC;
+	border-left:0px;
+}
+.memberMappingsPopup table th{
+	padding:6px 10px;
+}
+.memberMappingsPopup table td.memberPrgTd,
+.memberMappingsPopup table th:first-child{
+	border-left:1px solid #CCC;
+}
+.memberMappingsPopup table td{
+	border-top:0px;
+	color:#999;
+	padding:4px 10px;
+}
+.memberMappingsPopup table td div{
+	padding:3px 0px;
+}
+.otherUserUseTopBar{
+	border-bottom:1px solid #CCC; 
+	height: 20px; 
+	padding: 7px;
+	font-size:14px;
+	background-color:rgba(0,0,0,0.7);
+	color:#EEE;
+}
+.otherUserUseTopBar a{
+	color:#33A5DF;
+}
+.orgMemberTooltip{
+	padding:8px 12px;
+	background-color:#FFF;
+	min-width:200px;
+	min-height:60px;
+}
+.orgMemberTooltip .instProfilePicContainer{
+	min-width: 80px;
+	height: 80px;
+	overflow: hidden;
+	background-color: #999;
+	margin-right: 10px;
+}
+.orgMemberTooltip .instProfilePicContainer.imgLoaded{
+	background-color: transparent;
+}
+.orgMemberTooltip .instProfilePic{
+	width:80px;
+	opacity:0;
+}
+#tooltipContainer.orgMemberToolTip .tooltipBody{
+	background-color:#FFF;
+	border:2px solid #666;
+	color:#666;
+}
+#tooltipContainer.orgMemberToolTip .tooltipPointerDown{
+	border-top:5px solid #666;
+}
+#userAllNotifcations .pageHolderM{
+	background-color:#FFF;
+	/*padding:10px 20px;*/
+	margin-bottom:20px;
+}
+#userAllNotifcations .instGetOlderNotisHolder{
+	padding:2px 10px;
+	background-color:#EEE;
+}
+.myAccessCodesTable{
+	margin:12px;
+	padding:2px;
+	border-color:#666;
+}
+.myAccessCodesTable ul{
+	-webkit-padding-start: 20px;
+}
+.myAccessCodesTable li{
+	margin-bottom:5px;
+}
+.myAccessCodesTable td{
+	padding:4px 8px;
+	color:#666;
+}
+.myAccessCodesTable th{
+	padding:6px 12px;
+	color:#333;
+	font-size:14px;
+}
+.tabText{
+	left: 5%;
+    position: relative;
+}

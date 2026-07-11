@@ -1,0 +1,134 @@
+<head>
+<style type="text/css">
+    .nonner{
+        display: none;
+    }
+    .instTATable{
+        font-size: 14px;
+        max-height: 600px;
+        overflow: auto;
+    }
+    .indpRowCell{
+        padding-left:10px!important;
+    }
+    .loadMoreItems{
+        font-size: 14px!important;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    .TAAdmin{
+        width: 40%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .titleTable{
+        font-size: 16px!important;
+        bottom: 17px;
+        position: relative;
+    }
+</style>
+</head>
+<div class="card">
+    <div class="card-header bgm-teal">
+        <div class="row">
+            <div class="col-sm-4 f-20 f-500 c-white">
+                <div>Result Analytics</div>
+            </div>
+            #{if userRole=="STUDENT" && profileAnalytics!=null && profileAnalytics.errorCode.isEmpty()}
+            %{
+                profile = profileAnalytics.result;
+            }%
+            <div class="col-sm-4">
+                <div class="mini-charts-item" style="margin-bottom: 0px!important;">
+                    <div class="clearfix">
+                        <div class="chart chart-pie">
+                            <img src="/public/images/statsImages/testsAttempted.png" style="width: 45px;height: 45px;">
+                        </div>
+                        <div class="count">
+                            <small>&{'TXT_TESTS'} &{'TXT_ATTEMPTED'}</small>
+                            <h2>${profile.totalAttempts}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="mini-charts-item" style="margin-bottom: 0px!important;">
+                    <div class="clearfix">
+                        <div class="chart chart-pie">
+                            <img src="/public/images/statsImages/averageScore.png" style="width: 45px;height: 45px;">
+                        </div>
+                        <div class="count">
+                            <small>&{'TXT_AVERAGE'} &{'TXT_SCORE'}</small>
+                            <h2>${Math.round(profile.percentage)}%</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            #{/if}
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- <div class="pm-body clearfix" role="tabpanel"> -->
+            <!-- <ul class="tab-nav tn-justified" role="tablist">
+                <li class="active"><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab">Graph</a></li>
+                <li><a href="#table" aria-controls="table" role="tab" data-toggle="tab">Result Sheet</a></li>
+            </ul> -->
+            <!-- <div class="tab-content"> -->
+                <!-- <div id="graph" role="tabpanel" class="tab-pane active">
+                    <div class="col-sm-12">
+                        <div class="pmb-block" style="min-height: 650px;">
+                            <div class="pmbb-header f-20">
+                                Test Result Graph
+                            </div>
+                            <div class="pmbb-body p-l-30"> -->
+                                <div style="padding-top:10px;" class="nonner">
+                                    #{institute.analytics.selectPrograms memberInfo : memberInfo /}
+                                </div>
+                            <!-- </div>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- <div id="table" role="tabpanel" class="tab-pane">
+                    <div class="col-sm-12">
+                        <div class="pmb-block" style="min-height: 650px;">
+                            <div class="pmbb-header f-20"> -->
+
+                                <div class="instTATests">
+                                <!-- Test Search Box Removed , Due to Non-Support From backEnd-->
+                                    #{if userRole!='STUDENT'}
+                                    <div class="instSearchTests" style="display:none;">
+                                        <div class="input-group TAAdmin">
+                                            <span class="input-group-addon">
+                                                <i class="zmdi zmdi-search"></i>
+                                            </span>
+                                            <div class="fg-line">
+                                                    <input type="text" class="customSearchBox doCStream form-control p-l-10" placeholder="Search Test by ID/Name"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    #{/if}
+                                    <div class="instTATable">
+                                        <table class="instTATableTH CSWidget" data-widget="RESULT_ANALYTICS_TESTS">
+                                        </table>
+                                    </div>
+                                </div>
+                            <!-- </div>
+                            <div class="pmbb-body p-l-30">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        <!-- </div> -->
+    </div>
+</div>
+#{script src:"o.Invoice.js", charset:'utf-8' /}
+#{script src:"o.analytics.js", charset:'utf-8' /}
+<script type="text/javascript">
+    var instTATestData;
+    $(document).ready(function(){
+        $(".instPageNavigator").find(".active").removeClass("active");
+        $(".instPageNavigator").find(".instNavTab.instOpenAnalytics").closest("li").addClass("active");
+        instAnalytics.init();
+    });
+</script>

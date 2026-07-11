@@ -1,0 +1,222 @@
+#{if memberInfo.errorCode.isEmpty() && userInfo.errorCode.isEmpty()}
+%{
+	member = memberInfo.result.info;
+	user = userInfo.result.info;
+	loginType = "EMAIL";
+	username = user.username;
+	isSysGenPassword = user.isSysGenPassword;
+	isOTPuser = user.isOTPuser;
+	if(member.isUsernameOrgSpecific){
+            username = member.memberId;
+            loginType = "MEMBER";
+	}
+	extStngsClass = "";
+	if(params.useExtClassName!=null){
+		extStngsClass = params.useExtClassName;
+	}
+	isSubscribed = userInfo.result.unsubscribeInfo == null || userInfo.result.unsubscribeInfo.equals(null) ? true : false;
+}%
+<div id="settingsPopupH">
+	<div class="instSettingsPopup ${extStngsClass}">
+	   <table cellspacing=0 style="min-width:500px;">
+	      <tr class="instSettingsPwdTR">
+		<td class="alignTop">
+	   	   <div style="padding:15px 15px 0 0;">
+			<span class="big24">&{'settings.TITLE'}</span>
+		   	<span class="${params.closePopupClass} right big18 instImgs" style="cursor:pointer;" title="close popup"></span>
+		   </div>
+		   <table cellspacing=0 class="instStngLogin">
+			<tr>
+				<td class="alignTop instStngsTitle" style="padding-bottom:20px;padding-right: 0px;width: 128px;">&{'settings.LOGINID'}</td>
+				<td class="myStngsLoginId alignTop" data-login-type="${loginType}" 
+					data-username="${username}">${username}</td>
+			</tr>
+			#{if !"EXT_AUTH_ORG".equals(session.get("userAuthType"))}
+			<tr>
+			#{if isSysGenPassword==true && isOTPuser==true}
+			#{/if}
+			#{else}
+				<td class="alignTop instStngsTitle">&{'login.PASSWORD'}</td>
+				<td class="alignTop">
+					<div class="myStngsPwd">**********</div>
+					<div class="myStngsChngPwd">
+						<input class="myStngsChngOldPwd" placeholder="&{'settings.CURR_PASSWORD'}" type="password"/>
+					</div>
+					<div class="myStngsChngPwd">
+						<input class="myStngsChngNewPwd" placeholder="&{'settings.NEW_PASSWORD'}" type="password"/>
+					</div>
+					<div class="myStngsChngPwd">
+						<input class="myStngsChngReNewPwd" placeholder="&{'settings.REENTER_NEW_PASSWORD'}" type="password"/>
+					</div>
+					<div class="chngPwdMsgs nonner">
+						<div class="redTextColor pwdLengthError nonner" style="color: #CC3333!important;">&{'settings.SERVICE_MSG_PWD_LENGTH_ERROR'}</div>
+						<div class="redTextColor pwdNotMatch nonner" style="color: #CC3333!important;">&{'settings.SERVICE_MSG_PWD_NOT_MATCH'}</div>
+						<div class="redTextColor curPwdNotMatch nonner" style="color: #CC3333!important;">&{'settings.SERVICE_MSG_CURR_PWD_NOT_MATCH'}</div>
+						<div class="redTextColor unknownError nonner" style="color: #CC3333!important;">&{'settings.SERVICE_ERROR'}</div>
+						<div class="greenTextColor pwdChngSuccess nonner">&{'settings.SERVICE_MSG_CHNG_PWD_SUCCESS'}</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td class="showChngPwdBtnHold">
+					<span class="blueButton instStngsChngPassBtn">&{'login.CHNG_PASSWORD'}</span>
+				</td>
+				#{/else}
+				<td class="showChngPwdDoneBtnHold">
+					<span class="blueButton instStngsChngPassDoneBtn">Done</span>
+				</td>
+			</tr>
+			#{/if}
+		   </table>
+		</td>
+		<td class="instStngInfo instStngEmailInfo">
+			<span class="left instStngInfoArrow"></span>
+			#{if "MEMBER".equals(loginType)}
+				<div class="big16 boldy settingsLoginMsg1">&{'settings.LOGINID'}</div>
+				<div class="big16 boldy settingsLoginMsg2 nonner">&{'settings.EMAIL_LOGINID'}</div>
+			#{/if}
+			#{else}
+				<div class="big16 boldy">&{'settings.EMAIL_LOGINID'}</div>
+			#{/else}
+			<div class="instStngInfoMsg">
+				#{if "MEMBER".equals(loginType)}
+					<div class="settingsLoginMsg1">&{'settings.MSG_1'}</div>
+					<div class="settingsLoginMsg2 nonner">&{'settings.MSG_3'}</div>
+				#{/if}
+				#{else}
+					<div class="">&{'settings.MSG_3'}</div>
+				#{/else}
+			</div>
+		</td>
+	      </tr>
+	      <tr>
+                  <td class="alignTop instStngEmail"  
+                      style="vertical-align: top;padding-top:20px;width: 450px;" data-email-id="${user.email}">
+			%{
+				regEmailBtn = "nonner";
+				regEmailHolder = "nonner";
+				regEmailNotVerified = "nonner";
+				regEmailVerified = "nonner";
+				emailChangeRequested = user.email;
+				if(user.email.equals(null) || user.email.isEmpty()){
+					regEmailBtn = "";
+				}else if(user.has('emailChangeRequested') && 
+					!user.emailChangeRequested.equals(null) && 
+					!user.emailChangeRequested.isEmpty()){
+					
+					regEmailNotVerified = "";
+					emailChangeRequested = user.emailChangeRequested;
+				}
+				if(user.isEmailVerified){
+					regEmailVerified = "";
+				}
+			}%
+			<table cellspacing=0 style="min-width:300px;">
+			   <tr>
+				<td class="alignTop instStngsTitle">&{'settings.EMAIL'}</td>
+				<td>
+					<div class="regEmailBtn ${regEmailBtn} regEmailEachDiv relative" style="top:-10px;">
+						<span class="greenButton instStngsRegEmail" style="left: 45px;position: relative;">&{'settings.REGISTER_EMAIL'}</span>
+					</div>
+					<div class="regEmailHolder ${regEmailHolder} regEmailEachDiv relative" style="top:-10px;left: 45px;">
+						<div class="">
+							<input class="myStngsChngEmail emailUserName" placeholder="&{'login.PLACEHOLDER_USERNAME'}" name="email" type="email"/>
+								<span class="signupErrorDiv"></span>
+						</div>
+						#{if isSysGenPassword==true && isOTPuser==true}
+							<div class="" style="padding-bottom:5px;padding-top: 5px; ">
+								<input class="myStngsChngEmail" placeholder="&{'settings.NEW_PASSWORD'}"
+								name="password" type="password" id="newpassword"/>
+							</div>
+							<div class="">
+								<input class="myStngsChngEmail" placeholder="&{'settings.REENTER_NEW_PASSWORD'}"
+								name="confpassword" type="password" id="confirmpassword"/>
+							</div>
+							<div style="padding:10px 0;"><center>
+								<span class="blueButton instStngsRegUpdateBtn">&{'TXT_ADD'}</span></center>
+							</div>
+						#{/if}
+						#{else}
+						<div style="padding:10px 0;">
+							<span class="blueButton instStngsRegEmailBtn">&{'TXT_ADD'}</span>
+						</div>
+						#{/else}
+						<div class="greyTextColor big14">&{'settings.EMAIL_VERIFICATION_LINK_SEND'}</div>
+					</div>
+					<div class="regEmailNotVerified ${regEmailNotVerified} regEmailEachDiv">
+						<div class="">
+							<span class="greyTextColor userEmailId big16">${emailChangeRequested}</span>
+							<a class="instStngsRegEmail" style="padding:0 10px;">&{'TXT_CHANGE'}</a>
+						</div>
+						<div style="padding:12px 0;">
+							<span class="redTextColor boldy big14" style="padding-right:20px;color:#ed3237 !important;">&{'TXT_NOT_VERIFIED'}</span>
+							<a class="resendEmailVerifyLink" style="color:#ed3237 !important;">&{'settings.RESEND_VERIFICATION_LINK'}</a>
+							<div class="emailVerifyLinkSent smally greyTextColor nonner">
+								&{'settings.EMAIL_VERIFICATION_LINK_SENT'}</div>
+						</div>
+					</div>
+					<div class="regEmailVerified ${regEmailVerified} regEmailEachDiv">
+						<div class="greyTextColor userEmailId big16" data-email-id="${user.email}">${user.email}</div>
+						<div style="padding:12px 0;">
+							<span class="greenTextColor boldy big14" style="padding-right:20px;">&{'TXT_VERIFIED'}</span>
+							<a class="instStngsRegEmail">&{'TXT_CHANGE'}</a>
+						</div>
+						<div class="subscriptionEmail" style="padding:6px 0;"
+							data-text-subscribed="&{'settings.YOU_ARE_SUBSCRIBED_EMAIL'}"
+							data-text-unsubscribed="&{'settings.YOU_ARE_UNSUBSCRIBED_EMAIL'}">
+						#{if isSubscribed==true}
+							<div class="">&{'settings.YOU_ARE_SUBSCRIBED_EMAIL'}</div>
+							<a class="redTextColor unsubscribeBtn">&{'settings.UNSUBSCRIBE_BTN'}</a>
+						#{/if}
+						#{else}
+							<div class="redTextColor">&{'settings.YOU_ARE_UNSUBSCRIBED_EMAIL'}</div>
+							<span class="smallGreenButton subscribeBtn">&{'settings.SUBSCRIBE_BTN'}</span>
+						#{/else}
+						</div>
+						#{if user.email != username && !"EXT_AUTH_ORG".equals(session.get("userAuthType"))}
+						<div class="centerText instStngsUseEmailHold" style="padding:20px 0;">
+							<span class="greenButton instStngsUseEmailBtn">&{'settings.USE_EMAIL_AS_LOGIN'}</span>
+						   <div class="myStngsVerifyOldPwdHold nonner">
+							<input class="myStngsVerifyOldPwd" 
+								placeholder="&{'settings.CURR_PASSWORD'}" type="password"/>
+							<span class="blueButton instStngsUseEmailBtn2"
+								data-login-type="${loginType}" data-username="${username}">Done</span>
+						   </div>
+						   <div class="leftText big14 instStngsUseEmailMsg nonner">
+							<div class="greenTextColor boldy big16">&{'settings.USE_EMAIL_AS_LOGIN_SUCCESS'}</div>
+							<div class="blueTextColor" style="padding:5px 0;">&{'settings.USE_EMAIL_AS_LOGIN_MSG'}</div>
+						   </div>
+						</div>
+						#{/if}
+					</div>
+				</td>
+			   </tr>
+			</table>
+		</td>
+		<td class="instStngInfo">
+		#{if isSysGenPassword==true && isOTPuser==true}
+			<span class="left instStngInfoArrow relative" style="display: none;"></span>
+			<div id="settingsEmail" style="position: relative;bottom: 40px;">
+				<div class="big16 boldy">&{'settings.REGISTER_EMAIL'}</div>
+				<div class="instStngInfoMsg">
+					&{'settings.MSG_2'}
+				</div>
+			</div>
+		#{/if}
+		#{else}
+			<span class="left instStngInfoArrow relative" style="top:20px;"></span>
+			<div class="big16 boldy">&{'settings.REGISTER_EMAIL'}</div>
+			<div class="instStngInfoMsg">
+				&{'settings.MSG_2'}
+			</div>
+		#{/else}
+		</td>
+	      </tr>
+	   </table>
+	</div>
+</div>
+<script type="text/javascript">
+	var usrJsonData = ${user.raw()};
+</script>
+#{/if}

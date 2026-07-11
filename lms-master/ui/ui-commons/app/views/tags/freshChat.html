@@ -1,0 +1,20 @@
+<script>
+  function initFreshChat() {
+    window.fcWidget.init({
+      token: "58a5790b-8932-4f7d-8938-b588c0afbf2c",
+      host: "https://wchat.freshchat.com"
+    });
+
+    window.fcWidget.setExternalId("${session.get('userId')}");
+    // To set user name
+    window.fcWidget.user.setFirstName("${session.get('fullname')}");
+    // To set user email
+    window.fcWidget.user.setEmail("${session.get('username')}");
+    // To set user properties
+    window.fcWidget.user.setProperties({
+      plan: "Estate",                 // meta property 1
+      status: "Active"                // meta property 2
+    });
+  }
+  function initialize(i,t){var e;i.getElementById(t)?initFreshChat():((e=i.createElement("script")).id=t,e.async=!0,e.src="https://wchat.freshchat.com/js/widget.js",e.onload=initFreshChat,i.head.appendChild(e))}function initiateCall(){initialize(document,"freshchat-js-sdk")}window.addEventListener?window.addEventListener("load",initiateCall,!1):window.attachEvent("load",initiateCall,!1);
+</script>

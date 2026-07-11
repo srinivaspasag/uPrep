@@ -1,0 +1,209 @@
+    %{
+        info=_info;
+	signUpFields = _signUpFields;
+        tableClass='';
+        target=_target;
+        if(target=="ADD_EDIT_MEMBER"){
+            tableClass=' width100Percent';
+        }
+	isEdit = _isEditMember;
+    }%
+    <table class="editBasicInfoTable${tableClass}">
+        <tbody>
+	  <tr style="display:none;"><!-- HIDDEN ELEMENTS-->
+		<td>
+			<input type="hidden" name="isEdit" value="${isEdit}" class="formInput"/>
+		</td>
+	  </tr>
+          <tr>
+              <td class="width100">
+                  First Name*
+              </td>
+              <td>
+                  <div class="inputDiv">                      
+                      <input type="text" class="formInput" name="firstName" value="${info?.firstName}"
+                             data-req="true"/>
+                  </div>                            
+              </td>
+          </tr>       
+          <tr>
+              <td>
+                  Last Name
+              </td>
+              <td>
+                  <div class="inputDiv">
+                      <input type="text" class="formInput" name="lastName" value="${info?.lastName}" />
+                  </div>                            
+              </td>
+          </tr>
+          #{if target!="EDIT_PUBLIC_PROFILE"}
+          <tr>
+              <td>
+                  <div>&{'INST_ID'}</div>
+		  #{if isEdit != true}
+		  <div class="smally greyTextColor">(If not provided, will be auto-generated)</div>
+		  #{/if}
+              </td>
+              <td class="alignTop">
+                  <div class="inputDiv">
+		   #{if isEdit == true}
+                      <input type="text" class="memberIdInput" name="targetMemberId" disabled value="${info?.memberId}"/>
+		   #{/if}
+		   #{else}
+                      <input type="text" class="memberIdInput formInput" name="targetMemberId" value="${info?.memberId}"/>
+		   #{/else}
+                  </div>                            
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <div>Email ID</div>
+		  #{if isEdit != true}
+		  <div class="smally greyTextColor">(Optional, if &{'INST_ID'} provided)</div>
+		  #{/if}
+              </td>
+              <td class="alignTop">
+                  %{
+                    email='';
+                    if(info!=null&&!info.isNull('email')){
+                        email=info.email;
+                    }
+                  }%
+                  <div class="inputDiv">
+                      <input type="text" class="formInput emailTextBox" name="email" value="${email}"/>
+                  </div>
+		  <div class="smally greyTextColor italics">Member's Email Id. Used for login and communication purpose</div> 
+              </td>
+          </tr>          
+          #{/if}
+	  #{if target == "ADD_EDIT_OFFLINE_USER"}
+          <tr style="display:none;">
+	  #{/if}
+	  #{else}
+          <tr>
+	  #{/else}
+              
+          </tr>          
+	  #{if target == "ADD_EDIT_OFFLINE_USER"}
+          <tr style="display:none;">
+	  #{/if}
+	  #{else}
+          <tr>
+	  #{/else}
+              <td>
+                  Gender*
+              </td>
+              <td>
+                  %{
+                    
+                    if(info!=null&&info.has('gender')&&!info.isNull('gender')){
+                        gender=info.gender;
+                    }else{
+                        gender='MALE';
+                    }
+                  }%
+                <div class="vChoose formvChoose" data-req='true' 
+                     data-value="${gender}" data-param-name='gender'>
+                  <div class="vChooseHead">${gender.toLowerCase().capitalizeWords()}</div>
+                  <div class="vChooseDownIcon"></div>
+                  <div class="vChooseDropDown">
+                      <div class="vChooseOpt" data-value="MALE">Male</div>
+                      <div class="vChooseOpt" data-value="FEMALE">Female</div>
+                  </div>
+                </div>                                              
+              </td>
+          </tr>                        
+          #{if target!='EDIT_PUBLIC_PROFILE'}
+          <tr>
+              <td>
+                  Contact Number
+              </td>
+              <td>
+                  %{
+                    if(info!=null&&!info.isNull('contactNumber')){
+                        contactNumber= info.contactNumber;
+                    }else{
+                     contactNumber='';
+                    }
+                  }%
+                  <div class="inputDiv">
+                      <input type="text" class="formInput contactNumberTextBox" required name="contactNumber"  
+				value="${contactNumber}"/>
+                  </div>                            
+              </td>
+          </tr>                          
+          #{/if}
+	  #{if signUpFields!=null && !signUpFields.equals(null) && signUpFields.length()>0}
+	  %{
+		fillExtraInfo = false;
+		if(isEdit && info!=null && info.extraInfo!=null && !info.extraInfo.equals(null)){
+			fillExtraInfo = true;
+		}
+	  }%
+	  #{list items:0..signUpFields.length()-1,as:'sindex'}
+	  %{ 
+		field = signUpFields.get(sindex); 
+		fieldType = field.fieldType;
+            	validationType = field.validationType;
+            	valueSet = field.valueSet;
+	  }%
+	  <tr>
+		<td>
+		   <span>${field.name}#{if field.required == true}*#{/if}</span>
+		</td>
+		<td>
+		 %{
+			value = "";
+			if(fillExtraInfo){
+			   	for(indx=0;indx<info.extraInfo.length();indx++){
+					if(field.name.equals(info.extraInfo.get(indx).name)){
+						value = info.extraInfo.get(indx).value;
+					}
+			   	}
+			}
+		 }%
+                  <div class="inputDiv">
+                      <input type="hidden" class="formInput nonner" name="extraInfo[${sindex}].name"  
+				value="${field.name}"/>
+		      #{if fieldType.equals(null)}
+                        <input type="text" class="formInput" data-req="${field.required}"
+                                name="extraInfo[${sindex}].value" value="${value}"/>
+                      #{/if}
+                      #{elseif validationType == "LIST"}
+                            #{if !valueSet.equals(null) && valueSet.length()>0}
+                            <select data-req="${field.required}" name="extraInfo[${sindex}].value" 
+                                class="formSelect" >
+                                #{list items:0..valueSet.length()-1,as:'i'}
+					%{ selValue = valueSet.get(i); }%
+                                        <option #{if selValue == value} selected #{/if}
+						name='${selValue}'>${selValue}</option>
+                                #{/list}
+                            </select>
+                            #{/if}
+                      #{/elseif}
+                      #{else}
+                                %{
+                                        inputObj = uicom.util.Utilities._getInputTypeByServerType(fieldType);
+                                }%
+                                <input type="${inputObj.inputType}" class="formInput ${inputObj.inputClass}"
+					data-req="${field.required}" value="${value}"
+                                        name="extraInfo[${sindex}].value"/>                        
+                      #{/else}
+                  </div>                            
+		</td>
+	  </tr>
+	  #{/list}
+	  #{/if}
+          <tr>
+              <td>
+                  Picture
+              </td>
+              <td>                  
+                  <div class="memberPicPreview img50Wrapper margTop10">
+                      <img src="${info?.thumbnail}" class="img50"/>
+                  </div>
+                  <div class="memberPicDiv margLeft10 linBlk alignBottom"></div>
+              </td>
+          </tr>                                                  
+        </tbody>
+    </table>

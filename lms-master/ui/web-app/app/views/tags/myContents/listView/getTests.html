@@ -1,0 +1,217 @@
+#{if tests!=null && tests.errorCode.isEmpty() && tests.result.list.length()>0}
+<input type="hidden" class="resultDataCount" value="${tests.result.totalHits}" data-real-count="${tests.result.totalHits}"/>
+#{list items:0..tests.result.list.length()-1, as:'tIndex'}
+%{ 
+	test = tests.result.list.get(tIndex);
+	testOpen = webUtils.TemplateHelper._getTestUrl(test,params.orgId,params.userRole);
+	newStart = test.startTime;
+    testExpired = false;
+    testClosed = false;
+    if(newStart <= 0){
+        startsIn = 0;
+    }
+    else{
+        startsIn = newStart - new Date().getTime();
+        if(startsIn < 0){
+            startsIn = 0;
+        }
+    }
+    newEnd = test.endTime;
+    if(newEnd <= 0){
+        endsIn = 0;
+    }
+    else{
+        endsIn = newEnd - new Date().getTime();
+        if(endsIn < 0){
+            testExpired = true;
+            endsIn = 0;
+        }
+    }
+    newClose = test.closeTime;
+    if(newClose <= 0){
+        closesIn = 0;
+    }
+    else{
+        closesIn = newClose - new Date().getTime();
+        if(closesIn < 0){
+            testClosed = true;
+            closesIn = 0;
+        }
+    }
+    Object[] Timers = [endsIn,startsIn];
+    testTextClass = "blackTextColor";
+    attempted = test.has('attempted') && (test.attempted == true || test.attempted == "true");
+    testUrl = testOpen.url + "?targetType=SECTION"+"&targetId="+params.sectionId;
+    if(attempted){
+        testTextClass = "greyTextColor";
+    }
+}%
+<div class="relative myContentsEachListItems myContentsEachItem #{if (startsIn !=0 && startsIn >0 && !attempted && params.userRole == 'STUDENT') || (testExpired && !attempted && params.userRole == 'STUDENT') } disabled #{/if}"
+	data-test-id="${test.id}" data-entity-type="test" data-entity-id="${test.id}">
+   <a class="${testOpen.className} doCStream" data-test-id="${testOpen.id}" data-cs-name="OPEN"
+	data-user-role="${params.userRole}" 
+	href="${testUrl}" data-org-id="${params.orgId}" data-target-id="${params.sectionId}" data-target-type="SECTION">
+	<div class="left relative myContentsListLeft">
+		<span class="resourceIconTEST"></span>
+		<span class="handleTextOverflow relative big12 boldy ${testTextClass}" title="${test.name}">${test.name}</span>
+        #{if testExpired && !attempted}
+            <span class="test-expired">Test Expired</span>
+        #{/if}
+        #{elseif testClosed && attempted}
+            <span class="test-expired">Test Expired</span>
+        #{/elseif}
+        #{if !attempted}
+        #{list items:0..Timers.length-1, as:'index'}
+            #{if Timers[index] !=0 && Timers[index] >0}
+             %{
+                shouldRunTimer = false;
+                timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(Timers[index]);
+                if(timeObj.getInt("hrs") > 24){
+                    day = Math.round(timeObj.getInt("hrs")/24);
+                    if(day > 1){
+                        timeBlock = day + ' days';
+                    }else{
+                        timeBlock = day + ' day';
+                    }
+                    shouldRunTimer = false;
+                }
+                else if(timeObj.getInt("hrs") >= 0){
+                    timeBlock = timeObj.hrs+':'+timeObj.mins+' hrs';
+                    shouldRunTimer = true;
+                }
+            }%
+            <div class="floatRight entityRemainingTimeBlock #{if index == 0} endTestBlock #{/if}" style="bottom:3px;position: relative;">
+                <div class="expandContent displayInBlock">
+                    <span>#{if index == 0} Ends #{/if} #{else} Starts #{/else} in </span>
+                    &nbsp;
+                    <span class="#{if shouldRunTimer} scheduleTimer #{/if} entityRemainingTime" data-time-block-in = "${Timers[index]}">
+                        ${timeBlock}
+                    </span>
+                </div>
+                <img src="/public/images/alarm-white.png" style="position: relative;top:3px;right: 2px;">
+            </div>
+            #{/if}
+        #{/list}
+        #{/if}
+		<!-- <div class="relative singleLineText">
+		#{if !test.user.equals(null) && test.user!=null}
+		%{
+			user=test.user;
+			userId = user.id;
+			if(user.has("orgId") && user.has("userId")){
+				userId = user.userId;
+			}
+			getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+		}%
+			<span class="blackTextColor">by</span>
+			<a class="relative big12 blueTextColor ${getUserClassAndUrl.className} doCStream" 
+				data-cs-name="UPLOADER"
+                   		style="padding-top:0px;" href="${getUserClassAndUrl.url}" data-user-id="${userId}">
+                    		 ${user.firstName} ${user.lastName}
+			</a>
+		#{/if}
+		</div> -->
+	</div>
+	<div class="left relative myContentsListMiddle greyTextColor">
+	#{if test.avgRating>0}
+            <div class="left relative myContentsRankingHolder">
+		<div class="relative boldy leftText">Rating</div>
+		<div class="relative myContentsRankingStars" style="width:${test.avgRating*20}%"></div>
+	    </div>
+	    <div class="left verticalItemDivider"></div>
+	#{/if}
+	    <div class="left myContentsItemInfo">
+		<div class="leftText nonner"><b>Views</b> - ${test.views}</div>
+		#{if test.duration <= 0}
+			<div class="leftText"><b>Duration</b> - No Limit</div>
+		#{/if}
+		#{else}
+			%{
+				timeObj=uicom.util.Utilities.getTimeFromMiliSec(test.duration);
+			}%
+			<div class="leftText"><b>Duration</b> - ${timeObj.hrs}:${timeObj.mins} hrs</div>
+		#{/else}
+	    </div>
+	</div>
+	<div class="right relative myContentsListRight">
+		<span class="left relative myContentsDocumentsText">
+		%{
+			boards = test.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   #{if boards.length()<=1}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<span style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</span>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+			<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+	</span>
+                <a  class="right relative greenButton myContentsButtonItem ${testOpen.className} doCStream" 
+			data-user-role="${params.userRole}" 
+			data-cs-name="OPEN" data-org-id="${params.orgId}"
+            data-test-id="${testOpen.id}" href="${testUrl}" data-org-id="${params.orgId}" data-target-id="${params.sectionId}" data-target-type="SECTION">Open</a>
+		<!-- *{#{elseif test.followType == "OWNER"}
+			<a class="right relative smallBlueButton myContentsButtonItem editTestPage doCStream" 
+			data-cs-name="EDIT" data-test-id="${test.id}" style="padding:1px 11px;">Edit</a>
+		#{/elseif}}*
+		<span class="right relative myContentsButtonItem">
+			#{widgets.followUnfollowEntity followType:test.followType,entityType:'TEST',entityId:test.id/}
+		</span> -->
+		<span class="right relative myContentsShareIt big14 doCStream" data-cs-name="SHARE">Share</span>
+	</div>
+   </a>
+</div>
+#{/list}
+<script type="text/javascript">
+    $(document).ready(function(){
+        var timeHolder = $(".scheduleTimer");
+        timeHolder.each(function(){
+            var remainingTime = $(this).data("timeBlockIn")/1000;
+            var timer = $(this);
+            remainingTime = parseInt(remainingTime,10);
+            var x = setInterval(function(){
+                if (remainingTime < 60) {
+                    clearInterval(x);
+                    timer.closest(".myContentsEachItem").removeClass("disabled");
+                    timer.closest(".entityRemainingTimeBlock").remove();
+                    return ;
+                }
+                remainingTime = remainingTime - 60;
+                var hours = Math.floor(remainingTime/3600);
+                var preHours = hours;
+                if(hours < 10){
+                    preHours = "0" + hours;
+                }
+                var minutes = ("0"+Math.floor((remainingTime-hours*3600)/60)).slice(-2);
+                timer.text(preHours+":"+minutes+ " hrs");
+            },60*1000);
+            // clearInterval(x);
+        });
+    });
+</script>
+#{/if}
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_TEST'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+#{/else}
+
+#{if params.orgId == "602ea5ee2736d6c753bd7772" || params.orgId == "58c244d9e4b0d17e65cab555" || params.orgId == "5551bf80e4b053fbc7baf90d" || params.orgId == "55f6b821e4b06863a03b2fcc" }
+#{if "STUDENT".equals(params.userRole)}
+		<div class="instNavCMDSLink right toolTipTitle" data-title="Click here to Download<br>Course Completion Certificate">
+			<a class="" href="/Institute/getCertificate?callingUserId=${params.myUserId}&userId=${params.myUserId}&sectionId=${params.sectionId}&programId=${params.programId}&orgId=${params.orgId}&callingApp=web-app&callingAppId=web-app&centreId=${params.centerId}" target="_blank">
+			 <span class="bigGreenButton blackTextColor">
+				 <span>Download Certificate</span>
+			 </span>
+			</a>
+		 </div>
+#{/if}
+#{/if}

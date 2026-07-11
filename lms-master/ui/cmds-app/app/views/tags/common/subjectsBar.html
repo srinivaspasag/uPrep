@@ -1,0 +1,17 @@
+    %{
+        subjects=_subjects.result.courses;
+    }%
+    #{if subjects.length()>0}
+    <div id="subjectsBar">
+        <span>Subjects:</span>
+        #{list items:0..subjects.length()-1,as:'s'}
+            %{
+                sub=subjects.get(s);
+            }%
+        <span class="blueBotTab cmdsSBSub${(s_isFirst)?' blueBotTabActive':''}" 
+              title="${sub.name}" data-course-id="${sub.courseId}">
+            ${sub.name}
+        </span>
+        #{/list}
+    </div>
+    #{/if}

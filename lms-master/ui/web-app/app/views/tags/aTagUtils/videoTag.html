@@ -1,0 +1,26 @@
+%{ 
+	vidUrl = webUtils.TemplateHelper._getVidUrl(entityObj,params.orgId);
+}%
+<div class="smallVideoInfo">
+	<span class="resourceIconVIDEO"></span>
+	<a class="${vidUrl.className}" title="${entityName}" data-id="${vidUrl.id}" 
+   		href="${vidUrl.url}">
+    		<span class="singleLineText displayInBlock">${entityName}</span>
+	</a>
+	#{if !entityInfo.equals(null) && entityInfo.has("duration") && entityInfo.has("thumbnailURL")}
+	%{
+		timeObj=uicom.util.Utilities.getTimeFromMiliSec(entityInfo.duration);
+	}%
+	<div class="smallVideoExtraInfo">
+		<div class="smallVideoDuration">
+		#{if timeObj.getInt("hrs") > 0} 
+			${timeObj.hrs}:
+		#{/if}
+			${timeObj.mins}:${timeObj.secs}
+		</div>
+		<div class="smallVideoThumbnailHolder">
+			<img class="smallVideoThumbnail" alt="" src="${entityInfo.thumbnailURL}"/>
+		</div>
+	</div>
+	#{/if}
+</div>

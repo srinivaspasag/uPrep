@@ -1,0 +1,22 @@
+<div class="instUpvoteHolder" data-entity-id="${_entityId}" data-entity-type="${_entityType}">
+	#{if _voted==false}
+		<a class="upvoteInstItem">&{'TXT_UPVOTE'}</a>
+		<span class="upvotedInstItem nonner">&{'TXT_UPVOTED'}</span>
+	#{/if}
+	#{else}
+		<span class="upvotedInstItem">&{'TXT_UPVOTED'}</span>
+	#{/else}
+	<!-- <span class="upvoteInstSeparator">.</span>
+	<a class="commentsInstFeed">Comment</a>
+	<span class="upvoteInstSeparator">.</span> -->
+	<span class="upvotesInstFeedCount" data-entity-count="${_upVotes}">
+		<span class="instImgs #{if _voted==true}voted #{/if}"></span>
+		<a class="upvotesCount upVoteItemCount">${_upVotes}</a>
+	</span>
+	<!-- <span class="commentsInstFeedCount commItemRepliesSec">
+		<span class="instImgs"></span>
+		<a class="commentsCount">${_comments}</a>
+	</span> -->
+	<span class="upvoteInstSeparator">.</span>
+	<span class="instFeedAge">${new Date(_timeCreated).since(true)}</span>
+</div>

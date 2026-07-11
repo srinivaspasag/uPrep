@@ -1,0 +1,66 @@
+#{if data!=null && data.centers.length()>0 }
+%{
+	centers = data.centers;
+}%
+<div class="instShareEachCenter">
+	<input type="checkbox" class="doCStream instShrAllCentersCHK" checked 
+               data-cs-name="CENTER_SEL_CHKBX"/>
+	<span class="relativePos" style="top:-3px;">
+		<span class="instShrCenterName big13">All Centers</span>
+	</span>
+</div>
+#{list items:0..centers.length()-1,as:'index'}
+%{ center = centers.get(index); }%
+<div class="instShareEachCenter">
+    %{       
+        centerId=center.id;
+    }%
+	<input type="checkbox" class="instShareCenterCHK doCStream" checked 
+               data-cs-name="CENTER_SEL_CHKBX" data-center-name="${center.name}"/>
+	<span class="instSelectShareCenter relativePos upDownArrowDiv">
+		<span class="instShrCenterName"  data-center-id='${centerId}'>${center.name}</span>
+		<span class="upDownArrow"></span>
+	</span>
+	<span class="nonner instShareCenterSummary">
+		<span class="fullWidth greyTextColor smally">Selected</span>
+		<span class="fullWidth big14 boldy blueTextColor"></span>
+	</span>
+	<div class="instShareSelSection nonner">
+		<div class="boldy">${center.name}</div>
+		<div class="smally boldy greyTextColor">Select Sections</div>
+		#{if center.has('sections') && center.sections.length()>0}
+		<div class="instShareSections">
+		   <div class="instShareSectionsScrollable">
+			#{list items:0..center.sections.length()-1,as:'sIndex'}
+                            %{
+                                section=center.sections.get(sIndex);
+                                sectionId=section.id;
+                                sectionName=section.name;
+                            }%                        
+			<div class="instShrSec" data-value = "${sectionId}" data-name='${sectionName}'>
+				<input type="checkbox" class="doCStream" data-cs-name="SECTION_SEL_CHKBX"/>
+				<span>${sectionName}</span>
+			</div>
+			#{/list}
+		   </div>
+		</div>
+		<a class="instShrSecDone smally greenTextColor liner">Done</a>
+		#{/if}
+		#{else}
+			<div class="instShrSec redTextColor">No Sections</div>
+		#{/else}
+	</div>
+</div>
+#{/list}
+<div style="padding-bottom:10px;">
+	<span class="instShareCenterBtn right doCStream" data-cs-name="DONE_ADDING_CENTERS">Done</span>
+	<a class="instShareCenterCNCL right redTextColor">Cancel</a>
+	<div class='cleaner_with_divider'>&nbsp;</div>
+</div>
+#{/if}
+#{else}
+	<div class="smally boldy singleLineText redTextColor centerText">
+		Sorry, there are no Centers to share with
+	</div>
+#{/else}
+<div class="fullWidth borderBottom"></div>

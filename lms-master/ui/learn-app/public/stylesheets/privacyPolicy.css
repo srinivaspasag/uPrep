@@ -1,0 +1,79 @@
+#images {
+   cursor: pointer;
+}
+#images img:last-child {
+   display: none
+}
+#images :hover img:first-child {
+   display: none
+}
+#images :hover img:last-child {
+   display: inline-block
+}
+.navbar-md {
+   min-height: 60px
+}
+.navbar-md .navbar-brand, .navbar-md .navbar-nav>li>a {
+   padding-top: 10px;
+   padding-bottom: 10px
+}
+.navbar-md .navbar-brand {
+   height: 60px;
+   top: -18px;
+   position: relative;
+}
+.navbar-md .navbar-toggle {
+   margin: 6px 12px 6px 0px;
+   padding: 6px 7px 6px 7px;
+}
+.navbar-md .navbar-toggle .icon-bar {
+   width: 19px;
+}
+.navbar-nav>li {
+   position: relative;
+   top: 10px;
+}
+.modal {
+   text-align: center;
+   padding: 0!important;
+}
+e .modal:before {
+   content: '';
+   display: inline-block;
+   height: 100%;
+   vertical-align: middle;
+   margin-right: -4px;
+}
+.modal-dialog {
+   display: inline-block;
+   text-align: left;
+   vertical-align: middle;
+}
+#ppBody {
+   font-size: 11pt;
+   width: 100%;
+   margin: 0 auto;
+   text-align: justify;
+}
+#ppHeader {
+   font-family: verdana;
+   font-size: 21pt;
+   width: 100%;
+   margin: 0 auto;
+}
+.ppConsistencies {
+   display: none;
+}
+.sliderSprite, .spriteImg {
+   background-image: url('/public/outerAssets/images/siteSprite.png');
+   background-repeat: no-repeat;
+   display: inline-block;
+   font-size: 1px;
+}
+#signbtn:hover {
+   background: #62b23b;
+}
+.navbar-toggle{
+   left: 10px;
+   position: relative;
+}

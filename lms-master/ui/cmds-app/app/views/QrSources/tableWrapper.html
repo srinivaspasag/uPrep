@@ -1,0 +1,25 @@
+<table class="headSecTable">
+  <thead>
+      <tr>
+          <td class="CTCBoxTd">
+            <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                <div class="gCBoxTicker"></div>                    
+            </div>   
+          </td>
+          <td class="CTInfoTd"></td>
+          <td class="CTTitleTd">TITLE</td>
+          <td class="CTAddedByTd">ADDED BY</td>
+          <td class="CTDateAddedTd">DATE ADDED</td>
+          <td class="CTStatusTd">Status</td>
+      </tr>          
+  </thead>
+</table>
+<div id="fixedSec">
+    <table class="cmdsTable">
+      <tbody>
+          #{if targetTemplate!=null&&targetTemplate!=''}
+             #{include arg:targetTemplate /}
+          #{/if}
+      </tbody>
+    </table> 
+</div>

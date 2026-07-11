@@ -1,0 +1,166 @@
+%{
+	feed = _feedData;
+	lastFeedId = _lastFeedId;
+	firstFeedId = _firstFeedId;
+	lastFeedTime = _lastFeedTime;
+	firstFeedTime = _firstFeedTime;
+	actor = _actor;
+}%
+#{if feed!=null && feed.has(lastFeedId) && feed.has('src') && feed.src.has('id')}
+%{ 
+	src = feed.src;
+	info = feed.info;
+	srcType = "STATUSFEED";
+	if(src.has("type")){
+		srcType = src.get("type");
+	}
+	knownType = false;
+	ownerUser = actor != null && !actor.equals(null) ? actor : feed.get('srcOwner');
+	srcOwnerUser = feed.get('srcOwner');
+	content = src;
+	contentType = "";
+	extraClass = "";
+	statusMessage = "";
+	entityType = "STATUSFEED";
+	if(!src.equals(null)){
+	   if(src.has('statusMessage') && !src.statusMessage.equals(null) && !src.statusMessage.isEmpty()){
+		statusMessage = src.statusMessage;
+	   }
+	   if(src.has('sourceContent') && !src.sourceContent.equals(null) && src.sourceContent.has('type')){
+		content = src.sourceContent;
+		contentType = content.get('type');
+		knownType = uicom.util.InstituteUtil.isSupportedActivityFeed(contentType); 
+	   }else if(src.has('type') && !src.type.equals(null)){
+		contentType = src.get('type');
+		if(feed.eType=="MADE_VISIBLE"){
+			contentName = play.i18n.Messages.get("ENTITY_NAME_"+contentType);
+			msg = play.i18n.Messages.get("NEW_ENTITY_PUBLISHED",contentName);
+			statusMessage = msg;
+			extraClass = "publishedEntity";
+		}
+		entityType = contentType;
+		content = src;
+		content.put("user",srcOwnerUser);
+		knownType = uicom.util.InstituteUtil.isSupportedActivityFeed(contentType);
+	   }
+	}
+	if(!info.equals(null)){
+		if(info.has('target') && !info.target.equals(null)){
+			target = info.target;
+		}
+	}
+}%
+<div class="eachInstFeedHolder ${extraClass}" 
+	data-first-news-feed-id="${feed.getString(firstFeedId)}" data-last-news-feed-id="${feed.getString(lastFeedId)}">
+	<table cellspacing=0 cellpadding=0 class="fullWidth">
+	   <tr>
+		#{if !ownerUser.equals(null)}
+		%{
+			getUser=(controllers.Profile.getUserClassAndUrl(ownerUser));
+                	userClass = getUser.get("className");
+                	userUrl = getUser.get("url");
+		}%
+		<td rowspan=4 style="vertical-align:top;width:60px;">
+		    <div class="instProfilePicContainer">
+			<a class="${userClass} displayInBlock" href="${userUrl}" data-user-id="${ownerUser.id}">
+				<img class="instFeedProfilePic" src="${ownerUser.thumbnail}" alt=""/>
+			</a>
+		    </div>
+		</td>
+		<td>
+		        #{institute.memberName user : ownerUser , classNames : "instFeedProfileName boldy" , getUser : getUser /}
+			#{if feed.has('sharedWith') && feed.sharedWith.length()>0}
+			%{
+				shr = feed.sharedWith.get(0);
+				shrName = shr.has('name')?shr.name:"";
+			}%
+			<span class="instFeedShareScope nonner">
+				<span class="instImgs"></span>
+				<span class="big12">${shrName}</span>
+			</span>
+			#{/if}
+		</td>
+		#{/if}
+		#{if !src.equals(null) && src.has("id") &&
+			srcType == "STATUSFEED" && 
+			(params.userRole != "STUDENT" || ownerUser.id == session.userId)}
+		<td class="right">
+			<div class="instItemStgs">
+				<div class="instImgs"></div>
+			</div>
+			<div class="instItemStgsDropped nonner">
+				<div class="delInstFeed" data-id="${src.id}">&{'TXT_DELETE'}</div>
+			</div>
+		</td>
+		#{/if}
+	   </tr>
+	   <tr>
+		<td>
+			<div class="instFeedPreview">
+			    #{if !statusMessage.isEmpty()}
+					#{institute.previews.text source:statusMessage,target:'preview'/}
+			    #{/if}
+			    <div class="feedEntityHolder">
+			    #{if knownType == true}
+				%{
+					srcCont = content;
+				}%
+				#{if srcCont.type=="IMAGE"}
+					#{institute.previews.image source:srcCont,target:'preview'/}
+				#{/if}
+				#{elseif srcCont.type=="WEB_PAGE"}
+					#{institute.previews.link source:srcCont,target:'preview'/}
+				#{/elseif}	
+				#{elseif srcCont.type=="LINK_VIDEO"}
+					#{institute.previews.video source:srcCont,target:'preview'/}
+				#{/elseif}
+				#{elseif srcCont.type=="VIDEO"}
+					#{myContents.iconView.video video : srcCont , caller : "EXT" /}
+				#{/elseif}
+				#{elseif srcCont.type=="DOCUMENT"}
+					#{myContents.iconView.document document : srcCont , caller : "EXT" /}
+				#{/elseif}
+				#{elseif srcCont.type=="TEST"}
+					%{
+						if(!srcCont.has("attempted")){
+							srcCont.put("attempted",false);
+						}
+						srcCont.put("mode","ONLINE");
+					}%
+					#{myContents.iconView.test test : srcCont , caller : "EXT" , target:target /}
+				#{/elseif}
+				#{elseif srcCont.type=="ASSIGNMENT"}
+					%{
+						if(!srcCont.has("attempted")){
+							srcCont.put("attempted",false);
+						}
+					}%
+					#{myContents.iconView.test test : srcCont , caller : "EXT" /}
+				#{/elseif}
+				#{elseif srcCont.type=="FILE"}
+					#{myContents.iconView.file file : srcCont , caller : "EXT" /}
+				#{/elseif}
+				#{elseif srcCont.type=="MODULE"}
+					#{myContents.iconView.module module : srcCont , caller : "EXT" , target:target /}
+				#{/elseif}
+			     #{/if}
+			     <div class="cleaner_with_divider">&nbsp;</div>	
+			     </div>
+			</div>
+		</td>
+	   </tr>
+	#{if knownType == true || !statusMessage.isEmpty()}
+	   <tr>
+		<td>
+			#{institute.widgets.upvoteBar entityType:entityType,entityId:src.id,upVotes:src.upVotes,voted:src.voted,comments:src.comments,timeCreated:feed.get(firstFeedTime) /}	
+		</td>
+	   </tr>
+	   <tr>
+		<td class="instFeedCommContainer nonner">
+			#{institute.widgets.comments entityType:entityType,entityId:src.id /}	
+		</td>
+	   </tr>
+	#{/if}
+	</table>
+</div>
+#{/if}

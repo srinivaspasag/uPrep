@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Learnpedia</title>
+    <meta charset="utf-8" />
+    <meta content="Learnpedia Web-App Subscription" name="application-name" />
+    <meta content="http://www.Learnpedia.in" name="application-url" />
+    <meta content="Knowledge Democratized" name="description" />
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    #{script src:'o.subscriptionHome.js', charset:'utf-8' /}
+    <!--*{<script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>}*-->
+    <style type="text/css">
+	body{
+   		padding: 0;
+    		line-height: 16px;
+    		font-family:Ubuntu,sans-serif;
+    		font-size: 12px;
+    		margin: 0px;
+    		background: url("/public/images/bg.jpg") repeat scroll 0 0 transparent;
+    		color: #373737;
+    		overflow-y:scroll;
+    		overflow-x:hidden;
+	}
+	#testSignUpHolder{
+		background-color:#fff;
+		border-radius:10px;
+		padding:25px;
+		margin:100px;
+		color:#2E2E2E;
+		box-shadow:2px 5px 12px #ddd;
+	}
+	.testSignUpRow{
+		margin:15px;
+		border-radius:5px;
+		padding:10px;
+		background:#ededed;
+	}
+	.testSignUpText{
+		font-size:15px;
+		font-weight:bold;
+		padding:12px;
+		min-width:170px;
+		float:left;
+	}
+	.testSeriesFilterBy,
+	.testSignUpSelectBox,
+	.testSignUpInputBox{
+		box-shadow: inset 1px 1px 2px #e0dede;
+		border:0px solid #efefef;
+		border-width:0 1px 1px 0px;
+		border-radius:4px;
+		line-height:20px;
+		font-size:16px;
+		padding-left:8px;
+		width:200px;
+		height:35px;
+		margin-right:15px;
+	}
+	.testSignUpSelectBox{
+		font-weight:normal;
+	}
+	.testSignUpInputBox::-webkit-input-placeholder{
+        	color:#a7a7a5;
+        	font-style: italic;
+        	font-size:14px;
+		font-weight:normal;
+	}
+	.testSignUpInputBox:-moz-placeholder{
+        	color:#a7a7a5;
+        	font-style: italic;
+        	font-size:14px;
+		font-weight:normal;
+	}
+	.goBackInHistory{
+		padding:12px 2px;
+	}
+	.button,
+	.blueButton,
+	.greenButton,
+	.redButton{
+		padding:4px 20px;
+		margin-left:12px;
+		font-size:16px;
+		cursor:pointer;
+		border-radius:2px;
+	}
+	.left{
+		float:left;
+	}
+	.right{
+		float:right;
+	}
+	.extLink{
+		padding:4px 20px;
+		margin:12px;
+		background-color:#E6E6E6;
+		padding: 15px 20px;
+		margin: 4px 0 0 20px;
+		font-size: 14px;
+	}
+	.extLink:hover{
+		background: #6E6E6E;
+		color: white;
+	}
+	.nonner{
+		display:none;
+	}
+	.boldy{font-weight:bold;}
+	.redButton{
+		color:#fff;
+		background:#eb6f6f;
+		background-image:url('/public/images/test_creation_button_bg/red.jpg');
+		background-repeat:repeat-x;
+	}
+	.greenButton{
+		color:#EFFBFB;
+    		background: -moz-linear-gradient(center top ,#A0DD50 ,#75AE2A) repeat scroll 0 0 transparent;
+    		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#A0DD50', endColorstr='#75AE2A');
+    		background: -webkit-gradient(linear, left top, left bottom, from(#A0DD50), to(#75AE2A));
+    		background: -o-linear-gradient(top,#A0DD50,#75AE2A);
+	}
+	.blueButton{
+		color:#EFFBFB;
+    		background: -moz-linear-gradient(center top ,#50B0DD ,#337999) repeat scroll 0 0 transparent;
+    		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#50B0DD', endColorstr='#337999');
+    		background: -webkit-gradient(linear, left top, left bottom, from(#50B0DD), to(#337999));
+    		background: -o-linear-gradient(top,#50B0DD,#337999);
+	}
+	.subsTopBar{
+		position:relative;
+		top:0px;
+		padding:5px 0;
+		border-bottom:1px solid #ccc;
+		min-height:55px;
+		background-color:#efefef;
+	}
+	.pageHolderM{
+        	width:1002px;
+        	margin:0 auto;
+	}
+	.centerText{
+		text-align:center;
+	}
+	.italics{
+		font-style:italic;
+	}
+	.greenTextColor{
+		color:#21610B;
+	}
+	.redTextColor{
+		color:#8A0808;
+	}
+	.big14{
+		font-size:14px;
+	}
+	.rightText{
+		text-align:right;
+	}
+	.smally{
+		font-size:11px;
+	}
+	a{
+		color: #369;
+		text-decoration: none;
+		cursor: pointer;
+		position: relative;
+	}
+	.cleaner_with_divider {
+    		clear: both;
+    		width: 100%;
+    		height: 0px;
+    		font-size: 1px;
+	}	
+   </style>
+</head>
+<body>
+	%{
+		orgId = org.getString("_id");
+	}%
+     <div class="subsTopBar CSWidget" data-widget="SUBSCRIPTION_TOP_BAR" data-org-obj='${org.raw()}'>
+	<div class="pageHolderM">
+		%{ instLogo = uicom.util.Utilities.getInstLogo(org.getString('thumbnail'));}%
+		<img class="instLogo left instThumbnailLogo" src="${instLogo}" alt="${org.getString('fullName')}"/>
+    		<a href="/frontdesk/${orgId}" class="extLink left doCStream" 
+			data-name="ADD_SUBSCRIPTION_LINK">Add Subscription</a>
+    		<a href="/frontdesk/members/${orgId}" class="extLink left doCStream" 
+			data-name="VIEW_SUBS_MEMBERS_LINK">View Subscribed Members</a>
+    		<a href="#" class="extLink changePasswordBtn left doCStream" 
+			data-name="CHANGE_PASSWORD">Change Login Password</a>
+    		<a href="/security/logout" class="extLink right doCStream" data-name="LOGOUT_LINK">Logout</a>
+	</div>
+     </div>
+      #{doLayout /}
+    <input type="hidden" id="serverTime" value="${new Date().getTime()}"/>
+    #{common.popup/}
+    #{common.changePassword/}
+     </div>
+    #{common.noscript/}
+</body>
+<script type="text/javascript">
+	function dateStrToLong(str){
+		var d = str.split("/");
+		var dt = new Date();
+		dt.setDate(d[0]);
+		dt.setMonth(d[1]);
+		dt.setFullYear(d[2]);
+		return dt.getTime();
+	};
+	$(function(){
+		$(document).on("change",".numberTextBox",function(e){
+   		     	var target = $(e.currentTarget);
+        	     	var val = target.val();
+        		var numVal = "";
+			var t = val.match(/(\d+)/gi);
+        		try{
+                		var numVal = parseInt(t.join(""));
+        		}catch(err){ numVal=""; }
+        		target.val(numVal);
+		});
+	});
+	var j = [{tabType:'TEST_SERIES_SUBSCRIPTION'}];
+		
+	$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        	var orgData = $(".subsTopBar").data("orgObj");
+		var orgParams = {
+			"orgId":orgData["orgId"],
+			"memberId":orgData["memberId"],
+			"userRole":orgData["userRole"]
+		};
+        	options.data = $.param($.extend(originalOptions.data, orgParams));
+	});
+</script>
+</html>

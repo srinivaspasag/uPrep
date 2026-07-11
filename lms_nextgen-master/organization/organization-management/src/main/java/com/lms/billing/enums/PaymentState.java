@@ -1,0 +1,5 @@
+package com.lms.billing.enums;
+
+public enum PaymentState {
+    PAID, UNPAID, PARTIALLY_PAID, UNDER_VERIFICATION, UNDER_TRANSACTION
+}

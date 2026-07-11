@@ -1,0 +1,13 @@
+%{
+    tests=tests.result.list;
+}%
+#{if tests.length()>0}
+#{list items:0..tests.length()-1,as:'i'}
+%{
+    test=tests.get(i);              
+}%
+<div class="vRadioItem">
+    <div class="vRadio" data-value="${test.id}">${test.name}</div>
+</div>                
+#{/list}
+#{/if}

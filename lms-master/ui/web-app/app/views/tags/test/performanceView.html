@@ -1,0 +1,87 @@
+<style type="text/css">
+.testPerformanceHold{
+        padding:20px 40px;
+        background-color:#eee;
+}
+.testPrfmToppers{
+        padding-top:30px;
+}
+.testPrfmToppersName{
+        width:200px;
+        padding:0 2px;
+        overflow:hidden;
+}
+.testPrfmToppersDetails{
+	visibility:hidden;
+}
+.testPrfmToppers:hover .testPrfmToppersDetails{
+	visibility:visible;
+}
+.testPrfmToppersImg{
+}
+</style>
+%{
+	data = _data;
+	toppersData = _toppersData;
+	toppers = toppersData.result.list;
+	marksDistribution = _marksDistribution
+}%
+<div class="testPerformanceHold">
+   <table class="fullWidth">
+	<tr>
+	   <td style="width:48%;">
+		<div class="testPrfmAvgScore">
+			<div class="big14">&{'TXT_AVERAGE'} &{'TXT_SCORE'}<div>
+			%{
+				percentAvgScore = uicom.util.Utilities.calcPercentage(data.avgMarks,data.totalMarks);
+			}%
+			<div class="blueTextColor" style="font-size:26px;padding-top:8px;">${percentAvgScore} %</div>
+		</div>
+		#{if toppers.length()>0}	
+	   	<div class="testPrfmToppers">
+			<div class="big14">&{'TXT_TOP_PERFORMERS'}</div>
+			<div class="" style="padding:10px 0;">
+			   <table>
+				#{list items:0..toppers.length()-1,as:'index'}
+				%{  
+					if(index >= 5){
+						 break;
+					}
+					topper = toppers.get(index).user;
+					analytics = toppers.get(index).info.measures;
+				}%
+				<tr class="testPrfmTopper">
+				   <td class="testPrfmToppersImg">
+					%{
+						thumbnail='/public/images/defaultUser.jpg';
+						if(topper!=null && !topper.equals("null") && !topper.equals(null)){
+						    thumbnail=topper.thumbnail;
+						}
+	                }%
+					<img class="icon30" src="${thumbnail}" alt="&{'IMG_NA'}"/>
+				   </td>
+				   <td class="testPrfmToppersName">
+					#{institute.memberName user : topper , classNames : "big14 blueTextColor" /}
+				   </td>
+				   <td>
+					%{
+						percentScore = uicom.util.Utilities.calcPercentage(analytics.score,data.totalMarks);
+					}%
+					<div class="big14">${percentScore} %</div>
+				   </td>
+				   *{<td class="testPrfmToppersDetails">
+						#{test.linkToStudentResult user : topper , testId : data.id /}	
+				   </td>}*
+				</tr>
+				#{/list}
+			   </table>
+			</div>
+		</div>
+		#{/if}
+	   </td>
+	   <td style="width:48%;">
+		#{test.marksDistributionGraph marksDistribution : marksDistribution /}
+	   </td>
+	</tr>
+   </table>
+</div>

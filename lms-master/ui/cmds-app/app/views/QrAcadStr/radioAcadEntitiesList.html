@@ -1,0 +1,13 @@
+%{
+    entities=entities.result.queryResult;
+}%  
+#{if entities.length()>0}
+#{list items:0..entities.length()-1,as:'i'}
+    %{
+        entitiesItem=entities.get(i);              
+    }%
+    <div class="vRadioItem">
+        <div class="vRadio" data-value="${entitiesItem.id}">${entitiesItem.name}</div>
+    </div>                
+#{/list}
+#{/if}

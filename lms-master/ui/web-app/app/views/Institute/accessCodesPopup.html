@@ -1,0 +1,92 @@
+<table class="myAccessCodesTable" cellspacing=0 cellpadding=2 border=1>
+<tr>
+	<th>&{'TXT_ACCESS_CODE'}</th>
+	<th>&{'INVENTORY_PRODUCT_ITEM'}</th>
+	<th>&{'payment.ORDER_ID'}</th>
+	<th class="width150">&{'INVENTORY_BUYING_POINT'}</th>
+</tr>
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.accessCodes.list.length()>0}
+%{
+	dataList = resp.result.accessCodes.list;
+}%
+#{list items:0..dataList.length()-1,as:'index'}
+%{
+	data = dataList.get(index);
+	items = data.items;
+}%
+<tr>
+	<td>
+                <div class="boldy big16 centerText">${data.code}</div>
+	</td>
+	<td>
+	#{if items.length()>0}
+                <ul class="accessCodeItemList">
+                #{list items:0..items.length()-1,as:'index'}
+                        %{ item = items.get(index); info = item.info; }%
+                        #{if !info.equals(null)}
+                        <li class="relative">
+                                <div class="big15" style="width:85%;">
+                                        <span class="">&{'ENTITY_NAME_'+item.entity.type}: </span>
+                                        <span class="boldy">${info.name}</span>
+                                </div>
+				<div class="">
+					<span class="big13">&{'USED_STATUS'} : </span>
+					#{if item.verified == true}
+						<span class="big13 greenTextColor boldy">&{'USED_STATUS_CONSUMED'}</span>
+					#{/if}
+					#{else}
+						<span class="big13 redTextColor boldy">&{'USED_STATUS_UNUSED'}</span>
+					#{/else}
+				</div>
+				#{if info.has("costRate") && !info.costRate.equals(null)}
+                                %{
+                                        costRate = info.costRate;
+                                        costValue = 0;
+                                        if(costRate.has("currencyCode") && !costRate.currencyCode.equals(null)){
+                                                currency = uicom.util.Utilities._getCurrencyByCode(costRate.currencyCode);
+                                        }
+                                        if(costRate.has("value") && !costRate.value.equals(null)){
+                                                if(costRate.value>0){
+                                                        costValue = costRate.value/100;
+                                                }
+                                        }
+                                }%
+                                <div class="right big14 blueTextColor absolute" 
+                                        style="right:0px;top:0px;">
+                                        <span class="boldy">${currency.symbol}</span>
+                                        <span>${costValue}</span>
+                                </div>
+                                #{/if}
+			</li>
+                        #{/if}
+                        #{else}
+                                <div class="centerText greyTextColor italics smally">&{'TXT_NA'}</div>
+                        #{/else}
+                #{/list}
+                </ul>
+                #{/if}
+	</td>
+	<td class="width75 maxWidth75">
+                #{if !data.orderId.equals(null)}
+                        <a class="right" href="/organization/${params.orgId}/order/${data.orderId}" 
+                                target="_blank">${data.orderId}</a>
+                #{/if}
+                #{else}
+                        <div class="centerText greyTextColor italics smally">&{'TXT_UNAVAILABLE'}</div>
+                #{/else}
+        </td>
+	<td>
+                <div class="boldy big14">${data.sellerInfo.pointOfSale}</div>
+                <div>(<span class="big12 color6">&{'REF_NO'}</span>:<span class="color3 boldy">${data.sellerInfo.sellerReferenceNo}</span>)</div>
+        </td>
+</tr>
+#{/list}
+#{/if}
+#{else}
+<tr class="noRecordTR">
+     <td colspan=4>
+        <div class="boldy big13 centerText">&{'NO_item_FOUND',"Access Codes"}</div>
+     </td>
+</tr>
+#{/else}
+</table>

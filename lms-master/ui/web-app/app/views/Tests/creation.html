@@ -1,0 +1,11 @@
+*{#{stylesheet media:'screen', src:'test/creation.css' /}}*
+#{script src:'test/o.createTest.js', charset:'utf-8' /}
+<div id="testCreation" class="pageHolderT absolute">
+    #{include '/tags/test/creation.html' /}
+</div>
+<script type="text/javascript">
+	var incommingTestId = '${testIdStr}';
+	$(document).ready(function(){
+		testCreation.init();
+	});
+</script>

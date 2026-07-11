@@ -1,0 +1,56 @@
+#{stylesheet media:'screen', src:'assignments/o.main.css' /}
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    $(function(){
+        showNoTabSec("TEST");
+    });
+</script>
+#{/if}
+#{if data!=null && data.errorCode.isEmpty()}
+<div id="assignments" class="pageHolderNM" data-id="${asnId}" data-role="${params.userRole}" data-target-user-id="${session.userId}">
+	<div class="leftAsnInfo">
+		#{assignments.infoLeft userRole : params.userRole , data : data /}
+	</div>
+    <div style="text-align: center;margin-top: 10px;">
+        #{if ratings !=null && ratings.errorCode.isEmpty() && myOrgInfo!=null}
+        %{
+            ratings = ratings.result;
+            if(myOrgInfo.has('userRole') && myOrgInfo.userRole != null &&
+                myOrgInfo.userRole !=""){
+                userRole = myOrgInfo.userRole;
+            }
+            if(data.has("result") && data.result!= null){
+                dataRes = data.result;
+            }
+        }%
+        #{if userRole == "STUDENT"}
+            #{institute.ratings entity : dataRes , entityType:"ASSIGNMENT" ,ratings:ratings /}
+        #{/if}
+    #{/if}
+    </div>
+	<div class="centerAsn">
+	</div>
+</div>
+#{/if}
+#{elseif data!=null && !data.errorCode.isEmpty()}
+	#{common.messagePage msgTextColor : "redTextColor" , msg : data.errorMessage /}
+#{/elseif}
+#{else}
+	<div class="bodyWhiteBg">
+	<div class="pageHolderNM" style="height:700px;">
+		#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+		<div class="boldy big14 centerText" style="padding:30px 0;">Assignment data not available, please try later</div>
+	</div>
+	</div>
+#{/else}
+#{if params.orgId!=null && !params.orgId.isEmpty()}
+<script type="text/javascript">
+	$(function(){
+		instHeader.show("${params.orgId}");
+                if(window["markContentCompleted"] && "${params.get('userRole')}"=="STUDENT"){
+                    markContentCompleted();
+                }
+	});
+</script>
+#{/if}
+#{script src:'assignments/o.home.js', charset:'utf-8' /}

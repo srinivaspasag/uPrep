@@ -1,0 +1,105 @@
+%{
+    topics=topics.result.boards;    
+}%
+<div class="coursePath">
+    Add Topic Tree
+    <span class="coursePathSubName"> > ${params.courseName}</span>
+    <a class="floatRight big14 backToCourses">Cancel/back to subject home</a>
+</div>
+<table id="topicTreeTable">
+    <tbody>
+        <tr>
+            <td id="publicTopicTree">
+                <div class="topicTreeHead">
+                    <span class="floatRight importAllTopics">Import All</span>
+                    <div class="margHalfTop">
+                        Available Tree                                
+                    </div>                    
+                </div>
+                <div class="topicTreeList">
+                    
+                    #{if publicTopics!=null&&publicTopics.result.boards.length()>0}
+                    %{
+                      publicTopics=publicTopics.result.boards;  
+                    }%
+                    #{list items:0..publicTopics.length()-1,as:'pt'}
+                        %{
+                            topic=publicTopics.get(pt);
+                            brdId=topic.id;
+                        }%
+                        <div class="topicTreeTopic">
+                           <div class="topicTreeTopicItem publicBrd_${brdId}"
+                                data-brd-id='${brdId}' >
+                                <div class="gCBox publicTopicgCBox">
+                                    <div class="gCBoxTicker"></div>
+                                </div>
+                                <span class="brdItemName">${topic.name}</span>                                
+                            </div>
+                            <div class="topicTreeTopicSubTopics"></div>
+                            <div class="openSubTopics"></div>                             
+                        </div>                        
+                    #{/list}
+                    #{/if}                            
+                    #{else}
+                    <div class="userMessage">
+                        There are no topics for this subject in the public tree.
+                    </div>
+                    #{/else}
+                </div>
+            </td>
+            <td>
+                <div class="gBlueButton big14 addSelectedBrds">Add Selected</div>
+            </td>
+            <td id="instituteTopicTree">
+                <div class="topicTreeHead">
+                    <div class="gButton addTopicToInstTree floatRight" data-parent-id="${params.instParentId}"
+                         data-course-name="${params.courseName}">
+                        Add Topic
+                    </div>                    
+                    <div class="margHalfTop">
+                        Selected Tree                                
+                    </div>                            
+                </div>
+                <div class="topicTreeList">
+                    #{if topics.length()>0}
+                    #{list items:0..topics.length()-1,as:'t'}
+                        %{
+                            topic=topics.get(t);
+                            brdId=topic.id;
+                            publicBrdId=topic.publicBrdId;
+                        }%
+                        <div class="topicTreeTopic savedTopicTree">
+                            <div class="topicTreeTopicItem instBrd_${brdId} instBrdItem 
+                                 brdFrom_${publicBrdId} savedBrdItem"
+                                 data-brd-id='${brdId}' data-public-brd-id='${publicBrdId}'>
+                                <span class="brdItemName">${topic.name}</span>
+                                <div class="vChoose brdItemvChoose" data-value="-1" data-onchange="editBrdItem">
+                                  <div class="vChooseHead">
+                                      <div class="brdItemEdit"></div>
+                                  </div>
+                                  <div class="vChooseDownIcon"></div>
+                                  <div class="vChooseDropDown">
+                                      <div class="vChooseOpt" data-value="RENAME">Rename</div>
+                                      <div class="vChooseOpt vchooseOptAddSubTopic" data-value="ADD_SUBTOPIC">Add Sub Topic</div>
+                                  </div>
+                                </div>                                   
+                            </div>
+                            <div class="topicTreeTopicSubTopics"></div>
+                            <div class="openSubTopics"></div> 
+                        </div>                        
+                    #{/list}
+                    #{/if}                      
+                </div>                 
+            </td>                    
+        </tr>
+    </tbody> 
+</table>
+<div class="centry margTop20">
+    <div class="gBlueButton topicTreeSubmit">Done/Save</div>
+</div>
+
+
+
+
+
+

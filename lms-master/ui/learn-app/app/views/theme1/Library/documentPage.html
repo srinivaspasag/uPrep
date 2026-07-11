@@ -1,0 +1,227 @@
+#{if documentInfo!=null && documentInfo.errorCode.isEmpty()}
+    <style type="text/css">
+    .bookName{
+    font-size: 20px;
+    text-align: center;
+    max-width: 900px;
+    font-weight: bold;
+    }
+    #loadingDocFrame{
+    text-align:center;
+    position:absolute;
+    width:100%;
+}
+    #loadingDocFrame span{
+    padding:8px 30px;
+    background-color:#666;
+    color:#FFF;
+    border-radius:20px 0 20px 0;
+    font-size:16px;
+    top:50px;
+    position:relative;
+}
+.nonner{
+    display: none;
+}
+@media print
+{
+    iframe {display:none;}
+}
+body{
+        overflow-x: hidden !important;;
+    }
+</style>
+<script type="text/javascript">
+    $(function(){
+        $(".tryNativeViewer").on('click',function(){
+            $("#docViewerIframe").addClass("nonner");
+            $("#docViewerNative").removeClass("nonner");
+            $(this).addClass("nonner").siblings().removeClass("nonner");
+        });
+        $(".tryDefaultViewer").on('click',function(){
+            $("#docViewerIframe").removeClass("nonner");
+            $("#docViewerNative").addClass("nonner");
+            $(this).addClass("nonner").siblings().removeClass("nonner");
+        });
+    });
+    $(document).ready(function(){
+        var iframeEl = $('#docViewerNative').contents().get(0);
+        $(iframeEl).bind('contextmenu', function(event) {
+            event.preventDefault()
+        });
+    });
+</script>
+<div id="resourceDocView" class="pageHolderNM">
+%{
+    doc = documentInfo.result;
+    currentAppName=play.Play.configuration.getProperty("application.name");
+}%
+
+<section class="docMetaInfo" style="margin-top: -35px;">
+    <div class="card">
+        <div class="card-header container hidden-xs" style="background-color: ghostwhite;">
+                <div class="row">
+                    <div class="pull-left text-uppercase f-20 f-700">
+                        <img src="/public/assets/theme1/img/bookIcon.png" class="analytics-img-browser"
+                        style="width: 30px;">
+                        ${doc.name}
+                    </div>
+                    #{if doc.has("boardTree") && !doc.boardTree.equals(null) && doc.boardTree.length()>0}
+                        %{
+                                boards = doc.boardTree;
+                        }%
+                        #{list items:0..boards.length()-1,as:'bIndex'}
+                        %{
+                                subject = boards.get(bIndex);
+                        }%
+
+                    <div class="media-body pull-right">
+                        <ul class="lgi-attrs" >
+                            <li>
+                                ${subject.name}
+                            </li>
+                            #{if subject.has("children") && !subject.children.equals(null) && subject.children.length()}
+                                #{list items:0..subject.children.length()-1,as:'cIndex'}
+                                    %{
+                                      topic = subject.children.get(cIndex);
+                                    }%
+                            <li >
+                                ${topic.name}
+                            </li>
+                        </ul>
+                                #{/list}
+                            #{/if}
+                    </div>
+                </div>
+                <div class="row">
+                    #{if doc.has('description') && !doc.description.isEmpty()}
+                        <h2 class="m-t-20">Description :
+                        <small class="m-l-20">${doc.description}</small>
+                        </h2>
+                    #{/if}
+                    <div style="margin-top:-20px;float: right;display: inline-block;" class="invisible">
+                        <span class="greenTextColor" style="vertical-align: middle;">Current doc viewer not working Try - </span>
+                        <span class="btn btn-danger tryNativeViewer nonner greyButton">Use Alternate Viewer</span>
+                        <span class="btn btn-alternate tryDefaultViewer greenButton">Use Default Viewer</span>
+                    </div>
+                </div>
+
+                        #{/list}
+                    #{/if}
+
+        </div>
+        <div class="card-header visible-xs" style="background-color: white;">
+                <div class="panel-group" data-collapse-color="cyan" id="accordionBlue" role="tablist"
+                    aria-multiselectable="true">
+                    <div class="panel panel-collapse">
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title text-uppercase">
+                                <a data-toggle="collapse" data-parent="#accordionBlue"
+                                   href="#accordionBlue-one" aria-expanded="true">
+                                 <img src="/public/assets/theme1/img/bookIcon.png" class="analytics-img-browser"
+                                style="width: 20px;">
+                                    ${doc.name}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="accordionBlue-one" class="collapse" role="tabpanel">
+                            <div class="panel-body">
+                                    <div class="container">
+                                        <div class="media-body row">
+                                            <ul class="lgi-attrs" >
+                                                <li>
+                                                    ${subject.name}
+                                                </li>
+                                                #{if subject.has("children") && !subject.children.equals(null) && subject.children.length()}
+                                                    #{list items:0..subject.children.length()-1,as:'cIndex'}
+                                                        %{
+                                                          topic = subject.children.get(cIndex);
+                                                        }%
+                                                <li >
+                                                    ${topic.name}
+                                                </li>
+                                                    #{/list}
+                                                #{/if}
+                                            </ul>
+                                        </div>
+                                        <div class="row">
+                                            #{if doc.has('description') && !doc.description.isEmpty()}
+                                                <h2 class="m-t-20">Description :
+                                                <small class="m-l-20">${doc.description}</small>
+                                                </h2>
+                                            #{/if}
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <section class="docViewMain card-body" style="padding: 10px;">
+            <div class="loaderDiv"></div>
+            <div class="docPdfContent">
+                #{if doc.has('converted') && doc.converted == false && doc.has('operationJobIdMap') && !doc.operationJobIdMap.equals(null)}
+
+                <div class="docConversionMsg">
+                    <span class="c-red f-16 f-700">The document you are trying to view is in processing state, please revisit later</span>
+                </div>
+            #{/if}
+            #{elseif doc.has('url') && !doc.url.equals('null') && !doc.url.isEmpty()}
+            %{
+                docUrl = doc.url;
+                frameDocUrl = docUrl + "?callingApp=" + play.Play.configuration.getProperty("application.name");
+                frameDocUrl = java.net.URLEncoder.encode(frameDocUrl, "UTF-8");
+                //docUrl = docUrl.replace("http://","https://");
+            }%
+
+
+
+                <div id="loadingDocFrame" class="nonner">
+                    <span>Loading...</span>
+                </div>
+                <iframe src="/pdfjs/web/viewer.html?file=${frameDocUrl}" class="pdfViewerEmbed nonner" width="100%"
+                id="docViewerIframe" frameborder=0
+                allowfullscreen=true webkitallowfullscreen=true mozallowfullscreen=true></iframe>
+                <iframe class="pdfViewerEmbed" id="docViewerNative"
+                width="100%" name="plugin" src="${docUrl}#zoom=100&toolbar=0&navpanes=0" type="application/pdf">
+                    <div class="f-14 c-red text-center">It seems that you pdf plugin provided by your browser not working properly.Please use Default Viewer</div>
+                </iframe>
+            #{/elseif}
+            #{else}
+
+
+
+                <div class="docConversionMsg">
+                    <span class="c-red f-16 f-700">Unable To Open. Contact Administrator.</span>
+                </div>
+            #{/else}
+
+
+
+            </div>
+        </section>
+    </div>
+</section>
+
+</div>
+#{/if}
+#{script src:'o.documentView.js', charset:'utf-8' /}
+
+<script type="text/javascript">
+    $(function(){
+    if(docOpenInterval) clearInterval(docOpenInterval);
+    var docOpenInterval = setInterval(function(){
+         try{
+        if($ && docView){
+           if(docOpenInterval) clearInterval(docOpenInterval);
+           docView.init();
+        }
+         }catch(err){
+         }
+    },100);
+    });
+</script>
+#{elseif documentInfo!=null && !documentInfo.errorCode.isEmpty()}
+    #{common.messagePage msgTextColor : "redTextColor" , msg : documentInfo.errorMessage /}
+#{/elseif}

@@ -1,0 +1,41 @@
+%{
+    entityType=_entityType.toLowerCase();
+    entityId=_entityId;
+    entityName=_entityName;
+    entityObj = _entityObj;
+    entityInfo = _info;
+}%
+<div class="entityNameDiv m-l-20">
+    %{ 
+		vidUrl = controllers.TemplateHelper._getVidUrl(entityObj);
+	}%
+	<div class="smallVideoInfo">
+		<span class="videoSolution f-18" data-id="${vidUrl.id}" style="cursor: pointer;color: blue;">
+		<img src="/public/assets/theme1/img/videoIcon.png" class="analytics-img-browser"
+          style="width: 30px; height: 30px;">
+		${entityName}
+		</span>
+		
+		#{if !entityInfo.equals(null) && entityInfo.has("duration") && entityInfo.has("thumbnailURL")}
+		%{
+			timeObj=util.Utilities.getTimeFromMiliSec(entityInfo.duration);
+		}%
+		<div class="smallVideoExtraInfo videoSolution"  data-id="${vidUrl.id}" style="cursor: pointer;">
+			<div class="smallVideoDuration m-l-25 c-gray"> Duration :
+			#{if timeObj.getInt("hrs") > 0} 
+				${timeObj.hrs}:
+			#{/if}
+				${timeObj.mins}:${timeObj.secs} Hours
+			</div>
+			<div class="smallVideoThumbnailHolder embed-responsive embed-responsive-16by9 m-r-20">
+				<img class="smallVideoThumbnail img-responsive embed-responsive-item" alt="" src="${entityInfo.thumbnailURL}"/>
+			</div>
+		</div>
+		#{/if}
+		
+	</div>
+	<div class="videoSolutionData m-b-20">
+			
+		</div>
+
+</div>

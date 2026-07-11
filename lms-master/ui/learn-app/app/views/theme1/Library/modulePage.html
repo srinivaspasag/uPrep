@@ -1,0 +1,143 @@
+%{
+    moduleResp=moduleResponse;
+}%
+
+
+<div class="modulePage">
+    <div id="moduleEntriesHolder">
+    %{
+        moduleEntryInfos=moduleResp.moduleEntryInfos;
+        foundNowContentForSequentialRun=false;
+        compulsoryContentCount=1;
+        completedCompulsoryContentCount=0;
+        sessionFound = false;
+    }%
+    #{if moduleEntryInfos.length()>0}
+            #{list items:0..moduleEntryInfos.length()-1,as:'i'}
+            %{
+                entryInfo=moduleEntryInfos.get(i);
+            }%
+            #{if entryInfo.isNull('entity')&&!entryInfo.isNull('name')}
+            %{
+                sessionFound = true;
+            }%
+            #{if i != 0}
+    </div>
+</div>
+            #{/if}
+            #{if i == 0}
+<div class="p-timeline-holder" style="margin-top: 60px;">
+#{/if}
+<div class="p-timeline">
+    <div class="pt-line c-gray text-right moduleEntry moduleEntryTopicType">
+        <span class="d-block moduleEntryTopicCircle">A</span>
+    </div>
+    <div class="pt-body">
+        <h2 class="ptb-title">${entryInfo.name}</h2>
+            #{/if}
+            #{else}
+        #{if !sessionFound}
+            <div class="smallScreenMargin">
+        #{/if}
+        <div class="card border8px m-b-10 cardPadding p-t-15 p-b-15 p-l-15 p-r-15 m-b-10
+                        #{if entryInfo.attempted || entryInfo.completed }
+                            attemptedHover
+                        #{/if} 
+                        #{else}
+                            libraryHover
+                        #{/else}" 
+            id="moduleHolder" data-entity-type = '${entryInfo.entity.type}' data-entity-id='${entryInfo.entity.id}' data-module-id=${moduleResp.id} data-entity-attempted='${entryInfo.attempted}'>
+            <div class="card-body f-14 f-500 container"  style="padding:1px; cursor: pointer;">
+
+                <div class="row">
+                    #{if entryInfo.entity.type == 'TEST'}
+                        <div class="col-xs-7" style="margin-left: -15px;" >
+                            <div class="container">
+                                <div class="row text-capitalize m-l-10">
+                                    <img src="/public/assets/theme1/img/testIcon.png" class="analytics-img-browser imageStyle">
+                                            ${entryInfo.info.name}
+                                </div>
+                                <div class="row text-capitalize f-300 c-gray f-11 m-t-10 m-l-10 smallScreenFontSize visible-xs">
+                                    ${entryInfo.info.qusCount} question
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 text-capitalize f-300 c-gray f-12 hidden-xs">
+                            ${entryInfo.info.qusCount} question
+                        </div>
+
+                    #{/if}
+
+
+                    #{if entryInfo.entity.type == 'DOCUMENT'}
+                    <div class="col-xs-7" style="margin-left: -15px;">
+                        <div class="container">
+                            <div class="row text-capitalize m-l-10">
+                                <img src="/public/assets/theme1/img/bookIcon.png" class="analytics-img-browser imageStyle"
+                                    style="width: 20px;">
+                                    ${entryInfo.info.name}
+                            </div>
+                            <div class="row text-capitalize f-300 c-gray f-11 m-t-10 m-l-10 smallScreenFontSize visible-xs">
+                                    ${entryInfo.entity.type}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-3 text-capitalize f-300 c-gray f-12 hidden-xs">
+                            ${entryInfo.entity.type}
+                    </div>
+                    #{/if}
+
+
+                    #{if entryInfo.entity.type == 'VIDEO'}
+                    <div class="col-xs-7" style="margin-left: -15px;">
+                       <div class="container">
+                           <div class="row text-capitalize m-l-10">
+                                <img src="/public/assets/theme1/img/videoIcon.png" class="analytics-img-browser imageStyle" style="width: 20px;">
+                                    ${entryInfo.info.name}
+                            </div>
+                            <div class="row text-capitalize f-300 c-gray f-11 m-t-10 m-l-10 smallScreenFontSize visible-xs">
+                            %{
+                                timeObj=util.Utilities.getTimeFromMiliSec(entryInfo.info.duration);
+                            }%
+                                ${timeObj.hrs}:${timeObj.mins}:${timeObj.secs} Hours
+                            </div>
+                       </div>
+                    </div>
+                    <div class="col-xs-3 text-capitalize f-300 c-gray f-11 hidden-xs">
+                        ${timeObj.hrs}:${timeObj.mins}:${timeObj.secs} Hours
+                    </div>
+                    #{/if}
+                     <i class="iconAllign zmdi zmdi-check-all #{if entryInfo.attempted || entryInfo.completed} c-blue #{/if}"></i>
+                </div>
+            </div>
+        </div>
+        #{if !sessionFound}
+            </div>
+        #{/if}
+            #{/else}
+            #{if  i == moduleEntryInfos.length()-1 && sessionFound}
+                %{
+                    sessionFound = false;
+                }%
+                </div>
+                </div>
+            </div>
+            <hr>
+            #{/if}
+            #{/list}
+
+    #{/if}
+
+
+            </div>
+        </div>
+        <script>
+   $(document).ready(function() {
+       var allTopics = $(".p-timeline-holder").children(".p-timeline");
+       for (var k = 0, l = allTopics.length; k < l; k++) {
+           var entry = allTopics.eq(k);
+           entry.find(".moduleEntryTopicCircle").text(indexToChar(k).toUpperCase());
+       }
+   });
+
+        </script>

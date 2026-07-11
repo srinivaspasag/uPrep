@@ -1,0 +1,471 @@
+@import url(//fonts.googleapis.com/css?family=Roboto:400,100,100italic,400italic,700,300italic,700italic,500,500italic,300);
+@font-face {
+	  font-family: "vedantu";
+          src:url('../vedantu.eot?#iefix') format('embedded-opentype'),
+             url('../vedantu.ttf') format('truetype')
+	}
+@font-face {
+	  font-family: "sketch-block";
+          src:url('../Sketch_Block.eot?#iefix') format('embedded-opentype'),
+             url('../Sketch_Block.ttf') format('truetype')
+	}
+body {
+    padding: 0;
+    line-height: 20px;
+    font-family:Ubuntu,sans-serif;
+    font-size: 13px;
+    background-attachment: fixed;
+    margin: 0px;
+    /*word-spacing: 2px;*/
+    overflow-y:scroll;
+    overflow-x:auto;
+}
+body .nonner{
+    display: none;
+}
+body .hider{
+	visibility:hidden;
+	opacity:0;
+}
+.alignTop{
+	vertical-align:top;
+}
+a img{
+    border-width: 0;
+}
+a{
+    color:#0a7ead;
+    text-decoration:none;
+    cursor: pointer;
+    position: relative;
+}
+.cleaner_with_divider {
+    clear: both;
+    width: 100%;
+    height: 0px;
+    font-size: 1px;
+}
+.smallLoader{
+    background-color:#999;
+    padding:3px 25px;
+    color: #333;
+    font-family: Roboto;
+    font-weight:300;
+    font-size: 20px;
+    margin:0 15px;
+}
+.loadingDiv{
+	margin-top:5px;
+}
+textarea{
+    resize:none;
+}
+.keepScrolling{
+	background-color:rgba(125, 223, 125,0.8);
+	border-radius:15px;
+	color:#fff;
+	padding:5px 30px;
+	font-size:15px;
+	font-family:Roboto;
+	position:relative;
+	right:10px;
+	float:right;
+}
+.captchaDiv {
+	position: relative;
+	bottom: 10px;
+}
+.captchaDiv label {
+	display: block;
+	font-size: 11px;
+	font-style: italic;
+	margin-top: 35px;
+}
+.captchaDiv img {
+	height: 36px;
+}
+.captchaDiv .code {
+	border: 1px solid #C2C2C2;
+	font-weight: bold;
+	height: 30px;
+	padding: 0 5px;
+	width: 100px;
+	vertical-align: top;
+	margin-left: 10px;
+}
+.captchaDiv a {
+	color: #808080;
+	position: relative;
+	text-decoration: underline;
+	top: 5px;
+	vertical-align: top;
+}
+.refreshCaptcha{
+	background:url('/public/images/refresh.png') no-repeat;
+	padding:0 0 8px 20px;
+	cursor:pointer;
+	margin-left:5px;
+}
+.captchaError,
+.hasError {
+	color: orangered;
+}
+.greenButton{
+	font-size: 18px;
+	padding: 10px 45px;
+	min-width: 85px;
+	background-color: rgb(140, 199, 80);
+	color: #fff;
+	outline:0px;
+	border:0px;
+	border-radius: 10px;
+}
+.greenButton:hover{
+	cursor:pointer;
+	background-color:rgb(102, 204, 0);
+}
+.blueButton{
+	font-size: 14px;
+	padding: 5px 25px;
+	min-width: 20px;
+	background-color: #2AA6D4;
+	color: #fff;
+	outline:0px;
+	border:0px;
+	border-radius: 10px;
+}
+.blueButton:hover{
+	cursor:pointer;
+	background-color: #39BCEC;
+}
+.left{
+    float: left;
+}
+.relative{
+	position:relative;
+}
+.absolute{
+	position:absolute;
+}
+.displayInBlock{
+	display:inline-block;
+}
+.right{
+    float: right;
+}
+.boldy{
+    font-weight: bold;
+}
+.fontLight{
+	font-weight:300;
+}
+.fs20{
+	font-size:20px;
+	line-height:20px;
+}
+.fs18{
+	font-size:18px;
+	line-height:18px;
+}
+.fs15{
+	font-size:15px;
+	line-height:15px;
+}
+.fs16{
+	font-size:16px;
+	line-height:16px;
+}
+.fs14{
+	font-size:14px;
+	line-height:15px;
+}
+.lineHeight20{
+	line-height:20px;
+}
+.fs12{
+	font-size:12px;
+	line-height:12px;
+}
+.fs13{
+	font-size:13px;
+	line-height:14px;
+}
+.fs11{
+	font-size:11px;
+	line-height:12px;
+}
+.fs25{
+	font-size:25px;
+	line-height:25px;
+}
+.fs30{
+	font-size:30px;
+	line-height:30px;
+}
+.fs50{
+	font-size:50px;
+	line-height:50px;
+}
+.fs45{
+	font-size:45px;
+	line-height:45px;
+}
+.fs60{
+	font-size:60px;
+	line-height:60px;
+}
+.fs70{
+	font-size:70px;
+	line-height:70px;
+}
+.fs38{
+	font-size:38px;
+	line-height:38px;
+}
+.padTop20{
+	padding-top:20px;
+}
+.fontRoboto{
+	font-family:Roboto;
+	font-weight:400;
+}
+.fontRobotoLight{
+	font-family:Roboto;
+	font-weight:300;
+}
+.fontRobotoThin{
+	font-family:Roboto;
+	font-weight:100;
+}
+.fontVedantu{
+	font-family:vedantu;
+}
+.fontSketch{
+	font-family:sketch-block;
+}
+.fonty{
+    color: #404040;
+    font-family: vedantu;
+    font-size: 40px;
+}
+.disableMainBodyScroll{
+	position: fixed !important;
+	width: 100%;
+}
+.popupWrapper{
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: 10000;
+	display: table;
+	height: 100% !important;
+	table-layout: fixed;
+	width: 100%;
+	outline: none;
+	background:#888;
+	background-color: rgba(0, 0, 0, .6);
+}
+.popupHolder{
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	width: 100%;
+}
+.popupContainer{
+	text-align:left;
+	direction:ltr;
+	display:inline-block;
+	margin:20px;
+	background-color:#FFF;
+}
+.crossPopup{
+	background:url('/public/images/products/cross.png') no-repeat;
+	padding:10px;
+	float:right;
+	margin:10px;
+	cursor:pointer;
+	position:relative;
+	z-index:500;
+}
+.centerText{
+	text-align:center;
+}
+.leftText{
+	text-align:left;
+}
+.fullWidth{
+	width:100%;
+}
+.fullHeight{
+	height:100%;
+}
+.width50Percent{
+	width:49%;
+}
+.blackTextColor{
+	color:#000;
+}
+.redTextColor{
+	color:#e62c22;
+}
+.whiteTextColor{
+	color:#FFFFFF;
+}
+.textColor666{
+	color:#666;
+}
+.textColor333{
+	color:#333;
+}
+.skyBlueTextColor{
+	color:#0099CC;
+}
+.greyTextColor{
+	color:#888;
+}
+.pageHolderM{
+	width:1002px;
+        margin:0 auto;
+}
+.pageHolder{
+	min-width:1002px;
+        max-width:1204px;
+        margin:0 auto;
+}
+.secHold1000{
+	width:1000px;
+	margin:0 auto;
+}
+.secHold1200{
+	width:1200px;
+	margin:0 auto;
+}
+.textVerSeparator{
+	height:8px;
+}
+.vedantuImgBG{
+	content:'vedantu';
+	background-image:url('/public/images/vedantu.png');
+	background-repeat:no-repeat;
+	padding:5px 62px;
+}
+#stayInLoopPopup{
+        position: relative;
+        padding: 25px 25px 25px 50px;
+        background-color: white;
+        box-shadow: 0px 1px 5px 0px rgba(204, 204, 204, 0.5);
+}
+input::-webkit-input-placeholder{
+	color:#a7a7a5;
+        font-style: italic;
+        font-size:12px;
+}
+input:-ms-input-placeholder{
+	color:#a7a7a5;
+        font-style: italic;
+        font-size:12px;
+}
+input::-moz-placeholder{
+	color:#a7a7a5;
+        font-style: italic;
+        font-size:12px;
+}
+.regEmailInput::-webkit-input-placeholder{
+	padding:5px 0px;
+}
+.regEmailInput:-ms-input-placeholder{
+	padding:5px 0px;
+}
+.regEmailInput::-moz-placeholder{
+	padding:5px 0px;
+}
+.allowUserSelect{
+	-webkit-user-select: initial;  /* Chrome all / Safari all */
+  	-moz-user-select: initial;     /* Firefox all */
+  	-ms-user-select: initial;      /* IE 10+ */
+
+  	-o-user-select: initial;
+  	user-select: initial;
+}
+.cstTextBox{
+	outline:none;
+	width:300px;
+	border:1px solid #eee;
+	height:30px;
+	background-color:#f7f7f7;
+	padding-left:6px;
+	font-size:15px;
+	color:#999;
+}
+.cstTextBox:focus{
+	border:1px solid #999;
+	color:#666;
+}
+textarea.cstTextBox{
+	height:90px;
+	margin-top:7px;
+}
+.cstTextBox.code{
+	width:120px;
+}
+.greenTextColor{
+	color:green;
+}
+.blueTextColor{
+	color:#4699CF;
+}
+.clickable{
+	cursor:pointer;
+}
+.redTextColor{
+	color:red;
+}
+.btnDisabled{
+        opacity:0.65;
+        filter:alpha(opacity=65);
+        cursor:default;
+}
+#errorDiv,
+#subscribeContainer{
+	width:300px;
+	text-align:center;
+	margin:20px auto;
+	background-color:#EEDFE4;
+	padding:30px;
+}
+/* TOOLTIP CSS */
+.infoPageFooter{
+        position:fixed;
+        top:110%;
+        z-index:10000;
+}
+#tooltipContainer{
+        position:fixed;
+        opacity:0;
+        z-index: 10000;
+}
+#tooltipContainer .tooltipBody{
+        background-color:rgba(0,0,0,0.75);
+        padding:20px 25px;
+	border-radius:15px;
+	max-width:200px;
+        color:#f1f1f1;
+}
+#tooltipContainer .tooltipPointerUp,
+#tooltipContainer .tooltipPointerDown{
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        position:absolute;
+}
+#tooltipContainer .tooltipPointerUp{
+        border-bottom: 5px solid rgba(0,0,0,0.85);
+        top:-5px;
+}
+#tooltipContainer .tooltipPointerDown{
+        border-top: 5px solid rgba(0,0,0,0.85);
+        bottom:-5px;
+}
+/* TOOLTIP CSS END */

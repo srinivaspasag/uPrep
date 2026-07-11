@@ -1,0 +1,15 @@
+%{
+	percent = _percent!=null ? _percent : 0;
+}%
+<div class="progressBarHolder" data-progress-percent="${percent}">
+     <div class="progressBar">
+	#{if percent>0}
+             <div class="progressDone" style="width:${percent}%"></div>
+	#{/if}
+	#{else}
+             <div class="nonner progressDone" style="width:${percent}%"></div>
+             <div class="nonner preProgress"></div>
+	#{/else}
+     </div>
+     <div class="progressCount left big14"> ${percent}% </div>
+</div>

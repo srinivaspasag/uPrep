@@ -1,0 +1,99 @@
+%{
+    moduleTitle='';
+    hasModuleInfo=false;
+    moduleId='';
+    if(moduleInfo!=null){        
+        boards=moduleInfo.result.boardTree;    
+        moduleInfo=moduleInfo.result.moduleInfo;
+        moduleId=moduleInfo.id;
+        moduleTitle=moduleInfo.name;
+        moduleRunText='Non Sequential';
+        if(!moduleInfo.isNull('moduleRun')&&moduleInfo.moduleRun=='SEQUENTIAL'){
+            moduleRunText='Sequential';
+        }       
+        hasModuleInfo=true;
+    }
+}%
+<div id="modulePage" class="modulePageView" data-module-id="${moduleId}" data-module-title="${moduleTitle}">   
+    <div id="leftSection"></div> 
+    <div id="mainSection">      
+        <div id="topicDotsLiner"></div>
+        <div class="moduleTitleDiv">    
+            <div class="moduleTitleTextHead">
+                <div class="moduleTitleTextBox resourceIconMODULE"></div>
+                <div class="inputDiv moduleTitleInputDiv">
+                    <input type="text" id="moduleTitleInput"
+                           placeholder="&{'MODULE_TITLE_INPUT_PLACE_HOLDER'}" value="${moduleTitle}"/>
+                </div> 
+            </div> 
+            <div class="linBlk nonner" style="position: relative; margin-left: 50px; top: 10px;">
+                <div class="big14 boldy color3 margBot5">Add prerequisite (To view this module)</div>
+                <div class="vChoose" data-value="-1">
+                    <div class="vChooseHead"
+                         style="background-color: rgb(255, 255, 255); 
+                         padding-top: 7px; padding-bottom: 7px;width: 150px;">No prerequisites</div>
+                    <div class="vChooseDownIcon"></div>
+                    <div class="vChooseDropDown">
+                        <div class="vChooseOpt" data-value="-1">No prerequisites</div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <span class="big12 color6">Module Run: ${moduleRunText}</span><br>
+            #{include 'QrModules/moduleTags.html' /}
+        </div> 
+        <div class="moduleMainSectionHead">&{'MODULE_CONTENTS'}</div>
+        <div id="moduleEntriesHolder">
+            #{if !hasModuleInfo||moduleInfo.isNull('children')||(!moduleInfo.isNull('children')&&moduleInfo.children.length()==0)}
+            <div class="userMessage">No entries found</div>
+            #{/if}
+            #{else}
+                %{
+                    children=moduleInfo.children;
+                    firstChild=children.get(0);
+                }%
+                  #{if children.length()>0}
+                  #{list items:0..children.length()-1,as:"i"}            
+                      %{
+                        entry=children.get(i);
+                      }%
+                      #{if !entry.isNull('entity')}
+                            #{qrModules.contentEntry entry:entry,isFinalised:true,forDisplay:true /}                            
+                      #{/if}
+                      #{elseif !entry.isNull('name')}
+                            %{ 
+                                entryTitle="";
+                                if(entry!=null){
+                                    entryTitle=entry.name;
+                                }
+                            }%
+                            <div class="moduleEntry moduleEntryTopicType moduleEntryTopicTypeWithInput moduleEntryFinalised"
+                                 rel="moduleEntryTopicTypeWithInput" data-entry-title="${entryTitle}">
+                                <div class="moduleEntryRightSec">
+                                </div>
+                                <div class="moduleEntryLeftSec">
+                                    <div class="moduleEntryTopicTitleCount margRight10">
+                                        A
+                                    </div>
+                                    <div class="inputDiv moduleEntryTopicInputDiv">
+                                        <input type="text" class="moduleEntryTopicInput" value="${entryTitle}"
+                                               placeholder="&{'MODULE_ADD_TITLE'}"/>
+                                    </div>
+                                </div>
+                                <div class="cleaner_with_divider">&nbsp;</div>
+                            </div> 
+                      #{/elseif }
+                  #{/list}
+                  #{/if}
+            #{/else}                           
+        </div>
+    </div> 
+</div>
+<script type="text/javascript">
+    new function() {
+        var fn = function() {
+            qrModules.init({prerequisiteModuleId:"${prerequisiteModuleId}",published:true});
+        };
+        lazyLoad([{fname: "qrModules.js", cb: fn}]);
+    }();
+</script>  

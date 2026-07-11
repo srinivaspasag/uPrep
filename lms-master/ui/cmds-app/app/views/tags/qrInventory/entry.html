@@ -1,0 +1,53 @@
+%{
+	data = _data;
+	items = data.items;
+}%
+<tr class="eachShipmentInfo" data-id="${data.id}">
+	<td class="width150 maxWidth150">
+		<div>
+			#{if data.userInfo.equals(null)}
+				<span class="color3 big14">${data.buyerContactDetails.email}</span>
+			#{/if}
+			#{else}
+				#{widgets.user20 user : data.userInfo /}
+			#{/else}
+		</div>
+		<div class="color6 big12" style="padding-top:6px;"><span class="updateClientTime"
+			data-format="dd/mmm/yyyy hrs:min" data-time=${data.timeCreated}>${data.timeCreated}</span></div>
+	</td>
+	<td>
+		#{qrInventory.items items : items /}
+	</td>
+	<td class="width130 maxWidth130">
+		<div class="boldy big14">${data.sellerInfo.pointOfSale}</div>
+		<div>(<span class="big12 color6">&{'REF_NO'}</span>:<span class="color3 boldy">${data.sellerInfo.sellerReferenceNo}</span>)</div>
+	</td>
+	<td class="width75 maxWidth75 centerText">
+		#{if !data.orderId.equals(null) && data.orderId != 0}
+			<a href="/organization/${params.orgId}/order/${data.orderId}" class="big14"
+				target="_blank">${data.orderId}</a>
+		#{/if}
+		#{else}
+			<div class="centerText greyTextColor italics smally">&{'TXT_UNAVAILABLE'}</div>
+		#{/else}
+	</td>
+	<td>
+		#{if !data.deviceIds.equals(null) && data.deviceIds.length() > 0}
+			<a class="allowedDevicesPopup big12" 
+				data-devices='${data.deviceIds.toString()}'>
+				<span>&{'VIEW_DEVICE_IDS'}</span>
+				(<span class="deviceIdsCount">${data.deviceIds.length()}</span>)
+			</a>
+		#{/if}
+		#{else}
+			<div class="centerText greyTextColor italics smally">&{'TXT_UNAVAILABLE'}</div>
+		#{/else}
+	</td>
+	<td class="width100 maxWidth75">
+		<div class="boldy big16 centerText">${data.code}</div>
+		<div class="centerText" style="padding-top:8px;">
+			<span class="greyButton resendAccessCodeEmail"
+				data-email="${data.buyerContactDetails.email}">Resend Email</span>
+		</div>
+	</td>
+</tr>

@@ -1,0 +1,98 @@
+%{
+	subjects = _subjects;
+}%
+<div class="slpAddContentHold">
+    <div class="slpAddContentContainer">
+    <div class="animScroll">
+	<div class="diffSlpContentTypes animScrollItem">
+		<div class="centerText greyTextColor big12">&{'CHOOSE_CONTENT_TYPE'}</div>
+		<table class="centerText fullWidth">
+		    <tr>
+			<td>
+			    <div class="slpAddContentType" data-type="CMDSVIDEO">
+				<div class="slpContentIcon resourceIconVIDEO"></div>
+				<div class="greyTextColor smally">&{'TXT_MULTIMEDIA'}</div>
+			    </div>
+			</td>
+			<td>
+			    <div class="slpAddContentType" data-type="CMDSDOCUMENT">
+				<div class="slpContentIcon resourceIconDOCUMENT"></div>
+				<div class="greyTextColor smally">&{'TXT_DOCUMENT'}</div>
+			    </div>
+			</td>
+			<td> 
+			    <div class="slpAddContentType" data-type="CMDSFILE">
+				<div class="slpContentIcon resourceIconFILE"></div>
+				<div class="greyTextColor smally">&{'TXT_FILE'}</div>
+			    </div>
+			</td>
+			<td>
+			    <div class="slpAddContentType" data-type="CMDSASSIGNMENT">
+				<div class="slpContentIcon resourceIconASSIGNMENT"></div>
+				<div class="greyTextColor smally">&{'TXT_ASSIGNMENT'}</div>
+			    </div>
+			</td>
+			<td>
+			    <div class="slpAddContentType" data-type="CMDSTEST">
+				<div class="slpContentIcon resourceIconTEST"></div>
+				<div class="greyTextColor smally">&{'TXT_TEST'}</div>
+			    </div>
+			</td>
+		    </tr>
+		</table>
+	</div>
+	*{<!--<div class="chooseHowSlpAddContent animScrollItem">
+		<div class="centerText greyTextColor big12">&{'ADD_A_SLP_CONTENT','<span class="slpContentType"></span>'}</div>
+		<table class="fullWidth centerText" style="padding-top:20px;">
+		   <tr>
+			<td>
+				<span class="blueButton slpAddFromResource">&{'ADD_FROM_RESOURCE'}</span>
+			</td>
+			<td>
+				<span class="blueButton createSlpResource">&{'CREATE_SLP_CONTENT'}</span>
+			</td>
+		   </tr>
+		</table>
+	</div>-->}*
+    </div>
+    </div>
+</div>
+<div class="slpAddResourcePopup mcWidget">
+	<div style="color:#333;">
+		<span class="big20">&{'ADD_FROM_RESOURCE'} - </span>
+		<span class="contentType big20 boldy"></span>
+	</div>
+	<div class="">
+	   	<div class="inputDiv slpResourceSearchBox hasSearchImg whiteInputDiv">
+                	<input type="text" class="mcSearchDivInput" data-param-name="query" value="" placeholder="Search Resources">
+                	<span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>                
+           	</div>
+		#{if subjects!=null && subjects.errorCode.isEmpty() && subjects.result.list.length()>0}
+		<div class="vChoose chooseSlpResourceSub mcvChoose" data-value="-1" data-onchange="onSlpResrcChooseChange" 
+			data-param-name="includes" data-beforemccall="filterContent" data-target="RESOURCES">
+            		<div class="vChooseLabel">Filter By</div>
+            		<div class="vChooseHead">All Subject</div>
+            		<div class="vChooseDownIcon"></div>
+            		<div class="vChooseDropDown" style="top: 28px;">
+                		<div class="vChooseOpt vChooseOptTicked" data-value="">All Subject</div>
+				#{list items:0..subjects.result.list.length()-1,as:'bIndex'}
+					%{
+						sub = subjects.result.list.get(bIndex);
+					}%
+                			<div class="vChooseOpt" data-value="${sub.id}">${sub.name}</div>
+				#{/list}
+            		</div>
+        	</div>
+		#{/if}
+		#{include 'Widgets/mcvChooseAlpha.html' /}
+		<div class="right relative" style="top:16px;">
+                	#{common.lmArrowsDiv /}
+		</div>
+	</div>
+	<div class="selectResoutceBtnHolder nonner">
+		<span class="greenButton hider selectSlpEntity">&{'TXT_SELECT'}</span>
+	</div>
+	<div class="LMHandlerDiv">
+	</div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+</div>

@@ -1,0 +1,94 @@
+%{
+	data = _data;
+	info = data.recordInfo;
+	jobId = "";
+	extraClassName = "";
+	opsDone = true;
+	if(data.has('jobId') && !data.jobId.equals(null) && !data.jobId.isEmpty()){
+		jobId = data.jobId;
+		extraClassName = "exportInProgress";
+		opsDone = false;
+	}
+        programUrl=util.UrlFramer.getProgramUrl(info.programInfo.name,info.programInfo.id,params.orgId);
+}%
+<div class="exportItem ${extraClassName} exportJobId-${jobId}" data-job-id="${jobId}" data-id="${info.id}">
+   <div class="exportBody"> 
+     <table class="fullWidth">
+       <tr>
+	<td class="alignTop">
+   		<span class="resourceIconEXPORT"></span>
+	</td>
+	<td>
+	<div class="boldy big16 greyTextColor">
+		<span>${info.name}</span>
+		<div class="big12 right">
+			<span class="left greyTextColor" style="margin-right:5px;">by </span>
+                	#{widgets.user20 user : info.userInfo /}
+		</div>
+	</div>
+	<div class="greyTextColor">
+		<span class='italica'>&{'STARTED_AT'}</span>
+		<span class="big14">
+			#{common.clientTimeDate time : info.timeCreated , format : "dd/mm/yyyy hrs:min:sec" /}
+		</span>
+	</div>
+	<div class="big14 exportProgCenterSec">
+		<span class="greyTextColor">&{'TXT_BATCH'} : </span>
+                <a href='${programUrl}' class="getProgramPage cmdsaPush"
+                        data-program-id='${info.programInfo.id}'>
+			<span class="boldy">${info.programInfo.name}</span>,
+                </a>
+		<span class="greyTextColor">&{'TXT_CENTER'} : </span>
+		<span class="boldy">${info.centerInfo.name}</span>,
+		<span class="greyTextColor">&{'TXT_SECTION'} : </span>
+		<span class="boldy">${info.sectionInfo.name}</span>
+	</div>
+	<table cellspacing=0 cellpadding=0 class="fullWidth">
+	    <tr>
+		<td class="totalProgressTD">
+			#{if opsDone == true}
+				<div class='big16 greenTextColor'>Done, ready to download</div>
+			#{/if}
+			#{else}
+				#{common.progressBar /}
+			#{/else}
+		</td>
+		<td class="cancelExportTD #{if opsDone == true}nonner#{/if}">
+			<span class="smallRedButton cancelExport right">&{'TXT_CANCEL'}</span>
+		</td>
+		<td class="doneExportTD #{if opsDone == false}nonner#{/if}">
+			#{if data.has('url') && !data.url.equals(null) && !data.url.isEmpty()}
+				<a class="smallGreenButton downloadExport right" href="${data.url}">&{'TXT_DOWNLOAD'}</a>
+			#{/if}
+			#{else}
+				<a class="smallGreenButton downloadExport right">&{'TXT_DOWNLOAD'}</a>
+			#{/else}
+		</td>
+		<td class="deleteExportTD #{if opsDone == false}nonner#{/if}">
+			<span class="smallRedButton deleteExport right">&{'TXT_DELETE'}</span>
+		</td>
+	    </tr>
+	</table>
+	<div>
+		<a class="showExportDetails">&{'TXT_VIEW_DETAILS'}</a>
+		<a class="hideExportDetails nonner">&{'TXT_HIDE_DETAILS'}</a>
+	</div>
+   </td>
+  </tr>
+  </table>
+  </div>
+   <div class="exportDetails nonner">
+   	<div class="exportProgCenterSec big16"></div>
+   	<div style="padding:12px 0;">
+		<div class="big14">&{'EXPORT_CONTENT_LIST'}</div>
+		<div class="exportContentList">
+			<table class="fullWidth tableWithBorder" cellspacing=0 cellpadding=0>
+			   <tr>
+				<td class="boldy big14">&{'TXT_NAME'}</td>
+				<td class="boldy big14">&{'TXT_STATUS'}</td>
+			   </tr>
+			</table>
+		</div>
+	</div>
+    </div>
+</div>

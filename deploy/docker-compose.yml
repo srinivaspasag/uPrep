@@ -1,0 +1,81 @@
+services:
+  mongo:
+    image: mongo:3.4
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - lmsnet
+
+  lmsbe:
+    image: uprep-lmsbe:aws
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    volumes:
+      - ./lms-master:/root/lms/vedantu/zowie
+      - ./entrypoint.sh:/root/entrypoint.sh:ro
+    entrypoint: ["/bin/bash", "/root/entrypoint.sh"]
+    networks:
+      - lmsnet
+
+  # Provides 127.0.0.1:27017 inside lmsbe's network namespace, forwarded to the
+  # mongo container. The legacy services connect to localhost:27017 (local.conf).
+  socat:
+    image: alpine/socat
+    restart: unless-stopped
+    network_mode: "service:lmsbe"
+    depends_on:
+      - lmsbe
+      - mongo
+    command: TCP-LISTEN:27017,fork,reuseaddr TCP:mongo:27017
+
+  ui:
+    image: node:20-bullseye
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./uprep-ui:/app
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: localvedantu
+      USER_SERVICE_URL: http://lmsbe:19011
+      CONTENT_SERVICE_URL: http://lmsbe:19013
+      ORG_SERVICE_URL: http://lmsbe:19012
+      BOARD_SERVICE_URL: http://lmsbe:19016
+      NEXT_PUBLIC_DEFAULT_ORG_ID: 5874a52bc92ed65e3defc7e5
+      NODE_OPTIONS: "--max-old-space-size=1536"
+      PORT: "3000"
+    command: bash -lc "npm install --no-audit --no-fund && npm run build && npm start -- -p 3000 -H 0.0.0.0"
+    depends_on:
+      - mongo
+      - lmsbe
+    expose:
+      - "3000"
+    networks:
+      - lmsnet
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - ui
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./uprep-ui/public/uploads:/srv/uploads:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - lmsnet
+
+networks:
+  lmsnet:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,320 @@
+%{
+    packType = _packType;
+}%
+<div class="container">
+    <div class="choosePricingModel m-t-20 m-b-20">
+        <div class="row m-t-25 packBlock ${packType}">
+            <div class="col-sm-6 col-md-4 m-t-5">
+                <div class="card pt-inner PACK PACK1">
+                    <div class="pti-header bgm-amber">
+                    </div>
+                    #{if packType == "TECH"}
+                    <div class="pti-body">
+                        <div class="ptib-item">
+                            <div class="f-700 text-center f-14 text-uppercase">Best suited for</div>
+                            <div class="text-center " style="margin-top: 5px;">
+                               <span><b>Educators</b></span> who want to conduct their own <b>Online Tests</b> & <b>Embed Videos</b>.
+                            </div>
+                        </div>
+                        <div class="ptib-item">
+                            Unlimited Programs, Learners, Storage
+                        </div>
+                        <div class="ptib-item">
+                            Encrypted Content
+                        </div>
+                        <div class="ptib-item">
+                            1 Admin
+                        </div>
+                        <div class="ptib-item">
+                            1 Manager
+                        </div>
+                        <div class="ptib-item">
+                            No Private Labelling
+                        </div>
+                    </div>
+                    #{/if}
+                    #{elseif packType == "COURSE"}
+                        <div class="pti-body">
+                            <div class="ptib-item">
+                                This is a comprehensive program that aids student's JEE/NEET Test Prep . It simplifies the JEE/NEET curriculum through engaging videos and 2D/3D animations
+                            </div>
+                            <div class="ptib-item">
+                                Prepare with 4000+ Videos
+                                <br/>
+                                Refer to 110+ e Books
+                                <br/>
+                                Practice from 20000+ Questions
+                                <br/>
+                                 Perform over 1200+ Mock Tests
+                            </div>
+                            <div class="ptib-item">
+                                Unlimited Programs, Learners, Storage
+                                <br/>
+                                Encrypted Content
+                            </div>
+                            <div class="ptib-item">
+                                Classroom Connect
+                            </div>
+                            <div class="ptib-item">
+                                Instant Test Generator
+                            </div>
+                            <div class="ptib-item">
+                                Partial Private Labelling
+                            </div>
+                        </div>
+                    #{/elseif}
+                    #{elseif packType == "TEST"}
+                        <div class="pti-body">
+                            <div class="ptib-item">
+                                1200+ Preloaded Mini Tests
+                                <br/>
+                                70000+ Questions
+                            </div>
+                            <div class="ptib-item">
+                                Instant Test Generator
+                            </div>
+                            <div class="ptib-item">
+                                Unlimited Programs, Learners, Storage
+                            </div>
+                            <div class="ptib-item">
+                                Partial Private Labelling
+                            </div>
+                        </div>
+                    #{/elseif}
+                    #{else}
+                    #{/else}
+                    #{if packType == "TECH"}
+                    <div class="pti-footer">
+                        <a class="bgm-amber viewMore" title="View More">
+                            <i class="zmdi zmdi-chevron-down"></i></a>
+                    </div>
+                    #{/if}
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4 m-t-5">
+                <div class="card pt-inner PACK PACK2">
+                    <div class="pti-header bgm-green">
+                    </div>
+                    #{if packType == "TECH"}
+                    <div class="pti-body">
+                        <div class="ptib-item">
+                            <div class="f-700 text-center f-14 text-uppercase">Best suited for</div>
+                            <div class="text-center " style="margin-top: 5px;">
+                               <b>Institutes</b> who want to go live with their own <b>Learning App.</b>
+                            </div>
+                        </div>
+                        <div class="ptib-item">
+                            <b>Lite Pack + </b>
+                        </div>
+                        <div class="ptib-item">
+                            Upload Videos | Auto Test Generator
+                        </div>
+                        <div class="ptib-item">
+                            Classroom Connect
+                        </div>
+                        <div class="ptib-item">
+                            5 Managers
+                        </div>
+                        <div class="ptib-item">
+                            Partial Private Labelling
+                        </div>
+                    </div>
+                    #{/if}
+                    #{elseif packType == "COURSE"}
+                        <div class="pti-body">
+                            <div class="ptib-item">
+                                <b>JEEPEDIA | NEETPEDIA ONLINE + </b> 
+                            </div>
+                            <div class="ptib-item">
+                                Access through SD Card
+                            </div>
+                            <div class="ptib-item">
+                                Works without active internet
+                            </div>
+                        </div>
+                    #{/elseif}
+                    #{elseif packType == "TEST"}
+                        <div class="pti-body">
+                            <div class="ptib-item nonner">
+                                A nationwide mock JEE Mains & JEE Advanced test platform that includes 12 JEE Mains and 4 JEE Advanced Tests. Common platform to test students from across the country
+                            </div>
+                            <div class="ptib-item">
+                                <b>TESTPEDIA LITE + ADVANCE EDGE </b>
+                            </div>
+                            <div class="ptib-item">
+                                175+ Chapter-wise Tests 
+                            </div>
+                            <div class="ptib-item">
+                                4,000 Handpicked Questions
+                            </div>
+                            <div class="ptib-item">
+                                Video Solutions
+                            </div>
+                        </div>
+                    #{/elseif}
+                    #{else}
+                    #{/else}
+                    #{if packType == "TECH"}
+                    <div class="pti-footer">
+                        <a class="bgm-green viewMore" title="View More"><i class="zmdi zmdi-chevron-down"></i></a>
+                    </div>
+                    #{/if}
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4 m-t-5">
+                <div class="card pt-inner PACK PACK3">
+                    <div class="pti-header bgm-cyan">
+                        <div class="c-white" style="font-size: 20px;">
+                            <a class="btn btn-lg waves-effect showForm" data-toggle="modal" href="#modalDefault" style="margin: 3px 0px;
+    color: black;
+    background: white;
+    border-radius: 5px;"><i class="zmdi zmdi-phone "></i>
+                                &nbsp;Contact Sales
+                            </a>
+                        </div>
+                        <div class="ptih-title">Enterprise Pack</div>
+                    </div>
+                    #{if packType == "TECH"}
+                    <div class="pti-body">
+                        <div class="ptib-item">
+                            <div class="f-700 text-center f-14 text-uppercase">Best suited for</div>
+                            <div class="text-center" style="margin-top: 5px;">
+                                For organizations that need <b>scale</b>, <b>performance</b>, and <b>flexibility</b> in their business process
+                            </div>
+                            <!-- <div>
+                                <span>Looking for something beyond our pricing plans? Contact us : </span>
+                                <ul>
+                                <li>Email us at <a href="mailto:info@learnpedia.in">info@learnpedia.in</a></li>
+                                 <li>Call us at  +91 8099777711</li>
+                            </ul>
+                            </div> -->
+                        </div>
+                        <div class="ptib-item">
+                            <b>Standard Pack +</b>
+                        </div>
+                        <div class="ptib-item">
+                            Signup Embeddables
+                        </div>
+                        <div class="ptib-item">
+                            One-on-one Online Support
+                        </div>
+                        <div class="ptib-item">
+                            Unlimited Managers
+                        </div>
+                        <div class="ptib-item">
+                            Complete Private Labelling
+                        </div>
+                    </div>
+                    #{/if}
+                    #{elseif packType == "COURSE"}
+                        <div class="pti-body">
+                            <div class="ptib-item">
+                                <b>JEEPEDIA | NEETPEDIA ONLINE + </b>
+                            </div>
+                            <div class="ptib-item">
+                                Access through Pendrive
+                            </div>
+                            <div class="ptib-item">
+                                Works without active internet
+                            </div>
+                        </div>
+                    #{/elseif}
+                    #{elseif packType == "TEST"}
+                        <div class="pti-body">
+                            <div class="ptib-item">
+                                8 JEE Main & 4 JEE Advanced Tests
+                                    | 
+                                8 NEET Tests
+                            </div>
+                            <div class="ptib-item">
+                                Detailed Analysis
+                            </div>
+                            <div class="ptib-item">
+                                All India Ranking
+                            </div>
+                        </div>
+                    #{/elseif}
+                    #{else}
+                    #{/else}
+                    #{if packType == "TECH"}
+                    <div class="pti-footer">
+                        <a class="bgm-cyan viewMore" title="View More"><i class="zmdi zmdi-chevron-down"></i></a>
+                    </div>
+                    #{/if}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="small" style="font-size: 13px;font-style: italic;margin:30px;">
+        <strong>Note:</strong> An invoice of 3 months will be generated for every new institute at the time of on-boarding, monthly invoices will be generated from the beginning of the 4th month.
+    </div>
+    #{if packType == "TECH"}
+    <div class="other-packs-container">
+        <div class="goToPack goToCOURSE card">
+            <p>See available Course plans</p>
+        </div>
+        <div class="goToPack goToTEST card">
+            <p>See available Test plans</p>
+        </div>
+    </div>
+    #{/if}
+
+    <div class="modal fade" id="modalDefault" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="text-align: center;">
+                <div class="modal-header text-left">
+                    <h2>Interested in the Enterprise Pack?</h2>
+                    <small>Please fill in your details below,our team will reach out to you soon.</small>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                        <div class="form-group fg-float">
+                        <div class="fg-line" id="name-group">
+                                <input type="text" id="full-name" class="form-control" required="">
+                                <label class="fg-label">Name:</label>
+                                <span class="zmdi form-control-feedback" id="name-dialog" style="display: none;"></span> <small class="help-block text-left" id="name-help"></small>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
+                        <div class="form-group fg-float">
+                        <div class="fg-line" id="email-group">
+                                <input type="email" id="email" class="form-control" required="">
+                                <label class="fg-label">Email:</label>
+                                <span class="zmdi form-control-feedback" id="email-dialog" style="display: none;"></span> <small class="help-block text-left" id="email-help"></small>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="zmdi zmdi-local-phone"></i></span>
+                        <div class="form-group fg-float">
+                        <div class="fg-line" id="number-group">
+                                <input type="text" id="number" class="form-control" required="" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                <label class="fg-label">Contact Number:</label>
+                                <span class="zmdi form-control-feedback" id="number-dialog" style="display: none;"></span> <small class="help-block text-left" id="number-help"></small>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="zmdi zmdi-assignment-o"></i></span>
+                        <div class="form-group fg-float">
+                        <div class="fg-line" id="message-group">
+                                <textarea rows="3" id="message" class="form-control fg-input" required=""></textarea>
+                                <label class="fg-label">Tell us about your requirements</label>
+                               <span class="zmdi form-control-feedback" id="message-dialog" style="display: none;"></span> <small class="help-block text-left" id="message-help"></small>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary submit-btn">Submit</button>
+                    <button type="button" class="btn btn-link" data-dismiss="modal">Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

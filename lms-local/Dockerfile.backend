@@ -1,0 +1,14 @@
+FROM --platform=linux/amd64 azul/zulu-openjdk:7
+
+# sbt launcher (0.12.2) — reads each project's build.properties to bootstrap the right sbt
+COPY bin/sbt-launch-0.12.2.jar /opt/sbt/sbt-launch.jar
+COPY repositories /root/.sbt/repositories
+
+# sbt wrapper: force all resolution through our curated 2026-live mirrors
+RUN printf '#!/usr/bin/env bash\nexec java \\\n  -Xms512m -Xmx3g -XX:MaxPermSize=512m \\\n  -Dhttps.protocols=TLSv1.2 \\\n  -Djdk.tls.client.protocols=TLSv1.2 \\\n  -Dsbt.override.build.repos=true \\\n  -Dsbt.repository.config=/root/.sbt/repositories \\\n  -Dsbt.ivy.home=/root/.ivy2 \\\n  -Dfile.encoding=UTF-8 \\\n  -jar /opt/sbt/sbt-launch.jar "$@"\n' > /usr/local/bin/sbt \
+ && chmod +x /usr/local/bin/sbt
+
+# Backend services must live under a path containing "vedantu/zowie" (Build.scala hard-codes this)
+WORKDIR /root/lms/vedantu/zowie
+
+CMD ["bash"]

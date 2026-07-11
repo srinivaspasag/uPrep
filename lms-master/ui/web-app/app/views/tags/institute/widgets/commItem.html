@@ -1,0 +1,26 @@
+%{
+	data = _data;
+}%
+#{if data.has("content") && data.content!=null && !data.content.isEmpty()}
+<div class="instEachFeedCom" data-comment-id="${data.id}">
+	#{if data.has('user') && data.user!=null}
+	%{
+		getUser=(controllers.Profile.getUserClassAndUrl(data.user));
+                userClass = getUser.get("className");
+                userUrl = getUser.get("url");
+                userId = getUser.get("id");
+	}%
+	<div class="left instProfilePicContainer">
+		<a class="${userClass} displayInBlock" href="${userUrl}" data-user-id="${userId}">
+			<img class="instFeedCommentPic" src="${data.user.thumbnail}" alt=""/>
+		</a>
+	</div>
+	<div class="left" style="max-width:90%;">
+		#{institute.memberName user : data.user , classNames : "instFeedProfileName boldy" , getUser : getUser /}
+		<div class="instFeedCommentBody">${data.content.raw()}</div>
+		<div class="instFeedCommAge">${new Date(data.timeCreated).since(false)}</div>
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+	#{/if}
+</div>
+#{/if}

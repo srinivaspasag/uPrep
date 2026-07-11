@@ -1,0 +1,21 @@
+%{
+    target=_target;
+    leaders=_leaders;
+    if(target=='QUESTION_PAGE')headText='Challenge Leaderboard';
+    else headText='Challenges Leaderboard';
+}%
+<div class="CLBHolder CSWidget"  data-widget="CHALLENGE_LEADERBOARD">
+    <div class="boldy big14 margBot10 margLeft">${headText}</div>
+    #{if target!='QUESTION_PAGE'}
+    <div class="SSCSubTabs padLeft10" style="font-size: 12px;">
+        <span class="SSCSubTab activeSSCSubTab thisWeekCLB doCStream" data-name="THIS_WEEK_LINK">This Week</span>
+        <span>|</span>
+        <span class="SSCSubTab thisMonthCLB doCStream" data-name="THIS_MONTH_LINK">This Month</span>
+        <span>|</span>
+        <span class="SSCSubTab overallCLB doCStream" data-name="OVERALL_LINK">Overall</span>
+    </div>        
+    #{/if}
+    <div class="CLBListDiv">
+        #{include 'tags/challenges/leaderBoardItems.html' /}
+    </div>    
+</div>

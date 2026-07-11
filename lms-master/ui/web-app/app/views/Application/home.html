@@ -1,0 +1,40 @@
+
+#{extends 'header.html' /}
+#{set title:'Home' /}
+<script type="text/javascript">
+    $(function(){
+                 $.get("/Application/homeContent",function(data){
+                    $("#mainSection").html(data);
+                 });
+                $.get("/Application/getNotificationsSummary",function(data){
+                        if(data.errorMessage==''&&data.result.newNotificationCount>0){
+                           $("#notis .notiNo").html(data.result.newNotificationCount).addClass("activeNotiNo");
+                        }
+                });
+    });
+</script>
+<div class="cleaner_with_divider">&nbsp;</div>
+    <div id="contentSectionHolder">
+      <div id="contentMain" class="toBeClosed">
+          <div id="leftSection">
+              <div id="leftBar1" class="leftSub"></div>
+              <div id="leftBar2" class="leftSub"></div>
+          </div>
+          <div id="mainSection">
+              <div style='text-align: center;min-height: 400px;'><img src='/public/images/loading.gif' alt='loading..'></div>
+          </div>
+          <div id="mainSectionDummy"></div> 
+          <div id="rightSection">
+              <div id="rightBarFlex"></div>
+              <div id="rightBar1" class="rightSub"></div>
+              <div id="rightBar2" class="rightSub"></div>
+              <div id="rightBar3" class="rightSub"></div>
+              <div id="rightBar4" class="rightSub"></div>
+          </div>
+          <div class="cleaner_with_divider contentFooter">&nbsp;</div>
+      </div>
+      <div class="cleaner_with_divider DBTabPositioner">&nbsp;</div>
+    </div>
+
+
+

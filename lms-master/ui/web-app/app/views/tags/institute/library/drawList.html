@@ -1,0 +1,12 @@
+%{
+	defaultVal = "";
+	defaultText = "";
+	if(params.userRole == "STUDENT"){
+		if(list!=null && list.length()>0){
+			defaultVal = list.get(0).id;
+			defaultText = list.get(0).name;
+		}	
+	}
+	selectAll = params.allowSelectAll!=null?Boolean.parseBoolean(params.allowSelectAll):false;
+}%
+#{institute.widgets.dropDowns.singleList list : list , selectedVal : defaultVal , selectedText : defaultText , listType : listType , showSelectAll : selectAll /}

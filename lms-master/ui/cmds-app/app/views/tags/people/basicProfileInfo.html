@@ -1,0 +1,140 @@
+    %{
+        info=_info;
+        target=_target;
+        orgUserProfile=_orgUserProfile;
+    }%
+    <span class="big20 color3">&{'ORG_MEMBER_INFO'}</span>
+    <table class="margTop20">
+        <tbody>           
+            <tr>
+                <td>
+                    Profile
+                </td>
+                <td class="boldy">${info.profile.toLowerCase().capitalizeWords()}</td>
+            </tr>            
+            <tr>
+                <td>
+                    &{'INST_ID'}
+                </td>
+                <td class="boldy">${info.memberId}</td>
+            </tr>
+            <tr>
+                <td>
+                    Email ID
+                </td>
+                <td>
+                    %{
+                        memberEmailId=info.email;
+                    }%
+                    #{if memberEmailId!=""}
+                        <span class="memberEmailId">${memberEmailId}</span>
+                        #{if orgUserProfile=="MANAGER"&&!session.directLogin}
+                        <div class="margTop color9">
+                            <a class="unsetMemberEmail smally" data-user-id="${info.userId}" data-org-member-id="${info.id}">
+                                Unset Email
+                            </a>
+                        </div>                        
+                        #{/if}
+                    #{/if}
+                    #{else}
+                    <div class="smallThinGray">Not given</div>
+                    #{/else}                                    
+                </td>
+            </tr>
+            #{if target=='STUDENT_PAGE'&&!info.isNull('gender')}
+            <tr>
+                <td>
+                    Gender
+                </td>
+                <td>${info.gender}</td>
+            </tr>                       
+            #{/if}
+            #{if info.contactNumber!=''}
+            <tr>
+                <td>
+                    Contact Number
+                </td>
+                <td>${info.contactNumber}</td>
+            </tr>               
+            #{/if}
+            <tr>
+                <td>
+                    Picture
+                </td>
+                <td>
+                    <div class="img30Wrapper">
+                        <img class="img30" src="${info.thumbnail}">
+                    </div>                        
+                </td>
+            </tr>  
+        </tbody>
+    </table>
+    <span class="big18 color3">&{'USER_INFO'}</span>
+    <table class="margTop20">
+        <tbody>
+            <tr>
+                <td>
+                    Username
+                </td>
+                <td>
+                    #{if info.isUsernameOrgSpecific}
+                    <div class="smallThinGray">Not available(Using &{'INST_ID'} for login.)</div> 
+                    #{/if}
+                    #{else}
+                        ${info.username}
+                        #{if orgUserProfile=="MANAGER" && !session.directLogin &&
+				(!"EXT_AUTH_ORG".equals(session.get("orgAuthType")) || "MANAGER".equals(info.profile))}
+                        <div class="margTop">
+                            <a class="resetMemberUsername smally">Use &{'INST_ID'} as Username</a>
+                        </div>                    
+                        #{/if}
+                    #{/else}
+	    	    #{if target!="OFFLINE_USER_PAGE"&&orgUserProfile=="MANAGER"&&!session.directLogin
+				&& (!"EXT_AUTH_ORG".equals(session.get("orgAuthType")) || "MANAGER".equals(info.profile))}
+                    <div class="margTop">
+                        <a class="changeMemberPass smally">Change Password</a>
+                    </div>                    
+		    #{/if}
+                </td>
+            </tr>                 
+            <tr>
+                <td>
+                    Verified Email ID
+                </td>
+                <td>
+                    %{
+                        verifiedEmail=info.verifiedEmail;
+                    }%
+                    #{if verifiedEmail!=""}
+                        ${verifiedEmail}
+                    #{/if}
+                    #{else}
+                    	<div class="smallThinGray">Not given</div>
+                    #{/else}                                    
+                </td>
+            </tr>
+            %{
+                extraInfo=info.extraInfo;
+            }%
+            #{if extraInfo.length()>0}
+                #{list items:0..extraInfo.length()-1,as:'i'}
+                    %{
+                        kv=extraInfo.get(i);
+                    }%
+            <tr>
+                <td>
+                    ${kv.name}
+                </td>
+                <td>
+                    #{if kv.value!=''}
+                    ${kv.value} 
+                    #{/if}
+                    #{else}
+                    <div class="smallThinGray">Not given</div>
+                    #{/else}                                                    
+                </td>
+            </tr>                    
+                #{/list}
+            #{/if}
+        </tbody>
+    </table>

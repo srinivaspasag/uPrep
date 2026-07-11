@@ -1,0 +1,24 @@
+<div class="instUpvoteHolder wi-stats upVoteDiv upvoteHolder" data-entity-id="${_entityId}" data-entity-type="${_entityType}">
+    <div class="pull-left comcontainer">
+        #{if _voted==false}
+          <a class="upvoteInstItem like"><i class="zmdi zmdi-thumb-up ics"></i> &{'TXT_UPVOTE'}</a>
+            <span class="upvotedInstItem nonner liked"><i class="zmdi zmdi-thumb-up ics"></i> &{'TXT_UPVOTED'}</span>
+        #{/if}
+        #{else}
+          <span class="upvotedInstItem liked"><i class="zmdi zmdi-thumb-up ics"></i> &{'TXT_UPVOTED'}</span>
+        #{/else}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <!-- <span class="upvoteInstSeparator">.</span> -->
+        <a class="replyToCommItem like"><i class="zmdi zmdi-comment ics" style="top: 2px;position: relative;"></i> Comment</a>
+    </div>
+    <div class="pull-right wis-numbers">
+        <span class="upvotesInstFeedCount commReviewVoteDiv" data-entity-count="${_upVote}">
+            <span class="instImgs #{if _voted==true}voted #{/if}"><i class="zmdi zmdi-thumb-up"></i></span>
+            <span class="upvotesCount upVoteItemCount">${_upVote}</span>
+        </span>
+        <span class="showCommentReplies commItemRepliesSec">
+            <span class="instImgs"><i class="zmdi zmdi-comments"></i></span>
+            <span class="commRepliesNum">${_replies}</span>
+        </span>
+    </div>
+</div>

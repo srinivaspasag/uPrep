@@ -1,0 +1,26 @@
+#{if !replies.equals(null) && replies.errorCode.isEmpty() && replies.result.list.length()>0}
+%{
+    replies=replies.result.list;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+#{widgets.replyItems replies:replies,loadMoreSize:loadMoreSize /}
+#{/if}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.reply-editor').code("");
+        $(".reply-editor").summernote({
+            height:50,
+            placeholder:"Add a comment"
+        });
+        button = $(".note-insert button:nth-child(2)").css("display","none");
+        $(".note-insert").append('<div class="imageClick" style="display:inline-block;"><button type="button" class="btn btn-default btn-sm waves-effect"><i class="fa fa-picture-o"></i></button></div>');
+        $(".imageClick").on("click",imageClick);
+        $(".imageClick").attr("id","reply-image");
+
+        formulaButton = $(".note-view button:nth-child(1)").addClass("formulaEditor");
+        $(".formulaEditor").on("click",formulaEditor);
+        comment.init();
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub,$("instOneDbtContainer").find(".instDbtDesc").get(0)]);
+        });
+</script>

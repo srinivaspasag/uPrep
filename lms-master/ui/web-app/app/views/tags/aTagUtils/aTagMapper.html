@@ -1,0 +1,11 @@
+%{
+    entityType=_entityType.toLowerCase();
+    entityId=_entityId;
+    entityName=_entityName;
+    templateName='tags/aTagUtils/'+entityType+'Tag.html';
+    entityObj = _entityObj;
+    entityInfo = _info;
+}%
+<div class="entityNameDiv">
+    #{include arg:templateName /}
+</div>

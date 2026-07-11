@@ -1,0 +1,88 @@
+#{if moduleInfo.errorCode!=''}
+#{common.errorCodes resp:moduleInfo /}
+#{/if}
+#{else}
+%{
+    hasChildren=false;
+    moduleInfo=moduleInfo.result.moduleInfo;
+    if(!moduleInfo.isNull('children')&&moduleInfo.children.length()>0){
+        hasChildren=true;
+    }  
+}%
+<div class="cmdsPopupHead">Select the content to be made downloadable in this module</div>
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv">
+    <table class="headSecTable">
+      <thead>
+          <tr>
+              <td class="width16 tdPadLeft5" style="padding-top: 20px;">
+                  #{if hasChildren}
+                    <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                        <div class="gCBoxTicker"></div>                    
+                    </div>   
+                  #{/if}
+              </td>
+              <td class="tdPadLeft5 itemTitleTH">Title</td>
+              <td class="downloadState width150 maxWidth150"><span style="padding-left:10px;">Download</span></td>
+          </tr>	  
+      </thead>
+    </table>                    
+</div>                
+<div id="fixedSec">
+    <table class="cmdsTable moduleTable">
+      <tbody>
+          #{if hasChildren}
+          %{
+            hasContent=false;
+            children=moduleInfo.children;
+          }%
+          #{list items:0..children.length()-1,as:'i'}
+          %{
+                entry=children.get(i);            
+          }%
+          #{if !entry.isNull('entity')}
+            %{
+                hasContent=true;
+                resource=entry.info;
+                if(!entry.isNull('info')){
+                    entityId=resource.id;
+                    entityName=resource.name;
+                    entityType=resource.type;
+                    allowCBox=true;
+                    if(entityType=="CMDSVIDEO"&&resource.linkType=="ADDED"){
+                        allowCBox=true;
+                    }
+                    entityDownloadState = 'NOT_APPLICABLE';
+                    if(entityType == 'CMDSDOCUMENT' || (entityType == 'CMDSVIDEO' && resource.linkType == 'UPLOADED')){
+                      entityDownloadState = entry.downloadState;
+                    }
+                }                
+            }%
+          <tr class="" data-entity-type="${entityType}" data-entity-id="${entityId}"
+              data-entity-name="${entityName}">
+            <td class="width16 tdPadLeft5">
+                #{if allowCBox}
+                  <div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                      <div class="gCBoxTicker"></div>                      
+                  </div>  
+                #{/if}
+            </td>
+            <td class="tdPadLeft5 color0 entityTitleTd">
+                #{aTagMapper entityName:entityName,entityId:entityId,entityType:entityType,entityDownloadState:entityDownloadState/}
+            </td>
+          </tr>            
+          #{/if} 
+          #{/list}
+          #{/if}
+          #{if !hasChildren ||!hasContent}
+            <tr class="noResultsTr">
+              <td colspan="10">
+                  <div class="userMessage">No content found.</div>
+              </td>
+            </tr>                                
+          #{/if}          
+      </tbody>
+    </table>
+    #{footer /}
+</div> 
+#{/else}

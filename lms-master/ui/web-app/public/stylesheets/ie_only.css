@@ -1,0 +1,12 @@
+#searchArea{
+    adding-top: 5px;
+}
+#searchForm>img{
+    vertical-align: baseline;
+}
+#postArea{
+    padding-top: 10px;
+}
+#feedMenu a.activeFeed{
+    padding-bottom: 1px;
+}

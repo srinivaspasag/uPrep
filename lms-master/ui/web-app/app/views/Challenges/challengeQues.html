@@ -1,0 +1,45 @@
+#{if challengeStart.errorCode!=''}
+    <script type="text/javascript">
+        if("${errorCode}"=="ALREADY_ATTEMPTED"){
+            showError("Either you have already attempted this question or the alloted time has expired");
+        }
+        else{
+            showError(COMMON_ERROR_MESSAGE);
+        }        
+        removeChallengeFullScreen();
+    </script>
+#{/if}
+#{else}
+%{
+    challengeStart=challengeStart.result;
+    ques=challengeStart.entity;
+    ques.put('qid',ques.id);
+}%
+<div class="challengeQuesContent CSWidget"
+     data-type="${ques.type}" data-qid="${ques.id}" data-widget="QUESTION">
+    <div class="floatRight">&{ques.type.raw()}</div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+    <div class="quesTextDivHolder">
+            <div class='quesTextDiv'>
+		<div class="rightText">
+			<span class="instImgs refreshQues" data-closest=".quesTextDiv"></span>
+		</div>
+                #{questions.quesText ques:ques /}
+            </div>
+    </div>
+    #{questions.quesAnsDiv ques:ques,target:'TAKE_CHALLENGE' /}
+</div>
+<script type="text/javascript">
+    $(function(){
+        var TCP=$("#takeChallengePage");
+        TCP.find(".challengeQuesContent").data("token","${challengeStart.token}");
+        TCP.find(".TCPTimerDiv").data("startTime","${challengeStart.startTime}");
+       var startStatus=prepareChallengeTimer(TCP);
+       if(!startStatus){
+            removeChallengeFullScreen();
+       }
+    });
+</script>
+#{/else}
+
+

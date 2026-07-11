@@ -1,0 +1,21 @@
+.syncAllPrograms{
+    width: 50%;
+    margin: auto;
+    display: none;
+    margin-bottom: 20px;
+}
+
+#programDataTable th,td{
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+.syncOrgInfo{
+    display: inline-block;
+    float: right;
+    top:5px;
+    position: relative;
+}
+.boldy{
+    font-weight: 600;
+}

@@ -1,0 +1,5 @@
+#These messages are for use in javascript files. 
+
+appId = App Id
+secretKey = App Secret Key
+authToken = App Auth Token

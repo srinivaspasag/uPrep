@@ -1,0 +1,20 @@
+   %{
+    subjects=_subjects;
+   }%
+    #{if subjects.length()>0}
+   <div class="big15 boldy margTop20 margBot5"> Subjects</div>            
+  <div class="vRadioGrp" data-param-name="courseId" 
+       data-callback="onmcvRadioChange" data-beforemccall="setGetTopicTree"> 
+    <div class="vRadioItem">
+        <div class="vRadio vRadioChecked">All Subjects</div>  
+    </div>    
+    #{list items:0..subjects.length()-1,as:'s'}
+    %{
+        sub=subjects.get(s);                
+    }%
+    <div class="vRadioItem">
+        <div class="vRadio" data-value="${sub.courseId}">${sub.name}</div>
+    </div>    
+    #{/list}
+    </div>  
+    #{/if}

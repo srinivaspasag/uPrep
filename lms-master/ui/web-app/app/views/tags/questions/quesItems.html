@@ -1,0 +1,212 @@
+%{
+    quesns=_quesns;
+    target=_target;
+    
+    if(_sharedType!=null)sharedType=_sharedType;
+    else sharedType="";
+    
+    loadMoreSize=_loadMoreSize;
+
+    if(target!=null && target.length()>9)targetStr=target.substring(0,9);
+    else targetStr="";
+}%
+        #{if quesns.length()>0}
+        #{list items:0..quesns.length()-1,as:'q'}
+        %{
+            ques=quesns.get(q);
+            attemptable=true;
+            if(!ques.hasAns||ques.type=='PARA'||ques.type=='TEXT')attemptable=false;              
+	    recordState = ques.has("recordState") && !ques.recordState.equals(null) ? ques.recordState : "ACTIVE";
+        }%
+    
+
+      <div class="quesHolder" id="ques_${ques.id}"> 
+          #{if sharedType!=''&&ques.has('sharedBy')}
+            <div class="quesSharedDiv margTop margBot5">
+                *{ #{widgets.shareInfo user:ques.sharedBy,shareId:ques.shareId /}}*
+            </div>                           
+          #{/if}
+        <div class='ques CSWidget' data-qid='${ques.id}' data-type="${ques.type}" data-widget="QUESTION_ITEMS_LIST">
+<!--                    <div class='quesFeedText'>Question added by Ajith Reddy</div>-->
+            <div class="quesLeftBlock">
+                #{widgets.upVoteItem entityType:"QUESTION",entityId:ques.id,upVote:ques.upVotes,voted:ques.voted /}
+                #{if target=="PLAYLIST_ADD"}
+                <div class='quesAddToListDiv'>
+                    <a class='blueSubmitButton addQuesToPLSec'>Add</a>
+                </div>
+                #{/if}
+		#{elseif target=="TEST_ADD"}
+                    <div class='quesAddToListDiv'>
+                        <a class='blueSubmitButton questionAddToListBtn'>Add</a>
+                    </div>
+		#{/elseif}
+                <div class="quesStatsDiv">
+                    #{if !attemptable}
+                    Views
+                    <div class="boldy">${ques.views}</div>                    
+                    #{/if}
+                    #{else}
+                    Attempts
+                    <div class="boldy">${ques.attempts}</div>                    
+                    #{/else}
+                    <div class='quesSolnStatsDiv margHalfTop'>
+                        Solutions
+                        <div class='boldy'>${ques.solutions}</div>
+                    </div>
+                    <div class="margHalfTop">
+                        Discussions
+                        <div class='boldy'>${ques.comments}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="quesLefter">                  
+                <div class="quesHeadDiv">
+                    #{if ques.has('user')}
+                    %{
+                        user=ques.user;
+                    }%
+                    #{widgets.img20 user:user /}
+                    <span style="padding:0 4px"> by </span>
+		    #{institute.memberName user : user , classNames : "quesCreator" /}
+                    <label class="feedPipe">|</label>
+                    #{/if}
+                    <span class="quesCreatedTime">Added on ${new Date(webUtils.TemplateHelper._getClientTimeOffsetCalc(ques.timeCreated,params.clientServerTimeDelta)).format('dd/MM/yy')}</span>
+                    #{if !ques.boardTree.equals(null) && ques.boardTree.length()>0&&ques.boardTree.get(0).type=="COURSE"}
+                        %{
+                            sub=ques.boardTree.get(0);
+                        }%
+                            <a class='boardSubject floatRight margRight10 ptrTagInline doCStream' data-brd-id="${sub.id}"
+                               /*href="${controllers.Boards.getBoardUrl('subject',sub.id)}"*/ data-name="BOARD_SUBJECT">
+                                ${sub.name}
+                            </a>
+                    #{/if}
+<!--                                <a class='quesSourcePath quesSourcePathClass ptrTagHovered'>${ques.id}</a>-->
+                </div>
+                <div class="quesTextDivHolder">
+			#{if recordState != "TEMPORARY"}
+                        <a class='quesTextDiv openQuesPage ptrTagInline blocky rteTextDiv doCStream' data-qid='${ques.id}'
+			   data-org-id="${params.orgId}"
+                           href="${controllers.Questions.getQuesUrl(ques.id)}" data-name="OPEN_QUESTION">
+                            #{questions.quesText ques:ques /}
+                        </a>
+			#{/if}
+			#{else}
+                        <span class='quesTextDiv blocky rteTextDiv doCStream quesUnavailable'>
+                            #{questions.quesText ques:ques /}
+			</span>
+			#{/else}
+                </div>                
+                <div class="quesMetatags">
+                    <div class="margTop">
+                            #{if !ques.boardTree.equals(null) && ques.boardTree.length()>0&&ques.boardTree.get(0).type=="COURSE"}
+                            %{
+                                subject=ques.boardTree.get(0);
+                            }%
+                            #{if subject.has('children')&&subject.children.length()>0}
+                                %{
+                                    topic=subject.children.get(0)
+                                }%
+                                <a class='boardTopic greenBrdTopic ptrTagInline doCStream' data-brd-id="${topic.id}"
+                                   /*href="${controllers.Boards.getBoardUrl('topic',topic.id)}"*/ data-name="BOARD_TOPIC">
+                                    ${topic.name}
+                                </a>
+                                #{if topic.has('children')&&topic.children.length()>0}
+                                 >
+                                    #{list items:0..topic.children.length()-1,as:'st'}
+                                        %{
+                                            subTopic=topic.children.get(st);
+                                        }%                                        
+                                    <a class='boardSubTopic yellowBrdSubTopic ptrTagInline doCStream' 
+					data-brd-id="${subTopic.id}" data-name="BOARD_SUBTOPIC"
+                                       /*href="${controllers.Boards.getBoardUrl('subtopic',subTopic.id)}"*/>
+                                        ${subTopic.name}
+                                    </a>
+                                    ${st_isLast?'':','}
+                                    #{/list}
+                                #{/if}
+                             #{/if}
+                            #{/if}
+                    </div>
+                    <div class="quesExamAndLevel">
+                        #{if ques.has('targets')&&ques.targets.length()>0}
+                            <label class="smally">Target-</label>
+                            #{list items:0..ques.targets.length()-1,as:'e'}
+                            %{
+                                exam=ques.targets.get(e);
+                            }%
+                            <a class='boardExam boldy margRight5 doCStream' data-brd-id="${exam.id}"
+                               /*href="${controllers.Boards.getBoardUrl('exam',exam.id)}"*/ data-name="BOARD_EXAM">
+                                ${exam.code}
+                            </a>
+                            #{/list}
+                        #{/if}
+                        #{if ques.has('difficulty')&&ques.difficulty!='UNKNOWN'}
+                        <label class="smally">Level- </label>
+                        <span class="quesDifficulty">${ques.difficulty}</span>
+                        #{/if}
+                    </div>
+                </div>
+                #{if attemptable&&!ques.attempted}
+                    #{questions.quesAnsDiv ques:ques,target:target /}
+                #{/if}
+                <div class='quesHiddenDiv'>
+                    #{if attemptable}
+                        #{if !ques.attempted}                        
+                            <span class="smally margHalfTop">
+                                &{ques.type.raw()}
+                            </span>
+                            <span class='attemptQues'>Attempt</span>
+                        #{/if}
+                        #{else}
+                            <span class="quesAttempted">Attempted</span>                        
+                            <span class="smally margHalfTop">
+                                &{ques.type.raw()}
+                            </span>
+                        #{/else}
+                    #{/if}
+                    #{else}
+                            <span class="smally margHalfTop">
+                                &{ques.type.raw()}
+                            </span>                    
+                    #{/else}
+		    <!-- NOT REQUIRED git hub ISSUE #89
+                    *{#{if ques.followType=="NONE"}
+                    <span class="saveQues margRight10 doCStream" data-qid='${ques.id}' data-name="SAVE_QUESTION">
+                        <label></label>
+                        <span>Save</span>
+                    </span>
+                    #{/if}
+                    #{elseif ques.followType=="FOLLOWING"}
+                    <span class="unsaveQues margRight10 doCStream" data-qid='${ques.id}' data-name="UNSAVE_QUESTION">
+                        <label></label>
+                        <span>Unsave</span>
+                    </span>
+                    #{/elseif}
+                    <span class="shareEntity margLeft doCStream ptr" data-entity-id='${ques.id}' 
+			data-name="SHARE_ENTITY" data-entity-type="QUESTION">
+                        <label></label>
+                        <span>Share</span>
+                    </span>
+                    <span class="quesAddToDiv" data-qid='${ques.id}'>
+                        <label class="quesAddToImg"></label>
+                        Add to
+                    </span>}*-->
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+        </div>
+       </div>
+        #{/list}
+        #{/if}
+        #{else}
+	     #{if target == "MY_INSTITUTE"}
+		#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+	     #{/if}
+	     #{else}
+         	<div class="userMessage">No questions Found</div>
+	     #{/else}
+        #{/else}
+        #{if loadMoreSize !=0 && quesns.length()==loadMoreSize && target != "TEST_ADD" && target != "SEARCH_CONTENT"}
+        <div class="loadMoreItems LMHandlerDivLoadMore doCStream" data-name="LOAD_MORE_QUESTIONS" 
+		data-start="${params.start}" data-size="${params.size}">Load More Questions</div>
+        #{/if}

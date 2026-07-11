@@ -1,0 +1,41 @@
+#{if memberInfo!=null && memberInfo.programs.length()>0}
+<link href="/public/stylesheets/fullcalendar/core/main.css" rel="stylesheet"/>
+<link href="/public/stylesheets/fullcalendar/daygrid/main.css" rel="stylesheet"/>
+<link href="/public/stylesheets/myClassroomConnect.css" rel="stylesheet"/>
+<link href="/public/stylesheets/scheduleInfoPopup.css" rel="stylesheet" />
+<div class="myClassroomConnectHolder institute">
+    <div class = "programSelection">
+        #{institute.library.selectPrograms memberInfo : memberInfo /}
+    </div>
+    <div id="myClassroomConnect" style="width: 100%;
+        padding: 10px 15px;
+        text-align: center;
+        box-sizing: border-box;
+        ">
+        <div id="errorHandler" class="redColor boldy">
+        </div>
+        <div id="calendar">
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/public/javascripts/fullcalendar/core/main.js"></script>
+<script type="text/javascript" src="/public/javascripts/fullcalendar/interaction/main.js"></script>
+<script type="text/javascript" src="/public/javascripts/fullcalendar/daygrid/main.js"></script>
+<script type="text/javascript" src="/public/javascripts/myClassroomConnect.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        myClassroomConnect.init();
+        $("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+        $("#instPageNavigator").find(".instNavTab.openClassroomConnectTab").addClass("clInstTab");
+    });
+</script>
+#{/if}
+#{else}
+<div class="pageHolderM">
+    <div style="padding:100px;" class="centerText">
+        <span class="big18">&{'org.NOT_PART_OF_PROG'}</span>
+    </div>
+</div>
+#{/else}

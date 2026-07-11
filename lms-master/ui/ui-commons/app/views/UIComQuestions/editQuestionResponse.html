@@ -1,0 +1,62 @@
+<style type="text/css">
+.editQuesResp{
+	width:600px;
+	padding:20px 25px;
+}
+.editQuesSelectionSec{
+	background-color:#EEE;
+	margin-top:10px;
+}
+.eachEditQuesAssociation{
+	padding:15px;
+	border-bottom:1px solid #CCC;
+}
+</style>
+#{if contentList.length()>0}
+<div class="editQuesResp">
+	<div class="boldy big18">This question will be updated in the following tests</div>
+	<div class="editQuesSelectionSec">
+	   #{list items:0..contentList.length()-1,as:'index'}
+	   %{
+		content = contentList.get(index);
+		entity = content.entity;
+		radBtnName = "editQuesAssoId-"+entity.id;
+	   }%
+	   <div class="eachEditQuesAssociation" data-type="${entity.type}" data-id="${entity.id}">
+		<div class="big16 boldy">
+			#{aTagMapper entityName : content.name , entityId : entity.id , entityType : entity.type /}
+		</div>
+		<div class="greyTextColor big14" style="padding-left:24px;">&{'ENTITY_NAME_'+entity.type}</div>
+		#{if content.published}
+		<div class="padTop10">
+			<!-- <input type="radio" name="${radBtnName}" value="CREATE_COPY" checked />
+			<span>&{'DONOT_UPDATE_QUES'}</span> -->
+			<div class="padTop5 nonner">
+			<input type="checkbox" checked="" class="check" name="${radBtnName}" value="RIGHT_AWAY"/>
+			<span>&{'DO_UPDATE_QUES'}</span>
+		</div>
+		</div>
+		<!-- <div class="redTextColor padTop5">&{'ENTITY_NAME_'+entity.type} is already published.</div> -->
+		#{/if}
+		#{else}
+		<div class="padTop10">
+			<div class="padTop5 nonner">
+				<input type="checkbox" checked = "" class="check" name="${radBtnName}" value="RIGHT_AWAY"/>
+				<span>&{'DO_UPDATE_QUES'}</span>
+			</div>
+		</div>
+		#{/else}
+	   </div>
+	   #{/list}
+	</div>
+	<div class="centerText margTop20">
+		<span class="QAEditSubmitConfirm bigGreenButton doCStream" 
+			data-cs-name="EDIT_ASSOCIATION_BTN">&{'TXT_SAVE'}</span>
+		<span class="bigRedButton doCStream closeVPopup cancelEditQues" 
+			data-cs-name="PUBLISH_BTN">&{'TXT_CANCEL'}</span>
+	</div>
+</div>
+#{/if}
+#{else}
+	<div class="centerText big16 redTextColor">Associated list is empty!</div>
+#{/else}

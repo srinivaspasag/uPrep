@@ -1,0 +1,8 @@
+
+%{
+    playlists=playlists.result.playlists;
+    loopStart=0;
+    loopEnd=playlists.length()-1;
+    target=params.get('target');
+}%
+#{playlist.PLItems playlists:playlists,loopStart:loopStart,loopEnd:loopEnd,target:target /}

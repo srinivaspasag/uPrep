@@ -1,0 +1,46 @@
+<div class="${_parentCls}">
+    %{
+        memberInfo = _memberInfo;
+        programCls = _programCls;
+        centerCls = _centerCls;
+        sectionCls = _sectionCls;
+        progs = memberInfo.programs;
+        selectedTextProg = "";
+        selectedValProg = "";
+        selectedTextCenter = "All Centers";
+        selectedValCenter = "";
+        selectedTextSection = "All Sections";
+        selectedValSection = "";
+        allowSelectAll = params.userRole == "STUDENT" ? false : true;
+        centers = null;
+        sections = null;
+        if(progs.length()>0){
+           prog1 = progs.get(0);
+           selectedTextProg = prog1.name;
+           selectedValProg = prog1.id;
+           centers = prog1.centers;
+           if(centers.length()>0){
+            center1 = centers.get(0);
+            if(params.userRole == "STUDENT"){
+               sections = center1.sections;
+               if(sections.length()>0){
+                selectedTextCenter = center1.name;
+                selectedValCenter = center1.id;
+                center1Sec1 = sections.get(0);
+                selectedTextSection = center1Sec1.name;
+                selectedValSection = center1Sec1.id;
+                }
+            }
+           }
+        }
+    }%
+    <div class="instSelMyBatch instSelMyProgram ${programCls}" title="Select Programme" >
+        #{widgets.dropDowns.singleList list : progs , selectedVal : selectedValProg , selectedText : selectedTextProg , listType : "Programs" , showSelectAll : false /}
+    </div>
+    <div class="instSelMyBatch instSelMyCenter ${centerCls}" title="Select Center" data-allow-select-all=${allowSelectAll} >
+        #{widgets.dropDowns.singleList list : centers , selectedVal : selectedValCenter , selectedText : selectedTextCenter , listType : "Centers" , showSelectAll : allowSelectAll /}
+    </div>
+    <div class="instSelMyBatch instSelMySection ${sectionCls}" title="Select Section" data-allow-select-all=${allowSelectAll} >
+        #{widgets.dropDowns.singleList list : sections , selectedVal : selectedValSection , selectedText : selectedTextSection , listType : "Sections" , showSelectAll : allowSelectAll /}
+    </div>
+</div>

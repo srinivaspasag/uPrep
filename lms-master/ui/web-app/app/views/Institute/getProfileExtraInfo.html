@@ -1,0 +1,35 @@
+#{if memberInfo.errorCode==""&&memberInfo.has('result')&&memberInfo.result.info.extraInfo.length()>0}
+%{
+extraInfo=memberInfo.result.info.extraInfo;
+}%
+<div class="memberMappingsPopup">
+    <div>
+        <div class="big20" style="margin-bottom: 20px">Extra Info</div>
+    </div>
+    <div>
+        <table cellspacing=0 cellpadding=0 class="big14" style="width: 400px">
+            #{list items:0..extraInfo.length()-1,as:'i'}
+            %{
+            kv=extraInfo.get(i);
+            }%
+            <tr>
+                <td style="padding: 20px 10px;font-weight: bold;border: none">
+                    ${kv.name}
+                </td>
+                <td style="padding: 20px 10px;border: none">
+                    #{if kv.value!=''}
+                    ${kv.value} 
+                    #{/if}
+                    #{else}
+                    <div class="smallThinGray">Not given</div>
+                    #{/else}                                                    
+                </td>
+            </tr>            
+            #{/list}   
+        </table>
+    </div>
+</div>
+#{/if}
+#{else}
+<div class="memberMappingsPopup redTextColor">No Extra Info Found</div>
+#{/else}

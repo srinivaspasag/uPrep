@@ -1,0 +1,17 @@
+#{if testAnalytics.result.has('user') && !testAnalytics.result.user.equals(null)}
+	%{
+		user = testAnalytics.result.get('user');
+                getUserClass = controllers.Profile.getUserClassAndUrl(user);
+		userId = getUserClass.id;
+        }%
+	#{if userId != session.userId}
+	<div class="testUserInfo CSWidget centerText" data-widget="TEST_DETAILS_USER">
+		<span class="greyTextColor relative">Test Performance of</span>
+		<img style="width:30px;height:30px;" src="${user.thumbnail}" alt="${user.firstName}"/>
+		<a href="${getUserClass.url}" data-user-id="${userId}"
+		class="doCStream ${getUserClass.className}" data-cs-name="USER_LINK">
+			<span class="relative" >${user.firstName} ${user.lastName}</span>
+		</a>
+	</div>
+	#{/if}
+#{/if}

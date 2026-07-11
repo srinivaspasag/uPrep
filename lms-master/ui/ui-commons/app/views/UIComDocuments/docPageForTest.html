@@ -1,0 +1,64 @@
+#{if docInfo!=null && docInfo.errorCode.isEmpty()}
+<div id="resourceDocView" class="pageHolderNM">
+%{
+	doc = docInfo.result;
+        currentAppName=play.Play.configuration.getProperty("application.name");
+}%
+<section class="docViewMain">
+	<div class="loaderDiv"></div>
+	<div class="docPdfContent">
+	        #{if doc.has('converted') && doc.converted == false && doc.has('operationJobIdMap') && !doc.operationJobIdMap.equals(null)}
+			<div class="docConversionMsg">
+				<span class="redTextColor big16 boldy">&{'DOC_UNDER_PROCESS'}</span>
+			</div>	
+		#{/if}
+		#{elseif doc.has('url') && !doc.url.equals('null') && !doc.url.isEmpty()}
+		%{
+			docUrl = doc.url;
+			frameDocUrl = docUrl + "?callingApp=" + play.Play.configuration.getProperty("application.name");
+			frameDocUrl = java.net.URLEncoder.encode(frameDocUrl, "UTF-8");
+			//docUrl = docUrl.replace("http://","https://");
+		}%
+		<div id="loadingDocFrame" class="nonner">
+			<span>&{'LOADING_DOC'}</span>
+		</div>
+		<iframe src="/pdfjs/web/viewer.html?file=${frameDocUrl}" class="pdfViewerEmbed" width="100%" 
+			id="docViewerIframe" frameborder=0
+			allowfullscreen=true webkitallowfullscreen=true mozallowfullscreen=true>
+		</iframe>
+		<object class="pdfViewerEmbed nonner" id="docViewerNative"
+			width="100%" name="plugin" src="${docUrl}" type="application/pdf">
+			<div class="big14 redTextColor centerText">&{'BROWSER_PDF_PLUGIN_MISSING'}</div>
+		</object>
+		#{/elseif}
+		#{else}
+			<div class="docConversionMsg">
+				<span class="redTextColor big16 boldy">&{'UNABLE_TO_OPEN'}</span>
+			</div>	
+		#{/else}
+	</div>
+</section>
+</div>
+#{script src:'o.docView.js', charset:'utf-8' /}
+<script type="text/javascript">
+	$(function(){
+        if(window["markContentCompleted"] && "${params.get('userRole')}"=="STUDENT"){
+            markContentCompleted();
+        }        
+        condenseText($(".entityEditableDesc"),300);
+	if(docOpenInterval) clearInterval(docOpenInterval);
+	var docOpenInterval = setInterval(function(){
+	     try{
+		if($ && docView){
+		   if(docOpenInterval) clearInterval(docOpenInterval);
+		   docView.init();
+		}
+	     }catch(err){
+	     }
+	},100);
+	});
+</script>
+#{/if}
+#{elseif docInfo!=null && !docInfo.errorCode.isEmpty()}
+	#{common.messagePage msgTextColor : "redTextColor" , msg : docInfo.errorMessage /}
+#{/elseif}

@@ -1,0 +1,119 @@
+                  %{
+                    totalHits=people.result.totalHits;
+                    students=people.result.list;
+                    orgUserProfile=currentOrgInfo.getOrgUserProfile();
+                    testUserDataError = flash.get('testUserDataError');
+                  }%
+                  #{if testUserDataError!=null}
+                    <script type="text/javascript">
+                      $(document).ready(function(){
+                        showError("${testUserDataError}");
+                      });
+                    </script>
+                  #{/if}
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+    <div class="headSecTableDiv">
+            <table class="headSecTable">
+              <thead>
+                  <tr>
+                      #{if orgUserProfile=="MANAGER" || orgUserProfile == "SALESPERSON"}
+                      <td class="width16"></td>
+                      <td class="width16"></td>
+                      #{/if}
+                      <td class="tdPadLeft5">Name</td>
+                      <td class="width120 maxWidth120">Enrollment ID</td>
+                      <td class="width75 maxWidth75">Gender</td>
+                      <td class="width130 maxWidth130">Program</td>
+                      <td class="width100 maxWidth100">Center</td>
+                      <td class="width75 maxWidth75">Section</td>
+                      <td class="width120 maxWidth120">&{'DEVICE_ASSIGNMENT'}</td>
+                      #{if params.pageTarget=='PROGRAM_PAGE'&&params.sectionId!=null}
+                      <td class="width75 maxWidth75">Payment Info</td>
+                      #{/if}
+                  </tr>          
+              </thead>
+            </table>    
+        </div>    
+        <div id="fixedSec">
+            <table class="cmdsTable">
+              <tbody>
+                  #{if students.length()>0}
+                  #{list items:0..students.length()-1,as:'m'}
+                  %{
+                    student=students.get(m);
+                    userId=student.userId;
+                  }%
+                    <tr class="big13 memberTr">
+                      #{if ((orgUserProfile=="MANAGER") || (orgUserProfile == "SALESPERSON")) && !"EXT_AUTH_ORG".equals(session.get("orgAuthType"))}
+                        <td class="width16"> 
+                            <div class="editOrgStudent editPeopleImg" data-user-id='${userId}'></div>
+                        </td>    
+                      #{/if}
+                        <td class="tdPadLeft5">
+                            #{widgets.user20 user:student /}                              
+		    	    #{people.userStatus user : student , orgUserProfile : orgUserProfile /}
+                        </td>
+                        <td class="width120 maxWidth120 boldy">${student.memberId}</td>
+                        <td class="width75 maxWidth75">${student.gender}</td>
+                        %{
+                            programs=student.mappings.programs;
+                            programName='-';
+                            centerName='-';
+                            sectionName='-';
+                            try{
+                                if(programs.length()>0){
+                                    if(programs.length()==1){
+                                        program=programs.get(0);
+                                        programName=program.name;
+					if(program.centers.length()>1){
+					 	centerName = '<a class="showUserMappings" data-user-id="'+userId+'">';
+						centerName += program.centers.length()+' Centers</a>';
+					}else if(program.centers.length()>0){
+                                        	center=program.centers.get(0);
+                                        	centerName = center.name;
+                                                sections=center.sections;
+						if(sections.length()>1){
+					 		sectionName = '<a class="showUserMappings" data-user-id="'+userId+'">';
+							sectionName += sections.length()+' Sections</a>';
+						}else if(sections.length()>0){
+                                        		sectionName=sections.get(0).name;
+						}                                                                                                
+					}
+                                    }else{
+                                        programName='<a class="showUserMappings" data-user-id="'+userId+'">'+programs.length()+' Programs</a>';
+                                    }
+                                }else{
+                                    programName='0 programs';
+                                }                            
+                            }catch(Exception e){
+                            
+                            }
+                        }%
+                        <td class="width130 maxWidth130 boldy big12">${programName.raw()}</td>
+                        <td class="width100 maxWidth100 big12">${centerName.raw()}</td>
+                        <td class="width75 maxWidth75 big12">
+                            ${sectionName.raw()}
+                        </td>
+                      	<td class="width120 maxWidth120">NO</td>
+                        #{if params.pageTarget=='PROGRAM_PAGE'&&params.sectionId!=null}
+                        <td class="width75 maxWidth75">
+                            <a class="viewStudentProgramPaymentInfo" 
+                               data-section-id='${params.sectionId}'
+                               data-target-user-id="${userId}"
+                               >View</a>
+                        </td>                        
+                        #{/if}
+                    </tr>  
+                    #{/list}
+                    #{/if}
+                    #{else}
+                    <tr class="noResultsTr">
+                      <td colspan="8">
+                          <div class="userMessage">No students found.</div>
+                      </td>
+                    <tr>                              
+                    #{/else}                    
+              </tbody>
+            </table> 
+            #{footer /}
+        </div>      

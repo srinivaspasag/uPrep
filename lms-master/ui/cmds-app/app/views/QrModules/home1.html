@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="/public/stylesheets/slp.css"/>
+<div id="createSLP" class="mcWidget relativePos">
+    <div id="slpTopBar" class="centerText pageHeadGrayDiv">
+	<span class="curSlpName boldy big20">
+		<span>&{'TXT_SLP_TITLE'}</span>
+		<span class="slpModuleTitle"></span>
+	</span>
+	<span class="absolute" style="right:45px;">
+		<span class="blueButton btnDisabled">&{'TXT_SAVE'}</span>
+	</span>
+    </div>
+    <div class="">
+	<div id="leftSection">
+		<div class="leftSecHeadsDiv">
+			<div class="leftSecHead leftSecHeadActive" data-tab="CURRICULUM">&{'TXT_CURRICULUM'}</div>
+			<!--*{<div class="leftSecHead" data-tab="REF_CONTENT">&{'TXT_REF_CONTENT'}</div>
+			<div class="leftSecHead" data-tab="SETTIGNS">&{'TXT_SETTIGNS'}</div>}*-->
+		</div>
+		<div id="fixedLeftSecPortion"></div>
+	</div>
+	<div id="mainSection">
+		*{<!-- TIPS Section
+		<div class="slpTipsHold centerText">
+		    <div class="container">
+			<div class="big20">&{'SLP_TIPS_CAPTION'}</div>
+			<div style="padding:15px 0;">
+				<span class="blueTextColor">&{'TXT_TIPS'}</span>
+				<span>&{'SLP_TIP_1'}</span>
+			</div>
+			<span class="greyButton slpTipsGotIt">Got It<span>
+		    </div>
+		</div>-->}*
+		<div class="submitSlpNameHold">
+			<div class="greyTextColor boldy big16">&{'SLP_TITLE_INPUT_CAPTION'}</div>
+			<div class="padTop10">
+				<input type="text" class="inputDiv slpNameInput"/>
+			</div>
+			<div class="padTop5">
+				<input type="checkbox" class="makeSlpSequential"/>
+				<span class="big12 greyTextColor">Make module sequential</span>
+			</div>
+		</div>
+		<div class="slpCreateSamples">
+			#{slp.topicCreation /}
+			#{slp.addContent subjects : orgBoards /}
+		</div>
+		<div class="slpCreationContainer">
+		</div>
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+</div>
+<script type="text/javascript">
+    new function(){                    
+        var fn=function(){qrSlp.init();}
+        lazyLoad([{fname:"qrSlp.js",cb:fn}]);        
+    }();    
+</script>

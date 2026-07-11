@@ -1,0 +1,1084 @@
+@font-face {
+	font-family: Ubuntu;
+	src: url(../fonts/Ubuntu-Regular.ttf);
+}
+body {
+    padding: 0;
+    line-height: 16px;
+    font-family:Ubuntu,sans-serif;
+    font-size: 12px;
+    background-attachment: fixed;
+    margin: 0px;
+    /*background: url("/public/images/bg.jpg");*/
+    background-color:#28bcec;
+    font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+}
+
+a img{
+    border-width: 0;
+}
+
+a {
+    color:#1A94C5;
+    text-decoration:none;
+    cursor: pointer;
+    position: relative;
+}
+a:hover{
+    text-decoration: underline;
+}
+.cleaner_with_divider {
+    clear: both;
+    width: 100%;
+    height: 10px;
+    font-size: 1px;
+}
+input{
+    min-height: 19px;
+    font-family:Ubuntu,sans-serif;
+    outline: none;
+}
+input[type="checkbox"]{
+    width: 14px;
+    height: 14px;
+}
+ul{
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    padding: 0;
+    margin: 0;
+}
+textarea{
+    resize:none;
+}
+
+
+#genderError,#birthError,#verifyError,#mobileError,#confirmError,#emailAddressError,#cgpaError,#zipError{
+    font-size: 12px;
+}
+.hasError{
+    font-size: 12px;
+    color: orangered;
+}
+.hasError img{
+    vertical-align: bottom;
+    margin: 5px 5px 0 0;
+    height: 15px;
+}
+#fname:focus,#lname:focus,#email:focus,#pass:focus{
+    border: 2px solid #1A94C5;
+    margin: 3px 0 0 0;
+}
+
+/*for register head page*/
+#topBarHolder{
+    width: 100%;
+    height: 61px;
+    background-color: #363636;
+}
+#topBar,#content{
+    width: 1002px;
+    margin: 0 auto;
+}
+#topBar{
+    text-align: center;
+    padding-top: 15px;
+}
+#globe{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+}
+
+/*for signup page*/
+#content{
+    color: #434343;
+}
+#content table{
+    margin: 0 auto;
+}
+#leftSection{    
+    float: left;
+    padding: 15px 15px 0 10px;
+    width: 300px;
+    text-align: right;
+    font-size: 13px;
+    position: relative;
+    border-right: 1px solid #e0e0e0;
+}
+#signInClick{
+    font-size: 14px;
+}
+/*#loginForm{
+    background-color: #404040;
+}*/
+#loginDiv{
+    text-align: left;
+    font-weight: bold;
+    margin-top: 5px;
+    width: 200px;
+    position: absolute;
+    right: 15px;
+    font-size: 12px;
+}
+.signInArrow{
+    left: 170px;
+    position: absolute;
+    top: -5px;
+}
+.pad10{
+    padding: 10px;
+}
+.whity{
+    color: #ffffff;
+}
+.blacky{
+    color: #000000;
+}
+.blocky{
+    display: block;
+}
+#submitForgetPass{
+    font-size: 11px;
+    margin-top: 0;
+    padding: 3px 11px 2px;
+}
+/*#loginUsername,#loginPass{
+    width: 170px;
+    height: 24px;
+    border: 1px solid #404040;
+    padding: 0 5px;
+}*/
+#forgotPassDiv{
+    background-color: #404040;
+    font-size: 11px;
+    margin-top: 10px;
+}
+.forgotPassBody{
+    padding: 10px;
+}
+.forgotPass{
+    color: #4EBAE7;
+    font-size: 11px;
+    font-weight: normal;
+    margin: 0 18px 0 10px;
+    text-decoration: underline;
+}
+#forgotPassEmail{
+    border: 1px solid #E0E0E0;
+    font-size: 11px;
+    width: 124px;
+}
+/*#clickToLogin{
+    float: right;
+    font-size: 13px;
+    margin: 0 10px 0 0;
+    padding: 2px 10px;
+}*/
+.loginError{
+    font-size: 11px;
+    color: orange !important;
+}
+h2{
+    font-size: 28px;
+    margin: 23px 0 5px 0;
+}
+#rightSection #regForm>div,#collegeDiv>div,#regForm{
+    position: relative;
+}
+#fname,#lname{
+    width: 179px
+}
+#email,#pass,.showPass input{
+    width: 390px;
+}
+#fnameDiv{
+    float: left;
+    margin-right: 20px;
+}
+#lnameDiv{
+    margin-left: 200px;
+}
+#rightSection #fnameDiv,#rightSection #lnameDiv{
+    margin-bottom: 0;
+}
+#rightSection.inviteSection{
+    padding: 50px 0 0 0;
+    width: 425px;
+    margin: auto;
+}
+#emailDiv,#passDiv{
+    margin-top: 15px;
+}
+.showPass{
+    display: none;
+}
+#checkPassSpan{
+    color: #C8C8C8;
+    font-style: italic;
+    font-weight: normal;
+}
+#rightSection input{
+    background-color: #F6F6F6;
+    border: 1px solid #BCBCBC;
+    -moz-border-radius:7px;
+    -webkit-border-radius:7px;
+    border-radius:7px;
+    color: #6C6C6C;
+    font-weight: bold;
+    height: 31px;
+    margin: 4px 1px 1px 1px;
+    padding: 0 5px;
+}
+.inputImg,.submitImg{
+    vertical-align: bottom;
+}
+input#terms_conditions,input#checkPass{
+    vertical-align: sub;
+    margin-top: 10px;
+    height: 14px;
+}
+input#register{
+    background: #c9c9c9;
+    height: 32px;
+    color:#fafafa;
+    padding: 0 20px;
+    font-size: 15px;
+    margin-top: 10px;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+    cursor: pointer;
+}
+#termsDiv{
+    font-weight: normal;
+}
+#termsDiv a,#signInClick{
+    font-weight: bold;
+}
+#rightSection #branch{
+    background-color: #ffffff;
+    display: block;
+    margin-left: -1px;
+    width: 300px;
+    font-size: 12px;
+}
+.branchSuggs{
+    background-color: #FFFFFF;
+    font-size: 11px;
+    margin: 0 4px;
+    width: 299px;
+    position: relative;
+    z-index: 1;
+    display: none;
+}
+.branchSuggs li{
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid #E0E0E0;
+    border-width: 0 1px 0 1px;
+}
+.branchSuggs li:last-child{
+    border-bottom: 1px solid #e0e0e0;
+}
+.branchSuggs li.autoSelected{
+    background-color: #33BAD7;
+    color: #FFFFFF;
+}
+.branchSuggs li label{
+    color: #000000;
+}
+.autoSelected label{
+    color: #33bad7;
+}
+#degree,#semester{
+    bottom: 0;
+    background-color: #ffffff;
+    display: block;
+    height: 40px;
+    margin-top: 8px;
+    opacity: 0;
+    position: absolute;
+    width: 231px;
+    font-size: 12px;
+}
+.otherSelect{
+    width: 164px !important;
+}
+.selectImg2{
+    width: 221px;
+    height: 15px;
+    background: url(../images/selectImg1.png) no-repeat;
+    margin-top: 5px;
+    font-size: 12px;
+    padding: 7px 5px 10px 5px;
+}
+.selectImg2{
+    background: url(../images/selectImg2.png) no-repeat;
+    width: 164px;
+}
+#rightSection{
+    padding: 50px 0 0 40px;
+    vertical-align: top;
+    width: 700px;
+    font-size: 13px;
+    font-weight: bold;
+}
+/*for images only*/
+.regImg{
+    display: none;
+}
+.nameImg{
+    top: -13px;
+    left: 130px;
+    position: absolute;
+}
+#emailImg{
+    top: -5px;
+    left: 310px;
+    position: absolute;
+}
+#passImg{
+    top: -10px;
+    left: 200px;
+    position: absolute;
+}
+#checkPassImg{
+    bottom: -15px;
+    left: 100px;
+    position: absolute;
+}
+#collegeDiv{
+    margin: 0 0 10px 70px;
+    display: none;
+}
+#getCollegeName{
+    padding:10px 0 15px 0;
+    color: #0c95c9;
+}
+#collegeError{
+    bottom: 15px;
+    position: relative;
+}
+#semImg{
+    left: 288px;
+    position: absolute;
+    top: 91px;
+}
+
+.blueSubmitButton,.blackCancelButton{
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 5px 17px;
+    text-align: center;
+    background: url("../images/blueNormal.png") repeat-x scroll 0 0 #2d9eb6;
+    border: 1px solid #2D9EB6;
+}
+.blueSubmitButton:hover,.blueFollowButton:hover{
+    background: url("../images/blueHover.png") repeat-x scroll 0 0 #2d9eb6;
+    -moz-box-shadow: 0 2px 2px #C2C2C2;
+    -webkit-box-shadow: 0 2px 2px #C2C2C2;
+    box-shadow: 0 2px 2px #C2C2C2;
+}
+.blueFollowButton.downOnBlueButton,.blueSubmitButton.downOnBlueButton{
+    background: url("../images/blueClick.png") repeat-x scroll 0 0 #2d9eb6;
+}
+.blackCancelButton,.blackOpenButton{
+    background: url("../images/blackNormal.png") repeat-x scroll 0 0 #303030;
+    border: 1px solid #303030;
+}
+.blackCancelButton:hover,.blackOpenButton:hover{
+    background: url("../images/blackHover.png") repeat-x scroll 0 0 #303030;
+    -moz-box-shadow: 0 2px 2px #303030;
+    -webkit-box-shadow: 0 2px 2px #303030;
+    box-shadow: 0 2px 2px #303030;
+}
+.blackCancelButton.downOnBlackButton{
+    background: url("../images/blackClick.png") repeat-x scroll 0 0 #2d9eb6;
+}
+#uniPopupHolder{
+    height: 0;
+    left: 0;
+    outline: medium none;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    overflow: visible;
+    z-index: 2003;
+}
+#uniPopupContainer{
+    position: relative;
+    top: 150px;
+    height: 0;
+}
+#uniPopupScrollar{
+    border: 5px solid #404040;
+    margin: auto;
+    background-color: #ffffff;
+    overflow: auto;
+    width: 380px;
+    display: none;
+}
+#uniPopup{
+    padding: 15px;
+}
+#errorDiv{
+    position: fixed;
+    top: 150px;
+    width: 100%;
+    margin-left: 20px;
+    text-align: center;
+}
+#code,.passInput{
+    border: 1px solid #e0e0e0;
+}
+#code:focus,.passInput:focus{
+    border: 1px solid #33bad7;
+}
+.regSmallButton{
+    font-size: 12px;
+    margin: 10px 10px 0 0;
+    padding: 3px 10px;
+}
+.changePasswordDiv{
+    display: inline-block;
+    margin: 50px auto auto;
+    text-align: left;
+}
+
+/*commons*/
+.floatLeft{
+    float: left;
+}
+.floatRight{
+    float: right;
+}
+.boldy{
+    font-weight: bold;
+    color: #363636;
+}
+.centry{
+    text-align: center;
+}
+.margHalfTop{
+    margin-top: 5px;
+}
+.margTop{
+    margin-top: 10px;
+}
+.margTop20{
+    margin-top: 20px;
+}
+.userMessage{
+    font-weight: bold;
+    color: #404040;
+    text-align: center;
+    margin-top: 20px;
+    clear: both;
+}
+#successPopupHolder{
+    width: 1002px;
+    margin: 0 auto;
+    position: relative;
+}
+#successPopup{
+    text-align: center;
+    width: 275px;
+    top: 275px;
+    z-index: 2012;
+    margin-left: 410px;
+    position: fixed;
+    background-color: #363636;
+    left: 100px;
+    opacity:0.9;
+    color: #ffffff;
+    display: none;
+    min-height: 100px;
+}
+.successPopupBody{
+    padding: 25px 8px 25px 18px;
+}
+#successPopupHolder .blueSubmitButton:hover{
+    -moz-box-shadow: 0 2px 2px #222222;
+    -webkit-box-shadow: 0 2px 2px #222222;
+    box-shadow: 0 2px 2px #222222;
+}
+/*sign up 3 steps*/
+.signUpStatusDivHolder{
+    border-bottom: 1px solid #e0e0e0;
+    color: #363636;
+}
+.signUpStatusDiv{
+    margin: auto;
+    padding: 20px 0 0;
+    width: 1002px;
+}
+.welcomeHead{
+    font-size: 17px;
+    font-weight: bold;
+}
+.SUStepDiv{
+    color: #acacac;
+    display: inline;
+    font-weight: bold;
+}
+.SUStepActiveDiv{
+    color: #363636;
+}
+.SUStep{
+    background-image: url("/public/images/smallGrayO.png");
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    height: 22px;
+    padding-top: 5px;
+    text-align: center;
+    width: 27px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+.SUStepActiveDiv .SUStep{
+    background-image: url("/public/images/smallGreenO.png");
+}
+.SUStepDiv label{
+    vertical-align: sub;
+}
+.SUProcessArrows{
+    margin: 0 10px;
+    vertical-align: middle;
+}
+#signUpProcessDiv{
+    color: #363636;
+    width: 1002px;
+    margin: auto;
+}
+.SUProcessHead{
+    font-size: 17px;
+    margin-bottom: 40px;
+    font-weight: bold;
+    color: #363636;
+    text-align: center;
+}
+.SUConnectWithFB,#signupUserRecos,#signupDocRecos{
+    background-color: #F7F7F7;
+    margin: 20px auto auto;
+    padding: 30px 30px 75px;
+    text-align: center;
+    width: 550px;
+}
+#connectWithFB{
+    background: url("/public/images/fbLine.png") repeat-x #265376;
+    border: 1px solid #000000;
+    color: #FFFFFF;
+    padding: 12px 0;
+    cursor: pointer;
+}
+#connectWithFB:hover{
+    background: url("/public/images/fbLineHover.png") repeat-x #265376;
+}
+#connectWithFB img{
+    vertical-align: middle;
+}
+#connectWithFB span{
+    border-right: 1px solid #6088A8;
+    left: 3px;
+    padding: 13px 16px 13px 13px;
+    position: relative;
+}
+#connectWithFB label{
+    border-left: 1px solid #25567C;
+    cursor: pointer;
+    padding: 13px 20px;
+}
+.fbConnectDetails{
+    margin: 25px 0 60px;
+}
+.SUSmallBtn{
+    font-size: 11px;
+    margin: 0 10px 0 0;
+    padding: 2px 12px;
+}
+#SUUserRecosList{
+    height: 300px;
+}
+.SUUserReco{
+    display: inline-block;
+    padding: 10px;
+    width: 300px;
+}
+.SUUserReco:nth-child(odd){
+    margin-right: 55px;
+}
+.SUUserReco:nth-child(even){
+    margin-left: 55px;
+}
+.userImgWrapper{
+    border: 1px solid #D0D0D0;
+    float: left;
+    padding: 3px;
+}
+.userImgHold{
+    display: inline-block;
+    height: 42px;
+    overflow: hidden;
+    width: 42px;
+    line-height: 42px;
+    vertical-align: middle;
+}
+.userImg{
+    width: 42px;
+    vertical-align: middle;
+}
+.SUURDetails{
+    color: #ACACAC;
+    display: inline-block;
+    float: left;
+    font-size: 11.5px;
+    line-height: 14px;
+    margin-left: 10px;
+    padding-right: 10px;
+    width: 165px;
+}
+.SUURName{
+    font-size: 12px;
+}
+.SUURButton{
+    padding-top: 15px;
+    display: inline-block;
+    text-align: center;
+    width: 63px;
+}
+#SUDocRecosList{
+    padding: 10px;
+    height: 300px;
+}
+.SUDocReco{
+    display: inline-block;
+    padding: 10px 10px 10px 0;
+}
+.SUDocReco40{
+    margin-right: 40px;
+}
+.SUDRButton{
+    height: 25px;
+    text-align: center;
+    width: 60px;
+}
+.animItem{
+    position: relative;
+    float: left;
+    height: 64px;
+    overflow: hidden;
+    padding: 3px;
+    width: 64px;
+    background-color: #8cbdc6;
+}
+.animDocImg{
+    height: auto;
+    position: relative;
+    top: 12px;
+    width: 64px;
+    z-index: 2;
+}
+.animDocInfo{
+    left: 4px;
+    top: 3px;
+    width: 88%;
+    position: absolute;
+    line-height: 11px;
+    font-size: 10px;
+    color: #ffffff;
+}
+.animDocTitle{
+    font-weight: bold;
+    height: 22px;
+    overflow: hidden;
+    max-width: 63px;
+}
+.animDocAuthor{
+    margin-top: 3px;
+    font-style: italic;
+    font-size: 9px;
+    max-height: 22px;
+    overflow: hidden;
+}
+.animDocRating{
+    font-weight: bold;
+    position: absolute;
+    top: 51px;
+    z-index: 1;
+}
+.animDocImgAdjuster{
+    background-color: inherit;
+    bottom: 0;
+    height: 3px;
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+}
+.SUDRDetails{
+    float: left;
+    font-size: 11px;
+    margin-left: 10px;
+    width: 190px;
+    line-height: 12px;
+}
+.SUDRFollow{
+    margin-bottom: 15px;
+}
+.SUDRCourseName{
+    color: #999999;
+}
+.backSUProcess{
+    text-decoration: underline;
+    color: #999999;
+    font-size: 11px;
+    margin-right: 10px;
+}
+.SULoader{
+    text-align: center;
+    margin-top: 30px;
+}
+#signupUserRecos,#signupDocRecos{
+    padding: 10px 40px 10px 20px;
+    text-align: left;
+    width: 775px;
+}
+#signupDocRecos{
+    width: 940px;
+}
+
+
+/*for jscroll*/
+.scroll-pane{
+    overflow: auto;
+    outline: none;
+}
+.jspContainer
+{
+    overflow: hidden;
+    position: relative;
+}
+
+.jspPane
+{
+    position: absolute;
+}
+
+.jspVerticalBar
+{
+    position: absolute;
+    top: 0;
+    right: 3px;
+    width: 6px;
+    height: 100%;
+    background: red;
+        display: none;
+}
+
+.jspHorizontalBar
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 7px;
+    background: red;
+}
+
+.jspVerticalBar *,
+.jspHorizontalBar *
+{
+    margin: 0;
+    padding: 0;
+}
+
+.jspCap
+{
+    display: none;
+}
+
+.jspHorizontalBar .jspCap
+{
+    float: left;
+}
+
+.jspTrack
+{
+    background: #fafafa;
+    position: relative;
+}
+
+.jspDrag
+{
+    background-color: #545454;
+    position: relative;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+        -moz-border-radius:20px;
+        -webkit-border-radius:20px;
+        border-radius:20px;
+}
+
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag
+{
+    float: left;
+    height: 100%;
+}
+
+.jspArrow
+{
+    background: #50506d;
+    text-indent: -20000px;
+    display: block;
+    cursor: pointer;
+}
+
+.jspArrow.jspDisabled
+{
+    cursor: default;
+    background: #80808d;
+}
+
+.jspVerticalBar .jspArrow
+{
+    height: 7px;
+}
+
+.jspHorizontalBar .jspArrow
+{
+    width: 7px;
+    float: left;
+    height: 100%;
+}
+
+.jspVerticalBar .jspArrow:focus
+{
+    outline: none;
+}
+
+.jspCorner
+{
+    background: #eeeef4;
+    float: left;
+    height: 100%;
+}
+
+/* Yuk! CSS Hack for IE6 3 pixel bug :( */
+* html .jspCorner
+{
+    margin: 0 -3px 0 0;
+}
+
+/* CSS for sign in page - ARUN */
+.loginPageWrapper{
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+#detectClientMsg,
+.signInWrapper .errorWrapper,
+.signInWrapper .successWrapper,
+.signInWrapper .serverError{
+    margin: 0 auto;
+    margin-top: 10px;
+}
+.loginContent,
+.passwordContent,
+.forgotPassWrap{
+    padding: 30px 40px;
+    overflow: hidden;
+}
+.forgotPassWrap{
+    display: none;
+    margin: 0 auto;
+    margin-top: 10px;
+    padding: 15px 50px;
+
+}
+.loginContent h4,
+.passwordContent h4{
+    float: left;
+    margin-top: 0;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #666;
+}
+#loginUsername,#userPassword,
+.passwordContent input,
+#enterEmail{
+    padding: 5px;
+    margin-bottom: 25px;
+    height: 30px;
+    width: 375px;
+    background: #fff;
+    clear: left;
+    float: left;
+    border: 0;
+    border-left: 2px solid #c7c7c7;
+    border-top: 2px solid #c7c7c7;
+    outline: none;
+}
+#enterEmail{
+    margin-bottom: 15px;
+}
+#loginUsername:-moz-placeholder,#userPassword:-moz-placeholder,
+#loginUsername::-webkit-input-placeholder,#userPassword::-webkit-input-placeholder{
+    color: #ccc;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+}
+.loginButton,
+.createButton,
+.changeButton{
+    background: #61b46f; /* Old browsers */
+    background: -moz-linear-gradient(top, #7dd78c 0%,#4d9659 100%); /* FF3.6+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7dd78c', endColorstr='#4d9659');
+    background: -webkit-gradient(linear, left top, left bottom, from(#7dd78c), to(#4d9659));
+    background: -o-linear-gradient(top,#7dd78c,#4d9659);
+    color: #FFF;
+    border: 1px solid #5cbb6b;
+    display: block;
+    padding: 8px 4px;
+    width: 110px;
+    clear: left;
+    float: left;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.loginButton:hover,
+.createButton:hover{
+    background: -moz-linear-gradient(top, #97e4a4 0%,#58a965 100%); /* FF3.6+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#97e4a4', endColorstr='#58a965 ');
+    background: -webkit-gradient(linear, left top, left bottom, from(#97e4a4), to(#58a965));
+    background: -o-linear-gradient(top, #97e4a4,#58a965);
+}
+#clickToSend{
+    padding: 4px;
+    width: 75px;
+    font-size: 12px;
+}
+.loginContent input:focus,
+.passwordContent input:focus,
+#enterEmail:focus
+{
+    box-shadow: 0px 0px 10px rgba(51, 153, 204, .9);
+}
+
+.loginContent a{
+    float: right;
+    line-height: 34px;
+    cursor: pointer;
+}
+.loginContent a:hover{
+    text-decoration: underline;
+}
+.nameWrapper{
+    overflow: hidden;
+    width: 325px;
+    padding: 5px;
+    margin: 0 auto;
+    margin-bottom: 43px;
+}
+#userPassword,
+#verifyPassword{
+    margin-bottom: 32px;
+}
+.title{
+    display: block;
+    background: url("/public/images/vedantutm.png") no-repeat;
+    float: left;
+    width: 328px;
+    height: 33px;
+    margin-right: 5px;
+}
+
+.accountInfo{
+    float: right;
+    margin-right: 4px;
+}
+.accountInfo span:first-child{
+    float: right;
+    font-size: 11px;
+    color: #666;
+}
+
+span.signEmail{
+    clear: right;
+    float: right;
+    font-size: 14px;
+    color: #333;
+}
+#detectClientMsg,
+.errorWrapper,
+.successWrapper,
+.signInWrapper .serverError{
+    width: 480px;
+    margin: 10px auto;
+    background: rgba(204,51,51,.15);
+    border-radius: 5px;
+    padding: 5px;
+    display: none;
+    margin-left: 0;
+}
+.successWrapper{
+    background: rgba(134,201,122,.2);
+}
+.signInWrapper .serverError{
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+}
+.successWrapper span,
+.errorWrapper span,
+.serverError span{
+    text-align: center;
+    color: #333;
+    font-size: 13px;
+    display: block;
+}
+.errorWrapper span.commonMsg{
+    font-size: 11px;
+    color: #666;
+}
+.errorWrapper span.commonMsg a{
+    color: #3399cc;
+}
+
+.showError{
+    display: inline-block;
+}
+
+#detectClientMsg{
+	text-align:center;
+	color:#8A0808;
+	font-size:12px;
+	background:#fff;
+	margin: 0 auto;
+	margin-top: 10px;
+	padding: 15px 0;
+	border-radius:10px;
+	display:none;
+}
+
+/*end of login page CSS - ARUN */
+
+
+
+
+
+
+

@@ -1,0 +1,287 @@
+%{
+	//me = _profileResp.result;
+	inst = _memberInfo;
+	profileData = _profileData;
+	targetUserRole = inst.get("profile");
+	myOrgInfo = _myOrgInfo;
+	userInfo = _userInfo;
+	targetUserId = _targetUserId;
+}%
+
+#{script src:'uicomRegister.js', charset:'utf-8' /}
+<!-- Scripts for Intl-tel-input plugin -->
+#{script src:'intlTelInput.js', charset:'utf-8' /}
+#{script src:'utils.js', charset:'utf-8' /}
+<!-- Stylesheet for Intl-tel-input plugin -->
+#{stylesheet media:'screen',src:'intlTelInput.css'/}
+
+<style type="text/css">
+.loginInputField {
+    padding: 10px;
+    height: 15px;
+    font-size: 14px;
+    color: #666;
+    outline: 0;
+    border: 1px solid #ddd;
+    margin: 0 0 4px 15px;
+    width: 270px;
+}
+.loginButton{
+    color: #fff;
+    background-color: #ed3237;
+    /*border: 0px solid #88ad5f;*/
+    background-image: none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 8px 35px;
+    font-size: 16px;
+}
+</style>
+<div class="instProfileTopBar">
+    <div class="relative pageHolderM">
+	<table cellspacing=0 cellpadding=0 class="fullWidth">
+	   <tr>
+		<td class="alignTop instTopTableCol">
+		   <table>
+			<tr>
+			   <td rowspan=4 class="alignTop">
+			      <div class="instPrPicHolderTd">
+				%{
+					thumbnail = inst.has('thumbnail')?inst.thumbnail:'';
+					enableProfilePicUpload = true;
+					//Disable upload profile picture option for students of Trividyaa organization.
+					if(params.orgId == "5bacb325e4b0ff57ab848e07" && params.userRole == "STUDENT"){
+						enableProfilePicUpload = false;
+					}
+				}%
+				<div class="instPrPicHolder" data-prev-url="${thumbnail}">
+					<img class="instPrPic" alt="&{'IMG_NA'}" src="${thumbnail}"/>
+				</div>
+				#{if targetUserId == session.get("userId") && enableProfilePicUpload}
+				<div class="instChngPicHold">
+				</div>
+				<div class="instChngPicAnim nonner">
+					<div class="smallLoader"></div>
+				</div>
+				#{/if}
+			      </div>
+			   </td>
+			   <td class="alignTop">
+				<div class="boldy big20">${inst.firstName.toUpperCase()}</div>
+			   </td>
+			</tr>
+			<tr>
+			   <td>
+				<div class="big20">${inst.lastName.toUpperCase()}</div>
+			   </td>
+			</tr>
+			<tr>
+			   <td>
+				<div class="greyTextColor">&{'ROLE_'+inst.profile}</div>
+			   </td>
+			</tr>
+			<tr>
+			   <td>
+				#{if targetUserId == session.get("userId")}	
+					*{<a class="editInstProfile">Edit Profile</a>}*
+				#{/if}
+			   </td>
+			</tr>
+		   </table>		
+		</td>
+		<td class="alignTop instTopTableCol">
+		   <table>
+			<tr>
+			   <td>
+				<div class="boldy padRight10">&{'TXT_INST'}</div>
+			   </td>
+			   <td>
+				<div class="color999">${myOrgInfo.getString('instFullName')}</div>
+			   </td>
+			</tr>
+			#{if inst.mappings.has('programs') && inst.mappings.programs.length()>0}
+			%{
+				programs = inst.mappings.programs;
+				viewMore = false;
+				progLength = programs.length();
+				if(progLength>1){
+					viewMore = true;
+				}
+				if("STUDENT".equals(targetUserRole)){
+					progLength = 1;
+				}
+			}%
+			#{list items:0..progLength-1, as:'pIndex'}
+			%{
+				program = programs.get(pIndex);
+			}%
+			<tr>
+			   <td class="alignTop">
+			   #{if pIndex==0}
+				<div class="boldy">&{'TXT_BATCH'}</div>
+		           #{/if}
+			   </td>
+			   <td>
+				<div class="color999">${program.name}</div>
+			   </td>
+			</tr>
+				#{if "STUDENT".equals(targetUserRole) && program.has('centers') && program.centers.length()>0}
+					%{
+						center = program.centers.get(0);
+						if(program.centers.length()>1){
+							viewMore = true;
+						}
+					}%
+					<tr>
+			   		<td class="alignTop">
+			   		#{if pIndex==0}
+						<div class="boldy">&{'TXT_CENTER'}</div>
+		           		#{/if}
+			   		</td>
+			   		<td>
+						<div class="color999">${center.name}</div>
+			   		</td>
+					</tr>
+						#{if center.has('sections') && center.sections.length()>0}
+							%{
+								section = center.sections.get(0);
+								if(center.sections.length()>1){
+									viewMore = true;
+								}
+							}%
+							<tr>
+			   				<td class="alignTop">
+			   				#{if pIndex==0}
+								<div class="boldy">&{'TXT_SECTION'}</div>
+		           				#{/if}
+			   				</td>
+			   				<td>
+								<div class="color999">${section.name}</div>
+			   				</td>
+							</tr>
+						#{/if}
+				#{/if}
+			#{/list}
+			#{/if}
+			#{if "STUDENT".equals(targetUserRole)}
+				#{if viewMore == true}
+					<tr>
+						<td></td>
+						<td>
+							<a class="viewMemberMappings" data-user-name="${inst.firstName} ${inst.lastName}"
+								data-user-id="${targetUserId}">&{'VIEW_MORE'}</a>
+						</td>
+					</tr>
+				#{/if}
+			#{/if}
+			#{elseif progLength>0}
+				<tr>
+					<td></td>
+					<td>
+						<a class="viewMemberMappings" data-user-name="${inst.firstName} ${inst.lastName}"
+							data-user-id="${targetUserId}">&{'TXT_VIEW_DETAILS'}</a>
+					</td>
+				</tr>
+			#{/elseif}
+		   </table>	
+		</td>
+		#{if targetUserId == session.get("userId")}
+		<td class="alignTop instTopTableCol">
+		   <table>
+			<tr>
+			   <td class="alignTop">
+				<div class="boldy">&{'TXT_EMAIL'}</div>
+			   </td>
+			   <td>
+				#{if inst.email.equals(null) || inst.email.isEmpty()}
+					<div class="greyTextColor">&{'PROFILE_DATA_NOT_PROVIDED'}
+					<a class="registerEmail" style="color:#ed3237 !important;left: 20px;">&{'PROFILE_REGISTER_EMAIL'}</a>
+					</div>
+				#{/if}
+				#{else}
+					<div class="color999">
+					${inst.email}
+					#{if userInfo.isEmailVerified!=true}
+					<a class="verifyEmail" style="left: 20px;position: relative;">&{'PROFILE_EMAIL_NOT_VERIFIED'}</a>
+					#{/if}
+					#{else}
+					<span style="color:green;left:20px;position: relative;">Verified</span>
+					#{/else}
+					</div>
+				#{/else}
+			   </td>
+			</tr>
+			<tr>
+			   <td class="alignTop">
+				<div class="boldy padRight10">&{'TXT_CONTACT'}</div>
+			   </td>
+			   <td>
+				#{if inst.contactNumber.equals(null) || inst.contactNumber.isEmpty()}
+					<div class="greyTextColor">
+					&{'PROFILE_DATA_NOT_PROVIDED'}
+					#{if myOrgInfo.enableOTP == "true"}
+						<a class="registerContactNumber" data-org-id="${params.orgId}">&{'PROFILE_REGISTER_CONTACT_NUMBER'}</a>
+					#{/if}
+					</div>
+				#{/if}
+				#{else}
+					<div class="color999">
+					${inst.contactNumber}
+					#{if myOrgInfo.enableOTP == "true"}
+					#{if userInfo.isPhoneVerified!=true}
+						<a class="registerContactNumber" data-org-id="${params.orgId}" style="left: 20px;position: relative;">&{'PROFILE_VERIFY_CONTACT_NUMBER'}</a>
+					#{/if}
+					#{else}
+					<span style="color:green;left:20px;position: relative;">Verified</span>
+					#{/else}
+					#{/if}
+					</div>
+				#{/else}
+			   </td>
+			</tr>
+			*{<!-- Remove My Orders Link from here-->
+                        #{if "STUDENT".equals(targetUserRole)}
+			<tr>
+			   <td></td>
+			   <td>
+                               <a class="openMyOrders" href="/organization/${params.orgId}/myorders"
+                                  data-user-id="${session.get('userId')}" data-org-id='${params.orgId}'>&{'TXT_MY_ORDERS'}</a>
+			   </td>
+			</tr>                        
+                        #{/if}}*
+                        #{if inst.has('extraInfo')&&inst.extraInfo.length()>0}
+                        <tr>
+                                <td></td>
+                                <td>
+                                        <a class="viewProfileExtraInfo" data-user-name="${inst.firstName} ${inst.lastName}"
+                                                data-user-id="${targetUserId}">View Extra Info</a>
+                                </td>
+                        </tr>                        
+                        #{/if}
+			<!--*{DIS-ABLED not available from system
+			<tr>
+			   <td class="alignTop" style="padding-right:10px;">
+				<div class="boldy">&{'TXT_HOMETOWN'}</div>
+			   </td>
+			   <td>
+				*{<div class="">${me.get('GENERAL').get('basic').get('homeTown')}</div>}*
+				<div class="greyTextColor">&{'PROFILE_DATA_NOT_PROVIDED'}</div>
+			   </td>
+			</tr>
+			}*-->
+		   </table>
+		</td>
+		#{/if}
+		#{if targetUserId != session.get("userId")}	
+		<td class="instTopTableCol">
+			<div class="userSendMsg blueSubmitButton" data-user-id="${targetUserId}" 
+				data-user-full-name="${inst.firstName} ${inst.lastName}">
+				<span class="instImgs"></span>
+				<span class="title">&{'TXT_SEND_MSG'}</span>
+			</div>	
+		</td>
+		#{/if}
+	   </tr>
+	</table>
+    </div>
+</div>

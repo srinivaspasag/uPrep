@@ -1,0 +1,39 @@
+<div id="qrOrgBillingDashboard" style="min-height: 70vh;">
+    <div class="centerText pageHeadGrayDiv">
+        <div class="centerText">
+            <span class="big20">Billing Details Dashboard</span>
+        </div>
+    </div>
+    <center>
+        <table style="margin-top: 20px;width: 70%">
+            <tr>
+                <td>
+                Start Date : 
+                </td>
+                <td>
+                #{common.datevChoose /}
+                </td>
+                <td>
+                End Date : 
+                </td>
+                <td>
+                    #{common.datevChoose /}
+                </td>
+                <td>
+                    <button type="submit" name="submit" id="submit" class="blueButton submitStudentCount">Submit</button>
+                </td>
+            </tr>
+        </table>
+    </center>
+    <div id="billingTableData" style="margin-top: 20px;">
+    
+</div>
+</div>
+<br>
+
+<script type="text/javascript">
+    new function(){
+        var fn=function(){qrBilling.init();}
+        lazyLoad([{fname:"qrBilling.js",cb:fn}]);
+    }();    
+</script>

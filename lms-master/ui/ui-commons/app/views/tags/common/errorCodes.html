@@ -1,0 +1,17 @@
+    %{
+        resp=_resp;
+    }%
+    <input id="respErrorCode" value="${resp.errorCode}" type="hidden"/>
+    <input id="respErrorMessage" value="${resp.errorMessage}" type="hidden"/>
+    <script type="text/javascript">
+        new(function(){
+            try{
+                showError("${resp.errorMessage}");
+            }catch(err){
+                var fn=function(){
+                    showError("${resp.errorMessage}")
+                }     
+                lazyFnCall(fn);        
+            }              
+        })();
+    </script>    

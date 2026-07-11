@@ -1,0 +1,67 @@
+    %{
+        type=_type;
+        userAttemptedAns=_userAttemptedAns;
+        source=_source;
+        isCorrect=_isCorrect;
+        correctAnswer=_correctAnswer;
+    }%
+            #{if type=="SCQ"||type=="MCQ"||type=="NUMERIC"}
+                    <div class="QPUserAnsDiv">
+                        #{if source!='CHALLENGES_PAGE'}
+                        <span class="QPShowGraphBtn margTop">
+                            <a class="showQuesAnalytics ptrTagInline doCStream" data-name="QUESTION_ANALYTICS_BUTTON">Question Analytics</a>
+                        </span>
+                        #{/if}
+                        <div class="QPUserAnsDivAnsBlk">
+                            Your Answer
+                            #{if userAttemptedAns !=null && !userAttemptedAns.equals(null) &&  userAttemptedAns.length()>0}
+
+                                %{
+                                    ansStatusClass='';
+                                    if (isCorrect!=null){
+                                        if(isCorrect == "CORRECT")ansStatusClass='QPAnsCorrect';
+                                        else ansStatusClass='QPAnsIncorrect';
+                                    }
+                                }%
+                                <div class="${ansStatusClass}">
+                                    #{if type!='NUMERIC'}
+                                            #{list items:0..userAttemptedAns.length()-1,as:'ua'}
+                                            <span class="boldy">
+                                                ${uicom.util.Utilities.getOption(Integer.parseInt(userAttemptedAns.get(ua)))}
+                                            </span>
+                                            ${ua_isLast?'':','}
+                                            #{/list}
+                                    #{/if}
+                                    #{else}
+                                        ${userAttemptedAns.get(0)}
+                                    #{/else}
+                                </div>
+                            #{/if}
+                            #{else}
+                            <div>NA</div>
+                            #{/else}
+                        </div>
+
+                        <div class="QPUserAnsDivAnsBlk">
+                            Correct Answer
+                            #{if correctAnswer!=null&&correctAnswer.length()>0}
+                            <div>
+                                #{if type!='NUMERIC'}
+                                    #{list items:0..correctAnswer.length()-1,as:'ca'}
+                                    <span class="boldy">
+                                        ${uicom.util.Utilities.getOption(Integer.parseInt(correctAnswer.get(ca)))}
+                                    </span>
+                                    ${ca_isLast?'':','}
+                                    #{/list}
+                                #{/if}
+                                #{else}
+                                    ${correctAnswer.get(0)}
+                                #{/else}
+                            </div>
+                            #{/if}
+                            #{else}
+                            <div>NA</div>
+                            #{/else}
+                        </div>
+                    </div>
+            #{/if}

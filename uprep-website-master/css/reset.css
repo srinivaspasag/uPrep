@@ -1,0 +1,20 @@
+@font-face{font-family:Kumbh Sans;src:url(KumbhSans-Light.ttf);}
+html{font-family:'Kumbh Sans', sans-serif;}
+*{margin:0;padding:0;-webkit-box-sizing:border-box !important;-moz-box-sizing:border-box !important;box-sizing:border-box !important;}
+body{line-height:1.6;}
+a{text-decoration:none;color:inherit;}
+li{list-style:none;}
+img{width:100%;}
+.container{max-width:1300px;margin:auto;}
+.inner-body{overflow-x:hidden;}
+button{outline:none;font-family:'Kumbh Sans', sans-serif;}
+input{font-family:'Kumbh Sans', sans-serif;outline:none;}
+textarea{font-family:'Kumbh Sans', sans-serif;outline:none;}
+textarea::-webkit-input-placeholder{font-family:'Kumbh Sans', sans-serif;}
+textarea:-moz-placeholder{font-family:'Kumbh Sans', sans-serif;}
+textarea::-moz-placeholder{font-family:'Kumbh Sans', sans-serif;}
+textarea:-ms-input-placeholder{font-family:'Kumbh Sans', sans-serif;}
+textarea::-ms-input-placeholder{font-family:'Kumbh Sans', sans-serif;}
+textarea::placeholder{font-family:'Kumbh Sans', sans-serif;}
+a{color:inherit;}
+.inner-body{overflow-x:hidden;}

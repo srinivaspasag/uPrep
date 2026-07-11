@@ -1,0 +1,30 @@
+%{
+    diagrams=_diagrams;
+    loadMoreSize=_loadMoreSize;
+}%
+#{if diagrams.length()>0 }
+    #{list items:0..diagrams.length()-1,as:'index'}
+    %{
+        diagram = diagrams.get(index);
+    }%
+    <div class="relative diagImgHolder">
+        <div class="diagImgHoverBtn">
+                <span class="right relative blueButton addDiagPreview" 
+                      data-imghtml="${diagram.fullViewHTML}" data-img-title="${diagram.fileName}">
+                    Preview
+                </span>
+                <span class="right relative greenButton addDiagAdd" data-imghtml="${diagram.fullViewHTML}">Add</span>
+        </div>
+        <div class="left absolute diagImgHoverTxt">
+                ${diagram.fileName}
+        </div>
+        <img class="left relative diagImg" alt="No Preview" src="${diagram.searchHTML}"/>
+    </div>
+    #{/list}
+    #{if loadMoreSize !=0 && diagrams.length()==loadMoreSize}
+    <div class="loadMoreItems LMHandlerDivLoadMore doCStream" data-name="LOAD_MORE_DIAGRAMS">Load More Diagrams</div>
+    #{/if}
+#{/if}
+#{else}
+        <div class="centry boldy margTop20">No Diagrams Found</div>
+#{/else}

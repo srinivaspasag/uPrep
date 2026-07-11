@@ -1,0 +1,9 @@
+    %{
+        target="HOME_PAGE_SHARED_CONTENT";
+        if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+        else loadMoreSize=0;
+    }%
+
+#{if params.entityType=="QUESTION"}
+    #{questions.quesItems quesns:sharedContent.result.questions,target:target,loadMoreSize:loadMoreSize,sharedType:params.sharedType /}
+#{/if}

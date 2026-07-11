@@ -1,0 +1,94 @@
+    %{
+        target=_target;        
+        cmdsResp=_cmdsResp;
+        includeName='';
+        quesnsUrl='QrQuestions/qrQuesns.html';
+        if(target=="RESOURCES"){
+            includeName='QrResources/resourcesTable.html';
+            optsType=target;
+        }else if(target=='PROGRAM_PAGE'){
+            includeName='QrPrograms/libraryTable.html';   
+        }
+    }%    
+    <div class="mcWidget relativePos">   
+        <div id="leftSection">
+            <div class="leftSecHeadsDiv">
+                #{if target=="RESOURCES"}
+                    <div class="leftSecHead leftSecHeadActive">Institute Resources</div>
+                    <!--<div class="leftSecHead">Public Resources</div>-->                
+                #{/if}
+                #{elseif target=='PROGRAM_PAGE'}
+                    <div class="leftSecHead leftSecHeadActive showProgContent">Content</div>
+                    <div class="leftSecHead showProgMembers">Members</div>                
+                    <div class="leftSecHead showProgPageSchedule">Schedule</div>                
+                    <div class="leftSecHead">Students</div>                            
+                #{/elseif}    
+            </div>
+            <div id="fixedLeftSecPortion">
+                <div class="color3 big16 margLeft20 margBot20 boldy">Subjects</div>            
+                <div class="cmdsSearchSubsDiv margLeft20"></div>                     
+                <div class="cmdsTableTopicTree nonner margLeft20">
+                    <div class="big15 boldy margTop20 margBot5">Topics</div>            
+                    <div class="cmdsSearchTopicsDiv"></div>
+                </div>                 
+            </div>           
+        </div>   
+        <div id="mainSection">
+            #{if target=='PROGRAM_PAGE'}
+                #{common.filterProgCenterSecDiv /}
+            #{/if}
+            #{if target=="RESOURCES"||target=='PROGRAM_PAGE'}
+                    %{
+                        if(target=='RESOURCES'){
+                            addContentBtnText='+ Add Resources';
+                            addFolder=true;
+
+                        }else if(target=='PROGRAM_PAGE'){
+                            addContentBtnText='+ Add Content';
+                            addFolder=false;
+                        }
+                    }%            
+                <div class="cmdsTableSearchDiv">
+                    <div class="inputDiv cmdsTableSearchBox hasSearchImg">
+                        <input type="text" class="mcSearchDivInput" data-param-name="query" value="${params.query}"/>
+                        <span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>                
+                    </div>            
+                    #{sources.addResource target:target,addText:addContentBtnText,addFolder:addFolder/}               
+                </div>                                
+            #{/if}
+            <div class="cmdsTableOptsAndSortDiv">
+              <div class="cmdsTableCheckedOpts floatLeft">
+                  <div class="gButton">Copy To</div>
+                  <div class="gButton">Delete</div>
+              </div>  
+              <div class="cmdsTableSortDiv">                             
+                Sort by
+                #{include 'Widgets/mcvChooseAlpha.html' /}                  
+                <div class="vChoose mcvChoose" data-value="-1" data-onchange="onmcvChooseChange"
+                     data-param-name="visibility">
+                    <div class="vChooseLabel">Filter By</div>
+                    <div class="vChooseHead">All Content</div>
+                    <div class="vChooseDownIcon"></div>
+                    <div class="vChooseDropDown">
+                        <div class="vChooseOpt" data-value="-1">All Content</div>
+                        <div class="vChooseOpt" data-value="HIDDEN">Visible Content</div>
+                        <div class="vChooseOpt" data-value="VISIBLE">Hidden Content</div>        
+                    </div>
+                </div>              
+                #{common.lmArrowsDiv /}  
+              </div>
+            </div>
+            %{
+                tableClasses='';
+                if(target!='TEST_CREATION'||target!='SOURCE_PAGE_QUESTIONS'){
+                    tableClasses='cmdsContentTBody LMHandlerDiv';
+                }
+            }%
+            <div id="tableSection" class="${tableClasses}">
+                #{if includeName!=''}
+                    #{include arg:includeName /}
+                #{/if}          
+            </div>                
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>  

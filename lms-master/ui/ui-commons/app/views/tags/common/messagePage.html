@@ -1,0 +1,59 @@
+%{
+	msg = _msg;
+	msgTextColor = _msgTextColor;
+	msgTextColor = msgTextColor==null?"":msgTextColor;
+}%
+<style>
+#mainMsgHolder{
+	padding:30px 0;
+}
+.responseBlock{
+	width:570px;
+	margin:0 auto;
+	background-color:#FFF;
+}
+.block1,
+.block2{
+	padding:20px 50px;
+	color:#666;
+}
+.block1{
+	background-color:#DDDDDD;
+}
+.redTextColor{
+	color:#cc6666!important;
+}
+</style>
+<div id="mainMsgHolder" class="">
+   <div class="responseBlock">
+	<div class="block1">
+		<div class="fontRoboto big18 greenTextColor">&{'TXT_MESSAGE'}</div>
+	</div>
+	<div class="block2">
+	    <div class="fontRobotoLight big18 ${msgTextColor}">${msg.raw()}</div>
+	    #{if session!=null && session.userId!=null && !session.userId.isEmpty()}
+	    <div style="text-align:right;padding:20px 0;">
+		<a class="big14 fontRoboto" onclick="history.back()">&{'TXT_BACK'}</a>
+		<span class="big16"> | </span>
+		<a class="big14 fontRoboto" href="/">&{'TXT_HOME'}</a>
+		<span class="big16"> | </span>
+		<a class="big14 fontRoboto" href="/Security/logout">&{'TXT_LOGOUT'}</a>
+	    </div>
+	    #{/if}
+	</div>
+   </div>
+</div>
+%{
+	appName = play.Play.configuration.getProperty("application.name");
+}%
+#{if appName=='web-app'}
+<script>
+$(function(){
+	try{
+		if(institute && institute.init){
+			institute.init();
+		}
+	}catch(err){}
+});
+</script>
+#{/if}

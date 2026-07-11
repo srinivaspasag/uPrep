@@ -1,0 +1,58 @@
+%{
+    ques=_ques;
+    target=_target;
+    if(target=='TAKE_CHALLENGE'){
+        ansSubmitClass='submitChallengeAns';
+    }
+    else {
+        ansSubmitClass='quesAnsSubmit';
+    }
+}%
+                <div class="quesAnsDiv">
+                    <div class="addAnsBlock floatLeft" data-qid="${ques.id}" data-type="${ques.type}">
+                        #{if ques.type=="SCQ"||ques.type=="MCQ"}
+                        <span class="boldy">Answer:</span>
+                            %{
+                                options=ques.options;
+                                if(ques.type=='SCQ')inputType="Radio";
+                                else inputType="Checkbox";
+                            }%
+                            #{if options.length()>0}
+                            #{list items:0..options.length()-1, as:'j'}
+                            <span class='quesAns${inputType}Span boldy'>
+                                <input type='${inputType}' class='quesAns${inputType}' name="quesAns${inputType}" value="${j_index}"/>
+                                ${uicom.util.Utilities.getOption((j+1))}
+                            </span>
+                            #{/list}
+                            #{/if}
+                        #{/if}
+                        #{elseif ques.type=="NUMERIC"}
+                         <span class="boldy">Answer:</span>
+                         <input type="text" class="QATextNumInput" placeHolder="Enter number only" style="padding: 3px;"/>
+                             #{if ques.has('precision')&&ques.precision>0}
+                             <span class='color8 small10'> (precision upto ${ques.precision} decimal places)</span>
+                             #{/if}
+			     #{if target=="TAKE_CHALLENGE"}
+				#{common.virtualNumKeypad inputClassName:".QATextNumInput"/}
+			     #{/if}
+                            <div class='smally color8'>Provide only numerical answers. For eg : 100 (correct),
+                             10.5 (correct), 2/3 (wrong), 10g (wrong)</div>                             
+                        #{/elseif}
+                        #{elseif ques.type=="TEXT"}
+                         <span class="boldy">Answer:</span><input type="text" class="QATextNumInput" placeHolder="Enter here"/>
+                        #{/elseif}
+                        #{elseif ques.type=="PARA"}
+                         <span class="boldy blocky">Answer:</span>
+                         <div class="">
+                            <textarea class="paraAns"></textarea>
+                         </div>
+                        #{/elseif}
+                    </div>
+                    <div class="floatRight smally margTop">
+                        <span class="greenButton margRight5 ${ansSubmitClass} doCStream" data-name="SUBMIT_ANSWER_BTN">Submit</span>
+                        #{if target!='TAKE_CHALLENGE'}
+                        <a class="liner quesCancelAns">Cancel</a>
+                        #{/if}
+                    </div>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                </div>

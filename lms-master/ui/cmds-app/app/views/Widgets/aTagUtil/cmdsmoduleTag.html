@@ -1,0 +1,14 @@
+<span class="resourceIconMODULE"></span>
+%{
+    targetId = "";
+    pushUrl = "/organization/"+params.orgId+"/module/"+entityId;
+    if(params.sectionId != null){
+        targetId = params.sectionId;
+        pushUrl += "?targetType=SECTION&targetId="+targetId;
+    }
+}%
+<a class="getModulePage cmdsaPush" title="${entityName}"  data-entity-id="${entityId}" 
+   href="${pushUrl}" #{if targetId != ""} data-target-id = "${targetId}"#{/if}>
+	<span class="singleLineText displayInBlock">${entityName}</span>
+</a>
+ 

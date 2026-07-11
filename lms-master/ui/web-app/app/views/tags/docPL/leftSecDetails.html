@@ -1,0 +1,32 @@
+
+                  %{
+                    docPL=_docPL;
+                    docPLId=_docPLId;
+                    entityType=_entityType;
+                  }%
+
+                <div id="docPLLeftSecDetails">
+                    <div class="DPLSName">${docPL.title}</div>
+                %{
+                    user=docPL.user;
+                    getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                }%
+                    <div class="floatLeft" style="width: 160px;">
+                        #{widgets.img20 user:user /}
+                        <a class="ptrTagHovered DPLSOwnerName ${getUserClassAndUrl.className}" data-user-id="${user._id}" href="${getUserClassAndUrl.url}">
+                            ${user.firstName+' '+user.lastName}
+                        </a>
+                    </div>
+                    <div class="ratingStars floatLeft margHalfTop"
+                         style="width: ${uicom.util.Utilities.getStarsWidth(docPL.ratingInfo.avgRating)}px"></div>                   
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </div>
+                <div class="DPLSSaveAndVote">
+                    <span class="margRight10 linBlk margHalfTop">  
+                        #{widgets.upVoteItem voted:docPL.voted,upVote:docPL.upVotes,entityType:entityType,entityId:docPLId /}
+                    </span>
+                    <span class="margRight10 floatRight">
+                        #{widgets.followUnfollowEntity followType:docPL.followType,entityType:entityType,entityId:docPLId /}
+                    </span>
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </div>

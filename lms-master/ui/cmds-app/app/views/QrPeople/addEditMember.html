@@ -1,0 +1,129 @@
+%{
+    if(memberInfo!=null){
+        isEditMember=true;
+        memberInfo=memberInfo.result.info;        
+        memProfileNameClass='';
+    }else{
+        isEditMember=false;
+        memProfileNameClass=' nonner';
+    }
+}%
+<div id="addEditPeoplePage" class="addEditMemberPage">
+    <div class="addMemHead">Add/Edit Member</div>
+    <div class="selectedMemProfileDiv margBot20${memProfileNameClass}">
+        <span class="color6 big15">Role:</span>
+        <span class="margLeft10 boldy big20 liner memProfileName color6">
+            #{if isEditMember}
+            ${memberInfo.profile.toLowerCase().capitalizeWords()}
+            #{/if}
+        </span>
+    </div>       
+    #{if !isEditMember}
+    <div class="selectMemProfileDiv">
+        <span class="color6 big13">Select a member type</span>
+        <div class="memProfileBtns">
+            <div class="blueTabNew selectMemProfile" rel='TEACHER'>Teacher</div>
+            <div class="blueTabNew selectMemProfile" rel='MANAGER'>Manager</div>
+            <div class="blueTabNew selectMemProfile" rel='EDITOR'>Editor</div>
+            <div class="blueTabNew selectMemProfile" rel='SALESPERSON'>Salesperson</div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>        
+    </div>
+    #{/if}
+   
+    <div class="addMemStepHead nonner" rel='PROFILE'>
+        <a class="floatRight smally">Edit</a>
+        <span class="big18">Step 1</span>
+    </div>
+    <div class="addMemStepBody nonner" rel='PROFILE'>
+        <div class="addMemStepBodyHead1">Step 1/2</div>
+        <div class="addMemStepBodyHead2">Fill Member Details</div>
+        <div class="addMemStepBodyMain addMemDetailsDiv">
+            #{people.editBasicProfileInfo info:memberInfo,target:"ADD_EDIT_MEMBER" , isEditMember : isEditMember /}
+            <span class="cmdsPopupError nonner">Fields marked with * are compulsory</span>
+            %{
+                basicProfileDoneText='Add';
+                if(isEditMember){
+                    basicProfileDoneText='Done Editing';
+                }
+            }%
+            <div class="rightText">
+                <div class="gBlueButton addMemProfileSubmit">${basicProfileDoneText}</div>
+            </div>
+        </div>
+    </div>
+    %{
+        step2HeadClass='';
+        if(!isEditMember){
+            step2HeadClass=' nonner';
+        }
+    }%
+    <div class="addMemStepHead${step2HeadClass}" rel='ACADEMICS'>
+        <a class="floatRight smally">Edit</a>
+        <span class="big18">Step 2</span>
+    </div>  
+    <div class="addMemStepBody nonner" rel='ACADEMICS'>
+        <div class="addMemStepBodyHead1">Step 2/2</div>
+        <div class="addMemStepBodyHead2">Assign Courses and Sections</div>
+        <div class="addMemStepBodyMain">
+            <div class="coursesvChooseDiv">
+                <div class="smallThinGray">Loading courses..</div>
+            </div>
+            #{acadStr.acadStrTable target:"ADD_PEOPLE_ACADEMICS" /}
+            <div class="boldy big16 color6 margTop20">Added</div>
+            <div id="addMemAddedAcademics">
+                #{people.addedMappings peopleInfo:memberInfo /}
+            </div>            
+            <div class="margTop20">
+                <div class="gButton openCoursevChoose nonner">Add Another Course</div>
+                <div class="gBlueButton addMemAcademicsSubmit">Done</div>
+            </div>
+        </div>
+    </div>    
+    *{<div class="addMemStepHead nonner" rel='ROLE'>
+        <a class="floatRight smally">Edit</a>
+        <span class="big18">Step 3</span>
+    </div>  
+    <div class="addMemStepBody nonner" rel='ROLE'>
+        <div class="addMemStepBodyHead1">Step 3/3</div>
+        <div class="addMemStepBodyHead2">Assign Role</div>
+        <div class="addMemStepBodyMain">
+            <div class="vChoose" data-value="-1">
+              <div class="vChooseHead" style="width: 100px;">Choose Role</div>
+              <div class="vChooseDownIcon"></div>
+              <div class="vChooseDropDown">
+                  <div class="vChooseOpt" data-value="Editing">Editing</div>
+                  <div class="vChooseOpt" data-value="Non Editing">Non Editing</div>
+              </div>
+            </div>
+            <div class="rightText">
+                <div class="gBlueButton addMemRoleSubmit">Done</div>
+            </div>            
+        </div>        
+    </div>}*
+        
+</div>
+%{
+    if(memberInfo==null){
+        subTarget='ADD_MEMBER';
+    }else{
+        subTarget='EDIT_MEMBER';
+    }
+}%
+<script type="text/javascript">
+    new function(){
+        var fn1=function(){qrAddEditPeople.init({target:"ADD_EDIT_MEMBER",subTarget:"${subTarget}",
+                targetUserId:"${params.targetUserId}",targetOrgMemberId:'${memberInfo?.id}',
+                targetProfile:"${params.targetProfile}",profile:'${memberInfo?.profile}'});};
+        var addEditMemberProfile="${params.targetProfile}";
+        if("${subTarget}"=="EDIT_MEMBER"){
+        	addEditMemberProfile="${memberInfo?.profile}";
+        }
+        var fn2=function(){qrAcadStr.init({targetTable:"ADD_PEOPLE_ACADEMICS",
+        	addEditMemberProfile:addEditMemberProfile});};
+        lazyLoad([{fname:"qrAddEditPeople.js",cb:fn1},{fname:"qrAcadStr.js",cb:fn2}]);
+    }();       
+</script> 
+
+
+

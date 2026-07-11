@@ -1,0 +1,52 @@
+#{stylesheet media:'screen', src:'institute/createShare.css'/}
+<div class="instCreateShare">
+	<div style="padding:15px 0;">
+		<span class="instImgs instActivityImg"></span>
+		<span class="big14" style="color:rgb(20, 78, 116);padding-left:4px;">&{'TXT_RECENT_ACTIVITY'}</span>
+	</div>
+	<table id="instCreateShrTable">
+	   <tr>
+		<td style="vertical-align:top;width:45px;">
+		    <div class="instProfilePicContainer" style="width:30px;">
+			<img class="instUserPic myInstProfilePic" alt="${session.firstName}" src="${session.profilePic}"/>
+		    </div>
+		</td>
+		<td>
+		   <div class="instShareInput">
+			<div class="instShareInputBox autogrow" contenteditable=true data-placeholder="&{'CREATE_SHR_PLACEHOLDER'}">
+				<span class="placeholder">&{'CREATE_SHR_PLACEHOLDER'}</span>
+			</div>
+			<input placeholder="&{'PASTE_WEB_LINK'}" class="instShareLinkInput extAttachInput nonner" 
+				type="text" data-input-type="Link"/>
+			<iframe src="/Institute/uploadActiForm?orgId=${params.orgId}" class="instShareFileInput nonner extAttachInput">
+			</iframe>
+			<input placeholder="&{'PASTE_VIDEO_LINK'}" class="instShareVidInput nonner extAttachInput"
+				type="text" data-input-type="Vid"/>
+			<div class="instAttachPreviewHold">
+			</div>
+			<div class="instNotValidUrlTxt">
+				<div id="Link" class="nonner">&{'NOT_VALID_EXT_URL'}</div>
+				<div id="Vid" class="nonner">&{'NOT_VALID_VIDEO_URL'} 
+					</br>
+					(&{'VALID_VIDEO_URL_DOMAIN'})
+				</div>
+				<div id="File" class="nonner">&{'IMG_NOT_UPLOADED'}</div>
+				<div id="AddError" class="nonner">&{'UNABLE_TO_SHARE_ACTIVITY'}</div>
+				<div id="Shared" class="nonner greenTextColor">&{'SHARED_SUCCESSFULLY'}</div>
+			</div>	
+		   </div>
+		   <div class="instShrOptionsCol">
+			<span class="greyTextColor smally left" style="margin-top:5px;">&{'TXT_ATTACH'}</span>
+			<span class="instImgs instShrLinkIco" data-input-type="Link" title="share external link"></span>
+			<span class="instImgs instShrPicIco" data-input-type="File" title="upload and share picture"></span>
+			<span class="instImgs instShrVidIco" data-input-type="Vid" title="share external video link"></span>
+		
+			<span class="right shrWithBtn">&{'TXT_SHARE_WITH'}</span>
+        		<div class="cleaner_with_divider">&nbsp;</div>
+		   </div>
+		</td>
+	   </tr>
+	</table>
+	<div id="testShareLoadedImg"></div>
+</div>
+<script type="text/javascript" src="/public/javascripts/institute/o.createShare.js"></script>

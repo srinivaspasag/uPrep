@@ -1,0 +1,15 @@
+#{if org!=null && org.errorCode.isEmpty()}
+	#{include 'UIComRegister/index.html'/}
+#{/if}
+#{else}
+	#{extends 'uicomRegisterHead.html'/}
+	#{set title:'Welcome to Learnpedia' /}
+        <div class="vedantuNameWrapper">
+        	<div class="vedantuTitle"></div>
+        </div>
+	<div class="centerText big16">
+		<div class="boldy redTextColor">Organization not found with us,</div>
+		</br>
+		<div>Please check the url, Or contact your Organization Admin</div>
+	</div>
+#{/else}

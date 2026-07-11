@@ -1,0 +1,84 @@
+# ===== Secrets / credentials (NEVER commit) =====
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+*.keystore
+*.jks
+*.mobileprovision
+keystore.properties
+sg.env
+instance.env
+**/deploy/*.env
+
+# ===== Dependencies / vendored runtimes =====
+node_modules/
+.m2repo/
+.pnp
+.pnp.js
+lms-local/play-1.2.4/
+lms-local/bin/
+
+# ===== Build outputs =====
+target/
+build/
+build-device/
+dist/
+.next/
+out/
+DerivedData/
+*.class
+*.o
+*.a
+
+# ===== Archives / large binary artifacts =====
+*.zip
+*.tgz
+*.tar
+*.tar.gz
+*.gz
+*.7z
+*.rar
+*.archive
+
+# ===== Mobile app binaries =====
+*.apk
+*.aab
+*.ipa
+Payload/
+
+# ===== Xcode generated =====
+*.xcodeproj/
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# ===== Vendored maven caches =====
+local-repo/
+
+# ===== Dropped legacy/peripheral projects (preserved in local .zip backups) =====
+windows-master/
+offline-assessment-web-master/
+score-reader-master/
+Learnpedia-android-master/
+score_uprep_android-master/
+TestLp-master/
+sales-app-master/
+demo-slot-booking-master/
+
+# ===== Runtime data / scratch (not source) =====
+.tmp_boards/
+uprep-ui/public/uploads/
+
+# ===== Stray root binaries / docs =====
+/*.pdf
+/*.jpeg
+/*.jpg
+/*.png
+
+# ===== Logs / OS cruft =====
+*.log
+logs/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,98 @@
+%{
+	req = _req==null?false:_req;
+	include = _include==null?false:_include;
+	disable = _disable==null?false:_disable;
+        fieldType=_fieldType;
+        valueSet=_valueSet;
+        validationType=_validationType;
+        placeHolder=_placeHolder;
+        defaultValue=_defaultValue;
+	isAdditional = _isAdditional==null?false:_isAdditional;
+	name = _name;
+	extraAttrReq = "";
+	extraAttrInclude = "";
+	val = "checked";
+	if(req){
+		include = true;
+		extraAttrInclude = extraAttrReq = val;
+	}
+	else if(include){
+		extraAttrInclude = val;
+	}
+	if(disable){
+		extraAttrReq += " disabled";
+		extraAttrInclude += " disabled";
+	}
+}%
+<td>
+	<span class="big16 custSignupFieldName">${name}</span>
+	#{if isAdditional==true}
+		<span class="removeField"></span>
+	#{/if}
+</td>
+<td class="singupFieldType">
+    #{if fieldType.equals(null)}
+        &{'SIGNUP.FIELD_TYPE_TEXT'}
+    #{/if}
+    #{else}
+        #{if validationType == "LIST"}
+            &{'SIGNUP.FIELD_TYPE_DROP_DOWN'}
+        #{/if}
+	#{elseif validationType == "REGEX"}
+	    &{'SIGNUP.FIELD_TYPE_REGEXP'}
+	#{/elseif}
+        #{else}
+            &{'SIGNUP.FIELD_TYPE_'+fieldType}
+        #{/else}
+    #{/else}
+</td>
+<td class="singupFieldValues ${validationType}">
+    #{if validationType == "LIST"}
+    <a class="addDropDownFieldsForSignup">&{'SIGNUP.ADD_EDIT'}</a>
+    <select class="dropDownForSignup" data-options='${valueSet.raw()}'>
+        <option value="">&{'SIGNUP.SELECT_DEFAULT_VALUE'}</option>
+    #{if !valueSet.equals(null)&&valueSet.length()>0}
+        #{list items:0..valueSet.length()-1,as:'i'}
+	%{ 
+		value = valueSet.get(i);
+		selectedTxt = "";
+		if(value == defaultValue){
+			selectedTxt = "selected";
+		}
+	}%
+        <option value='${valueSet.get(i)}' ${selectedTxt} >${valueSet.get(i)}</option>
+        #{/list}
+    #{/if}
+    </select>
+    #{/if}
+    #{elseif validationType == "REGEX"}
+	%{
+		value = "";
+		if(!valueSet.equals(null) && valueSet.length()>0){
+			value = valueSet.get(0);
+		}
+	}%
+	<input class="inputRegexpForSignup" placeholder="Enter Regular Expression" value="${value}"/>
+    #{/elseif}
+    #{else}
+        -
+    #{/else}
+</td>
+<td class="centerText">
+	#{if placeHolder != null && validationType != "LIST"}
+	%{
+		placeHolder = placeHolder.equals(null)?"":placeHolder;	
+	}%
+		<input type="text" class="addPlaceHolderInSignup" value="${placeHolder}" maxlength="80"
+			placeholder="Maximum 80 characters"/>
+	#{/if}
+	#{else}
+		<span class="greyTextColor italics smally">&{'TXT_NOT_APPLICABLE'}</span>
+	#{/else}
+</td>
+<td class="centerText">
+	<input type="checkbox" class="addFieldInSignup" ${extraAttrInclude} />
+</td>
+<td class="centerText">
+	<input type="checkbox" class="reqFieldInSignup" ${extraAttrReq} />
+</td>

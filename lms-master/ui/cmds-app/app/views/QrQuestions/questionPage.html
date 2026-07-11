@@ -1,0 +1,16 @@
+%{
+ques=question.result.info;
+    canEdit=true;
+}%
+<div id="qrQuestionPage">
+    #{questions.quesItem ques:ques,target:"QUESTION_PAGE",canEdit:canEdit /}   
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){qrQuestions.init();loadMJEqns();}
+        lazyLoad([{fname:"qrQuestions.js",cb:fn}]);
+    }();       
+</script> 
+
+
+

@@ -1,0 +1,19 @@
+
+<div class="left relative eachMyContentsPlaylist myContentsEachListItems" data-playlist-id="${playlistData.playlistId}" title="${playlistData.title}">
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+		<input class="right absolute smallBlueButton myContentsButtonItem" type="button" value="Preview"/>
+		<span class="left absolute myContentsItemInfo"><b>Views - </b>${playlistData.views}</span>
+		<span class="right absolute myContentsShareIt big14">Share</span>
+	</div>
+	<img class="left relative playListIcon" alt="no preview" src="/public/images/playlist/plBack.png"/>
+	<div class="left relative myContentsPlaylistDetails">
+		<span class="left relative big12 boldy myContentsPltext blackTextColor">${playlistData.title}</span>
+	#{if playlistData.has('user') && playlistData.user!=null}
+		<span class="left relative big12 myContentsPltext blueTextColor" style="padding-top:0px;">by ${playlistData.user.firstName} ${playlistData.user.lastName}</span>
+	#{/if}
+		<span class="left relative myContentsRankingHolder" style="margin-left:10px;">
+			<span class="left relative myContentsRankingStars" style="width:${playlistData.avgRating*20}%"></span> 
+		</span>
+	</div></br>
+</div>

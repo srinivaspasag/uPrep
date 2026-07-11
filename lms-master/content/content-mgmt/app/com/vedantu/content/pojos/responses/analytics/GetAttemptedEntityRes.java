@@ -1,0 +1,30 @@
+package com.vedantu.content.pojos.responses.analytics;
+
+import com.vedantu.commons.enums.EntityType;
+import com.vedantu.commons.pojos.SrcEntity;
+
+public class GetAttemptedEntityRes extends SrcEntity {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    public long               endTime;
+
+    public GetAttemptedEntityRes(EntityType type, String id, long endTime) {
+
+        super(type, id);
+        this.endTime = endTime;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("{endTime:").append(endTime).append(", type:").append(type).append(", id:")
+                .append(id).append("}");
+        return builder.toString();
+    }
+
+}

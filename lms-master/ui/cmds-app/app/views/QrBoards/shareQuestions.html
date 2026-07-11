@@ -1,0 +1,367 @@
+<style type="text/css">
+    #questionSharing{
+        width: 1000px;
+        margin: auto;
+    }
+    .noBoardWarning{
+        text-align:center;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 40px;
+    }
+    .questionSharingTopBar{
+        float: right;
+        margin-top:20px;
+        height: 30px;
+    }
+    .selectPicker{
+        margin-left: 10px;
+        height: 100%;
+        display: inline-block;
+        background-color: #F2F2F2;
+        position: relative;
+        top:3px;
+        min-width: 200px;
+        padding: 5px;
+        line-height: normal;
+        font-size: 15px;
+        color:#3d3d3d;
+    }
+    .selectPicker option{
+        background: #fff;
+        font-size: 14px;
+        border: 1px solid #ccc;
+    }
+    .redButton{
+        box-sizing: border-box;
+        height: 100%;
+        display: inline-block;
+    }
+    .sharedOrgBoardTable{
+        width: 100%;
+        margin-top: 40px;
+    }
+    .sharedOrgBoardTable th{
+        padding: 10px 0px;
+    }
+    .orgAccordian{
+        margin-bottom: 20px;
+    }
+    .collapsable{
+        cursor: pointer;
+        background: #3d3d3d;
+        color: white;
+        border: 1px solid #afafaf;
+    }
+    .tableHead{
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .orgHeading{
+        font-weight: bold;
+        font-size: 15px;
+        width: 200px!important;
+        text-transform: capitalize;
+    }
+    .organizationBoardHeading{
+        border-top: 1px solid #cccccc;
+        background-color: #f7f7f7;
+    }
+    .openClose{
+        display: inline-block;
+        width: 30px;
+        text-align: center;
+        font-size: 20px;
+        line-height: 20px;
+        margin-right: 5px;
+        padding: 2px;
+        box-sizing: border-box;
+    }
+    .collapse{
+        display: none;
+        transition: 2s ease-in;
+    }
+    .noMapping td{
+        text-align: center!important;
+        padding: 30px;"
+    }
+    .boardMappingText{
+        text-transform: capitalize;
+        font-size: 14px;
+    }
+    .yetToMapText,.unsharedBoardMap{
+        background: #f1f1f1;
+    }
+    .yetToMapText{
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .toggle {
+      position: relative;
+      display: block;
+      width: 45px;
+      height: 24px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transform: translate3d(0, 0, 0);
+      margin: auto;
+  }
+  .toggle:before {
+      content: "";
+      position: relative;
+      top: 1px;
+      left: 1px;
+      width: 40px;
+      height: 22px;
+      display: block;
+      background: #c8ccd4;
+      border-radius: 12px;
+      transition: background 0.2s ease;
+  }
+  .toggle span {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 24px;
+      height: 24px;
+      display: block;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(154,153,153,0.75);
+      transition: all 0.2s ease;
+  }
+  .visibleCheck:checked + .toggle:before {
+      background: #8CC750;
+  }
+  .visibleCheck:checked + .toggle span {
+      transform: translateX(18px);
+  }
+  .unsharedBoards{
+    margin-left: 5px;
+  }
+  .addMoreMapping{
+    float:right;
+  }
+  .deleteMappingDisable{
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .progress{
+    padding: 10px;
+  }
+  .publishCount{
+    float: right;
+  }
+  .publishGrayBar{
+    width: 450px;
+  }
+  .greenText{
+    color: #8CC750;
+  }
+  .resync{
+    display: none;
+  }
+</style>
+#{if resp.errorCode!=''}
+    #{common.errorCodes resp:resp /}
+#{/if}
+#{else}
+    <div id='questionSharing'>
+        <input type="hidden" value="${play.Play.configuration.getProperty('learnpedia.id')}" id="learnpediaOrgId">
+        %{
+            data = resp.result;
+            orgDetails = data.orgDetails;
+        %}
+        <div class="questionSharingTopBar">
+            <div class="redButton addMapping boldy">
+                +  Add Mapping
+            </div>
+            <select class="orgSelect selectPicker">
+                <option selected="selected" disabled="true">Choose Organization</option>
+                #{list items:0..orgDetails.length()-1, as:'index'}
+                    #{if orgDetails.get(index).orgId != play.Play.configuration.getProperty("learnpedia.id")}
+                    <option data-org-id='${orgDetails.get(index).orgId}' data-org-name = '${orgDetails.get(index).orgName}'>
+                        ${orgDetails.get(index).orgName}
+                    </option>
+                    #{/if}
+                #{/list}
+            </select>
+        </div>
+        <div class="cleaner_with_divider"></div>
+        #{if data.sharedOrgDetails.length()>0}
+        <table class="CTFTable sharedOrgBoardTable">
+            <thead class="boldy">
+                <tr>
+                    <th>Organization Name</th>
+                    <th >No. of Boards Shared</th>
+                    <th>Invisible/Visible</th>
+                </tr>
+            </thead>
+            #{list items:0..data.sharedOrgDetails.length()-1, as:'sharedBoardIndex'}
+                %{
+                        sharedOrgDetail = data.sharedOrgDetails.get(sharedBoardIndex);
+                }%
+                <tbody class="${sharedOrgDetail.orgId}_board orgAccordian" data-shared-org-id="${sharedOrgDetail.orgId}">
+                    <tr class="collapsable orgList">
+                        <td class="orgHeading"><span class="openClose">  +  </span>${sharedOrgDetail.orgName}</td>
+                        <td class="tableHead">
+                            ${sharedOrgDetail.sharedBoards.length()}
+                        </td>
+                        <td>
+                            <input
+                                #{if sharedOrgDetail.publishStatus} checked="true" #{/if}
+                             type="checkbox" class="visibleCheck visibleCheckbox" data-shared-to-org-id = "${sharedOrgDetail.orgId}"  id="${sharedOrgDetail.orgId}" style="display:none"/>
+                            <label for="${sharedOrgDetail.orgId}" class="toggle">
+                                <span>
+
+                                </span>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr class="organizationBoardHeading collapse">
+                        <th>Board Names</th>
+                        <th>Share Status</th>
+                        <th>Delete</th>
+                    </tr>
+                    #{if sharedOrgDetail.sharedBoards.length() == 0}
+                        <tr class="collapse noMapping">
+                            <td colspan="4">
+                                <span class="redColor boldy">NO MAPPING FIND</span>
+                            </td>
+                        </tr>
+                    #{/if}
+                    #{else}
+                        #{list items:0..sharedOrgDetail.sharedBoards.length()-1, as:'sharedBoardsCourseIndex'}
+                             %{
+                                 currentSharedBoard = sharedOrgDetail.sharedBoards.get(sharedBoardsCourseIndex);
+                            }%
+                        <tr class="eachBoardRow collapse" data-shared-to-org-id = "${sharedOrgDetail.orgId}" data-parent-board-id = "${currentSharedBoard.parentBoardId}" data-shared-to-board-id = "${currentSharedBoard.sharedBoardId}">
+                            <td class="boardMappingText">Learnpedia's ${currentSharedBoard.parentBoardName} --->  ${sharedOrgDetail.orgName} ${currentSharedBoard.sharedBoardName} </td>
+                            <td>
+                                #{if currentSharedBoard.status}
+                                    <span class="greenText boldy">SHARED</span>
+                                #{/if}
+                                #{else}
+                                    <button class="bigGreenButton shareMapping" data-resync = "false">SHARE</button>
+                                #{/else}
+                            </td>
+                            <td>
+                                #{if !currentSharedBoard.status}
+                                    <div class="removeSharingBtn deleteMapping" ></div>
+                                #{/if}
+                                #{else}
+                                    <div class="removeSharingBtn deleteMappingDisable" title="cannot delete mapping, make Invisible instead"></div>
+                                #{/else}
+                            </td>
+                            <td  class="resync">
+                                <button class="bigRedButton shareMapping" data-resync = "true">Resync</button>
+                            </td>
+                        </tr>
+                        #{/list}
+                    #{/else}
+                    <tr class="collapse yetToMapText">
+                        <td colspan="3">Subject Yet to be mapped : </td>
+                    </tr>
+                    #{if sharedOrgDetail.unSharedBoards.length() == 0}
+                        <tr class="collapse noMapping unsharedBoardMap">
+                            <td colspan="4">
+                                <span class="redColor boldy">NO BOARDS LEFT TO MAP</span>
+                            </td>
+                        </tr>
+                    #{/if}
+                    #{else}
+                    <tr class="collapse unsharedBoardMap">
+                        <td colspan="2">
+                            #{list items:0..sharedOrgDetail.unSharedBoards.length()-1, as:'unSharedBoardsCourseIndex'}
+                                %{
+                                 currentSharedBoard = sharedOrgDetail.unSharedBoards.get(unSharedBoardsCourseIndex);
+                                }%
+                                    <span class="unsharedBoards">#{if unSharedBoardsCourseIndex>=1},#{/if}${currentSharedBoard}</span>
+                            #{/list}
+                        </td>
+                        <td>
+                            <div class="blueButton addMoreMapping" data-org-name=${sharedOrgDetail.orgName} data-org-id = ${sharedOrgDetail.orgId}>Add More Mappings</div>
+                        </td>
+                    </tr>
+                    #{/else}
+                </tbody>
+            #{/list}
+        </table>
+        <div class="shareMappingProgress nonner">
+            <h3 style="text-align: center;">Sharing Questions</h3>
+            <div id="SCQProgress" class="progress SCQProgress nonner">
+                <div class="grayHead">
+                    SCQ Percentage completed:
+                    <span class="publishCount"></span>
+                    <span class="publishPercent"></span>
+                </div>
+                <div class="publishStatusDiv">
+                    <div class="publishGrayBar"></div>
+                    <div class="publishGreenBar"></div>
+                </div>
+            </div>
+
+            <div id="MCQProgress" class="progress MCQProgress nonner">
+                <div class="grayHead">
+                    MCQ Percentage completed:
+                    <span class="publishCount"></span>
+                    <span class="publishPercent"></span>
+                </div>
+                <div class="publishStatusDiv">
+                    <div class="publishGrayBar"></div>
+                    <div class="publishGreenBar"></div>
+                </div>
+            </div>
+
+            <div id="NUMERICProgress" class="progress NUMERICProgress nonner">
+                <div class="grayHead">
+                    NUMERIC Percentage completed:
+                    <span class="publishCount"></span>
+                    <span class="publishPercent"></span>
+                </div>
+                <div class="publishStatusDiv">
+                    <div class="publishGrayBar"></div>
+                    <div class="publishGreenBar"></div>
+                </div>
+            </div>
+
+            <div id="TEXTProgress" class="progress TEXTProgress nonner">
+                <div class="grayHead">
+                    PARA Percentage completed:
+                    <span class="publishCount"></span>
+                    <span class="publishPercent"></span>
+                </div>
+                <div class="publishStatusDiv">
+                    <div class="publishGrayBar"></div>
+                    <div class="publishGreenBar"></div>
+                </div>
+            </div>
+
+            <div id="MATRIXProgress" class="progress MATRIXProgress nonner">
+                <div class="grayHead">
+                    MATRIX Percentage completed:
+                    <span class="publishCount"></span>
+                    <span class="publishPercent"></span>
+                </div>
+                <div class="publishStatusDiv">
+                    <div class="publishGrayBar"></div>
+                    <div class="publishGreenBar"></div>
+                </div>
+            </div>
+        </div>
+        #{/if}
+        #{else}
+            <div class="noBoardWarning redColor">
+                You have not shared questions with any organization yet
+            </div>
+        #{/else}
+    </div>
+#{/else}
+<script type="text/javascript">
+    new function() {
+        var fn = function() {
+            shareQuestionsBoard.init();
+        }
+        lazyLoad([{fname: "shareQuestions.js", cb: fn}]);
+    }();
+</script>

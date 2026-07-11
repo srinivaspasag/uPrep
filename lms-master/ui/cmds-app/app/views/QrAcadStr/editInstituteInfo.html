@@ -1,0 +1,806 @@
+#{if orgInfo.errorCode!=''}
+    #{common.errorCodes resp:orgInfo /}
+#{/if}
+#{else}
+%{
+    org=orgInfo.result;
+    endPoint=null;
+    socialMedia=null;
+    appInfos=null;
+    smtpUser=null;
+    smtpPassword=null;
+    instaMojoClientId = null;
+    instaMojoClientSecret = null;
+    instaMojoApiKey = null;
+    instaMojoAuthToken = null;
+    smtpHost = null;
+    communicationMail = null;
+    appVersion = null;
+    smsGateway = null;
+    if(org.has("endPoint") && !org.endPoint.equals(null)){
+	endPoint = org.endPoint;
+    }
+    if(org.has("socialMedia") && !org.socialMedia.equals(null)){
+	socialMedia = org.socialMedia;
+    }
+    if(org.has("appInfos") && !org.appInfos.equals(null) && org.appInfos.length()>0){
+	appInfos = org.appInfos;
+    }
+    if(org.has("smtpUser") && !org.smtpUser.equals(null) && org.smtpUser.length()>0){
+    smtpUser = org.smtpUser;
+    }
+    if(org.has("smtpPassword") && !org.smtpPassword.equals(null) && org.smtpPassword.length()>0){
+    smtpPassword = org.smtpPassword;
+    }
+    if(org.has("instaMojoClientId") && !org.instaMojoClientId.equals(null) && org.instaMojoClientId.length()>0){
+    instaMojoClientId = org.instaMojoClientId;
+    }
+    if(org.has("instaMojoClientSecret") && !org.instaMojoClientSecret.equals(null) && org.instaMojoClientSecret.length()>0){
+    instaMojoClientSecret = org.instaMojoClientSecret;
+    }
+    if(org.has("instaMojoApiKey") && !org.instaMojoApiKey.equals(null) && org.instaMojoApiKey.length()>0){
+    instaMojoApiKey = org.instaMojoApiKey;
+    }
+    if(org.has("instaMojoAuthToken") && !org.instaMojoAuthToken.equals(null) && org.instaMojoAuthToken.length()>0){
+    instaMojoAuthToken = org.instaMojoAuthToken;
+    }
+    if(org.has("smtpHost") && !org.smtpHost.equals(null) && org.smtpHost.length()>0){
+    smtpHost = org.smtpHost;
+    }
+    if(org.has("smsGateway") && !org.smsGateway.equals(null) && org.smsGateway.length()>0){
+        smsGateway = org.smsGateway;
+    }
+    if(org.has("communicationMail") && !org.communicationMail.equals(null) && org.communicationMail.length()>0){
+    communicationMail = org.communicationMail;
+    }
+    if(org.has("versionCode") && !org.versionCode.equals(null) && org.versionCode>0){
+    versionCode = org.versionCode;
+    }
+}%
+<div id="editInstituteInfoPage">
+<div class="big22 margBot20">Edit Organization Info</div>
+<table class="orgTable">
+        <tr>
+            <td>Name*</td>
+            <td>
+                <div class="inputDiv">
+                    <input type="text" class="formInput" value="${org.name}"
+                           data-req="true" name="name" />
+                </div>                                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Full Name*
+            </td>
+            <td>
+                <div class="inputDiv">
+                    <input type="text" class="formInput" data-req="true" value="${org.fullName}"
+                           name="fullName" />
+                </div>                  
+            </td>
+        </tr> 
+        <tr>
+            <td>
+                Picture
+            </td>
+            <td>
+                %{
+                    thumbnail='/public/images/instDefault.jpg';
+                    if(org.has('orgThumbnail')){
+                        thumbnail=org.orgThumbnail;
+                    }
+                }%            
+                  <div class="memberPicPreview img50Wrapper margTop10">
+                      <img src="${thumbnail}" class="img50"/>
+                  </div>
+                  <div class="memberPicDiv margLeft10 linBlk alignBottom relative" style="top:-35px;"></div>                
+            </td>
+        </tr>          
+        <tr>
+            <td>
+               Website* 
+            </td>
+            <td>
+                <div class="inputDiv">
+                    <input type="text" class="formInput websiteTextBox" data-req="true" name="website" 
+                           placeholder="eg. http://www.learnpedia.in"  value="${org.website}"/>
+                    *{<!--<input type="hidden" class="formInput" data-req="true" name="slug" value="${org.slug}"/>
+                    <input type="hidden" class="formInput" data-req="true" name="scope" value="PUBLIC"/>-->}*
+                </div>                                              
+            </td>
+        </tr> 
+        *{<!--<tr>
+            <td>
+                Email Domain*
+            </td>
+            <td>
+                <div class="inputDiv">
+                    <input type="text" class="formInput emailDomainTextBox" data-req="true" name="emailDomain"
+                           placeholder="eg. gmail.com"  value="${org.emailDomain}"/>
+                </div>                               
+            </td>
+        </tr>-->}*   
+        <tr>
+            <td>
+                Contact Number*
+            </td>
+            <td>
+                <div class="inputDiv">
+                    <input type="text" class="formInput contactNumberTextBox" data-req="true"
+                           name="contactNumber"  value="${org.contactNumber}"/>                    
+                </div>                                             
+                <div class="smallThinGray margHalfTop">Enter a contact number of the format +919898977777,9997778325 or 08728 268610</div>
+            </td>
+        </tr>      
+        <tr>
+            <td>
+                Type 
+            </td>
+            <td>    
+                %{
+                    type='COLLEGE';
+                    if(!org.isNull('type')&&!org.type!=''){
+                        type=org.type;
+                    }
+                }%                
+                <div class="vChoose formvChoose" data-value="${type}"
+                     data-param-name="type">
+                    <div class="vChooseHead">${type}</div>
+                    <div class="vChooseDownIcon"></div>
+                    <div class="vChooseDropDown">
+                        <div class="vChooseOpt" data-value="COLLEGE">College</div>
+                        <div class="vChooseOpt" data-value="SCHOOL">School</div>
+                        <div class="vChooseOpt" data-value="UNIVERSITY">University</div>
+                        <div class="vChooseOpt" data-value="INSTITUTE">Institute</div>
+                        <div class="vChooseOpt" data-value="COMPANY">Company</div>
+                        <div class="vChooseOpt" data-value="OTHER">Other</div>                        
+                    </div>
+                </div>                                 
+            </td>
+        </tr>              
+        <tr>
+            <td>Locations*</td>
+            <td class="locationsTd">
+                %{
+                    locations=org.locations;
+                }%
+                #{list items:0..locations.length()-1,as:'l'}
+                %{
+                    loc=locations.get(l);
+                }%
+                <div class="locationDiv">
+                    <div class="inputDiv">
+                        <input type="text" name="city" placeholder="City" value="${loc.city}">
+                    </div>
+                    <div class="inputDiv">
+                        <input type="text" name="state" placeholder="State" value="${loc.state}">
+                    </div>
+                    <div class="inputDiv">
+                        <input type="text" name="country" placeholder="Country" value="${loc.country}">                    
+                    </div>                    
+                    #{if l_index==1}
+                        <a class="addNewLocation small10">Add More</a>
+                    #{/if}                    
+                    #{else}
+                        <a class="removeLocation small10">Remove</a>
+                    #{/else}
+                </div>
+                #{/list}                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              Address*  
+            </td>
+            <td>    
+                <div class="textareaDiv">
+                    <textarea name="address" data-req="true"
+                              class="formTextarea">${org.address}</textarea>
+                </div>                
+            </td>
+        </tr>    
+        <tr>
+            <td>
+              Description  
+            </td>
+            <td>
+                <div class="textareaDiv">
+                    <textarea name="description" class="formTextarea">${org.description.equals(null)?"":org.description.trim()}</textarea>
+                </div>                
+            </td>
+        </tr>            
+        *{<!--<tr>
+            <td>
+                Scope 
+            </td>
+            <td>    
+                %{
+                    scope='PUBLIC';
+                    if(!org.isNull('scope')&&!org.scope!=''){
+                        scope=org.scope;
+                    }
+                }%
+                <div class="vChoose formvChoose" data-value="${scope}" data-param-name="scope">
+                    <div class="vChooseHead">${scope}</div>
+                    <div class="vChooseDownIcon"></div>
+                    <div class="vChooseDropDown">
+                        <div class="vChooseOpt" data-value="PUBLIC">Public</div>
+                        <div class="vChooseOpt" data-value="PRIVATE">Private</div>
+                    </div>
+                </div>                 
+            </td>
+        </tr>-->}*
+	<tr>
+	%{
+		vedantuAuthTrClass = "";
+		extAuthTrClass = "nonner";
+		if("EXT_AUTH_ORG".equals(org.authType)){
+			vedantuAuthTrClass = "nonner";
+			extAuthTrClass = "";
+		}
+	}%
+	    <td>
+		<span>Login Mechanism</span>
+	    </td>
+	    <td style="border:1px solid #DFD8D8;padding:10px;">
+		<div>
+			<input type="radio" class="formInput radioAuthType" 
+				name="authType" value="VEDANTU" checked style="width:15px;height:15px;"/>
+			<span class="big14 boldy">&{'VEDANTU_AUTH_TYPE'}</span>
+		</div>
+		<table cellspacing=0 cellpadding=0 class="margTop15 padLeft10" style="background-color:#F4F4F4;">
+			<tr class="vedantuAuthTr ${vedantuAuthTrClass}">
+			   <td colspan="2">
+				<div class="boldy big15 borderBottom" style="padding-bottom:4px;">Supported login types</div>
+				<div class="big16 margTop5">
+					<input type="checkbox" checked disabled/>
+					<span>Institute ID based login.</span>
+				</div>
+				<div class="big16 margTop5">
+					<input type="checkbox" checked disabled/>
+					<span>Email ID based login.</span>
+				</div>
+			   </td>
+			</tr>
+		</table>
+		<div class="margTop10">
+			<input type="radio" name="authType" value="EXT_AUTH_ORG" class="formInput radioAuthType"
+				#{if "EXT_AUTH_ORG".equals(org.authType)}checked#{/if} style="width:15px;height:15px;"/>
+			<span class="big14 boldy">&{'EXTERNAL_AUTH_TYPE'}</span>
+		</div>
+		<table cellspacing=0 cellpadding=0 class="margTop15 padLeft10">
+        		<tr class="extAuthTr ${extAuthTrClass}">
+            		   <td class="padRight10">
+              			<span>User Authentication Url *</span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="endPoint.authEndpoint"
+					#{if "EXT_AUTH_ORG".equals(org.authType)} data-req="true" #{/if}
+                          	 	placeholder="eg. https://www.example.com/user/authenticate"  
+					value="#{if endPoint!=null}${endPoint.authEndpoint}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+        		<tr class="extAuthTr ${extAuthTrClass}">
+            		   <td class="padRight10">
+              			<span>Register New User Url </span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="endPoint.registerEndpoint"
+                          	 	placeholder="eg. https://www.example.com/user/register"  
+					value="#{if endPoint!=null}${endPoint.registerEndpoint}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+        		<tr class="extAuthTr ${extAuthTrClass}">
+            		   <td class="padRight10">
+              			<span>Enroll User to class Url </span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="endPoint.enrollmentEndPoint"
+                          	 	placeholder="eg. https://www.example.com/user/enrollToClass"  
+					value="#{if endPoint!=null}${endPoint.enrollmentEndPoint}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+        		<tr class="extAuthTr ${extAuthTrClass}">
+            		   <td>
+              			<span>Test Data upload url</span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="endPoint.testAttemptDataUploadEndpoint" 
+                        		placeholder="eg. https://www.example.com/testdata/uploadTestAttemptData"  
+					value="#{if endPoint!=null}${endPoint.testAttemptDataUploadEndpoint}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+        		<tr class="extAuthTr ${extAuthTrClass}">
+            		   <td>
+              			<span>Allow Offline login on Mobile</span>
+            		   </td>
+            		   <td>
+                		<input type="checkbox" style="width:20px;" class="formInput" name="endPoint.allowOfflineLoginOnMobile" 
+                           		#{if endPoint!=null && endPoint.allowOfflineLoginOnMobile} checked #{/if}/>
+                		<div class="smallThinGray">Allow users to login to mobile/tablet app, even when internet connection is not available</div>
+            		   </td>
+        		</tr> 
+	    	</table>
+	     </td>
+	</tr>
+	<tr>   
+            <td>
+                <div class="margTop15">Social Pages</div>
+            </td>
+	    <td>
+		<table cellspacing=0 cellpadding=0 class="margTop15" style="border:1px solid #DFD8D8;padding:10px;">
+        		<tr class="">
+            		   <td class="padRight10">
+              			<span>Facebook link</span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="socialMedia.facebook"
+                          	 	placeholder="facebook Link"  
+					value="#{if socialMedia!=null}${socialMedia.facebook}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+        		<tr class="">
+            		   <td class="padRight10">
+              			<span>twitter link</span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="socialMedia.twitter"
+                          	 	placeholder="Twitter Link"  
+					value="#{if socialMedia!=null}${socialMedia.twitter}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+        		<tr class="">
+            		   <td class="padRight10">
+              			<span>Linkedin link</span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="socialMedia.linkedin"
+                          	 	placeholder="linkedin Link"  
+					value="#{if socialMedia!=null}${socialMedia.linkedin}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+        		<tr class="">
+            		   <td class="padRight10">
+              			<span>Blogger link</span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="socialMedia.blogger"
+                          	 	placeholder="blogger Link"  
+					value="#{if socialMedia!=null}${socialMedia.blogger}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+        		<tr class="">
+            		   <td class="padRight10">
+              			<span>youtube link</span>
+            		   </td>
+            		   <td>
+                		<div class="inputDiv">
+                    		   <input type="text" class="formInput websiteTextBox" name="socialMedia.youtube"
+                          	 	placeholder="YouTube Link"  
+					value="#{if socialMedia!=null}${socialMedia.youtube}#{/if}"/>
+				</div>
+            		   </td>
+        		</tr> 
+		</table>
+            </td>
+	</tr>
+	<tr>   
+            <td>
+                <div class="margTop15">&{'APP_STORE_LINKS'}</div>
+            </td>
+	    <td>
+		<table cellspacing=0 cellpadding=0 class="margTop15" style="border:1px solid #DFD8D8;padding:10px;">
+        		<tr class="">
+            		   <td class="padRight10">
+              			<span>&{'ANDROID_APP_LINK'}</span>
+            		   </td>
+            		   <td>
+                      <div class="inputDiv">
+                         <input type="hidden" class="formInput" name="appInfos[0].type"
+                         value="GOOGLE_PLAY"/>
+                         <input type="text" class="formInput websiteTextBox" name="appInfos[0].url"
+                         value="#{if appInfos!=null}${appInfos.get(0).url}#{/if}"/>
+                     </div>
+                 </td>
+        		</tr>
+                <tr>
+                    <td class="padRight10">
+                        <span>App Version* </span>
+                    </td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="versionCode" data-req="true"
+                         value="#{if versionCode!=null}${versionCode}#{/if}"/>
+                        </div>
+                    </td>
+                </tr> 
+		</table>
+	     </td>
+	</tr>
+        <tr>
+            <td>
+               Points of Sale 
+            </td>
+            <td>
+                %{
+                    if(org.has('pointsOfSale')&&!org.pointsOfSale.equals(null)){
+                        pointsOfSale=org.pointsOfSale;
+                    }
+                    pointsOfSaleStr='';
+                    if(pointsOfSale!=null&& pointsOfSale.length()>0){
+                        for(int k=0;k<pointsOfSale.length();k++){
+                            pointsOfSaleStr+=pointsOfSale.get(k);
+                            if(k!=pointsOfSale.length()-1){
+                                pointsOfSaleStr+=',';
+                            }
+                        }
+                    }
+                }%
+                <div class="inputDiv">
+                    <input type="text"name="pointsOfSale" class="formInput" value="${pointsOfSaleStr}">
+                </div>       
+                <div class="smallThinGray margHalfTop">
+                    Enter comma separated values like Flipkart,Snapdeal,Amazon
+                </div>                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Communication Mail
+            </td>
+            <td>
+               <div class="inputDiv">
+                <input type="text" class="formInput emailTextBox" value="#{if communicationMail!=null}${communicationMail}#{/if}"
+                name="communicationMail" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                SMTP Host
+            </td>
+            <td>
+               <div class="inputDiv">
+                <input type="text" class="formInput" value="#{if smtpHost!=null}${smtpHost}#{/if}"
+                name="smtpHost" />
+                </div>
+                <div class="smallThinGray margHalfTop">
+                    We currently support GMAIL and SendGrid.
+                </div>
+            </td>
+        </tr>
+        <tr>
+        <td>
+            SMTP User
+        </td>
+        <td>
+             <div class="inputDiv">
+                <input type="text" class="formInput" value="#{if smtpUser!=null}${smtpUser}#{/if}"
+                 name="smtpUser" />
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            SMTP Password
+        </td>
+        <td>
+             <div class="inputDiv">
+                <input id="smtpPassword" type="password" class="formInput" value="#{if smtpPassword!=null}${smtpPassword}#{/if}"
+                 name="smtpPassword" />
+            </div>
+            <div class="smallThinGray margHalfTop">
+                <input id="showSmtpPassword" type="checkbox">
+                <label for="showSmtpPassword">Show Password</label>
+            </div>
+        </td>
+    </tr>
+    <tr >
+        <td>
+            InstaMojo ClientId
+        </td>
+        <td>
+             <div class="inputDiv">
+                <input type="text" class="formInput" value="#{if instaMojoClientId!=null}${instaMojoClientId}#{/if}"
+                 name="instaMojoClientId" />
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            InstaMojo Client Secret
+        </td>
+        <td>
+             <div class="inputDiv">
+                <input type="text" class="formInput" value="#{if instaMojoClientSecret!=null}${instaMojoClientSecret}#{/if}"
+                 name="instaMojoClientSecret" />
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            InstaMojo Api Key
+        </td>
+        <td>
+             <div class="inputDiv">
+                <input type="text" class="formInput" value="#{if instaMojoApiKey!=null}${instaMojoApiKey}#{/if}"
+                 name="instaMojoApiKey" />
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            InstaMojo Auth Token
+        </td>
+        <td>
+             <div class="inputDiv">
+                <input type="text" class="formInput" value="#{if instaMojoAuthToken!=null}${instaMojoAuthToken}#{/if}"
+                 name="instaMojoAuthToken" />
+            </div>
+        </td>
+    </tr>
+	<tr>   
+            <td>
+                Encrypt Content
+            </td>
+            <td>
+                <input type="checkbox" style="width:20px;" required name="isEnc" class="formInput" #{if org.encLevel != "NA"} checked #{/if}/>
+                <div class="smallThinGray">Encrypt and store your institute content with us.</div>
+            </td>
+	</tr>
+    <tr>
+            <td>
+                Enable OTP
+            </td>
+            <td>
+                <input type="checkbox" style="width:20px;" required name="enableOTP" class="enableOTPInput" #{if org.enableOTP} checked #{/if}/>
+                <div class="smallThinGray">This option will enable OTP verification for Contact Number.</div>
+            </td>
+    </tr>
+    <tr class="#{if !org.enableOTP}disableOption#{/if} sms-gateway-section ">
+        <td>
+            <div class="margTop15">Sms Gateway</div>
+        </td>
+        <td>
+            <table cellspacing=0 cellpadding=0 class="margTop15" style="border:1px solid #DFD8D8;padding:10px;">
+                <thead>
+                    <tr>
+                        <td colspan="2">
+                            <select class="smsgateway-select">
+                                <option  selected disabled>Choose Host</option>
+                                <option name="SMSGRID" class="sms-gateway-option" value="SMSGRID">SMSGRID</option>
+                                <option name= "SMSCOUNTRY" class="sms-gateway-option" value="SMSCOUNTRY">SMSCOUNTRY</option>
+                            </select>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody class="sms-country-options nonner">
+                   <tr>
+                       <td class="padRight10">
+                            <span>URL</span>
+                       </td>
+                       <td>
+                            <div class="inputDiv">
+                                   <input type="text" class="smsGatewayFormInput websiteTextBox" name="url"
+                                    placeholder="URL" value=""/>
+                            </div>
+                       </td>
+                    </tr>
+                    <tr>
+                       <td class="padRight10">
+                            <span>User</span>
+                       </td>
+                       <td>
+                            <div class="inputDiv">
+                                   <input type="text" class="smsGatewayFormInput" name="User"
+                                    placeholder="User" value=""/>
+                            </div>
+                       </td>
+                    </tr>
+                    <tr>
+                       <td class="padRight10">
+                            <span>Password</span>
+                       </td>
+                       <td>
+                            <div class="inputDiv">
+                                   <input type="password" class="smsGatewayFormInput" name="passwd"
+                                    placeholder="Password" value=""/>
+                            </div>
+                       </td>
+                    </tr>
+                    <tr>
+                       <td class="padRight10">
+                            <span>SID</span>
+                       </td>
+                       <td>
+                            <div class="inputDiv">
+                                   <input type="text" class="smsGatewayFormInput" name="sid"
+                                    placeholder="SID" value=""/>
+                            </div>
+                       </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 10px;box-shadow:0px 0px 1px 1px #e7e7e7;">
+                            <div style="font-size: 15px;line-height: 1.6;user-select: all;cursor: pointer;" title="Please make sure this template is available in SMSCOUNTRY">
+                                Hello! Welcome to ${org.fullName} Family. Your verification code is ** We are delighted to have you as one of our valuable customers. Happy to help.
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody class="sms-grid-options nonner">
+                    <tr>
+                        <td class="padRight10">
+                            <span>URL</span>
+                        </td>
+                        <td>
+                            <div class="inputDiv">
+                               <input type="text" class="smsGatewayFormInput websiteTextBox" name="url"
+                                placeholder="URL" value=""/>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="padRight10">
+                            <span>User</span>
+                        </td>
+                        <td>
+                            <div class="inputDiv">
+                               <input type="text" class="smsGatewayFormInput" name="user"
+                                placeholder="User" value=""/>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="padRight10">
+                            <span>API Key</span>
+                        </td>
+                        <td>
+                            <div class="inputDiv">
+                               <input type="text" class="smsGatewayFormInput" name="apikey"
+                                placeholder="API Key" value=""/>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="padRight10">
+                            <span>Sender_ID</span>
+                        </td>
+                        <td>
+                            <div class="inputDiv">
+                               <input type="text" class="smsGatewayFormInput" name="sender_id"
+                                placeholder="Sender_ID" value=""/>
+                        </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tr>
+                    <td colspan="2" style="padding: 10px;">
+                        <span class="sms-gateway-message"></span>
+                    </td>
+                </tr>
+        </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Doubts Forum Mode
+        </td>
+        <td>
+            <input type="radio" name="DoubtsForumMode" id="PUBLIC" value="public" checked> Public
+            <input type="radio" name="DoubtsForumMode" id="PRIVATE" value="private" #{if "PRIVATE".equals(org.doubtsForumMode)}checked#{/if}> Private
+            <input type="radio" name="DoubtsForumMode" id="HIDDEN" value="hidden" #{if "HIDDEN".equals(
+            org.doubtsForumMode)}checked#{/if}> Hidden
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Disable Signup
+        </td>
+        <td>
+            <input type="radio" name="disableSignup" class="disableSignup" value="true" #{if org.disableSignup}checked#{/if}/> Yes
+            <input type="radio" name="disableSignup" class="disableSignup" value="false" #{if !org.disableSignup}checked#{/if}/> No
+        </td>
+    </tr>
+    <tr class="disableSignupMessageHolder #{if org.disableSignup}#{/if}#{else}nonner#{/else}">
+        <td>
+            Disable Signup Message
+        </td>
+        <td>
+
+            <div class="inputDiv">
+                <input type="text" class="formInput" id="disableSignupMessage"
+                 name="disableSignupMessage" value="#{if !org.disableSignupMessage.equals(null)}${org.disableSignupMessage}#{/if}" />
+            </div>
+        </td>
+    </tr>
+        *{<!--<tr>
+            <td>
+                Admin Details*
+            </td>
+            <td class="adminDetailsTd">
+                %{
+                    admin=org.representative;
+                }%                      
+                <div class="inputDiv">
+                    <input type="text" placeholder="First Name"  value="${admin.firstName}" class="formInput"
+                           data-req="true" name="representative.firstName" />
+                </div>
+                <div class="inputDiv margTop">
+                    <input type="text" placeholder="Last Name"   value="${admin.lastName}" class="formInput"
+                           name="representative.lastName" />
+                </div>
+                <div class="inputDiv margTop">
+                    <input type="email" placeholder="Email Id"   value="${admin.email}" class="formInput"
+                           data-req="true"  name="representative.email" />
+                </div>                                
+            </td>
+        </tr>-->}*
+    </table>
+    <div class="rightText margTop20">
+        <div class="floatLeft redTextColor boldy nonner editInstituteErrDiv"></div>
+        <div class="blueButton submitEditInstituteInfo">Save</div>
+        <div class="grayButton cancelEditInstituteInfo">Cancel</div>
+    </div>
+</div>
+#{if smsGateway != null}
+<script type="text/javascript">
+    function fillForm(url,postData,parentDiv){
+        var fields = postData.split("&amp;");
+        $("."+parentDiv).find("input[name=url]").val(url);
+        for(i=0;i<fields.length;i++){
+            var fieldName = fields[i].split("=")[0];
+            var fieldValue = fields[i].split("=")[1];
+            $("."+parentDiv).find("input[name="+fieldName+"]").val(fieldValue);
+        }
+    }
+    $(document).ready(function(){
+        var host = "${smsGateway.host}";
+        var postData = "${smsGateway.postData}";
+        var url = "${smsGateway.url}";
+        var parentDiv = "";
+        if(host === "SMSCOUNTRY"){
+            parentDiv = "sms-country-options";
+        }
+        else{
+            parentDiv = "sms-grid-options";
+        }
+        $(".smsgateway-select option[name="+host+"]").attr("selected","selected");
+        fillForm(url,postData,parentDiv);
+        $("."+parentDiv).removeClass("nonner");
+    })
+</script>
+#{/if}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".info-instamojo").on("click",function(){
+            // Add instamojo image for help
+            // showVPopup();
+        });
+         $('#showSmtpPassword').on("change",function(){
+            var smtpPasswordInput = $("#smtpPassword")[0];
+            if (smtpPasswordInput.type === "password") {
+                smtpPasswordInput.type = "text";
+            } else {
+                smtpPasswordInput.type = "password";
+            }
+         });
+    });
+</script>
+#{/else}

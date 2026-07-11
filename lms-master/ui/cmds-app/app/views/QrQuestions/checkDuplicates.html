@@ -1,0 +1,101 @@
+%{
+    firstTimeLoad = "false";
+    if(params.firstTimeLoad != null && params.firstTimeLoad!= ""){
+        firstTimeLoad = params.firstTimeLoad;
+    }
+    target = "CHECK_DUPLICATES";
+    if(params.target!= null && params.target!= ""){
+        target = params.target
+    }
+    totalHits = 0;
+    if(questions.has('result') && questions.result!= null){
+        result = questions.result;
+        if(result.has('totalHits') && result.totalHits != null){
+            totalHits = result.totalHits;
+        }
+    }
+}%
+#{if firstTimeLoad == "true"}
+<style type="text/css">
+    .boldy{
+        font-weight: bold;
+    }
+    #checkDuplicates{
+        height: 500px;
+    }
+    #checkDuplicates .vChooseContentTypes{
+        display: none;
+    }
+    #checkDuplicates .moveResources{
+        display: none;
+    }
+    #checkDuplicates .addToProgramLibrary{
+        display: none;
+    }
+    #checkDuplicates .cmdsTableCheckedOpts{
+        /*left: 20px;
+        position: relative;*/
+    }
+    #checkDuplicates .ques{
+        margin-top: 40px;
+    }
+    .highlight{
+        background-color: #FFFF00;
+        font-weight: 600;
+    }
+    #tableSection .questionsLinkTr{
+        display: none;
+    }
+    #checkDuplicates .cmdsTableSearchDiv{
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+    #checkDuplicates .inputDiv{
+        width: 400px;
+    }
+    #checkDuplicates .cmdsTableCheckedOpts{
+        position: absolute;
+        top:50px;
+        left: 20px;
+    }
+</style>
+#{/if}
+<div id="checkDuplicates" class="mcWidget" data-org-id="${params.orgId}"
+data-query = "${params.query}" data-start="${params.start}"
+data-size="${params.size}" data-ques-type="${params.quesType}" data-target="${params.target}" data-params="{}">
+    <input type="hidden" class="totalHitsHider" value="${totalHits}"/>
+    <div class="cmdsTableCheckedOpts" data-opts-type="RESOURCES"></div>
+    #{if firstTimeLoad == "true"}
+    <div class="checkDupsTopBar" style="margin-top: 40px;">
+        <div class="cmdsTableSortDiv">
+            #{common.mcvChooseContentTypes target:"CHECK_DUPLICATES"/}
+            #{include 'Widgets/mcvChooseQuesType.html' /}
+            #{include 'Widgets/mcvChooseLevel.html' /}
+            #{include 'Widgets/mcvChooseAlpha.html' /}
+            #{common.lmArrowsDiv /}
+        </div>
+        <div class="cmdsTableSearchDiv">
+            <div class="inputDiv cmdsTableSearchBox hasSearchImg">
+                <input type="text" class="queryInput" data-param-name="query" value="${params.query}"/>
+                <span class="inputSearchImg queryImage" data-param-name="query"></span>                
+            </div>
+        </div>
+    </div>
+    #{/if}
+    <div id="tableSection" class="LMHandlerDiv">
+        <div style="text-align: center;font-size: 16px;" class="boldy matchedResults">
+                Matched Results : ${totalHits}
+        </div>
+        #{include 'QrQuestions/qrQuesns.html' /}
+    </div>
+</div>
+</div>
+#{if firstTimeLoad == "true"}
+<script type="text/javascript" src="/public/javascripts/highlight.js"></script>
+<script type="text/javascript" src="/public/javascripts/checkDuplicates.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        duplicates.init();
+    });
+</script>
+#{/if}

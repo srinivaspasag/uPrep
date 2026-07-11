@@ -1,0 +1,42 @@
+        #{if cdps.length()>0}  
+        #{list items:0..cdps.length()-1, as:'so'}          
+            %{
+                cdp=cdps.get(so);
+                user=cdp.creator;
+                cdpId=cdp._id;
+            }%           
+          <tr class="cmdsTr" data-cdp-id="${cdpId}" data-entity-id="${cdpId}" 
+              data-entity-type="CDP"> 
+              <td class="CTCBoxTd">
+                  <div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                      <div class="gCBoxTicker"></div>                      
+                  </div>                  
+              </td>
+              <td class="CTInfoTd"></td>
+              <td title="${cdp.name}" class="CTTitleTd">
+                  #{aTagMapper entityName:cdp.name,entityId:cdpId,entityType:'CDP'/}
+              </td>
+              <td class="CTAddedByTd">
+                  #{widgets.user20 user:user /}
+              </td>
+              <td class="CTDateAddedTd">
+                  ${new Date(cdp.timeCreated).format('dd/MM/yyyy')}
+              </td>
+              <td class="CTStatusTd">
+                  #{if cdp.has('isPublished')&&cdp.isPublished}
+                  <span class="cmdsPrdtStatus" data-status="PUBLISHED">PUBLISHED</span>
+                  #{/if}
+                  #{else}
+                    <span class="cmdsPrdtStatus" data-status="INCOMPLETE">INCOMPLETE</span>
+                  #{/else}                  
+              </td>                 
+          </tr>           
+          #{/list}
+          #{/if}
+          #{else}
+          <tr>
+            <td colspan="5">
+                <div class="userMessage">No Results found.</div>
+            </td>
+          <tr>
+          #{/else}          

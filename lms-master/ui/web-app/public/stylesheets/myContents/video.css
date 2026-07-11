@@ -1,0 +1,138 @@
+#videoPage{
+	color:#333;
+}
+
+.videoSec{
+	float:left;
+	width:75%;
+	background-color:#ffffff;
+	min-height:800px;
+	border:1px solid #ccc;
+	border-top:0px;
+}
+.videoSecHold{
+	padding:25px 50px;
+}
+#videoPage .video-js{
+    width: 100%;
+    height: 100%;
+}
+#videoPage .vjs-big-play-button{
+    left: 50%!important;
+    top:50%!important;
+    transform: translate(-50%,-50%);
+}
+.videoSugg{
+	float:right;
+	width:24.5%;
+	min-height:400px;
+}
+.vidInfo{
+	padding:5px 0;
+}
+.videoDescription,
+.videoTitle{
+	max-width:520px;
+	display:inline-block;
+}
+.videoDescription{
+	max-width:580px;
+	text-align: justify;
+}
+.videoPlayerHolder{
+	background-color:#1b1b1b;
+	height:400px;
+	margin-top:10px;
+}
+.videoComments{
+	padding:10px 0;
+}
+.vidSuggHolder{
+	padding:30px 15px;
+}
+.eachVidSugg{
+	padding-top:30px;
+}
+.vidThumbHold{
+	padding-bottom:10px;
+	height:120px;
+	max-width:250px;
+	cursor:pointer;
+}
+.vidThumbImg{
+	background-color:#000;
+	height:100%;
+	width:100%;
+	z-index:100;
+	position:relative;
+}
+.vidThumbImg img{
+	height:100%;
+	width:100%;
+}
+.vidThumbInfo{
+	position:relative;
+	z-index:200;
+	height:100%;
+	width:100%;
+	text-align:center;
+	top:-100%;
+}
+.vidThumbDuration{
+	font-size:15px;
+	color:#fff;
+	position:relative;
+	top:65px;
+}
+.vidPlayIcon{
+	position:relative;
+	top:45px;
+}
+.vidPlayIcon span{
+	padding:20px 25px;
+	background-image:url('/public/images/my-content/video.png');
+	background-repeat:no-repeat;
+}
+.qrCodeScan{
+	right: 28%;
+	margin: 20px;
+}
+#videoPage .switchTabHolder{
+	top: 10px;
+	position: relative;
+	float: right;
+}
+#videoPage .switchTab{
+	padding: 4px 10px 1px;
+}
+#videoPage .activeSwitch{
+	background: #62b23b;
+}
+.warningContainer{
+	height: 100%;
+}
+.warningDiv{
+	position: absolute;
+	line-height: 1.5;
+	margin: 20px 40px;
+	font-weight: 600;
+	height: 100%;
+}
+.warningDiv .warningHead{
+	font-size: 32px;
+}
+.warningDiv .warningSubHead{
+	font-size: 20px;
+	position: absolute;
+	right: 0px;
+	bottom: 30px;
+}
+.warningDiv .title{
+	font-size: 45px;
+	text-transform: uppercase;
+}
+.warningSubHead a{
+	color:#fff!important;
+	text-decoration:underline;
+	font-size:12px;
+}

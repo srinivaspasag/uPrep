@@ -1,0 +1,99 @@
+#{if documents!=null && documents.errorCode.isEmpty() && documents.result.list.length()>0}
+
+<input type="hidden" class="resultDataCount" value="${documents.result.totalHits}" data-real-count="${documents.result.totalHits}"/>
+#{list items:0..documents.result.list.length()-1, as:'tIndex'}
+%{ 
+	documentsData = documents.result.list.get(tIndex);
+	caller = _caller == null ? "" : _caller;
+	docUrl = webUtils.TemplateHelper._getDocUrl(documentsData,params.orgId);
+	recordState = documentsData.has("recordState") && !documentsData.recordState.equals(null) ? documentsData.recordState : "ACTIVE";
+}%
+<a class="relative ${docUrl.className} doCStream" data-id="${docUrl.id}" href="${docUrl.url}" data-cs-name="OPEN">
+   <div class="relative myContentsEachListItems myContentsEachItem" 
+	data-doc-id="${documentsData.id}" data-entity-type="document" data-entity-id="${documentsData.id}">
+	<div class="left relative myContentsListLeft">
+		<span class="resourceIconDOCUMENT"></span>
+		<span class="relative big12 boldy blackTextColor "
+			title="${documentsData.name}">${documentsData.name}</span>
+		<!-- <div class="relative singleLineText">
+		#{if documentsData.has('user') && documentsData.user!=null}
+                      %{
+                        user=documentsData.user;
+                        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                      }%
+			<span class="blackTextColor">by</span>
+			<a class="relative big12 blueTextColor ${getUserClassAndUrl.className}"
+                   		style="padding-top:0px;" href="${getUserClassAndUrl.url}" data-user-id="${getUserClassAndUrl.id}">
+                    		 ${user.firstName} ${user.lastName}
+			</a>
+		#{/if}
+		</div> -->
+	</div>
+	<div class="left relative myContentsListMiddle greyTextColor">
+	#{if documentsData.avgRating>0}
+            <div class="left relative myContentsRankingHolder">
+		<div class="relative boldy leftText">Rating</div>
+		<div class="relative myContentsRankingStars" style="width:${documentsData.avgRating*20}%"></div>
+	    </div>
+	    <div class="left verticalItemDivider"></div>
+	#{/if}
+	    <div class="left myContentsItemInfo">
+		<div class="boldy nonner">Views</div>
+		<div class="nonner">${documentsData.views}</div>
+		<div class="leftText"><b>Duration</b> - No Limit</div>
+	    </div>
+	</div>
+	<div class="right relative myContentsListRight">
+		<span class="left relative myContentsDocumentsText">
+		%{
+			boards = documentsData.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   #{if boards.length()<=2}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<span style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</span>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+			<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+	</span>
+		<a class="right relative greenButton myContentsButtonItem ${docUrl.className} doCStream" data-id="${docUrl.id}" href="${docUrl.url}" data-cs-name="OPEN">Open</a>
+		<!-- *{#{if documentsData.followType == "OWNER"}
+			<a class="right relative smallBlueButton myContentsButtonItem editMyDoc" data-doc-id="${documentsData.id}" data-title="${documentsData.title}">Edit</a>
+		#{/if}}*
+		<span class="right relative myContentsButtonItem">
+			#{widgets.followUnfollowEntity followType:documentsData.followType,entityType:'DOCUMENT',entityId:documentsData.id/}
+		</span>
+		<span class="right relative myContentsShareIt big14">Share</span> -->
+	</div>
+   </div>
+</a>
+#{/list}
+#{/if}
+*{#{elseif documents==null}
+	#{include '/tags/comingSoon/document.html'/}
+#{/elseif}}*
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_DOCS'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/3library-docs-zero.jpg" /}
+#{/else}
+
+#{if params.orgId == "602ea5ee2736d6c753bd7772" || params.orgId == "58c244d9e4b0d17e65cab555" || params.orgId == "5551bf80e4b053fbc7baf90d" || params.orgId == "55f6b821e4b06863a03b2fcc" }
+#{if "STUDENT".equals(params.userRole)}
+		<div class="instNavCMDSLink right toolTipTitle" data-title="Click here to Download<br>Course Completion Certificate">
+			<a class="" href="/Institute/getCertificate?callingUserId=${params.myUserId}&userId=${params.myUserId}&sectionId=${params.sectionId}&programId=${params.programId}&orgId=${params.orgId}&callingApp=web-app&callingAppId=web-app&centreId=${params.centerId}" target="_blank">
+			 <span class="bigGreenButton blackTextColor">
+				 <span>Download Certificate</span>
+			 </span>
+			</a>
+		 </div>
+#{/if}
+#{/if}

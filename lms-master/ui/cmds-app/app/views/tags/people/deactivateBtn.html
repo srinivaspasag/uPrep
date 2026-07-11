@@ -1,0 +1,21 @@
+%{
+	user = _user;
+	btnCls = "greyButton";
+	btnText = "Deactivate / Activate Member";
+	if(user.has("userState")){
+		if("ACTIVE".equals(user.userState)){
+			btnCls = "redButton";
+			btnText = play.i18n.Messages.get("DEACTIVATE_MEMBER");
+		}else{
+			btnCls = "smallGreenButton";
+			btnText = play.i18n.Messages.get("ACTIVATE_MEMBER");
+		}
+	}
+}%
+    <div class="${btnCls} margLeft20 deactivateOrgMember" data-user-id="${user.userId}"
+   	data-user-state="${user.userState}" 
+   	data-active-from="${user.activeFrom}" 
+   	data-active-till="${user.activeTill}" 
+	data-user-profile="${user.profile}">
+    		<span>${btnText}</span>
+    </div>

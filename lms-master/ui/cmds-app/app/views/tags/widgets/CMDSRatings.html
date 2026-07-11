@@ -1,0 +1,268 @@
+%{
+	entityRatingCMDSInfo = _entityRatingCMDSInfo;
+	entityType = _entityType;
+	entityId = _entityId;
+	entityName = _entityName;
+}%
+<style type="text/css">
+body::-webkit-scrollbar {
+    width: 0px;
+}
+.ratingSection{
+	background: #f1f1f1;
+	margin-top: 10px;
+	display: inline-block;
+	width: 100%;
+	padding-top: 10px;
+}
+.CMDSTEST.ratingSection,.CMDSDOCUMENT.ratingSection,.CMDSASSIGNMENT.ratingSection{
+	width: 600px;
+}
+.CMDSTEST.ratingSection,.CMDSASSIGNMENT.ratingSection{
+    position: fixed;
+    top: 150px;
+    /*cursor: pointer;*/
+    width: 30px;
+    height: 140px;
+	right: 0px;
+	/*transition: width 200ms;*/
+	background: #339900;
+}
+.openRating.ratingSection{
+	background: #f1f1f1!important;
+	transition: width 200ms;
+}
+.CMDSTEST.ratingCap:hover,.CMDSASSIGNMENT.ratingCap:hover{
+	box-shadow: 8px 10px 20px 0 rgba(46,61,73,.15);
+	width: 40px;
+}
+.heading{
+	position: relative;
+	top: 10px;
+}
+.margLeft10{
+	margin-left: 10px;
+}
+.ratingsDiv{
+	text-align: left;
+	display: none;
+}
+.CMDSVIDEO.ratingSection .ratingsDiv, .CMDSDOCUMENT.ratingSection .ratingsDiv{
+	display: block;
+}
+.ratingIcons{
+	display: inline-block;
+	margin-bottom: 10px;
+}
+.badRating,.averageRating,.goodRating{
+	display: inline-block;
+	margin-left: 20px;
+}
+.emoji{
+	opacity: 0.6;
+}
+.emoji:hover{
+	opacity: 1;
+	transform: scale(1.1);
+}
+.badRating span,.averageRating span,.goodRating span{
+	position: relative;
+	bottom: 10px;
+	font-size: 14px;
+	font-weight: 600;
+}
+.totalReviews{
+	float: right;
+	position: relative;
+	right: 10px;
+	cursor: pointer;
+}
+.disabled{
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.openRating{
+	width: 150px!important;
+	height: 250px!important;
+}
+.openRating .ratingsDiv{
+	display: block;
+}
+.CMDSTEST.ratingSection .heading,.CMDSASSIGNMENT.ratingSection .heading{
+	margin-bottom: 20px;
+}
+.openRating .badRating,.openRating .averageRating,.openRating .goodRating{
+	display: block;
+}
+.CMDSTEST.ratingSection .ratingIcons div,.CMDSASSIGNMENT.ratingSection .ratingIcons div{
+	margin-bottom: 10px;
+}
+.CMDSTEST.ratingSection .ratingIcons,.CMDSASSIGNMENT.ratingSection .ratingIcons{
+	margin-top: 10px;
+}
+.CMDSTEST.ratingSection .emoji,.CMDSASSIGNMENT.ratingSection .emoji{
+	margin-right: 5px;
+}
+.openRating .ratingCap{
+	background: #339900;
+	color: #fff;
+    position: fixed;
+    right: 150px;
+    line-height: 1.4;
+    padding: 7px;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.openRating .reviewHolder{
+	/*cursor: pointer;*/
+}
+.openRating .reviewHolder .reviewInfo{
+	display: inline-block;
+	left: 20px;
+    position: relative;
+    bottom: 20px;
+    font-weight: 600;
+    top: -10px;
+    line-height: 0.5;
+}
+.openRating .reviewHolder .reviewInfo div{
+	text-align: center;
+}
+.openRating .reviewHolder .reviewInfo span{
+	bottom: 5px;
+	position: relative;
+}
+.openRating .totalReviews{
+	float: none;
+    position: relative;
+    right: -17px;
+}
+.ratingCap{
+	color: #fff;
+	position: fixed;
+	line-height: 1.4;
+    padding: 7px;
+    border-radius: 2px;
+    font-weight: bold;
+    right: 0px;
+    cursor: pointer;
+    text-align: center;
+}
+</style>
+
+<div class="${entityType} ratingSection" data-org-id="${params.orgId}" data-entity-name="${entityName}">
+	#{if entityRatingCMDSInfo != null}
+		#{if entityRatingCMDSInfo.has('errorCode') && !entityRatingCMDSInfo.errorCode.equals("") && !entityRatingCMDSInfo.errorCode.equals(null)}
+			<div class="margBot5 grayHead big15 left margLeft10">Ratings</div>
+			<div class="redColor" style="font-size: 12px;text-align: center;">
+				<b>THIS ${entityType} IS NOT PUBLISHED YET</b>
+			</div>
+		#{/if}
+		#{else}
+		#{if entityType == 'CMDSASSIGNMENT' || entityType == 'CMDSTEST'}
+			<div class="ratingCap">
+				<div>R</div>
+				<div>A</div>
+				<div>T</div>
+				<div>I</div>
+				<div>N</div>
+				<div>G</div>
+				<div>S</div>
+			</div>
+		#{/if}
+		#{else}
+			<div class="margBot5 grayHead big15 margLeft10 heading left">Ratings</div>
+		#{/else}
+	    <div class="ratingsDiv" data-entity-ratings= "${ratings}">
+	        <div class="ratingIcons">
+	            <div class="badRating">
+	                <img src="/public/images/ratings/badRating.png" class="emoji" title="BAD count ${entityRatingCMDSInfo.result.badRatingCount}">
+	                <span>${entityRatingCMDSInfo.result.badRatingCount}</span>
+	            </div>
+	            <div class="averageRating">
+	                <img src="/public/images/ratings/avgRating.png" class="emoji" title="AVERAGE count ${entityRatingCMDSInfo.result.avgRatingCount}">
+	                <span>${entityRatingCMDSInfo.result.avgRatingCount}</span>
+	            </div>
+	            <div class="goodRating">
+	                <img src="/public/images/ratings/goodRating.png" class="emoji" title="GOOD count ${entityRatingCMDSInfo.result.goodRatingCount}">
+	                <span>${entityRatingCMDSInfo.result.goodRatingCount}</span>
+	            </div>
+				#{if entityType == "CMDSASSIGNMENT" || entityType == "CMDSTEST"}
+				<div class="reviewHolder">
+					<img src="/public/images/ratings/review.png" class="totalReviews reviewIcon #{if entityRatingCMDSInfo.result.reviewCount == 0}disabled#{/if} " data-entity-type="${entityType}" data-entity-id="${entityId}" data-rating-count="${entityRatingCMDSInfo.result.reviewCount}" title="View Reviews: ${entityRatingCMDSInfo.result.reviewCount}">
+
+					<div class="reviewInfo">
+						#{if entityRatingCMDSInfo.result.reviewCount == 0}
+							<div>No</div>
+							<div>Reviews</div>
+						#{/if}
+						#{else}
+							<span>${entityRatingCMDSInfo.result.reviewCount}</span>
+						#{/else}
+					</div>
+				</div>
+				#{/if}
+	        </div>
+	        #{if entityType != "CMDSASSIGNMENT" && entityType != "CMDSTEST"}
+	        <div class="totalReviews bigGreenButton #{if entityRatingCMDSInfo.result.reviewCount == 0}disabled#{/if}" title="View Reviews ${entityRatingCMDSInfo.result.reviewCount}" data-entity-type="${entityType}" data-entity-id="${entityId}" data-rating-count="${entityRatingCMDSInfo.result.reviewCount}">
+	        	Total Reviews ( ${entityRatingCMDSInfo.result.reviewCount} )
+	        </div>
+	        #{/if}
+	    </div>
+	    <div class="cleaner_with_divider">
+	    	
+	    </div>
+		#{/else}
+	#{/if}
+	#{else}
+		<div class="margBot5 grayHead big15 left margLeft10">Ratings</div>
+		<div class="redColor" style="font-size: 12px;text-align: center;">
+			<b>THIS ${entityType} IS NOT PUBLISHED YET</b>
+		</div>
+	#{/else}
+</div>
+
+<script type="text/javascript">
+	$(".CMDSTEST.ratingSection").off("click")
+								.on("click", ".ratingCap",openRatingDiv)
+	$(".CMDSASSIGNMENT.ratingSection").off("click")
+									   .on("click",".ratingCap",openRatingDiv)
+
+	function openRatingDiv(){
+		$(".ratingSection").toggleClass("openRating");
+	}
+	$(".totalReviews").off("click")
+					  .on("click",totalReviews);
+
+	function totalReviews(){
+		var ratingCount = $(".totalReviews").data("ratingCount");
+		if(ratingCount == 0){
+			return ;
+		}
+		var entityType = $(".totalReviews").data("entityType");
+		var entityId = $(".totalReviews").data("entityId");
+		if(entityId == "" || entityId == null || entityId == undefined){
+			showError("Entity Id is not found");
+			return ;
+		}
+		var orgId = $(".ratingSection").data("orgId");
+		var entityName = $(".ratingSection").data("entityName");
+		var firstTimeLoad = "true";
+		var start = 0;
+		var size = 50;
+		var params = {
+			entityType:entityType,
+			entityId:entityId,
+			start:start,
+			size:size,
+			orgId:orgId,
+			entityName:entityName,
+			ratingType:"BAD",
+			firstTimeLoad:firstTimeLoad
+		};
+		opencmdsPage("/QrTests/getCMDSEntityReviews",params);
+		pushHistory(null, null, "/organization/"+orgId+"/reviews/"+entityId+"?entityType="+entityType+"&start="+start+"&size="+size+"&entityName="+entityName+"&firstTimeLoad="+firstTimeLoad);
+	}
+</script>

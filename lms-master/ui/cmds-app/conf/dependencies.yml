@@ -1,0 +1,12 @@
+# Application dependencies
+
+require:
+    - play
+    - ui-commons -> ui-commons
+    
+repositories:
+    - My External:
+        type:       local
+        artifact:   ${application.path}/../[module]
+        contains:
+            - ui-commons

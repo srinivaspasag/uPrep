@@ -1,0 +1,191 @@
+
+<div id='chatDivsWrapper'>
+  <div id='chatDivsHolder'>
+     <div id='chatMainBlockHolderWrapper'>
+        <div id='chatMainBlockHolder' data-user-id='${session.userId}'>
+            <div id='CMBIHWrapper'></div>
+            <div id="chatReqPopupHolder"></div>
+            <div id='CMBNonner' class="nonner relativePos">
+                <div id='CMBHead'>
+                    <div class="floatLeft relativePos">
+                        <div class='img40Wrapper img40Round'>
+                            <img src='${session.profilePic}'  class='img40 img40Round myCurrentPic'
+                                 alt='' data-user-id='${session.userId}'/>                            
+                        </div>
+                        <div class='CMBBubble CMBOffline'></div>
+                    </div>
+                    <div class='img40Lefter relativePos'>
+                        <div class='CMBMyNameStatus relativePos'>
+                            <div class='CMBName boldy'>You</div>
+                            <span class='CMBStatus ptr'>Signing in..</span>
+                            <textarea class='CMBStatusInput nonner' placeholder='Type and Enter'></textarea>
+                        </div>
+                        <div class="CMBSettingsDiv nonner"></div>
+                    </div>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                </div>
+                <div id='CMBFrndsWrapper'>
+                    <div class='CMBHeading'>Following</div>
+                    <div id='CMBFollowingDiv'><div class='userMessage'>Loading..</div></div>
+                    <div class='CMBHeading'>Followers</div>
+                    <div id='CMBFollowersDiv'><div class='userMessage'>Loading..</div></div>
+               </div>
+                <div class="nonner" id="CMBMask">
+                    <span class='boldy maskText'>Unable to connect</span>
+                    <div class='margTop maskTimeDiv'>Reconnecting in
+                        <label class='maskTime'>60</label> seconds.
+                        <a class='forceReconnect' class='liner'>Try now</a>
+                    </div>                    
+                </div>
+            </div>
+            <div id='CMBTail' class="CMBTailBordered">
+                <span class="CMBTailImg"></span>
+                <span class='boldy' style="color: #ffffff">Chat</span> <span class='CMBTailList'>(<label class="CMBTailFollowingNo">0</label> following /
+                    <label class="CMBTailFollowersNo">0</label> followers)</span>
+                <span class='CMBOpenClose'></span>
+            </div>
+        </div>
+     </div>
+  </div>
+</div>
+
+<div id="chatSettingsSample" class="nonner">
+    <span class='CMBSettings'></span>
+    <div class='CMBStatusUpdateDiv'>
+        <div class='CMBStatusSet'><div class='CMBStatusSetBubble CMBAvailable'></div>Available</div>
+        <div class='CMBStatusSet'><div class='CMBStatusSetBubble CMBBusy'></div>Busy</div>
+        <div class='signOutOfChat'><div class='CMBStatusSetBubble CMBOffline'></div>Sign out</div>
+    </div>
+</div>
+<div id="chatUserDivSample" class="nonner">
+    <div class='CMBUserDiv'>
+        <div class='CMBUserNameImg'>
+            <div class="relativePos floatLeft">
+                <div class='img30Wrapper img30Round'>
+                    <img src=''  class='img30 img30Round CMBUserImg'alt=''  />                    
+                </div>
+                <div class='CMBBubble'></div>
+            </div>
+            <div class='img30Lefter'>
+                <div class='CMBName'></div>
+                <div class='CMBStatus'></div>
+            </div>
+        </div>
+        <div class='CMBChatDivStatus CMBChatDivSendReq'></div>
+        <div class='cleaner_with_divider'>&nbsp;</div>
+    </div>
+</div>
+<div id="chatInviteSample" class="nonner">
+    <div id='CMBInviteHolder'>
+        <div class="relativePos floatLeft">
+            <div class='img40Wrapper img40Round'>
+                <img src=''  class='img40 CMBIHUserImg' alt=''/>
+            </div>
+            <div class='CMBIHBubble'></div>
+        </div>
+        <div class='img40Lefter'>
+            <div class='CMBIHHead'>Chat Request from <a class='CMBIHUserName'></a></div>
+            <div class='CMBIHPurposeDiv'></div>
+            <div class='margTop15 margBot20'>
+                <span class='blueSubmitButton chatReqAccept margRight10'>Accept</span>
+                <a class='smally liner chatReqDecline' onclick='insideOutClick()'>Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="chatReqPopupSample" class="nonner">
+    <div id='chatReqPopup'>
+        <div class="relativePos floatLeft">
+            <div class='img40Wrapper img40Round'>
+                <img src=''  class='img40 chatReqUserImg' alt=''/>
+            </div>
+            <div class='chatReqBubble'></div>
+        </div>
+        <div class='img40Lefter'>
+            <div class='chatReqHead'>Send Chat Request</div>
+        </div>
+        <div class='cleaner_with_divider'>&nbsp;</div>
+        <div class='margTop15'>
+            <span class='boldy'>Purpose</span>
+            <input class='chatReqPurposeInput' />
+        </div>
+        <div class='margTop15 margBot20 centry'>
+            <span class='blueSubmitButton sendChatReq margRight10'>Send</span>
+            <a class='smally liner' onclick='insideOutClick()'>Cancel</a>
+        </div>
+    </div>
+</div>
+<div id="chatDivSample" class="nonner">
+    <div class='chatDivWrapper'>
+        <div class='chatDiv'>
+            <div class='CDHead'>
+                <div class='CDHeadImgText'>
+                    <div class='img20Wrapper floatLeft img20Round'>
+                        <img src=''  class='img20 img20Round CDHeadUserImg' alt=''/>
+                    </div>
+                    <div class='img20Lefter CDHeadText'>Chat with <span class='CDHeadUserName'></span></div>
+                </div>
+                <div class='minimizeChatDiv'></div>
+                <div class='closeChatDiv'></div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+            <div class='CDNonner relativePos'>
+                <div class='CDChatLines'>
+                    <div class="CDChatLinesBody"></div>
+                </div>
+                <div class="CDOfflineMessageDiv"></div>
+                <textarea class='CDTextarea' placeHolder='Type and enter'></textarea>
+            </div>
+        </div>
+     </div>
+</div>
+<div id="CDMyLineSample" class="nonner">
+    <div class='CDChatLine CDMyLine'>
+        <div class="img20Holder"></div>
+        <div class='CDCLTextDiv'>
+            <div class='CDCLArrow'></div>
+            <div class='CDCLText'></div>
+        </div>
+    </div>
+</div>
+<div id="CDOthersLineSample" class="nonner">
+    <div class='CDChatLine CDOthersLine'>
+        <div class='img20Wrapper img20Round'>
+            <img src=''  class='img20 img20Round CDLineUserImg openUserImg' alt=''/>
+        </div>
+        <div class='CDCLTextDiv'>
+            <div class='CDCLArrow'></div>
+            <div class='CDCLText'></div>
+        </div>
+    </div>
+</div>
+<audio id="chatSound" style="display: none;"></audio>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){vChat.init();}
+        fetchScripts([{fname:"chat.js",cb:fn}]);   
+    }();      
+</script>   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

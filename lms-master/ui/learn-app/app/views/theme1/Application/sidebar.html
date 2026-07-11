@@ -1,0 +1,54 @@
+<div class="sideBarToggle" style="display: none;">
+  <aside class="sidebar sidebar-alt c-overflow" id="sidebar" style="top: 60px;">
+    <ul class="main-menu">
+      <li #{if activeClass =="home"} class="active" #{/if}>
+        <a href="/"><i class="zmdi zmdi-home"></i> Home</a>
+      </li>
+      #{if categoriesResponse.result.list.length() != 0}
+      <li class="sub-menu #{if activeClass == 'programs'} active #{/if}">
+        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-apps"></i> Programs</a>
+        <ul>
+          #{if categoriesResponse.result.list.length() == 1}
+            <li><a href="/packages/${catergoryName}">${categoriesResponse.result.list.get(0).name}</a></li>
+          #{/if}
+          #{else}
+            #{list items:0..1,as:'index'}
+            %{
+              category = categoriesResponse.result.list;
+              catergoryName = category.get(index).name;
+            }%
+            <li><a href="/packages/${catergoryName}">${catergoryName}</a></li>
+            #{/list}
+          #{/else}
+          <li><a href="/packages">ALL PROGRAMS</a></li>
+      </ul>
+    </li>
+    #{/if}
+    <li class="sub-menu #{if popup =='exam' || activeClass == 'exam'} active #{/if} nonner">
+      <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-assignment-o"></i>Exams</a>
+      <ul>
+        <li #{if activeClass =="aiims"} class="active" #{/if}><a href="/exam/aiims">AIIMS</a></li>
+        <li #{if activeClass =="jeemain"} class="active" #{/if}><a href="/exam/jeemain">JEE Main</a></li>
+        <li #{if activeClass =="jeeadvanced"} class="active" #{/if}><a href="/exam/jeeadvanced">JEE Advanced</a></li>
+        <li #{if activeClass =="neet"} class="active" #{/if}><a href="/exam/neet">NEET</a></li>
+        <li #{if activeClass =="bitsat"} class="active" #{/if}><a href="/exam/bitsat">BITSAT</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="http://blog.learnpedia.in"><i class="zmdi zmdi-blogger"></i> Blog</a>
+    </li>
+    <!-- <li class="#{if activeClass =='institutes'} active #{/if}">
+        <a href="/institutes"><i class="zmdi zmdi-graduation-cap"></i> Institutes</a>
+      </li> -->
+      <li class="#{if activeClass =='students'} active #{/if}">
+        <a href="/students"><i class="zmdi zmdi-graduation-cap"></i> Students</a>
+      </li>
+    <li  #{if activeClass =="signup"} class="active" #{/if}>
+      <a href="/signup"><i class="zmdi zmdi-accounts-add"></i> Signup</a>
+    </li>
+    <li  #{if activeClass =="login"} class="active" #{/if}>
+      <a href="/login"><i class="zmdi zmdi-accounts"></i> Login</a>
+    </li>
+  </ul>
+</aside>
+</div>

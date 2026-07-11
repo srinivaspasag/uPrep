@@ -1,0 +1,9 @@
+%{
+	feed = _feedData;
+	lastFeedId = "lastNewsFeedId";
+	firstFeedId = "firstNewsFeedId";
+	lastFeedTime = "lastNewsFeedTime";
+	firstFeedTime = "firstNewsFeedTime";
+	actor = feed.clusteredNews.get(0).actor;
+}%
+#{institute.widgets.feedsTemplate feedData : feed , lastFeedId : lastFeedId , firstFeedId : firstFeedId , lastFeedTime : lastFeedTime , firstFeedTime : firstFeedTime , actor : actor /}

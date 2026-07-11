@@ -1,0 +1,568 @@
+@font-face {
+	  font-family: "chalkboard";
+          src:url('../chalkboard.eot?#iefix') format('embedded-opentype'),
+             url('../chalkboard.ttf') format('truetype')
+	}
+#challengePageHolder{
+    background: #ffffff;
+}
+#challengePage{
+    margin: 0 auto;
+    width: 1002px;
+    padding-bottom: 100px;
+}
+#CPMainSec{
+    float: left;
+    width: 741px;
+}
+.CPHead{
+    font-size: 30px;
+    color: #666;
+    margin: 30px 0 20px 0;
+    font-family: georgia;
+}
+.CPTabs{
+    margin: 35px 0 20px 0;
+    text-align: center;
+}
+.CPTab{
+    background-image: -moz-linear-gradient(center top , #F8F8F8, #F4F4F4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8F8F8', endColorstr='#F4F4F4');
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#F8F8F8), to(#F4F4F4));
+    background-image: -o-linear-gradient(top,#F8F8F8,#F4F4F4);
+    border: 1px solid #EEEEEE;
+    cursor: pointer;   
+    margin-left: -4px;
+    padding: 15px 10px;
+    color: #666666;
+    display: inline-block;
+    width: 220px;
+    border-color: #EEEEEE #EEEEEE #EEEEEE #CCCCCC;
+}
+.CPTab:hover{
+    color: #333333;
+    background: #d8f6f9;
+}
+.activeCPTab{
+    background: none repeat scroll 0 0 #ABF5FF;
+    color: #333333;
+}
+.CPTotalCount{
+    color: #545454;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 11px;
+    line-height: 13px;
+}
+.closedChallenges .CPTotalCount,.attemptedChallenges .CPTotalCount{
+    display: none;
+}
+.CPTotalCountText{
+    display: inline-block;
+    vertical-align: middle;
+    width: 85px;
+}
+.CPChallengeCount{
+    color: #CC3333;
+    font-size: 36px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+.attemptedChallenges .CPTotalPointsDiv{
+    display: none;
+}
+.CPTotalPointsCount{
+    font-size: 45px;
+    vertical-align: middle;
+    font-family: digit;
+}
+
+/* challenges content*/
+#CPChallengesHolder{
+    background: url("/public/images/challenges/back.png") repeat scroll 0 0 transparent;
+    border: 5px solid #D5CEBC;
+    border-radius: 15px 15px 15px 15px;
+    box-shadow: 1px 0 3px #CCC;
+    padding: 15px 20px;
+    position: relative;
+    min-height: 675px;
+}
+.closedChallenges #CPChallengesHolder{
+    margin-top: 40px;
+}
+.CPLeftRounder{
+    background: url("/public/images/challenges/leftRound.png") no-repeat scroll 0 0 transparent;
+    height: 36px;
+    left: -6px;
+    position: absolute;
+    top: -6px;
+    width: 36px;
+}
+.CPRightRounder{
+    background: url("/public/images/challenges/rightRound.png") no-repeat scroll 0 0 transparent;
+    height: 36px;
+    right: -6px;
+    position: absolute;
+    top: -6px;
+    width: 36px;
+}
+.CPSelect{
+    border: 3px solid #A18D5E;
+    border-radius: 7px 7px 7px 7px;
+    font-weight: bold;
+    margin: 0 7px 10px 0;
+    width: 140px;
+}
+.CPSelect .vChooseDropDown{
+    border-radius: 0 0 7px 7px;
+    border: 3px solid #A28F61;
+    text-align: left;
+    z-index: 300;
+    left: -3px;
+}
+.CPSelect .vChooseHead{
+    background-color: #EBE5D6;
+    border-radius: 6px 6px 6px 6px;
+}
+.challenge{
+    margin-bottom: 20px;
+    position: relative;
+}
+.challengeMain{
+    float: left;
+    width: 575px;
+}
+.challengeTimerAndContentsDiv{
+    background-color: #FFFFFF;
+    padding: 15px 10px 10px 50px;
+    position: relative;
+}
+.lostChallenge .challengeTimerAndContentsDiv{
+    border: 3px solid #CC3333;
+    border-right: 0;
+}
+.crackedChallenge .challengeTimerAndContentsDiv{
+    border: 3px solid #53b453;
+    border-right: 0;
+}
+.challengePin{
+    background: url("/public/images/challenges/pin.png") no-repeat scroll 0 0 transparent;
+    height: 44px;
+    left: -3px;
+    position: absolute;
+    top: -12px;
+    width: 51px;
+}
+.challengeStatusSec{
+    float: left;
+    height: 70px;
+    width: 70px;
+    position: relative;
+}
+.challengeAttemptedClosed .challengeStatusSec{
+    text-align: center;
+}
+.challengeTimer .half_fill_circle_1{
+    width: 48%;
+    left: 51%;
+    border-radius: 0 100px 100px 0;
+}
+.challengeTimer .half_fill_circle_2{
+    border-radius: 100px 0 0 100px;
+    left: 1px;
+}
+.challengeTimer .bg_color{
+    border-radius: 0 100px 100px 0;
+}
+.challengeTimer #timer_circle,.challengeTimer .bg_color{
+    background-color: #cccccc;
+}
+.challengeTimer .half_fill_circle_2,
+.challengeTimer .half_fill_circle_1{
+    background-color: #CC3333;
+}
+.challengeTimerTime {
+    background-color: #ffffff;
+    border-radius: 100px 100px 100px 100px;
+    height: 46px;
+    left: 3px;
+    padding-top: 18px;
+    position: absolute;
+    text-align: center;
+    top: 3px;
+    width: 64px;
+    z-index: 200;
+}
+.challengeClosed .challengeStatusSec{
+    height: 50px;
+    border-radius: 40px;
+    background-color: #eeebe3;
+    padding-top: 20px;
+    text-align: center;
+    font-size: 11px;
+}
+.challengeClosedText{
+    font-size: 17px;
+    font-weight: bold;
+    color: #CC3333;
+}
+.challengeStatusImg {
+    background: url("/public/images/challenges/lost.jpg") no-repeat scroll center center transparent;
+    height: 40px;
+    width: 40px;
+    display: inline-block;
+}
+.crackedChallenge .challengeStatusImg{
+    background-image: url("/public/images/challenges/cracked.jpg");
+}
+.challengeStatusText{
+    color: #CC3333;
+    font-size: 17px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.challengeStatusWonText,.crackedChallenge .challengeStatusLostText{
+    display: none;
+}
+.crackedChallenge .challengeStatusWonText{
+    color: #53b453;
+    display: block;
+}
+.challengeContents{
+    color: #ACACAC;
+    margin-left: 85px;
+    min-height: 93px;
+    position: relative;
+}
+.challengeTitle,.TCPChallengeTitle{
+    font-family: chalkboard;
+    font-size: 22px;
+    line-height: 23px;
+    color: #333333;
+}
+.challengeAttemptCountDiv{
+    color: #CC6666;
+}
+.challengeShadow{
+    background: url("/public/images/challenges/shadow.png") no-repeat scroll right bottom transparent;
+    bottom: -34px;
+    height: 25px;
+    position: absolute;
+    width: 100%;
+}
+.challengeAttemptedClosed .challengeShadow,.challengeClosed .challengeShadow{
+    right: -125px;
+}
+.challenge:hover .challengeShadow{
+    display: none;
+}
+.startChallengeDiv{
+    background-color: #FFFF99;
+    font-weight: bold;
+    opacity: 0;
+}
+.challengeClosed .startChallengeDiv,.challengeAttemptedClosed .startChallengeDiv{
+    width: 690px;
+}
+.challenge:hover .startChallengeDiv{
+    opacity: 1;
+}
+.takeChallengeBtn{
+    background-image: -moz-linear-gradient(center top , #CC6666, #993333);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#CC6666', endColorstr='#993333');
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#CC6666), to(#993333));
+    background-image: -o-linear-gradient(top,#CC6666,#993333);
+    border: 1px solid #CC6666;
+    color: #FFFFFF;
+    margin-right: 5px;
+    padding: 12px 30px;
+    display: inline-block;
+}
+.takeChallengeBtn.nonner{
+    display: none;
+}
+.challengeSlip{
+    background-color: #FFFF99;
+    margin-left: 595px;
+    text-align: center;
+    width: 100px;
+}
+.challengeSlipShade{
+    background-color: #F5F588;
+    height: 20px;
+}
+.challengeSlipText{
+    /* Safari */
+    -webkit-transform: rotate(-10deg);
+
+    /* Firefox */
+    -moz-transform: rotate(-10deg);
+
+    /* IE */
+    -ms-transform: rotate(-10deg);
+
+    /* Opera */
+    -o-transform: rotate(-10deg);
+
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.3);
+    font-size: 14px;
+    font-family: chalkboard;
+    padding: 20px 0;
+}
+.challengeSlipPoints,.challengePointsGained{
+    color: #CC3333;
+    font-size: 28px;
+    margin: 4px 0;
+}
+.challengeTopperDiv,.challengeResultDiv {
+    bottom: 0;
+    font-family: chalkboard;
+    padding: 0 5px;
+    position: absolute;
+    right: -115px;
+    top: 0;
+    width: 105px;
+    margin-left: 0;
+    background-color: #FFFF99;
+    text-align: center;
+}
+.crackedChallenge .challengeResultDiv,.lostChallenge .challengeResultDiv{
+    background-color: #b1ff99;
+    padding: 20px 5px;
+    border: 3px solid #53b453;
+    border-left: 0;
+    top: -3px;
+    bottom: -3px;
+}
+.lostChallenge .challengeResultDiv{
+    background-color: #f7c4c3;   
+    border: 3px solid #CC3333;
+}
+#challengePage .LMHandlerDiv{
+    min-height: 100px;
+}
+.attemptedChallengesDivider{
+    background-color: #D5CEBC;
+    left: -20px;
+    margin: 15px 0;
+    min-height: 5px;
+    position: relative;
+    width: 106%;
+}
+
+
+/*right sec*/
+#CPRightSec{
+    float: right;
+    width: 260px;
+    padding-top: 246px;
+}
+.closedChallenges #CPRightSec,.attemptedChallenges #CPRightSec{
+    padding-top: 200px;
+}
+.CPRightSecColor{
+    color: #44747B;
+}
+.CPRSMultiplierDiv {
+    background-color: #B1FF99;
+    padding: 5px 5px 15px 0;
+    width: 110px;
+    margin-bottom: 5px;
+}
+.CPRSMultiplierSymbol,.CPRSStrikeRate{
+    font-size: 30px;
+    line-height: 30px;
+}
+.CPRSMultiplierCount{
+    font-size: 40px;
+}
+.CPRSMultiplierHelp,.CPRSStrikeRateHelp{
+    background-color: #CC6666;
+    border-radius: 10px 10px 10px 10px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    height: 16px;
+    padding-top: 2px;
+    text-align: center;
+    width: 18px;
+}
+.CPRSMyPointsDiv,.CPRSStrikeRateDiv,.CPRSHatsDiv{
+    background-color: #ABF5FF;
+    margin-bottom: 5px;
+}
+.CPRSMyPointsDiv{
+    padding: 5px 10px 10px;
+}
+.CPRSMyPoints{
+    font-family: digit;
+    font-size: 35px;
+    line-height: 35px;
+}
+.CPRSMultiplierHelpDiv,.CPRSStrikeRateHelpDiv{
+    display: none;
+}
+.CPRSStrikeRateDiv{
+    padding: 5px 5px 15px;
+    text-align: center;
+    width: 95px;
+}
+.CPRSHatsDiv{
+    color: #44747B;
+    padding: 10px 30px 10px 10px;
+    display: inline-block;
+}
+.challengeHat {
+    background: url("/public/images/challenges/hat.png") no-repeat scroll right bottom transparent;
+    display: inline-block;
+    height: 15px;
+    width: 25px;
+}
+.CPRSHatCount{
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+
+
+/*take challenge*/
+#takeChallengePage{
+    background-color: #ffffff;
+    padding-bottom: 100px;
+}
+#TCPMainSecHolder{
+    width: 100%;
+    border-bottom: 1px solid #cccccc;
+    padding: 45px 0 30px 0;
+}
+#TCP1002,#TCPHintSec1002,#TCPTitleHolder{
+    width: 1002px;
+    margin: 15px auto 0;
+}
+#TCPMainSec,#TCPHintSec,.TCPChallengeTitle{
+    float: left;
+    width: 700px;
+}
+.challengeQues .quesTextDivHolder{
+    margin: 0 0 5px 0;
+    border: 0;
+    padding: 5px;
+    border-radius: 3px;
+    background-color: #dbdbdb;
+    box-shadow: 1px 1px 1px #cccccc;
+}
+.challengeQues .quesTextDiv{
+    border: 1px solid #cacaca;
+    margin-top: 0;
+    background-color: #ffffff;
+    padding: 15px;
+}
+.challengeQues .quesAnsDiv{
+    display: block;
+}
+.challengeQues .quesCancelAns{
+    display: none;
+}
+.TCPHintDiv{
+    float: left;
+    margin-right: 10px;
+}
+.TCPHintBtn{
+    background-color: #f6f6f4;
+    color: #cccccc;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 25px;
+    border-radius: 3px;
+}
+.TCPHintStriked .TCPHintBtn{
+    text-decoration: line-through;
+}
+.TCPHintActive .TCPHintBtn{
+    color: #333333;
+    background-color: #edede9;
+    cursor: pointer;
+}
+.TCPHintActive:hover .TCPHintBtn{
+    background-color: #dbeaf2;
+}
+.TCPHintLossText {
+    color: #CC6666;
+    opacity: 0;
+    margin-top: 20px;
+    text-align: center;
+}
+.TCPHintDiv:hover .TCPHintLossText{
+    opacity: 1;
+}
+
+
+#TCPRightSec{
+    float: right;
+    width: 260px;
+    border: 1px solid #cccccc;
+}
+.TCPTimerDiv {
+    border-bottom: 1px solid #CCCCCC;
+    padding: 20px 60px 15px;
+}
+.TCPTimerCircle{
+    float: left;
+    width: 50px;
+    height: 50px;
+    position: relative;
+    margin-right: 10px;
+}
+.TCPTimerCircle #timer_circle,.TCPTimerCircle .bg_color{
+    background-color: #eeebe3;
+}
+.TCPTimerTextDiv{
+    color: #94a7ab;
+}
+.TCPTimerText{
+    font-weight: bold;
+    font-size: 24px;
+}
+.TCPHat {
+    background: url("/public/images/challenges/hat.png") no-repeat scroll center center transparent;
+    display: inline-block;
+    height: 31px;
+    width: 31px;
+}
+.TCPPointsDiv{
+    padding: 20px 50px 15px;
+}
+.TCPPointsText {
+    background-color: #ABF5FF;
+    border-radius: 70px 70px 70px 70px;
+    display: inline-block;
+    height: 95px;
+    padding-top: 40px;
+    width: 135px;
+}
+.TCPPointsCount{
+    color: #3399CC;
+    font-family: digit;
+    font-size: 45px;
+    line-height: 45px;
+}
+.TCPHint{
+    border: 5px solid #DBDBDB;
+    border-radius: 2px 2px 2px 2px;
+    box-shadow: 1px 1px 1px #BBBBBB;
+    padding: 8px 15px 20px 8px;
+    margin-bottom: 20px;
+}
+.TCPHintLine{
+    border-bottom: 1px solid #CCCCCC;
+    bottom: 3px;
+    margin-left: 60px;
+    position: relative;
+}
+.TCPHintContnent{
+    padding: 10px 0 0 10px;
+}
+
+

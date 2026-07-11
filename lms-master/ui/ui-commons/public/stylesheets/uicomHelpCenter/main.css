@@ -1,0 +1,213 @@
+.helpTopBar a{
+	text-decoration:none;
+	color:#fff;
+}
+.embedVideo:hover,
+.helpEachTopicPara .pVideo:hover,
+.helpEachTopic .video:hover,
+#helpCenterTopics .pImage:hover,
+#helpCenterTopics .image:hover{
+	border:2px solid #0099CC;
+	cursor:pointer;
+}
+.helpTopBar{
+	background-color:#363636;
+	padding:13px;
+	height:13px;
+	font-size:13px;
+	color:#ffffff;
+	border-bottom: 1px solid #363636;
+}
+.helpHomeMiddleBar{
+	background-color:#ed3237;
+	text-align:center;
+	padding:50px 0;
+	font-size:25px;
+	color:#ffffff;
+}
+.helpHomeTable{
+	padding:55px 20px;
+}
+.helpHomeTable th,
+.helpHomeTable td{
+	border-right:1px solid #bdbdbd;
+	padding-bottom:50px;
+	text-align:left;
+	vertical-align:top;
+}
+.helpHomeTable th:last-child,
+.helpHomeTable td:last-child{
+	border-right:0px;
+}
+.helpHomeTable th{
+	font-size:14px;
+}
+.helpHomeTopicsHolder,
+.helpHomeQuesHolder,
+.helpHomeTable th{
+	padding-left:25px;
+	padding-right:25px;
+}
+.helpTopicItem,
+.helpQuestionTitle,
+.helpTopicTitle{
+	padding:5px 0;
+	border-bottom:1px solid #ddd;
+	color:#666;
+	font-size:15px;
+	cursor:pointer;
+	padding-right:10px;
+}
+.helpTopicItem:first-child,
+.helpTopicTitle:first-child{
+	font-weight:bold;
+}
+.helpQuestionTitle:hover,
+.helpTopicItem.selected,
+.helpTopicItem:hover,
+.helpTopicTitle:hover{
+	color:#0099CC;
+}
+/* TOPICS CSS */
+.helpTopicsTopBar{
+	padding:17px 0;
+	text-align:center;
+	font-size:20px;
+	color:#fff;
+	background-color:#ed3237;
+}
+.helpTopicsTable{
+	margin:0 20px 0 10px;
+	min-height:500px;
+}
+.helpTopicsTable td{
+	padding:15px 0;
+	vertical-align:top;
+}
+.helpTopicsTable .helpTopicsHolder{
+	width:250px;
+}
+td.helpTopicsBodyHolder{
+	border-left:1px solid #bbb;
+	padding-left:20px;
+}
+.helpEachTopic{
+	padding-bottom:30px;
+}
+.helpEachTopic .title{
+	color:#333;
+	font-size:18px;
+}
+.helpEachTopic .image{
+	padding-top:15px;
+	height:400px;
+	overflow:hidden;
+}
+.helpEachTopic .helpEachTopicContent{
+	padding-top:15px;
+	color:#666;
+}
+.helpEachTopicPara{
+	padding:20px;
+}
+.redText{
+	color:red;
+}
+ul{
+    list-style-image:initial;
+    list-style-position:initial;
+    list-style-type:square;
+    padding: 10px 20px;
+    margin: initial;
+}
+ul ul{
+    list-style-type:disc;
+    padding: 5px 0 0 25px;
+}
+ul ul ul{
+    list-style-type:circle;
+    padding: 4px 0 0 15px;
+}
+ul li{
+	padding-top:6px;
+}
+ul ul li{
+	padding-top:3px;
+}
+.helpEachTopicPara .pImage,
+.helpEachTopic .image{
+	max-width:95%;
+	overflow:hidden;
+	padding:6px;
+	margin:15px 0;
+	border:2px solid #999; 
+}
+.helpEachTopicPara .pVideo,
+.helpEachTopic .video{
+	background-color:#333;
+	padding:2px;
+	text-align:center;
+	border:2px solid #999; 
+}
+.helpEachTopicPara .pVideo embed,
+.helpEachTopic .video embed,
+.helpEachTopicPara .pVideo iframe,
+.helpEachTopic .video iframe{
+	max-width:98%;
+}
+.embedVideo{
+	border:2px solid #999;
+	padding:4px;
+	margin:10px;
+	margin-left:0px;
+	text-align:center;
+}
+.helpEachTopicImg{
+	width:100%;
+	min-height:400px;
+	background-color:#ccc;
+}
+/* QUESTIONS */
+.helpEachQues{
+	padding-bottom:20px;
+}
+.helpEachQues .title{
+	color:#333;
+	font-size:14px;
+	font-weight:bold;
+}
+.helpEachQues .image{
+	padding-top:10px;
+}
+.helpEachQues .helpEachQuesContent{
+	padding-top:10px;
+	color:#666;
+}
+.helpEachQues .helpEachQuesAnswer{
+	padding:15px 0 0 20px;
+	color:#333;
+}
+.scrollToTop:hover{
+	border:2px solid #666;
+}
+.scrollToTop{
+	position:fixed;
+	float: right;
+	right:50px;
+	bottom:50px;
+	width: 60px;
+	height: 60px;
+	border-radius: 30px;
+	cursor: pointer;
+	border:2px solid #ccc;
+	border-radius:35px;
+
+	opacity:0;
+	alpha:filter(opacity=0);	
+	background-image: url('/public/images/next-tail-less-arrow.png');
+	background-repeat: no-repeat;
+	transform: rotate(-90deg);
+	-webkit-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+}

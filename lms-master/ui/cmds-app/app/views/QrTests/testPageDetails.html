@@ -1,0 +1,340 @@
+<table class="TPDTable">
+    <tbody>
+        <tr class="big15 boldy">
+            <td class="testPageDetHead alignTop">Title</td>
+            <td>
+                <div class="testTitle">                 
+                    <span class="entityEditableName">${testDetails.name}</span>
+                    %{
+                    testType=testDetails.type;
+                    if(testType=="TEST"){
+                    entityType="CMDSTEST";
+                    urlClass="cmdsTests";                            
+                    }else{
+                    entityType="CMDSASSIGNMENT";    
+                    urlClass="cmdsAssignments";
+                    }
+                    }%
+                    <a class="editEntityDetailsStyles editEntityDetails" 
+                       title="Edit Details" data-entity-type="${entityType}" data-entity-id="${testDetails.id}"
+                       data-url-class="${urlClass}"></a> 
+                </div>
+            </td>                     
+        </tr>
+        <tr class="nonner">
+            <td class="testPageDetHead alignTop">Description</td>
+            <td>
+                <div class="color8 small10 entityEditableDesc">
+                    #{if !testDetails.isNull('desc')}
+                    ${testDetails.desc}
+                    #{/if}
+                </div>                
+            </td>
+        </tr>            
+        <tr class="boldy">
+            <td class="testPageDetHead">Code</td>
+            <td>
+                <div class="condenseText">${testDetails.code}</div>
+            </td>                     
+        </tr>
+        #{if testDetails.has('resultVisibility')}
+        %{
+        resultShow='VISIBLE';
+        if(!testDetails.isNull('resultVisibility')){
+        resultShow=testDetails.resultVisibility;
+        }
+        resultShowText='SHOW';
+        if(resultShow=="HIDDEN"){
+            resultShowText='HIDE';
+        }
+        resultShowMessage='';
+        if(!testDetails.isNull('resultVisibilityMessage')){
+            resultShowMessage=testDetails.resultVisibilityMessage;
+        }
+        }%
+        <tr>
+            <td class="testPageDetHead">Results</td>
+            <td colspan="2">
+                <div style="position: relative;">
+                    <span style="font-weight: bold;
+                          float: left; display: inline-block; font-size: 13px;" class="testResultShowText #{if resultShow == 'VISIBLE'}greenColor#{/if}#{else}redColor#{/else}">
+                        ${resultShowText}
+                    </span>
+                    <div class="editEntityDetailsStyles changeTestResultVisibility"
+                         data-result-visibility="${resultShow}"
+                         data-result-visibility-message='${resultShowMessage}' style="cursor: pointer;">
+                    </div>
+                </div>
+            </td>
+        </tr>
+        #{/if}
+        %{
+            testPassword = testDetails.has("password") && !testDetails.password.equals(null) && !testDetails.password.equals("");        
+            resultPassword = testDetails.has("resultPassword") && !testDetails.resultPassword.equals(null) && !testDetails.resultPassword.equals("");
+        }%
+        #{if testPassword && testDetails.published}
+            <tr>
+                <td id="showTestPassword" class="testPageDetHead" data-id="${testDetails.password}">Password:</td>
+                <td>${testDetails.password}</td>
+            </tr>
+        #{/if}
+        #{if resultPassword && testDetails.published}
+            <td id="showTestResultPassword" class="testPageDetHead" data-id="${testDetails.resultPassword}">Result Password:</td>
+            <td>${testDetails.resultPassword}</td>
+        #{/if}
+        <tr>
+            <td colspan="2">                            
+                <div class="testPageMoreDet nonner">
+                    %{
+                    metadata=testDetails.metadata;
+                    subsHTML="";
+                    currentTotalHTML="";
+                    targetTotalHTML="";
+                    Utilities=uicom.util.Utilities;
+                    }%
+                    #{if metadata.length()>0}
+                    <div class="TPDSubDomainBtns">
+                        #{list items:0..metadata.length()-1,as:'i'}
+                        %{
+                        sub=metadata.get(i);
+                        }%
+                        <div class="gButton TPDSubDomain${(i_isLast)?' gButtonActive':''}" 
+                             title="${sub.name}" data-course-id="${sub.id}">
+                            ${sub.name}
+                        </div>
+                        #{/list}
+                    </div>
+                    #{/if}
+                    #{if metadata.length()>0}
+                    #{list items:0..metadata.length()-1,as:'i'}
+                    %{
+                    sub=metadata.get(i);
+                    currentTotal=0;                                        
+                    }% 
+                    <div class="TPDSubDomainDiv${(i_isLast)?'':' nonner'}">
+                        <table class="TPDTopicTable">
+                            <tbody>
+                                #{if Utilities.isJSONArrayNotEmpty(sub,'children')}
+                                #{list items:0..sub.children.length()-1,as:'t'}
+                                %{
+                                topic=sub.children.get(t);                                            
+                                }%
+                                <tr>
+                                    <td>${topic.name}</td>
+                                    <td class="TPDTopicCurrent_${topic.id}">
+                                        ${topic.qusCount}
+                                    </td>
+                                </tr>
+                                #{/list}
+                                #{/if}
+                            </tbody>
+                        </table>                                        
+                        <table class="TPDQTypeTable">
+                            <tbody>                                        
+                                #{if !sub.isNull('details')&&sub.details.length()>0}
+                                #{list items:0..sub.details.length()-1,as:'sd'}
+                                %{
+                                qTypeInfo=sub.details.get(sd);
+                                currentQuesCountForType=qTypeInfo.qIds.length();
+                                currentTotal+=currentQuesCountForType;  	            
+                               	posMarks=0;
+                              	negMarks=0;
+                              	if(qTypeInfo.has('marks')&&!qTypeInfo.isNull('marks')){
+                              		marks=qTypeInfo.marks;
+                              		posMarks=marks.positive;
+                              		negMarks=marks.negative;
+                              	}                          
+                                }%
+                                <tr>
+                                    <td>
+                                        ${qTypeInfo.type}
+                                        <div class="grayHead">
+                                            Current :                                            
+                                        </div>  
+                                        <div class="grayHead">
+                                            Target :                                            
+                                        </div>
+                                        #{if testDetails.has("isNTAPattern") && testDetails.isNTAPattern}
+                                            <div class="grayHead">
+                                            MQA
+                                            :                                            
+                                            </div>  
+                                        #{/if}
+                                                                                 
+                                    </td>
+                                    <td>
+                                   		 <div>
+                                   		 	<span class="greenColor">+${posMarks}</span>
+                                   		 	<label class='feedPipe'>|</label>
+                                   		 	<span class="redColor">-${negMarks}</span>
+                                 		 </div>
+                                        <div class="TPD${qTypeInfo.type}Current_${sub.id}">
+                                            ${currentQuesCountForType}
+                                        </div>
+                                        <div class="TPD${qTypeInfo.type}Target_${sub.id}">
+                                            ${qTypeInfo.qusCount}
+                                        </div>
+                                        #{if testDetails.has("isNTAPattern") && testDetails.isNTAPattern}
+                                              <div class="TPD${qTypeInfo.type}Target_${sub.id}">
+                                            ${qTypeInfo.maxQuestionsTobeAttempted}
+                                        </div>
+                                        #{/if}
+                                    </td>
+                                </tr>
+                                #{/list}
+                                #{/if}
+                            </tbody>
+                        </table>                                  
+                        *{
+
+                        <!--                        <tr>
+                                                    <td>
+                                                        <div class="grayHead">
+                                                            Current Total: 
+                                                        </div>                                        
+                                                    </td>
+                                                    <td>
+                                                        <span class="TPDSubCurrent_${sub.id}">${currentTotal}</span>                                        
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Target Total: 
+                                                    </td>
+                                                    <td>
+                                                        <span class='TPDSubTarget_${sub.id}'>${sub.qusCount}</span>
+                                                    </td>
+                                                </tr>-->
+
+                        }* 
+                        <div class="grayHead big15">
+                            Current Total: <span class="TPDSubCurrent_${sub.id}">${sub.qIds.length()}</span> 
+                        </div>
+
+                        <div class="grayHead big15">
+                            Target Total: <span class='TPDSubTarget_${sub.id}'>${sub.qusCount}</span>                                   
+                        </div>
+                        #{if testDetails.has("isNTAPattern") && testDetails.isNTAPattern} 
+                        <div>
+                                <span class="testPageDetHead cellHead"></span>
+                        </div>
+                        <div>
+                                <span class="testPageDetHead cellHead" style="width:270px!important">MQA : Max Questions can be Attempted</span>
+                        </div> 
+                        #{/if}                              
+
+                        %{
+                        subsHTML+="<span class='cellTitle'>"+sub.name+"</span>";
+                        currentTotalHTML+="<span class='cellTitle TPDSubCurrent_${sub.id}'>"+sub.qIds.length()+"</span>";
+                        targetTotalHTML+="<span class='cellTitle'>"+sub.qusCount+"</span>";
+                        }%                                                                       
+                    </div>
+                    #{/list}
+                    #{/if}
+                </div>
+                <div class="TPDSubTable">
+                    <!-- <tbody> -->
+                        #{if testDetails.has('duration') && testDetails.duration>0}
+                        <div>
+                            <span class="testPageDetHead cellHead">Duration</span>
+                            %{
+                            timeObj=uicom.util.Utilities.getTimeFromMiliSec(testDetails.duration);
+                            }%
+                            <span><span class="greyTextColor">${timeObj.hrs}:${timeObj.mins}</span> hrs</span>
+                        </div>
+                        <div>
+                        #{if testDetails.has("enableSectionLocking") && (testDetails.published || params.hideSectionLocking != "true")}
+                            %{
+                                enableSectionLocking = testDetails.enableSectionLocking;
+                            }%
+                            <div class="sectionLockingOptionDiv margTop10">
+                                <div class="radioButtonDiv">
+                                    <span class="spanTitle">Enable Section Locking? </span>
+                                    <span>
+                                        <input type="radio" name="enableSectionLocking" value="true" class="enableSectionLocking" #{if enableSectionLocking} checked#{/if}> YES
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="enableSectionLocking" class="enableSectionLocking" value="false" #{if !enableSectionLocking} checked#{/if}> NO
+                                    </span>
+                                </div>
+                            #{if enableSectionLocking}
+                                <div>
+                                    <span class="greenColor radioEnableText">Section Locking is enabled for this Test.</span>
+                                </div>
+                            #{/if}
+                            #{else}
+                                <div>
+                                    <span class="redColor radioEnableText">Section Locking is not enabled for this Test.</span>
+                                </div>
+                            #{/else}
+                            </div>
+                            #{/if}
+                        </div>
+                        #{/if}
+                        <div class="overFlowHolder">
+                            <div>
+                                <span class="cellHead">Subjects</span>
+                                ${subsHTML.raw()}
+                            </div>
+                            <div>
+                                <span class=" testPageDetHead cellHead">Current Total</span>
+                                ${currentTotalHTML.raw()}
+                            </div>
+                            <div>
+                                <span class="testPageDetHead cellHead">Target Total</span>
+                                ${targetTotalHTML.raw()}
+                            </div>
+                            
+                        </div>
+                        <div>
+                        #{if testDetails.has("isNTAPattern") && testDetails.isNTAPattern}
+                            <div class="greenColor margTop5 margBot5 displayInBlock">Optional Questions are enabled in this Test.<span id="info-on-hover" title="For detailed information, Click on View Details">
+                                    <img src="/public/images/info30.png" width="15px">
+                                </span>
+                            </div>
+                        #{/if}
+                        #{if testDetails.has("subjectiveTest") && testDetails.subjectiveTest}
+                            <div class="greenColor margTop5 margBot5 displayInBlock">This is a Subjective Test.
+                                <span id="info-on-hover" title="Subjective type questions needs to be manually graded.">
+                                    <img src="/public/images/info30.png" width="15px">
+                                </span>
+                            </div>
+                        #{/if}
+                        #{if testDetails.has("enableAutoResumeTest") && (testDetails.published || params.hideAutoResumeTest != "true")}
+                            %{
+                                enableAutoResumeTest = testDetails.enableAutoResumeTest;
+                            }%
+                            <div class="enableAutoResumeTestDiv margTop5 margBot5">
+                                <div class="radioButtonDiv">
+                                    <span class="spanTitle">Auto Resume Test? </span>
+                                    <span>
+                                        <input type="radio" name="enableAutoResumeTest" value="true" class="enableAutoResumeTest" #{if enableAutoResumeTest} checked#{/if}> YES
+                                    </span>
+                                    <span>
+                                        <input type="radio" name="enableAutoResumeTest" class="enableAutoResumeTest" value="false" #{if !enableAutoResumeTest} checked#{/if}> NO
+                                    </span>
+                                </div>
+                            #{if enableAutoResumeTest}
+                                <div>
+                                    <span class="greenColor radioEnableText">Auto Resume option is enabled for this Test.</span>
+                                </div>
+                            #{/if}
+                            #{else}
+                                <div>
+                                    <span class="redColor radioEnableText">Auto Resume option is not enabled for this Test.</span>
+                                </div>
+                            #{/else}
+                            </div>
+                            #{/if}
+                        </div>
+                    <!-- </tbody> -->
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+#{script src:'qrTestOptions.js', charset:'utf-8' /}
+<script type="text/javascript">
+    qrTestOptions.init();
+</script>

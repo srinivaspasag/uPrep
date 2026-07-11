@@ -1,0 +1,38 @@
+@(emailDetails: com.vedantu.organization.event.details.ApproveOrganizationEmailDetails)
+@import org.apache.commons.lang3.StringUtils
+
+<div style="color:#666;">
+	<span>Congratulations! You are now part of Learnpedia&rsquo;s beta program. We wholeheartedly welcome your organization </span>
+	<span style="font-size:15px;font-weight:bold;color:#333;">@emailDetails.organization.fullName</span>
+	<span> to be a part of Learnpedia &#45; most advanced ecosystem for mobile based learning.</span>
+</div>
+
+<!-- <div style="padding: 20px 0px;color:#666;">You have specified this email-id for communication from Learnpedia. You need to verify this email-id (by clicking on Verification Link sent in a separate email).</div> -->
+
+<div style="color:#666;">Update your administrator profile password (click on the link below):
+	<div style="padding-top:5px;">
+		@defining(emailDetails.passwordResetURL){ url =>
+		  @if( StringUtils.isNotEmpty(  url )){
+			<a href="@emailDetails.passwordResetURL" target="_blank" 
+				style="color:#4699CF;font-weight:bold;">Update Password</a>
+		  }else{
+			Please use your existing login credentials.
+		  }
+		}
+	</div>
+</div>
+
+<div style="padding-top: 20px;color:#666;">
+	<div>Steps to Login:</div>
+	<div style="border:1px solid #CCC;border-radius:10px;margin:8px;padding:10px 12px 10px 0px;">
+	<ol start="1">
+	@defining(emailDetails.organization.slug){ slugId =>
+		<li>Click for ADMIN Tool &#45; <a rel="nofollow" href="https://cmds.learnpedia.in/org/@slugId">CMDS(Content Management And Distribution System)</a></li>
+		<li>Click for <a rel="nofollow" href="https://learn.learnpedia.in/org/@slugId">Learn Platform</a></li>
+	}
+		<li>Click on Login</li>
+		<li>Email Id - <a rel="nofollow" style='text-decoration:none;color:#333'>@emailDetails.user.email</a>
+		<li>Enter the above mentioned Email ID and the Password updated by you.</li>
+	</ol>
+	</div>
+</div>

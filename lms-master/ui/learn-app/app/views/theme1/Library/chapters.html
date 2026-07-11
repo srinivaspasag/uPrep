@@ -1,0 +1,48 @@
+%{
+    testResult = resp.result.testRes;
+    documentResult = resp.result.documentRes;
+    moduleResult = resp.result.moduleRes;
+    boardResponse = resp.result.boardResponse;
+    programId = resp.result.programId;
+}%
+
+#{list items:0..boardResponse.list.length()-1,as:'Pindex'}
+%{
+    chapterName = boardResponse.list.get(Pindex).name;
+    chapterId = boardResponse.list.get(Pindex).id;
+    documentCount= 0;
+    testCount= 0;
+    moduleCount= 0;
+    subjectYear = boardResponse.list.get(Pindex).year;
+}%
+
+
+    #{if testResult.facet.length()>0}
+    #{list items:0..testResult.facet.topics.length()-1,as:'Dindex'}
+        #{if boardResponse.list.get(Pindex).id==testResult.facet.topics.get(Dindex).obj.id}
+            %{              
+                testCount=testResult.facet.topics.get(Dindex).count;
+            }%          
+        #{/if}
+    #{/list}
+    #{/if}
+    #{if documentResult.facet.length() > 0}
+    #{list items:0..documentResult.facet.topics.length()-1,as:'Dindex'}
+        #{if boardResponse.list.get(Pindex).id==documentResult.facet.topics.get(Dindex).obj.id}
+            %{              
+                documentCount=documentResult.facet.topics.get(Dindex).count;
+            }%          
+        #{/if}
+    #{/list}
+    #{/if}
+    #{if moduleResult.facet.length() > 0}
+    #{list items:0..moduleResult.facet.topics.length()-1,as:'Dindex'}
+        #{if boardResponse.list.get(Pindex).id==moduleResult.facet.topics.get(Dindex).obj.id}
+            %{              
+                moduleCount=moduleResult.facet.topics.get(Dindex).count;
+            }%          
+        #{/if}
+    #{/list}
+    #{/if}
+    #{library.chapter chapterName:chapterName, documentCount: documentCount, testCount: testCount, moduleCount: moduleCount, chapterId: chapterId, programId: programId, parentId: parentId /}
+#{/list}

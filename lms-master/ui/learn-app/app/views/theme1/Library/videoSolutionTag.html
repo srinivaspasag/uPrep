@@ -1,0 +1,49 @@
+#{if videoInfo !=null && videoInfo.errorCode.isEmpty()}
+%{
+    vid = videoInfo.result;
+
+}%
+<div id="digitalLibrary">
+    <div id="videoPage" data-video-id="${vid.id}">
+            #{if "UPLOADED".equals(vid.linkType)}
+                        %{
+                            callingAppName = play.Play.configuration.getProperty("application.name");
+                            playUrl = util.Utilities.putParamInUrl(vid.url,"callingApp",callingAppName);
+                        }%
+                        
+                            <div class="embed-responsive embed-responsive-16by9">
+                            	<video autoplay="true" poster="${vid.thumbnail}" controls="controls" preload="none" class="embed-responsive-item">
+                            	        <source type="video/mp4" src="${playUrl}"/>
+                            	</video>
+                            </div>
+                       
+                    #{/if}
+                    #{elseif "ADDED".equals(vid.linkType)}
+                        %{
+                            playUrl = vid.url;
+                        }%
+                        #{if vid.has('linkInfo') && !vid.linkInfo.equals(null) && vid.linkInfo.has('id')}
+                            %{
+                            	extInfo = vid.linkInfo;
+                                playUrl = vid.linkInfo.embedURL;
+                                playUrl= playUrl+"&autoplay=true";
+                                if(extInfo.domainName != null && "YOUTUBE".equals(extInfo.domainName.toUpperCase())){
+                                    playUrl = util.Utilities.putParamInUrl(playUrl,"rel","0");
+                                    playUrl = util.Utilities.putParamInUrl(playUrl,"showinfo","0");
+                                }
+                            }%
+                        #{/if}
+                            <div class="embed-responsive embed-responsive-16by9 m-r-20">
+                            	<iframe class="embed-responsive-item" src="${playUrl}"></iframe>
+                            </div>
+                    #{/elseif}
+    </div>
+</div>
+#{/if}
+#{elseif videoInfo!=null && !videoInfo.errorCode.isEmpty()}
+    <div class="c-red f-20 f-500">Something Went Wrong!!</div>
+#{/elseif}
+
+<script type="text/javascript">
+    library.init();
+</script>

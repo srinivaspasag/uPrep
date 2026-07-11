@@ -1,0 +1,112 @@
+<style>
+.testErrMsgHolder{
+	margin-top:50px;
+	padding:20px 50px;
+	border-radius:10px;
+	background-color:#fff;
+	text-align:center;
+	font-size:18px;
+}
+.testErrMsgHolder .ERMsg{
+	font-size:18px;
+	color:#cc6666;
+}
+.testErrMsgHolder .btnHolder{
+	padding:40px;
+}
+.testErrMsgHolder .greenButton,
+.testErrMsgHolder .redButton,
+.testErrMsgHolder .blueButton{
+	padding:5px 20px;
+	margin-right:20px;
+	font-size:16px;
+}
+</style>
+%{
+	curTestId = _testId;
+	curTestName = _testName;
+	resp=_resp;
+}%
+<div class="pageHolderM">
+	<div class="testErrMsgHolder">
+		<div class="ERMsg">${resp.errorMessage}</div>
+		#{if resp.has('result') && resp.result!=null}
+			%{ oldTest = resp.result;}%
+			<p>
+				<span class="ERTestName">Test Name : <b>${oldTest.testName}</b>.</span>
+				#{if oldTest.timeLeft > 0}	
+					%{
+                                        	timeObj=uicom.util.Utilities.getTimeFromMiliSec(oldTest.timeLeft);
+                                	}%
+					<div class="ERTestTimeLeft">
+					You have ${timeObj.hrs}:${timeObj.mins} hrs left. 
+					</div>
+				#{/if}
+			</p>
+			<div class="btnHolder">
+				#{if resp.errorCode == "TEST_INPROGRESS"}
+				<span class="blueButton endTestNow" data-old-test-id="${oldTest.testId}"
+					data-new-test-id="${curTestId}" data-old-attempt-id="${oldTest.attemptId}"
+					data-old-test-name="${oldTest.testName}"
+					data-new-test-name="${curTestName}">
+					End Test -<b>"${oldTest.testName}"</b>(Recommended)</span>
+				<span class="blueButton reAttemptTestNow" data-test-id="${oldTest.testId}">
+					Open -<b>"${oldTest.testName}"</b> Results</span>
+				#{/if}
+				#{else}
+				<span class="blueButton endTestNow" data-old-test-id="${oldTest.testId}"
+					data-old-attempt-id="${oldTest.attemptId}"
+					data-old-test-name="${oldTest.testName}">
+					End Test -<b>"${oldTest.testName}"</b></span>
+				#{/else}
+			</div>
+		#{/if}
+		<span class="right redButton exitFromTestFS" data-test-id="${curTestId}">Exit</span>
+		<div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$(".testErrMsgHolder").on("click",".endTestNow",function(e){
+			var $this = $(this);
+			var oldTestId = $this.data("oldTestId");
+			var oldTestName = $this.data("oldTestName");
+			var oldAttemptId = $this.data("oldAttemptId");
+			var newTestId = $this.data("newTestId");
+			var newTestName = $this.data("newTestName");
+			var params = {"testId":oldTestId,"attemptId":oldAttemptId};
+			$this.html("ending - <b>'"+oldTestName+"'</b>");
+			testFns.terminateProgressTest(params,function(data){
+				console.log(data);
+				if(data.errorCode==""){
+					$(".reAttemptTestNow").remove();
+					$(".ERTestTimeLeft").remove();
+					$(".ERMsg").remove();
+					if(newTestId){
+					   $this.removeClass("blueButton").addClass("greenButton")
+						.removeClass("endTestNow").addClass("attemptTestNow")
+						.html("Attempt - <b>'"+newTestName+"'</b>");
+					   $(".ERTestName").find("b").text(newTestName);
+					}else{
+					   $this.html("Ended - <b>'"+oldTestName+"'</b>");
+					}
+				}else{
+					$this.html("failed ending - <b>'"+oldTestName+"'</b>");
+				}
+			});
+		});
+		$(".testErrMsgHolder").on("click",".attemptTestNow",function(e){
+			testFns.retryCurrentTest();
+		});
+		$(".testErrMsgHolder").on("click",".reAttemptTestNow",function(e){
+			var testId = $(this).data("testId");
+			postTestUi();
+			testFns.postTestPage(testId);
+		});
+		$(".testErrMsgHolder").on("click",".exitFromTestFS",function(e){
+			var testId = $(this).data("testId");
+			postTestUi();
+			testFns.reload(testId);
+		});
+	});
+</script>

@@ -1,0 +1,53 @@
+<head>
+    <style type="text/css">
+        .sweet-alert input {
+          display: initial;
+          width: auto;
+          height: auto;
+          margin: auto;
+        }
+    </style>
+</head>
+<div class="relative addDiagramHolder CSWidget" data-widget="UPLOAD_DIAGRAM">
+    <!-- DISABLED
+     *{<div class="centry addDiagramMainTabs">
+            <span class="depthTab activeDepthTab doCStream" data-name="CHOOSE_FROM_COLLECTION" data-tab-id="QAADChooseDiv">
+                Choose from collection
+            </span>
+            <span class="depthTab doCStream" data-name="UPLOAD_NEW_DIAGRAM" data-tab-id="QAADUploadDiv">
+                Upload an Image
+            </span>
+    </div>
+    <div class="QAADChooseDiv QAADContentDiv">
+            <input type="text" class="searchQADiagram margTop20" value="" placeholder="search diagrams,graphs or concepts"/>
+            <div class="QAADChooseDivTabs">
+                    <span class="blackTab activeBlackTab doCStream" data-name="SHOW_ALL_SUBJECTS_TAB">All</span>
+                    <b> | </b>
+                    <span class="blackTab doCStream" data-name="SHOW_PHYSICS_TAB" data-query="Physics">Physics</span>
+                    <b> | </b>
+                    <span class="blackTab doCStream" data-name="SHOW_CHEMISTRY_TAB" data-query="Chemistry">Chemistry</span>
+            </div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+            <div class="LMHandlerDiv">
+                    #{include 'Questions/diagItems.html' /}
+            </div>
+    </div>}*-->
+    <div class="QAADUploadDiv QAADContentDiv">
+        <div class="cleaner_with_divider">&nbsp;</div>
+        <div class="quesAddUploadImgDiv">
+                <div class="cleaner_with_divider">&nbsp;</div>
+                <div id="file-uploadImageQues"  style="display: inline-block; position: relative; float:left;"></div>
+                <div class="fg-line">
+                    <input id="addDiagUploadTextBox" class="customInputTextBox form-control" value="" type="text"/>
+                </div>
+                <img alt="" class="nonner QAADUploading" style="position: relative; top: 10px;" src="/public/images/common/round-loading.gif"/>
+                <span class="nonner QAADUploadingPercent greyTextColor" style="margin:0 10px;"></span>
+        </div>
+    <div class="QAADImgPreview"></div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+        <div class="margTop20 centry">
+            <!--<span class="greenButton boldy QAADStartUpload">Upload</span>-->
+            <center><span class="greenButton btn btn-success waves-effect boldy QAADAddImg" onclick="postImage();">&{'TXT_ADD'}</span></center>
+        </div>
+    </div>
+</div>

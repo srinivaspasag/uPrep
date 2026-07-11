@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+ <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<title>#{get 'title' /}</title>
+<link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}"></link>
+*{#{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /}}*
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+#{gaTrackingCode /}
+#{script src:'uicomCommon/utils.js', charset:'utf-8' /}
+#{script src:'uicomRegister.js', charset:'utf-8' /}
+<!-- Scripts for Intl-tel-input plugin -->
+#{script src:'intlTelInput.js', charset:'utf-8' /}
+#{script src:'utils.js', charset:'utf-8' /}
+<!--End of Script -->
+#{stylesheet media:'screen', src:'uicomRegister.css' /}
+<!-- Stylesheet for Intl-tel-input plugin -->
+#{stylesheet media:'screen',src:'intlTelInput.css'/}
+<!-- End of Stylesheet -->
+  </head>
+    <body>
+        %{
+            appName=play.Play.configuration.getProperty("application.name");
+        }%
+	<div class="pageFullWidth regTopBar"></div>
+	<div class="pageFullWidth mainRegHolder loginFor${appName.toUpperCase()}" style="min-height:490px;">
+	    <!--<div class="vedantuMainImage"></div>-->
+            #{doLayout /}
+	</div>
+	<div id="detectClientMsg"></div>
+        #{if appName=='cmds-app'||appName=='test-app'}
+            <div class="cmdsVedantuInfoDiv">
+                <img src="/public/images/vedantuWhite.jpg" />
+                <!-- <a target='_blank' href='http://www.learnpedia.in'>About us</a> | <a href="mailto:info@learnpedia.in" target='_blank'>Contact us</a> -->
+            </div>
+        #{/if}
+      #{common.noscript/}
+      #{common.vPopup/}
+    </body>
+</html>
+<script type="text/javascript">
+	function checkVedantuClient(){
+		try{
+			vedantuClient.verifyClient($("#detectClientMsg"));
+			$("#detectClientMsg").append("<p>"+vedantuClient.detectedClientMsg()+"</p>");
+			if(onDocLoadInterval) clearInterval(onDocLoadInterval);
+		}catch(err){}
+	}
+	var onDocLoadInterval = setInterval(function(){
+		checkVedantuClient();
+	},1000);
+	$(document).ready(function(){
+		checkVedantuClient();
+	});
+</script>

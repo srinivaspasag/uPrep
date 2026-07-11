@@ -1,0 +1,6 @@
+%{
+    leaders=leaders.result.list;
+    if(params.target!=null)target=params.target;
+    else target='';
+}%
+#{challenges.leaderBoard target:target,leaders:leaders /}

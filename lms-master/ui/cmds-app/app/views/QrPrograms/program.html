@@ -1,0 +1,78 @@
+<div id="programPage" class="relativePos mcWidget">    
+    <div class="pageHeadGrayDiv">   
+        <div class="floatLeft" id="programPageHeadDiv">
+            <div>
+                <span class="progPageProgram big20 boldy color6" data-default-text="Program">
+                    Program
+                </span>
+                <a class="changeProgPageProgram liner margLeft5 nonner">Change Program</a>
+            </div>            
+            <div class="color9 big13">
+                <span class="progPageCenter" data-default-text="All Centers">All Centers</span>, 
+                <span class="progPageSection" data-default-text="All Sections">All Sections</span>
+            </div>
+        </div>
+        <div class="inputDiv cmdsTableSearchBox hasSearchImg floatRight
+             margRight15 whiteInputDiv">
+            <input type="text" class="mcSearchDivInput" data-param-name="query" value="${params.query}"
+                   placeholder="Search Content" id="mcWidgetInput"/>
+            <span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>                
+        </div>
+	#{if "MANAGER".equals(currentOrgInfo.getOrgUserProfile())}
+	%{
+		extraInfo = currentOrgInfo.getExtraInfo();
+		sectionOnlyElemClass = "sectionOnlyElem";
+		if(params.sectionId==null){
+			sectionOnlyElemClass += " nonner";
+		}
+	}%
+	#{if extraInfo!=null && extraInfo.has("isSuperAdmin") && extraInfo.isSuperAdmin == true}
+	<div class="${sectionOnlyElemClass} floatRight relative" style="padding-right:12px;top:-8px;">
+		<div class="greyTextColor smally">&{'ENABLE_SD_CARD_CREATION'}</div>
+		<div class="switchTabHolder" id="switchSectionSdOnly">
+			<span class="switchTabON switchTab" data-value="ON">&{'TXT_ON'}</span>
+			<span class="switchTabOFF switchTab" data-value="OFF">&{'TXT_OFF'}</span>
+		</div>
+	</div>
+	<div id="sectionLibSDCardOptions" style="padding-right:12px;"
+		class="floatRight ${sectionOnlyElemClass} hider">
+		#{common.chooseSdCardPage /}
+	</div>
+	#{/if}
+	#{/if}
+    </div>
+    <div id="leftSection">
+        <div class="leftSecHeadsDiv">
+            <div class="leftSecHead leftSecHeadActive" id="showProgContent">Content</div>
+            <div class="leftSecHead" id="showProgMembers">Members</div>
+            %{
+                learnpediaId=play.Play.configuration.getProperty("learnpedia.id");
+            }%
+            #{if currentOrgInfo.id == learnpediaId }
+                <div class="leftSecHead" id="showProgOrganizations">Organizations</div>
+            #{/if}
+<!--            <div class="leftSecHead showProgSchedule">Schedule</div>                -->
+            <div class="leftSecHead" id="showProgStudents">Students</div>   
+            <div class="leftSecHead nonner" id="uploadOfflineTests">Upload Mark Sheets</div>
+            #{if currentOrgInfo!=null && !currentOrgInfo.equals(null) && currentOrgInfo.getClassroomConnectStatus() == true}
+                <div class="leftSecHead nonner showClassroomConnect" id="showClassroomConnect">Classroom Connect</div>
+            #{/if}
+        </div>
+        <div id="fixedLeftSecPortion" class="hider">
+            #{common.courseTopicChooseDiv /}              
+        </div>           
+    </div>   
+    <div id="mainSection"></div>
+    <div class="cleaner_with_divider">&nbsp;</div>      
+</div>
+
+<script type="text/javascript">
+    new function(){                    
+        var params={target:"PROGRAM_PAGE",
+                programId:"${params.programId}",areaType:"${params.areaType}"};
+        params.centerId="${params.centerId}";
+        params.sectionId="${params.sectionId}";
+        var fn=function(){qrProgram.init(params);};
+        lazyLoad([{fname:"qrProgram.js",cb:fn}]);        
+    }();    
+</script>

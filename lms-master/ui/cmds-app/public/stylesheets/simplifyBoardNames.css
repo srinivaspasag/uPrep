@@ -1,0 +1,43 @@
+.vpopupBodyHolder{
+    position: relative;
+}
+.simplifyBoardNames{
+    /*min-width: 600px;*/
+    min-height: 180px;
+    padding-bottom: 30px;
+}
+.checkboxDiv{
+    float: right;
+    /*margin: 10px 0 0 20px;*/
+    width: 25%;
+    background: #F4F4F4;
+}
+.simplifyBoardForm{
+    display: inline-block;
+    float: left;
+    width:70%;
+    /*margin:10px 0 0 20px;*/
+}
+#simplifyBoardFormValue{
+    width: 250px;
+}
+.simplifyBoardFormButtons{
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.SCHolder{
+    margin:10px;
+}
+.boardNames{
+    font-weight: bold;
+    top:1px;
+    position: relative;
+}
+.ATTagTreeDiv{
+    margin-top: 20px;
+    border: 3px solid lightgrey;
+    padding-left:15px;
+    padding-right: 15px;
+}

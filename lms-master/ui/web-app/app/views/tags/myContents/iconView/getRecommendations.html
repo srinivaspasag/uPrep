@@ -1,0 +1,23 @@
+#{if recommendations.has("result") && recommendations.result.has("documents") && recommendations.result.documents.length()>0}
+<input type="hidden" class="resultDataCount" value="${recommendations.result.totalHits}"/>
+
+#{list items:0..recommendations.result.documents.length()-1,as:'rIndex'}
+%{recom = recommendations.result.documents.get(rIndex);}%
+<div class="left relative contentRecommendationEach">
+	<input type="button" class="right absolute smallBlueButton followRecommendationBtn" value="Save"/>
+	<img class="left relative recommendationBookCover" src="${recom.thumbnail}" />
+	<div class="left relative recDocHolder">
+		<span class="left relative recommendationDocumentsType">${recom.type}</span><br/>
+		<span class="left relative big12 boldy contentRecommendationText blackTextColor">${recom.title}</span><br/>
+		<span class="left relative contentRecommendationText blueTextColor">by ${recom.authorName}</span><br/>
+		#{if recom.has('user') && recom.user!=null}
+			<span class="left relative contentRecommendationText greyTextColor recomUploader">Uploaded by ${recom.user.firstName} ${recom.user.lastName}</span>
+		#{/if}
+		<span class="left relative myContentsRankingHolder">
+			<span class="left relative myContentsRankingStars" style="width:${recom.avgRating*20}%"></span> 
+		</span>
+	</div><br/>
+	<span class="left relative big12 greyTextColor" style="clear:both;padding-top:8px;"><b>Views - </b>${recom.views}</span></br>
+</div>
+#{/list}
+#{/if}

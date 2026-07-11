@@ -1,0 +1,51 @@
+<div class="left relative CSWidget #{if params.orgId!=null}nonner#{/if}" id="searchContentHeader" data-widget="SEARCH_BAR">
+	<div class="left relative topSearchContent">
+		<div class="vselect vselectHide selectSearchContentType doCStream" onstatechange="searchContentTypeChange" data-value="QUESTION" data-cs-name="SEARCH_CONTENT_TYPE_SELECT">
+			<span class="vSelectHead">
+				<input type="text" class="vSelectText" value="Questions" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect" ></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+					<span class="vSelectEach" data-value="QUESTION">Questions</span>
+					<span class="vSelectEach" data-value="PLAYLIST">Playlists</span>
+					<!-- DOCUMENTS , VIDEOS DISABLED FOR  RELEASE
+					<span class="vSelectEach" data-value="DOCUMENT" data-exclude-types="VIDEO">Documents</span>
+					<span class="vSelectEach" data-value="DOCUMENT" data-include-types="VIDEO">Videos</span>-->
+					<span class="vSelectEach" data-value="USER">People</span>
+					<span class="vSelectEach" data-value="TEST">Test</span>
+				</div>
+			</div>
+		</div>
+		<input type="text" id="searchContentTextBox" class="relative searchContentInputQuery big14 doCStream" value="" data-cs-name="search-box"/>
+                <a id='exploreContent' class="absolute right ptrTagInline doCStream" href="/explorecontent" 
+			data-cs-name="EXPLORE_CONTENT_TAB">
+    			<span class="exploreContentImg"></span>
+    			<span class="boldy big16">Explore Content</span>
+                        <div class="exploreContentTail" style="display:none;"><!--Anirban : bug fix:#326-->
+                            Playlists <span class="feedPipe">|</span> Documents <span class="feedPipe">|</span> Tests <span class="feedPipe">|</span> Videos
+                        </div>
+		</a>
+	</div>
+		<!--<div class="left searchDirectly relative">
+			<span class="smally">You can directly search for a </span>
+			<div class="vselect vselectHide selectSearchContentDirectly vDropDown" onstatechange="searchContentDirectlyChange" data-value="">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText" value="Subject / Topic" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+						<span class="vSelectEach" data-value="">Subject / Topic</span>
+					</div>
+				</div>
+			</div>
+		</div>-->
+</div>
+<div class="left relative searchSuggestionParent nonner CSWidget" data-widget="search_suggestion">
+	<div class="left relative searchSuggestionPadder">
+		<div class="left relative searchContentSuggestionHolder">
+			*{#{include '/SearchContent/getSuggestions.html'/}}*
+		</div>
+	</div>
+</div>

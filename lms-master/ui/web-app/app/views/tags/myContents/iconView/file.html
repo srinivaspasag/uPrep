@@ -1,0 +1,73 @@
+%{ 
+	file = _file; 
+	caller = _caller == null ? "" : _caller;
+	fileOpenUrl = webUtils.TemplateHelper._getFileUrl(file,params.orgId);
+	recordState = file.has("recordState") && !file.recordState.equals(null) ? file.recordState : "ACTIVE";
+}%
+<div class="left relative eachMyContentsFile myContentsEachIconItems myContentsEachItem" 
+	data-doc-id="${file.id}" data-entity-type="FILE" data-entity-id="${file.id}">
+	#{if recordState == "TEMPORARY"}
+	<div class="absolute contentUnavailable">
+		<div class="contentUnavailableMsg">&{'TXT_UNAVAILABLE'}</div>
+	</div>	
+	#{/if}
+	#{elseif caller != "EXT" }
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+                <a class="right relative greenButton doCStream myContentsButtonItem ${fileOpenUrl.className}"
+                   data-id="${fileOpenUrl.id}" href="${fileOpenUrl.url}" data-cs-name="OPEN">Open</a>
+                <a class="right relative greenButton doCStream myContentsButtonItem"
+                   data-id="${fileOpenUrl.id}" href="${file.url}" target="_blank" data-cs-name="DOWNLOAD">&{'TXT_DOWNLOAD'}</a>
+		*{<div class="right relative myContentsButtonItem">
+			#{widgets.followUnfollowEntity followType:file.followType,entityType:'FILE',entityId:file.id/}
+		</div>}*
+		<span class="left absolute myContentsItemInfo"><b>Views - </b>${file.views}</span>
+		<span class="right absolute myContentsShareIt">Share</span>
+	</div>
+	#{/elseif}
+	<span class="left relative fileThumbnail"></span>
+	<div class="left relative myContentsDocumentsDetails">
+		#{if caller != "EXT" }
+		<span class="left relative big12 boldy myContentsDocumentsText blackTextColor singleLineText toolTipTitle"
+			data-title="${file.name}" >${file.name}</span>
+		#{/if}
+		#{else}
+		<a class="left relative big12 boldy myContentsDocumentsText blackTextColor singleLineText toolTipTitle ${fileOpenUrl.className}" 
+                   	data-id="${fileOpenUrl.id}" href="${fileOpenUrl.url}" data-cs-name="OPEN"
+			data-title="${file.name}">${file.name}</a>
+		#{/else}
+		<br/>
+		#{if file.has('extension')}
+		<span class="left relative big12 myContentsDocumentsText blackTextColor singleLineText"
+			title="${file.extension}">type : <b>${file.extension}</b></span><br/>
+		#{/if}
+		%{
+			boards = file.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   <span class="left relative myContentsDocumentsText" style="width:100%;">
+		   #{if boards.length()<=2}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<span style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</span>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+		   	<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+		#{if file.has('user') && file.user!=null}
+                      %{
+                        user=file.user;
+                      }%
+			<span class="left relative myContentsDocumentsText">
+				<span>by </span>
+				#{institute.memberName user : user , classNames : "blueTextColor" /}
+			</span><br/>
+		#{/if}
+	</div>
+</div>	

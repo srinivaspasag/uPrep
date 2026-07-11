@@ -1,0 +1,22 @@
+<div class="cmdsPopupHead" style="display:inline-block;"></div>
+	<div class="vChoose mcvChoose vChooseUserDevices margLeft10 alignMiddle" data-value="showAllDevices" 
+		data-onchange="onUserDeviceChangeInPopup">
+                <div class="vChooseHead">Show All Devices</div>
+                <div class="vChooseDownIcon"></div>
+        	<div class="vChooseDropDown">
+                        <div class="vChooseOpt" data-value="showAllDevices">Show All Devices</div>
+                        <div class="vChooseOpt" data-value="showOnlyWebDevices">Show Only Web Devices</div>
+                        <div class="vChooseOpt" data-value="showOnlyMobileDevices">Show Only Mobile Devices</div> 
+        	</div>
+    	</div>
+<div class="userDeviceDetailsHold mappingsDisplayDiv">
+   <table class="fullWidth mappingsDisplayTable" cellspacing=0>
+	<tr>
+		<td class="boldy big14">Device</td>
+		<td class="boldy big14 nonner">Status</td>
+		<td class="boldy big14">Last Login Time</td>
+		<td class="boldy big14">Last Activity</td>
+	</tr>
+	#{include 'QrDevices/userDeviceTable.html'/}
+   </table>
+</div>

@@ -1,0 +1,20 @@
+@(src:com.vedantu.organization.pojos.LicensingInfo)
+@import play.Play
+
+    	<div style="font-weight:bold;">
+	@defining(Play.application().configuration().getString("infographic.link")){ hostLink =>
+		<a rel="nofollow" href="@hostLink/plans/@src.id">@src.name</a>
+	}
+	</div>
+	<div>@src.desc </div>	
+@if( src.peruser ) {
+	<div>License Type: User based </div>
+	<div>Cost per user per month: <b>$@src.cost</b></div>
+}else{
+	<div>License Type: Non-user based </div>
+    	<div>Cost per additional user per month: @src.additionalCost</div>
+	@defining( src.cost * 12 ){ yearlyCost =>
+         	<div>Annual cost : <b>$@yearlyCost</b></div>
+	}
+}
+	<div>Invoicing : Monthly</div>	

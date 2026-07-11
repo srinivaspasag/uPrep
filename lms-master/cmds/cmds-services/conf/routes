@@ -1,0 +1,172 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               					controllers.Assets.at(path="/public", file)
+
+#ping
+GET    /application/ping                           controllers.Application.ping()
+
+# this is common controller across all services and will provide information about currently deployed build
+POST	/sysinfo/get                              		controllers.SysInfo.getInfo()
+
+# Home page
+OPTIONS	/*test											controllers.CMDSResources.cors(test:String)
+POST    /cmdsResources/getResources	    				controllers.CMDSResources.getResources()
+POST    /cmdsResources/getQuestionsCount                controllers.CMDSResources.getQuestionsCount()
+POST    /cmdsResources/getQuestions                     controllers.CMDSResources.getQuestions()
+POST    /cmdsResources/createFolder	    				controllers.CMDSResources.createFolder()
+POST    /cmdsResources/move     						controllers.CMDSResources.move()
+POST    /cmdsResources/removeResources					controllers.CMDSResources.delete()
+POST    /cmdsResources/getFolders   					controllers.CMDSResources.getFolders()
+POST   /cmdsResources/upload						    controllers.CMDSResources.upload()
+POST   /cmdsResources/getSignedRequest					controllers.CMDSResources.getSignedRequest()
+POST   /cmdsResources/update							controllers.CMDSResources.update()
+
+# CMDS ModulesModules
+POST    /cmdsModules/createModule	    				controllers.CMDSModules.createModule()
+POST    /cmdsModules/addModuleEntries	    			controllers.CMDSModules.addModuleEntries()
+POST    /cmdsModules/updateModule	    				controllers.CMDSModules.updateModule()
+POST    /cmdsModules/deleteModule	    				controllers.CMDSModules.deleteModule()
+POST    /cmdsModules/moveModuleEntry	    	        controllers.CMDSModules.moveModuleEntry()
+POST    /cmdsModules/deleteModuleEntry	    			controllers.CMDSModules.deleteModuleEntry()
+POST    /cmdsModules/getCMDSModuleInfo	    		    controllers.CMDSModules.getCMDSModuleInfo()
+POST    /cmdsModules/updateModuleEntries	    		controllers.CMDSModules.updateModuleEntries()
+POST    /cmdsModules/getCMDSModules	    		        controllers.CMDSModules.getCMDSModules()
+POST    /cmdsModules/setSchedule                        controllers.CMDSModules.setSchedule()
+POST    /cmdsModules/deleteSchedule                     controllers.CMDSModules.deleteSchedule()
+
+# CMDS Questions
+POST    /cmdsQuestions/addQuestion     					controllers.CMDSQuestions.addQuestion()
+POST    /cmdsQuestions/editQuestion     				controllers.CMDSQuestions.update()
+POST 	/cmdsQuestions/publishQuestionAsChallenge 		controllers.CMDSQuestions.publishQuestionAsChallenge()
+POST 	/cmdsQuestions/getQuestion						controllers.CMDSQuestions.getQuestion()
+POST 	/cmdsQuestions/getQuestions						controllers.CMDSQuestions.getQuestions()
+POST 	/cmdsQuestions/getUsages						controllers.CMDSQuestions.getUsages()
+POST	/cmdsQuestions/getSolutions			            controllers.CMDSQuestions.getSolutions()
+GET     /cmdsQuestions/fixMissingSolution/:orgId/:scope/:cmdsQId        controllers.CMDSQuestions.fixMissingSolution(orgId: String, scope: String, cmdsQId: String)
+GET     /cmdsQuestions/fixMissingSolutions/:orgId/:scope        controllers.CMDSQuestions.fixMissingSolutions(orgId: String, scope: String)
+GET     /cmdsQuestions/fixboards/:orgId/:boardId        controllers.CMDSQuestions.fixBoards(orgId: String, boardId: String)
+GET     /cmdsQuestions/fixBoardMapping/:orgId           controllers.CMDSQuestions.fixBoardMapping(orgId: String)
+
+# CMDSLibrary data
+POST	/cmdsLibrary/addToLibrary						controllers.CMDSLibrary.addToLibrary()
+POST	/cmdsLibrary/removeFromLibrary					controllers.CMDSLibrary.removeFromLibrary()
+POST	/cmdsLibrary/getLibraryResources    			controllers.CMDSLibrary.getLibraryResources()
+POST	/cmdsLibrary/makeVisible 						controllers.CMDSLibrary.makeVisible()
+POST	/cmdsLibrary/getVisibilityStatus				controllers.CMDSLibrary.getVisibilityStatus()
+POST	/cmdsLibrary/move								controllers.CMDSLibrary.move()
+POST 	/cmdsResources/publish							controllers.CMDSResources.publish()
+POST 	/cmdsResources/getStatus						controllers.CMDSResources.getStatus()
+POST    /cmdsResources/getQuestionSharingBasicInfo      controllers.CMDSResources.getQuestionSharingBasicInfo()
+POST    /cmdsResources/addMappings                      controllers.CMDSResources.addMappings()
+POST    /cmdsResources/saveMapping                      controllers.CMDSResources.saveMapping()
+POST    /cmdsResources/deleteMapping                    controllers.CMDSResources.deleteMapping()
+POST    /cmdsResources/shareMapping                     controllers.CMDSResources.shareMapping()
+POST    /cmdsResources/visibleMapping                   controllers.CMDSResources.visibleMapping()
+
+# CMDSQuestionSet 
+POST	/cmdsQuestionSets/uploadQuestionFile 			controllers.CMDSQuestionSets.uploadQuestionFile()
+POST	/cmdsQuestionSets/getQuestions		    		controllers.CMDSQuestionSets.getQuestions()
+POST	/cmdsQuestionSets/confirmQuestionSetUpload  	controllers.CMDSQuestionSets.confirmQuestionSetUpload()
+POST	/cmdsQuestionSets/update						controllers.CMDSQuestionSets.update()
+
+# offline test result upload
+POST   /cmdsTests/uploadTestResults						controllers.CMDSTests.uploadTestResults()
+POST   /cmdsTests/uploadTestResults2                    controllers.CMDSTests.uploadTestResults2()
+
+# CMDSTest 
+POST   /cmdsTests/createTest						    controllers.CMDSTests.createTest()
+POST   /cmdsTests/createTestAuto					    controllers.CMDSTests.createTestAuto()
+POST   /cmdsTests/addQuestion						    controllers.CMDSTests.addQuestion()
+POST   /cmdsTests/removeQuestion					    controllers.CMDSTests.removeQuestion()
+POST   /cmdsTests/getTestInfo					    	controllers.CMDSTests.getTestInfo()
+POST   /cmdsTests/getTestQuestions					    controllers.CMDSTests.getTestQuestions()
+POST   /cmdsTests/finishTestEditing					    controllers.CMDSTests.finishTestEditing()
+POST   /cmdsTests/getTests						    	controllers.CMDSTests.getTests()
+POST   /cmdsTests/update								controllers.CMDSTests.update()
+POST   /cmdsTests/updateTestResultVisibility			controllers.CMDSTests.updateTestResultVisibility()
+POST   /cmdsTests/setPasswordForTest                    controllers.CMDSTests.setPasswordForTest()
+POST   /cmdsTests/simplifyBoardNames                    controllers.CMDSTests.simplifyBoardNames()
+POST   /cmdsTests/addSimplifiedBoardNames               controllers.CMDSTests.addSimplifiedBoardNames()
+POST   /cmdsTests/removeSimplifiedBoardNames            controllers.CMDSTests.removeSimplifiedBoardNames()
+POST   /cmdsTests/enableOrDisablePartialMarks           controllers.CMDSTests.enableOrDisablePartialMarks()
+POST   /cmdsTests/enableOrDisableSectionLocking         controllers.CMDSTests.enableOrDisableSectionLocking()
+POST   /cmdsTests/enableAutoResumeTest                  controllers.CMDSTests.enableAutoResumeTest()
+POST   /cmdsTests/regenerateAnalytics                   controllers.CMDSTests.regenerateAnalytics()
+
+#CMDSAssignment
+POST   /cmdsAssignments/createAssignment				controllers.CMDSAssignments.createAssignment()
+POST   /cmdsAssignments/addQuestion						controllers.CMDSAssignments.addQuestion()
+POST   /cmdsAssignments/removeQuestion					controllers.CMDSAssignments.removeQuestion()
+POST   /cmdsAssignments/getAssignmentInfo				controllers.CMDSAssignments.getAssignmentInfo()
+POST   /cmdsAssignments/getAssignmentQuestions			controllers.CMDSAssignments.getAssignmentQuestions()
+POST   /cmdsAssignments/finishAssignmentEditing			controllers.CMDSAssignments.finishAssignmentEditing()
+POST   /cmdsAssignments/getAssignments					controllers.CMDSAssignments.getAssignments()
+POST   /cmdsAssignments/update							controllers.CMDSAssignments.update()
+
+#CMDSVideos
+#POST   /cmdsVideos/uploadVideo						    controllers.CMDSVideos.uploadVideo()
+POST   /cmdsVideos/confirmVideo						    controllers.CMDSVideos.confirm()
+POST   /cmdsVideos/getVideo						        controllers.CMDSVideos.get()
+POST   /cmdsVideos/update								controllers.CMDSVideos.update()
+GET   /cmdsVideos/reprocess/:id								controllers.CMDSVideos.reprocess(id: String)
+POST /cmdsVideos/reprocess/:id								controllers.CMDSVideos.reprocess(id: String)
+
+GET   /cmdsVideos/convertAgain/:id								controllers.CMDSVideos.convertAgain(id: String)
+POST /cmdsVideos/convertAgain/:id								controllers.CMDSVideos.convertAgain(id: String)
+
+POST   /cmdsDocuments/confirm						    controllers.CMDSDocuments.confirm()
+POST   /cmdsDocuments/get						        controllers.CMDSDocuments.get()
+POST   /cmdsDocuments/update							controllers.CMDSDocuments.update()
+POST   /cmdsDocuments/reconvert							controllers.CMDSDocuments.reconvert()
+
+POST   /cmdsFiles/confirm						    	controllers.CMDSFiles.confirm()
+POST   /cmdsFiles/get						            controllers.CMDSFiles.get()
+POST   /cmdsFiles/update						    	controllers.CMDSFiles.update()
+
+#resendEmailReqForm
+#CMDS Indexing
+POST   /indexer/reIndex							   		controllers.Indexer.reIndex()
+POST   /indexer/reIndexLibraryLinks						controllers.Indexer.reIndexLibraryLinks()
+POST   /indexer/reIndexUserActionMappings				controllers.Indexer.reIndexUserActionMappings()
+
+
+# CMDS Exports
+POST   /cmdsExports/schedule							controllers.CMDSExports.schedule()
+POST   /cmdsExports/getExports							controllers.CMDSExports.getExports()
+POST   /cmdsExports/getExportDetails					controllers.CMDSExports.getExportDetails()
+POST   /cmdsExports/delete								controllers.CMDSExports.delete()
+
+# CMDS Exports
+POST   /sdGroups/schedule								controllers.CMDSSDCardGroups.schedule()
+POST   /sdGroups/gets									controllers.CMDSSDCardGroups.gets()
+POST   /sdGroups/get									controllers.CMDSSDCardGroups.get()
+POST   /sdGroups/move									controllers.CMDSSDCardGroups.move()
+POST   /sdGroups/mark									controllers.CMDSSDCardGroups.mark()
+POST   /sdGroups/deleteSdCardGroup						controllers.CMDSSDCardGroups.deleteSdCardGroup()
+POST   /sdCards/get										controllers.CMDSSDCards.get()
+POST   /sdCards/contents								controllers.CMDSSDCards.getContents()
+
+#CMDS maintainence 
+POST   /sizer/calculate									controllers.Sizer.calculate()
+POST   /sizer/calculateLibs								controllers.Sizer.calculateLibs()
+
+#CMDS Access Codes 
+POST   /accessCodes/generateAccessCode					controllers.AccessCodes.generateAccessCode()
+POST   /accessCodes/generateBulkAccessCode			    controllers.AccessCodes.generateBulkAccessCode()
+POST   /accessCodes/verifyAccessCode					controllers.AccessCodes.verifyAccessCode()
+POST   /accessCodes/getAccessCodes					    controllers.AccessCodes.getAccessCodes()
+POST   /accessCodes/getSellableItems				    controllers.AccessCodes.getSellableItems()
+POST   /accessCodes/updateShipmentStatus			    controllers.AccessCodes.updateShipmentStatus()
+POST   /accessCodes/resendEmail			                controllers.AccessCodes.resendEmail()
+POST   /accessCodes/deviceManagement	                controllers.AccessCodes.deviceManagement()
+
+
+#CMDS Notification By GCM
+POST	/notifications/registerById 					controllers.Notifications.registerById()
+POST	/notifications/getRegIds 					controllers.Notifications.getRegIds()
+
+# ~~~ FOR UPLOADING TEMP IMAGES ~~~
+POST   /uploads/uploadImage                             controllers.Uploads.uploadImage()

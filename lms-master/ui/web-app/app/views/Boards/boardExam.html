@@ -1,0 +1,88 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="vBoardsStyles">
+    showNoTabSec("BOARD_EXAM");
+</script>
+#{/if}
+#{stylesheet media:'screen', src:'boards.css' /}
+%{
+    examInfo=examInfo.result;
+}%
+<div id="boardPage">
+    <div id="BPTopBarHolder">
+        <div id="BPTopBar">
+            <div class="BPBackToBoardDiv">
+<!--                <span class="greenButton BPBackToBoard">Back To Board</span>-->
+            </div>
+            <div class="BPTopBarExamDiv">
+                #{if examInfo.desc!=''}
+                <div class="BEIcon66 floatLeft">
+                    <div class="BEIcon66Code">${examInfo.code}</div>
+                </div>
+                <div class="img80Lefter">                    
+                    #{if examInfo.code=='AIEEE'}
+                    <div class="floatLeft" style="width: 400px;">${uicom.util.Utilities.morify(examInfo.desc,350).raw()}</div>                    
+                    <div style="padding: 10px; border-radius: 1px 1px 1px 1px; border: 1px solid rgb(204, 204, 102); background-color: rgb(255, 255, 153); width: 200px; margin-left: 410px;">We will soon be updating according to the latest format 
+                        of competitive examinations</div>
+                    #{/if}
+                    #{else}
+                    <div class="floatLeft">
+                        ${uicom.util.Utilities.morify(examInfo.desc,350).raw()}
+                    </div>                    
+                    #{/else}
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </div>
+                #{/if}
+                #{else}
+                <div class="centry">
+                    <div class="BEIcon66">
+                        <div class="BEIcon66Code">${examInfo.code}</div>
+                    </div>
+                </div>
+                #{/else}
+            </div>
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+    <div id="BP1002">
+<!--        <div id="BEPLeftSec"></div>-->
+        <div id="BEPMiddleDiv">
+            #{if examInfo.targetOf.length()>0}
+                %{
+                    subjects=examInfo.targetOf;
+                }%
+            <div class="BEPMiddleDivTopBar CSWidget" data-widget="SUBJECTS_TOGGLE">
+                #{list items:0..subjects.length()-1,as:'i'}
+                <a class="BEPSubject ptrTagInline doCStream" data-brd-id="${subjects.get(i).brdId}" 
+		    data-cs-name="SUBJECT_BUTTON">
+                    ${subjects.get(i).name}
+                    <div class="BEPSubArrow"><img src="/public/images/boards/BEPSubArrow.png"></div>
+                </a>
+                #{/list}
+            </div>
+            <div id="BSContents">
+                <script type="text/javascript">
+                    $(function(){
+                        var brdId="${subjects.get(0).brdId}";
+                       var boardPage=$("#boardPage");
+                       boardPage.data("examCode","${examInfo.code}").data("examId","${examInfo.brdId}");
+                       boardPage.find(".BEPSubject").first().addClass("activeBEPSubject");
+                       boardPage.find("#BSContents").load('/boards/getBSContents',{brdId:brdId});
+                    });
+                </script>
+            </div>
+            #{/if}
+            #{else}
+            <div class="userMessage">There are no subjects listed under this exam</div>
+            #{/else}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){vBoards.init({targetPage:'BOARD_EXAM'});}
+        fetchScripts([{fname:"boards.js",cb:fn}]);   
+    }();      
+</script>  
+
+

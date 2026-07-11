@@ -1,0 +1,38 @@
+#{if queAnalyticsData!=null && queAnalyticsData.errorCode.isEmpty() && queAnalyticsData.result.length()>0}
+%{
+    queAnalyticsData = queAnalyticsData.result;
+}%
+<style type="text/css">
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+</style>
+<h3 id="popupHeading"></h3>
+<span style="color: #666;font-size: 14px;">Count of students: ${queAnalyticsData.length()}</span>
+<div style="max-height: 400px;overflow:auto; ">
+    <table cellpadding="15">
+        <tr>
+            <th>S.No</th>
+            <th>Username</th>
+            <th>Time Taken</th>
+        </tr>
+    #{list items:0..queAnalyticsData.length()-1,as:'index'}
+    %{
+        student = queAnalyticsData.get(index);
+        studentUserName = student.userName;
+        studentTime = student.timeTaken;
+        timeObj=uicom.util.Utilities.getTimeFromMiliSec(studentTime);
+    }%
+        <tr class="studentsInfo">
+            <td>${index+1}</td>
+            <td>${studentUserName}</td>
+            <td>${timeObj.mins}:${timeObj.secs} mins</td>
+        </tr>
+    #{/list}
+    </table>
+</div>
+#{/if}
+#{else}
+   <h3 id="popupHeading"></h3>
+   <span style="color: #666;font-size: 14px;">Count of students: 0</span>
+#{/else}

@@ -1,0 +1,63 @@
+#These messages are for use in javascript files. 
+COMMON_ERROR_MESSAGE = Something went wrong.Refresh the Page and try again.
+
+#i18nJS
+#ERROR
+BLANK_CONTANT_NOT_ALLOWED = Can not post blank content!
+PLEASE_ENTER_TEXT = Please Enter Some Text!
+FAILED_TO_UPLOAD_PROFILE_PIC = Failed to upload profile pic, Please try again later!
+FAILED_TO_LOAD_IMAGE = Failed to load image selected by you!
+ERROR_OCCURRED = Error Occurred!
+FAILED_TO_UPDATE = Failed to update. try agan later!
+
+CONFIRM_DELETE_POPUP_TXT = Are you sure to delete, process can not be un-done !
+ENTER_ATLEAST_SUBJECT_TOPIC = Please select atleast one Subject and Topic!
+CANNOT_OPEN_TEST = Can not open the selected test!
+BROWSER_SPECIFIC_SUPPORT_DEPENDENCY = Sorry your browser does not support this feature. Use latest versions of Firefox/Chrome.
+SUFFICIENT_RIGHT_MISSING = You do not have sufficient rights for this.
+NOT_A_VALID_EMAIL_ID = Not a valid email-id, please re-enter.
+ALPHANUMERIC_WRONG_FORMAT = Please provide the value in alpha-numeric format. Special characters are not allowed!
+DUPLICATE_VALUE_FOUND = Duplicate value found. Please enter unique value.
+
+#COMMON
+TXT_MORE = More
+LOADING = Loading...
+SHOW_MORE = Show More
+TXT_SEARCH = Search
+TRY_REFRESHING_THE_PAGE = Try Refreshing the page.
+TXT_ALL_SUBJECTS = All Subjects
+VIEW_TEST = View Test
+VIEW_ANALYTICS = View Ananlytics
+TXT_MARKS = Marks
+TXT_HIGHEST = Highest
+TXT_AVERAGE = Average
+TXT_RANK = Rank
+TXT_SUBMITTED = Submitted
+TXT_OK = OK
+TXT_NOT_AVAIALABLE = Not Available
+TXT_CUSTOM = Custom
+TXT_NOT_APPLICABLE = Not Applicable
+TXT_SUCCESS = Success
+TXT_REMOVE = remove
+TXT_ADD = add
+TXT_DONE = Done
+
+#TRANSACTION
+TRANSACTION_FAILED_TO_EXECUTE = Transaction failed to execute, Try again later!
+ERROR_WHILE_JOINING = Error occurred while joning
+SUCCESSFULLY_JOINED_PROGRAM = Successfully joined the program, click OK to continue
+
+#API FILTERS
+MOST_RECENT = Most Recent
+ALL_SUBJECTS = All Subjects
+ALL_TYPES = All Types
+ALL_LEVELS = All Levels
+
+#PROFILE
+PROFILE_TEACHER = Teacher
+PROFILE_STUDENT = Student
+PROFILE_MANAGER = Manager
+PROFILE_EDITOR = Manager
+
+#SD-CARD
+SD_MOVE_CONTENT_SRC_DEST_SAME = Source card and destination card can not be same!

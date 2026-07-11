@@ -1,0 +1,71 @@
+#{if questions!=null && questions.errorCode.isEmpty()}
+%{
+    orgId = params.orgId;
+    MAX_DISC = 2;
+}%
+#{if questions.result.list.length()>0}
+<div class="instSimilarQues left card p-15">
+    <div class="instTopicHead text-center"><h4>&{'SIM_DOUBTS'}</h4></div>
+    <div class="left instSimQues CSWidget" data-widget="SIMILAR_DISCUSSIONS" style="min-height: inherit;border-top:1px solid #eee; ">
+        #{list items:0..questions.result.list.length()-1,as:'dIndex'}
+        %{
+            discuss = questions.result.list.get(dIndex);
+        }%
+        <div class="eachSimQues" style="padding: 10px;">
+           <!-- <div> -->
+            <a class="doCStream instSimQuesBody openInstDoubt" data-cs-name="SIMILAR_DISCUSSION_LINK" 
+            data-diss-id="${discuss.id}" href="/discussion/${discuss.id}">
+                ${discuss.name.raw()}
+            </a>
+           <!-- </div> -->
+           #{institute.widgets.displayOnlyUpvoteBar followers:discuss.followers,comments:discuss.comments /}
+        </div>
+        #{/list}
+    </div>
+    #{if questions.result.list.length()>MAX_DISC}
+        <!-- <div><a class="smally viewMoreSimDoubts">&{'VIEW_MORE'}</a></div> -->
+        <!-- <script type="text/javascript">
+            $(function(){
+                function calcHeight(upto,newClass){
+                   var maxHeight = 0,count=0;
+                   $(".instSimQues").addClass(newClass).find(".eachSimQues").each(function(){
+                    if(count<upto){
+                        maxHeight += $(this).height()+18;
+                    }
+                    count++;
+                   });
+                   $(".instSimQues").css("height",maxHeight+"px");
+                };
+                calcHeight(${MAX_DISC});
+                $(".instSimilarQues").on("click",".viewMoreSimDoubts",function(){
+                    calcHeight(20,"animHeight");
+                    $(this).remove();
+                })
+            });
+        </script> -->
+    #{/if}
+</div>
+#{/if}
+#{if questions.result.has('facet')}
+    #{if questions.result.facet.has('topics') && questions.result.facet.topics.length()>0}
+<div class="instRelatedTopics left">
+    <span class="instTopicHead">&{'SIM_TOPICS'}</span>
+    <div class="left instTopicTree CSWidget" data-widget="FILTER_DISCUSSION_BY_TRENDING_TOPICS">
+        %{
+            topics = questions.result.facet.topics;
+        }%
+        #{list items:0..topics.length()-1, as:'tIndex'}
+        %{ topicFacet = topics.get(tIndex); }%
+            <div class="instEachTrTopic doCStream" data-name="${topicFacet.obj.name}" name="RELATED_TOPIC_LINK" 
+                data-brd-id="${topicFacet.obj.id}">
+                <span class="instTrTopicText doubtBrd-${topicFacet.obj.id}" 
+                    data-brd-id="${topicFacet.obj.id}">
+                    ${topicFacet.obj.name}</span>
+                <span class="instTrTopicCount">(${topicFacet.count})</span>
+            </div>
+        #{/list}
+    </div>
+</div>
+    #{/if}
+#{/if}
+#{/if}

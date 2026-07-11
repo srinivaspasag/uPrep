@@ -1,0 +1,6 @@
+#{if data!=null && data.has('url')}
+	#{institute.previews.link target:"editable",source:data /}
+#{/if}
+#{else}
+	<div class="instNotValidUrlTxt">&{'NOT_VALID_EXT_URL'}</div>
+#{/else}

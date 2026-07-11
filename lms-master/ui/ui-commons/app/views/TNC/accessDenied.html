@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}"/>
+        <title>Access Denied!</title>
+        <style type="text/css">
+        #accessDenied{
+            margin: 0 auto;
+            background: white;
+            display: block;
+            padding: 20px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            border-radius: 10px;
+        }
+        @font-face {
+            font-family: Ubuntu;
+            src: url(../../../public/fonts/Ubuntu-Regular.ttf);
+        }
+        body {
+            padding: 0;
+            line-height: 16px;
+            font-family:Ubuntu,sans-serif;
+            font-size: 12px;
+            margin: 0px;
+            background-color:#0a1a29;
+            font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+            color:#333;
+        }
+        .accessDenied{
+            width:500px;
+            padding-left:25px;
+        }
+        .accessDeniedBody{
+            max-height:600px;
+            padding-right:20px;
+            margin:20px 0;
+        }
+        .accessDeniedHead{
+            font-size:26px;
+            color:#4CAF50;
+        }
+        .accessDeniedTitle{
+            font-weight:bold;
+            font-size:12px;
+        }
+        .accessDeniedBody{
+            font-size:12px;
+        }
+        .margTop10{
+            margin-top: 10px;
+        }
+        .margBottom10{
+            margin-bottom: 10px;
+        }
+        .accessDeniedText{
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .logout{
+            float:right;
+            font-size: 14px;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="accessDenied">
+            <div class="accessDenied margTop10">
+                <div class="accessDeniedHead">Access Denied</div>
+                <div class="accessDeniedBody">
+                    <div class="accessDeniedText">
+                    Your access rights have been temporarily withheld. Please contact your Account Manager(<a href='mailto:admin@learnpedia.in'>admin@learnpedia.in</a>) for more information on this.
+                    </div>
+                    <div class="margTop10 margBottom10 logout">
+                    <span>
+                        <a href="/Security/logout">&{'TXT_LOGOUT'}</a>
+                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

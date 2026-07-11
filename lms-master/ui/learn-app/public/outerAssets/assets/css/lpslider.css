@@ -1,0 +1,727 @@
+@import url(//fonts.googleapis.com/css?family=Roboto+Slab:400,700|Roboto:300,400,500,700);
+@font-face {
+    font-family: Ubuntu;
+    src: url(../../../../public/fonts/Ubuntu-Regular.ttf);
+}
+body {
+    /*padding: 0;
+    line-height: 16px;
+    font-size: 12px;*/
+    background-attachment: fixed;
+    margin: 0px;
+    /*background: url("/public/images/bg.jpg");*/
+    /*background-color:#EEEEEE;*/
+    /*font-family:'Ubuntu', sans-serif;*/
+    color:#333;
+    overflow-y:scroll;overflow-x:auto;
+}
+
+a img{
+    border-width: 0;
+}
+.centerText{
+    text-align:center;
+}
+.alignTop{
+    vertical-align:top;
+}
+a {
+    color:#0099CC;
+    text-decoration:none;
+    cursor: pointer;
+    position: relative;
+}
+a:hover{
+    text-decoration: underline;
+}
+.cleaner_with_divider {
+    clear: both;
+    width: 100%;
+    height: 10px;
+    font-size: 1px;
+}
+.fullWidth{
+    width:100%;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background-color:#eee;
+}
+::-webkit-scrollbar-thumb {
+    background-color:#ccc;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color:#666;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    opacity:0.5;
+}
+input{
+    min-height: 19px;
+    font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+    outline: none;
+}
+input[type="checkbox"]{
+    width: 14px;
+    height: 14px;
+    min-height: 14px;
+}
+ul{
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    padding: 0;
+    margin: 0;
+}
+textarea{
+    resize:none;
+}
+.pageHolder{
+    margin:0 auto;
+    width:1200px;
+}
+.pageHolder1000{
+    width:1000px;
+        margin:0 auto;
+}
+.pageFullWidth{
+    margin:0 auto;
+}
+.relative{
+    position:relative;
+}
+.absolute{
+    position:absolute;
+}
+.singleLineText{
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+}
+.smally{
+    font-size:11px;
+}
+.big12{
+    font-size:12px;
+}
+.big13{
+    font-size:13px;
+}
+.big14{
+    font-size:14px;
+}
+.big15{
+    font-size:15px;
+}
+.big16{
+    font-size:16px;
+}
+.big20{
+    font-size:20px;
+}
+.big25{
+    font-size:25px;
+    line-height:28px;
+}
+.big28{
+    font-size:28px;
+    line-height:30px;
+}
+.big35{
+    font-size:35px;
+    line-height:41px;
+}
+.big55{
+    font-size:55px;
+    line-height:60px;
+}
+.right{
+    float:right;
+}
+.left{
+    float:left;
+}
+.nonner{
+    display:none;
+}
+.boldy{
+    font-weight:bold;
+}
+.redTextColor{
+    color:#cc6666;
+}
+.greyTextColor{
+    color:#666;
+}
+.blueTextColor{
+    color:#207B99;
+}
+.whiteTextColor{
+    color:#FFF;
+}
+.whiteTextColor75{
+    color:rgba(255,255,255,0.75);
+}
+.fontRobotoSlab{
+    font-family:'Roboto Slab' !important;
+    font-style:normal;
+}
+.fontRobotoThin{
+    font-family:'Ubuntu' !important;
+    font-style:normal;
+    font-weight:300;
+}
+#detectClientMsg,
+.successWrapper,
+.serverErrorMsg{
+    margin: 10px auto;
+    /*background: rgba(204,51,51,.15);*/
+    background: #fff;
+    border:1px solid #ccc;
+    padding: 5px;
+    display: none;
+    margin-left: 0;
+    /*color:rgb(240, 82, 82);*/
+}
+.serverErrorDiv,.errorWrapperDiv{
+    background-color: #E35757;
+    display: none;
+    /*margin: 10px 50px 0;*/
+    text-align: center;
+}
+.serverError,.errorWrapper{
+    background: url("/public/images/errorIcon.png") no-repeat scroll 5px center transparent;
+    border: medium none;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 13px;
+    padding: 11px 0 11px 29px;
+}
+.vpopupWrapper{
+    padding:15px 0;
+}
+
+/* SPECIFIC */
+.sliderSprite,
+.spriteImg{
+    background-image:url('../../images/siteSprite.png');
+    background-repeat:no-repeat;
+    display:inline-block;
+    font-size:1px;
+}
+.sliderSprite{
+    background-image:url('../../images/sliderSprite.png');
+}
+.siteTopBar{
+    height:65px;
+    overflow:hidden;
+}
+.instThumbnailLogo {
+    max-height: 45px;
+    max-width: 150px;
+    margin-top: 8px;
+}
+.siteSignupSecTable{
+    padding:20px 0;
+}
+a.greyColor{
+    color:#666;
+    font-size:13px;
+}
+.orgButton{
+    background-color:blue;
+    padding:10px 50px;
+    font-weight:bold;
+    font-size:16px;
+    color:#FFF;
+    cursor:pointer;
+    border-radius:10px;
+}
+.topBarSignupLink{
+    cursor:pointer;
+}
+.orgSignupLink{
+    font-size:16px;
+    font-weight:bold;
+    position:relative;
+    top:-3px;
+}
+.orgSignupBtnTopLine{
+    width:100%;
+    height:5px;
+    position:relative;
+    top:-23px;
+}
+.signupPopupButton{
+    /*margin: 0 13px 0 30px;*/
+}
+.middleSliderSec{
+    position:relative;
+    width:100%;
+}
+.bgImageHolder{
+    text-align:center;
+    min-height:400px;
+    height: 100px;
+    overflow:hidden;
+}
+.bgImageBlackOut{
+    background-color:rgba(0,0,0,0.7);
+}
+.bgImageBlackOut,
+.middleSliderHolder{
+    position:absolute;
+    width:100%;
+    top:0px;
+}
+.sliderTable{
+    width:1000px;
+    padding-top:20px;
+    margin:0 auto;
+}
+.siteSlideTextHolder{
+    height:153px;
+    position:relative;
+}
+.sliderInfoSec{
+    position:absolute;
+    height:170px;
+    width:356px;
+    padding:0px 0px 12px;
+}
+.siteSlideTextFrame{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+.siteSlideText{
+    height:150px;
+    width:356px;
+}
+.googlePlayIcon{
+    background-position:-231px -18px;
+    height:51px;
+    width:180px;
+}
+.googlePlayIcon:hover{
+    background-position:-231px -81px;
+}
+.middleSliderHolder .signupPopupButtonHolder{
+    margin:20px 0px 95px;
+    position:absolute;
+    bottom: 0px;
+}
+.signupPopupButtonHolder .signupPopupButton{
+    display: inline-block;
+    margin-right:13px;
+    padding: 18px 65px 16px;
+    border-radius: 10px;
+}
+.slide-dots{
+    position:relative;
+    top: 35px;
+    text-align: center;
+    padding-left: 60px;
+}
+.slide-dot{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    border-radius:5px;
+    margin-right:5px;
+    background-color:rgba(255,255,255,0.5);
+    cursor:pointer;
+}
+.slide-dot:hover{
+    background-color:rgba(255,255,255,0.8);
+}
+.slide-dot.active{
+    background-color:#FFF;
+}
+.extTriangle{
+    position:absolute;
+    right:-30px;
+    top:0px;
+    width: 0; 
+    height: 0; 
+    border-top: 30px solid transparent;
+    border-left: 30px solid rgba(254,169,24,0.85);
+}
+.slideImgsHolder{
+    height:330px;
+    margin-left:35px;
+}
+#slideMobileHolder{
+    background-position:-30px -20px;
+    width:112px;
+    height:224px;
+    position:absolute;
+    bottom:0px;
+}
+#slideTabletHolder{
+    background-position:-164px -10px;
+    width:526px;
+    height:306px;
+    position:absolute;
+    bottom:15px;
+    margin-left:15px;
+}
+#slideTabletContainer{
+    background-color: #333;
+    margin: 16px 64px;
+    width: 400px;
+    height: 255px;
+    overflow:hidden;
+}
+#slideTabletContainer .sliderSprite{
+    width: 400px;
+    height: 255px;
+}
+#siteSlideTablet1{
+    background-position:-229px -27px;
+}
+#siteSlideTablet2{
+    background-position:-228px -323px;
+}
+#siteSlideTablet3{
+    background-position:-228px -578px;
+}
+#slideMobileContainer{
+    background-color: #FFF;
+    margin: 25px 4px 20px;
+    width: 101px;
+    height: 161px;
+    overflow:hidden;
+}
+#slideMobileContainer .sliderSprite{
+    width: 101px;
+    height: 178px;
+}
+#siteSlideMobile1{
+    background-position:-34px -45px;
+}
+#siteSlideMobile2{
+    background-position:-34px -265px;
+}
+#siteSlideMobile3{
+    background-position:-34px -441px;
+}
+/* FEATURES SECTION */
+.siteFeatureSec{
+    padding:45px 0;
+    background-color:#42474A;
+}
+.featureText{
+    margin:0 35px 0 35px;
+}
+.dividerLine1px{
+    height:1px;
+    background-color:#555a5c;
+    width: 371px;
+}
+.siteFeaturesContainer{
+    padding:12px 0 33px;
+    width:1026px;
+    position:relative;
+    left:-13px;
+}
+.joinPopupButton{
+    padding:15px 100px;
+    font-size:23px;
+}
+.siteFeatureBlock{
+    background-color:rgba(255,255,255,0.1);
+    color:#FFF;
+    padding:20px 25px;
+    width:275px;
+    height:50px;
+}
+.siteFeatureIcon{
+    width:35px;
+    height:35px;
+}
+#siteFeatureIcon1{
+    background-position:-22px -25px;
+    height:28px;
+}
+#siteFeatureIcon2{
+    background-position:-86px -23px;
+}
+#siteFeatureIcon3{
+    background-position:-148px -20px;
+}
+#siteFeatureIcon4{
+    background-position:-22px -82px;
+}
+#siteFeatureIcon5{
+    background-position:-87px -78px;
+}
+#siteFeatureIcon6{
+    background-position:-152px -78px;
+}
+.siteEachFeatureHolder{
+    height: 40px;
+    width:100%;
+    overflow: hidden;
+}
+.siteFeatureName{
+    font-size:18px;
+    line-height:20px;
+    height:100%;
+    position:relative;
+}
+.siteFeatureDesc{
+    opacity:0;
+    height:100%;
+    position:relative;
+    font-size:12px;
+    line-height:13px;
+    display:table;
+}
+.fullHeight{
+    height:100%;
+}
+.siteFeatureName span,
+.siteFeatureDesc span{
+    display:inline-block;
+    vertical-align:middle;
+}
+/* FEATURES SECTION END */
+/* ABOUT ORG SECTION */
+.siteAboutOrg{
+    background-color:#292C2F;
+    padding:45px 0 85px;
+}
+.siteAboutOrgTitle{
+    color:#CFD0D0;
+    padding-bottom:5px;
+}
+.siteAboutOrgDesc{
+    color:#717274;
+    padding-bottom:25px;
+    width:70%;
+}
+.vedantuIcon{
+    vertical-align: middle;
+    padding: 5px 0;
+    color: #33bad7;
+    font-size: 25px;
+    font-weight: bold;
+}
+.poweredByTxt{
+    color:#717274;
+}
+.siteAboutOrgRightTD{
+    width:215px;
+}
+.siteGoToOrgBtn{
+    padding:18px 30px 16px;
+    font-size:14px;
+    background-color:rgba(255,255,255,0.1);
+    color:#FFF;
+    border-radius: 2px;
+    vertical-align: top;
+    display:inline-block;
+}
+.siteTwitterIcon,
+.siteBlogIcon,
+.siteYouTubeIcon,
+.siteFbIcon,
+.siteLinkedInIcon{
+    width:34px;
+    height:34px;
+    margin-right:8px;
+}
+.siteFbIcon{
+    background-position:-25px -155px;
+}
+.siteTwitterIcon{
+    background-position:-66px -155px;
+}
+.siteBlogIcon{
+    background-position:-107px -155px;
+}
+.siteYouTubeIcon{
+    background-position:-148px -155px;
+}
+.siteLinkedInIcon{
+    background-position:-25px -197px;
+}
+.siteAboutOrg table td{
+    border-bottom:1px solid #222;
+}
+.padTopBottom15{
+    padding:15px 0;
+}
+.siteAboutOrgSmallText{
+    font-size:13px;
+    color:#616365;
+}
+.siteAboutOrgSmallTextDivider{
+    background-color:#616365;
+    font-size:13px;
+    margin:0px 20px;    
+    color:#616365;
+    font-size:11px;
+}
+.siteAboutOrgSmallTextDivider:before{
+    content:'|';
+}
+/* ABOUT ORG SECTION END*/
+/* POPUP */
+.signupPopup,
+.loginPopup{
+    padding:35px;
+    min-width:520px;
+}
+.contactUsTable,
+.memberSignupTable,
+.memberLoginTable{
+    padding:35px 55px 17px;
+    background-color:#F4F4F4;
+    margin-top:15px;
+    width:100%;
+}
+.loginFieldTitle{
+    font-size:14px;
+    color:#666;
+}
+.loginInputField, .loginSelectField{
+    padding:10px;
+    height:15px;
+    font-size:14px;
+    color:#666;
+    outline:none;
+    border:1px solid #ddd;
+    margin:0 0 4px 15px;
+    width:270px;
+}
+.loginInputField.showError{
+    border: 2px solid #E95151;
+}
+.loginSelectField{
+    height: 30px;
+    padding: 3px 0;
+    width: 95%;    
+}
+.signupErrorDiv{
+    padding-left:15px;
+    font-size:12px;
+    font-weight:300;
+    color:#F01C0A;
+    height:0px;
+    width:290px;
+    overflow:hidden;
+}
+.signupErrorDiv.success{
+    color:#8CC92D;
+}
+#clickToSignUp,
+#clickToGeneratePassword,
+#clickToLogin{
+    text-align:center;
+    padding:13px 0 12px;
+    font-size:20px;
+    font-weight:bold;
+    outline:none;
+    border:0px;
+    border-radius:4px;
+}
+#clickToSignUp,
+#clickToLogin{
+    width:222px;
+}
+#clickToGeneratePassword{
+    width:200px;
+    display: inline-block;
+}
+input[type="checkbox"].showPasswordCheckbox{
+    width:13px;
+    height:13px;
+    margin-left: 15px;
+    margin-top: 6px;
+}
+.showPassword,
+.forgotPass{
+    color:#999;
+    font-size:12px;
+    padding-top:5px;
+}
+.loginErrorMsg{
+    background-color: #ffebeb;
+    border:1px solid #ffa4a4;
+    color:#ec0000;
+    padding:15px 10px;
+    font-size:13px;
+    text-align:center;
+    margin-top:15px;
+}
+.forgotPasswordPopup{
+    padding: 30px;
+}
+.forgotPassTable{
+    padding:15px;
+    background-color: #F4F4F4;
+    margin-top:15px;
+}
+.smallGreenButton{
+    cursor: pointer;
+    padding: 8px 35px;
+    font-size: 16px;
+    display: inline-block;
+}
+.signupTitleTd{
+    width:140px;
+}
+#dobCalender{
+    background-position:-302px -149px;
+    width:27px;
+    height:27px;
+    position: relative;
+    top: 8px;
+    right: 36px;
+    cursor:pointer;
+}
+#dobCalenderHolder{
+    padding: 0 16px;
+    position:absolute;
+}
+#dobCalenderHolder .ui-widget-content{
+    background: #F5F19C;
+    border: 1px solid #C2C241;
+}
+.contactUsTable td{
+    padding:12px 0;
+    border-bottom:1px solid #D1D1D1;
+}
+.contactUsTD{
+    max-width: 160px;
+    min-width: 150px;
+}
+/* POPUP END*/
+.loginInputField::-webkit-input-placeholder{
+    color:#a7a7a5;
+        font-style: italic;
+    font-size:12px;
+}
+.loginInputField:-moz-placeholder{
+    color:#a7a7a5;
+        font-style: italic;
+    font-size:12px;
+}
+.blueLoginButton{
+    padding:6px 15px 5px;
+    font-size:12px;
+    font-weight:bold;
+    color:#FFF;
+    background-color:#006699;
+    border-radius:3px;
+    cursor:pointer;
+    line-height:13px;
+}
+#clientBottomBar{
+    max-width:100%;
+    overflow:hidden;
+}

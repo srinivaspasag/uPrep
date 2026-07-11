@@ -1,0 +1,49 @@
+    #{if leaders.length()>0}
+    <table id="CLBList" class="margHalfTop" cellpadding="0" cellspacing="0">
+        <tbody>
+            #{list items:0..leaders.length()-1,as:'l'}
+            #{if leaders.get(l).has('user') && !leaders.get(l).user.equals(null)}
+            %{
+                leader=leaders.get(l);
+                user=leader.user;
+                getUserClassAndUrl = controllers.Profile.getUserClassAndUrl(user);
+		userId = getUserClassAndUrl.id;
+                if(userId!=session.userId)userType='OTHERS';
+                else userType='ME';
+            }%
+            <tr class="CLBLeaderTr${(userType=='ME')?' CLBMeLeader':''}">
+                <td class="CLBLeaderRank">#${leader.rank}</td>
+                <td class="CLBLeaderImg">
+                    #{widgets.img30 user:user /}
+                </td>
+                <td>
+		    #{institute.memberName user : user , classNames : "ptrTagInline" /}
+                    <div class="smally">
+                        #{if target=='HOME_PAGE'||target=='CHALLENGES_PAGE'}
+                        <span class="acacac">Points Earned: </span>
+                        <label class="boldy">${leader.points}</label>
+                        #{/if}
+                        #{elseif target=='QUESTION_PAGE'}
+                        #{if leader.hint<3}
+                            #{list items:2..leader.hint}
+                                <span class="challengeHat"></span>
+                            #{/list}
+                        #{/if}
+                            %{
+                                timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(leader.timeTaken);
+                                timeText= timeObj.mins+':'+timeObj.secs+' mins';                    
+                            }%
+                        <label class="acacac">Time Taken: </label>
+                        <span class="boldy">${timeText}</span>
+                        #{/elseif}
+                    </div>
+                </td>
+            </tr>
+            #{/if}
+            #{/list}
+        </tbody>
+    </table>
+    #{/if}
+    #{else}
+    <div class="userMessage">No Leaders Found</div>
+    #{/else}

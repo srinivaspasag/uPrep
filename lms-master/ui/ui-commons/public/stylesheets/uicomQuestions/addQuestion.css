@@ -1,0 +1,165 @@
+.addQuestionPage{
+    display: block;
+    float: right;
+    padding: 4px 8px;
+    margin-top: 10px;
+    background: -moz-linear-gradient(center top , #a0dd50,#75ae2a) repeat scroll 0 0 transparent;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a0dd50', endColorstr='#75ae2a');
+    background: -webkit-gradient(linear, left top, left bottom, from(#a0dd50), to(#75ae2a));
+    text-align: center;
+    font-size: 12px;
+    border-radius: 2px;
+    color: #fff;
+    text-shadow: 0 1px 0 #75ae2a;
+    font-weight: bold;
+    text-decoration: none;
+}
+.addQuestionPage:hover{
+    text-decoration: none;
+}
+.quesAddTopBar,.quesAddMainDiv,.QATagsAndLevelDiv,.QASubmitDiv{
+    width: 800px;
+    margin: 0 auto;
+}
+/*Add Questions*/
+#quesAddContentSec{
+    background-color: #ffffff;
+    padding-bottom: 100px;
+}
+.quesAddTopBar{
+    padding: 15px;
+    text-align: center;
+}
+.QATBHead{
+    color: #CC6666;
+    font-weight: bold;
+}
+.QATextNumInput{
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 1px #BBBBBB inset;
+    margin-right: 15px;
+    padding: 7px 5px;
+    width: 98%;
+}
+.QARTEDiv  .RTEAddDiagram{
+    float: right;
+    font-weight: bold;
+    margin: 3px 0 2px; 
+    padding: 4px 10px;
+}
+.QARTEDiv .RTEFormulaEditor{
+    color: #FFFFFF;
+    float: right;
+    font-weight: bold;
+    margin: 3px 10px 2px 0;
+    padding: 4px 10px;
+}
+.quesAddOptsTable{
+    width: 100%;
+}
+.quesAddOptChoose{
+    width: 4%;
+}
+.quesAddOptHead{
+    padding: 15px 0;
+    width: 10%;
+}
+.QAOCorrectRow .quesAddOptHead{
+    color: #00cc00;
+}
+.quesAddOptRTEDiv .RTEArea,.QAHintsDiv .RTEArea{
+    min-height: 15px;
+}
+.quesAddOptRTEDiv .RTEArea,.QAHintsDiv .RTEArea:focus{
+    min-height: 45px;
+}
+.quesAddOptRTEDiv .RTEToolBar,.QASolnHead,.QASolnDivActive .QAGiveSoln,.QASolnRTEDiv,
+.addingParagraphQues .QAGiveSoln,.QASolnDiv .cancelQASoln,.QASolnAttachDiv{
+    display: none;
+}
+.activeQuesAddOptRTEDiv .RTEToolBar,.QASolnDivActive .cancelQASoln,.QASolnDivActive .QASolnRTEDiv,
+.addingParagraphQues .QASolnHead,.addingParagraphQues .QASolnRTEDiv,.QASolnDivActive .QASolnAttachDiv{
+    display: block;
+}
+.QASolnAttachDiv{
+	background-color: #F7F7F4;
+	border: 1px solid #cccccc;
+	border-top:0px;
+}
+.QASolnAttachBtn{
+	padding:10px 0;
+	color:#666;
+	cursor:pointer;
+}
+.QASolnAttachBtn:hover{
+	background-color:#DDD;
+}
+.QASolnAttachHolder{
+	padding:10px 15px;
+}
+.eachVideoSol{
+}
+.removeVideoSolution{
+	color: #999999;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 15px;
+	font-weight: bold;
+	float:right;
+	right:0px;
+}
+.removeVideoSolution:hover{
+	color:#333;
+}
+.quesAddOptDot{
+    background-color: #3399CC;
+    border-radius: 10px 10px 10px 10px;
+    color: #FFFFFF;
+    display: inline-block;
+    font-weight: bold;
+    height: 18px;
+    margin: 5px;
+    padding-top: 2px;
+    text-align: center;
+    vertical-align: middle;
+    width: 20px;    
+}
+.quesAddShadowBorder{
+    background: url("/public/images/uicomQuestions/solnShadow.png") no-repeat scroll center -1px transparent;
+    border-top: 1px solid #E0E0E0;
+    height: 7px;
+    position: relative;
+}
+
+.QATagsAndLevelDivWrapper{
+    background-color: #F7F7F4;
+    border-bottom: 1px solid #CCCCCC;
+    position: relative;
+    top: -7px;
+}
+.QATagsDiv{
+    border-right: 1px solid #CCCCCC;
+    float: left;
+    padding: 20px 20px 20px 0;
+    width: 50%;
+}
+.QALevelDiv{
+    margin-left: 50%;
+    min-height: 220px;
+    padding: 30px 20px 30px 40px;
+}
+
+/*preview Question*/
+#previewQuestionDiv{    
+    padding: 10px 0 15px 0;
+}
+.previewQuesBody{
+    border: 1px solid #CCCCCC;
+    box-shadow: 1px -1px 1px #CCCCCC, 1px 2px 2px #CCCCCC;
+    padding: 10px;    
+}
+.previewQuesPart{
+    border-bottom: 1px solid #cccccc;
+    padding: 10px 0;
+    margin: 10px 0;
+}

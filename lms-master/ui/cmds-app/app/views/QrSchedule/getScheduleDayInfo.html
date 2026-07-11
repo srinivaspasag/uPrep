@@ -1,0 +1,83 @@
+#{if scheduleDayInfo!=null && scheduleDayInfo.errorCode.isEmpty()}
+    <div>
+        <span class="closeCmdsPopupWIndow"></span>
+        <h3 id="todayDate"></h3>
+        <div class="scheduleDayInfo">
+            <div class="boardsHolder">
+                #{list items:0..scheduleDayInfo.result.metadata.length()-1, as:'index'}
+                    %{
+                        specificBoardInfo = scheduleDayInfo.result.metadata.get(index);
+                        boardClass ="";
+                        if(index == 0){
+                            boardClass = "boardActive";
+                        }
+                    }%
+                    <div class="boardData ${boardClass}" data-index="${index}" data-board-id ="${specificBoardInfo.id}">
+                        <span class="boardName">${specificBoardInfo.subName}</span>
+                    </div>
+                #{/list}
+            </div>
+            #{list items:0..scheduleDayInfo.result.metadata.length()-1, as:'index'}
+            %{
+               defaultClass = "nonner";
+               if(index == 0){
+                    defaultClass = "active";
+                }
+            }%
+                <div class="boardInfo ${defaultClass}" data-index="${index}" style="padding: 5px;">
+                    %{
+                        boardInfo = scheduleDayInfo.result.metadata.get(index);
+                    }%
+                    #{list items:0..boardInfo.details.length()-1, as:'boardIndex'}
+                        %{
+                            boardInfoDetails =boardInfo.details.get(boardIndex);
+                            entityUrl = "/organization/"+params.orgId+"/"+boardInfoDetails.type.toLowerCase();
+                            highlightText = "";
+                            if(boardInfoDetails.type == "TEST"){
+                                imgLocation = "/public/images/icons/test.png";
+                                entityClass = "getTestPage";
+                            }
+                            else if(boardInfoDetails.type == "VIDEO"){
+                                imgLocation = "/public/images/icons/video.jpg";
+                                entityClass = "getVideoPage";
+                            }
+                            else if(boardInfoDetails.type == "MODULE"){
+                                imgLocation = "/public/images/icons/module.png";
+                                entityClass = "getModulePage";
+                            }
+                            else if(boardInfoDetails.type == "DOCUMENT"){
+                                imgLocation = "/public/images/icons/document.png";
+                                entityClass = "getDocPage";
+                            }
+                        }%
+                        <div class="contentInfo" data-board-id="${boardInfo.id}">
+                            #{list items:0..boardInfoDetails.contents.length()-1, as:'contentIndex'}
+                                %{
+                                    contentInfo =boardInfoDetails.contents.get(contentIndex);
+                                }%
+
+                                <div class="content">
+                                    <img src="${imgLocation}" class="image">
+                                        <a class="${entityClass} entityLink cmdsaPush" 
+                                        data-entity-id="${contentInfo.cmdsId}" data-cmds-id="${contentInfo.cmdsId}" data-web-id="${contentInfo.id}" href="${entityUrl}/${contentInfo.cmdsId}" data-entity-type="${boardInfoDetails.type}">
+                                            <span class="contentLimit ${highlightText}" title="${contentInfo.name}">${contentInfo.name}</span>
+                                        </a>
+                                    #{if params.userRole == "MANAGER" || params.userRole == "TEACHER"}
+                                    <span class="floatRight removeEntityFromSchedule">
+                                        <img src="/public/images/uicomCommon/remove.png">
+                                    </span>
+                                    #{/if}
+                                </div>
+                            #{/list}
+                        </div>
+                    #{/list}
+                </div>
+            #{/list}
+        </div>
+        #{if params.userRole == "MANAGER" || params.userRole == "TEACHER"}
+            <button class="redButton removeDaySchedule">
+                Remove Schedule
+            </button>
+        #{/if}
+    </div>
+#{/if}

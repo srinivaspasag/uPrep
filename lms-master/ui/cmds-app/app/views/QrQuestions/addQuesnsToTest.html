@@ -1,0 +1,26 @@
+%{
+    testsTotal=tests.result.totalHits;
+}%
+#{if testsTotal>0}
+<div class="cmdsPopupHead">Add Questions to Test</div>
+<div class="maxWidth500Overflow">
+<table class="margLeft20" width="95%">
+    <tbody>
+        <tr>
+            <td class="grayHead pad10Top alignTop">
+                Choose Test
+            </td>
+            <td class="pad10Top entityListDiv">
+                <input type="hidden" class="entityListTotal" value="${testsTotal}"/>
+                <div class="vRadioGrp formvRadioGrp entityList" data-param-name="testId">            
+                    #{include 'QrQuestions/addQuesnsToTestList.html' /}
+                </div>                
+            </td>
+        </tr>
+    </tbody>
+</table>   
+</div>
+#{/if}
+#{else}
+<div class="userMessage margBot20">No tests found.</div>
+#{/else}

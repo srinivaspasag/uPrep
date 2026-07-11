@@ -1,0 +1,676 @@
+
+@font-face {
+    font-family: Ubuntu;
+    src: url(../fonts/Ubuntu-Regular.ttf);
+}
+
+body {
+    padding: 0;
+    line-height: 16px;
+    font-size: 12px;
+    background-attachment: fixed;
+    margin: 0px;
+    /*background: url("/public/images/bg.jpg");*/
+    background-color:#4b4b4b!important;
+    font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+    color:#333;
+    overflow-y:scroll;overflow-x:auto;
+}
+
+a img{
+    border-width: 0;
+}
+.centry,
+.centerText{
+    text-align:center;
+}
+a {
+    color:#1A94C5;
+    text-decoration:none;
+    cursor: pointer;
+    position: relative;
+}
+a:hover{
+    text-decoration: underline;
+}
+.cleaner_with_divider {
+    clear: both;
+    width: 100%;
+    height: 10px;
+    font-size: 1px;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background-color:#eee;
+}
+::-webkit-scrollbar-thumb {
+    background-color:#ccc;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color:#666;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    opacity:0.5;
+}
+input{
+    min-height: 19px;
+    font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+    outline: none;
+}
+input[type="checkbox"]{
+    width: 14px;
+    height: 14px;
+    min-height: 14px;
+}
+ul{
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    padding: 0;
+    margin: 0;
+}
+textarea{
+    resize:none;
+}
+.pageHolder{
+    margin:0 auto;
+    width:1200px;
+}
+.pageFullWidth{
+    margin:0 auto;
+    width: 100% !important;
+}
+.regTopBar{
+    background-color:#333;
+    padding:10px 0;
+}
+.mainRegHolder{
+    background-color:#f6f6f6;
+    box-shadow:inset 0px -1px 10px -1px #888;
+}
+.mainLoginBox{
+    min-height: 480px;
+    overflow: hidden;
+    position: relative;
+    width: 440px;
+}
+.cmdsLoginPage .mainLoginBox{
+    min-height: 400px;
+}
+.vedantuNameWrapper{
+    overflow: hidden;
+    padding: 25px 0;
+    text-align: center;
+}
+.vedantuTitle{
+    background: url("/public/images/vedantutm.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 33px;
+    width: 328px;
+}
+.cmdsTitle{
+    background: url("/public/images/cmdsLogo.jpg") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 80px;
+    margin-top: 30px;
+    width: 500px;
+}
+.vedantuMainImage{
+    position:absolute;
+    width:350px;
+    height:530px;
+    top:20px;
+    margin-left:410px;
+    background: url("/public/images/globe.png") no-repeat;
+}
+.cmdsVedantuInfoDiv{
+    color: #FFFFFF;
+    margin-top: 10px;
+    text-align: center;
+}
+.cmdsVedantuInfoDiv > a {
+    color: #FFFFFF;
+    font-size: 11px;
+}
+.cmdsVedantuInfoDiv > img {
+    vertical-align: sub;
+}
+
+/* LOGIN PAGE */
+.enterEmailContent,
+.loginContent,
+.unsubscribeContent,
+.passwordContent,
+.forgotPassWrap{
+    padding: 20px 50px;
+    overflow: hidden;
+}
+.cmdsLoginPage .loginContent{
+    padding-bottom: 13px;
+}
+.regFormTxt{
+    font-size:16px;
+    padding-bottom:5px;
+}
+.regInputBoxHolder{
+    margin-bottom:12px;
+}
+.regInputBoxHolder input{
+    width:95%;
+    padding-left:15px;
+    height:36px;
+    font-size:16px;
+    background-color:#fff;
+    border:1px solid #ccc;
+    outline:none;
+    border-radius: 10px;
+}
+#accessCodeLoginDiv .regInputBoxHolder input{
+    height:26px;
+    font-size:15px;
+}
+.regInputBoxHolder input:hover{
+    border-color:#ccc;
+}
+.regInputBoxHolder #loginOrgName{
+    height:31px;
+}
+.regInputBoxHolder input:focus{
+    border:1px solid #666;
+}
+
+/*login form*/
+
+#signInWrapper{
+    left: 0;
+    position: absolute;
+    width: 880px;
+}
+#loginChooserHolder,#loginFormDiv {
+    float: left;
+    width: 440px;
+    position: relative;
+}
+.loginForTOOLS #loginFormDiv,.loginForTEST-APP #loginFormDiv{
+    float: none;
+    margin: 0 auto;
+    padding-top: 100px;
+}
+.loginForTOOLS #loginFormDiv{
+    padding-top: 30px;
+}
+.loginChooser{
+    display: inline-block;
+    text-align: left;
+}
+.loginChooserHead{
+    color: #666666;
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: 75px;
+    text-align: center;
+}
+.loginCodeForm .loginCodeInput{
+    width:auto;
+}
+.loginCodeForm .loginChooserButton{
+    padding: 12px 46px;
+    margin-right: 0px;
+    margin-left: -4px;
+}
+.loginAccessCodeBtn,
+.loginChooserButton{
+    background-color: #ed3237;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 17px;
+    margin-right: 10px;
+    padding: 18px 25px;
+    text-align: center;
+    border-radius: 10px;  
+}
+.loginAccessCodeBtn{
+    background-color: #999;
+    padding:16px 0;
+    font-size:15px;
+    display:block;
+}
+.loginAccessCodeBtn:hover{
+    background-color: #ed3237;
+}
+.loginChooserButton:hover{
+    background-color: #ed3237;
+}
+
+.backToLoginStart{
+    border-radius: 15px;
+    background: url("/public/images/loginBack.png")
+        no-repeat scroll 4px center #EEEEEE;
+    cursor: pointer;
+    display: inline-block;
+    height: 30px;
+    position: absolute;
+    top: 14px;
+    width: 30px;    
+    left: 8px;
+}
+.backToLoginStart:hover{
+    background-color: #CCCCCC;
+}
+::-webkit-input-placeholder {
+   text-transform: none;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   text-transform: none;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   text-transform: none;
+}
+
+:-ms-input-placeholder {  
+   text-transform: none;
+}
+
+.greenButton,
+.loginButton,
+.createButton,
+.unsubscribeEmail,
+.changeButton{
+    color:#fff;
+    background-color: #ed3237;
+    border:0px solid #88ad5f;
+    background-image:none;
+    border-radius:0px;
+    cursor:pointer;
+    padding:8px 35px;
+    font-size:16px;
+    border-radius: 10px;
+}
+.greenButton:hover,
+.loginButton:hover,
+.createButton:hover,
+.changeButton:hover{
+    background-color:#ed3237;	
+}
+.smally{
+    font-size:11px;
+}
+.big12{
+    font-size:12px;
+}
+.big16{
+    font-size:16px;
+}
+.right{
+    float:right;
+}
+.left{
+    float:left;
+}
+.nonner{
+    display:none;
+}
+.forgotPass{
+    font-size:13px;
+}
+.showPassword{
+    font-size:11px;
+    color:#666;
+}
+.regSubmitHolder{
+    /*padding-top:10px;*/
+}
+.forgotPassWrap{
+    display: none;
+    margin: 0 auto;
+    margin-top: 10px;
+    padding: 15px 50px;
+}
+.forgotPassWrap .regSubmitHolder{
+    padding-top:0px;
+}
+#detectClientMsg,
+.successWrapper,
+.serverErrorMsg{
+    margin: 10px auto;
+    /*background: rgba(204,51,51,.15);*/
+    background: #fff;
+    border:1px solid #ccc;
+    padding: 5px;
+    display: none;
+    margin-left: 0;
+    /*color:rgb(240, 82, 82);*/
+}
+.serverErrorDiv,.errorWrapperDiv{
+    background-color: #E35757;
+    display: none;
+    /*margin: 10px 50px 0;*/
+    text-align: center;
+}
+.serverError,.errorWrapper{
+    background: url("/public/images/errorIcon.png") no-repeat scroll 5px center transparent;
+    border: medium none;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 13px;
+    padding: 11px 0 11px 29px;
+}
+.updatePasswordWrapper .serverError,
+.updatePasswordWrapper .errorWrapper{
+    color: #666;
+    display: block;
+}
+#detectClientMsg{
+    position: fixed;
+    width: 350px;
+    right: 10px;
+    bottom: 10px;
+    box-shadow: 0px 0px 5px 2px #ccc;
+    background-color: rgb(255, 223, 223);
+    padding:10px 15px;
+}
+.serverErrorDiv{
+    display: block;
+}
+.successWrapper{
+    background: rgba(134,201,122,.2);
+}
+.accountInfo{
+    font-size: 11px;
+    color: #666;
+}
+.accountInfo span:first-child{
+    float: right;
+}
+.userMessage{
+    color: #404040;
+    text-align: center;
+    padding:10px 20px;
+    clear: both;
+}
+.regInstSuggHolder{
+    position:absolute;
+    border:1px solid #666;
+    border-top:0px;
+    background-color:#fff;
+    z-index:2000;
+}
+.regInstSugg{
+    padding:4px 19px;
+    border-bottom:1px solid #ccc;
+    cursor:pointer;
+    width:300px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    background-color:#eee;
+}
+.regInstSugg:last-child{
+    border:0px;
+}
+.regInstSugg.hovered{
+    background-color:#ccc;
+}
+.regInstLoginSec{
+    margin-bottom:22px;
+}
+.freezeInstLogin{
+    opacity:0.72;	
+}
+
+/* SLIDES */
+.loginSlidesMainHold{
+    position:absolute;
+    width:700px;
+    min-height:550px;
+}
+.loginSlidesContainer{
+    width:700px;
+    overflow:hidden;
+}
+.loginSlidesHolder{
+    position:relative;
+}
+.loginSlides{
+    min-width:700px;
+    max-width:700px;
+    min-height:480px;
+    max-height:550px;
+    vertical-align:top;
+    padding-top:10px;
+    opacity:0;
+}
+.loginSlidesImgCont{
+    width:700px;
+    min-height:480px;
+    position:relative;
+    text-align:center;
+}
+.loginSlidesImg{
+    border:0px;
+    display:inline-block;
+}
+.loginSlidesTxt{
+    color:#fff;
+    font-size:13px;
+    padding:12px 125px 0;
+    text-align:left;
+}
+.loginSlidesIndicator{
+    text-align:center;
+    padding:10px;
+    cursor:pointer;
+}
+.loginSlidesInd{
+    padding:7px;
+    background-color:#fff;
+    margin-right:10px;
+    border-radius:7px;
+    font-size:0px;
+}
+.loginSlidesInd.current{
+    background-color:#216499;
+}
+.loginVPopupError{
+    text-align:center;
+    color:#666;
+    padding:20px;
+}
+.wrongPassHolder{
+    padding:20px 40px;
+    width:600px;
+    font-size:18px;
+}
+.wrongPassSec{
+    padding:15px 20px;
+    border-top:1px solid #ccc;
+    margin-top:20px;
+}
+.wrongPassSecTitle{
+    padding-bottom:25px;
+}
+.vpopupWrapper{
+    margin-top:10px;
+}
+.unsubscribeEmailWrapper,
+.updatePasswordWrapper{
+    width:400px;
+    margin:0 auto;
+}
+.forgotPassHolder .regInstSugg{
+    width:262px;
+}
+.boldy{
+    font-weight:bold;
+}
+.uppercase{
+    text-transform:uppercase;
+}
+.big14{
+    font-size:14px;
+}
+.redTextColor{
+    color:#cc6666;
+}
+.greyTextColor{
+    color:#666;
+}
+.blueTextColor{
+    color:#207B99;
+}
+.howToLoginBtn{
+    position:absolute;
+    bottom:15px;
+    right:10px;
+    border-radius:14px;
+    background-color:rgba(255,255,255,0.7);
+    color:#207B99;
+    cursor:pointer;
+    padding:3px 12px;
+    font-size:15px;
+}
+.howToLoginBtn .backImg{
+    background: url("/public/images/loginSlides/howto.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 23px;
+    margin-top: 3px;
+    margin-right: 5px;
+    width: 23px;
+}
+.orgInfoToolTip{
+	position:absolute;
+	background:#FFF;
+	border:3px solid #1A94C5;
+	border-radius:8px;
+	padding:15px 20px;
+	margin-left: 46px;
+	top: -25%;
+	opacity:1;
+	-webkit-transition: opacity 300ms linear;
+	-moz-transition: opacity 300ms linear;
+	-o-transition: opacity 300ms linear;
+	-ms-transition: opacity 300ms linear;
+	transition: opacity 300ms linear;
+}
+.orgInfoToolTip.hider{
+	display:none;
+	opacity:0;
+}
+.orgToolTipTable{
+	min-width:300px;
+	/*max-width:300px;*/
+	min-height:40px;
+	max-height:110px;
+	text-overflow:ellipsis;
+	overflow:hidden;
+}
+.bottomBlueArrow{
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-bottom: 10px solid transparent;
+	border-top: 10px solid #1A94C5;
+	bottom: -23px;
+	position: absolute;
+	margin-left: 40%;
+	float:left;
+}
+.padLeft5{
+    padding-left:5px;
+}
+.orgInfoPic{
+	max-width:150px;
+	min-height:30px;
+	background-color:#CCC;
+	margin-left:5px;
+}
+.orgData{
+    width:150px;
+    box-sizing: border-box;
+}
+.orgInfoFullName{
+    color:gray;
+    margin-top:5px;
+}
+
+/*For new signup form*/
+
+.loginInputField{padding: 10px;
+    height: 15px;
+    font-size: 14px;
+    color: #666;
+    outline: 0;
+    border: 1px solid #ddd;
+    margin: 0 0 4px 15px;
+    width: 270px;
+  }
+.loginFieldTitle{
+    font-size: 15px;
+    color: #666;
+}
+.signupErrorDiv{
+    padding-left:15px;
+    font-size:12px;
+    font-weight:300;
+    color:#F01C0A;
+    height:0px;
+    width:100%;
+    overflow:hidden;
+}
+.signupErrorDiv.success{
+    color:#8CC92D;
+}
+
+.smallGreenButton {
+    color: #fff;
+    background-color: #72c022;
+}
+
+.smallGreenButton {
+    cursor: pointer;
+    padding: 8px 35px;
+    font-size: 16px;
+    display: inline-block;
+}
+
+.blueLoginButtons {
+    padding: 6px 15px 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #FFF;
+    background-color: #069;
+    border-radius: 3px;
+    cursor: pointer;
+    line-height: 13px;
+}
+
+/* Radio button CSS */
+
+input[type='radio'] {
+    -webkit-appearance:none;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    outline:none;
+    box-shadow:0 0 3px 0px gray inset;
+}
+input[type='radio']:hover {
+    box-shadow:0 0 5px 0px orange inset;
+}
+input[type='radio']:before {
+    content:'';
+    display:block;
+    width:60%;
+    height:60%;
+    margin: 20% auto;
+    border-radius:50%;
+}
+input[type='radio']:checked:before {
+    background:#62b23b;
+}

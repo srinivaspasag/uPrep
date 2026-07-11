@@ -1,0 +1,24 @@
+#{if discussion.has('result') && discussion.result.has('dissId')}
+%{
+	dicussionsData = discussion;
+	discuss = discussion.result;
+	_target="INTERNAL";
+}%
+<div class="instEachDiscus" data-disc-id="${discuss.dissId}" data-disc-index="0">
+	#{include 'tags/institute/discussion.html'/}
+</div>
+	<script type="text/javascript">
+		$(".instDiscussFollowBtn").find("span").removeClass("blueSubmitButton").addClass("greenButton");
+		$(".instHideComments").addClass("nonner");
+		/*MathJax.Hub.Queue(["Typeset",MathJax.Hub],$("#instDiscusssionHolder").get(0),function(){
+			$(".instDiscussHead").useScrollBar(null,{vertical:false,horizontal:true});
+		});*/
+	</script>
+
+#{/if}
+#{else}
+	<div class="relative boldy centerText" style="padding:20px 0;">
+		<p>	Question Not found
+		</p>
+	</div>
+#{/else}

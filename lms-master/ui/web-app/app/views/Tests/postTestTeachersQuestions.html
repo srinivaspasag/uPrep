@@ -1,0 +1,63 @@
+#{if questionsData!=null && questionsData.errorCode.isEmpty() && questionsData.result.list.length()>0}
+%{
+	questions = questionsData.result.list;
+}%
+#{list items:0..questions.length()-1,as:'index'}
+%{
+	ques = questions.get(index);
+	quesAna = ques.measures;
+	qTypeFull = play.i18n.Messages.get("TXT_FULL_"+ques.info.type); 
+}%
+   <tr>
+	<td class="postTestTeacherQues">
+	    #{test.analyticQues qIndex : ques.qusNo , qType : ques.info.type , qTypeFull : qTypeFull , quesBody : ques.info /}
+	</td>
+	<td class="postTestTeacherQuesAna">
+	%{
+		total = quesAna.correct + quesAna.incorrect + quesAna.partial + quesAna.left;
+	}%
+        <div class="question-status-container">
+            #{if !ques.info.marks.equals(null)}
+            %{
+                questionStatus = ques.info.marks.status;
+                quesStatusClass = "boldy"
+                if(questionStatus == "ACTIVE"){
+                    quesStatusClass += " greyTextColor ";
+                }
+                else if(questionStatus == "BONUS"){
+                    quesStatusClass += " greenColor ";
+                }
+                else {
+                    quesStatusClass += " redColor ";
+                }
+            }%
+                <div>
+                    Status : <span class="ques-status ${quesStatusClass}">${questionStatus}</span>
+                    <div class="change-question-status displayInBlock"></div>
+                    <div class="edit-question-status margTop10 nonner" data-question-id="${ques.info.id}">
+                        <select class="select-status">
+                            <option selected disabled>Choose an option</option>
+                            <option value="ACTIVE">ACTIVE</option>
+                            <option value="BONUS">BONUS</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                        <button class="submit-question-status">Submit</button>
+                    </div>
+                </div>
+            #{/if}
+        </div>
+	    #{institute.analyticsHorizontalBar correct : quesAna.correct , incorrect : quesAna.incorrect , partial:quesAna.partial , left:quesAna.left , attempts : total , quesId : ques.info.id/}
+	</td>	
+   </tr>
+#{/list}
+%{
+	lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+}%
+#{if questionsData.result.totalHits > lastCount }
+<tr>
+        <td colspan=2 style="padding-top:20px;">
+                <div class="loadMoreItems testQuesLoadMore doCStream" name="LOAD_MORE_TEST" data-next-start="${lastCount}">&{'LOAD_MORE_item','Questions'}</div>
+        </td>
+<tr>
+#{/if}
+#{/if}

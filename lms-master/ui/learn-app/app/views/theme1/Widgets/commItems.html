@@ -1,0 +1,14 @@
+#{if !comments.equals(null) && comments.errorCode.isEmpty() && comments.result.list.length()>0}
+%{
+    comments=comments.result.list;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+    rootType=params.get('parent.type');
+}%
+#{if params.target=="MY_INSTITUTE"}
+    #{widgets.instComment comments:comments,loadMoreSize:loadMoreSize,rootType:rootType /}
+#{/if}
+#{else}
+    #{widgets.commItems comments:comments,loadMoreSize:loadMoreSize,rootType:rootType /}
+#{/else}
+#{/if}

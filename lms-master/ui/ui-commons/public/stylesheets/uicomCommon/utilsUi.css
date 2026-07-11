@@ -1,0 +1,102 @@
+.gCBox{
+    background-color: #EEEEEE;
+    border: 1px solid #CCCCCC;
+    border-radius: 1px 1px 1px 1px;
+    display: inline-block;
+    font-size: 1px;
+    height: 10px;
+    margin: 0 4px 0 1px;
+    outline: 0 none;
+    vertical-align: sub;
+    width: 10px;
+}
+.gCBox:hover,.gCBox:active,.gCBoxChecked{
+    border: 1px solid #B2B2B2;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) inset;  
+}
+.gCBoxChecked .gCBoxTicker{
+    background: url("/public/images/checkmark.png") no-repeat scroll -6px -5px transparent;
+    height: 17px;
+    left: 1px;
+    position: relative;
+    top: -1px;
+    width: 15px;
+}
+
+
+/*playlists and documents*/
+.leftSecTab{
+    border-radius: 3px 3px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+.leftSecTab:hover,.leftSecActiveTab{
+    background-color: #FFFFFF;
+    color: #3399CC;
+}
+.leftSecTabPipe{
+    display: inline-block;
+    font-weight: bold;
+    margin: 4px 2px;
+}
+#leftSecContent{
+    background-color: #FFFFFF;
+    padding: 13px 0 50px;
+    overflow: auto;
+}
+#docPLLeftSecDetails{
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #CCCCCC;
+    padding: 15px 15px 10px;
+}
+.DPLSName{
+    color: #3399CC;
+    font-family: georgia;
+    font-size: 20px;
+    line-height: 24px;
+    margin-bottom: 10px;
+}
+.DPLSOwnerName{
+    margin: 2px 0 0 5px;
+    vertical-align: middle;
+}
+.DPLSSaveAndVote{
+    background-color: #FFFFFF;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+#DPLSInfo,#DPLSReviews,#DPLSComments{
+    padding: 20px 10px 10px;
+}
+#leftSecContent .upVoteItemCount{
+    display: inline;
+}
+#leftSecContent .ASTTTTopic{
+    left: 0;
+}
+#leftSecContent .ASTTTSubTopic{
+    left: 0;
+}
+
+/*fixed view of doc*/
+#docViewOptionsHolder{
+    position: fixed;
+    top: 45px;
+    width: 700px;
+    z-index: 1;
+}
+#docViewer{
+    position: relative;
+/*    top: -12px;*/
+}
+.DTDocLeftBody{
+    position: fixed;
+    top: 45px;
+    width: 260px;
+}
+.autogrow{
+        overflow:hidden;
+        padding:0px;
+}

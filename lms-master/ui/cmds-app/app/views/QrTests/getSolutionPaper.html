@@ -1,0 +1,235 @@
+%{
+    data = response.result;
+    //Changing font family for Trividyaa Organization
+    orgClass ='default';
+    if(params.orgId == '5bacb325e4b0ff57ab848e07'){
+        orgClass = 'trividyaa';
+    }
+}%
+<style type="text/css">
+    body,span,div{
+        font-size: 13.0pt!important;
+        font-family: sans-serif!important;
+    }
+    .questionPaperHolder{
+        padding: 0px 20px;
+    }
+    .questionPaperHeader img{
+        height: 38px;
+        max-width: 140px;
+        padding: 3px;
+        position:absolute;
+    }
+    .questionPaperTitle{
+        font-size: 26px!important;
+        font-weight: bold;
+        text-align:  center;
+        line-height: 34px;
+        top: 5px;
+        position: relative;
+        text-transform: capitalize;
+    }
+    .cleaner_with_divider{
+        clear: both;
+        width: 100%;
+    }
+    .instName{
+     font-size: 30px!important;
+     font-weight: bold;
+     line-height: 1.5;
+     text-align: center;
+    }
+    .marksDetails{
+        float: right;
+        margin:10px 0px;
+    }
+    .boardHeading{
+        padding: 5px;
+        background: black;
+        color: white;
+        text-align: center;
+        min-width: 80px;
+        max-width: 150px;
+        margin: 10px auto;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    .nonner{
+        display: none;
+    }
+    .line{
+        margin-top:20px;
+    }
+    .mainContent{
+        width: 90%;
+        margin: auto;
+    }
+    .RTELatex{
+        display: inline-block;
+    }
+    .questionType{
+        font-size: 18px!important;
+        font-weight: bold;
+        text-align: center;
+    }
+    .optKey{
+        font-size: 20px!important;
+    }
+    .questionNumber{
+        font-weight: bold;
+    }
+    .keyDiv{
+        display: inline-block;
+        width: 150px;
+        margin-top: 15px;
+    }
+    .solutionTitle{
+        font-size: 20px!important;
+        text-align: center;
+    }
+    .solutionDiv{
+        margin-top: 40px;
+    }
+    @font-face{
+        font-family: trividyaaOrg;
+        src:url('../../public/Samarkan.ttf') format('truetype')
+    }
+    .trividyaa{
+        font-family: trividyaaOrg!important;
+        letter-spacing: 1.6;
+    }
+</style>
+<div class="questionPaperHolder">
+    <div class="questionPaperHeader">
+             <img src="${currentOrgInfo.getOrgThumbnail()}" alt="${currentOrgInfo.getFullName()}">
+        <div class="instName ${orgClass}">
+            ${currentOrgInfo.getFullName()}
+        </div>
+        <div class="questionPaperTitle">
+            ${data.name} - Keys and Solutions
+        </div>
+        <div class="marksDetails">
+            <div class="totalMarks">
+                <strong>Total Marks : </strong>${data.totalMarks}
+            </div>
+            #{if data.duration>0}
+            %{
+                    timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.duration);
+                    totalTimeHrs = timeObj.hrs;
+                    totalTimeMins = timeObj.mins;
+                    totalTime = totalTimeHrs + ":" + totalTimeMins;
+
+            }%
+            <div class="Duration">
+                <strong>Duration : </strong>${totalTime} hrs
+            </div>
+            #{/if}
+        </div>
+    </div>
+    <hr class="cleaner_with_divider">
+    <div class="solutionTitle boardHeading">KEY</div>
+    <div class="mainContent">
+        %{
+            questionIndex = 0;
+        %}
+    #{list items:0..data.boards.length()-1, as:'index'}
+        %{
+            board = data.boards.get(index);
+            section = 1
+        }%
+            #{list items:0..board.questions.length()-1, as:'boardIndex'}
+                %{
+                    boardQuestion = board.questions.get(boardIndex).questions;
+                    boardQuestionType = board.questions.get(boardIndex).type;
+                    boardQuestionTotalMarks = board.questions.get(boardIndex).totalMarks;
+                }%
+
+                #{if !boardQuestion.equals(null) && !boardQuestion.equals("null") && boardQuestion != "null" &&  boardQuestion != null}
+                %{
+                    boardQuestionTotalQuestion = boardQuestion.length();
+                }%
+                    #{list items:0..boardQuestion.length()-1, as:'boardQuestionIndex'}
+                        <div class="keyDiv">
+                            <span class="questionNumber">${++questionIndex}.  </span>
+                            %{
+                                key = boardQuestion.get(boardQuestionIndex).key;
+                            }%
+                            %{
+                                alphabet = "ABCDEFGHIJKLMNOPQRSTWXYZ";
+                                question = question;
+                            }%
+                            #{if boardQuestionType != "NUMERIC" && boardQuestionType != "SUBJECTIVE"}
+                            #{list items:0..key.length()-1, as:'keyIndex'}
+                                <span class="optKey">(${alphabet[Integer.parseInt(key.get(keyIndex))-1]})</span>
+                            #{/list}
+                            #{/if}
+                            #{elseif boardQuestionType == "SUBJECTIVE"}
+                                <span class="optKey">N/A</span>
+                            #{/elseif}
+                            #{else}
+                                <span class="optKey">[${key.get(0)}]</span>
+                            #{/else}
+                        </div>
+                        #{/list}
+                    %{section++}%
+                #{/if}
+            #{/list}
+        #{/list}
+        </div>
+        <hr class="line">
+        <div class="solutionTitle boardHeading">SOLUTIONS</div>
+        <div class="mainContent">
+        %{
+            questionIndex = 0;
+        %}
+    #{list items:0..data.boards.length()-1, as:'index'}
+        %{
+            board = data.boards.get(index);
+            section = 1
+        }%
+            #{list items:0..board.questions.length()-1, as:'boardIndex'}
+                %{
+                    boardQuestion = board.questions.get(boardIndex).questions;
+                    boardQuestionType = board.questions.get(boardIndex).type;
+                    boardQuestionTotalMarks = board.questions.get(boardIndex).totalMarks;
+                }%
+
+                #{if !boardQuestion.equals(null) && !boardQuestion.equals("null") && boardQuestion != "null" &&  boardQuestion != null}
+                %{
+                    boardQuestionTotalQuestion = boardQuestion.length();
+                }%
+                    #{list items:0..boardQuestion.length()-1, as:'boardQuestionIndex'}
+                    %{
+                        solution = boardQuestion.get(boardQuestionIndex).solution;
+                    }%
+                    #{if solution != null && !solution.equals(null) && solution != ""}
+                        <div class="solutionDiv">
+                            <span class="questionNumber">${++questionIndex}.  </span>
+                            <span class="solution">${solution.raw()}</span>
+                        </div>
+                    #{/if}
+                    #{else}
+                        %{++questionIndex}%
+                    #{/else}
+                    #{/list}
+                    %{section++}%
+                #{/if}
+            #{/list}
+        #{/list}
+        </div>
+</div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            extensions : [ "tex2jax.js" ],
+            jax : [ "input/TeX", "output/HTML-CSS" ],
+            tex2jax : {
+                    inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+            },
+            TeX: {
+            extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                    }
+    });
+</script>
+<script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>

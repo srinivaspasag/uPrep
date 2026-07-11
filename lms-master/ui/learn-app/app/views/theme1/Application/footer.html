@@ -1,0 +1,135 @@
+<link rel="stylesheet" href="@{'/public/outerAssets/assets/css/footer.css'}">
+
+<footer> 
+  <div class="footer" style="margin-bottom: -110px;padding-bottom: 0px;width: 100%;">
+    <div class="container ">
+      <div class="row" style="margin-top: 50px;">
+        #{if categoriesResponse.result.list.length() != 0}
+        <div class="col-xs-6 col-sm-3">
+          <ul>
+            <li>
+              <a class="heading" href="/packages">Programs</a>
+            </li>
+            #{if categoriesResponse.result.list.length() == 1}
+              <li ><a class="sub-menu" href="/packages/${catergoryName}">${categoriesResponse.result.list.get(0).name}</a></li>
+            #{/if}
+            #{else}
+              #{list items:0..1,as:'index'}
+              %{
+                category = categoriesResponse.result.list;
+                catergoryName = category.get(index).name;
+              }%
+              <li ><a class="sub-menu" href="/packages/${catergoryName}">${catergoryName}</a></li>
+              #{/list}
+            #{/else}
+            <li ><a class="sub-menu" href="/packages">ALL PROGRAMS</a></li>
+          </ul>
+        </div>
+        #{/if}
+        <div class="col-xs-6 col-sm-3">
+          <ul>
+            <li>
+              <a class="heading">Resources</a>
+            </li>
+            <li style="margin-top: 10px;">
+              <a class="sub-menu" href="http://blog.learnpedia.in">Blog</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="https://www.youtube.com/channel/UCpSlhIcpbaEaUYBhw2D0YQA">Videos</a>
+            </li>
+            <li>
+              <a class="sub-menu" style="color: rgb(27, 27, 27);pointer-events: none;cursor: default;" href="/faqs">Faqs</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-6 col-sm-3 nonner">
+          <ul>
+            <li>
+              <a class="heading" href="/exams">Exams</a>
+            </li>
+            <li style="margin-top: 10px;">
+              <a class="sub-menu" href="/exam/aiims">AIIMS</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/exam/neet">NEET</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/exam/bitsat">BITSAT</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/exam/jeemain">JEE Mains</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/exam/jeeadvanced">JEE Advanced</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+          <ul>
+            <li>
+              <a class="heading">Company</a>
+            </li>
+            <li style="margin-top: 10px;">
+              <a class="sub-menu" href="/about">About</a>
+            </li>
+            <li>
+              <!-- <a class="sub-menu" href="/institutes">Institutes</a> -->
+              <a class="sub-menu" href="/students">Students</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/franchise">Partner Us</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/about#team-info">Team</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/about#portfolio-page">Advisors</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/contactus">Contact Us</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/privacypolicy">Privacy Policy</a>
+            </li>
+            <li>
+              <a class="sub-menu" href="/terms">Terms of Use</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-12 col-sm-3 text-center" style="padding: 5px 65px;">
+          <div class="heading">
+            Contact Us
+          </div>
+          <div class="address c-white m-t-20">
+           
+            <div class="m-t-20">
+              +91 8099777711
+            </div>
+          </div>
+          <div class="m-t-20">
+            <a title="facebook" href="https://www.facebook.com/learnpediaIN">
+              <i class="zmdi zmdi-facebook-box socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+            <a title="youtube" href="https://www.youtube.com/channel/UCpSlhIcpbaEaUYBhw2D0YQA">
+              <i class="zmdi zmdi-youtube-play socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+            <a title="twitter" href="https://twitter.com/learnpediaIN?lang=en">
+              <i class="zmdi zmdi-twitter socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+            <a title="blog" href="http://blog.learnpedia.in">
+              <i class="zmdi zmdi-blogger socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+            <a title="linkedin" href="https://www.linkedin.com/company/learnpedia?trk=tyah&amp;trkInfo=clickedVertical%3Acompany%2CclickedEntityId%3A2775301%2Cidx%3A2-1-3%2CtarId%3A1449744529921%2Ctas%3Alearnpedia" target="_blank">
+              <i class="zmdi zmdi-linkedin-box socialMedia" style="font-size: 30px;padding: 2px;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="row m-t-10 f-14 text-center"> 
+        <p>
+          2017 &copy; Learnpedia Edutech Pvt Ltd. ALL Rights Reserved
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>

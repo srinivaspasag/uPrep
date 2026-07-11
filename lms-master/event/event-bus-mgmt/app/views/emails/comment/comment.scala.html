@@ -1,0 +1,17 @@
+@(emailDetails:com.vedantu.eventbus.email.details.AbstractEmailNotificationDetails)
+@import views.html.emails._
+@appDomain( emailDetails ) { host =>  
+
+	@defining(emailDetails.details.getJSONObject("src").getJSONObject("contentSrc").getString("id")) { orgId =>
+
+		@defining(emailDetails.details.getJSONObject("src")) { src =>
+			
+					comment
+				@defining(emailDetails.details.getJSONObject("actor")) { actor =>
+					<a style="color: #33bad7; text-decoration: none" href="">
+						<b>@actor.getString("firstName") @actor.getString("lastName")</b>
+					</a>
+				}
+		}
+	}
+}

@@ -1,0 +1,12 @@
+#{if ((params.callerUserRole!="STUDENT" && params.callerUserRole!=null) || params.userRole != "STUDENT" )&& !_user.equals(null)}
+%{
+	user = _user;
+	testId = _testId;
+	userId = user.id;
+	if(user.has('orgId') && user.has('userId')){
+		userId = user.userId;
+	}
+}%
+     <a class="openInstTest smally" href="/organization/${params.orgId}/test/${testId}?targetUserId=${userId}&targetUserRole=STUDENT" 
+                data-target-user-id="${userId}" data-test-id="${testId}" data-target-user-role="STUDENT">&{'TXT_VIEW_DETAILS'}</a>
+#{/if}

@@ -1,0 +1,77 @@
+%{
+	userState = params.userState;
+	activateFrom = params.activateFrom;
+	if(activateFrom!=null && !activateFrom.equals(null) && Long.parseLong(activateFrom)>0){
+		activateFrom = Long.parseLong(activateFrom);
+	}else{
+		activateFrom = -1;
+	}
+	activateTill = params.activateTill;
+	if(activateTill!=null && !activateTill.equals(null) && Long.parseLong(activateTill)>0){
+		activateTill = Long.parseLong(activateTill);
+	}else{
+		activateTill = -1;
+	}
+}%
+<div id="deactivationPopup" data-user-id="${targetUserId}" style="padding:20px 30px;">
+   <div class="deactivationOptions centerText">
+   	<div class="big18 centerText">Deactivate/Activate Member</div>
+	#{if "ACTIVE".equals(userState)}
+	<div class="margTop20">
+	   <span class="bigRedButton deactivateMemberNow" data-type="true">&{'DEACTIVATE_NOW'}</span>
+	</div>
+	#{/if}
+	#{else}
+	<div class="margTop20">
+	   <span class="bigGreenButton deactivateMemberNow" data-type="false">&{'ACTIVATE_NOW'}</span>
+	</div>
+	#{/else}
+	<div class="margTop20">
+	   <span class="bigBlueButton scheduleDeactivation">&{'SCHEDULE_DEACTIVATE'}</span>
+	</div>
+   </div>
+   <div class="scheduleDeactivationHold nonner" data-user-state="${userState}">
+   	<div class="big18 centerText">Schedule Member's Activation Period</div>
+	<div class="redTextColor big13 boldy margTop10">
+	   #{if activateFrom > 0}
+		<span>&{'CURRENT_SCHEDULE_DETAILS'}</span>
+		<span class="updateClientTime" data-time="${activateFrom}" data-format="' mm/dd/yyyy '"></span>
+		#{if activateTill > 0}
+			<span> to </span>
+			<span class="updateClientTime" data-time="${activateTill}" data-format="' mm/dd/yyyy '"></span>
+		#{/if}
+		#{else}
+			<span> , indefinitely </span>
+		#{/else}
+	   #{/if}
+	   #{elseif "ACTIVE".equals(userState)}
+		<span>&{'CURRENTLY_SCHEDULED_INDEFINITLY'}</span>
+	   #{/elseif}
+	   #{else}
+		<span>&{'CURRENTLY_NO_SCHEDULE_DETAILS'}</span>
+	   #{/else}
+	</div>
+	<div class="redTextColor smally centerText" style="margin-top:5px;">NOTE: Date is displayed here in "MM/DD/YYYY" format.</div>
+	<table class="fullWidth tableWithBorder margTop20">
+	   <tr>
+		<th>From Date</th>
+		<th>To Date</th>
+	   </tr>
+	   <tr>
+		<td>
+			<input type="text" class="datePickCalendar" data-prev-value="${activateFrom}"
+				id="deactivateFromInput"/>
+		</td>
+		<td>
+			<input type="text" class="datePickCalendar" data-prev-value="${activateTill}"
+				id="deactivateToInput"/>
+		</td>
+	   </tr>
+	   <tr>
+		<td colspan=2 class="centerText">
+	   		<span class="bigBlueButton scheduleDeactivationNow">&{'SCHEDULE_DEACTIVATE'}</span>
+		</td>
+	   </tr>
+	</table>
+   </div>
+</div>

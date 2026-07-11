@@ -1,0 +1,6 @@
+%{
+    reviews=reviews.result.comments;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+#{widgets.reviewItems reviews:reviews,loadMoreSize:loadMoreSize /}

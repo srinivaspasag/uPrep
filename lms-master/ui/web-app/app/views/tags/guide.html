@@ -1,0 +1,18 @@
+<div id="" class="relative pageHolderT CSWidget" data-widget="GUIDE_BODY" style="padding-top:25px;">
+	<span class="boldy big25 left" style="padding-top:10px;">What can you do on Vedantu?</span>
+	<button class="greenButton closeWebGuide right boldy doCStream" name="BACK_BTN">Close/Back</button>
+	<div style="width:98%;border-radius:10px;background-color:#fff;margin:30px 0;" class="left">
+		<!--<a class="absolute guideToLinks doCStream" name="QUESTION_LINK" style="top:273px;left:578px;" href="/"></a>-->
+		<a class="absolute guideToLinks doCStream" name="MYCONTENT_LINK" style="top:820px;left:626px;" href="/mycontent"></a>
+		<a class="absolute guideToLinks doCStream" name="CHALLENGES_LINK" style="top:1310px;left:655px;" href="/challenges"></a>
+		<a class="absolute guideToLinks doCStream" name="EXPLORE_CONTENT_LINK" style="top:1817px;left:535px;" href="/explorecontent"></a>
+		<img src="/public/images/guide/bg1.jpg" alt=""/>
+		<img src="/public/images/guide/bg2.jpg" alt=""/>
+	</div>
+</div>
+<script>
+	$(".closeWebGuide").on("click",function(){
+		history.back();
+	});
+	pushHistory(null,null,"/guide");
+</script>

@@ -1,0 +1,15 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.list.length()>0}
+%{
+	totalHits = resp.result.totalHits;
+        exports = resp.result.list;
+}%
+	<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+	#{list items:0..exports.length()-1,as:'index'}
+		#{exports.item data : exports.get(index) /}	
+	#{/list}
+#{/if}
+#{else}
+<div style="padding:20px;">
+	<div class="boldy big16 redTextColor centerText">&{'NO_EXPORTS_FOUND'}</div>	
+</div>
+#{/else}

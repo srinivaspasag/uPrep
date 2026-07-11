@@ -1,0 +1,221 @@
+%{    
+    doc=docInfo.result;
+    docId=params.docId;
+    if(play.Play.configuration.getProperty("application.name")=="web-app"){
+        domain='WEB_APP';
+    }else{
+        domain='CMDS_APP';
+    }
+}%
+<div id="docViewPage" data-doc-id="${docId}">    
+    <div id='DTDoc1002'>
+        <div id="DTDocLeft">
+            <div class="DTDocLeftBody" data-doc-id="${docId}">                
+                #{if domain=='WEB_APP'}
+                #{docPL.leftSecDetails docPL:doc,entityType:"DOCUMENT",docPLId:docId /}
+                #{/if}
+                #{else}
+                <div id="docPLLeftSecDetails">
+                    <div class="DPLSName">${doc.title}</div>
+                    %{
+                        user=doc.user;
+                    }%
+                    #{widgets.user20 user:user /}
+                    <div class="margTop20">
+                        #{if doc.has('isPublished')&&doc.isPublished}
+                        <span class="smally boldy">This document is published.</span>
+                        #{/if}
+                        #{else}
+                          <div class="gRedButton publishcmdsDoc" data-doc-id="${docId}">Publish Document</div>                    
+                          <div class="gButton editcmdsDocTocs margLeft" data-doc-id="${docId}">Edit TOCs</div>                    
+                        #{/else}                          
+                    </div>                     
+                </div>             
+                #{/else}
+                <div class="cleaner_with_divider">&nbsp;</div>
+                <div class="margTop20">
+                    #{if domain=='WEB_APP'}
+                    <span class="leftSecTab leftSecActiveTab docCommentsSpan">Comments</span>
+                    <label class="leftSecTabPipe">|</label>
+                    <span class="leftSecTab docInfoSpan">Info</span>
+                    <label class="leftSecTabPipe">|</label>
+                    <span class="leftSecTab docReviewsSpan">Reviews</span>
+                    #{/if}
+                    #{else}
+                    <span class="leftSecTab showcmdsDocContents leftSecActiveTab">Contents</span>
+                    <span class="leftSecTab docInfoSpan">Info</span>                    
+                    #{/else}
+                </div>
+                <div id="leftSecContent">
+                    #{if domain=='WEB_APP'}
+                    <div id="DPLSComments" class="docContentDiv"></div>                    
+                    <div id="DPLSInfo" class="docContentDiv nonner">
+                        <div class="DPLSInfoTagTree">
+                            #{if doc.has('targets')}
+                                #{UIComWidgets.displayTags exams:doc.targets,subjects:doc.boards,tags:doc.tags /}
+                            #{/if}
+                            #{else}
+                                %{
+                                        org.json.JSONArray exams=new org.json.JSONArray();
+                                }%
+                                #{UIComWidgets.displayTags exams:exams,subjects:doc.boards,tags:doc.tags /}
+                            #{/else} 
+                        </div>
+                        <div class="DPLSPeoplesHolder"></div>
+                    </div>                    
+                    <div id="DPLSReviews" class="docContentDiv nonner">
+                        #{docPL.reviews entityType:"DOCUMENT",docPLId:docId,docPL:doc /}
+                    </div>
+                    #{/if}
+                    #{else}
+                    <div id="DPLSContents" class="docContentDiv"></div>
+                    <div id="DPLSInfo" class="docContentDiv nonner">
+                        <div class="DPLSInfoTagTree">
+                            %{
+                                if(doc.has('targets'))exams=doc.targets;
+                                else{
+                                    org.json.JSONArray exams=new org.json.JSONArray();
+                                }
+                                if(doc.has('boards'))boards=doc.boards;
+                                else{
+                                    org.json.JSONArray boards=new org.json.JSONArray();
+                                }
+                            }%
+                            #{UIComWidgets.displayTags exams:exams,subjects:boards,tags:doc.tags /}
+                        </div>
+                    </div>                      
+                    #{/else}
+                </div>                
+            </div>
+        </div>
+        <div id='DTDocMiddle'>
+            #{if doc.pageCount>0}
+            <div id="docViewOptionsHolder">
+                <div  id='docViewOptions'>
+                    <div class="DVPageTurn" rel="${docId}">
+                        <div class="DVPageUp DVPageMoves" title="Go one page up"></div>
+                        <div class="DVPageTop DVPageMoves" title="Go to page 1"></div>
+                        <div class="DVPageDown DVPageMoves" title="Go one page down"></div>
+                    </div>                      
+                    #{if domain=='WEB_APP'}
+                        <div class="DVContents" rel="${docId}">
+                            <div class="showContents ptr">
+                                <div class="showConDiv">Contents</div>
+                            </div>
+                            <div id="docContentsBody"></div>
+                        </div>                                            
+                        <div class='DVOptions docOptCommDiv'>
+                            <span class="docOptComm"></span>
+                            <div>Comment</div>
+                        </div>
+                        <div class='DVOptions docOptColorDiv'>
+                            <span class="docOptColor"></span>
+                            <div>Highlight</div>
+                            <div class='colorPicker' rel='${docId}'>
+                                <span style='background-color: #ebd819;' rel='ebd819'> </span>
+                                <span style='background-color: #ff8800;' rel='ff8800'> </span>
+                                <span style='background-color: #00ffc7;' rel='00ffc7'> </span>
+                                <span style='background-color: #4ee8ff;' rel='4ee8ff'> </span>
+                            </div>
+                        </div>
+<!--                            <div class='DVOptions'>
+                        <span class="docOptZoomClass"></span>                             
+                        <div>Zoom In</div>
+                    </div>
+                    <div class="DVOptions">
+                        <span class="docOptBoomClass"></span>
+                        <div>Zoom Out</div>
+                    </div>
+                    <div class='DVOptions docOptFS' id='docOptFS'>
+                        <span class="docOptFSImg"></span>
+                        <div>Full View</div>
+                    </div>-->
+                        <div class='DVOptions docOptBM'>
+                            <span class="docOptBMImg"></span>
+                            <div id='BMDiv'>
+                                <b>Bookmark Title</b>
+                                <input type='text' class='BMInput' />
+                                <input type='submit' class='blueSubmitButton submitBM' value='Save' />
+                            </div>
+                            <div>Bookmark</div>
+                        </div>
+                      #{/if}  
+                    %{
+                        if(doc.pageCount>0)val='1';
+                        else val='';
+                    }%
+                    #{if doc.pageCount>0}
+                    <div class="floatLeft docViewPageNum margLeft">                               
+                        <a class="addDocToDesk" rel="${docId}"></a>
+                        <b>Pg</b>
+                        <input type='text' id='docPageNumInput' value='${val}'/>
+                        / <label id='docTotalPages'>${doc.pageCount}</label>
+                    </div>
+                    #{/if}
+                </div>
+            </div>
+            <div id="docViewer">
+                <div class="cleaner_with_divider">&nbsp;</div>
+                <div id="pageViewHolder"></div>
+                #{if domain=='WEB_APP'}
+                <div id="highlightOptions">
+                   <div class='DVOptions docOptCommFlyDiv'>
+                       <span class="docOptCommFly"></span>
+                   </div>
+                   <div class='DVOptions docOptColorFlyDiv'>
+                       <span class="docOptColorFly"></span>
+                   </div>                       
+                </div>
+                <div class="colorPicker" style="margin-top: 8px;" rel="${docId}">
+                       <span style="background-color: #ebd819;" rel="ebd819"> </span>
+                       <span style="background-color: #ff8800;" rel="ff8800"> </span>
+                       <span style="background-color: #00ffc7;" rel="00ffc7"> </span>
+                       <span style="background-color: #4ee8ff;" rel="4ee8ff"> </span>
+                </div>
+                 <div id="docOptCommBox">
+                     <div class="docOptCommBoxBody">
+                        <textarea class="docCommentInput" id="docCommentInput_${docId}"></textarea>
+<!--                        <select class="commentType" id="commentType_${docId}">
+                            <option value="public" selected="selected">Public</option>
+                            <option value="private">Private</option>
+                        </select>-->
+                        <input type="submit" value="Submit" class="blueSubmitButton submitCommentHL"/>
+                        <a onclick="insideOutClick()" class="margLeft5">Cancel</a>
+     <!--                   <div id="docOptCommOptions_${docId}" class="docOptCommOptions">
+                             <img alt="attach" src="/public/images/uicomDocuments/attach.png" class="commAttach" />
+                             <img alt="formula" src="/public/images/uicomDocuments/formula.png" class="commFormula" />
+                        </div>-->
+                      </div>
+                  </div>      
+                #{/if}
+            </div>
+            #{/if}
+            #{else}
+            <div class="userMessage">There are no pages in the document.</div>
+            #{/else}
+        </div>
+        <div class='cleaner_with_divider'>&nbsp;</div>
+    </div>
+    <script type="text/javascript">
+        new function(){
+            var fn=function(){docView.init({pages:${doc.pages.raw()},docId:"${docId}",
+                    pageCount:"${doc.pageCount}",domain:"${domain}"});}
+            lazyLoad([{fname:"uicomDocuments/docView.js",cb:fn}]);
+        }();       
+    </script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

@@ -1,0 +1,128 @@
+#{if params.userRole == "MANAGER" || params.userRole == "TEACHER"}
+#{if params.loadQuestionInfo.equals("true")}
+    <link rel="stylesheet" type="text/css" href="/public/stylesheets/test/gradeSubjectiveQuestion.css"/>
+#{/if}
+#{if questionAttempts!=null && questionAttempts.errorCode.isEmpty()}
+%{
+    result = questionAttempts.result;
+    subjectiveQuestionId = result.subjectiveQuestionId;
+    userQuestionAttempts = result.userQuestionAttempts;
+    boards = result.boards;
+    totalhits = result.totalhits;
+}%
+    <div class="#{if params.loadQuestionInfo.equals('true')}subjective-question-page#{/if}" data-test-id="${params.testId}">
+        #{if params.loadQuestionInfo.equals("true")}
+        <span class="gButton margTop10 margBot10" onclick="history.back()">Go Back</span>
+        <div class="border-lg">
+        <h2 class="centerText s-title">
+            Grade the Subjective Question below
+        </h2>
+        #{if !boards.equals(null)}
+        #{list items:0..boards.length()-1, as:'index'}
+            %{
+                board = boards.get(index);
+            }%
+            #{if !board.questions.equals(null)}
+            #{list items:0..board.questions.length()-1, as:'boardIndex'}
+                 %{
+                    boardQuestion = board.questions.get(boardIndex);
+                }%
+                #{if !boardQuestion.equals(null) && !boardQuestion.equals("null") && boardQuestion != "null" &&  boardQuestion != null}
+                    #{if boardQuestion.id.equals(subjectiveQuestionId)}
+                        <div class="question-info-div" data-q-id="${subjectiveQuestionId}">
+                            <div class="margTop10 margBot10 big14">
+                                <h3>Question  </h3> <div class="lh-more">${boardQuestion.content.raw()}</div>
+                            </div>
+                            <div class="marks-holder" data-positive = "${boardQuestion.marks.positive}" data-negative="${boardQuestion.marks.negative}">
+                                Marks <span class="greenColor">+${boardQuestion.marks.positive}</span>
+                                      <span class="redColor">
+                                      #{if boardQuestion.marks.negative > 0} -${boardQuestion.marks.negative}
+                                      #{/if}
+                                      #{else}
+                                        ${boardQuestion.marks.negative}
+                                      #{/else}
+                                  </span>
+                            </div>
+                            #{if boardQuestion.solution != null}
+                                <div class="margTop10 margBot10 big14">
+                                    <h3>Solution </h3> <div class="lh-more">${boardQuestion.solution.raw()}</div>
+                                </div>
+                            #{/if}
+                        </div>
+                    #{/if}
+                #{/if}
+            #{/list}
+            #{/if}
+        #{/list}
+        #{/if}
+        </div>
+        #{/if}
+        <div class="border-lg">
+        #{if params.loadQuestionInfo.equals("true")}
+                <h2 class="centerText s-title">Student Attempts</h2>
+        #{/if}
+        #{if totalhits > 0}
+        <div class="#{if params.loadQuestionInfo.equals('true')} user-question-attempt-holder #{/if}">
+            #{if userQuestionAttempts.length() > 0}
+            #{list items:0..userQuestionAttempts.length()-1, as:'uIndex'}
+                %{
+                    userQuestionAttempt = userQuestionAttempts.get(uIndex);
+                }%
+                <div class="user-question-attempt-container">
+                    <div class="user-question-attempt" data-user-id="${userQuestionAttempt.userId}" data-attempt-id="${userQuestionAttempt.attemptId}">
+                        <div class="lh-more">${userQuestionAttempt.answerGiven.get(0).raw()}</div>
+                    </div>
+                    <div class="margBot10 mark-button-holder margTop10
+                    #{if userQuestionAttempt.isCorrect.equals('UNKNOWN')}#{/if}#{else}nonner#{/else}">
+                        <button class="sbutton" data-is-correct="CORRECT">Correct</button>
+                        <button class="sbutton" data-is-correct="INCORRECT">Incorrect</button>
+                        <button class="sbutton" data-is-correct="PARTIAL">Partial</button>
+                        <button class="saveButton blue">Save</button>
+                        <button class="cancelButton nonner red">Cancel</button>
+                        <div class="nonner show-input">
+                            <input type="number" placeholder="Enter marks" class="partial-marks" name="partial-marks" />
+                            <div class="smally margBot5 greyColor">Click on save.</div>
+                        </div>
+                    </div>
+                    <div class="margTop10 margBot10 mark-save-holder #{if userQuestionAttempt.isCorrect.equals('UNKNOWN')}nonner#{/if}">
+                        <div class="displayInBlock">Grade Saved : <div class="displayInline user-question-attempt-status">${userQuestionAttempt.isCorrect}</div>
+                        <div class="w-200 margLeft10 margRight10 displayInline">
+                            Marks Alloted :
+                        <div class="marks-received displayInline"> ${userQuestionAttempt.score}</div>
+                        </div>
+                    </div>
+                        <button class="editButton orange displayInline">Edit</button>
+                    </div>
+                </div>
+
+            #{/list}
+            #{/if}
+        </div>
+        #{/if}
+        #{if totalhits > 0 && totalhits > Integer.parseInt(params.start) + Integer.parseInt(params.size)}
+            <div class="load-more-attempts loadMoreItems" data-start="${params.start}" data-size="${params.size}">
+                Load More Attempts
+            </div>
+        #{/if}
+        #{if totalhits == 0}
+            <div class="redColor no-hits centerText margTop10 margBot10 big20 padTop10 padBot10">
+                No Attempts Available
+            </div>
+        #{/if}
+        </div>
+    </div>
+#{/if}
+#{else}
+    #{common.messagePage msgTextColor : "redTextColor" , msg : questionAttempts.errorMessage /}
+#{/else}
+#{if params.loadQuestionInfo.equals("true")}
+<script type="text/javascript" src="/public/javascripts/test/gradeSubjectiveQuestion.js">
+</script>
+#{/if}
+<script type="text/javascript">
+    gradeSubjectiveQuestion.init();
+</script>
+#{/if}
+#{else}
+    #{common.messagePage msgTextColor : "redTextColor" , msg : "No Data available" /}
+#{/else}

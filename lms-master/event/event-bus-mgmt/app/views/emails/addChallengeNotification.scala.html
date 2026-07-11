@@ -1,0 +1,12 @@
+@(emailDetails:com.vedantu.eventbus.email.details.AddChallengeEmailNotificationDetails)
+
+@appDomain( emailDetails) { host =>  
+@defining(emailDetails.details.getJSONObject("src")) { srcDetails =>
+@defining(srcDetails.getJSONObject("contentSrc").getString("id")) { orgId =>
+@defining( emailDetails.details.getJSONObject("actor")){ actor =>
+			@userNewsDetails(host)(orgId)(actor)
+			<span> added @contentNewsDetails(host)(orgId)(srcDetails)</span>
+			}	
+		}	
+ 	  }
+}

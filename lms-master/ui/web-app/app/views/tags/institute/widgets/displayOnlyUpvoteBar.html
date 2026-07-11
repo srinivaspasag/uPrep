@@ -1,0 +1,20 @@
+<div class="instUpvoteHolder">
+	#{if _upVotes!=null}
+	<span class="upvotesInstFeedCount">
+		<span class="instImgs"></span>
+		<a class="upvotesCount" data-entity-count="${_upVotes}">${_upVotes}</a>
+	</span>
+	#{/if}
+	#{if _comments!=null}
+	<span class="commentsInstFeedCount">
+		<span class="instImgs"></span>
+		<a class="commentsCount">${_comments}</a>
+	</span>
+	#{/if}
+	#{if _followers!=null}
+	<span class="followersInstFeedCount">
+		<span class="instImgs" style="padding:4px 6px;"></span>
+		<a class="upvotesCount">${_followers}</a>
+	</span>
+	#{/if}
+</div>

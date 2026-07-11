@@ -1,0 +1,202 @@
+<style type="text/css">
+    .collapsable{
+    cursor: pointer;
+    background:#3d3d3d;
+    color:white;
+    border: 1px solid #afafaf;
+}
+.collapse{
+    display: none;
+    transition: 2s ease-in;
+}
+.openClose{
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    font-size: 20px;
+    line-height: 20px;
+    margin-right: 5px;
+    padding: 2px;
+    box-sizing: border-box;
+}
+.courseHeading{
+    font-weight:bold;
+    font-size:15px;
+    width: 200px!important;
+}
+.CTFSubTotal, .CTFTable tr:last-child {
+    border-top: none;
+}
+.selected{
+    background: green;
+    color: white;
+    font-weight: bold;
+}
+.selector{
+    cursor: pointer;
+}
+.CTFTitleTaker,.CTFTable,.CTFPage4,.testPage4Title{
+    margin: auto;
+    width: 850px;
+}
+.cmdsPopupHead{
+    text-align: center;
+    margin-bottom: 20px;
+    margin: 15px;
+}
+.tableHead{
+    font-weight:bold;
+    font-size: 15px;
+}
+.goToCTFTestFormatQuesType,.goToCTFGenerateTest{
+    float: right;
+    margin: 20px 0px;
+}
+.skipTopicWiseFilter,.skipDifficultyWiseFilter{
+    margin: 20px 0px;
+}
+.topicRow{
+    background:#d8d8d8;
+}
+.difficultyRow{
+    background:#f1f1f1;
+}
+.tableHead1{
+    background:#d8d8d8;
+}
+.tableHead2{
+    background:#f1f1f1;
+}
+.tableHead3{
+    font-weight: bold;
+    color:#808080
+}
+.tableHead{
+    font-size: 15px;
+    font-weight: bold;
+}
+#testLoaderOverlay{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+.loadingText{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+</style>
+#{if finalResp.errorCode !=''}
+    #{common.errorCodes resp:finalResp /}
+#{/if}
+#{else}
+%{
+    testDetails = finalResp.result;
+    metadata = finalResp.result.metadata;
+}%
+<script type="text/javascript">
+    var metadata = ${metadata.raw()};
+    var metadata_copy = ${metadata.raw()};
+</script>
+    <div id="overlay" style="text-align: center;">
+        <img src="/public/images/loading_big.gif" class="overlay">
+    </div>
+    <div id="autoGenerateTestPage">
+    <div class="CTFTitleTaker nonner" id="testPage" data-entity-id="${testDetails.id}">
+        <div class="cmdsPopupHead">
+            <span class="resourceIconAutomate"></span>
+        Generate Test (Step-3/4)
+    </div>
+    <table class="CTFTable pageTable3">
+        <thead class="boldy">
+            <tr>
+                <td class="width100">Topic Name</td>
+                <td>SCQ</td>
+                <td>MCQ</td>
+                <td>Numeric</td>
+                <td>Para</td>
+                <td>Matrix</td>
+                <td>Subjective</td>
+            </tr>
+        </thead>
+        #{list items:0..metadata.length()-1,as:'boardList'}
+            %{
+            current = metadata.get(boardList);
+                }%
+        <tbody class="${current.id} board" data-subject-id="${current.id}">
+        <tr class="collapsable subjectList subject_${current.id}" >
+            <td class="courseHeading">
+               <span class="openClose">  +  </span>
+            ${current.name} - ${current.qusCount}
+        </td>
+            #{list items:0..current.details.length()-1,as:'boardDetails'}
+            <td class="tableHead">${current.details.get(boardDetails).qusCount}</td>
+            #{/list}
+        </tr>
+        <tr class="collapse questionStatus">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td colspan="2">
+                <input type="radio" class="CTFRadio" name="CTFRadio ${current.name}"  value="PUBLISHED" />
+                Published
+                <input type="radio" class="CTFRadio" name="CTFRadio ${current.name}"  value="NOT_PUBLISHED" />Unpublished
+                <input type="radio" class="CTFRadio" name="CTFRadio ${current.name}" checked  value="BOTH" />Both
+            </td>
+        </tr>
+        #{if current.has("children") && !current.children.equals(null) && current.children.length()}
+        #{list items:0..current.children.length()-1,as:'boardTopicList'}
+        <tr class="collapse topicList topic_${current.children.get(boardTopicList).id} ${current.id}" data-topic-id="${current.children.get(boardTopicList).id}">
+            <td class="topicName">${current.children.get(boardTopicList).name}</td>
+            <td class="CTFScq"><input type="text" class="CTFNum numberTextBox" maxlength="3" size="3" value="0" /></td>
+            <td class="CTFMcq"><input type="text" class="CTFNum numberTextBox" maxlength="3" size="3" value="0" /></td>
+            <td class="CTFNumeric"><input type="text" class="CTFNum numberTextBox" maxlength="3" size="3" value="0" /></td>
+            <td class="CTFPara"><input type="text" class="CTFNum numberTextBox" maxlength="3" size="3" value="0" /></td>
+            <td class="CTFMatrix"><input type="text" class="CTFNum numberTextBox" maxlength="3" size="3" value="0" /></td>
+            <td class="CTFSubjective"><input type="text" class="CTFNum numberTextBox" maxlength="3" size="3" value="0" /></td>
+        </tr>
+        #{/list}
+        #{/if}
+        #{else}
+            <tr class="collapse topicList getTopics chapter_${current.id}" data-course-id="${current.id}">
+            </tr>
+        #{/else}
+        </tbody>
+    #{/list}
+    </table>
+    <div>
+        <button class="blueButton goToCTFTestFormatQuesType">Next</button>
+        <button class="blueButton skipTopicWiseFilter nonner">Skip and Generate</button>
+    </div>
+    </div>
+    <div class="CTFPage4 nonner">
+        <div class="testPage4Title">
+        <div class="cmdsPopupHead">
+            <span class="resourceIconAutomate"></span>
+        Generate Test (Step-4/4)
+        </div>
+        <table class="CTFTable pageTable4">
+        </table>
+    </div>
+    <div>
+        <button class="bigGreenButton goToCTFGenerateTest">Genertate Test</button>
+        <button class="blueButton skipDifficultyWiseFilter">Skip and Generate</button>
+    </div>
+    </div>
+    </div>
+    <div id="testLoaderOverlay" class= "nonner">
+        <img src="/public/images/generate.gif" class="testLoader">
+        <div class="loadingText">Preparing Test...Please Wait</div>
+    </div>
+<script type="text/javascript">
+   new function() {
+        var fn = function() {
+            autoGenerateTestChaptersList.init();
+        }
+        lazyLoad([{fname: "autoGenerateTestChaptersList.js", cb: fn}]);
+    }();
+</script>
+#{/else}

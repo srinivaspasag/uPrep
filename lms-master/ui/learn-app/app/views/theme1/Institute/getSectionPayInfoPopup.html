@@ -1,0 +1,76 @@
+<div class="sectionPayInfoPopup">
+#{if resp!= null && resp.errorCode.isEmpty()}
+    <div class="orgSiteColor big20 catProgramName centerText" style="margin-top:30px;">${itemName}</div>
+    %{
+        data = resp.result.info;
+    }%
+    #{if data.total != 0}
+    <div style="margin-top:20px;">
+        <div class="f-16" style="margin-bottom:6px;">&{'payment.TXT_PAYMENT_INFO'}</div>
+        <table cellspacing=10 cellpadding=0 class="fullWidth table" style="padding:12px;background-color:#EEE">
+            <tr>
+                <th style="width:120px;">Invoice Number : </th>
+                <td>
+                    #{if data.invoiceNo.equals(null) ||
+                        org.apache.commons.lang.StringUtils.isEmpty(data.invoiceNo)}
+                        <span class="italics greyTextColor smally">&{'TXT_NA'}</span>
+                    #{/if}
+                    #{else}
+                        <span>${data.invoiceNo}</span>
+                    #{/else}
+                </td>
+            </tr>
+            <tr>
+                <th>&{'payment.AMMOUNT_PAID'} : </th>
+                %{
+                    amountPaidValue = 0;
+                    currency = "Rs.";
+                    amountPaid = data.amountPaid;
+                    amountPaidValue = amountPaid/100;
+                }%
+                <td>${currency}${amountPaidValue}</td>
+            </tr>
+            %{
+                discountValue = 0;
+                currency = "Rs.";
+                discount = data.discount;
+                discountValue = discount/100;
+            }%
+            #{if discountValue !=0}
+                <tr>
+                    <th>Discount : </th>
+                    <td>${currency}${discountValue}</td>
+                </tr>
+            #{/if}
+            <tr>
+                <th>Total Amount : </th>
+                %{
+                    totalAmountValue = 0;
+                    currency = "Rs.";
+                    totalAmount = data.total;
+                    totalAmountValue = totalAmount/100;
+                }%
+                <td>${currency}${totalAmountValue}</td>
+            </tr>
+            <tr>
+                <th>&{'payment.PAYMENT_DATE'} : </th>
+                <td data-time="${data.paymentInfo.paymentTime}" class="updateClientTime"></td>
+            </tr>
+        </table>
+    </div>
+    #{/if}
+    #{else}
+    <div style="margin-top:20px;">
+        <div class="big16 centerText">Payment Info is not available. This could be because you have not purchased the product online.</div>
+    </div>
+    #{/else}
+        <!-- <div class="centerText" style="margin:40px 0 30px;">
+                <span class="orgButton closeVPopup btn btn-primary waves-effect">&{'TXT_OK'}</span>
+        </div> -->
+#{/if}
+#{else}
+    <div class="redTextColor centerText big16">
+        &{'COMMON_ERROR_MESSAGE'}
+    </div>
+#{/else}
+</div>

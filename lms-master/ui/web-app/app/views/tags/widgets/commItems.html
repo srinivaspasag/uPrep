@@ -1,0 +1,52 @@
+%{
+    comments=_comments;
+    loadMoreSize=_loadMoreSize;
+    rootType=_rootType;
+}%
+#{if comments.length()>0}
+#{list items:0..comments.length()-1,as:'c'}
+    %{
+        comm=comments.get(c);
+        user=comm.user;
+    }%
+    <div class="commItem CSWidget" data-widget="COMMENT" data-comm-id="${comm.id}">
+        <div class="commItemBody">
+            <div class="commItemLeftSec">
+                #{widgets.img30 user:user /}
+                #{if rootType!='SOLUTION'}
+
+                <div class="margHalfTop smally commReviewVoteDiv centry linBlk" data-comment-id="${comm.id}">
+                    #{widgets.upVoteItem entityType:"COMMENT",entityId:comm.id,upVote:comm.upVotes,voted:comm.voted /}
+                </div>
+                #{/if}
+            </div>
+            <div class="itemContent40">
+                <div class="commItemWhity">
+                    <div class="itemHorn"></div>
+                    <div class="margBot10">
+			#{institute.memberName user : user /}
+                        <span> says</span>
+                        <span class="floatRight time">${new Date(comm.timeCreated).since(true)}</span>
+                    </div>
+                    <div class="rteTextDiv commItemText">${comm.content.raw()}</div>
+                </div>
+                #{if rootType!='SOLUTION'}
+                <div class="commItemRepliesSec">
+                    <div>
+                        <a class="commRepliesNum ptrTagInline doCStream" data-cs-name="SHOW_REPLIES"><label>${comm.comments}</label> repl${comm.comments.pluralize('y','ies')}</a>
+                        <a class="replyToCommItem ptrTagHovered doCStream" data-cs-name="POST_REPLY_BUTTON">Reply</a>
+                    </div>
+                </div>
+                #{/if}
+            </div>
+        </div>
+        <div class="replyWidgetHolder"></div>
+    </div>    
+#{/list}
+        #{if loadMoreSize!= 0&& comments.length()==loadMoreSize}
+        <div class="loadMoreItems LMHandlerDivLoadMore doCStream"  data-cs-name="LOAD_MORE_COMMENTS">Load More Comments</div>
+        #{/if}
+#{/if}
+#{else}
+    <div class="userMessage">No Comments found</div>
+#{/else}

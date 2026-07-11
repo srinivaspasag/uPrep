@@ -1,0 +1,84 @@
+#{if users.result.has("list") && users.result.list.length()>0}
+%{
+	totalCount = users.result.totalHits;
+}%
+#{list items:0..users.result.list.length()-1,as:'index'}
+   %{ 
+	user = users.result.list.get(index);
+	userId = user.id;
+	if(user.has('orgId') && user.has('userId')){
+		userId = user.userId;
+	}
+   }%
+   <div class="instTypEachMembrSugg" data-user-id="${userId}" data-full-name="${user.firstName} ${user.lastName}">
+	<table cellspacing=0 cellpadding=0>
+		<tr>
+		    <td rowspan=2 style="padding-right:12px;">
+			<img class="instTypEachMembrPic" alt="" src="${user.has('thumbnail')?user.thumbnail:''}"/>
+		    </td>
+		    <td>
+			<span class="big13">${user.firstName} ${user.lastName}</span>
+		    </td>
+		</tr>
+		<tr>
+			<td class="greyTextColor instMemberSuggInfo">
+			#{if user.profile == "STUDENT"}
+				<span class="instMemInfo">
+				&{'TXT_STUDENT'}
+				 #{if user.has('mappings')}
+					at %{ orgInfo = user.mappings;}%
+				 #{if orgInfo.has("programs") && orgInfo.programs.length()>0}
+				%{ progs = orgInfo.programs;}%
+				   #{list items:0..progs.length()-1,as:'pIndex'}
+					%{ prog = progs.get(pIndex);}%
+					${ prog.name}
+				 	#{if prog.has('centers') && prog.centers.length()>0}
+					  #{list items:0..prog.centers.length()-1,as:'cIndex'}
+						%{ center = prog.centers.get(cIndex); }%
+				 	  #{if center.has("sections") && center.sections.length()>1}
+					    #{list items:0..center.sections.length()-2,as:'sIndex'}
+						${center.sections.get(sIndex).name}, 	
+					    #{/list}
+				 	  #{/if}
+						${center.sections.get(center.sections.length()-1).name}
+					  #{/list}
+				 	#{/if}
+					- ${center.name}
+				   #{/list}
+				#{/if}
+				#{/if}
+				</span>
+			#{/if}
+			#{elseif user.profile == "TEACHER"}
+				<span class="instMemInfo">
+				#{if user.has('orgInfo') && user.orgInfo.has('courses') && user.orgInfo.courses.length()>0}
+					&{'TXT_TEACHES'} 
+					#{if user.orgInfo.courses.length()>1}
+					  #{list items:0..user.orgInfo.courses.length()-2,as:'cIndex'}
+						${user.orgInfo.courses.get(cIndex).name},
+					  #{/list}
+					#{/if}
+					%{
+						lastCrs = user.orgInfo.courses.get(user.orgInfo.courses.length()-1);
+					}%
+					${lastCrs!=null&&lastCrs.toString()!="null"?lastCrs.name:""}
+				#{/if}
+				#{else} &{'TXT_TEACHER'} #{/else}
+				</span>
+			#{/elseif}
+			#{else}
+				<span class="instMemInfo">&{'ROLE_'+user.profile.toUpperCase()}</span>
+			#{/else}
+			</td>
+		</tr>
+	</table>
+   </div>
+#{/list}
+   %{
+	lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+   }%
+   #{if totalCount > lastCount }
+	<div class="loadMoreMemberSugg doCStream instTypEachMembrSugg loadMoreItems" data-next-start="${lastCount}"
+		name="LOAD_MORE_MEMBERS">&{'LOAD_MORE_item','Members'}</div>
+   #{/if}
+#{/if}

@@ -1,0 +1,234 @@
+.modulePageSprite{
+    background-image: url("/public/images/slpmodules/sprite.png");
+    background-repeat: no-repeat;
+}
+#modulePage {
+    background-color: #F4F4F4;
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    margin: 0 auto;
+    min-height: 800px;
+    padding-bottom: 60px;
+    position: relative;
+    width: 1002px
+}
+#topicDotsLiner{
+    background-color: #D5D5D5;
+    position: absolute;
+    width: 2px;   
+}
+#modulePageHeader{
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #D2D2D2;
+    padding: 25px 15px 15px 55px;
+    position: relative;
+}
+.modulePageHeaderArrow{
+    background: url("/public/images/slpmodules/sprite.png") no-repeat scroll -139px -10px rgba(0, 0, 0, 0);
+    bottom: -18px;
+    height: 23px;
+    left: 126px;
+    position: absolute;
+    width: 25px;    
+}
+.moduleTitleTextBox {
+    background-color: #61A200;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 3px;
+    display: inline-block;
+    height: 19px;
+    vertical-align: baseline;
+    width: 20px;
+}
+.moduleTitle {
+    color: #333333;
+    font-size: 25px;
+    margin-right: 8px;
+}
+.modulePageTitleInfo{
+    margin-right: 250px;
+}
+.modulePageTitleInfo .openInstProfile{
+    float: none;
+    margin-left: 5px;
+    margin-right: 0;
+}
+.modulePageTitleInfo .img20Wrapper{
+    display: none;
+}
+.modulePageTags {
+    margin-left: 28px;
+    margin-top: 10px;
+}
+.moduleTag {
+    background-color: #F2DD70;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 7px;
+    padding: 2px 15px;
+}
+.moduleRunDiv {
+    /*bottom: 15px;
+    padding-right: 20px;
+    position: absolute;*/
+    /*right: 0;*/
+    width: 250px;
+    float: right;
+    margin-top: 10px;
+}
+.moduleRunIcon {
+    background-position: 0 0;
+    display: inline-block;
+    float: left;
+    height: 40px;
+    width: 43px;
+}
+#moduleEntriesHolder {
+    padding: 20px 95px 60px 125px;
+    position: relative;
+    clear:right;
+}
+.moduleEntryTopicType {
+    color: #BABABA;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+.moduleEntryTopicType:first-child{
+    margin-top: 5px;
+}
+.moduleEntryTopicCircle {
+    background-color: #EEEEEE;
+    border: 2px solid #D5D5D5;
+    border-radius: 30px;
+    color: #999999;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: normal;
+    height: 28px;
+    line-height: 27px;
+    text-align: center;
+    width: 28px;
+}
+.moduleEntryContentType {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #EEEEEE;
+    /*height: 70px;*/
+    margin-bottom: 6px;
+    position: relative;
+    text-decoration: none;
+    border-radius: 10px;
+}
+.moduleEntryContentType:hover{
+    text-decoration: none;
+}
+.moduleEntryRightSec {
+    float: right;
+    margin-top: 15px;
+    padding-right: 20px;
+    padding-top: 12px;
+    width: 150px;
+}
+.moduleStatusText {
+    color: #999999;
+    font-size: 13px;
+}
+.moduleEntryContentType .moduleTextBlueColor{
+    color: #006699;
+}
+.moduleStatusIcon {
+    background-position: -58px 0;
+    display: inline-block;
+    float: right;
+    height: 43px;
+    position: relative;
+    top: -10px;
+    vertical-align: middle;
+    width: 21px;
+}
+.moduleStatusIcon.hider{
+    visibility: hidden;
+}
+.moduleStatusIconCompleted{
+    width: 27px;
+    background-position: -80px 0;
+}
+.moduleStatusIconConsumeNow{
+    background-position: -40px 0;
+}
+.moduleEntryLeftSec {
+    margin-right: 180px;
+    padding: 15px 12px;
+}   
+.moduleContentNo {
+    color: #333333;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+    margin-top: 3px;
+}
+#modulePage .singleLineText {
+    color: #333333;
+    font-size: 18px;
+    line-height: normal;
+    margin-left: 3px;
+}
+.moduleContentStat {
+    color: #999999;
+    font-size: 13px;
+    margin-left: 3px;
+    margin-top: 3px;
+}
+.moduleEntryContentTypeDivider{
+    background-color: #F4F4F4;
+    height: 6px;
+    position: absolute;
+    top: -8px;
+    width: 100%;
+}
+.moduleEntryContentTypeTicked{
+    background: url("/public/images/slpmodules/sprite.png") no-repeat scroll -111px -7px rgba(0, 0, 0, 0);
+    bottom: 0;
+    cursor: default;
+    height: 25px;
+    margin-top: 25px;
+    position: absolute;
+    right: -35px;
+    top: 0;
+    width: 25px;   
+}
+.moduleEntryTopicType + .moduleEntryContentType .moduleEntryContentTypeDivider{
+    display: none;
+}
+#moduleProgressBlackBar {
+    background-color: #666666;
+    height: 25px;
+    position: absolute;
+    width: 100%;
+}
+#moduleProgressGreenBar {
+    background-color: #91C133;
+    height: 25px;
+    position: absolute;
+    top: 0;
+    width: 100% !important;
+}
+#moduleProgressText {
+    color: #FFFFFF;
+    font-size: 15px;
+    line-height: 25px;
+    position: relative;
+    text-align: center;
+}
+
+.qrCodeScan{
+    margin: 0px 25px;
+    right: 0px;
+    z-index: 10;
+}
+.moduleEntryLeftSec .singleLineText{
+    max-width: 500px;
+    display: inline-block;
+}

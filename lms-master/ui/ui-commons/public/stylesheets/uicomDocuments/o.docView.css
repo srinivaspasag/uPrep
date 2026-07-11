@@ -1,0 +1,607 @@
+/*doc viewer*/
+#DTDoc1002{
+    width: 1002px;
+    margin: 0 auto;
+    word-wrap: break-word;
+    margin-bottom: 60px;
+}
+.DTDoc1002FS{
+    width: 100%;
+}
+#DTDocLeft{
+    float: left;
+    min-height: 1px;
+    position: relative;
+    width: 260px;
+}
+#DTDocMiddle{
+    float: left;
+    margin-left: 37px;
+    position: relative;
+    width: 700px;
+}
+.DTVideoMiddle{
+    width: 780px;
+    padding: 10px;
+}
+#DTDocMiddle,.DTVideoMiddle{
+    border-left: 1px solid #B4B4B4;
+    border-right: 1px solid #E0E0E0;
+    float: left;
+}
+.DTDoc1002FS .DTDocMiddle{
+    float: none;
+}
+.docCloseMin{
+    text-align: right;
+    margin-top: 10px;
+}
+
+
+
+
+#docViewer{
+    background-color: #ffffff;
+    margin: 0 auto;
+}
+#pageViewHolder{
+    text-align: center;
+    position: relative;
+    top:0;
+    background-color: #a2a2a2;
+}
+.pageImage{
+    max-width: 700px;
+    height: auto;
+    display: inline-block;
+}
+.docDivs{
+    margin-bottom: 15px;
+    background-color: #ffffff;
+    position: relative;
+    height: 800px;
+    line-height: 800px;
+    vertical-align: middle;
+}
+.docDivs:last-child{
+    line-height: 50px;
+}
+.HOCRDiv{
+    position: absolute;
+}
+.DVOptions{
+    border-right: 1px solid #000000;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: right;
+    font-size: 9px;
+    line-height: 12px;
+    padding: 2px 15px;
+    position: relative;
+    text-align: center;
+}
+.DVOptions:hover{
+    background: url('/public/images/uicomDocuments/docOptBack.png') no-repeat scroll center center transparent;
+}
+.docOptComm,.docOptCommFly,.docOptColor,.docOptColorFly,.docOptZoomClass,.docOptBoomClass,.docOptFSImg,.docOptBMImg{
+    background: url("/public/images/uicomDocuments/comment.png") no-repeat scroll center center transparent;
+    display: inline-block;
+    height: 21px;
+    width: 21px;
+}
+.docOptComm:hover,.docOptCommFly:hover{
+    background-image: url("/public/images/uicomDocuments/commentAc.png");
+}
+.docOptColor,.docOptColorFly{
+    background-image: url("/public/images/uicomDocuments/color.png");
+}
+.docOptColor:hover,.docOptColorFly:hover{
+    background-image: url("/public/images/uicomDocuments/colorAc.png");
+}
+.docOptZoomClass{
+    background-image: url("/public/images/uicomDocuments/zoom.png");
+}
+.docOptZoomClass:hover{
+    background-image: url("/public/images/uicomDocuments/zoomAc.png");
+}
+.docOptBoomClass{
+    background-image: url("/public/images/uicomDocuments/boom.png");
+}
+.docOptBoomClass:hover{
+    background-image: url("/public/images/uicomDocuments/boomAc.png");
+}
+.docOptFSImg{
+    background-image: url("/public/images/uicomDocuments/FS.png");
+}
+.docOptFSImg:hover,.activeDocOptFS .docOptFSImg{
+    background-image: url("/public/images/uicomDocuments/FSAc.png");
+}
+.docOptBMImg{
+    background-image: url("/public/images/uicomDocuments/BM.png");
+}
+.docOptBMImg:hover,.toggleClick .docOptBMImg{
+    background-image: url("/public/images/uicomDocuments/BMAc.png");
+}
+.docViewOptionsHold{
+    z-index: 201;
+    width: inherit;
+}
+#docViewOptions{
+    background-color: #363636;
+    height: 40px;
+}
+.docOptZoomClass{
+    margin-right: 15px;
+}
+#BMDiv{
+    padding: 5px 10px;
+    position: absolute;
+    left: -54px;
+    top: 41px;
+    text-align: center;
+    background-color: #363636;
+    z-index: 12;
+    display: none;
+    color: #ffffff;
+}
+.BMInput{
+    width: 160px;
+    display: block;
+    margin: 5px auto 0;
+    border: 1px solid #dadada;
+}
+.submitBM{
+    margin: 5px auto 0;
+}
+.colorPicker{
+    background-color: #DADADA;
+    border: 1px solid #5F615E;
+    height: 22px;
+    left: 18px;
+    padding: 2px 3px;
+    position: absolute;
+    z-index: 12;
+    display: none;
+    bottom: -32px;
+    width: 109px;
+}
+.colorPicker span{
+    border: 1px solid #c1c1c1;
+    height: 15px;
+    margin: 0 2px;
+    padding: 2px;
+    width: 15px;
+    display: inline-block;
+}
+.DVPageTurn{
+    cursor: pointer;
+    height: 120px;
+    position: absolute;
+    right: 15px;
+    top: 65px;
+    width: 35px;
+    z-index: 2000;
+}
+.DVPageMoves{
+    background: url("/public/images/uicomDocuments/pageUp.png") no-repeat scroll center center #a6a7ab;
+    height: 40px;
+    position: absolute;
+    right: 0;
+    width: 35px;
+}
+.DVPageUp{
+    top: 0;
+    -moz-border-radius: 30px 30px 0 0;
+    -webkit-border-radius: 30px 30px 0 0;
+    border-radius: 30px 30px 0 0;
+}
+.DVPageTop{
+    background: url("/public/images/uicomDocuments/page1.png") no-repeat scroll center center #a6a7ab;
+    top: 40px;
+}
+.DVPageDown{
+    background: url("/public/images/uicomDocuments/pageDown.png") no-repeat scroll center center #a6a7ab;
+    bottom: 0;
+    -moz-border-radius: 0 0 30px 30px;
+    -webkit-border-radius: 0 0 30px 30px;
+    border-radius: 0 0 30px 30px;
+}
+.DVPageUp:hover,.DVPageDown:hover{
+    background-color: #6d6e71;
+}
+.DVPageTop:hover{
+    background: url("/public/images/uicomDocuments/page1Hover.png") no-repeat scroll center center #a6a7ab;
+}
+
+.DVContents{
+    position: relative;
+    float: left;
+}
+.showConDiv{
+    background: url("/public/images/uicomDocuments/contents.png") no-repeat scroll center 5px transparent;
+    color: #FFFFFF;
+    font-size: 9px;
+    height: 16px;
+    padding-top: 24px;
+    text-align: center;
+    width: 55px;
+}
+.showContents.toggleClick .showConDiv{
+    background-color: #35B9D4;
+}
+.conTocNum,.clickBM{
+    padding: 5px 0;
+}
+#docContentsBody{
+    border: 3px solid #35B9D4;
+    background-color: #ffffff;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    left: 0;
+    position: absolute;
+    top: 40px;
+    width: 242px;
+    z-index: 2001;
+    display: none;
+}
+#docContentsBody.openToggler,#BMDiv.openToggler,.colorPicker.openToggler{
+    display: block;
+}
+#docNextPage,#docPrevPage{
+    position: absolute;
+    right: 15px;
+    top: 250px;
+    cursor: pointer;
+}
+#docPrevPage{
+    left: 15px;
+}
+.docConTOC,.docConBM,#docReviews{
+    margin: 15px 0 0 10px;
+}
+.docButton,.docCancelButton{
+    background-color: #117fb2;
+    border: 1px solid #FAFAFA;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+.docCancelButton{
+    background-color: #b4b4b4;
+}
+#docConTOC,#docConBM{
+    overflow: auto;
+}
+#tableBM tr td{
+    padding: 7px 0;
+    text-align: left;
+}
+ .docMenuHolder,.videoMenuHolder{
+    height: 50px;
+    width: 100%;
+    background-color: #fafafa;
+    z-index: 100;
+    position: static;
+}
+.docMenu{
+    width: 1002px;
+    margin: 0 auto;
+    color: #373737;
+    position: relative;
+}
+.docDirectFollow{
+    width: 80px;
+    padding: 15px 0 0 10px;
+    float: left;
+}
+.docNameNo{
+    float: left;
+    padding-top: 15px;
+    width: 665px;
+    position: relative;
+}
+.dVDName{
+    font-size: 16px;
+    margin-right: 7px;
+    font-weight: bold;
+}
+.docViewPageNum{
+    color: #ffffff;
+    margin-right: 7px;
+    padding-top: 7px;
+}
+#docPageNumInput,.docPageNumInputUP{
+    background-color: #F5F5F3;
+    border: 1px solid #C2C2C2;
+    min-height: 17px;
+    text-align: center;
+    width: 17px;
+    margin: 0 2px;
+}
+
+/*full screen view*/
+.FSNote{
+    font-weight: bold;
+    font-style: italic;
+    color: #6c6c6c;
+    float: left;
+}
+.highlighter{
+    background-color: transparent;
+    height: inherit;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    bottom: 0;    
+}
+#highlightOptions,#docOptCommBox{
+    position: absolute;
+    top: 100px;
+    left: 10px;
+    display: none;
+    z-index: 1999;
+}
+#highlightOptions{
+    background-color: #363636;
+}
+#highlightOptions.openToggler,#docOptCommBox.openToggler{
+    display: block;
+}
+#highlightOptions .DVOptions{
+    padding: 6px 10px;
+}
+.docOptCommBoxBody{
+    padding: 5px 10px;
+    -moz-box-shadow: 0 2px 4px #C3C3C3;
+    -webkit-box-shadow: 0 2px 4px #C3C3C3;
+    box-shadow: 0 2px 4px #C3C3C3;
+    border: 1px solid #676767;
+    margin-bottom: 35px;
+    background-color: #ffffff;
+}
+.docCommentInput{
+    border: 1px solid #cfcfcf;
+    display: block;
+    margin-bottom: 10px;
+    width: 300px;
+    font-size: 11px;
+}
+.commDirectButtons{
+    height: 50px;
+    margin-left: -48px;
+    width: 135%;
+}
+.CWWriteOptions select{
+    margin-left: 48px;
+}
+.commentHL{
+    display: none;
+    background-color: #e7da1a;
+    z-index: 3;
+}
+#notConfirmed,.hasColor{
+    opacity: 0.5;
+}
+
+/*video page*/
+.videoMenu{
+    margin: auto;
+    padding-top: 15px;
+    width: 1002px;
+}
+.followVideo{
+	margin-left: 200px;
+}
+.followVideo img{
+	margin-top: 6px;
+}
+.videoTitleHolder{
+    padding: 0 10px 10px 0;
+    min-width: 440px;
+}
+.videoTitle,.videoStatNo{
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+}
+.rateVideo .ratingDoc{
+    left: 3px;
+    padding: 10px 3px;
+    position: absolute;
+    top: 0;
+    display: none;
+}
+.rateVideo:hover .ratingDoc{
+    display: block;
+}
+.rateVideo:hover .videoRateText,.rateVideo:hover .videoRatingNo{
+    display: none;
+}
+#videoWidget{
+    height: 425px;
+    position: relative;
+    z-index:100;
+}
+#videoWidget video{
+    width: 100%;
+    height: 100%;
+}
+#videoWidget .video-js{
+    width: 100%;
+    height: 100%;
+}
+#videoWidget .vjs-big-play-button{
+    left: 50%!important;
+    top:50%!important;
+    transform: translate(-50%,-50%);
+}
+.videoCommentsAndDesc{
+    margin-top: 10px;
+}
+.videoDescAndTags
+{
+    background-color: #F0F0F0;
+    padding: 15px 10px;
+}
+.videoCommentDiv{
+    margin: 15px auto auto;
+    padding: 3px 5px;
+    width: 350px;
+    background-color: #EBF3F6;
+    border: 1px solid #E0E0E0;
+}
+.videoCommentDiv .commDirectInput{
+    margin-bottom: 0;
+    width: 310px;
+}
+#videoCommentsSec .bodi{
+    padding: 10px 15px;
+}
+.pblrVideo{
+    padding: 0 0 20px 20px;
+}
+.pblrVideoStats,.videoBlockDetails {
+    margin-left: 147px;
+}
+.videosFromPublishers{
+    margin: 3px 0 0 510px;
+    background-color: #f0f0f0;
+    padding: 10px;
+}
+.dummyVideoPlayer{
+    background-color: #363636;
+    bottom: 0;
+    color: #FFFFFF;
+    padding-top: 25%;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100%;
+}
+
+/*comment widget*/
+.commentWidget{
+    padding: 10px 15px;
+}
+.CWCommInput{
+    width: 97%;
+    padding: 3px;
+    margin-left: -1px;
+    height: 22px;
+}
+.CWCommInput:focus{
+    border-color: #cfcfcf;
+    height: 45px;
+}
+.CWWriteDiv{
+    background-color: #EBF3F6;
+    border: 1px solid #E0E0E0;
+    margin: 10px 10px 15px 5px;
+    padding: 5px 10px;
+}
+.CWWriteArea{
+    margin-left: 35px;
+    position: relative;
+}
+.postShortContent,.CWCommReplyContent{
+    margin-left: 35px;
+}
+.fixedRepliesBox{
+    margin-left: 35px;
+    border: 1px solid #e0e0e0;
+    border-top: 0;
+    -moz-box-shadow: 1px 0 2px #BDBDBD;
+    -webkit-box-shadow: 1px 0 2px #BDBDBD;
+    box-shadow: 1px 0 2px #BDBDBD;
+    display: none;
+}
+.actComPost .fixedRepliesBox{
+	display: block;
+}
+.docViewComment .postShortContent:hover,.actComPost .postShortContent{
+    background-color: #f1f1f1;
+}
+.commPtr{
+    left: -5px;
+    position: absolute;
+    top: 10px;
+}
+.activeComment .commPtr{
+    display: none;
+}
+.docCommentNo{
+    font-size: 11px;
+    margin-top: 8px;
+    width: 60px;
+}
+.commentLikes{
+    bottom: 15px;
+    position: relative;
+}
+.docCommentNo a{
+    color: black;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.activeComment{
+    background-color: #f7f7f7;
+    padding: 25px 10px 5px 10px;
+}
+.fullCommentDown{
+    color: #555555;
+    margin-bottom: 10px;
+    clear: both;
+}
+.fullCommentDown .CWCommReply{
+    margin: 5px 10px;
+}
+.fullComInputSubmit{
+    margin-top: 10px;
+}
+.CWReplyInput,.inputToReview{
+    background-color: #fafafa;
+    border: 1px solid #D5D5D5;
+    width: 93%;
+    margin-left: 7px;
+    padding: 3px;
+}
+
+
+/*new styles for pdf viewer*/
+#highlightOptionsDiv{
+    position: absolute;
+    width: 100px;
+    height: 25px;
+    background-color: greenyellow;
+}
+.highlightPart{
+    background-color: yellow;
+    color: #000000;
+}
+.highlightsHolder {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  color: #000;
+  font-family: sans-serif;
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.highlightsHolder > div {
+  color: transparent;
+  position: absolute;
+  line-height: 1.2;
+  white-space: pre;
+  cursor: text;
+}
+.videoConversionMsg{
+	padding:20px;
+        background-color:#ccc;
+        text-align:center;
+}

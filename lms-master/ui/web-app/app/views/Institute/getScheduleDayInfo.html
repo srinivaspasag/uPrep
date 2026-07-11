@@ -1,0 +1,96 @@
+#{if scheduleDayInfo!=null && scheduleDayInfo.errorCode.isEmpty()}
+    <div>
+        <h3 id="todayDate"></h3>
+        <div class="scheduleDayInfo">
+            <div class="boardsHolder">
+                #{list items:0..scheduleDayInfo.result.metadata.length()-1, as:'index'}
+                    %{
+                        specificBoardInfo = scheduleDayInfo.result.metadata.get(index);
+                        boardClass ="";
+                        if(index == 0){
+                            boardClass = "boardActive";
+                        }
+                    }%
+                    <div class="boardData ${boardClass}" data-index="${index}" data-board-id ="${specificBoardInfo.id}">
+                        <span class="boardName">${specificBoardInfo.subName}</span>
+                    </div>
+                #{/list}
+            </div>
+            #{list items:0..scheduleDayInfo.result.metadata.length()-1, as:'index'}
+            %{
+               defaultClass = "nonner";
+               if(index == 0){
+                    defaultClass = "active";
+                } 
+            }%
+                <div class="boardInfo ${defaultClass}" data-index="${index}" style="padding: 5px;">
+                    %{
+                        boardInfo = scheduleDayInfo.result.metadata.get(index);
+                    }%
+                    #{list items:0..boardInfo.details.length()-1, as:'boardIndex'}
+                        %{
+                            boardInfoDetails =boardInfo.details.get(boardIndex);
+                            entityUrl = "/organization/"+params.orgId+"/"+boardInfoDetails.type.toLowerCase();
+                            sectionUrl = "";
+                            highlightText = "";
+                            if(boardInfoDetails.type == "TEST"){
+                                imgLocation = "/public/images/icons/test.png";
+                                entityClass = "openInstTest";
+                                sectionUrl = "?targetType=SECTION&targetId="+params.sectionId;
+                            }
+                            else if(boardInfoDetails.type == "VIDEO"){
+                                imgLocation = "/public/images/icons/video.jpg";
+                                entityClass = "openInstVideo";
+                            }
+                            else if(boardInfoDetails.type == "MODULE"){
+                                imgLocation = "/public/images/icons/module.png";
+                                entityClass = "openInstModule";
+                                sectionUrl = "?sectionId="+params.sectionId;
+                            }
+                            else if(boardInfoDetails.type == "DOCUMENT"){
+                                imgLocation = "/public/images/icons/document.png";
+                                entityClass = "openInstDoc";
+                            }
+                        }%
+                        <div class="contentInfo" data-board-id="${boardInfo.id}">
+                            #{list items:0..boardInfoDetails.contents.length()-1, as:'contentIndex'}
+                                %{
+                                    contentInfo =boardInfoDetails.contents.get(contentIndex);
+                                    if(params.userRole == "STUDENT" && boardInfoDetails.type == "TEST" && contentInfo.attempted == false){
+                                        entityClass = "openInstPreTest";
+                                        entityUrl = "/organization/"+params.orgId+"/"+"pretest";
+                                    }
+                                    if(params.userRole == "STUDENT" && boardInfoDetails.type == "TEST" && contentInfo.attempted == true){
+                                        highlightText = "greyTextColor";
+                                    }
+                                }%
+
+                                <div class="content">
+                                    <img src="${imgLocation}" class="image">
+                                        <a href="${entityUrl}/${contentInfo.id}#{if boardInfoDetails.type == "TEST" || boardInfoDetails.type == "MODULE"}${sectionUrl}#{/if}" class="${entityClass} entityLink"
+                                        #{if params.userRole == "MANAGER" || params.userRole == "TEACHER"}
+                                            data-cmds-id="${contentInfo.cmdsId}" data-web-id="${contentInfo.id}"
+                                        #{/if}
+                                        data#{if boardInfoDetails.type == "TEST"}-test#{/if}#{elseif boardInfoDetails.type == "ASSIGNMENT"}-assignment#{/elseif}-id="${contentInfo.id}" 
+                                        data-target-id="${params.sectionId}" data-target-type="SECTION" data-section-id="${params.sectionId}" data-entity-id="${contentInfo.id}" data-entity-type="${boardInfoDetails.type}">
+                                            <span class="contentLimit ${highlightText}" title="${contentInfo.name}">${contentInfo.name}</span>
+                                        </a>
+                                    #{if params.userRole == "MANAGER" || params.userRole == "TEACHER"}
+                                    <span class="floatRight removeEntityFromSchedule">
+                                        <img src="/public/images/uicomCommon/remove.png">
+                                    </span>
+                                    #{/if}
+                                </div>
+                            #{/list}
+                        </div>
+                    #{/list}
+                </div>
+            #{/list}
+        </div>
+        #{if params.userRole == "MANAGER" || params.userRole == "TEACHER"}
+            <button class="redButton removeDaySchedule">
+                Remove Schedule
+            </button>
+        #{/if}
+    </div>
+#{/if}

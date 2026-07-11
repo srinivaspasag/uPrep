@@ -1,0 +1,126 @@
+.instEachDiscus{
+}
+.instEachDiscus .RTEImageDiv{
+	cursor:pointer;
+}
+.instEachDiscus:hover .instDiscussFollowBtn{
+	display:inline;
+}
+.instDiscussFollowBtn{
+	display:none;
+}
+.discussionOpened .instDiscussFollowBtn{
+	display:inline;
+}
+.instDiscussFollowBtn .unfollowEntity{
+	background-color:transparent;
+	color:#cc6666;
+	font-size:11px;
+	background-image:none;
+	border-width:0px;
+}
+.instDiscussFollowBtn .unfollowEntity:hover{
+	text-decoration:underline;
+	cursor:pointer;
+}
+.instDiscussFollowBtn .greenButton{
+	padding:1px 7px;
+	font-size:11px;
+}
+.instDiscusWrapper{
+	padding:40px 13px 55px 13px;
+	border-bottom:1px solid #ccc;
+	border-right:1px solid #E7E7E7;
+	border-left:1px solid #E7E7E7;
+}
+.instDiscusWrapper .upVoteItemCount{
+	font-weight:bold;
+}
+.instVoteHold{
+	min-height:100%;
+	width:28px;
+	text-align:center;
+	padding-right:5px;
+}
+.eachSimQues .instSimQuesBody{
+	font-size:12px;
+	color:#669933;
+	cursor:pointer;
+}
+.eachSimQuesMaxHeight{
+}
+.eachSimQuesMaxHeight .instSimQuesBody{
+	max-height:65px;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	display:block;
+	line-height:12px;
+}
+.instSimQuesBody span,
+.instSimQuesBody div,
+.instSimQuesBody a{
+	font-size:12px;
+	color:#669933;
+}
+.instDiscussHead{
+	color:#669933;
+	letter-spacing:-0.5px;
+	max-width:93%;
+	overflow:hidden;
+}
+.instDiscussHead.rteTextDivStyled *:not(.MathJax_DisplaySpan){
+    font-size: 14px !important;
+    color:#669933 !important;
+    letter-spacing:-0.5px !important;
+}
+.discussionHeadOpened,.discussionHeadOpened.rteTextDivStyled *:not(.MathJax_DisplaySpan){
+	font-size:18px !important;
+	line-height:20px !important;
+	letter-spacing:-0.5px !important;
+}
+.instDiscussHead:hover{
+	/*text-decoration:underline;*/
+	cursor:pointer;
+	letter-spacing:-0.5px;
+}
+.instDiscussTags{
+	padding:5px 0 8px 0;
+	margin-left:33px;
+}
+.instDiscussDesc{
+	padding:2px 0 20px 35px;
+}
+.instDiscUser .simpleTabDivider{
+	font-size:2px;
+	padding:0 1px;
+	margin:0 0 0 4px;
+	top:-3px;
+}
+.instCommentInfo{
+	margin:10px 0 0 35px;
+	padding:0 15px 0 20px;
+	background-image:url('/public/images/LMS/comment.png');
+	background-repeat:no-repeat;
+	background-position:4px 2px;
+	cursor:pointer;
+}
+.instCommentInfo:hover,.instCommentSelected{
+	background-image:url('/public/images/LMS/comment_clicked.png');
+}
+.instDisUploader .icon{
+	height:20px;
+	width:20px;
+	border-radius:10px;
+}
+.instDiscussAge{
+	color:#999;
+	padding-top:3px;
+}
+.instDiscussionDiv{
+	padding-top:1px;
+	background:#e7e7e7;
+	margin:10px 0 5px 30px;
+}
+.discussionOpened .instDiscussFollowBtn{
+	display:inline;
+}

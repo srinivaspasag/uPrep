@@ -1,0 +1,34 @@
+%{
+        facet=activeChallenges.result.facet;
+        if(facet.has('statusFacet')&&facet.statusFacet.has('active'))active=facet.statusFacet.active;
+        else active=0;
+
+        if(facet.has('statusFacet')&& facet.statusFacet.has('ended'))ended=facet.statusFacet.ended;
+        else ended=0;
+
+        attempted=facet.attemptFacet.count;
+
+    activeChallenges=activeChallenges.result.list;
+    closedChallenges=closedChallenges.result.list;
+
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+<div class="centry big20 boldy margBot20">Results awaited</div>
+<div class="LMHandlerDiv" data-callback="ACTIVE_CHALLENGES" data-widget="ATTEMPTED_ACTIVE_CHALLENGES_HOLDER">
+    #{challenges.challengeItems target:'ATTEMPTED_CHALLENGES',challenges:activeChallenges,loadMoreSize:loadMoreSize,subTarget:'ACTIVE_CHALLENGES'/}
+</div>
+
+<div class="attemptedChallengesDivider"></div>
+
+<div class="centry big20 boldy margBot20">Closed Challenges</div>
+<div class="LMHandlerDiv" data-widget="ATTEMPTED_CLOSED_CHALLENGES_HOLDER">
+    #{challenges.challengeItems target:'ATTEMPTED_CHALLENGES',challenges:closedChallenges,loadMoreSize:loadMoreSize,subTarget:'CLOSED_CHALLENGES'/}
+</div>
+<script type="text/javascript">
+    $(function(){
+        try{
+            vChallenges.cpTabCbFns["ATTEMPTED_CHALLENGES"]({stats:{active:"${active}",closed:"${ended}",attempted:"${attempted}"}});
+        }catch(err){}
+    });
+</script>

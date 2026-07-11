@@ -1,0 +1,35 @@
+%{
+    isReply=false;
+    if(feed.src.has('pComm'))isReply=true;
+}%
+<div class='notiFeed' data-feed-id="${feed.newsActivityId}">    
+    %{
+        actor=feed.actor;
+    }%    
+        <div class="feedHead">
+            #{widgets.img20 user:feed.actor /}
+            <div class="feedHeadLefter">
+                <div class='feedTitle'>
+                    #{NewsFeeds.user user:feed.actor /}                            
+                        #{if !isReply}                        
+                            commented on the question added by
+                        #{/if}
+                        #{else}
+                            replied to the comment made by                    
+                        #{/else}
+                    #{NewsFeeds.user user:feed.srcOwner /}                     
+                    <span class="time">${new Date(feed.time).since()}</span>
+                </div>
+                <div class="feedWhiteLine"></div>
+                %{
+                    comment=feed.src.comm;            
+                }%
+                <div class="feedComment margTop">
+                    ${comment.textContent.raw()}
+                </div>                
+            </div>        
+        </div>    
+        <div class="feedBody">
+            #{NewsFeeds.discussions.discussion discuss:feed.src.pDoc,discussOwner:feed.srcOwner /}        
+        </div>              
+</div>

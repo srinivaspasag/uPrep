@@ -1,0 +1,12 @@
+%{
+    ques=question.result.info;   
+    qid=ques.id;
+    if(ques.has('detail')){
+        ques=ques.detail;
+    }     
+    boards=ques.boards;    
+    target='EDIT_QUESTION';
+}%
+<div id="editQuestion">
+    #{include 'UIComQuestions/addMultipleQuestions.html' /}
+</div>

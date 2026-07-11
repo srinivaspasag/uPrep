@@ -1,0 +1,215 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.6/jspdf.plugin.autotable.min.js"></script>  
+%{
+    list = resp.result.list
+    count_list = list.length()
+}%
+<title>Student Activity Dashboard</title>
+<style type="text/css">
+@font-face {
+    font-family: Ubuntu;
+    src: url(../../../public/fonts/Ubuntu-Regular.ttf);
+}
+    body {
+        font-family: Ubuntu;
+    }
+    table, td {
+        border-collapse: collapse;
+        border: 2px solid #ccc;
+    }
+    th {
+        background-color: #a9e999;
+        border-collapse: collapse;
+    }
+    tr:nth-child(even) {background-color: #f2f2f2;}
+</style>
+#{if resp!=null}
+    %{
+        list = resp.result.list
+        
+    }%
+    <center>
+<div style="text-align: left;">
+    Student Name : ${resp.result.studentName}
+    <br><br>
+    Institute ID : ${resp.result.memberId}
+
+    <hr>
+    <div style="float: right;">
+        <input type="button" onclick="tableToExcel('activitysheet')" value="Export to Excel">
+            <button class="btn" onclick="generate()">Export to PDF</button>
+            <p style="    text-align: right;
+            font-size: 13px;">N.A - Not Applicable</p>
+    </div>
+<br><br>
+<div>
+</center>
+    <table border=1 style="width: 100%; text-align: left;" cellpadding="10px" id="activitysheet" >
+       <tr style="background: #353535;color: white;">
+           <th>Time</th>
+           <th>Device</th>
+                <th>Visited Page</th>
+                <th>Activity</th>
+            <th>Test/Ebook/Video - Name</th>
+       </tr>
+       #{list items:0..list.length()-1,as:'index'}
+%{
+    activity_records = list.get(index);
+}%
+
+<tr>
+    %{
+        timeObj=uicom.util.Utilities.getDateMonthYearTime(activity_records.timeCreated);
+    }%
+    <td>${timeObj}</td>
+    #{if activity_records.deviceType == "MOBILE" }
+    <td>Android App</td>
+    #{/if}
+    #{else}
+    <td>${activity_records.deviceType}</td>
+    #{/else}
+
+    <!-- Conditions for Pages -->
+    #{if activity_records.page == "LIBRARY" || activity_records.page == "INSTITUTE_HOME" || activity_records.page == "LIBRARY_COURSES"}
+<td>Digital Library</td>
+#{/if}
+#{if activity_records.page == "STATUS_FEED" }
+<td>Recent Activity</td>
+#{/if}
+#{if activity_records.page == "MEMBERS" || activity_records.page == "PROFILE" }
+<td>Profile</td>
+#{/if}
+#{if activity_records.page == "USER_SETTINGS" }
+<td>Profile Settings</td>
+#{/if}
+#{if activity_records.page == "CHALLENGES" }
+<td>Challenges</td>
+#{/if}
+#{if activity_records.page == "DISCUSSION" || activity_records.page == "DOUBTS" }
+<td>Doubts Forum</td>
+#{/if}
+#{if activity_records.page == "PRE_TEST" }
+<td>Pre-Test</td>
+#{/if}
+#{if activity_records.page == "TEST" }
+<td>Test Details</td>
+#{/if}
+#{if activity_records.page == "TEST_ATTEMPT" }
+<td>Test Attempt</td>
+#{/if}
+#{if activity_records.page == "TEST_ANALYTICS" || activity_records.page == "ANALYTICS" }
+<td>Analytics</td>
+#{/if}
+#{if activity_records.page == "VIDEO" }
+<td>Video</td>
+#{/if}
+#{if activity_records.page == "MODULE" }
+<td>Module</td>
+#{/if}
+#{if activity_records.page == "DOCUMENT" }
+<td>Document</td>
+#{/if}
+#{if activity_records.page == "QUESTION" }
+<td>Question</td>
+#{/if}
+#{if activity_records.page == "PROGRAM" }
+<td>Programs</td>
+#{/if}
+#{if activity_records.page == "MSG_CONVERSATION" }
+<td>Message</td>
+#{/if}
+#{if activity_records.page == "LIBRARY_CONTENT" }
+<td>Digital Library Content</td>
+#{/if}
+#{if activity_records.page == "TEST_QUESTION_ATTEMPT" }
+<td>Question Attempt</td>
+#{/if}
+#{if activity_records.page == "ASSIGNMENT" }
+<td>Assignment</td>
+#{/if}
+
+<!-- Conditions for Activity -->
+#{if activity_records.action == "OPEN" }
+<td>Open</td>
+#{/if}
+#{if activity_records.action == "ADD" }
+<td>Add</td>
+#{/if}
+#{if activity_records.action == "ATTEMPTED" }
+<td>Attempt</td>
+#{/if}
+#{if activity_records.action == "VIEW" }
+<td>View</td>
+#{/if}
+#{if activity_records.action == "INITIATED" }
+<td>Start</td>
+#{/if}
+#{if activity_records.action == "RESUMED" }
+<td>Resume</td>
+#{/if}
+#{if activity_records.action == "RESET" }
+<td>Rest</td>
+#{/if}
+    <td>${activity_records.entityName}</td>
+</tr>
+#{/list}
+              
+    </table>
+   </div>
+</div>
+#{/if}
+#{else}
+<center>No Activity Found for the Student</center>
+#{/else}
+ <!-- code to download result as excel -->
+ <script type="text/javascript">
+    var tableToExcel = (function() {
+      var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+        , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+      return function(table, name) {
+        if (!table.nodeType) table = document.getElementById(table)
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = uri + base64(format(template, ctx))
+      }
+    })()
+    </script>
+
+<!-- code to download result as pdf -->
+<script type="text/javascript">
+    function generate() {
+        var doc = new jsPDF('l', 'pt', 'a4');
+        var htmlstring = '';
+        var tempVarToCheckPageHeight = 0;
+        var pageHeight = 0;
+        pageHeight = doc.internal.pageSize.height;
+        specialElementHandlers = {
+            // element with id of "bypass" - jQuery style selector
+            '#bypassme': function(element, renderer) {
+                // true = "handled elsewhere, bypass text extraction"
+                return true
+            }
+        };
+        margins = {
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10,
+            width: 800
+        };
+        var y = 20;
+        doc.setLineWidth(2);
+        doc.text(200, y = y + 30, '${resp.result.studentName}');
+        doc.autoTable({
+            html: '#activitysheet',
+            startY: 70,
+            theme: 'grid',
+            styles: {
+                minCellHeight: 40
+            }
+        })
+        doc.save('${resp.result.studentName}.pdf');
+    }
+    </script>

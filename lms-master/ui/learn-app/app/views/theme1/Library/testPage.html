@@ -1,0 +1,12 @@
+<input type="hidden" class="incommingTestId hidden" value='${testIdStr}'/>
+#{if cacheResp!=null && cacheResp.errorCode!=null}
+${cacheResp}
+    #{library.testCacheRespHandler testId:testIdStr,resp:cacheResp,testName:testNameStr /}
+}
+#{/if}
+#{else}
+<div id="digitalLibrary" class="pageHolderM test_home" style="width: 100vw; height: 100vh;overflow-y: auto;">
+    <input id="current_test_name" value="${testNameStr}" type="hidden"/>
+    #{include 'theme1/Library/takeTest.html' /}
+</div>
+#{/else}

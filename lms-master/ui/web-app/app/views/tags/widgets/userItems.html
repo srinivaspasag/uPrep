@@ -1,0 +1,13 @@
+    %{
+        users=_users;
+    }%
+
+    #{if users.length()>0}
+      #{list items:0..users.length()-1, as:'k'}
+        %{
+            user=users.get(k).user;            
+        }%
+        #{widgets.img30 user:user /}
+      #{/list}
+    #{/if}
+    <div class='cleaner_with_divider'>&nbsp;</div>

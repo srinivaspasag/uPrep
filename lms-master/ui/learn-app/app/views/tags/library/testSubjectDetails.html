@@ -1,0 +1,54 @@
+%{
+  subData = _subData;  
+}%
+<div class="m-t-25"></div>
+<div class="card border8px" style="box-shadow: 1px 1px 1px 1px #d6d6c2;">
+    <div class="bgm-bluegray text-center p-t-10 p-b-10 p-l-10 p-r-10 border8px">
+        <h4 style="color: white;">${subData.name}</h4>
+    </div>
+    <div class="card-body p-t-10 p-b-10 p-l-10 p-r-10">
+        <div class="container">
+            <div class="row">
+                <h6 class="col-xs-6">
+                    Format
+                </h6>
+                <div class="col-xs-6 c-cyan view-details" data-id="${subData.id}" style="cursor: pointer;">
+                    View Details
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-xs-6">
+                    <span >
+                        ${subData.qusCount}
+                    </span>
+                    <span>
+                        Questions
+                    </span>
+                </div>
+                <div class="col-xs-6">
+                    <span>
+                        ${subData.totalMarks}
+                    </span>
+
+                     <span>
+                        Marks
+                    </span>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-xs-6">
+                #{if subData.has('children') && !subData.children.equals(null) &&subData.children.length()>0}
+                    <h5>Curriculum</h5>
+                </div>
+                <div class="col-xs-12">
+                    #{list items:0..subData.children.length()-1, as:'cIndex'}
+                        ${subData.children.get(cIndex).name}<br>
+                    #{/list}
+                #{/if}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

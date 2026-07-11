@@ -1,0 +1,12 @@
+#{if docInfo.result.type=='Video'}
+    #{include 'UIComDocuments/videoPage.html' /}
+#{/if}
+#{else}
+    #{include 'UIComDocuments/docView.html' /}
+#{/else}
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="vDocViewStyles">
+    showNoTabSec("DOC_VIEW");
+</script>    
+#{/if}
+#{stylesheet media:'screen', src:'uicomDocuments/docView.css' /}

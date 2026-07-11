@@ -1,0 +1,49 @@
+@media (max-width: 767px) {
+    #profile-main .pm-overview {
+        background: darkslategray!important;
+        overflow: hidden;
+    }
+}
+@media (min-width: 1200px) {
+    #performance .pmb-block {
+    padding: 20px 42px 0;
+    }
+}
+.registerContactNumber,.registerEmail,.verifyEmail,.viewMemberMappings{
+    cursor: pointer;
+}
+#performance .pmb-block .pmbb-header {
+    margin-bottom: 10px!important;
+}
+.activityContainer{
+    max-height: 500px;
+    overflow: auto;
+}
+.instGetOlderActivityFeeds{
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+.intl-tel-input {
+  position: relative;
+  display: block !important;
+}
+.selected-flag{
+    left: 0px!important;
+}
+.intl-tel-input .country-list{
+    z-index: 5!important;
+}
+@media(max-width: 1200px){
+    .numberHolderDiv{
+        top: 10px;
+        position: relative;
+    }
+}
+.chart-image{
+    width: 45px;
+    height: 45px;
+}
+#instProfilePage .qq-upload-list{
+    display: none!important;
+}

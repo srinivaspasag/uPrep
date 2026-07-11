@@ -1,0 +1,51 @@
+%{
+    packageName=_packageName;
+    exportInfo=_exportInfo;
+}%
+
+<div class="margHalfTop">
+    <a class="viewPkgHistory smally">View History</a>
+    <div class="packageHistoryDiv nonner">
+        <div class="grayHead big16">Export Details of ${packageName}</div>
+        <table class="margTop cmdsTable" width='100%'>
+            <thead>
+                <tr>
+                    <td class="CTTitleTd">Download Link</td>
+                    <td class="CTAddedByTd">Exported By</td>
+                    <td class="CTInfoTd">Version</td>
+                </tr>
+            </thead>
+            <tbody>
+                #{if exportInfo.length()>0}
+                #{list items:0..exportInfo.length()-1,as:'i'}
+                    %{
+                        hist=exportInfo.get(i);
+                    }%
+                <tr>
+                    <td class="CTTitleTd">
+                        <a href="${hist.downloadLink}" target="_blank">
+                            ${hist.downloadLink}
+                        </a>
+                    </td>
+                    <td class="CTAddedByTd">
+                        #{widgets.user20 user:hist.user /}
+                    </td>
+                    <td class="CTInfoTd">
+                        ${hist.versionNumber}
+                    </td>                            
+                </tr>
+                #{/list}
+                #{/if}
+                #{else}
+                <tr>
+                    <td colspan="3">
+                        <div class="userMessage">
+                            No Details of this package are available.
+                        </div>
+                    </td>
+                </tr>
+                #{/else}
+            </tbody>
+        </table>                    
+    </div>
+</div>            

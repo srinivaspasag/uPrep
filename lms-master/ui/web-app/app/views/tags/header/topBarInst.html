@@ -1,0 +1,170 @@
+#{stylesheet media:'screen', src:'institute/o.common.css' /}
+%{
+	myOrgInfo = _myOrgInfo;
+}%
+<div id="instTopBar" class="pageHolderNM ${_classNm}" data-shown=false>
+    <div class="vedHold" style="width:122px; margin:0 17px 0 0;">
+	
+	<!--<a class='ptrTag orgHomePg topBrOrgId_${params.orgId}' 
+		href="/organization/${params.orgId}" data-org-id="${params.orgId}">
+		${myOrgInfo.getString('instFullName')}
+	</a>  -->
+    </div>
+	%{ instLogo = uicom.util.Utilities.getInstLogo(myOrgInfo.getString('instLogo'));}%
+    <div class="centerText big20 left instNameInTop scorelogo_sec">
+ 	<a id="" href="/home" class="doCStream scorelogo" data-cs-name="HOME_PAGE_TAB">
+		<!-- <img style="height:40px;" src="/public/images/Scorelogo.png" alt="learnpedia"/> -->
+		<img style="float: left;
+		margin-left: 5px;
+		padding: 1px;
+		height: 35px;
+		text-align: right;
+		vertical-align: middle;" src="${instLogo}" alt="${myOrgInfo.getString('instFullName')} Logo"
+				class="instThumbnailLogo"/>
+	</a> 
+	</div>
+    <div id="instUserDetails" class="${session.get('userId')}">
+       <span class="doCStream left instOpenSettingsDrop" style="margin:8px 0 0 10px;width:30px;" data-cs-name="MY_PROFILE_TAB">
+           <img src='${myOrgInfo.get("profilePic")}'  class='img30 myInstProfilePic' alt="" title="${myOrgInfo.get('fullName')}" />
+       </span>
+       <span class="instSettingsImg floatLeft instOpenSettingsDrop"></a>                 
+       <div class="instSettingsOptions">
+	<div class="whiteBg">
+	   <table class="instSettingsTable" cellspacing=0 cellpadding=0>
+		<tr>
+		   <td rowspan=3 class="alignTop" style="width:60px;">
+			<div class="instSettingsPicHolder">
+				<img class="instSettingsPic myInstProfilePic" alt="&{'IMG_NA'}" src="${myOrgInfo.get('profilePic')}"/>
+			</div>
+		   </td>
+		   <td class="alignTop">
+			<div class="big16">${myOrgInfo.get('firstName')}</div>
+		   </td>
+		</tr>
+		<tr>
+		   <td class="alignTop">
+			<div class="big16">${myOrgInfo.get("lastName")}</div>
+		   </td>
+		</tr>
+		<tr>
+		   <td class="alignTop">
+		   	<div class="greyTextColor big12">&{'ROLE_'+params.userRole}</div>
+		   </td>
+		</tr>
+	   </table>
+           <div class="instSettingsOpt" style="">
+		<a  data-user-id="${session.get('userId')}" class="openInstProfile doCStream" data-cs-name="MY_PROFILE">&{'TXT_MY_PROFILE'}</a>
+	   </div>
+	   #{if params.userRole == "STUDENT"}
+           <!-- <div class="instSettingsOpt openInstAvailPrograms doCStream" data-cs-name="PROGRAMS">
+		<a class="ptrTagInline">&{'TXT_PROGRAMS'}</a>
+	   </div> -->
+           <!--<div class="instSettingsOpt openMyOrders doCStream" data-cs-name="PROGRAMS" 
+		data-user-id="${session.get('userId')}" data-org-id='${params.orgId}'>
+                <a class="ptrTagInline" href="/organization/${params.orgId}/myorders">&{'TXT_MY_ORDERS'}</a>
+	   </div>-->
+           <div class="instSettingsOpt openMyAccessCodePopup doCStream" data-cs-name="ACCESS_CODES">
+		<a class="ptrTagInline">&{'settings.MY_ACCESS_CODES'}</a>
+	   </div>
+           #{/if}
+           #{if !session.directLogin}
+           <div class="instSettingsOpt openInstSettings doCStream" data-cs-name="PROFILE_SETTINGS">
+		<a class="ptrTagInline">&{'settings.TITLE'}</a>
+	   </div>
+           #{/if}
+           <!--<div class="instSettingsOpt openInstAboutApp doCStream" data-cs-name="APP_SETTINGS">
+		<a class="ptrTagInline">&{'settings.ABOUT_APP'}</a>
+	   </div>-->
+           <div class="instSettingsOpt logoutMe" style="">
+		<a href="/security/logout?orgId=${params.orgId}" class="doCStream ptrTagInline" data-cs-name="LOGOUT">&{'TXT_LOGOUT'}</a>
+	   </div>
+       	</div>
+       </div>
+    </div>
+    %{
+        enableNotifications = true;
+        //Disable notifications for students of Trividyaa organization.
+        if(params.orgId == "5bacb325e4b0ff57ab848e07" && params.userRole == "STUDENT"){
+            enableNotifications = false;
+        }
+    }%
+    #{if enableNotifications}
+    <div class="right topBarSeperator"></div>
+    <div id="instNotiHolder" class="/*notify*/">
+        <div class="instNotiHead"> 
+            <!-- <span class="instImgs"></span> -->
+            <div id="instImgWorld">
+            <img src="/public/images/LMS/world-01.png" class="instWorld" width="26px;">
+            <img src="/public/images/LMS/world-02.png" class="instWorld" width="26px;">
+            </div>
+            <span id="instTickerCount" class="">0</span>
+        </div>
+	    <div class="instNotiDiv">
+			<div class="whiteBg">
+				<span class="upArrowIco"></span>
+				<div class="instNotiTop">
+					<span class="big16">&{'TXT_NOTIFICATIONS'}</span>
+				</div>
+				<div class="instNotificationsH"></div>
+				<div class="instNotiSeeAll showAllMyNotifications big14 boldy">
+					&{'TXT_SEE_ALL'}
+				</div>
+			</div>
+		</div>
+    </div>
+    #{/if}
+    <div class="right topBarSeperator nonner"></div>
+    <div id="instMsgNotiHolder" class="nonner">
+        <div class="instMsgNotiHead"> 
+            <!-- <span class="instImgs"></span> -->
+            <div id="instMsgEnvelope">
+            <img src="/public/images/LMS/envelope-01.png" class="instEnvelope" width="30px;">
+            <img src="/public/images/LMS/envelope-02.png" class="instEnvelope" width="30px;">
+            </div>
+            <span id="instMsgCount" class="">0</span>
+        </div>
+        <div class="instMsgNotiDiv">
+			<div class="whiteBg">
+				<span class="upArrowIco" style="right: 134px!important;"></span>
+				<div class="instMsgNotiTop">
+					<span class="big16">&{'MY_MSG'}</span>
+					<span class="right">
+						<a class="instCreateMsg">&{'NEW_MSG'}</a>
+					</span>
+				</div>
+				<div class="msgsNotifications">
+					*{#{messages.noti/}}*
+				</div>
+				<div class="instMsgSeeAll big14 boldy">
+					&{'TXT_SEE_ALL'}
+				</div>
+			</div>
+		</div>
+    </div>
+
+    <!-- Added share -->
+
+    #{if params.userRole == "STUDENT" && params.orgId == play.Play.configuration.getProperty("learnpedia.id") && play.Play.configuration.getProperty("referral.state") == "ACTIVE"}
+    <div class="right topBarSeperator"></div>
+    <div id="instReferHolder" class="/*notify*/">
+        <div class="instReferHead"> 
+			    <button class="referButton" type="button">Refer & Earn</button>
+        </div>
+        <div class="instNotiDiv" style="right: -175px;">
+			<div class="whiteBg">
+				<span class="upArrowIco" style="right: 230px;"></span>
+				<div class="instNotiTop" style="text-align: center;"></div>
+				<div class="instNotificationsH"></div>
+
+                <div class="terms" style="text-align: right; cursor: pointer; font-size: 10px;line-height: 0%; position: relative; bottom:7px; right: 5px;"><u>Terms & Conditions</u></div>
+				<div class="instNotiSeeAll boldy" style="cursor: default; display: flex; padding-left: 128px; margin-top: 0px;">
+					<input id="fbShareButton" type="image" src="/public/images/facebook-share-button.png" style="border-radius: 9px; width: 146px; height: 36px">
+				</div>
+			</div>
+		</div>
+    </div>
+    #{/if}
+
+
+</div>
+#{script src:'institute/o.header.js', charset:'utf-8' /}

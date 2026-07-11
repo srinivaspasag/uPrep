@@ -1,0 +1,52 @@
+<div id="qrInventoryPage">
+   <div class="pageHolderNM">
+	<div class="" style="padding-bottom:12px;">
+	     <span class="blueButton showNewInventoryPopup">&{'INVENTORY_CREATE_BTN_TXT'}</span>
+	     <span class="blueButton createBulkAccessCodesPopup">Create Bulk Access Codes</span>
+	     <span class="blueButton searchInventoryTable right">&{'TXT_SEARCH'}</span>
+	</div>
+	<table class="qrInventoryTable" cellspacing=0 cellpadding=0 border=1>
+	   <tr class="qrInventoryTableHead">
+		<th class="width150">&{'TXT_EMAIL'} / &{'TXT_MEMBER'}</th>
+		<th>&{'INVENTORY_PRODUCT_ITEM'}</th>
+		<th class="width130">&{'INVENTORY_SELLING_POINT'}</th>
+		<th class="width75">&{'payment.ORDER_ID'}</th>
+		<th class="width75">&{'ALLOWED_DEVICE_ID'}</th>
+		<th class="width100">&{'TXT_ACCESS_CODE'}</th>
+	   </tr>
+	   <tr class="qrInventoryTableHead qrInventorySearchTR nonner">
+		<th class="width75">
+			<input class="searchInventoryInput searchInventoryField" 
+				data-field="buyerEmail" placeholder="search by buyer's email"/>
+		</th>
+		<th></th>
+		<th class="width150">
+	   		<select type="text" class="invSellPoint searchInventoryField"
+				data-field="pointOfSale">
+				<option value="">Select Selling Point</option>
+				#{if pointsOfSale!=null && pointsOfSale.errorCode.isEmpty() 
+					&& pointsOfSale.result.pointsOfSale.length()>0}
+				#{list items:0..pointsOfSale.result.pointsOfSale.length()-1,as:'index'}
+					%{ value = pointsOfSale.result.pointsOfSale.get(index);}%
+					<option value="${value}">${value}</option>
+				#{/list}
+				#{/if}
+	   		</select>
+			<input class="searchInventoryInput searchInventoryField" 
+				data-field="sellerReferenceNo" placeholder="search by reference number"/>
+		</th>
+		<th class="width75"></th>
+		<th class="width75"></th>
+		<th class="width100 centerText">
+	     		<span class="greenButton searchInventoryNow">&{'TXT_SEARCH'}</span>
+		</th>
+	   </tr>
+	</table>
+   </div>
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrInventory.init("#qrInventoryPage","accessCodes");}
+        lazyLoad([{fname:"qrInventory.js",cb:fn}]);        
+    }();    
+</script>

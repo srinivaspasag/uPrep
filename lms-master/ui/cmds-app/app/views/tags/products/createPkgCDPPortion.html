@@ -1,0 +1,43 @@
+#{if _target=="CDP"}
+<input type="hidden" class="cdpParentPlanId formInput" name='parentPlanId' value="">
+#{/if}
+<table class="margLeft20" width="95%">
+    <tbody>
+        <tr>
+            <td class="grayHead">
+                Title*
+            </td>
+            <td>
+                <div class="inputDiv">
+                    <input type="text" class="formInput" name="name"/>
+                </div>                            
+            </td>
+        </tr>               
+        #{if _target=="CDP"}
+        <tr class="cdpRemTr">
+            <td class="grayHead alignTop padTop10">
+                Choose Exam
+            </td>
+            <td class="pad10Top createCDPExams"></td>
+        </tr>               
+        #{/if}
+        <tr class="cdpRemTr">
+            <td class="grayHead">
+                Description
+            </td>
+            <td>
+                <div class="textareaDiv">
+                    <textarea class="formTextarea" name="description"></textarea>
+                </div>                          
+            </td>
+        </tr> 
+        *{#{if _target=="CDP"}        
+        <tr>
+            <td class="grayHead">Duration</td>
+            <td>
+                                
+            </td>
+        </tr>
+        #{/if}}*
+    </tbody>
+</table>

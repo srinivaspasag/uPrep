@@ -1,0 +1,165 @@
+%{
+  resourcesResult=resources.result;
+  totalHits=resourcesResult.totalHits;
+  resources=resourcesResult.list;
+questionsCount=0;
+  if(resourcesResult.has('totalQuestions')){
+  	questionsCount=resourcesResult.totalQuestions;
+  }
+  orgUserProfile=currentOrgInfo.getOrgUserProfile();
+}%
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv sectionLibraryTable">
+    <table class="headSecTable">
+      <thead>
+          <tr>
+              <td class="width16 tdPadLeft5">
+                  #{if resources.length()>0 && !orgUserProfile.equals("SALESPERSON")}
+                    <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                        <div class="gCBoxTicker"></div>                    
+                    </div>   
+                  #{/if}                   
+              </td>
+              <td class="tdPadLeft5 itemTitleTH">Title</td>
+              <td class="width150 maxWidth150"><span style="padding-left:30px;">Imported By</span></td>
+              <td class="width100 maxWidth100"><span style="padding-left:12px;">Date Added</span></td>
+              <td class="width75 maxWidth75">Visibility</td>
+              <td class="width100 maxWidth100">Download</td>
+          </tr>          
+	  #{sources.questionsLinkTr colspan:6 ,questionsCount:questionsCount,
+	   msg : "(Click to open all the questions available in the Section)" /}
+      </thead>
+    </table>                    
+</div>                
+<div id="fixedSec">
+    <table class="cmdsTable">
+      <tbody>
+          #{if resources.length()>0}
+          #{list items:0..resources.length()-1,as:'i'}
+          %{
+            vStatus=resources.get(i).scope;  
+            downloadable=resources.get(i).has('downloadable') && resources.get(i).downloadable == true;
+            resource=resources.get(i).source;
+            startsIn = resources.get(i).startsIn;
+            endsIn = resources.get(i).endsIn;
+            closesIn = resources.get(i).closesIn;
+            entityName=resource.name;
+            entityId=resource.id;
+            entityType=resource.type;
+	    converted = resource.has('converted')?resource.converted:true;
+	    completed = resource.completed;
+            if(resource.published){
+            if(resource.type == "CMDSMODULE"){
+            status ="UNPUBLISHED"
+          }else{
+
+                status='PUBLISHED';
+        }
+            }else{
+                status='UNPUBLISHED';
+            }                                             
+            sectionId=params.get('orgEntity.id');
+            
+            visibilityStatus='INVISIBLE';
+            if(vStatus=="ORG"){
+                visibilityStatus='VISIBLE';
+            } 
+	    isDownloadable = util.TemplateHelper.isEntityDownloadable(resource); 
+	    start = params.start!=null?Integer.parseInt(params.start):0;
+	    moveIndex = i + start;
+          }%
+          <tr class="entity_${entityId} sectionContentEntity" data-entity-type="${entityType}" data-entity-id="${entityId}"
+              data-entity-name="${entityName}" data-status="${status}" data-move-index="${moveIndex}"
+	      data-server-position="${resources.get(i).position}"
+              data-section-id="${sectionId}" data-visibility-status='${visibilityStatus}'>
+              #{if !orgUserProfile.equals("SALESPERSON")}
+            <td class="width16 tdPadLeft5">
+              <div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                  <div class="gCBoxTicker"></div>                    
+              </div>   
+            </td>
+            #{/if}
+            <td class="tdPadLeft5 color0 entityTitleTd">
+                #{aTagMapper entityName:entityName,entityId:entityId,entityType:entityType,converted:converted,completed:completed,visibility:visibilityStatus,startsIn:startsIn,endsIn:endsIn,closesIn:closesIn/}
+            </td>
+            <td class="width150 maxWidth150">
+                  #{widgets.user20 user:resource.addedBy /}                
+            </td>
+            <td class="width100 maxWidth100">
+                ${new Date(resource.timeCreated).format('dd/MM/yyyy')}
+            </td>
+            <td class="width75 maxWidth75">
+                <div class="visibilityStatusDiv">
+                    #{if visibilityStatus=="VISIBLE"}
+                    <div class="boldy greenColor entityVisible">Visible</div>
+                    #{/if} 
+                    #{else}
+                    <div class="boldy redColor">Not Visible</div>
+                    #{/else}
+                </div>
+            </td>
+            <td class="width100 maxWidth100">
+    #{if entityType != 'CMDSMODULE'}
+		<div class="downloadableStatusDiv">
+		    #{if isDownloadable == true}
+			#{if downloadable == true}
+                            <div class="boldy greenColor entityDownloadable">Enabled</div>
+			#{/if}
+			#{else}
+                            <div class="boldy redColor entityDownloadable">Disabled</div>
+			#{/else}
+		    #{/if}
+		    #{else}
+                            <div class="redTextColor">Not Applicable</div>
+		    #{/else}
+		</div>
+    #{/if}
+    #{else}
+      %{
+          downloadableStateClass = 'redColor'
+          downloadableState=resources.get(i).downloadableState;
+          if(downloadableState == 'ENABLED'){
+            downloadableStateClass = 'entityDownloadable greenColor boldy';
+          }
+          else if(downloadableState == 'DISABLED'){
+            downloadableStateClass = 'entityDownloadable redColor boldy';
+          }
+          else if(downloadableState == 'PARTIALLY_ENABLED'){
+            downloadableState = 'PARTIAL';
+            downloadableStateClass = 'entityDownloadable yellowColor boldy';
+          }
+      }%
+      <div class="downloadableStatusDiv">
+        <div class='${downloadableStateClass}'>${downloadableState.toLowerCase().capitalize()}</div>
+      </div>
+    #{/else}
+            </td>
+          </tr>
+          #{/list}
+          *{#{sources.questionsLinkTr colspan:5/}}*
+	  <tr id="reorderContentMoveHereTR" class="nonner">
+	     <td colspan=7>
+		<div class="reorderContentMoveHere">
+			<img src="/public/images/moveUpDownArrow.png" alt=""/>
+			<span class="moveText">&{'MOVE_HERE'}</span>
+			<span class="movingText nonner">&{'PLACING_TO'}</span>
+			<span class="reorderPositionDiv nonner">
+				<span class="big12 italics" style="padding-left:10px;">&{'TXT_POSITION'} :</span>
+				<span class="reorderPosition">&{'TXT_NA'}</span>
+			</span>
+		</div>
+	     </td>
+	  </tr> 
+          #{/if}
+          #{elseif questionsCount==0}
+            #{sources.noResourcesFound colspan:5,target:'LIBRARY_RESOURCES'/}                   
+          #{/elseif}                  
+      </tbody>
+    </table>
+    #{footer /}
+</div>       
+<div id="reorderContentInfo" class="nonner">
+	<span class="big14 boldy" style="padding-left:15px;">&{'TXT_REORDERING'}:</span>
+	<span class="reorderingItem"></span>
+	<span class="italics whiteTextColor right" style="padding-right:15px;">&{'REORDERING_CONTENT_GUIDE_BOTTOM'}</span>
+</div>

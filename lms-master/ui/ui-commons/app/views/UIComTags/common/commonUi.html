@@ -1,0 +1,59 @@
+<!--*{<script src="@{'/public/javascripts/uicomCommon/scrollbar.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/uicomCommon/vSelect.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+}*-->
+<div id="vSelect_parent" class="vselect vselectHide">
+		<span class="vSelectHead">
+			<input type="text" class="vSelectText" value="selected value" readonly="readonly"/>
+			<span class="dropDownIcon noUserSelect" ></span>
+		</span>
+		<div class="vSelectListHolder">
+			<div class="vSelectList">
+				<span class="vSelectEach"></span>
+			</div>
+		</div>
+</div>
+<div id="scrollParent" class="scrollParent">
+        <div class="scrollBar">
+		<div class="scrollRail">
+			<div class="scrollThumb">
+				<img class="thumbImg" src=""/>
+			</div>
+			<img class="railImg" src=""/>
+		</div>
+	</div>
+        <div class="container">
+            <div class="textBody">
+            <!-- Insert your text here -->
+            </div>
+        </div>
+        <div class="scrollBarHorizon">
+	    <div class="scrollRailHorizon">
+	    	<div class="scrollThumbHorizon">
+	    	</div>
+	    </div>
+	</div>
+</div>
+<div class="nonner" id="diagramPreview">
+    <div>
+        <span class="big14 boldy imgPreviewTitle"></span></br>
+        <span class="greenButton addDiagAdd">Add</span>
+        <a class="closeDiagPreview right">x close</a>
+    </div>
+    </br>
+    <span class="diagramPreviewImg"></span>
+</div>
+<div class="nonner" id="imagePreview">
+    <div class="big16 boldy imgPreviewTitle">
+	<span>Image Preview</span>
+	<select class="imgPreviewZoomSel">
+		#{list items:10..1,as:'index'}
+		<option value="${10*index}">${10*index}%</option>
+		#{/list}
+	</select>
+    </div>
+    <div class="imagePreviewLoading centerText">
+	<div class="big16 greyTextColor" style="padding:40px 60px;min-width:100px;">Loading ...</div>
+    </div>
+    <div class="imagePreviewImg">
+    </div>
+</div>

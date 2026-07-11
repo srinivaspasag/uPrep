@@ -1,0 +1,217 @@
+<style type="text/css">
+    .CTFSubTotal, .CTFTable tr:last-child {
+    border-top: none;
+}
+#generateTestHome{
+    margin: 15px;
+}
+.cmdsPopupHead{
+    text-align: center;
+    margin-bottom: 20px;
+}
+.testDetailsTable,.CTFHolder,.CTFTable{
+    margin: auto;
+    width: 650px;
+}
+.CTFTitleTakerError{
+    float: none;
+}
+.copyCTFToAllSubsAuto{
+    max-width: 200px;
+    line-height: 23px;
+}
+.showStatus{
+    margin-left: 10px;
+}
+.blueButton{
+    margin-top:10px;
+}
+</style>
+<div id="generateTestHome">
+    <div id="cmdsTestFormatSample">
+        <div class="CTFTitleTaker">
+            <div class="cmdsPopupHead">
+                <span class="resourceIconAutomate"></span>
+            Generate Test (Step-1/4)
+            </div>
+            <table class="testDetailsTable margLeft20">
+                <tbody>
+                    <tr>
+                        <td class="grayHead width100">
+                            Name*
+                        </td>
+                        <td>
+                            <div class="inputDiv">
+                                <input type="text" class="formInput" name="name" data-req="true" maxlength="256"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="grayHead width100">
+                            Code*
+                        </td>
+                        <td>
+                            <div class="inputDiv">
+                                <input type="text" class="formInput" name="code" data-req="true" maxlength="256"/>
+                            </div>
+                        </td>
+                        <tr>
+                            <td class="grayHead pad10Top alignTop">
+                                Choose Subjects*
+                            </td>
+                            <td class="pad10Top mvcCTFSubsTd"></td>
+                        </tr>
+                        <tr class="sequenceSubj nonner">
+                        <td class="grayHead pad10Top alignTop">
+                            Select Sequence
+                        </td>
+                        <td class="pad10Top">
+                            <ul class="selectedSubjectsList">
+                            </ul>
+                        </td>
+                    </tr>
+                        <tr class="testDurationTr">
+                            <td class="grayHead width100">
+                                Add Duration*
+                            </td>
+                            <td>
+                                #{common.timeDiv /}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="grayHead pad10Top alignTop">
+                                Description
+                            </td>
+                            <td class="pad10Top">
+                                <div class="textareaDiv">
+                                    <textarea class="formTextarea" name="desc"></textarea>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="grayHead pad10Top alignTop">
+                                Show Results
+                            </td>
+                            <td class="pad10Top">
+                                <div class="vChoose formvChoose"
+                                data-value="VISIBLE" data-param-name='resultVisibility'
+                                data-onchange='resultVisibilityStatusChange'>
+                                <div class="vChooseHead">SHOW</div>
+                                <div class="vChooseDownIcon"></div>
+                                <div class="vChooseDropDown">
+                                    <div class="vChooseOpt" data-value="VISIBLE">SHOW</div>
+                                    <div class="vChooseOpt" data-value="HIDDEN">HIDE</div>
+                                </div>
+                            </div>
+                            <div class="resultVisibilityMessageDiv nonner">
+                                <div class="smallThinGray">Message to be displayed telling the user when the results will be available</div>
+                                <div class="textareaDiv">
+                                    <textarea class="formTextarea" name="resultVisibilityMessage"></textarea>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    #{if params.orgId == play.Play.configuration.getProperty("learnpedia.id")}
+                    <tr>
+                        <td class="grayHead pad10Top alignTop">
+                            Enable AIR
+                        </td>
+                        <td>
+                            <div>
+                                <div class="displayInBlock margRight10">
+                                    <input class="formInput" type="radio" name="showAIR" value="true"> Yes
+                                </div>
+                                <div class="displayInBlock margRight10">
+                                    <input  class="formInput" type="radio" name="showAIR" value="false" checked> NO
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    #{/if}
+                    <tr >
+                        <td colspan="2"><button class="blueButton right goToCTFTestFormat">next</button></td>
+                    </tr>
+                    <tr >
+                        <td colspan="2" class="CTFTitleTakerError redColor"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="CTFHolder nonner">
+            <div class="cmdsPopupHead">
+                <span class="resourceIconAutomate"></span>
+                Generate Test (Step-2/4)
+            </div>
+            <div class="CTFSubs"></div>
+            <table class="CTFTable">
+                <thead class="boldy">
+                    <tr>
+                        <td class="width100">Type of Question</td>
+                        <td>Number of Questions</td>
+                        <td>Marks per Question</td>
+                        <td>Negative Marks per Question</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="width100">SCQ</td>
+                        <td><input type="text" class="CTFQuesAuto CTFNum numberTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>MCQ</td>
+                        <td><input type="text" class="CTFQuesAuto CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>Numeric</td>
+                        <td><input type="text" class="CTFQuesAuto CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>PARA</td>
+                        <td><input type="text" class="CTFQuesAuto CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>MATRIX</td>
+                        <td><input type="text" class="CTFQuesAuto CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>SUBJECTIVE</td>
+                        <td><input type="text" class="CTFQuesAuto CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr class="boldy">
+                        <td class="smally">Total Questions</td>
+                        <td class="CTFSubTotal">0</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="showStatus">
+            </div>
+            <div class="rightText">
+                <div class="gButton copyCTFToAllSubsAuto">Copy Format to other subjects</div>
+            </div>
+            <div class="boldy big15 margTop20 margLeft10">Total Questions in the test: <span class="CTFSubsTotal">0</span></div>
+                <button class="blueButton backButton margLeft10">back</button>
+                <button class="blueButton submitCreateTestAuto right">next</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    new function() {
+        var fn = function() {
+            generateTest.init();
+        }
+        lazyLoad([{fname: "generateTest.js", cb: fn}]);
+    }();
+</script>

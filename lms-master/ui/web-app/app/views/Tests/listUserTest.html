@@ -1,0 +1,43 @@
+#{if allTest.has('result') && allTest.result.has('tests') &&  allTest.result.tests.length()>0}
+<style>
+.allCreatedTestHolder{
+width:30%;
+position:absolute;
+margin:2% 0 0 35%;
+height:80%;
+}
+table{
+font-size:13px;
+border:2px solid #ccc;
+}
+</style>
+<div class="allCreatedTestHolder">
+	<center><h2>All Tests</h2></center>
+	<a href="javascript:openMyPage('/Tests/creation')">Create A New Test</a>
+	<br/><br/>
+	<table class="testListTable" border=1 cellspacing=5 cellpadding=10>
+		<tr>
+			<th>Test Name</th>
+			<th>Operation</th>
+			<th>Publish</th>
+		</tr>
+		#{list items:0..allTest.result.tests.length()-1, as:'index'}
+		%{ test = allTest.result.tests.get(index);}%
+		<tr>
+			<td>${test.name}</td>
+			#{if test.isTestFinalized == true}
+				<td><a href="javascript:openMyPage('/Tests/viewTest',{'testId':'${test.testId}'})">View & Attempt</a></td>
+				<td class="redTextColor">Published</td>
+			#{/if}
+			#{else}
+				<td><a href="javascript:openMyPage('/Tests/creation',{'entryPage':'addQuestion','testId':'${test.testId}'})">Add Questions To Test</a></td>
+				<td><a href="javascript:openMyPage('/Tests/creation',{'entryPage':'assign','testId':'${test.testId}'})">Publish</a></td>
+			#{/else}
+		</tr>
+		#{/list}
+	</table>
+</div>
+#{/if}
+#{else}
+<center><h2>No Test Found</h2></center>
+#{/else}

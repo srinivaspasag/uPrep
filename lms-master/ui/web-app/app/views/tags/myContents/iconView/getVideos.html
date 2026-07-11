@@ -1,0 +1,14 @@
+#{if videos!=null && videos.errorCode.isEmpty() && videos.result.list.length()>0}
+<input type="hidden" class="resultDataCount" value="${videos.result.totalHits}" data-real-count="${videos.result.totalHits}"/>
+#{list items:0..videos.result.list.length()-1, as:'tIndex'}
+%{ 
+	videoData = videos.result.list.get(tIndex); 
+}%
+	#{myContents.iconView.video video : videoData /}
+#{/list}
+#{/if}
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_VIDS'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/3library-videos-zero.jpg" /}
+#{/else}

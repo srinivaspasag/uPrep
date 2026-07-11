@@ -1,0 +1,17 @@
+#{if msgs!=null && msgs.errorCode.isEmpty() && msgs.result.list.length()>0}
+	%{
+		curCount = Integer.parseInt(params.curMsgs)+msgs.result.list.length();
+	}%
+	#{if Integer.parseInt(params.totalMsgs) > curCount}
+		<div class="convLoadOlderMsgs">${Integer.parseInt(params.totalMsgs) - curCount} older messages</div>
+	#{/if}
+	#{list items:msgs.result.list.length()-1..0,as:'index'}
+	%{ 
+		msgData = msgs.result.list.get(index);
+		if(params.ignoreMsgId!=null && params.ignoreMsgId==msgData.get("messageId")){
+			continue;
+		}
+	}%
+		#{messages.postMessage msg:msgData /}
+	#{/list}
+#{/if}

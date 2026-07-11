@@ -1,0 +1,29 @@
+%{
+    md=_md;
+}%
+                #{if md.has('courses')&&md.courses.length()>0}
+                %{
+                    subs=md.courses;
+                }%
+                #{list items:0..subs.length()-1,as:'sub'}
+                    %{
+                        course=subs.get(sub);
+                    }%
+                    #{if course.has('name')}
+                    <span class="coursePathCourse" data-course-id="${course.courseId}">
+                        ${course.name}
+                    </span>
+                    #{if course.topics&&course.topics.length()>0}
+                    /
+                    %{
+                        topics=course.topics;
+                    }%
+                    #{list items:0..topics.length()-1,as:'topic'}
+                    <span class="coursePathTopic" data-topic-name="${topics.get(topic).name}">
+                        ${topics.get(topic).name}${topic_isLast?'':','}
+                    </span>                    
+                    #{/list}
+                    #{/if}/
+                    #{/if}
+                #{/list}
+                #{/if}

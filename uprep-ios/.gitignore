@@ -1,0 +1,10 @@
+# Generated Xcode project (regenerate with `xcodegen generate`)
+*.xcodeproj/
+# Xcode user/build data
+xcuserdata/
+DerivedData/
+build/
+.DS_Store
+# Signing
+*.mobileprovision
+*.p12

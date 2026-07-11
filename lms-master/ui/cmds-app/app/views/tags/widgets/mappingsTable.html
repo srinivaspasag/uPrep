@@ -1,0 +1,89 @@
+%{
+    progs=_programs;
+    targetProfile=_targetProfile;
+}%
+<div class="cmdsPopupHead"></div>
+<div class="mappingsDisplayDiv">
+    <table class="mappingsDisplayTable big13">
+        <thead class="color3 boldy">
+            <tr>
+                <td class="width220 maxWidth220">Program</td>   
+                <td class="width130 maxWidth130">Center</td>   
+                <td class="width130 maxWidth130">Section</td>   
+            </tr>
+        </thead>
+        <tbody class="color6">
+            #{if progs!=null&&progs.length()>0}
+            #{list items:0..progs.length()-1,as:"p"}
+                %{
+                    prog=progs.get(p);
+                    centers=prog.centers;
+                    programUrl=util.UrlFramer.getProgramUrl(prog.name,prog.id,params.orgId);                     
+                    showTrClass=" nonner";
+                    if(targetProfile=="STUDENT"){
+                    	showTrClass="";
+                    }
+                }%
+                #{if targetProfile!="STUDENT"}
+                <tr data-tr-index="${p_index}">                       
+                    <td class="boldy width220 maxWidth220" colspan='3'>
+                        <a href='${programUrl}' class="getProgramPage cmdsaPush"
+                           data-program-id='${prog.id}'>${prog.name}
+                        </a>
+                        #{if centers.length()>0}
+                        <a class="viewProgMappingDetails small10 liner" style="font-weight: normal;">View Details</a>
+                        #{/if}
+                    </td>                      
+                </tr>
+                #{/if}                    
+                #{if centers.length()>0}
+                    #{list items:0..centers.length()-1,as:"c"}
+                        %{
+                            center=centers.get(c);
+                            sections=center.sections;
+                        }%        
+                            <tr class="progMapTr${p_index}${showTrClass}">
+                                #{if targetProfile=="STUDENT"}
+                                <td class="boldy width220 maxWidth220">
+                                    <a href='${programUrl}' class="getProgramPage cmdsaPush"
+                                       data-program-id='${prog.id}'>${prog.name}
+                                    </a>
+                                </td>                           
+                                #{/if}
+                                <td class="width130 maxWidth130">${center.name}</td>   
+                                <td class="width130 maxWidth130">
+                                #{if sections.length()>0}
+                                #{list items:0..sections.length()-1,as:'s'}
+                                %{
+                                    section=sections.get(s);
+                                    courses=section.courses;
+                                    coursesList=[];
+                                    for(int g=0;g<courses.length();g++){
+                                        coursesList[g]=" "+courses.get(g).name;
+                                    }             
+                                    coursesStr=coursesList.join(",");                                    
+                                }%
+                                <div class="margBot5">
+                                    ${section.name}
+                                    #{if coursesStr!=''}
+                                    <span class='smallThinGray'>
+                                        - ${coursesStr}
+                                    </span>                                    
+                                    #{/if}
+                                </div>
+                                #{/list}
+                                #{/if}                                    
+                                </td>
+                            </tr>                        
+                    #{/list}
+                #{/if}
+            #{/list}            
+            #{/if}
+            #{else}
+            <tr>
+                <td class="userMessage" colspan="3">No mappings found.</td>
+            </tr>
+            #{/else}
+        </tbody>
+    </table>
+</div>

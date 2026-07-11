@@ -1,0 +1,18 @@
+<div class='notiFeed' data-feed-id="${feed.newsActivityId}">    
+    %{
+        actor=feed.actor;
+    }%
+    <div class="feedHead">
+        #{widgets.img20 user:feed.actor /}
+        <div class="feedHeadLefter">
+            <div class='feedTitle big13'>
+                #{NewsFeeds.user user:feed.actor /}        
+                added a question
+                <span class="time">${new Date(feed.time).since()}</span>
+            </div>    
+        </div>        
+    </div>
+    <div class="feedBody">
+        #{NewsFeeds.discussions.discussion discuss:feed.src,discussOwner:feed.srcOwner /}  
+    </div>                
+</div>

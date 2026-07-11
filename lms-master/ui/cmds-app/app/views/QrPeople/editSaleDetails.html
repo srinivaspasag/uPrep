@@ -1,0 +1,62 @@
+#{if saleDetailsResp.errorCode!=''}
+    #{common.errorCodes resp:saleDetailsResp /}
+#{/if}
+#{else}
+%{
+    if(saleDetailsResp!=null){
+        isEditSale = true;
+        saleDetailsInfo=saleDetailsResp.result.saleDetailsInfo;
+        if(!saleDetailsInfo.equals(null) && saleDetailsInfo.has("paymentItems")) {
+            paymentItems=saleDetailsInfo.paymentItems;
+        } else {
+            paymentItems=null;
+        }
+    }else{
+        isEditSale=false;
+        paymentItems=null;
+    }
+}%
+
+#{if !paymentItems.equals(null)}
+<div class="cmdsPopupHead">Edit Payment Details</div>
+<table width="100%" class="paymentItemsTable">
+    #{if !paymentItems.equals(null) && paymentItems.length()>0}
+    #{list items:0..paymentItems.length()-1,as:'cIndex'}
+    %{
+        paymentItem = paymentItems.get(cIndex);
+    }%
+    <tr class="paymentItemTr">
+        <td><select class="paymentTypeSelect">
+            <option value="CASH" #{if paymentItem.paymentType == "CASH"}selected#{/if}> CASH </option>
+            <option value="CHEQUE" #{if paymentItem.paymentType == "CHEQUE"}selected#{/if}> CHEQUE </option>
+            <option value="PAYTM" #{if paymentItem.paymentType == "PAYTM"}selected#{/if}> PAYTM </option>
+            <option value="ETRANSFER" #{if paymentItem.paymentType == "ETRANSFER"}selected#{/if}> ETRANSFER </option>
+            </select></td>
+        <td><input type="number" name="amount" class="paymentInput" placeholder="Amount" value=${paymentItem.amount / 100}></td>
+        #{if paymentItem.paymentType == "CHEQUE"}
+            <td><input name="bankName" class="paymentInput" placeholder="Bank Name" value=${paymentItem.bankName}></td>
+            <td><input type="number" class="paymentInput" name="chequeNumber" placeholder="Cheque Number" value=${paymentItem.chequeNumber}></td>
+        #{/if}
+        #{if paymentItem.paymentType == "PAYTM"}
+            <td><input name="reference" class="paymentInput" placeholder="Reference" value=${paymentItem.reference}></td>
+        #{/if}
+        #{if paymentItem.paymentType == "ETRANSFER"}
+            <td><input name="reference" class="paymentInput" placeholder="Reference" value=${paymentItem.reference}></td>
+        #{/if}
+        <td class="paymentEntryDeleteTd"><span class="paymentEntryDeleteNotation"></span></td>
+    </tr>
+    #{/list}
+    #{/if}
+</table>
+<div>
+    <span class="blueButton addPaymentItem" data-action="ADD">Add Payment</span>
+</div>
+<div class="cmdsPopupBtns rightText">
+    <div class="gBlueButton margRight5 updateSaleDetails" data-sale-details-id=${saleDetailsInfo.id}>Save</div>
+    <div class="gButton closecmdsPopup">Cancel</div>
+</div>
+#{/if}
+#{else}
+<div class="userMessage">There is no SaleDetails information available.</div>
+#{/else}
+#{/else}

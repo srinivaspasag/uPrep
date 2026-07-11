@@ -1,0 +1,507 @@
+<style type="text/css">
+  @font-face {
+    font-family: Ubuntu;
+    src: url(../../../public/fonts/Ubuntu-Regular.ttf);
+} 
+body{
+    font-family: 'Ubuntu', sans-serif;
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+}
+.resultSheetContainer{
+    width:90%;
+    margin:auto;
+}
+.header > div{
+  position:relative;
+  display:inline-block;
+}
+.testData{
+  margin-left:60px;
+}
+.thumbnail{
+  bottom:20px;
+}
+.userData{
+  float:right;
+  text-align:right;
+}
+.summaryHeader{
+  width:100%;
+}
+.grey{
+  background:#666;
+  color: white;
+}
+.text-center{
+    text-align: center;
+}
+.text-left{
+    text-align: left;
+}
+.cell{
+  padding:15px;
+  border: 1px solid #d1d1d1;
+}
+.summaryContent{
+    width:100%;
+}
+.circle{
+  border-radius:50%;
+  padding:10px;
+  margin-right:5px;
+}
+.circle i{
+  color:#fff;
+  font-size: larger;
+}
+.cleaner_with_divider{
+  clear:both;
+}
+.text-uppercase{
+    text-transform: uppercase;
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.boldy{
+    font-weight: bold;
+}
+.topperData{
+    font-size: 13px;
+    text-align: left;
+    bottom: 0px;
+    position: absolute;
+    width: 100%;
+    border-top:1px solid #ccc;
+}
+.topperData span{
+    margin: 0px 10px;
+}
+.datacell{
+    border: 1px solid #d1d1d1;
+    height: 65px;
+    position: relative;
+    vertical-align: top;
+}
+.overlay{
+    position: relative;
+    height: 100%;
+    opacity: 0.65;
+    font-size: 13px;
+    color:white;
+    font-weight: bold;
+}
+.absoluteCenter{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    display: inline-block;
+}
+.green{
+    background: green;
+}
+.red{
+    background: red;
+}
+.gray{
+    background: gray;
+}
+.gold{
+    background: gold;
+}
+h3{
+    font-size: 20px;
+}
+.footer{
+    position: absolute;
+    bottom:10px;
+    font-size: 13px;
+}
+.nonner{
+    display: none;
+}
+.overlayHolder{
+    position:relative;height:100%;font-size: 0px;display: flex;
+}
+.showLegend{
+    margin:30px;
+}
+.legend span{
+    margin:20px;
+    bottom:10px;
+    position: relative;
+}
+.box{
+    width: 30px;
+    height: 30px;
+    opacity: 0.65;
+    display: inline-block;
+}
+.flexContainer{
+    display: flex;
+    align-items: center;
+}
+.flexContainer table{
+    flex:3;
+}
+.flexContainer .showLegend{
+    flex:1;
+}
+.cellA{
+    width: 40%;
+}
+.cellB{
+    width: 25%;
+}
+.overlay.gold{
+    color: black;
+}
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+
+#{if data!=null && data.has('name') && data.errorCode.isEmpty()}
+<body >
+<div class="resultSheetContainer">
+    <div class="header">
+        #{if myOrgInfo != null}
+            %{
+                orgThumbnail = "";
+                orgName = "";
+                if(myOrgInfo.has("instLogo") && myOrgInfo.instLogo != null &&
+                    myOrgInfo.instLogo !=""){
+                    orgThumbnail = uicom.util.Utilities.getInstLogo(myOrgInfo.getString('instLogo'));
+                }
+                if(myOrgInfo.has("instFullName") && myOrgInfo.instFullName != null &&
+                    myOrgInfo.instFullName !=""){
+                    orgName = myOrgInfo.instFullName;
+                }
+            }%
+        <div class="thumbnail">
+            <img src="${orgThumbnail}" alt="${orgName}" class="orgThumbnail" width="150px">
+        </div>
+        #{/if}
+        #{if testAnalytics!=null && testAnalytics.errorCode.isEmpty() }
+        %{
+            analytics = testAnalytics.result;
+            info = analytics.info;
+        %}
+        <div class="testData">
+            <h3>${data.name.capitalize()}</h3>
+            <p>%{
+                    testTime = "";
+                    testStartDate = new Date(testAnalytics.result.info.startTime).format("MMM dd, yyyy");
+                    timeTaken = uicom.util.Utilities.getTimeFromMiliSec(info.measures.timeTaken);
+                    if(timeTaken.hrs.toInteger() > 0){
+                        timeTaken.hrs.toInteger() == 1 ? (testTime += timeTaken.hrs + ' hr ') : (testTime += timeTaken.hrs + ' hrs ');
+                    }
+                    if(timeTaken.mins.toInteger() > 0){
+                        timeTaken.mins.toInteger() == 1 ? (testTime += timeTaken.mins + ' min ') : (testTime += timeTaken.mins + ' mins ');
+                    }
+                    if(timeTaken.secs.toInteger() > 0){
+                        timeTaken.secs.toInteger() == 1 ? (testTime += timeTaken.secs + ' sec ') : (testTime += timeTaken.secs + ' secs ');
+                    }
+                }%
+                Date : ${testStartDate}
+                    |
+                Time Taken : ${testTime}
+            </p>
+        </div>
+        <div class="userData">
+            #{if testAnalytics.result.has("user") && !testAnalytics.result.user.equals(null)}
+            %{
+                userInfo = analytics.user;
+            }%
+            <h3>${userInfo.firstName.capitalize()} ${userInfo.lastName.capitalize()}</h3>
+            <p>${userInfo.memberId}</p>
+            #{/if}
+        </div>
+    </div>
+    <div class="cleaner_with_divider"></div>
+
+    <div class="SummaryContainer">
+        <h3>Overall Summary</h3>
+        <table cellspacing="0">
+            <tr class="summaryHeader grey text-center text-uppercase">
+                <th class="cell"><span class="circle"><i class="fa fa-crown"></i></span>Rank</th>
+                #{if analytics.has('showAIR') && analytics.showAIR != null && analytics.showAIR == true}
+                    <th class="cell"><span class="circle"><i class="fa fa-medal"></i></span>AIR</th>
+                #{/if}
+                <th class="cell"><span class="circle"><i class="fa fa-trophy"></i></span>Score</th>
+                <th class="cell"><span class="circle"><i class="fa fa-tasks"></i></span>Attempted</th>
+                <th class="cell"><span class="circle"><i class="fa fa-bullseye"></i></span>Accuracy</th>
+                <th class="cell"><span class="circle"><i class="fa fa-users"></i></span>Percentage</th>
+            </tr>
+            <tr class="summaryContent text-center">
+                <td class="datacell"><span class="absoluteCenter"><span class="boldy">${analytics.rank} </span> / ${analytics.totalAttempts}</span></td>
+                #{if analytics.has('showAIR') && analytics.showAIR != null && analytics.showAIR == true}
+                    <td class="datacell">
+                        <span class="absoluteCenter">
+                            <span class="boldy">${analytics.AIR} / ${analytics.AIAttempts}</span>
+                        </span>
+                    </td>
+                #{/if}
+                <td class="datacell"><span class="absoluteCenter"><span class="boldy">
+                    ${Math.round(info.measures.score * 100) /100 } </span> / ${info.totalMarks}</span>
+                    <div class="topperData">
+                        #{if toppersData.has('result') && toppersData.result.has('list') && toppersData.result.list.length()>0}
+                            %{
+                                toppers = toppersData.result.list;
+                                topper = toppersData.result.list.get(0);
+                            }%
+                            <span>Topper : ${topper.info.measures.score}</span>
+                    </div>
+                </td>
+                <td class="datacell">
+                    <span class="absoluteCenter">
+                        <span class="boldy">${info.measures.attempts} </span> / ${info.qusCount}</span>
+                        <div class="topperData"><span>Topper :  ${topper.info.measures.attempts}</span></div>
+                </td>
+                <td class="datacell">
+                    <span class="absoluteCenter">
+                        <span class="boldy">
+                            %{
+                                accuracy = uicom.util.Utilities.calcPercentage(info.measures.correct,info.qusCount);
+                            }%
+                            ${accuracy}
+                        </span>
+                    </span>
+                        <div class="topperData">
+                            %{
+                                topperAccuracy = uicom.util.Utilities.calcPercentage(topper.info.measures.correct,info.qusCount);
+                            }%
+                            <span>Topper : ${topperAccuracy}</span>
+                        </div>
+                </td>
+                <td class="datacell">
+                    <span class="absoluteCenter">
+                        %{
+                        percentScore = uicom.util.Utilities.calcPercentage(info.measures.score,data.totalMarks);
+                    }%
+                    <span class="boldy">${percentScore}</span>
+                </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="sectionalSummaryContainer">
+        <h3>Sectional Summary</h3>
+        <div class="flexContainer">
+            <table cellspacing="0">
+                <tr class="summaryHeader grey text-center">
+                    <th class="cell">Sections</th>
+                    <th class="cell">Score</th>
+                    <th class="cell">Correct / Incorrect / #{if data.enablePartialMarks} Partial / #{/if}Unattempted </th>
+                    <!-- <th class="cell">Correct</th>
+                    <th class="cell">Incorrect</th>
+                    #{if data.enablePartialMarks}
+                        <th class="cell">Partial</th>
+                    #{/if}
+                    <th class="cell">Unattempted</th> -->
+                </tr>
+                #{list items:0..info.boards.length()-1,as:'index'}
+                %{
+                    sectionData = info.boards.get(index);
+                }%
+                    <tr class="summaryContent">
+                        <td class="datacell cellA"><div class="absoluteCenter">${sectionData.entity.name}</div></td>
+                        <td class="datacell cellB">
+                            <div class="absoluteCenter">
+                                <span class="boldy">
+                                ${sectionData.measures.score}
+                                 </span>
+                                 / ${sectionData.totalMarks}
+                             </div>
+                        </td>
+                        <td class="datacell">
+                            %{
+                                correct = (sectionData.measures.correct / sectionData.qusCount) * 100;
+                                String correctWidth =  correct +  "%";
+                                incorrect = (sectionData.measures.incorrect / sectionData.qusCount) * 100;
+                                String incorrectWidth =  incorrect +  "%";
+                                partial = (sectionData.measures.partial / sectionData.qusCount) * 100;
+                                String partialWidth =  partial +  "%";
+                                left = (sectionData.measures.left / sectionData.qusCount) * 100;
+                                String leftWidth =  left +  "%";
+                            }%
+                            <div class="overlayHolder">
+                                <div class="overlay green #{if correct == '0'}nonner#{/if}" style="width: ${correctWidth}">
+                                    <div class="absoluteCenter">
+                                        <span class="boldy">${sectionData.measures.correct} </span> 
+                                    </div>
+                                </div>
+                                <div class="overlay red #{if incorrect == 0}nonner#{/if}" style='width:${incorrectWidth}'>
+                                    <div class="absoluteCenter">
+                                    <span class="boldy">
+                                    ${sectionData.measures.incorrect} </span> 
+                                </div>
+                                </div>
+                                #{if data.enablePartialMarks}
+                                    <div class="overlay gold #{if partial == 0}nonner#{/if}" style='width:${partialWidth}'>
+                                        <div class="absoluteCenter">
+                                        <span class="boldy">${sectionData.measures.partial} </span> 
+                                    </div>
+                                    </div>
+                                #{/if}
+                                <div class="overlay gray #{if left == 0}nonner#{/if}" style='width:${leftWidth}'>
+                                    <div class="absoluteCenter">
+                                    <span class="boldy">${sectionData.measures.left} </span>
+                                </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                #{/list}
+                <tr class="summaryContent text-left" style="background: aliceblue;">
+                    <td class="datacell"><div class="absoluteCenter">Overall Score</div></td>
+                    <td class="datacell">
+                        <div class="absoluteCenter">
+                        <span class="boldy">${info.measures.score} </span> / ${info.totalMarks}</div></td>
+                    <td class="datacell">
+                        %{
+                            overallCorrect = (info.measures.correct / info.qusCount) * 100;
+                            String overallCorrectWidth =  overallCorrect +  "%";
+                            overallInCorrect = (info.measures.incorrect / info.qusCount) * 100;
+                            String overallInCorrectWidth =  overallInCorrect +  "%";
+                            overallPartial = (info.measures.partial / info.qusCount) * 100;
+                            String overallPartialWidth =  overallPartial +  "%";
+                            overallLeft = (info.measures.left / info.qusCount) * 100;
+                            String overallLeftWidth =  overallLeft +  "%";
+                        }%
+                        <div class="overlayHolder">
+                            <div class="overlay green #{if overallCorrect == 0}nonner#{/if}" style='width:${overallCorrectWidth}'>
+                                <div class="absoluteCenter"><span class="boldy">${info.measures.correct} </span></div>
+                            </div>
+                            <div class="overlay red #{if overallInCorrect == 0}nonner#{/if}" style='width:${overallInCorrectWidth}'>
+                                <div class="absoluteCenter"><span class="boldy">${info.measures.incorrect} </span> </div>
+                            </div>
+                            #{if data.enablePartialMarks}
+                            <div class="overlay gold #{if overallPartial == 0}nonner#{/if}" style='width:${overallPartialWidth}'>
+                                <div class="absoluteCenter"><span class="boldy">${info.measures.partial} </span> </div>
+                            </div>
+                            #{/if}
+                            <div class="overlay gray #{if overallLeft == 0}nonner#{/if}" style='width:${overallLeftWidth}'>
+                                <div class="absoluteCenter"><span class="boldy">${info.measures.left} </span> </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="showLegend">
+                <h3>Total Questions : ${info.qusCount} </h3>
+                <div class="legend"><div class="box green"></div><span>Correct</span></div>
+                <div class="legend"><div class="box red"></div><span>Incorrect</span></div>
+                #{if data.enablePartialMarks}<div class="legend"><div class="box gold"></div><span>Partial</span></div>#{/if}
+                <div class="legend"><div class="box gray"></div><span>Unattempted</span></div>
+            </div>
+        </div>
+    </div>
+    <div id="graphs" style="margin:20px 0px;padding-bottom: 30px;">
+        <div class="toppersContainer" style="display: inline-block;width: 50%;">
+            <div id="toppersChart"></div>
+            <div class="toppers" data-toppers = "${toppersData.result.list}"></div>
+        </div>
+        <div class="chartContainer" style="float:right;width: 50%;visibility: hidden;">
+            <div id="drawChart">
+            </div>
+            <div class="boards" data-boards="${analytics.info.boards}"></div>
+        </div>
+    </div>
+    <div class="cleaner_with_divider"></div>
+    <div class="footer nonner">
+        <div class="disclaimer">
+            * Rank, percentage and comparative analysis may change as more number of students appear for the test.
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+     google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var boards = document.querySelector(".boards").getAttribute("data-boards");
+        boards = JSON.parse(boards);
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Subjects');
+        data.addColumn('number', 'qusCount');
+        var entities = [];
+        for(i=0;i<boards.length;i++){
+            var entity = [];
+            entity.push(boards[i].entity.name);
+            entity.push(boards[i].qusCount );
+            entities.push(entity)
+        }
+        data.addRows(entities);
+
+        // Set chart options
+        var options = {'title':'Subject wise Distribution',
+                       'width':600,
+                       'height':400,
+                       pieSliceText: 'value',
+                       chartArea:{left:40},
+                       fontName:'Montserrat',
+                       titleTextStyle:{fontSize:20,bold:true}
+                   };
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('drawChart'));
+        chart.draw(data, options);
+      }
+</script>
+  <script type="text/javascript">
+    google.charts.load("current", {packages:['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var toppers = document.querySelector(".toppers").getAttribute("data-toppers");
+      toppers = JSON.parse(toppers);
+      var users = [["FirstName","Score",{role:"style"}]];
+      var colors = ["red","blue","green","gold","gray"];
+      for(i=0;i<toppers.length;i++){
+        if(i >= 5){break;}
+        var user = [];
+        if(toppers[i].user != null){
+            user.push(toppers[i].user.firstName + " " + toppers[i].user.lastName);
+            user.push(toppers[i].info.measures.score);
+            user.push(colors[i]);
+            users.push(user);
+        }
+      }
+      var data = google.visualization.arrayToDataTable(users);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        title: "Test Toppers Data",
+        width: 600,
+        height: 400,
+        legend: { position: "none" },
+        titleTextStyle:{fontSize:20,bold:true},
+        chartArea:{left:40},
+        fontName:'Montserrat',
+        vAxis: {
+            maxValue: "${info.totalMarks}",
+      }
+    }
+      var chart = new google.visualization.ColumnChart(document.getElementById("toppersChart"));
+      chart.draw(view, options);
+  }
+  //Show footer after page loads.
+  setTimeout(function(){document.querySelector(".footer").classList.remove("nonner");},1000);
+ </script>
+#{/if}
+#{/if}
+#{/if}
+</body>

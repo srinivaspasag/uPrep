@@ -1,0 +1,16 @@
+#{if _user!=null}
+%{
+    user=_user;
+    if(user.has('userId')){
+        userId=user.userId;
+        user.put('id',userId);
+    }else{
+        userId=user.id;
+    }
+    getUserClassAndUrl=util.UrlFramer.getUserClassAndUrl(user,params.orgId); 
+}%
+<a data-user-id="${userId}" class="cmdsaPush ${getUserClassAndUrl.className}"
+    href="${getUserClassAndUrl.url}" data-profile='${user.profile}'>
+    ${user.firstName+' '+user.lastName}
+</a>
+#{/if}

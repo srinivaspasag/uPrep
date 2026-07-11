@@ -1,0 +1,130 @@
+.msgNotiEachOne{
+	padding:6px 8px 15px 8px;
+	cursor:pointer;
+	border-bottom:1px solid #CCC;
+	background-color:#fff;
+}
+.msgNotiEachOne.convUnRead{
+	background-color:#FFFFCC;
+}
+.msgNotiEachOne:hover{
+	background-color:#ddd;
+}
+.msgNotiEachTable{
+	max-width:380px;
+	width:100%;
+}
+.showVoteUpDetails{
+color:blue !important;
+}
+.msgProfilePicCont{
+	width:30px;
+	height:30px;
+	overflow:hidden;
+	margin-right:10px;
+}
+.msgProfilePic{
+	width:30px;
+	max-height:40px;
+}
+.msgNotiEachOne .msProfileNm{
+	font-size:13px;
+}
+.msgRecieverNtLst{
+	color:#666;
+}
+.rightMsgNotiTD,
+.leftMsgNotiTD{
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+}
+.leftMsgNotiImgTD{
+	width:40px;
+}
+.leftMsgNotiTD{
+	max-width:250px;
+}
+.rightMsgNotiTD{
+	max-width:80px;
+	text-align:right;
+}
+.msgTime,
+.msgDate{
+	color:#333;
+}
+.shrtMsgTitle{
+	font-weight:bold;
+	color:#333;
+	max-width:260px;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+}
+
+/* CREATE */
+.msgCreatePopup{
+	min-width:530px;
+	max-width:1200px;
+}
+.msgRTEHolder .RTEArea{
+	min-height:70px;
+}
+.msgRTEHolder,
+.msgCrtTitle{
+	margin-bottom:5px;
+	width:450px;
+}
+.msgCrtTitle .msgSubjectInput{
+	height:30px;
+}
+.msgCrtTitle .inputFld{
+	border:1px solid transparent;
+	outline:none;
+	width:98%;
+	max-width:440px;
+	min-height:30px;
+	background-color:#eee;
+	padding-left:10px;
+	font-size:12px;
+}
+.crtMsgTtlTxt{
+	font-size:15px;
+	color:#000;
+	padding:10px 12px;
+	vertical-align:top;
+	width:30px;
+	text-align:right;
+}
+#msgSendBtn{
+	padding:6px 25px;
+	cursor:pointer;
+	color:#fff;
+    	background-color: #99cc65;
+	border:1px solid #88ad5f;
+	background-image:none;
+	border-radius:0px;
+}
+.msgBlueIcon.instImgs{
+	background-position:-402px 0;
+	padding:10px 12px;
+}
+.msgsNotifications{
+	padding: 1px 0px;
+}
+.userSendMsg.blueSubmitButton{
+	padding:8px 20px;
+	display: none;
+}
+.userSendMsg .instImgs{
+	padding: 7px 7px 7px 12px;
+	background-position: -681px -2px;
+	position:relative;
+	top:-2px;
+}
+.userSendMsg .title{
+	padding-left:8px;
+	font-size:14px;
+	position:relative;
+	top:2px;
+}

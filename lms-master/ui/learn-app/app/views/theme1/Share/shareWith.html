@@ -1,0 +1,86 @@
+<head>
+<style type="text/css">
+  .swal2-modal{
+    width: 300px;
+  }
+  select.bs-select-hidden, select.selectpicker {
+    display: inline-block!important;
+}
+</style>
+</head>
+%{
+    if(params.allowPublic=="true"){
+        defaultShareType='PUBLIC';
+        defaultShareText='Public';
+    }
+    else if(params.allowIndv=="true"){
+        defaultShareType='INDIVIDUALS';
+        defaultShareText='Individuals';
+    }
+    else if(params.allowInst=="true"){
+        defaultShareType="INSTITUTE";
+        defaultShareText=params.orgName!=null?params.orgName:"Choose Institute";
+    }
+}%
+<div id="shareSection">
+<div class="shareWithDiv CSWidget" data-entity-type="${params.entityType}" data-entity-id="${params.entityId}"
+ data-share-type="${defaultShareType}" data-widget="SHARE_WITH">
+    <div class="topSec">
+      <label class="big14 boldy">Share With</label>
+        <select class="vChoose shareSelect selectpicker" data-value="${defaultShareType}"
+             data-onchange="shareSelectChange" data-cs-name="SELECT_SHARE_WITH_TYPE" >
+          <div class="vChooseHead">${defaultShareText}</div>
+          <!-- <option>Choose an Institute</option> -->
+          <option class="vChooseDropDown">
+                #{if params.allowPublic=="true"}
+                    <div class="vChooseOpt" data-value="PUBLIC">Public</div>
+                #{/if}
+                #{if params.allowIndv=="true"}
+                    <div class="vChooseOpt" data-value="INDIVIDUALS">Individuals</div>
+        #{/if}
+        #{if params.allowInst=="true"}
+           #{if instData!=null && instData.errorCode.isEmpty() && instData.result.list.length()>0}
+              #{list items:0..instData.result.list.length()-1,as:'index'}
+              %{
+                inst = instData.result.list.get(index);
+              }%
+                      <div class="vChooseOpt" data-value="INSTITUTE" 
+                           data-opt-params='{"instId":"${inst.id}"}'>
+                          ${inst.fullName}
+                      </div>
+              #{/list}
+           #{/if}
+           #{elseif params.orgId!=null && !params.orgId.isEmpty()}
+                      <div class="vChooseOpt" data-value="INSTITUTE" 
+                           data-opt-params='{"instId":"${params.orgId}"}'>
+                          ${params.orgName}
+                      </div>
+           #{/elseif}
+        #{/if}
+          </option>
+        </select>
+    </div>
+    <div id="programShare">
+    </div>
+    <div class="shareTypeHolder relative">
+    #{if defaultShareType=="INDIVIDUALS"}
+        #{include 'Share/shareWithIndv.html' /}
+    #{/if}
+    #{elseif defaultShareType=="PUBLIC"}
+        #{include 'Share/shareWithPublic.html' /}
+    #{/elseif}
+    #{elseif defaultShareType=="INSTITUTE"}
+        <!-- <div class="greyTextColor centerText" style="padding-top:12px;">&{'CHOOSE_YOUR_INSTITUTE'}</div> -->
+    #{/elseif}
+    </div>
+    #{if params.embed!="true"}
+    <div class="bottomSec">
+    <br>
+    <span class="submitShare btn btn-primary waves-effect right doCStream" data-cs-name="SHARE_BTN">Share</span>
+    <!-- <a class="right redTextColor cancelCommonPopup crossVPopup doCStream pull-right" data-cs-name="CANCEL_BTN" 
+        style="padding:4px 12px 0 0;">Cancel</a> -->
+    <div class='cleaner_with_divider'>&nbsp;</div>
+    </div>
+    #{/if}
+</div>
+</div>

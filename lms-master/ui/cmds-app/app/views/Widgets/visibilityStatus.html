@@ -1,0 +1,141 @@
+%{
+    info=info.result.list;
+    target=params.target;
+    hasMakeVisibleOption=false;
+    if(target=="LIBRARY_RESOURCES"){
+        hasMakeVisibleOption=true;
+    }
+    entityType=params.get("content.type");
+    entityId=params.get("content.id");        
+    entityName=params.get("entityName");        
+    status=params.status;
+    allowDownload = params.allowDownload == "true" ? true : false;
+}%
+<div class="cmdsPopupHead">
+	#{if target=="LIBRARY_RESOURCES"}
+		<span>Visibility Status of </span>
+	#{/if}
+	<span class="big14 singleLineText greyTextColor" 
+		style="max-width:600px;display:inline-block;width:initial;vertical-align:middle;" 
+		title="${entityName}">${entityName}</span>
+	#{if target!="LIBRARY_RESOURCES"}
+		<span>Added to</span>
+	#{/if}
+</div>
+<div class="showToManySecsStatusDiv margBot10">
+    <table class="entityCloneTable">
+        <tbody class="hider">
+            <tr class="popupEntity popupEntity_${entityId}"
+                    data-src-entity='{"id":"${entityId}","type":"${entityType}"}' data-status="${status}">
+                <td class="statusTd" style="border:none;padding:0"></td>                
+            </tr>
+        </tbody>
+    </table>       
+</div>
+<div class="mappingsDisplayDiv">
+    <div class="cmdsTableCheckedOpts" 
+	#{if allowDownload == true}
+		data-opts-type="downloadToManySections"
+	#{/if}
+	#{else}
+		data-opts-type="showToManySections"
+	#{/else}
+    ></div> 
+    <div class="cleaner_with_divider">&nbsp;</div>
+    <table class="mappingsDisplayTable big13 margTop">
+        <thead class="color3 boldy">
+            <tr>
+                #{if hasMakeVisibleOption} 
+                <td class="width16 tdPadLeft5">
+                    #{if info!=null&&info.length()>0}
+                    <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                        <div class="gCBoxTicker"></div>                    
+                    </div>   
+                    #{/if}
+                </td>
+                #{/if}
+                <td class="width220 maxWidth220">Program</td>   
+                <td class="width130 maxWidth130">Center</td>   
+                <td class="width130 maxWidth130">Section</td>   
+                <td class="width130 maxWidth130">Visibility</td>
+		#{if allowDownload == true&&entityType!='CMDSMODULE'}
+                	<td class="width130 maxWidth130">Download</td>
+		#{/if}
+            </tr>
+        </thead>
+        <tbody class="color6">
+            #{if info!=null&&info.length()>0}
+            #{list items:0..info.length()-1,as:"p"}
+                %{
+                    acadItem=info.get(p);
+                    prog=acadItem.programInfo;
+                    center=acadItem.centerInfo;
+                    section=acadItem.sectionInfo;
+                    programUrl=util.UrlFramer.getProgramUrl(prog.name,prog.id,params.orgId);
+                    visibilityStatus=acadItem.visibility;
+                }%
+                <tr data-entity-type="SECTION" data-entity-id="${section.id}" 
+                    class="secEntity_${section.id}">
+                    #{if hasMakeVisibleOption} 
+                    <td class="width16 tdPadLeft5">
+                      <div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                          <div class="gCBoxTicker"></div>                    
+                      </div>   
+                    </td>
+                    #{/if}                      
+                    <td class="boldy width220 maxWidth220">
+                        <a href='${programUrl}' class="getProgramPage cmdsaPush"
+                           data-program-id='${prog.id}'>${prog.name}
+                        </a>
+                    </td>   
+                    <td class="width130 maxWidth130">${center.name}</td>   
+                    <td class="width130 maxWidth130">${section.name}</td> 
+                    <td class="width130 maxWidth130">
+                        %{
+                            isVisible=false;
+                            if(visibilityStatus=="ORG"){
+                                isVisible=true;
+                            }
+                        }%
+                        #{if target=="LIBRARY_RESOURCES"}
+                        <div class="visibilityStatusDiv linBlk">
+                            #{if isVisible}
+                            <div class="boldy greenColor entityVisible">Visible</div>
+                            #{/if} 
+                            #{else}
+                            <div class="boldy redColor">Not Visible</div>
+                            #{/else}
+                         </div>                                                                                      
+                        #{/if}
+                        #{else}
+                            #{if !isVisible}
+                            <div class="redColor boldy">Not Visible</div>
+                            #{/if}
+                            #{else}
+                            <div class="greenColor boldy entityVisible">Visible</div>
+                            #{/else}                          
+                        #{/else}
+                    </td>
+		    #{if allowDownload == true &&entityType!='CMDSMODULE'}
+                    <td class="width130 maxWidth130">
+			<div class="downloadableStatusDiv">
+			#{if acadItem.downloadable == true}
+                            <div class="boldy greenColor entityDownloadable">Enabled</div>
+			#{/if}
+			#{else}
+                            <div class="boldy redColor entityDownloadable">Disabled</div>
+			#{/else}
+			</div>
+                    </td>
+		    #{/if}
+                </tr>                   
+            #{/list}            
+            #{/if}
+            #{else}
+            <tr>
+                <td class="userMessage" colspan="5">This content is not shared with any program.</td>
+            </tr>
+            #{/else}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,15 @@
+65.2.108.70.sslip.io {
+	encode gzip
+
+	# Next.js `next start` does not serve files added to public/ after build,
+	# so uploaded documents/videos are served directly from disk by Caddy.
+	@uploads path /uploads/*
+	handle @uploads {
+		root * /srv
+		file_server
+	}
+
+	handle {
+		reverse_proxy ui:3000
+	}
+}

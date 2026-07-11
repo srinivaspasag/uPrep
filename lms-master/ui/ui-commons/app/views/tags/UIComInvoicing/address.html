@@ -1,0 +1,43 @@
+%{
+	data = _address;
+}%
+#{if !data.equals(null)}
+	<div class="boldy" style="font-size:16px;">${data.name}</div>
+	<div class="boldy">${data.email}</div>
+	<table cellspacing=2 cellpadding=0>
+	<tr>
+		<td class="addrTd">&{'ADDR_ADDRESS'}</td>
+		<td>
+		#{if !uicom.util.Validation.isEmpty(data.address)}
+			<div>${data.address}</div>
+		#{/if}
+		#{if !data.location.equals(null)}
+		%{
+			loc = data.location;
+		}%
+		#{if !uicom.util.Validation.isEmpty(loc.city)}
+		<div>${loc.city}</div>
+		#{/if}
+		#{if !uicom.util.Validation.isEmpty(loc.state)}
+		<div>${loc.state}</div>
+		#{/if}
+		#{if !uicom.util.Validation.isEmpty(loc.country)}
+		<div>${loc.country}</div>
+		#{/if}
+		#{/if}
+		</td>
+	</tr>
+	#{if !uicom.util.Validation.isEmpty(data.pinCode)}
+	<tr>
+		<td class="addrTd">&{'ADDR_PIN'}</td>
+		<td>${data.pinCode}</td>
+	</tr>
+	#{/if}
+	#{if !uicom.util.Validation.isEmpty(data.contactNo)}
+	<tr>
+		<td class="addrTd">&{'ADDR_PHONE'}</td>
+		<td>${data.contactNo}</td>
+	</tr>
+	#{/if}
+	</table>
+#{/if}

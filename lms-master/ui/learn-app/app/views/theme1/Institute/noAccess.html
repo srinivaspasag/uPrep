@@ -1,0 +1,24 @@
+#{if resp!=null}
+%{
+  baseUrl = resp.baseUrl;
+}%
+#{/if}
+<head>
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}">
+    <title>Institute Learning Environment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<input type="hidden" data-url="${baseUrl}" id="redirect">
+<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+
+window.onload = function() //executes when the page finishes loading
+{
+    redirect();
+}
+
+function redirect() {
+    url = $("#redirect").data("url");
+    window.location.href = url;
+}
+</script>

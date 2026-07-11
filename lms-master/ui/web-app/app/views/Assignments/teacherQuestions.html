@@ -1,0 +1,41 @@
+#{if questionsData!=null && questionsData.errorCode.isEmpty() && questionsData.result.list.length()>0}
+%{
+	questions = questionsData.result.list;
+}%
+#{list items:0..questions.length()-1,as:'index'}
+%{
+	ques = questions.get(index);
+	quesAna = ques.measures;
+	qTypeFull = play.i18n.Messages.get("TXT_FULL_"+ques.info.type); 
+}%
+<tr class="asnEachQuesTR">
+	<td class="ansTeacherQuesItem">
+	    #{test.analyticQues qIndex : ques.qusNo , qType : ques.info.type , qTypeFull : qTypeFull , quesBody : ques.info /}
+	</td>
+	<td class="centerText">
+	    %{
+		total = quesAna.attempts + quesAna.left;
+	    }%
+	    #{institute.analyticsHorizontalBar correct : quesAna.correct , incorrect : quesAna.incorrect , attempts : total /}
+	</td>
+</tr>
+#{/list}
+%{
+        totalHits = questionsData.result.totalHits;
+        lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+}%
+#{if totalHits > lastCount }
+<tr class="loadMoreDivTR">
+        <td colspan=5 style="padding-top:20px;">
+                <div class="loadMoreItems doCStream" name="LOAD_MORE_TEST" data-next-start="${lastCount}">&{'LOAD_MORE_item','Questions'}</div>
+        </td>
+</tr>
+#{/if}
+#{/if}
+#{else}
+<tr class="zeroLevelDivTR">
+        <td colspan=5 style="padding-top:20px;">
+		#{institute.zeroLevel alt : "No Data" , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+	</td>
+</tr>
+#{/else}

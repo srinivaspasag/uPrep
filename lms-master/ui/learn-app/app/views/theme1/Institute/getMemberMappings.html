@@ -1,0 +1,107 @@
+#{if mappings!=null && mappings.has('programs') && mappings.programs.length()>0}
+<div class="memberMappingsPopup">
+    <div>
+        <div class="f-16">&{'member_MEMBER_INFO',params.targetUserName}</div>
+    </div>
+    <br/>
+    <div>
+        <table class="table table-bordered table-striped" style="border: 1px solid dimgray;">
+            <tr>
+                <th style="text-align: center;">&{'TXT_BATCH'}</th>
+                <th>&{'TXT_CENTER'}</th>
+                <th style="text-align: center;">
+                    <span>&{'TXT_SECTION'}</span>
+                    #{if targetProfile == "TEACHER"}
+                        <span class="italica smally"> - &{'TXT_SUBJECTS'}</span>
+                    #{/if}
+                </th>
+            </tr>
+            %{
+                programs = mappings.programs;
+            }%
+            #{list items:0..programs.length()-1,as:'index'}
+            <tr>
+                %{
+                    program = programs.get(index);
+                }%
+                    <td rowspan="${program.centers.length()}" class="memberPrgTd">
+                    <div class="blueTextColor">${program.get("name")}</div>
+                </td>
+                #{if program.centers.length()>0}
+                %{
+                    center = program.centers.get(0);
+                }%
+                <td>
+                    <div>${center.name}</div>
+                </td>
+                    #{if center.sections.length()>0}
+                    <td>
+                    #{list items:0..center.sections.length()-1,as:'sIndex'}
+                    %{
+                        section = center.sections.get(sIndex)
+                    }%
+                        <div>
+                            <span>${section.name}</span>
+                            #{if targetProfile == "TEACHER" &&
+                                !section.courses.equals(null) &&
+                                section.courses.length()>0}
+                            %{
+                                courses = section.courses;
+                            }%
+                            </span> - </span>
+                            #{list items:0..courses.length()-1,as:'cIndex'}
+                                <span class="italica smally">${courses.get(cIndex).name},</span>    
+                            #{/list}
+                            #{/if}
+                        </div>
+                    #{/list}
+                    </td>
+                    #{/if}
+                #{/if}
+                #{if program.centers.length()>1}
+                </tr>
+                #{list items:1..program.centers.length()-1,as:'cIndex'}
+                <tr>
+                %{
+                    center = program.centers.get(cIndex);
+                }%
+                    <td>
+                        <div>${center.name}</div>
+                    </td>
+                    #{if center.sections.length()>0}
+                    <td>
+                        #{list items:0..center.sections.length()-1,as:'sIndex'}
+                        %{
+                            section = center.sections.get(sIndex);
+                        }%
+                        <div>
+                            <span>${section.name}</span>
+                            #{if targetProfile == "TEACHER" &&
+                                !section.courses.equals(null) &&
+                                section.courses.length()>0}
+                            %{
+                                courses = section.courses;
+                            }%
+                            </span> - </span>
+                            #{list items:0..courses.length()-1,as:'cIndex'}
+                                <span class="italica smally">${courses.get(cIndex).name},</span>    
+                            #{/list}
+                            #{/if}
+                        </div>
+                        #{/list}
+                    </td>
+                    #{/if}
+                </tr>
+                #{/list}
+                #{/if}
+                #{else}
+                </tr>
+                #{/else}
+            #{/list}
+        </table>
+    </div>
+</div>
+#{/if}
+#{else}
+    <div class="memberMappingsPopup redTextColor">Not Part Of Any Programs</div>
+#{/else}

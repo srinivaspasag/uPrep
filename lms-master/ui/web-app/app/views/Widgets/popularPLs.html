@@ -1,0 +1,46 @@
+#{if playlists!=null&&playlists.errorCode==""}
+%{
+    playlists=playlists.result.playlists;
+    PLLength=playlists.length();
+}%
+<div class='popularPLsHolder widget CSWidget' data-widget='POPULAR_PLAYLISTS'>
+    <div class='widgetHead'>
+        <span class="widgetHeadText">Playlists</span>
+<!--        <span class="widgetMostPopular">Most Popular</span>-->
+    </div>
+    <div class='popularPLsDiv widgetPadding'>
+        %{
+            if(PLLength>=3)PLLooper=3;
+            else PLLooper=PLLength;
+            loopStart=0;
+            loopEnd=PLLooper-1;
+            target='HOME_PAGE_RECOS';
+        }%
+        #{playlist.PLItems playlists:playlists,loopStart:loopStart,loopEnd:loopEnd,target:target,seeMore:true  /}
+        #{if PLLength>3}
+        <!--        <a class='popularPLsSeeMore liner smally'>see more...</a>-->
+                %{
+                    loopStart=3;
+                    loopEnd=PLLength-1;
+                    target='HOME_PAGE_RECOS';
+                }%
+                <div id="homePopularPLDataDiv">
+                    #{playlist.PLItems playlists:playlists,loopStart:loopStart,loopEnd:loopEnd,target:target  /}
+                </div>
+        #{/if}
+        <script type="text/javascript">
+                $("#homePopularPLDataDiv .PLItem").each(function(){
+                    popularPLsData.push($(this).html());                            
+                });
+                $(".popularPLsDiv").find(".PLItem").each(function(){
+                    popularPLsCrossed.push($(this).find(".widgetItemName").data("plId"));
+                });
+                 $("#homePopularPLDataDiv").remove();
+        </script>        
+        <div class='createBlock createPlaylist doCStream' data-name="create_playlist">
+            	<a class="createBlockImg"><img class='' src='/public/images/questions/createPL.png' alt='' /></a>
+                <span class='big16 boldy createBlockText'>Create Playlist</span>
+        </div>
+    </div>
+</div>
+#{/if}

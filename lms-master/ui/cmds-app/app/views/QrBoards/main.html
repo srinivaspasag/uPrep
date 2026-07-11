@@ -1,0 +1,44 @@
+<div id="coursesPage">
+    <div id="coursesPageCourses" class="">
+        <div class="searchCoursesHead">Add Courses</div>
+        <div class="coursesESHolder entrySuggHolder">
+            <div class="entrySuggDiv">
+                <span class="entrySuggAddedList"></span>
+                <input size="1" class="entrySuggInput" placeholder="Type Course Name or Select from the drop down" 
+                       value="" type="text" />
+                <div class="coursesPageDownArrow"></div>
+            </div>                        
+            <div class="ESListDiv"></div>
+        </div>
+        <div class="addedCoursesHead">Added Courses</div>
+        <div class="addedCoursesList">
+            %{
+                courses=courses.result.boards;
+            }%
+            #{if courses.length()>0}
+            #{list items:0..courses.length()-1,as:'c'}            
+                %{
+                    course=courses.get(c);
+                }%
+            <div class="courseItem" data-brd-id='${course.id}' data-name='${course.name}'
+                 data-public-brd-id='${course.publicBrdId}'>
+                <span class='courseItemName'>${course.name}</span>
+                <span class='editCourse'>View/Edit Topic Tree</span>
+            </div>
+            #{/list}
+            #{/if}
+            #{else}
+            <div class="userMessage">
+                There are no courses added to this institute.
+            </div>
+            #{/else}
+        </div>        
+    </div>
+    <div id="coursesPageTopics" class="nonner"></div>
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){qrBoards.init();}
+        lazyLoad([{fname:"qrBoards.js",cb:fn}]);
+    }();       
+</script> 

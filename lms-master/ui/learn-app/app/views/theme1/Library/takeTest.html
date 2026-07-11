@@ -1,0 +1,289 @@
+#{if data!=null && data.has('name')}
+
+<script type="text/javascript">
+    var takeTestData = ${data.raw()};
+    $(".selectpicker").selectpicker().selectpicker("render");
+</script>
+<LINK href="/public/stylesheets/o.take.css" rel="stylesheet" type="text/css">
+<script src="@{'/public/javascripts/test/o.attemptTest.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<div class="container" style="background-color: white;">
+    <div class="test_head row">
+        <div class="col-xs-8">
+            <span class="f-18 f-700">${data.name}</span>
+        </div>
+        <div class="col-xs-4">
+            <span class="onlineIcon">ONLINE</span>
+            <span class="offlineIcon hidden">OFFLINE</span>
+        </div>
+    </div>
+    <div class="testOfflineMsg hidden row text-center f-12 c-red" style="padding:10px;">
+        No Internet Connection Found! please check your internet connectivity. The test will resume automatically.
+    </div>
+%{
+    openBoardIndex = 0;
+}%
+
+    <div class="row">
+        <div class="test_subjects CSWidget container" data-widget="TEST_ATTEMPT_TOP_BAR">
+            <div class="test_subjects_tabs hidden-xs row">
+        #{list items:0..data.boards.length()-1, as:'index'}
+            #{if index == openBoardIndex }
+
+                <span class="selected btn btn-default waves-effect col-xs-2" data-cs-name="SUBJECT_TAB"
+                    data-subject-id=${data.boards.get(index).id}>${data.boards.get(index).name}</span>
+            #{/if}
+            #{else}
+
+                <span class="btn btn-default waves-effect col-xs-2">${data.boards.get(index).name}</span>
+            #{/else}
+        #{/list}
+
+            </div>
+            #{if data.boards.length()>1}
+            <div class="visible-xs test_subjectsSmall">
+                <select class="selectpicker" style="padding: 20px;" id="subjectTest">
+            #{list items:0..data.boards.length()-1, as:'index'}
+
+                    <option value="${data.boards.get(index).name}" data-subject-id=${data.boards.get(index).id}>
+                    ${data.boards.get(index).name}
+                </option>
+            #{/list}
+
+                </select>
+            </div>
+            #{/if}
+        </div>
+
+
+    </div>
+
+    <div class="test_subjects CSWidget test_endexam_timer row" data-widget="TEST_ATTEMPT_TOP_BAR" style="background-color: #F9F9F9">
+        <div class="endtest_time">
+            <button class="test_finished_btn btn bgm-teal waves-effect pull-right m-r-20 m-t-15" data-cs-name="END_FINISH_BTN">Finished ?</button>
+            <button class="test_end_btn btn bgm-red waves-effect pull-right m-r-20 m-t-15 hidden" style="background-color: #E3AB21;" data-cs-name="END_TEST_BTN">End Exam</button>
+        #{if data.has('duration') && data.duration > 0}
+
+            <span class="test_timer">
+                <span class="time_left">Time Left</span>
+        %{
+            timeObj=util.Utilities.getTimeFromMiliSec(data.duration);
+        }%
+
+                <span class="total_time_left">${timeObj.hrs}:${timeObj.mins}:${timeObj.secs}</span>
+            </span>
+        #{/if}
+
+
+        </div>
+    </div>
+
+    <div class="takeTestFilterQTypes row fullWidth hidden left">
+        <span class="boldy left" style="margin-top:3px;">Show</span>
+        <div class="vselect vselectHide selectTestFilterQType vDropDown left" onstatechange="testFilterQType" data-value="">
+            <span class="vSelectHead">
+                <input type="text" class="vSelectText" value="All Types" readonly="readonly"/>
+                <span class="dropDownIcon noUserSelect" ></span>
+            </span>
+            <div class="vSelectListHolder">
+                <div class="vSelectList">
+                    <span class="vSelectEach" data-value="">All Types</span>
+                    <!--<span class="vSelectEach" data-value="SCQ">Only SCQ's</span><span class="vSelectEach" data-value="MCQ">Only MCQ's</span>-->
+                </div>
+            </div>
+        </div>
+    </div>
+%{
+alphabet = "abcdefghijklmnopqrstwxyz";
+testQuestions = data.boards.get(openBoardIndex).questions;
+question = testQuestions;
+}%
+#{list items:0..testQuestions.length()-1,as:'qTypeIndex'}
+%{ eachType = testQuestions.get(qTypeIndex);}%
+#{if !eachType.equals(null) && eachType.has('questions') && !eachType.questions.equals(null) && eachType.questions.length()>0}
+%{
+    question = eachType.questions.get(0);
+    break;
+}%
+#{/if}
+#{/list}
+
+    <div class="test_questions CSWidget left row" data-widget="QUES_BODY_HOLDER">
+        <div style="text-align: center;">
+            <span style="font-size: 11px;">
+                Question Type : 
+            </span>
+            <span style="font-weight: bold;font-size: 13px;">
+                ${question.type}
+            </span>
+        </div>
+        <span class="questionNumber">Q1</span>
+        <div class="questionBody" data-q-type="${question.type}">
+            <div class="questionText">${question.content.raw()}</div>
+            <div class="choices #{if question.type=="NUMERIC"}hidden#{/if}">
+    %{
+        inputType="radio";
+        if(question.type == "MCQ"){
+            inputType = "checkbox";
+        }
+    }%
+    #{if question.has('options') && !question.options.equals(null) && question.options.length()>0}
+       #{list items:0..question.options.length()-1, as:'index'}
+
+                <table class="eachOptHolder">
+                    <tr>
+                        <td style="width:20px;">
+                            <input type="${inputType}" data-cs-name="QUES_OPTION_${inputType}" name="takeTestOptInput"
+                    value="${index}" />
+                        </td>
+                        <td class="optAlphaCount">(${alphabet.charAt(index)})</td>
+                        <td>
+                            <div class="eachOpt">${question.options.get(index).raw()}</div>
+                        </td>
+                    </tr>
+                </table>
+       #{/list}
+       #{list items:(question.options.length()-1)..5, as:'index'}
+
+                <table class="eachOptHolder hidden">
+                    <td style="width:20px;">
+                        <input type="${inputType}" data-cs-name="QUES_OPTION_${inputType}" value="${index}"
+                name="takeTestOptInput" />
+                    </td>
+                    <td class="optAlphaCount"></td>
+                    <td>
+                        <div class="eachOpt"></div>
+                    </td>
+                </table>
+       #{/list}
+    #{/if}
+    #{else}
+       #{list items:0..5, as:'index'}
+
+                <table class="eachOptHolder hidden">
+                    <td style="width:20px;">
+                        <input type="${inputType}" data-cs-name="QUES_OPTION_${inputType}" value="${index}"
+                name="takeTestOptInput"/>
+                    </td>
+                    <td class="optAlphaCount"></td>
+                    <td>
+                        <div class="eachOpt"></div>
+                    </td>
+                </table>
+       #{/list}
+    #{/else}
+
+            </div>
+            <div class="testNumAns #{if question.type!="NUMERIC"}hidden#{/if}">
+                <span class="">Answer : </span>
+                <input class="numberTextBox numericAnsInputBox"
+                    placeholder="Use below keyboard for input" type="text"/>
+                    <div class="virNumericKeyboard" data-input-box-class=".numericAnsInputBox">
+                         #{list items:0..9,as:'nkeys'}
+                                 <span class="VNKeys" data-val="${nkeys}" title="${nkeys}">${nkeys}</span>
+                         #{/list}
+                         <span class="VNKeys" data-val="." title="dot">.</span>
+                         <span class="VNKeys" data-val="<" title="backspace"><-</span>
+                         <span class="VNKeys" title="delete all">Clear All</span>
+                    </div>
+            </div>
+            <div class="message hidden f-18">Attempt
+                <b>next subject</b> or
+                <b>end exam</b>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="c-red f-16 text-center errorMsg hidden">
+            
+        </div>
+    </div>
+
+    <div class="test_btns row m-t-30">
+        <div class="hidden-xs">
+            <input type="button" class="col-xs-6 col-lg-3 mark_review_btn btn bgm-teal waves-effect pull-left margin10" data-cs-name="MARK_REVIEW_BTN" value="Mark For Review" style="max-width: 140px;" />
+            <input type="button" class="col-xs-6 col-lg-3 save_next_btn btn bgm-green waves-effect pull-right margin10" data-cs-name="SAVE_BTN" value="Save & Next" style=" max-width: 140px;"/>
+            <input type="reset" class="col-xs-6 col-lg-3 reset_btn btn btn-gray waves-effect pull-left margin10" data-cs-name="RESET_BTN" value="Reset" style="max-width: 100px;"/>
+
+            <input type="button" class="col-xs-6 col-lg-3 skip_btn btn btn-gray waves-effect pull-right margin10" data-cs-name="SKIP" value="Skip" style="max-width: 100px;"/>
+        </div>
+        <div class="visible-xs">
+            <div class="col-xs-6 text-left">
+                <input type="button" class="mark_review_btn btn bgm-teal waves-effect margin10" data-cs-name="MARK_REVIEW_BTN" value="Mark For Review" style="width: 140px;" />
+            </div>
+            <div class="col-xs-6 text-right">
+                <input type="button" class="save_next_btn btn bgm-green waves-effect margin10" data-cs-name="SAVE_BTN" value="Save & Next" style="width: 140px;"/>
+            </div>
+            <div class="col-xs-6 text-left">
+                <input type="reset" class="reset_btn btn btn-gray waves-effect margin10" data-cs-name="RESET_BTN" value="Reset" style="width: 100px;"/>
+            </div>
+            <div class="col-xs-6 text-right">
+                <input type="button" class="skip_btn btn btn-gray waves-effect margin10" data-cs-name="SKIP" value="Skip" style="width: 100px;"/>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="test_question_summary CSWidget container" data-widget="ATTEMPT_TEST_QUES_SUMMARY_HOLDER">
+        <div class="sub_name row">${data.boards.get(openBoardIndex).name}</div>
+        <div class="q_list row">
+%{ qIndex = 1;}%
+#{if data.boards.get(openBoardIndex).questions.length()>0}
+#{list items:0..data.boards.get(openBoardIndex).questions.length()-1, as:'qTypeIndex'}
+    %{ qTypeQuestions = data.boards.get(openBoardIndex).questions.get(qTypeIndex).questions;}%
+    #{if !qTypeQuestions.equals(null) && qTypeQuestions.length()>0}
+        #{list items:0..qTypeQuestions.length()-1, as:'index'}
+
+            <button class="col-xs-2 each_question " data-cs-name="SHOW_QUES_LINK"
+                data-qIndex="Q${qIndex}">Q${qIndex}</button>
+            %{qIndex++;}%
+        #{/list}
+    #{/if}
+#{/list}
+#{/if}
+
+        </div>
+        <div class="show_only_marked row">
+        <label class="f-500 f-12">
+            <input type="checkbox"  data-cs-name="SHOW_ONLY_QUES_MARKED_REVIEW">&nbsp;Show only marked for review questions
+        </label>
+        </div>
+    </div>
+
+
+
+    <!-- <div class="redTextColor italics" style="position:absolute;right:12%">
+        <div>Note : </div>
+        <ul>
+            <li> - Dont Press any keys while test is in progress.</li>
+            <li> - Use mouse left key to answer all the question</li>
+            <li class="greenTextColor"> All the best for the test</li>
+        </ul>
+    </div> -->
+</div>
+<script type="text/javascript">
+loadTestMJEqns($(".test_questions .question_body").get(0));
+$($(".test_question_summary").find(".q_list .each_question").get(0)).addClass("current");
+//takeTest.init();
+</script>
+#{if play.mode.name()=='PROD'}
+
+<script type="text/javascript">
+        $(function(){
+            try{
+                    //$(window).bind("blur",windowOutFocused);//ALT+TAB SCENARIO
+            }catch(err){}
+        });
+</script>
+#{/if}
+#{/if}
+#{else}
+
+<script type="text/javascript">
+$(function(){
+    alert("&{'TEST_TRY_AGAIN'}");
+    endCurrentExam("${testIdStr}");
+});
+</script>
+#{/else}

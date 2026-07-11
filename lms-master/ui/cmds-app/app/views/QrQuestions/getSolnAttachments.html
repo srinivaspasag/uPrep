@@ -1,0 +1,14 @@
+#{if solution!=null && solution.errorCode.isEmpty()}
+	%{
+		soln = solution.result.solutions.get(0);
+		attachments = soln.attachmentsInfo;
+	}%
+	#{list items:0..attachments.length()-1,as:'attachIndex'}
+		%{ 
+			attachEntity = attachments.get(attachIndex).entity; 
+			attachInfo = attachments.get(attachIndex).info; 
+			entityName = attachInfo.name;
+		}%
+		#{aTagMapper entityName:entityName,entityId:attachEntity.id,entityType:attachEntity.type/}
+	#{/list}
+#{/if}

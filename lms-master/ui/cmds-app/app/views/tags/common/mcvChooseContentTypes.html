@@ -1,0 +1,30 @@
+%{
+target=_target;
+}%
+<div class="vChoose vChooseContentTypes mcvChoose" data-value="-1" data-onchange="onmcvChooseChange"
+     data-param-name="includes" data-target="${target}">
+    <div class="vChooseLabel">Filter By</div>
+    <div class="vChooseHead">All Resources</div>
+    <div class="vChooseDownIcon"></div>
+    <div class="vChooseDropDown">
+        <div class="vChooseOpt" data-value="-1">All Resources</div>
+        <div class="vChooseOpt" data-value="CMDSASSIGNMENT">Assignments</div>
+        <div class="vChooseOpt" data-value="CMDSDOCUMENT">Documents</div>
+        <div class="vChooseOpt" data-value="CMDSFILE">File</div>
+        <div class="vChooseOpt" data-value="CMDSTEST">Tests</div>
+        <div class="vChooseOpt" data-value="CMDSVIDEO">Videos</div>   
+        #{if target=="RESOURCES"}
+        <div class="vChooseOpt" data-value="FOLDER">Folders</div>
+        <div class="vChooseOpt" data-value="CMDSQUESTIONSET">Question sets</div>                                                               
+        <div class="vChooseOpt" data-value="CMDSMODULE">Modules</div>   
+        <div class="vChooseOpt" data-value="CMDSQUESTION">Questions</div>
+        #{/if}        
+        #{elseif target=="POPUP_RESOURCES"}
+        <div class="vChooseOpt" data-value="FOLDER">Folders</div>
+        #{/elseif}
+        #{elseif target=="LIBRARY_RESOURCES"}
+        <div class="vChooseOpt" data-value="CMDSQUESTION">Questions</div> 
+        <div class="vChooseOpt" data-value="CMDSMODULE">Modules</div>                                                               
+        #{/elseif}                                                      
+    </div>
+</div>   

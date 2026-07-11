@@ -1,0 +1,177 @@
+/* @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,700|Roboto:300,400,500,700); */
+@font-face {
+    font-family: Ubuntu;
+    src: url(../../fonts/Ubuntu-Regular.ttf);
+} 
+#myProgramsPage{
+	font-family: 'Ubuntu', sans-serif;
+    position: relative;
+    z-index: 2;
+}
+.myProgramInfoPopup,
+.singleProgramPopup{
+    font-family: 'Ubuntu', sans-serif;
+    padding: 35px;
+    width: 520px;
+}
+.singleProgramPopup .signupPopupButton{
+    margin:0;
+}
+#categoryProgramsSection{
+	padding:40px 0;
+}
+.orgButton {
+	background-color: blue;
+	padding: 10px 50px;
+	font-weight: bold;
+	font-size: 16px;
+	color: #FFF;
+	cursor: pointer;
+	border-radius: 2px;
+}
+.vpopupBodyHolder{
+        border:3px solid #FEA918;
+        border-radius:5px;
+        box-shadow: none;
+}
+.myEnrolledPrograms{
+	background-color:white;
+	padding:20px 50px;
+}
+#categoryProgramsSection{
+	padding:20px 0;
+}
+.availablePrograms{
+	background-color:white;
+}
+.catProgramText{
+	position:relative;
+	top:10px;
+}
+.availablePrograms .categoryProgramsContainer{
+	margin-top:40px;
+}
+#myProgramsPage .categoryProgramsContainer{
+	border-bottom:0px;
+}
+.big28{
+	font-size:24px;
+	line-height:25px;
+}
+.spriteImg{
+        background-image:url('/public/images/microsite/siteSprite.png');
+        background-repeat:no-repeat;
+        display:inline-block;
+        font-size:1px;
+}
+.singleProgramPopup .skipToHome{
+	display:none;
+}
+#myProgramsPage .catProgramPrice{
+	margin-top:6px;
+}
+#myProgramsPage .padTopBottom{
+	padding:10px 0;
+}
+#topLoader{
+	z-index: 3000;
+}
+.buyProgramPopup{
+	padding: 35px;
+	width: 520px;
+}
+.sectionPayInfoPopup{
+	padding:15px 25px;
+	min-width:200px;
+}
+.partOfProgram,
+.paymentSuccess{
+	color:#8CC92D;
+}
+.paymentFailed{
+	color:#F01C0A;
+}
+.siteProgramHolder:hover .showUserPaymentInfo{
+	visibility:visible;
+}
+.catProgramDetailInfo{
+	padding: 25px 25px 30px;
+        background-color: #F4F4F4;
+        margin-top: 12px;
+}
+.catProgramDesc{
+        color:#666;
+        margin:9px 0 22px;
+}
+.titleRobotoMedium14{
+        font-size:14px;
+        color:#333;
+        font-weight:500;
+	font-family:Ubuntu;
+}
+.myProgramInfoPopup{
+        padding: 35px;
+        width: 520px;
+}
+.catProgramPrice{
+        color:#000;
+        font-size:18px;
+        margin-top:10px;
+        background-color: #f4f4f4;
+}
+.catProgramPrice.freeProgram{
+	color:#8CC92D;
+	font-weight:bold;
+}
+.catProgramCourses{
+    margin:10px 0 25px;
+    color:#666;
+    font-size:12px;
+    padding-left: 15px;
+    list-style-image: url('/public/images/microsite/bullet.png');
+}
+.myProgPaymentInfo{
+	padding: 9px 30px;
+	margin-left:10px;
+	border-radius:2px;
+}
+.applyCouponButton{
+    padding:6px 22px;
+    font-size:14px;
+}
+.packageSelect{
+	padding: 8px;
+	font-size: 16px;
+	width: 290px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+.packageSelectText {
+	font-size: 18px;
+	margin-left: 25px;
+	margin-right: 5px;
+}
+.signUpNowBtn{
+    text-align: center;
+    padding: 12px 0 10px;
+    font-size: 20px;
+    font-weight: bold;
+    outline: none;
+    border: 0px;
+    border-radius: 4px;
+    width: 250px;
+    display: inline-block;
+}
+.enrollProgText{
+    font-size:16px;
+    font-weight:bold;
+    color:#333;
+}
+.skipToHome {
+    position: absolute;
+    margin-left: 93px;
+}
+.redirectForTransaction.disabled {
+    background: #fea91866;
+    transition: all 0.1s ease-out;
+}

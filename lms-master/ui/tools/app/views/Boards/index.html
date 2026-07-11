@@ -1,0 +1,38 @@
+#{extends 'main.html' /}
+#{set title:'Tools:Boards' /}
+<div id="boardsPage">
+    #{respStatus /}
+    <div class="uploadDiv">
+        <div class="normalHeading">
+            Upload Global Tree
+            <a class="viewBoards" href="/globalboards">View Boards</a>
+        </div>
+        <form action="@{Boards.uploadGlobalTree}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="uploadFileParamName" value="inputFile">
+            <input type="file" name="boardFile" max-size="5120" required>
+            <input type="submit" value="Upload" class="blueButton"/>
+        </form>            
+    </div>
+    <div class="uploadDiv">
+        <div class="normalHeading">
+            Upload Consumer Tree
+            <a class="viewBoards" href="/consumerboards">View Boards</a>
+        </div>
+        <form action="@{Boards.uploadConsumerTree}" method="post" enctype="multipart/form-data">
+            <input type="text" placeholder="Enter the Consumer tree name" required size="30" name="treeName">
+            <input type="hidden" name="uploadFileParamName" value="inputFile">
+            <div class="checkBoxesDiv" data-error="Select atleast one grade" data-min-select="1">
+                <input type="checkbox" name="grades" value="K12"/>K12
+                <input type="checkbox" name="grades" value="UND_GRAD"/>Under Graduate
+                <input type="checkbox" name="grades" value="GRAD"/>Graduate
+                <input type="checkbox" name="grades" value="POST_GRAD"/>Post Graduate
+            </div>
+            <input type="file" name="boardFile" max-size="5120" required>
+            <input type="submit" value="Upload" class="blueButton"/>
+        </form>            
+    </div>    
+</div>
+<script type="text/javascript">
+    $("#boardsMenu").addClass("activeMenuItem");
+</script>
+    

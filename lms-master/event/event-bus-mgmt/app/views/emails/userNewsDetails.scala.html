@@ -1,0 +1,7 @@
+@(host:String)(orgId:String)(actor:org.json.JSONObject)
+
+<span style="display:inline;">
+@*<img style="width: 30px; height: 30px; display:inline-block;vertical-align:middle;background-color:#CCC;"
+	src="@actor.getString("thumbnail")" alt="@actor.getString("firstName") @actor.getString("lastName")" />*@
+<a style="display:inline-block;color:#4699CF;text-decoration:none;" href="@host/organization/@orgId/profile/@actor.getString("id")">@actor.getString("firstName") @actor.getString("lastName")</a>
+</span>

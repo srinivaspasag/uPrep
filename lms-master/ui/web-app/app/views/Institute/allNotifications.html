@@ -1,0 +1,25 @@
+<div id="userAllNotifcations">
+   <div class="pageHolderM">
+	<div class="" style="margin-top:25px;">
+		<span class="big20">&{'TXT_NOTIFICATIONS'}</span>
+		<span class="big12 right">
+			<span>Showing - </span>
+			<span class="boldy notisCurCount"></span>
+		</span>
+	</div>
+	<div class="greyUnderline"></div>
+	<div class="notificationsHolder"></div>
+   </div>
+</div>
+<script type="text/javascript">
+        var instHmPgOpenTimer;
+        $(function(){
+                if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+                instHmPgOpenTimer = setInterval(function(){
+                        if(institute && institute.notifications){
+                                clearInterval(instHmPgOpenTimer);
+                                institute.notifications.init();
+                        }
+                },10);
+        });
+</script>

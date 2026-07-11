@@ -1,0 +1,75 @@
+%{
+	plan = item;
+}%
+<div style="font-size: 16px;"><b>${plan.name}</b></div>
+<div>${plan.desc}</div>
+<!-- <div style="color:#666;padding-top:8px;" class="fs16"> -->
+<br>
+<span>Billing Period : </span>
+<span class="updateClientTime" data-time="${plan.details.period.from}" data-format="dd mmm, yyyy"></span>
+<span class=""> &{'TXT_TO'} </span>
+<span class="updateClientTime" data-time="${plan.details.period.till}" data-format="dd mmm, yyyy"></span>
+   <!-- </div> -->
+<div class="table-responsive">
+	<table class="table table-bordered">
+	    <tr>
+	    	<th>S. No.</th>
+	    	<th>Per User Price</th>
+	    	<th>No Of Users</th>
+			<th class="highlight">Amount</th>
+	    </tr>
+	    <tr>
+		<td>1.</td>
+		<td class="centerText">${currencyCode} ${plan.rate.value/100}</td>
+		<td class="centerText">${plan.count}</td>
+		<td class="highlight">${currencyCode} ${plan.costInfo.base/100}</td>
+	    </tr>
+	    <tr>
+		%{
+			costInfo = plan.costInfo;
+			taxes = costInfo.taxes;
+			taxesCount = taxes.length();
+		}%
+		<td colspan=2 rowspan=${3+taxesCount} class="tableBorderTop">
+			<div></div>
+		</td>
+		<td class="tableBorderTop tableBorderRight height25">
+			<span class="boldy">Sub-Total</span>
+		</td>
+		<td class="tableBorderTop tableBorderRight highlight">
+			<span class="">${currencyCode} ${util.Utilities.roundDecimals(costInfo.base/100)}</span>
+		</td>
+	    </tr>
+	    %{ 
+		totalTax = 0;
+	    }%
+	    #{list items:0..taxesCount-1,as:'taxIndex'}
+		%{ tax = taxes.get(taxIndex); totalTax += tax.calculatedTax; }%
+	    <tr>
+		<td class="tableBorderTop tableBorderRight height25">
+			<span class="boldy">${tax.category}</span>
+			<span>(${tax.desc} @ ${currencyCode}${tax.percentage})</span>
+		</td>
+		<td class="tableBorderTop tableBorderRight">
+			<span class="">${currencyCode} ${util.Utilities.roundDecimals(tax.calculatedTax/100)}</span>
+		</td>
+	    </tr>
+	    #{/list}
+	    <tr>
+		<td class="tableBorderTop tableBorderRight height25">
+			<span class="boldy" style="text-align: left;">Total Tax</span>
+		</td>
+		<td class="tableBorderTop tableBorderRight highlight">
+			<span class="">${currencyCode} ${util.Utilities.roundDecimals(totalTax/100)}</span>
+		</td>
+	    </tr>
+	    <tr>
+		<td class="tableBorderTop tableBorderRight height25">
+			<span class="boldy" style="text-align: left;">Total Amount</span>
+		</td>
+		<td class="tableBorderTop tableBorderRight highlight">
+			<span class="">${currencyCode} ${util.Utilities.roundDecimals(costInfo.total/100)}</span>
+		</td>
+	    </tr>	
+	</table>
+</div>

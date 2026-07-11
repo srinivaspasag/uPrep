@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta charset="${_response_encoding}">
+        <script type="text/javascript">
+            var redirectUrl="${redirectUrl}";
+                if(redirectUrl=="")redirectUrl="/login";
+                window.top.location=redirectUrl;
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

@@ -1,0 +1,24 @@
+    #{if !_user.equals(null)}
+        %{
+            user=_user;
+            getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+            userId=getUserClassAndUrl.id;
+        }%
+        <a class="img20Wrapper img20Round floatLeft ${getUserClassAndUrl.className} doCStream"
+           data-user-id="${userId}" href="${getUserClassAndUrl.url}" data-cs-name="USER_IMAGE">
+            <div class="img20DummyWrapper img20DummyRound">
+               <img class="img20 img20Round" src="${user.thumbnail}" title="${user.firstName} ${user.lastName}"
+                 alt="${user.firstName} ${user.lastName}"/>
+            </div>
+        </a>
+    #{/if}
+    #{else}
+    <a class="img20Wrapper img20Round floatLeft doCStream"
+           data-cs-name="USER_IMAGE">
+        <div class="img20DummyWrapper img20DummyRound">
+            <img class="img20 img20Round" src="static/user/student-unknown.jpg" title="Anonymous"
+                 alt="Anonymous"/>
+        </div>
+    </a>
+    #{/else}
+

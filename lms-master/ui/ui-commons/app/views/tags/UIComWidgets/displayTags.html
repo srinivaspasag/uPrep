@@ -1,0 +1,107 @@
+%{
+    subjects=_subjects;
+    exams=_exams;
+    tags=_tags;
+    if(play.Play.configuration.getProperty("application.name")=="web-app"){
+        domain='WEB_APP';
+    }else{
+        domain='CMDS_APP';
+    }    
+}%
+<div class="boldy margBot10">Target</div>
+#{if exams!=null&&exams.length()>0}
+   #{list items:0..exams.length()-1,as:'fe'}
+    #{if exams instanceof org.json.JSONObject}
+    <div class='ATTTExam ATTTItem' data-name="${exams.get(fe).code}" 
+         data-brd-id="${exams.get(fe).brdId}">
+        <span class='ATTTItemName'>${exams.get(fe).code}</span>
+    </div>    
+    #{/if}
+    #{else}
+    <div class='ATTTExam ATTTItem'>
+        <span class='ATTTItemName'>${exams.get(fe)}</span>
+    </div> 
+    #{/else}
+   #{/list}
+#{/if}
+#{else}
+<div class="time">Not Specified</div>
+#{/else}
+    
+<div class="boldy margTop20">Subject/Topics</div>
+#{if subjects!=null&&subjects.length()>0}    
+       #{list items:0..subjects.length()-1,as:'fs'}
+       %{
+            sub=subjects.get(fs);
+            if(sub.has('brdId')){
+                 subId=sub.brdId;
+            }else if(sub.has('_id')){
+             subId=sub._id;
+            }        
+       }%
+        <div class='ATTTSubject ATTTItem' data-name="${sub.name}"
+             data-brd-id="${subId}">
+            <span class='ATTTItemName'>${sub.name}</span>
+        </div>
+       #{/list}
+#{/if}
+#{else}
+<div class="time">Not Specified</div>
+#{/else}
+
+
+#{if domain=="WEB_APP"}
+    #{if subjects!=null&&subjects.length()>0&&subjects.get(0).has('children')&&subjects.get(0).children.length()>0}
+    %{
+        topics=subjects.get(0).children;
+    }%
+    #{list items:0..topics.length()-1,as:'t'}
+    %{
+        topic=topics.get(t);
+    }%
+        <div class='ATTTTopic ATTTItem' data-name="${topic.name}"
+             data-brd-id="${topic.brdId}">
+            <div class="ATTTTopicNameDiv">
+                <span class='ATTTTopicName ATTTItemName'>${topic.name}</span>
+            </div>
+            <div class='ATTTSubTopicsDiv' id="ATTTTSubTopicsDiv_${topic.brdId}">
+                #{if topic.has('children')&& topic.children.length()>0}
+                    #{list items:0..topic.children.length()-1,as:'st'}
+                        %{
+                            subTopic=topic.children.get(st);
+                        }%
+                        <div class='ATTTSubTopic ATTTItem' data-name="${subTopic.name}" data-brdId="${subTopic.brdId}">
+                            <div class="ATTTSubTopicNameDiv">
+                                <div class="ATTTSubSubTopicLeftLine"></div>
+                                <span class='ATTTSubTopicLine displayATTTSubTopicLine'></span>
+                                <span class='ATTTSubTopicName ATTTItemName'>${subTopic.name}</span>
+                            </div>
+                            #{if subTopic.has('children')&&subTopic.children.length()>0}
+                            <div class="ATTTSubSubTopicsDiv">
+                                #{list items:0..subTopic.children.length()-1,as:'sst'}
+                                %{
+                                    subSubTopic=subTopic.children.get(sst);
+                                }%
+                                <div class="ATTTSubSubTopic ATTTItem" data-name="${subSubTopic.name}" data-brd-id="${subSubTopic.brdId}">
+                                    <span class='ATTTSubSubTopicLine'></span>
+                                    <span class='ATTTSubSubTopicName ATTTItemName'>${subSubTopic.name}</span>
+                                </div>
+                                #{/list}
+                            </div>
+                            #{/if}
+                        </div>
+                    #{/list}
+                #{/if}
+            </div>
+        </div>
+    #{/list}
+    #{/if}
+#{/if}
+#{if tags!=null&&tags.length()>0}
+<div style="margin-top: 40px;">
+    <div class="boldy margBot10">Other tags</div>
+    #{list items:0..tags.length()-1,as:'tag'}
+    <label class="normalTag">${tags.get(tag)}</label>
+    #{/list}
+</div>
+#{/if}

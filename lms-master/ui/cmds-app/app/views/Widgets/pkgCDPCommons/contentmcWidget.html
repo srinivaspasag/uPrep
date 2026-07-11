@@ -1,0 +1,45 @@
+%{
+    if (params.libraryType=='CDP_LIBRARY'){
+        optsType='CDP_CONTENT';
+    }else{
+        optsType='PACKAGE_CONTENT';
+    }
+}%
+<div class="mcWidget">        
+    <div class="cmdsTableOptsAndSortDiv">
+      <div class="cmdsTableCheckedOpts floatLeft" data-opts-type="${optsType}"></div>  
+<!--      <div class="cmdsTableSortDiv">
+          Sort by
+        <div class="vChoose mcvChoose" data-value="-1" data-onchange="onmcvChooseChange"
+             data-param-name="eType" data-beforemccall="seteTypesForPkgs">
+            <div class="vChooseHead width100">All Types</div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt" data-value="-1">All </div>
+                <div class="vChooseOpt" data-value="DOCUMENT">
+                    <span class="docIcon docIconDOCUMENT"></span>
+                    Documents
+                </div>
+                <div class="vChooseOpt" data-value="VIDEO">
+                    <span class="docIcon docIconVIDEO"></span>
+                    Videos
+                </div>
+                <div class="vChooseOpt" data-value="TEST">
+                    <span class="prdtIcon prdtIconTEST"></span>
+                    Tests
+                </div>
+                <div class="vChooseOpt" data-value="ASSIGNMENT">
+                    <span class="prdtIcon prdtIconASSIGNMENT"></span>
+                    Assignments
+                </div>
+            </div>
+        </div>          
+      </div>-->
+      <div class="cleaner_with_divider">&nbsp;</div>
+    </div>          
+    <div id="leftSection">
+    </div>    
+    <div id="tableSection" class="LMHandlerDiv">            
+      #{include "Widgets/pkgCDPCommons/contentTable.html"/}
+    </div>
+</div>  

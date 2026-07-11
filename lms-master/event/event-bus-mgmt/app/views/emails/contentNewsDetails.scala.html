@@ -1,0 +1,40 @@
+@(host:String)(orgId:String)(src:org.json.JSONObject)
+@import org.json.JSONObject
+@defining( src.getString("type") ){ srcType =>
+<span style="display:inline;">
+	@if(src.getString("type")=="DISCUSSION"){
+		<span> @Messages("ENTITY_NAME_"+src.getString("type").toUpperCase()) : @getContentLink(host)(orgId)(src)(null)</span>
+	}else{
+	   @if(src.getString("type")=="STATUSFEED"){
+			<a href="@host/organization/@orgId/feed/@src.getString("id")" 
+        			style="color:#4699CF;text-decoration:none;">
+				<span> Post</span>
+			</a>
+	   }else{
+	   	@if(src.getString("type")=="QUESTION"){
+		
+			<span> @getContentLink(host)(orgId)(src)("Question") </span>
+	   	}else{
+		
+			@if( src.getString("type") == "SOLUTION"){
+				<span>@Messages("ENTITY_NAME_"+src.getString("type").toUpperCase()) added on   @getContentLink(host)(orgId)(src)(null)</span>
+			}else{	
+				@if( src.getString("type")=="REMARK" ){
+					<span> @Messages("ENTITY_NAME_"+src.getString("type").toUpperCase()) : @src.getString("content") </span>
+				}else{
+				    @if( src.getString("type")=="COMMENT" ){
+				   	<span> @getContentLink(host)(orgId)(src)(null)</span>
+				    }else{
+					@if( src.getString("type") == "CHALLENGE" ){
+					  <span> @Messages("ENTITY_NAME_"+src.getString("type").toUpperCase()) : @src.getString("name") </span>
+					}else{
+				   	  <span> @Messages("ENTITY_NAME_"+src.getString("type").toUpperCase()) : @getContentLink(host)(orgId)(src)(null)</span>
+					}
+				    }
+				}
+		   	}	
+		}
+	   }
+	}
+</span>
+}

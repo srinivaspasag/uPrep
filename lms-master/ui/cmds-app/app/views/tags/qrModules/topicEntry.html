@@ -1,0 +1,29 @@
+%{ 
+    entry=_entry;
+    entryTitle="";
+    if(entry!=null){
+        entryTitle=entry.name;
+    }
+    extraClass=' moduleEntryFinalised';    
+    if(_isFinalised==null){
+        extraClass='';
+    }
+}%
+<div class="moduleEntry moduleEntryTopicType moduleEntryTopicTypeWithInput${extraClass}"
+     rel="moduleEntryTopicTypeWithInput" data-entry-title="${entryTitle}">
+    <div class="moduleEntryRightSec">
+        <a class="addContentToTopic">Add Content</a>
+        <span class="moduleEntryDeleteNotation moduleDeleteTopicType"></span>
+    </div>
+    <div class="moduleEntryLeftSec">
+        <div class="moduleEntryTopicTitleCount margRight10">
+            A
+        </div>
+        <div class="inputDiv moduleEntryTopicInputDiv">
+            <input type="text" class="moduleEntryTopicInput" value="${entryTitle}"
+                   placeholder="&{'MODULE_ADD_TITLE'}"/>
+        </div>
+    </div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+    <div class="moduleEntryMoveDisplayer"></div>
+</div> 

@@ -1,0 +1,105 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    $(function(){
+        showNoTabSec("TEST");
+    });
+</script>
+#{/if}
+<div class="pageHolderM instTestToppers" data-test-id="${params.testId}">
+	<div class="leftAndRelative testCreationLeftBar CSWidget" data-widget="LEFT_BAR">
+		#{include '/tags/test/testDetailsLeftBar.html' /}
+		#{if testAttemptData!=null && testAttemptData.has('result') && testAttemptData.result.has('avgMarks') && testAttemptData.result.has('attemptCount')}
+		<div class="leftAndRelative testTakenSummary">
+			<span class="avgMarks">
+				<span class="smally">Average Score : </span>
+				<span class="boldy big16 padText blackTextColor">${Math.round(testAttemptData.result.avgMarks)}</span>
+			</span><br/>
+			<span class="avgTimeTaken">
+				<span class="smally">Average Time <span style="padding-left:5px;">:</span> </span>
+				%{
+					timeObj=uicom.util.Utilities.getTimeFromMiliSec(testAttemptData.result.avgTime);
+				}%
+				<span class="boldy big16 blackTextColor">${timeObj.hrs}:${timeObj.mins} hrs</span>
+			</span>
+		</div>
+		#{/if}
+	</div>
+#{if toppersData!=null && toppersData.errorCode=="" &&toppersData.has('result') && toppersData.result.has('leaderboard') && toppersData.result.leaderboard.length()>0}
+	<p>
+		<div class="boldy big14 centerText">Students Who Attempted the test</div>
+	</p>
+	<div class="left relative leaderBoardHolderTable CSWidget" data-widget="TEST_LEADERS">
+		<div class="left relative leaderBoardScrollHolder">
+		<table cellpadding="8" cellspacing="0" border="0" id="instTestToppersTable">
+			%{
+				topper = toppersData.result.leaderboard.get(0);
+			}%
+			<tr style="height:0px;">
+				<th>Rank</th>
+				<th>Student</th>
+			#{if topper.has('questionDistribution') && topper.questionDistribution.length()>0}
+        			#{list items:0..topper.questionDistribution.length()-1,as:'sIndex'}
+					<th>${topper.questionDistribution.get(sIndex).name}</th>
+				#{/list}
+			#{/if}
+				<th>Total</th>
+				<th>Time Taken</th>
+				<th style="width:110px;">Student Result Analytics</th>
+			</tr>
+			#{include 'tags/institute/testToppersTR.html'/}
+		</table>
+		<div id="instMoreTestToppers"></div>
+		</div>
+	</div>
+	<div class="left relative chooseLeaderBoardMarksPercent CSWidget" data-widget="RESULT_ANALYTICS_TEST_LIST">
+		<input type="radio" name="selectMarksOrPercentage" class="left absolute showLeadersMarks doCStream" checked=true value="marks"/><span class="absolute left">Marks</span><br/>
+		<input type="radio" name="selectMarksOrPercentage" class="left absolute showLeadersPercentage doCStream" value="percentage"/><span class="absolute left">Percentage</span><br/>
+	</div>
+	</br>
+#{/if}
+#{else}
+	<div class="left relative big14 boldy" style="margin-top:40px;text-align:center;width:60%">
+		No Student data for this test available yet
+	</div>
+#{/else}
+        <div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	var start = 0;
+	var testId = "${params.testId.raw()}";
+	var size = 50;
+	$(".instTestToppers").on("click",".showLeadersMarks",function(){
+		$(".leaderBoardShowPercentage").addClass("nonner");
+		$(".leaderBoardShowMarks").removeClass("nonner");
+	}).on("click",".showLeadersPercentage",function(){
+		$(".leaderBoardShowPercentage").removeClass("nonner");
+		$(".leaderBoardShowMarks").addClass("nonner");
+	});
+	$(".instTestToppers").on("click",".instTATestLeadersLoadMore",function(){
+		var start = $(this).data("start");
+		var params = {'testId':testId,'start':start,'size':size};
+		smallLoader("#instMoreTestToppers");
+		showTopLoader();
+		$.get("/Institute/getMoreTestLeaders",params,function(data){
+			hideTopLoader();
+			$("#instMoreTestToppers").html("");
+			$("#instTestToppersTable").append(data);
+			putLoadMoreDiv();
+		});
+	});
+	function putLoadMoreDiv(){
+		var loadMoreDiv = $(".leaderBoardScrollHolder").find(".instTATestLeadersLoadMore");
+		if(loadMoreDiv.get(0)){
+			$("#instMoreTestToppers").append(loadMoreDiv);
+		}
+		var tmpS = $("#instTestToppersCount").val();
+		if(tmpS){
+			start = tmpS+1;
+			$("#instTestToppersCount").remove();
+		}
+	}
+	putLoadMoreDiv();
+	window.scrollTo(0,0);
+});
+</script>

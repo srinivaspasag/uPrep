@@ -1,0 +1,272 @@
+#myContents{
+position:absolute;
+min-height:100%;
+}
+.myContentsLHS{
+width:760px;
+margin:5px 0 50px 0;
+}
+.topBarMyContents{
+width:100%;
+}
+.selectMyContents{
+width:120px;
+height:20px;
+margin:16px 0 0 2px;
+}
+.myContentsNavBar{
+margin:20px 0 0 280px;
+height:20px;
+}
+.myContentsNavBar .selectedTab{
+background-color:#373737;
+border-radius:2px;
+color:#fff;
+}
+.myContentsNavBar .navTab{
+padding:2px 5px 0 5px;
+cursor:pointer;
+}
+.myContentsNavBar .navDivider{
+height:100%;
+border-left:1px solid #ccc;
+padding:0 2px 0 2px;
+border-radius:2px;
+}
+.myContentsEachContentList{
+width:100%;
+margin-top:15px;
+background-color:rgba(255, 255, 255, 0.8);
+box-shadow:1px 1px 5px -2px rgba(50, 50, 50, 0.62);
+}
+.myContentsItemsHead{
+width:100%;
+height:40px;
+border-bottom:1px solid #F6F6F6;
+}
+.myContentsItemsHead .headText{
+padding:16px 5px 0 10px;
+}
+.myContentsHeadLeftArrow,
+.myContentsHeadRightArrow{
+width:27px;
+height:27px;
+margin:8px 5px 5px 0;
+cursor:pointer;
+}
+
+.myContentsHeadRightArrow{
+background:url('/public/images/questions/ANextQues.png') no-repeat;
+}
+.myContentsHeadLeftArrow{
+background:url('/public/images/questions/APrevQues.png') no-repeat;
+}
+.rightArrowDisabled{
+background:url('/public/images/questions/INextQues.png') no-repeat;
+}
+.leftArrowDisabled{
+background:url('/public/images/questions/IPrevQues.png') no-repeat;
+}
+.myContentsListsHolder{
+width:100%;
+max-height:130px;
+overflow:hidden;
+}
+.myContentsListsHolderPagination{
+max-height:532px;
+}
+.myContentsRHS{
+width:227px;
+margin:0 0 0 15px;
+}
+.myContentsCreateTestBlock,
+.myContentsUploadBlock,
+.myContentsCreatePlaylistBlock{
+	margin-top:53px;
+	width:100%;
+	height:380px;
+    webkit-box-shadow:-3px 0px 6px -5px rgba(50, 50, 50, 0.62);
+    moz-box-shadow:-3px 0px 6px -5px rgba(50, 50, 50, 0.62);
+    ms-box-shadow:-3px 0px 6px -5px rgba(50, 50, 50, 0.62);
+    box-shadow:-3px 0px 6px -5px rgba(50, 50, 50, 0.62);
+    background: url("/public/images/questions/widgetBorder.jpg") repeat-x scroll 0 bottom transparent;
+    background-color: #fcfbfb;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+.myContentsUploadBlock{
+height:160px;
+margin-top:20px;
+}
+.myContentsCreateTestBlock{
+height:100px;
+margin-top:20px;
+}
+.myContentsCreatePlaylistBlock .myContentCreatePlaylistImg,
+.myContentsCreateTestBlock .createTest,
+.myContentsCreatePlaylistBlock .createPlaylist{
+margin:15px;
+}
+.myContentsUploadBlock .uploadContent{
+float:left;
+margin:15px;
+width:175px;
+}
+.popularUploadContentsText{
+left:48px;
+top:-36px;
+}
+.myContentsUploadText{
+width:86%;
+margin:15px;
+text-align:center;
+}
+/* user viewing of his contents*/
+.myContentsPageTopSection{
+width:100%;
+/*max-height:400px;
+padding-bottom:20px;
+border-bottom:1px solid #ccc;*/
+}
+.contentsRecomendation{
+height:280px;
+width:100%;
+border:1px solid #d9e0e8;
+border-radius:0 0 8px 8px;
+overflow:hidden;
+}
+.contentsRecomendation .contentRecomendationHolder{
+width:100%;
+height:240px;
+background-color:#eaeff3;
+}
+.contentsRecomendation .contentRecomendationInfo{
+width:100%;
+height:40px;
+background-color:#fafbfd;
+border-radius:0 0 8px 8px;
+}
+.contentRecomendationInfo .peopleFollowingRecommendation{
+padding:12px 0 0 20px;
+}
+.contentRecomendationInfo .recommendationMatchingTags{
+padding:12px 20px 0 0px;
+float:right;
+}
+.contentRecomendationHolder .contentReccHeader{
+margin:25px 0 0 60px;
+width:400px;
+}
+.recommendationRightArrow,
+.recommendationLeftArrow{
+width:12px;
+height:16px;
+background-size:80%;
+cursor:pointer;
+margin: 0 8px 0 10px;
+}
+.recommendationDisableArrowLeft{
+background:url('/public/images/my-content/recommendation-prev-dis.png') no-repeat;
+}
+.recommendationDisableArrowRight{
+background:url('/public/images/my-content/recommendation-next-dis.png') no-repeat;
+}
+.recommendationLeftArrow{
+background:url('/public/images/my-content/recommendation-prev.png') no-repeat;
+}
+.recommendationRightArrow{
+background:url('/public/images/my-content/recommendation-next.png') no-repeat;
+}
+.contentRecommendationList{
+width:975px;
+max-height:170px;overflow:hidden;
+margin:25px;
+}
+.contentRecommendationEach{
+width:290px;
+height:120px;
+margin:10px 0 0 10px;
+padding:10px 0 10px 10px;
+border-right:1px solid #ccc;
+}
+.contentRecommendationEach .recDocHolder{
+width:218px;
+overflow:hidden;
+height:85px;
+right:3px;
+}
+.contentRecommendationEach .recomUploader,
+.contentRecommendationEach .recommendationDocumentsType,
+.contentRecommendationEach .followRecommendationBtn{
+opacity:0;
+filter:alpha(opacity=0);
+}
+.contentRecommendationEach:hover{
+background-color:#fff;
+border-radius:2px;
+}
+.contentRecommendationEach:hover .recomUploader,
+.contentRecommendationEach:hover .recommendationDocumentsType,
+.contentRecommendationEach:hover .followRecommendationBtn{
+opacity:1;
+filter:alpha(opacity=100);
+}
+.recommendationDocumentsType{
+padding:2px 5px 2px 5px;
+background-color:#f1f584;
+border-radius:2px;
+margin-left:8px;
+}
+.contentRecommendationText{
+padding:1px 8px 0 8px;
+min-width:90%;
+}
+.recommendationBookCover{
+background:url('/public/images/questions/docBack.png') no-repeat;
+width:70px;
+height:85px;
+margin:1px;
+}
+.followRecommendationBtn{
+clear:both;
+margin-top:-4px;
+right:3px;
+z-index:200;
+}
+.myContentSearch{
+width:100%;
+height:45px;
+margin-top:15px;
+}
+.myContentSearch .selectMyContents{
+margin:0 0 0 7px;
+}
+.chooseContents{
+min-width:150px;
+height:25px;
+overflow:hidden;
+}
+.chooseMyContents,
+.chooseInstituteContents{
+padding:4px 10px 0 10px;
+height:19px;
+margin:1px 1px 1px -2px;
+cursor:pointer;
+}
+.filterMyContentsSearchBy{
+margin:15px 375px;
+}
+.filterMyContentsSearchBy .depthTab{
+margin:0px;
+padding:8px 0;
+font-weight:bold;
+cursor:pointer;
+}
+.FilterForTestOnly .SSCTabs{
+	margin:5px 0;
+}
+.FilterForTestOnly .SSCTab{
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 2px;
+	border-right:0px;
+}

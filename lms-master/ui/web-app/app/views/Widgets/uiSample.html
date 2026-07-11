@@ -1,0 +1,306 @@
+%{
+	myProfileLink = "/myprofile";
+	myProfileClass = "openMyProfile";
+	myUserId = session.get('userId');
+	if(params.orgId!=null && !params.orgId.isEmpty()){
+		myProfileLink = "/organization/"+params.orgId+"/profile/"+session.get('userId');
+		myProfileClass = "openInstProfile";
+	} 
+}%
+<div id="uiSamplesDiv" class="nonner">
+    <div id="img30Sample" class="nonner">
+        <a class="img30Wrapper img30Round ${myProfileClass}" href="${myProfileLink}" data-user-id="${myUserId}">
+            <div class="img30DummyWrapper img30DummyRound">
+                <img src="${session.profilePic}" class="img30 img30Round myCurrentPic" alt="${session.fullname}"/>
+            </div>
+        </a>
+    </div>
+    <div id="img20Sample" class="nonner">
+        <a class='img20Wrapper img20Round ${myProfileClass}' href="${myProfileLink}" data-user-id="${myUserId}">
+            <div class="img20DummyWrapper img20DummyRound">
+                <img src='${session.profilePic}' class='img20 img20Round myCurrentPic' alt="${session.fullname}"/>
+            </div>
+        </a>
+    </div>
+
+    <div id="peoplePopupSample" class="nonner">
+        <div class="peoplePopup">
+            <div class="peoplePopupHead big16">
+                <span class="boldy poeplePopupHeadName"></span> (<label class="peoplePopupCount">0</label>)
+            </div>
+            <div class="peoplePopupPeople LMHandlerDiv margTop15"></div>
+        </div>
+    </div>
+
+    <div id="quesAddToStep1Sample" class="nonner">
+        <div class="quesAddToStep1">
+            <span class="quesAddToImg"></span><span class="boldy">Add to</span>
+            <div class="cleaner_with_divider" style="border-bottom: 1px solid #cccccc">&nbsp;</div>
+            <span class="boldy bigger margRight10">Playlist</span>
+            <select class="quesAddToStep1Select margTop margBot5"></select>
+        </div>
+    </div>
+    <div id="quesAddToPLSample" class="nonner">
+        <div class="quesAddToPLDiv">
+            <div class="boldy">
+                <span class="quesAddToImg"></span>Add To Playlist
+            </div>
+            <div class="centry quesAddToPLSelectDiv"></div>
+            <div class="cleaner_with_divider" style="border-bottom: 1px solid #cccccc">&nbsp;</div>
+            <div class="quesAddToPLBody"></div>
+            <div class="centry">
+                <span class="greenButton submitQuesAddToPL margRight10 cancelCommonPopup">Submit</span>
+                <a class="cancelCommonPopup liner">Cancel</a>
+            </div>
+        </div>
+    </div>
+    <div id="QSInputerSample" class="nonner">
+        <div class="inputerHat"></div>
+        <div class="QSInputer inputer CSWidget inputerRTE" data-widget="POST_SOLUTION">
+            <div class="img30Holder floatLeft"></div>
+            <div class="inputerContent40">
+                <div class="inputerRTEDiv"></div>
+                <div class="inputerBtns margTop">
+                    <span class="blueSubmitButton submitQSInput doCStream" data-cs-name="SUBMIT_SOLUTION_BUTTON">Submit</span>
+                    <a class="liner smally margLeft5 cancelInputerRTE">Cancel</a>
+                </div>
+                <div class="cleaner_with_divider">&nbsp;</div>
+            </div>
+        </div>
+        <div class="LMHandlerDiv"  data-widget="SOLUTIONS_HOLDER"></div>
+    </div>
+    <div id="QSSample" class="nonner">
+        <div class='quesSoln'>
+            <div class='quesSolnVoteDiv'>
+                #{widgets.upVoteItem entityType:"SOLUTION",entityId:'',upVote:0,voted:false /}
+            </div>
+            <div class="quesSolnContent">
+                <div class="quesSolnContentBody">
+                    <div class="margBot10">
+                        <div class="img20Holder floatLeft"></div>
+                        <div class="img20Lefter">
+                            <a  class="${myProfileClass} myCurrentName" href="${myProfileLink}" data-user-id="${myUserId}">${session.fullname}</a>
+                            <span class='time floatRight'>few moments ago</span>
+                        </div>
+                    </div>
+                    <div class="quesSolnText rteTextDiv"></div>
+                    <div class='floatRight smally margHalfTop doCStream' data-cs-name="SHOW_COMMENTS">
+                        <a class='liner showQSComments'><span>Show Comments(</span><label>0</label>)</a>
+                    </div>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                    <div class="margHalfTop"></div>
+                </div>
+                <div class="QSCommentsHolder nonner margTop20"></div>
+            </div>
+        </div>
+    </div>
+    <div id="commItemSample" class="nonner">
+        <div class='commItem CSWidget' data-widget="COMMENT">
+            <div class="commItemBody">
+                <div class='commItemLeftSec'>
+                    <div class="img30Holder floatLeft"></div>
+                    <div class='margHalfTop smally commReviewVoteDiv centry'>
+                        #{widgets.upVoteItem entityType:"COMMENT",entityId:'',upVote:0,voted:false /}                    
+                    </div>
+                </div>
+                <div class='itemContent40'>
+                    <div class='commItemWhity'>
+                        <div class="itemHorn"></div>
+                        <div class='margBot10'>
+                            <a  class="${myProfileClass} myCurrentName" href="${myProfileLink}" data-user-id="${myUserId}">${session.fullname}</a> says
+                            <span class='floatRight time'>few moments ago</span>
+                        </div>
+                        <div class="commItemText rteTextDiv"></div>
+                    </div>
+                    <div class="commItemRepliesSec">
+                        <div>
+                            <a class='commRepliesNum ptrTagInline doCStream' data-cs-name="POST_REPLY_BUTTON"><label>0</label> replies</a>
+                            <a class='replyToCommItem ptrTagHovered doCStream' data-cs-name="POST_REPLY_BUTTON">Reply</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="replyWidgetHolder"></div>
+        </div>
+    </div>
+    <div id="instCommItemSample" class="nonner">
+        <div class='commItem'>
+            <div class="commItemBody">
+                <div class='commItemLeftSec'>
+                    <div class="img30Holder floatLeft">
+		    </div>
+                </div>
+                <div class='itemContent40'>
+                    <div class='commItemWhity'>
+                        <div class='margBot15'>
+                            <a  class="openInstProfile big14 doCStream" data-user-id="${session.userId}" href="/organization/${params.orgId}/profile/${session.userId}">${session.fullname}</a>
+                            <span class='time'>few moments ago</span>
+                        </div>
+                        <div class="commItemText rteTextDiv big13"></div>
+                    #{institute.widgets.dbtComReply entityType:"COMMENT",entityId:'',upVote:0,voted:false,replies:0 /}
+                    </div>
+                </div>
+            </div>
+            <div class="replyWidgetHolder"></div>
+        </div>
+    </div>
+    <div id="replyItemSample" class="nonner">
+        <div class='replyItem'>
+            <div class="img20Holder floatLeft"></div>
+            <div class='itemContent30'>
+                <div class='replyItemWhity'>
+                    <div class="itemHorn"></div>
+                    <div class='margBot10'>
+                        <a  class="${myProfileClass} myCurrentName" href="${myProfileLink}" data-user-id="${myUserId}">${session.fullname}</a> says
+                        <span class='floatRight time'>few moments ago</span>
+                    </div>
+                    <div class="replyItemText"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="replyWidgetSample" class="nonner">
+        <div class="replyWidget">
+            <div class="replyInputer inputer CSWidget inputerRTE" data-widget="POST_REPLY">
+                <div class="img20Holder floatLeft"></div>
+                <div class="inputerContent30">
+                    <div class="inputerRTEDiv"></div>
+                    <div class="inputerBtns margTop">
+                        <span class="blueSubmitButton submitReplyInput doCStream" data-cs-name="SUBMIT_REPLY_BUTTON">Submit</span>
+                        <a class="liner smally margLeft5 cancelInputerRTE">Cancel</a>
+                    </div>
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </div>
+            </div>
+            <div class="LMHandlerDiv" data-widget="REPLIES_HOLDER"></div>
+        </div>
+    </div>
+    <div id="commWidgetSample" class="nonner">
+       <div class="commWidget">
+            <div class="inputerHat"></div>
+            <div class="commInputer inputer CSWidget inputerRTE" data-widget="POST_COMMENT">
+                <div class="commentorImgHolder img30Holder floatLeft"></div>
+                <div class="inputerContent40">
+                    <div class="inputerRTEDiv"></div>
+                    <div class="inputerBtns margTop">
+                        <span class="blueSubmitButton submitCommInput doCStream" data-cs-name="SUBMIT_COMMENT_BUTTON">Submit</span>
+                        <a class="liner smally margLeft5 cancelInputerRTE">Cancel</a>
+                    </div>
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </div>
+            </div>
+            <div class="LMHandlerDiv"  data-widget="COMMENTS_HOLDER"></div>
+       </div>
+    </div>
+    <div id="discItemSample" class="nonner">
+                <div class='discItem'>
+                    <div class='discContentWrapper'>
+                    <div class="initiatedWrapper">
+                        <span class="img30Holder"></span>
+                        <a  class="${myProfileClass} myCurrentName" href="${myProfileLink}" data-user-id="${myUserId}">${session.fullname}</a>
+                        <span>says</span>
+                    </div>
+                    <div class="secondWrapper">
+                        <div class="margHalfTop smally commReviewVoteDiv centry">
+                            #{widgets.upVoteItem entityType:"DISCUSSION",entityId:'',upVote:0,voted:false /}
+                        </div>
+                        <div class="discTopic"></div>
+                    </div>
+                            <div class="discBottomWrapper">
+                        <a class='commentToDiscItem'>Comment</a>
+                            </div>
+
+                    </div>
+                    <div class="commentWidgetHolder"></div>
+                </div>
+    </div>
+
+
+    <!--review widget-->
+    <div id="reviewItemSample" class="nonner">
+        <div  class="reviewItem">
+            <div class="commItemLeftSec">
+                <div class="img30Holder floatLeft"></div>
+                <div class="smally commReviewVoteDiv margHalfTop linBlk">
+                    #{widgets.upVoteItem entityType:"REVIEW",entityId:'',upVote:0,voted:false /}
+                </div>
+            </div>
+            <div class="itemContent40">
+                 <img class="commPtr" src="/public/images/uicomDocuments/commPtr.png" alt="" />
+                 <a class="${myProfileClass} boldy myCurrentName" data-user-id="${session.userId}" 
+			href="${myProfileLink}" data-user-id="${myUserId}">
+                     ${session.fullname}
+                 </a>&nbsp;
+                 <span class="reviewItemText"></span>
+                <div>
+                    <span class="time">few moments ago</span>
+                    <div class="ratingStars floatRight" style="margin-top:3px;"></div>
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+        </div>
+    </div>
+
+    <!--docPage comment sample-->
+    <div id="docPageCommItemSample" class="nonner">
+        <div class="docPageCommItem" data-root-type="PAGE">
+            <div class="commItemLeftSec">
+                <div class="img20Holder floatLeft"></div>
+                <div class="smally commReviewVoteDiv margHalfTop linBlk">
+                    #{widgets.upVoteItem entityType:"COMMENT",entityId:'',upVote:0,voted:false /}
+                </div>
+            </div>
+            <div class="postShortContent itemContent40">
+                 <img class="commPtr" src="/public/images/uicomDocuments/commPtr.png" alt="" />
+                 <a class="${myProfileClass}" data-user-id="${session.userId}"
+                    href="${myProfileLink}" data-user-id="${myUserId}">
+                     <b class="myCurrentName">${session.fullname}</b> -
+                 </a>&nbsp;
+                 <span class="docPageCommItemText"></span>
+                 <div class="docCommentNo">
+                     <a style="color:#868686;">
+                         <label>0</label> replies
+                     </a>
+                 </div>
+                 <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+        </div>
+    </div>
+
+    <!--create playlist-->
+    <div id="createPlaylistSample" class="nonner">
+        <div class="boldy">Add title for your Playlist</div>
+        <input type="text" class="createPLPUNameInput">
+        <div class="rightText margTop">
+            <span class="blueSubmitButton confirmCreatePL margRight10 doCStream" data-cs-name="SUBMIT_PLAYLIST">Submit</span>
+            <a class="smally liner cancelCommonPopup">Cancel</a>
+        </div>
+    </div>
+
+    <!--rte sample-->
+    <div id="rteSample" class="nonner">
+        #{include 'UIComWidgets/rte.html' /}
+    </div>
+    <!--entry sugg sample-->
+    <div id="shareEntrySuggSample">
+        <div class="ESPTile ptrTag">
+            <div class="img30Wrapper img30Round linBlk">
+                <div class="img30DummyWrapper img30DummyRound">
+                    <img src="" class="img30 img30Round" alt=""/>
+                </div>
+            </div>
+            <div class="linBlk alignMiddle entrySuggName"></div>                            
+        </div>      
+    </div>
+
+
+
+
+    #{common.uiSamples /}
+ 
+        <!--share with sample-->
+        <div id="shareWithSample" class="nonner">
+            #{include 'UIComShare/shareWith.html' /}    
+        </div>
+</div>
+

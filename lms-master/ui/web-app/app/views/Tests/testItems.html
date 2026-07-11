@@ -1,0 +1,8 @@
+
+%{
+    tests=tests.result.tests;
+    loopStart=0;
+    loopEnd=tests.length()-1;
+    target=params.target;
+}%
+#{test.testItems tests:tests,loopStart:loopStart,loopEnd:loopEnd,target:target /}

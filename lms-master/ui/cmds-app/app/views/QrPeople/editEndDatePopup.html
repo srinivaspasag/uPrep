@@ -1,0 +1,21 @@
+%{
+  endDate=_endDate;  
+}%
+<div class="editSubscriptionEndDatePopupContainer">
+    <div class="big20" style="padding-bottom:30px;" id="uploadResourceTitle">Edit Subsciption Date</div>
+    <div class="detailsOfUser nonner" data-org-id="${allParams.orgId}" data-target-user-id="${targetUserId}" 
+        data-target-org-member-id="${targetOrgMemberId}" data-section-id="${sectionId}"></div>
+	<table width="100%">
+            <tbody class="grayHead">
+            <tr class="endDate">
+                <td>End Date:</td>
+                <td>
+                    #{common.datevChoose /}
+                </td>
+            </tr> 
+        </tbody>
+    </table>
+    <div class="rightText">
+        <div class="gBlueButton margRight5 updateEndDateOfSubscription" id="updateEndDateOfSubscription">Submit</div>
+    </div>
+</div>

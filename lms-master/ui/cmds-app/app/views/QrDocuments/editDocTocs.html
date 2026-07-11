@@ -1,0 +1,19 @@
+#{if docInfo.errorCode!=''}
+    #{common.errorCodes resp:docInfo /}
+#{/if}
+#{else}
+%{
+    actionType="EDIT_TOCS_ONLY";
+}%
+<div class="editDocTocsSec uploadPageHolder" data-doc-id='${params.docId}'>
+    <div class="gHeading">Edit Tocs of ${docInfo.result.title}</div>
+    #{include 'UIComDocuments/toc.html' /}
+    #{stylesheet src:'uicomDocuments/docUpload.css' /} 
+    <script type="text/javascript">
+        new function(){
+            var fn=function(){docView.init({domain:"CMDS_APP"});}
+            lazyLoad([{fname:"uicomDocuments/docUpload.js",cb:fn}]);
+        }();       
+    </script>    
+</div>
+#{/else}

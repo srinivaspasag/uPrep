@@ -1,0 +1,42 @@
+#{extends 'main.html' /}
+#{set title:'Add Organization' /}
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/addOrg.css'}">
+#{script src:'addOrg.js', charset:'utf-8' /}
+<div id="mainContainHolder" class="">
+   <div class="pageHolderM" style="width: auto;">
+	#{include 'Organizations/addOrgTemplate.html'/}
+   </div>
+</div>
+#{if tncVersion != null}
+   <div id="termsAndConditionHold" class="nonner" data-version="${tncVersion}" data-name="businessAgreement">
+        <div class="termsAndCondition">
+                <div class="addOrgHeading centerText">&{'FIELD_TERMS_CONDITIONS'}</div>
+		<div class="fs14 blueTextColor clickable backToTerms nonner">Back to Terms</div>
+                <div class="trmsCondBody">
+			<!--<iframe rel="nofollow" src="/terms/get/businessAgreement?version=${tncVersion}"></iframe>-->
+		</div>
+		<div style="text-align:right;">
+                        <span class="blueButton closePopup">Okay</span>
+                </div>
+	</div>
+    </div>
+#{/if}
+#{popup /}
+#{msgPopup /}
+
+#{if resp!=null && !resp.errorCode.isEmpty()}
+	<script>
+	#{if !resp.errorMessage.equals(null) && !resp.errorMessage.isEmpty()}
+		$(function(){
+			showError("${resp.errorMessage}",function(){
+				$(".captchaDiv .code").addClass("errorBorder").focus();
+			});
+		});
+	#{/if}
+	#{else}
+		$(function(){
+			showError("Something went wrong. try again later!");
+		});
+	#{/else}
+	</script>
+#{/if}

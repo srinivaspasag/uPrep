@@ -1,0 +1,150 @@
+#{if memberInfo.errorCode!=''}
+    #{common.errorCodes resp:memberInfo/}
+#{/if}
+#{else}
+%{
+    info=memberInfo.result.info;
+}%
+<div id="peoplePage" class="studentPage">
+    <div class="memberPageHead">
+        <div class="img50Wrapper">
+            <img class="img50" src="${info.thumbnail}">
+        </div>
+        %{
+            orgUserProfile=currentOrgInfo.getOrgUserProfile();
+        }%
+        <div class="linBlk">
+	    <div class="margLeft10" style="display:inline-block;">
+            	<div class="big24 color3">${info.firstName+' '+info.lastName}</div>
+            	<div style="padding-top:3px;">
+			#{people.userStatus user : info , orgUserProfile : orgUserProfile /}
+		</div>
+	    </div>
+            #{if orgUserProfile=="MANAGER"}
+		#{if !"EXT_AUTH_ORG".equals(session.get("orgAuthType"))}
+            	<div class="grayButton margLeft20 editOrgStudent" data-user-id="${info.userId}">&{'EDIT_PROFILE'}</div>
+        #{/if}
+	    	#{people.deactivateBtn user : info /}
+            <div class="grayButton margLeft20 getStudentActivity">
+                <a style="color: black!important; text-decoration: none;"  href="/qrPeople/getStudentActivity?targetUserId=${memberInfo.result.info.userId}&orgId=${memberInfo.result.info.orgId}&callingApp=cmds-app&callingAppId=cmds-app&callingUserId=${session.get('callingUserId')}&userId=${session.get('callingUserId')}&limit=50&offset=0" target="_blank">View Activity</a>
+            </div>
+            #{/if}
+        </div>
+    </div>
+    <div class="peoplePageLeftSec">
+        #{people.basicProfileInfo info:info,target:"STUDENT_PAGE",orgUserProfile:orgUserProfile/}
+        <div class="color3 margBot20 big22 margTop20">Institute Info</div>
+        #{widgets.mappingsTable programs:info.mappings.programs,targetProfile:"STUDENT"/}
+    </div>
+    <div class="peoplePageRightSec">               
+        <div class="big20 color3">Parent Info</div>
+        <table class="margTop20">
+            <tbody>
+              %{
+                    noParentInfo=true;
+                    defaultParentMessage="<div class='smallThinGray'>Not Given</div>";
+					fatherName=defaultParentMessage;
+                 	fatherContactNumber=defaultParentMessage                    
+                   	if(!info.isNull('father')){
+                   		father=info.father;
+                   		fatherName=father.name;
+                   		if(!father.isNull('contactNumber')){
+                   			fatherContactNumber=father.contactNumber;
+                   		}	
+                		noParentInfo=false;	
+                   	}
+                   	
+                   	motherName=defaultParentMessage;
+                 	motherContactNumber=defaultParentMessage                    
+                   	if(!info.isNull('mother')){
+                   		mother=info.mother;
+                   		motherName=mother.name;
+                   		if(!mother.isNull('contactNumber')){
+                   			motherContactNumber=mother.contactNumber;
+                   		}	
+                		noParentInfo=false;	
+                   	}
+                   	
+                   	guardianName=defaultParentMessage;
+                 	guardianContactNumber=defaultParentMessage                    
+                   	if(!info.isNull('guardian')){
+                   		guardian=info.guardian;
+                   		guardianName=guardian.name;
+                   		if(!guardian.isNull('contactNumber')){
+                   			guardianContactNumber=guardian.contactNumber;
+                   		}	
+                		noParentInfo=false;	
+                   	}
+                   	parentEmail=defaultParentMessage;
+                    if(!info.isNull('parentEmail')&&info.parentEmail!=''){
+                    	parentEmail=info.parentEmail;
+                    }
+              }%             
+              <tr>
+                  <td class="grayHead">
+                      Father's Name
+                  </td>
+                  <td>  
+                      ${fatherName.raw()}
+                  </td>
+              </tr>             
+              <tr>
+                  <td class="grayHead">
+                      Contact Number
+                  </td>
+                  <td>
+                      ${fatherContactNumber.raw()}
+                  </td>
+              </tr> 
+              <tr>
+                  <td class="grayHead">
+                      Mother's Name
+                  </td>
+                  <td>  
+                      ${motherName.raw()}
+                  </td>
+              </tr>             
+              <tr>
+                  <td class="grayHead">
+                      Contact Number
+                  </td>
+                  <td>
+                      ${motherContactNumber.raw()}
+                  </td>
+              </tr> 
+              <tr>
+                  <td class="grayHead">
+                      Guardian's Name
+                  </td>
+                  <td>  
+                      ${guardianName.raw()}
+                  </td>
+              </tr>             
+              <tr>
+                  <td class="grayHead">
+                      Contact Number
+                  </td>
+                  <td>
+                      ${guardianContactNumber.raw()}
+                  </td>
+              </tr> 
+              <tr>
+                  <td class="grayHead">
+                      Parent Contact Email
+                  </td>
+                  <td>
+                    ${parentEmail.raw()}                   
+                  </td>
+              </tr>
+            </tbody>
+        </table>                  
+    </div>    
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrPeople.init({target:"STUDENT_PAGE",
+                targetUserId:"${info.userId}",targetOrgMemberId:"${info.id}"});}
+        lazyLoad([{fname:"qrPeople.js",cb:fn}]);        
+    }();    
+</script>  
+#{/else}

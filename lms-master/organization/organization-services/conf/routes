@@ -1,0 +1,214 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           				controllers.Application.index()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               				controllers.Assets.at(path="/public", file)
+
+# this is common controller across all services and will provide information about currently deployed build
+POST	/sysinfo/get                              	controllers.SysInfo.getInfo()
+
+#ping
+GET    /application/ping                           controllers.Application.ping()
+
+POST    /organizations/getOrganization              controllers.Organizations.getOrganization()
+POST    /organizations/getShowSharedSubjects        controllers.Organizations.getShowSharedSubjects()
+POST    /organizations/getOrganizationInfoForInvoice controllers.Organizations.getOrganizationInfoForInvoice()
+POST    /organizations/checkWebsite 		    	controllers.Organizations.checkWebsite()
+POST    /organizations/checkSlug              	    controllers.Organizations.checkSlug()
+POST    /organizations/checkAppVersion              controllers.Organizations.checkAppVersion()
+POST    /organizations/updateOrganizationSlug       controllers.Organizations.updateOrganizationSlug()
+POST    /organizations/updateOrganizationStatus     controllers.Organizations.updateOrganizationStatus()
+POST    /organizations/updateOrganizationDownloadStatus     controllers.Organizations.updateOrganizationDownloadStatus()
+POST    /organizations/updateOrganizationSharedSubjects   controllers.Organizations.updateOrganizationSharedSubjects()
+POST    /organizations/updateOrganizationClassroomConnectStatus   controllers.Organizations.updateOrganizationClassroomConnectStatus()
+POST    /organizations/getOrganizationBySlug        controllers.Organizations.getOrganizationBySlug()
+POST    /organizations/updateOrganizationReferer    controllers.Organizations.updateOrganizationReferer()
+POST    /organizations/getOrganizationByReferer     controllers.Organizations.getOrganizationByReferer()
+POST    /organizations/checkReferer        			controllers.Organizations.checkReferer()
+POST    /organizations/getOrganizations             controllers.Organizations.getOrganizations()
+POST    /organizations/addOrganization              controllers.Organizations.addOrganization()
+POST    /organizations/updateOrganization           controllers.Organizations.updateOrganization()
+POST    /organizations/approveOrganization          controllers.Organizations.approveOrganization()
+POST    /organizations/uploadOrgPic                 controllers.Organizations.uploadOrgPic()
+POST    /organizations/updateOrgMemberExtraInputFields  controllers.Organizations.updateOrgMemberExtraInputFields()
+POST    /organizations/getOrgMemberExtraInputFields controllers.Organizations.getOrgMemberExtraInputFields()
+POST    /organizations/updateDigitalLibraryFields  controllers.Organizations.updateDigitalLibraryFields()
+POST    /organizations/getDigitalLibraryFields controllers.Organizations.getDigitalLibraryFields()
+POST    /organizations/checkIfSuperAdmin            controllers.Organizations.checkIfSuperAdmin()
+POST    /organizations/getOrgPointsOfSale           controllers.Organizations.getOrgPointsOfSale()
+POST    /organizations/getInstaMojoAccessToken           controllers.Organizations.getInstaMojoAccessToken()
+POST    /organizations/ping           				controllers.Organizations.ping()
+
+POST    /organizations/getSharedOrgsByProgId        controllers.Organizations.getSharedOrgsByProgId()
+POST    /organizations/shareProgToOrg               controllers.Organizations.shareProgToOrg()
+POST    /organizations/removeSharedProgramFromOrg   controllers.Organizations.removeSharedProgramFromOrg()
+
+POST    /organizations/acceptTnC                    controllers.Organizations.acceptTnC()
+
+POST    /organizations/getCenters                   controllers.Organizations.getCenters()
+POST    /organizations/addCenter                    controllers.Organizations.addCenter()
+POST    /organizations/updateCenter                 controllers.Organizations.updateCenter()
+POST    /organizations/removeCenter                 controllers.Organizations.removeCenter()
+POST    /organizations/activateCenter               controllers.Organizations.activateCenter()
+
+POST    /organizations/getDepartments               controllers.Organizations.getDepartments()
+POST    /organizations/addDepartment                controllers.Organizations.addDepartment()
+POST    /organizations/updateDepartment             controllers.Organizations.updateDepartment()
+POST    /organizations/removeDepartment             controllers.Organizations.removeDepartment()
+POST    /organizations/activateDepartment           controllers.Organizations.activateDepartment()
+
+POST    /organizations/getPrograms                  controllers.Organizations.getPrograms()
+POST    /organizations/getProgramInfo               controllers.Organizations.getProgramInfo()
+POST    /organizations/addProgram                   controllers.Organizations.addProgram()
+POST    /organizations/updateProgram                controllers.Organizations.updateProgram()
+POST    /organizations/removeProgram                controllers.Organizations.removeProgram()
+POST    /organizations/activateProgram              controllers.Organizations.activateProgram()
+POST    /organizations/getProgramCenters            controllers.Organizations.getProgramCenters()
+POST    /organizations/addProgramCenters            controllers.Organizations.addProgramCenters()
+POST    /organizations/removeProgramCenters         controllers.Organizations.removeProgramCenters()
+
+POST    /organizations/getSection                   controllers.Organizations.getSection()
+POST    /organizations/getSections                  controllers.Organizations.getSections()
+POST    /organizations/addSection                   controllers.Organizations.addSection()
+POST    /organizations/updateSection                controllers.Organizations.updateSection()
+POST    /organizations/removeSection                controllers.Organizations.removeSection()
+POST    /organizations/activateSection              controllers.Organizations.activateSection()
+POST    /organizations/getSectionByAccessCode       controllers.Organizations.getSectionByAccessCode()
+POST    /organizations/generateOrgSectionAccessCode controllers.Organizations.generateOrgSectionAccessCode()
+POST    /organizations/updateSectionAccess          controllers.Organizations.updateSectionAccess()
+POST    /organizations/getSectionPackageInfo        controllers.Organizations.getSectionPackageInfo()
+POST    /organizations/updatePackageInfo            controllers.Organizations.updatePackageInfo()
+POST    /organizations/updateSectionMaxDiscount     controllers.Organizations.updateSectionMaxDiscount()
+
+
+POST    /organizations/addCategory                  controllers.Organizations.addCategory()
+POST    /organizations/removeCategory               controllers.Organizations.removeCategory()
+POST    /organizations/editCategory                 controllers.Organizations.editCategory()
+POST    /organizations/editCategories               controllers.Organizations.editCategories()
+POST    /organizations/customizeCategory            controllers.Organizations.customizeCategory()
+POST    /organizations/getCategories                controllers.Organizations.getCategories()
+POST    /organizations/getCategory                controllers.Organizations.getCategory()
+POST    /organizations/getCategorySections          controllers.Organizations.getCategorySections()
+POST    /organizations/getCategorySection           controllers.Organizations.getCategorySection()
+POST    /organizations/getMemberCategorySections	controllers.Organizations.getMemberCategorySections()
+POST    /microsites/getConfig			    		controllers.Microsites.getConfig()
+POST    /microsites/addToConfig			            controllers.Microsites.addToConfig()
+POST    /microsites/checkURL			    		controllers.Microsites.checkURL()
+
+
+POST    /organizations/getProgramCourses            controllers.Organizations.getProgramCourses()
+POST    /organizations/addProgramCourses            controllers.Organizations.addProgramCourses()
+POST    /organizations/removeProgramCourses         controllers.Organizations.removeProgramCourses()
+POST    /organizations/getCoursePrograms            controllers.Organizations.getCoursePrograms()
+
+POST    /organizations/getLatestTNC		    		controllers.Organizations.getLatestTNC()
+POST    /organizations/getAssociatedOrgsOfUser      controllers.Organizations.getAssociatedOrgsOfUser()
+
+### for verification app credentials for desktop app --> added by Shankar
+
+POST    /organizations/generateAppCredentials		controllers.Organizations.generateAppCredentials()
+POST    /organizations/verifyAppCredentials		    controllers.Organizations.verifyAppCredentials()
+
+
+POST    /members/authenticateMember                 controllers.Members.authenticateMember()
+POST    /members/authenticateOTPMember              controllers.Members.authenticateOTPMember()
+POST    /members/authenticateMember2                controllers.Members.authenticateMember2()
+POST    /members/getMemberProfile                   controllers.Members.getMemberProfile()
+POST    /members/getOrgMemberProfile                controllers.Members.getOrgMemberProfile()
+POST    /members/getOrgMemberWithEmail              controllers.Members.getOrgMemberWithEmail()
+POST    /members/getMembers                         controllers.Members.getMembers()
+POST    /members/addMember                          controllers.Members.addMember()
+POST    /members/addMemberMapping                   controllers.Members.addMemberMapping()
+POST    /members/updateMemberMapping                controllers.Members.updateMemberMapping()
+POST    /members/removeMemberMapping                controllers.Members.removeMemberMapping()
+POST    /members/setMemberRole                      controllers.Members.setMemberRole()
+POST    /members/addMemberPic                       controllers.Members.addMemberPic()
+POST    /members/updateMember                       controllers.Members.updateMember()
+POST    /members/updateMemberEmail                  controllers.Members.updateMemberEmail()
+POST    /members/resetUsername                      controllers.Members.resetUsername()
+POST    /members/getAllUserData                     controllers.Members.getAllUserData()
+POST    /members/unsetEmail                         controllers.Members.unsetEmail()
+POST    /members/uploadStudents                     controllers.Members.uploadStudents()
+POST    /members/sendForgotPasswordMail             controllers.Members.sendForgotPasswordMail()
+POST    /members/uploadProfilePic                   controllers.Members.uploadProfilePic()
+POST    /members/bulkUploadProfilePics              controllers.Members.bulkUploadProfilePics()
+POST    /members/addMemberWithAccessCode            controllers.Members.addMemberWithAccessCode()
+POST    /members/activate                           controllers.Members.activateUser()
+POST    /members/activationPeriod                   controllers.Members.activationPeriod()
+POST    /members/bulkUpdateStudentsInSection        controllers.Members.bulkUpdateStudentsInSection()
+POST    /members/getSection                         controllers.Members.getSection()
+POST    /members/getPaymentInfo                     controllers.Members.getPaymentInfo()
+POST    /members/updateEndDateMapping               controllers.Members.updateEndDateMapping()
+POST    /members/sendEmailsToStudents               controllers.Members.sendEmailsToStudents()
+POST    /members/getSaleDetails                     controllers.Members.getSaleDetails()
+POST    /members/updateSaleDetails                  controllers.Members.updateSaleDetails()
+POST    /members/doesContactNumberExists            controllers.Members.doesContactNumberExists()
+POST    /members/isValidReferralCode                controllers.Members.isValidReferralCode()
+POST    /members/getStudentsCount                   controllers.Members.getStudentsCount()
+
+#LP Wallet
+POST    /members/getReferralData                    controllers.Members.getReferralData()
+POST    /members/getWalletBalance                   controllers.Members.getWalletBalance()
+
+#OTP
+POST    /members/validateContactNumber              controllers.Members.validateContactNumber()
+POST    /members/verifyContactNumber                controllers.Members.verifyContactNumber()
+POST    /members/sendOTP                            controllers.Members.sendOTP()
+POST    /members/sendOTPApp                         controllers.Members.sendOTPApp()
+POST    /members/validateOTP                        controllers.Members.validateOTP()
+
+POST    /members/saveTestUserData                   controllers.Members.saveTestUserData()
+
+GET     /members/getReferredUsersData                     controllers.Members.getReferredUsersData()
+GET     /members/getTestUsersData                         controllers.Members.getTestUsersData()
+GET     /members/getStudentsData                          controllers.Members.getStudentsData()
+
+#USER TOKENS
+POST    /usertokens/addUserToken                    controllers.UserTokens.addUserToken()
+
+#CAMPAIGNS
+POST    /campaigns/addCampaign                      controllers.Campaigns.addCampaign()
+POST    /campaigns/deleteCampaign                   controllers.Campaigns.deleteCampaign()
+POST    /campaigns/updateCampaign                   controllers.Campaigns.updateCampaign()
+POST    /campaigns/getCampaign                      controllers.Campaigns.getCampaign()
+POST    /campaigns/getCampaigns                     controllers.Campaigns.getCampaigns()
+#ACTIVITY LOOGER
+POST 	/activityLogger/record						controllers.ActivityLogger.record()
+POST 	/activityLogger/getUsers					controllers.ActivityLogger.getUsers()
+POST 	/activityLogger/getUserStatus				controllers.ActivityLogger.getUserStatus()
+POST 	/activityLogger/login						controllers.ActivityLogger.login()
+POST    /activityLogger/logout                                           controllers.ActivityLogger.logout()
+POST    /activityLogger/checkIfUserExists				 controllers.ActivityLogger.checkIfUserExists()
+POST    /activityLogger/getStudentActivity				 controllers.ActivityLogger.getStudentActivity()
+
+#ACTIVITY LOOGER
+POST 	/licensing/getSupportedFeatures				controllers.Licensing.getSupportedFeatures()
+POST 	/licensing/getPlans							controllers.Licensing.getPlans()
+POST 	/licensing/create							controllers.Licensing.create()
+POST 	/licensing/delete							controllers.Licensing.delete()
+POST 	/licensing/update							controllers.Licensing.update()
+POST 	/licensing/mark								controllers.Licensing.mark()
+
+#Sales Campaign
+
+POST    /salesCampaigns/addSalesCampaign                controllers.SalesCampaigns.addSalesCampaign()
+POST    /salesCampaigns/getSalesCampaign                controllers.SalesCampaigns.getSalesCampaign()
+POST    /salesCampaigns/getSalesCampaigns               controllers.SalesCampaigns.getSalesCampaigns()
+POST    /salesCampaigns/updateSalesCampaign             controllers.SalesCampaigns.updateSalesCampaign()
+POST    /salesCampaigns/deleteSalesCampaign             controllers.SalesCampaigns.deleteSalesCampaign()
+
+#Campaign Code
+
+POST    /campaignCodes/addCampaignCode                 controllers.CampaignCodes.addCampaignCode()
+POST    /campaignCodes/createBulkCampaignCodes         controllers.CampaignCodes.createBulkCampaignCodes()
+POST    /campaignCodes/getCampaignCode                 controllers.CampaignCodes.getCampaignCode()
+POST    /campaignCodes/isValidCampaignCode             controllers.CampaignCodes.isValidCampaignCode()
+POST    /campaignCodes/applyCampaignCode               controllers.CampaignCodes.applyCampaignCode()
+
+# ~~~ FOR UPLOADING TEMP IMAGES ~~~
+POST   /uploads/uploadImage                        	    			controllers.Uploads.uploadImage()
+

@@ -1,0 +1,67 @@
+    %{
+        addText=_addText;
+        addFolder=_addFolder;
+        cbfn=_cbfn;
+    }%
+    <div class="vChoose mcvChoose addResourcevChoose redvChoose"  data-value="-1"
+         data-onchange="${cbfn}">                
+        <div class="vChooseHead">
+            ${addText}
+        </div>
+        <div class="vChooseDownIcon"></div>
+        <div class="vChooseDropDown">                    
+            #{if addFolder}
+            <div class="vChooseOpt vChooseOptAddFolder" data-value="FOLDER">
+                <span class="addFolderPlusSign">+</span>
+                <span class="resourceIconFOLDER"></span>
+                Add a Folder
+            </div>
+            #{/if}              
+            <div class="vChooseOpt nonner" data-value="ASSIGNMENT">
+                <span class="resourceIconASSIGNMENT"></span>
+                Add an Assignment
+            </div>            
+            <div class="vChooseOpt" data-value="DOCUMENT">
+                <span class="resourceIconDOCUMENT"></span>
+                Add a Document
+            </div>
+            <div class="vChooseOpt nonner" data-value="FILE">
+                <span class="resourceIconFILE"></span>
+                Add a File
+            </div>          
+            <div class="vChooseOpt" data-value="QUESTION_SET">
+                <span class="resourceIconQUESTIONSET"></span>
+                Add a Question Set
+            </div>                                    
+            <div class="vChooseOpt" data-value="TEST">
+                <span class="resourceIconTEST"></span>
+                Add a Test
+            </div>
+	    <div class="vChooseOpt" data-value="VIDEO">
+                <span class="resourceIconVIDEO"></span>
+                Add a Video
+            </div>            
+            <div class="vChooseOpt" data-value="MODULE">
+                <span class="resourceIconMODULE"></span>
+                Create a Module
+            </div>
+            <div class="vChooseOpt" data-value="AUTO_GEN_TEST">
+                <span class="resourceIconAutomate"></span>
+                Auto Generate Test
+            </div>
+            *{#{if session.userRole=='SUPER_USER'||session.userRole=='ADMIN'}
+            <div class="vChooseOpt" data-value="TESTSERIES">
+                <span class="resourceIconTESTSERIES"></span>
+                Add a Test Series
+            </div>
+            #{/if}
+            <div class="vChooseOpt" data-value="CDP">
+                <span class="resourceIconCDP"></span>
+                Add a Sequential Learning Program
+            </div>              
+            <div class="vChooseOpt" data-value="PACKAGE">
+                <span class="resourceIconPACKAGE"></span>
+                Add a Study Package
+            </div>                }*                      
+        </div>
+    </div>  

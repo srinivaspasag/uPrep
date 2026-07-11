@@ -1,0 +1,108 @@
+<div id="cmdsCustomizeSignupPage">
+   <div class="centerText pageHeadGrayDiv">
+	<span class="big20">&{'CUSTOMIZE_SIGNUP'}</span>
+   </div>
+   <div class="cmdsSingupMGMTSec">
+	<table cellspacing=0 cellpadding=0 class="tableWithBorder cmdsCustSignupTable">
+	   <tr>
+		<th class="big15">&{'SIGNUP.FIELD_NAME'}</th>
+                <th class="big15">&{'SIGNUP.FIELD_TYPE'}</th>
+                <th class="big15">&{'SIGNUP.FIELD_VALUES'}</th>
+		<th class="big15">&{'SIGNUP.PLACEHOLDER'}</th>
+		<th class="big15">&{'SIGNUP.SHOW_IN_FORM'}</th>
+		<th class="big15">&{'SIGNUP.FIELD_REQ'}</th>
+	   </tr>
+	   <!-- COMPULSORY FIELDS -->
+	   %{
+		msgs = play.i18n.Messages;
+	   }%
+	   <tr class="signupCompulsoryField">
+		#{extSignUp.customizeTd req : true , name : msgs.get("signup.FIRST_NAME") , disable : true /}
+	   </tr>
+	   <tr class="signupCompulsoryField">
+		#{extSignUp.customizeTd include : true , name : msgs.get("signup.LAST_NAME") , disable : true /}
+	   </tr>
+	   <tr class="signupCompulsoryField">
+		#{extSignUp.customizeTd req : true , name : msgs.get("signup.EMAIL_ID") , disable : true , fieldType : "EMAIL" /}
+	   </tr>
+	   <tr class="signupCompulsoryField">
+		#{extSignUp.customizeTd req : true , name : msgs.get("signup.PWD") , disable : true , fieldType : "PASSWORD" /}
+	   </tr>
+	   <tr class="signupCompulsoryField">
+		#{extSignUp.customizeTd req : true , name : msgs.get("signup.GENDER") , disable : true /}
+	   </tr>
+	   <tr class="signupCompulsoryField">
+		#{extSignUp.customizeTd req : true , name : msgs.get("signup.DOB") , disable : true , fieldType : "DATE" /}
+	   </tr>
+	   <!-- OPTIONAL FIELDS -->
+	   %{
+		cnNoName = msgs.get("signup.CONTACT_NO");
+		cnNoInclude = false;
+		cnNoReq = false;
+		cnPlaceHolder = "";
+		index = 0;
+		if(resp && resp.length()>0){
+			for(i=0;i<resp.length();i++){
+				field = resp.get(i);
+				if(cnNoName.equals(field.name)){
+					cnNoInclude = true;
+					cnPlaceHolder = field.placeHolder;
+					if(field.required){
+						cnNoReq = true;
+					}
+				}else{
+					additional.put(index++,field);
+				}
+			}
+		}
+	   }%
+	   <tr class="signupOptionalField" data-field-type="PHONE_NO">
+		#{extSignUp.customizeTd include : cnNoInclude , req : cnNoReq , name : cnNoName , fieldType : "PHONE_NO" , placeHolder : cnPlaceHolder /}
+	   </tr>
+	   #{if additional!=null && additional.length()>0}
+		#{list items:0..additional.length()-1,as:'aIndex'}
+		%{
+			field = additional.get(aIndex); 
+		}%
+	   	<tr class="signupOptionalField" data-field-type="${field.fieldType}">
+			#{extSignUp.customizeTd include : true , req : field.required , name : field.name , isAdditional : true, valueSet : field.valueSet , fieldType : field.fieldType , validationType : field.validationType , placeHolder : field.placeHolder , defaultValue : field.defaultValue /}
+	   	</tr>
+		#{/list}
+	   #{/if}
+	   <tr>
+		<td class="addNewField" colspan=10>
+			<div class="addNewFieldBtn big18">&{'ADD_SIGNUP_FIELD'}</div>
+			<div class="addNewFieldDiv nonner">
+				<input class="addNewFieldInput" placeholder="Enter the name of the field"/>
+                                <select class="addNewFieldType">
+                                    <option value="TEXT">&{'SIGNUP.FIELD_TYPE_TEXT'}</option>
+                                    <option value="DECIMAL">&{'SIGNUP.FIELD_TYPE_DECIMAL'}</option>
+                                    <option value="WHOLE_NUMBER">&{'SIGNUP.FIELD_TYPE_WHOLE_NUMBER'}</option>
+                                    <option value="EMAIL">&{'SIGNUP.FIELD_TYPE_EMAIL'}</option>
+                                    <option value="DATE">&{'SIGNUP.FIELD_TYPE_DATE'}</option>
+                                    <option value="PHONE_NO">&{'SIGNUP.FIELD_TYPE_PHONE_NO'}</option>
+                                    <option value="DROP_DOWN">&{'SIGNUP.FIELD_TYPE_DROP_DOWN'}</option>
+                                    <option value="REGEXP">&{'SIGNUP.FIELD_TYPE_REGEXP'}</option>
+                                </select>
+                                <div class="greenButton submitThisNewFieldForSignup">Submit</div>
+			</div>
+		</td>
+	   </tr>
+	</table>
+   	<div style="padding:20px 0px;" class="centerText">
+		<span class="bigBlueButton submitCustomizeSignup">&{'TXT_SUBMIT'}</span>
+		<span class="bigRedButton cancelSignupSubmit">&{'TXT_RESET'}</span>
+   	</div>
+   </div>
+   <table id="sampleSignupField" class="nonner">
+	<tr class="signupOptionalField">
+		#{extSignUp.customizeTd req : false , name : "" , placeHolder : "" /}
+	</tr>
+   </table>
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrExtSignup.initCustomize();}
+        lazyLoad([{fname:"qrExtSignup.js",cb:fn}]);        
+    }();    
+</script>

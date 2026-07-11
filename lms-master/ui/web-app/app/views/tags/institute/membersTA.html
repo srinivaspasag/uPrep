@@ -1,0 +1,13 @@
+<span class="instTAUsers" data-user-id="">None</span>
+#{if users!=null && users.errorCode.isEmpty() && users.result.list.length()>0}
+%{
+	totalCount = users.result.totalHits;
+}%
+#{list items:0..users.result.list.length()-1,as:'index'}
+%{ 
+	user = users.result.list.get(index);
+}%
+	<span class="instTAUsers" data-user-id="${user.id}">${user.firstName} ${user.lastName}</span>
+#{/list}
+#{/if}
+<div class="cleaner_with_divider">&nbsp;</div>

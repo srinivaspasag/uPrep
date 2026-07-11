@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Learnpedia Payment Testing</title>
+<script type="text/javascript"
+	src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+</head>
+<body>
+	<form method="get" action="">
+		<input type="submit" style='display: none'>
+	</form>
+	<h3 id="message"
+		style="color: rgb(102, 102, 102); font-size: 28px; margin-top: 50px; text-align: center;">Initiating payment..</h3>
+	<script language="javascript" type="text/javascript">
+		var fetchUrlParams = function() {
+			var parseStr=window.location.search.substr(1)+window.location.hash;
+			return decodeURIComponent(parseStr).split(
+					'&').reduce(
+					function _reduce(/*Object*/a, /*String*/b) {
+
+						b = b.split('=');
+						var key = b[0];
+						if (key) {
+							if (key.charAt(key.length - 2) == "["
+									&& key.charAt(key.length - 1) == "]") {
+								if (a[key] == undefined) {
+
+									a[key] = [];
+								}
+								a[key].push(b[1]);
+							} else {
+								a[b[0]] = b[1];
+							}
+						}
+						return a;
+					}, {});
+		};
+
+		$(function() {
+			var params = fetchUrlParams();
+ 			var msg = $("#message");
+			if(!params.callbackUrl){
+			       msg.text("missing callback url");					
+				return;				
+			}
+			// params.paymentChannel="EBS";
+			$.ajax({
+				url:"/payments/pay",
+				cache:false,
+				data: params
+			}).done(function(res) {
+				console.log(res);
+				if(!res || res.errorCode){
+					onError();
+					return;
+				}
+				var gatewayUrl = res.result.gatewayUrl;
+				console.log(gatewayUrl);
+				var f = $("form");
+				if(params.paymentChannel == "EBS"){
+					f.attr("method","post");
+				}
+				f.attr("action", gatewayUrl);
+				msg.text("Redirecting to payment gateway..");
+				f.submit();
+			}).fail(function(){
+				onError();
+				return;
+			});
+			function onError(errorCode){
+				errorCode = errorCode ? errorCode : "FALED";
+				msg.text("Error occured..");
+				//callback to caller
+			};
+		});
+	</script>
+</body>
+</html>
+

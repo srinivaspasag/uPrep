@@ -1,0 +1,86 @@
+                  %{
+                    totalHits=people.result.totalHits;
+                    students=people.result.list;
+                    orgUserProfile=currentOrgInfo.getOrgUserProfile();
+                  }%       
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+    <div class="headSecTableDiv">
+            <table class="headSecTable">
+              <thead>
+                  <tr>
+                      #{if orgUserProfile=="MANAGER"}
+                      <td class="width16"></td>
+                      #{/if}
+                      <td class="tdPadLeft5">Name</td>
+                      <td class="width120 maxWidth120">&{'INST_ID'}</td>
+                      <td class="width130 maxWidth130">Program</td>
+                      <td class="width100 maxWidth100">Center</td>
+                      <td class="width75 maxWidth75">Section</td>
+                      *{<!--<td class="width120 maxWidth120">&{'DEVICE_ASSIGNMENT'}</td>-->}*
+                  </tr>          
+              </thead>
+            </table>    
+        </div>    
+        <div id="fixedSec">
+            <table class="cmdsTable">
+              <tbody>
+                  #{if students.length()>0}
+                  #{list items:0..students.length()-1,as:'m'}
+                  %{
+                    student=students.get(m);
+                    userId=student.userId;
+                  }%
+                    <tr class="big13 memberTr">
+                      #{if orgUserProfile=="MANAGER" && !"EXT_AUTH_ORG".equals(session.get("orgAuthType"))}
+                        <td class="width16"> 
+                            <div class="editOrgOfflineUser editPeopleImg" data-user-id='${userId}'></div>
+                        </td>                        
+                      #{/if}
+                        <td class="tdPadLeft5">
+                            #{widgets.user20 user:student /}                              
+		    	    #{people.userStatus user : student , orgUserProfile : orgUserProfile /}
+                        </td>
+                        <td class="width120 maxWidth120 boldy">${student.memberId}</td>
+                        %{
+                            programs=student.mappings.programs;
+                            programName='-';
+                            centerName='-';
+                            sectionName='-';
+                            try{
+                                if(programs.length()>0){
+                                    if(programs.length()==1){
+                                        program=programs.get(0);
+                                        programName=program.name;
+                                        center=program.centers.get(0);
+                                        centerName=center.name;
+                                        sectionName=center.sections.get(0).name;
+                                    }else{
+                                        programName='<a class="showUserMappings" data-user-id="'+userId+'">'+programs.length()+' Programs</a>';
+                                    }
+                                }else{
+                                    programName='0 programs';
+                                }                            
+                            }catch(Exception e){
+                            
+                            }
+                        }%
+                        <td class="width130 maxWidth130 boldy big12">${programName.raw()}</td>
+                        <td class="width100 maxWidth100 big12">${centerName}</td>
+                        <td class="width75 maxWidth75 big12">
+                            ${sectionName}
+                        </td>
+                      	<!--<td class="width120 maxWidth120">NO</td>-->
+                    </tr>  
+                    #{/list}
+                    #{/if}
+                    #{else}
+                    <tr class="noResultsTr">
+                      <td colspan="8">
+                          <div class="userMessage">&{'NO_OFFLINE_USERS'}</div>
+                      </td>
+                    <tr>                              
+                    #{/else}                    
+              </tbody>
+            </table> 
+            #{footer /}
+        </div>      

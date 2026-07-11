@@ -1,0 +1,110 @@
+@(emailDetails: com.vedantu.organization.event.details.AddOrganizationEmailDetails)
+@import org.apache.commons.collections.CollectionUtils
+<div style="color:#666;">Thank you for requesting access to our <span style="font-weight:bold;">invite-only</span> beta program of Learnpedia.</div>
+<div style="padding: 20px 0px;color:#666;">We are excited to have you with us. We will get back to you once your request is approved.
+Here is a snapshot of what you have filled in the <b>Request Organization</b> form:</div>
+
+<table cellspacing=0 cellpadding=0 style="border:1px solid #CCC;padding:15px;">
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>
+                Plan Details
+            </td>
+            <td style='padding-bottom:10px;vertical-align:top;'>
+			<div style="color:#333;font-size:14px;">@plan(emailDetails.orgInfo.planInfo)</div>
+            </td>
+        </tr>
+        <tr>
+            <td style='width:175px;padding-bottom:10px;vertical-align:top;font-weight:bold;'>Organization Name</td>
+            <td style='padding-bottom:10px;vertical-align:top;'>
+                <span style="color:#333;">@emailDetails.organization.name</span>
+            </td>
+        </tr>
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>
+                Organization Full Name
+            </td>
+            <td style='padding-bottom:10px;vertical-align:top;'>
+                <span style="color:#333;">@emailDetails.organization.fullName</span>
+            </td>
+        </tr> 
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>
+               Website 
+            </td>
+            <td style='padding-bottom:10px;vertical-align:top;'>
+                <a rel="nofollow" style="color:#4699CF;" href="@emailDetails.organization.website">@emailDetails.organization.website</a>
+            </td>
+        </tr> 
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>
+                Organization Url on Learnpedia
+            </td>
+            <td style='padding-bottom:10px;vertical-align:top;font-size:13px;'>
+		@defining(emailDetails.organization.slug){ slugId =>
+                	<div>CMDS(Content Management And Distribution System) : 
+				<div style="color:#333;">https://cmds.learnpedia.in/org/@slugId</div></div>
+                	<div style="padding:5px 0;">Learn :  
+				<div style="color:#333;">https://learn.learnpedia.in/org/@slugId</div></div>
+		}
+            </td>
+        </tr> 
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>
+                Contact Number
+            </td>
+            <td style='padding-bottom:10px;vertical-align:top;'>
+                <div style="color:#333;">@emailDetails.organization.contactNumber</div>
+            </td>
+        </tr>      
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>
+                Type 
+            </td>
+            <td style='padding-bottom:10px;vertical-align:top;'>    
+               	@defining( emailDetails.organization.__getOrgType() ){ orgType => 
+              		<div style="color:#333;">@orgType</div>
+		}
+            </td>
+        </tr>              
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>Locations</td>
+            <td style='padding-bottom:2px;vertical-align:top;'>
+		@if( CollectionUtils.isNotEmpty( emailDetails.organization.locations )){
+               		@for( location <- emailDetails.organization.locations ){ 
+		                <div style="color:#333;padding-bottom:5px;">@location.city, @location.state, @location.country</div>
+			}
+	       }
+            </td>
+        </tr>
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>
+              Address  
+            </td>
+            <td style='padding-bottom:10px;vertical-align:top;'>
+		<div style="color:#333;">@emailDetails.organization.address</div>
+            </td>
+        </tr>    
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold'>
+              Description  
+            </td>
+            <td style='padding-bottom:10px;vertical-align:top;'>
+		@if(emailDetails.organization.description!=null && !emailDetails.organization.description.isEmpty()){
+                	<div style="color:#333;">@emailDetails.organization.description</div>
+		}else{
+                	<div style="color:#CCC;font-weight:bold;">Not Provided</div>
+		}
+            </td>
+        </tr>       
+        <tr>
+            <td style='padding-bottom:10px;vertical-align:top;font-weight:bold;'>
+                Admin Details
+            </td>
+            <td>
+               	@defining( emailDetails.organization.representative ){ orgreps => 
+                <div>Name : <span style="color:#333;padding-bottom:5px;">@orgreps.firstName @orgreps.lastName</span></div>
+                <div>Email : <a rel="nofollow" style="color:#333;text-decoration:none;">@orgreps.getEmail()</a></div>
+		}
+            </td>
+        </tr>
+    </table>   

@@ -1,0 +1,75 @@
+    <form action="@{Security.authentifyMember}" method="POST" id="memberLoginForm">
+        <div class="loginPageWrapper">
+                <div class="loginContent">
+			#{if org!=null && org.errorCode.isEmpty()}
+			<div class="regInstLoginSec freezeInstLogin">
+                           <div class="regFormTxt" style="font-size:13px;">
+				&{'login.YOUR_INST'}
+			   </div>
+			   <div class="regInputBoxHolder">
+                        	<input type="text" id="loginOrgName" placeholder="&{'login.PLACEHOLDER_INSTNAME'}" 
+					value="${org.result.fullName}" disabled/>
+                        	<input type="hidden" id="loginOrgId" name="orgId" value="${org.result.id}"/>
+			   </div>
+			</div>
+			#{/if}
+			#{else}
+			<div class="regInstLoginSec">
+                           <div class="regFormTxt" style="font-size:13px;">
+				&{'login.INST_SIGNIN'}
+			   </div>
+			   <div class="regInputBoxHolder">
+                        	<input type="text" id="loginOrgName" placeholder="&{'login.PLACEHOLDER_INSTNAME'}" value="" 
+					autocomplete="off" required class="suggOrgName"/>
+                        	<input type="hidden" id="loginOrgId" name="orgId" required class="suggOrgId"/>
+				<div class="regInstSuggHolder nonner">
+					<!--*{<div class="regInstSugg">Lakhya Institute</div>}*-->
+				</div>
+			   </div>
+			</div>
+			#{/else}
+			
+			<div class="regFormTxt" style="font-size:24px;padding-bottom:15px;">
+				<span>&{'login.SIGNIN'}</span>
+				<!--<a class="right smally" id="loginWithEmailId" data-org-id="${params.orgId}">&{'login.USE_EMAIL_ID'}</a>-->
+			</div>
+			<div class="regInputBoxHolder">
+                        	<input type="text" id="loginMemberId" placeholder="&{'login.PLACEHOLDER_USERENROLLID'}" 
+					name="memberId" required/>
+			</div>
+			<div class="regInputBoxHolder">
+                        	<input type="password" id="userPassword" placeholder="&{'login.PASSWORD'}" name="password" 
+					data-shown="password" required autocomplete="off" />
+                        	<input type="text" id="userPasswordText" class="nonner" placeholder="&{'login.PASSWORD'}" autocomplete="off" />
+			</div>
+			<div class="regSubmitHolder">
+				<div style="padding-bottom:20px;">
+					<input type="checkbox" class="left showPassword" style="margin-top:-2px;"/>
+                        		<span class="left showPassword">Show Password</span>
+                        		<a class="forgotPass right" data-login-type="MEMBER">Forgot Password?</a>
+					<div class="cleaner_with_divider">&nbsp;</div>
+				</div>
+                        	<input class="loginButton right" id="clickToLogin" value="Submit" type="submit"/>
+			</div>
+                </div> 
+        </div>
+    </form>
+    <div class="forgotPassWrap">
+	<div class="forgotPassHolder" data-url="memberForgotPass" data-login-type="MEMBER">
+        	<div style="font-size:16px;color:#888;">&{'login.FORGOT_PASSWORD_TITLE'}</div>
+		<div class="regInputBoxHolder" style="margin:20px 0 0 0;">
+             		<input type="text" id="forgotPassOrgName" placeholder="&{'login.PLACEHOLDER_INSTNAME'}" value="" 
+	     			autocomplete="off" required class="suggOrgName"/>
+             		<input type="hidden" id="forgotPassOrgId" name="orgId" required class="suggOrgId"/>
+	     		<div class="regInstSuggHolder nonner">
+	     			<!--*{<div class="regInstSugg">Lakhya Institute</div>}*-->
+	     		</div>
+		</div>
+		<div class="regInputBoxHolder" style="width:300px; padding:20px 0 0px;">
+        		<input type="text" id="forgetPassMemberId" placeholder="&{'login.PLACEHOLDER_USERENROLLID'}" name="forgotPassword"/>
+		</div>
+		<div class="regSubmitHolder centerText">
+                	<input class="loginButton" id="clickToSend" value="Submit" type="submit"/>
+		</div>
+	</div>
+    </div>

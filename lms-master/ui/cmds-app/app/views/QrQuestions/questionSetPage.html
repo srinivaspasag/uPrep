@@ -1,0 +1,26 @@
+#{if questions.errorCode!=''}
+#{common.errorCodes resp:questions/}
+#{/if}
+#{else}
+%{
+extraParamsStrForJS='{"target":"QUESTIONSET","questionSetId":"'+params.questionSetId+'","needCBox":true}';
+}%
+<div id="questionSetPage" class="mcWidget relativePos sec1002">
+    <div class="big20 blackTextColor" style="padding-bottom:10px;">
+        <span class="entityEditableName">${params.questionSetName.equals('null')?"":URLDecoder.decode(params.questionSetName,'ISO-8859-1')}</span>
+        <a class="editEntityDetailsStyles editEntityDetails" 
+           title="Edit Details" data-entity-type="CMDSQUESTIONSET" data-entity-id="${params.questionSetId}"
+           data-url-class="cmdsQuestionSets"></a>        
+    </div>
+    <div class="cmdsTableOptsAndSortDiv">
+        <div class="cmdsTableCheckedOpts floatLeft" data-opts-type='questionSetQuesns'></div>  
+        <div class="cmdsTableSortDiv">
+            #{common.lmArrowsDiv /}  
+        </div>
+    </div>
+    <div class="LMHandlerDiv">
+        #{include 'QrQuestions/qrQuesns.html' /}
+    </div>    
+    <div class="cleaner_with_divider">&nbsp;</div>
+</div>
+#{/else}

@@ -1,0 +1,170 @@
+#!/bin/bash
+
+# [global]
+# --------------------------------------------
+
+T_SCRIPT="$0";
+T_PROJECT="$1";
+T_OPERATION="$2";
+T_SCRIPT_NAME=`basename "$T_SCRIPT"`;
+#T_CONFIG="$HOME/.$T_SCRIPT_NAME.config";
+T_CONFIG="$3";
+
+# [functions]
+# --------------------------------------------
+
+function _usage_ {
+  echo "usage: $T_SCRIPT <project> <prepare|start|stop|status> <configpath>";
+}
+
+function _get_part_ {
+  _project="$1";
+  _part_num="$2";
+#  _line=`grep "$1=" "$T_CONFIG" | awk -F$_project= '{print $2}'`;
+  _line=$T_CONFIG;
+  _part=`echo "$_line" | awk -v p=$_part_num -F\; '{print $p}'`
+  echo $_part;
+}
+
+function _get_play_ {
+  _part=`_get_part_ "$1" "1"`;
+  echo "$_part/play";
+}
+
+function _get_mode_ {
+  _part=`_get_part_ "$1" "2"`;
+  echo "$_part";
+}
+
+function _get_port_ {
+  _part=`_get_part_ "$1" "3"`;
+  echo "$_part";
+}
+function _get_logger_file_ {
+  _part=`_get_part_ "$1" "4"`;
+  echo "$_part";
+}
+
+function _get_version_ {
+ _output=`$1`
+ _version=`echo $_output | awk -F'play|play\\!' '{print $2}' | awk -F" " '{print $1}' | awk -F"," '{print $1}'`
+ echo $_version
+}
+# [main]
+# --------------------------------------------
+
+if [ -z "$T_PROJECT" ]
+then
+  _usage_;
+  exit 1;
+fi;
+
+if [ ! -d "$T_PROJECT" ]
+then
+  echo "$T_PROJECT is not a directory";
+  _usage_;
+  exit 1;
+fi;
+
+#if [ ! -e "$T_CONFIG" ] || [ ! -f "$T_CONFIG" ]
+#then
+#  echo "$T_SCRIPT config file not found";
+#  exit 1;
+#fi;
+
+
+P_PLAY=`_get_play_ "$T_PROJECT"`;
+P_MODE=`_get_mode_ "$T_PROJECT"`;
+P_PORT=`_get_port_ "$T_PROJECT"`;
+P_LOGGER_FILE=`_get_logger_file_ "$T_PROJECT"`;
+P_LOG_FILE=$(echo "$T_PROJECT" | awk -F / '{ print $2 }');
+P_VERSION=`_get_version_ "$P_PLAY"`
+
+echo "play: $P_PLAY";
+echo "mode: $P_MODE";
+echo "port: $P_PORT";
+echo "version: $P_VERSION"
+echo "logger file: $P_LOGGER_FILE";
+echo "log file name: $P_LOG_FILE.log";
+
+echo "[$T_OPERATION]";
+echo "--------------------------------------------";
+cd "$T_PROJECT";
+P_EXIT_CODE=0;
+export JAVA_OPTS="-Xms64M -Xmx256M -XX:MaxPermSize=192M";
+case "$T_OPERATION" in 
+  prepare) #
+           echo "clean compile stage...";
+           $P_PLAY clean compile stage;
+           echo "classpath generation...";
+           $P_PLAY classpath > target/$T_SCRIPT_NAME.classpath.tmp;
+           cat target/$T_SCRIPT_NAME.classpath.tmp | grep -r "^[[:space:]]\+- " | awk 'BEGIN{i=0;cp=""} {if(i>0) {cp=cp":";} cp=cp$NF; i++} END{print cp}' > target/$T_SCRIPT_NAME.classpath;
+           rm -f target/$T_SCRIPT_NAME.classpath.tmp;
+           echo "start script generation...";
+
+           echo "#!/bin/bash
+T_SCRIPT_DIR=\`dirname \$0\`;
+T_STAGED_DIR=\"\$T_SCRIPT_DIR/staged\";
+T_CP=\`cat \"\$T_SCRIPT_DIR/$T_SCRIPT_NAME.classpath\"\`;
+exec java -Dhttp.port=$P_PORT -Dconfig.resource=$P_MODE.conf -Dlogger.file=$P_LOGGER_FILE -DLOG_FILE_NAME=$P_LOG_FILE -DTHE_APP_NAME=$T_PROJECT -cp \"\$T_CP\" play.core.server.NettyServer \$T_SCRIPT_DIR/..
+" > target/$T_SCRIPT_NAME.start;
+
+           chmod +x target/$T_SCRIPT_NAME.start;
+
+           echo "runnable dir generation...";
+           rm -rf ./runnable.tmp;
+           mkdir ./runnable.tmp;
+           cp -R ./target/staged ./runnable.tmp/.;
+           cp ./target/$T_SCRIPT_NAME.* ./runnable.tmp/.;
+
+           ;;
+  start)   #
+           if [ -f "RUNNING_PID" ]
+           then
+             R_PROC_PID=`cat RUNNING_PID`;
+             echo "already running [pid=$R_PROC_PID]";
+             ps -p $R_PROC_PID;
+           else
+             if [ -d ./runnable.tmp ]
+             then
+               rm -rf ./runnable;
+               mv ./runnable.tmp ./runnable;
+             fi;
+             ./runnable/$T_SCRIPT_NAME.start > /dev/null &
+             R_PROC_PID=$!;
+             echo "started process with pid=$R_PROC_PID";
+           fi;
+           ;;
+  stop)    #
+           if [ ! -f "RUNNING_PID" ]
+           then
+             echo "not running";
+           else
+             R_PROC_PID=`cat RUNNING_PID`;
+             ps -p $R_PROC_PID;
+             kill -15 "$R_PROC_PID";
+             echo "wait...";
+             sleep 3;
+             ps -p $R_PROC_PID;
+           fi;
+           ;;
+  status)  #
+           if [ ! -f "RUNNING_PID" ]
+           then
+             echo "not running";
+           else
+             R_PROC_PID=`cat RUNNING_PID`;
+             ps -p $R_PROC_PID;
+           fi;
+           ;;
+  *)       #
+           echo "unrecognized operation $T_OPERATION";
+           _usage_;
+           P_EXIT_CODE=1;
+           ;;
+esac;
+export JAVA_OPTS=
+cd -;
+echo "--------------------------------------------";
+
+exit $P_EXIT_CODE;

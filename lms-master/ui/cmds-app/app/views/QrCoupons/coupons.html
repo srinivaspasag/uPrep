@@ -1,0 +1,27 @@
+<div id="qrCouponsPage">
+   <div class="pageHolderNM">
+    <div class="" style="padding-bottom:12px;">
+         <span class="blueButton showNewCouponPopup">&{'COUPON_CREATE_BTN_TXT'}</span>
+    </div>
+    <table class="qrCouponsTable" cellspacing=0 cellpadding=0 border=1>
+       <tr class="qrCouponsTableHead">
+        <th class="width100">&{'COUPON_CODE_TXT'}</th>
+        <th class="width75">&{'COUPON_TYPE_TXT'}</th>
+        <th class="width75">&{'COUPON_DESC_TXT'}</th>
+        <th class="width75">&{'COUPON_LIMIT_TXT'}</th>
+        <th class="width75">&{'COUPON_MIN_ORDER_VALUE_TXT'}</th>
+        <th class="width40">&{'COUPON_USAGE_COUNT_TXT'}</th>
+        <th class="width40">&{'COUPON_MAX_USAGE_TXT'}</th>
+        <th class="width75">&{'EXPIRY_DATE_TXT'}</th>
+        <th class="width100">&{'COUPON_ACTIONS_TXT'}</th>
+       </tr>
+    </table>
+   </div>
+</div>
+
+<script type="text/javascript">
+    new function(){
+        var fn=function(){qrCoupons.init("#qrCouponsPage","active");}
+        lazyLoad([{fname:"qrCoupons.js",cb:fn}]);
+    }();
+</script>

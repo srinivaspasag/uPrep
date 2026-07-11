@@ -1,0 +1,45 @@
+#{if centers.errorCode!=''}
+    #{common.errorCodes resp:centers /}
+#{/if}
+#{else}
+    %{
+        centers=centers.result.list;
+    }%
+    #{if centers.length()>0}
+    <div class="cmdsPopupHead">Add to centers</div>
+    <table class="margLeft20" width="95%">
+        <tbody>
+            <tr>
+                <td class="grayHead pad10Top alignTop">
+                    Choose Center
+                </td>
+                <td class="pad10Top entityListDiv">
+                    <input type="hidden" class="entityListTotal" value=""/>
+                    <div class="multiplevChoose">
+                        <div class="mvcAllItems">
+                            <div class="gCBox" data-callback="mvcAllCheckFn">
+                                <div class="gCBoxTicker"></div>
+                            </div>
+                            <span class="mvcAllItemsText gCBoxText">All Centers</span>
+                        </div>   
+                        #{list items:0..centers.length()-1,as:'c'}
+                        %{
+                            center=centers.get(c);
+                        }%
+                        <div class='mvcItem'>
+                            <div class='gCBox gCBoxAcadEntity_${center.id}' data-value='${center.id}'>
+                                <div class='gCBoxTicker'></div>
+                            </div>
+                            <span class='mvcItemText gCBoxText'>${center.name}</span>
+                        </div>                    
+                        #{/list}
+                    </div>                   
+                </td>
+            </tr>
+        </tbody>
+    </table>   
+    #{/if}
+    #{else}
+    <div class="userMessage">No Centers found.</div>
+    #{/else}
+#{/else}

@@ -1,0 +1,89 @@
+    %{
+        target=_target;
+        currentOrgInfo=_currentOrgInfo;
+        renderInfo=_renderInfo;
+    }%    
+    <table id="acadStrTable">
+            <tr>
+                #{if target=='EDIT_ACAD_STR'}
+                <td class="ASTSearchTd ASTDeptsTdHead">
+                    <div class="inputDiv ASTSearchHolder hasSearchImg smallInputDiv">
+                        <input type="text" placeholder="Departments" data-entity-type='DEPARTMENT' class="ASTSearchDepts ASTSearchInput"/>                    
+                        <span class="inputSearchImg"></span>                
+                    </div>                    
+                </td>
+                #{/if}
+                <td class="ASTSearchTd ASTProgramsTdHead">
+                    <div class="inputDiv ASTSearchHolder hasSearchImg smallInputDiv">
+                        <input type="text" placeholder="Runs Programs" data-entity-type='PROGRAM' class="ASTSearchPrograms ASTSearchInput"/>                    
+                        <span class="inputSearchImg"></span>   
+                    </div>                    
+                </td>
+                <td class="ASTSearchTd editAcadStrTd ASTCentersTdHead">
+                    <div class="inputDiv ASTSearchHolder hasSearchImg smallInputDiv">
+                        <input type="text" placeholder="in Centers" data-entity-type='CENTER' class="ASTSearchCenters ASTSearchInput"/>                    
+                        <span class="inputSearchImg"></span>   
+                    </div>                    
+                </td>
+                <td class="ASTSearchTd editAcadStrTd ASTSectionsTdHead">
+                    <div class="inputDiv ASTSearchHolder hasSearchImg smallInputDiv">
+                        <input type="text" placeholder="Has Sections" data-entity-type='SECTION' class="ASTSearchSections ASTSearchInput"/>                    
+                        <span class="inputSearchImg"></span>   
+                    </div>                    
+                </td>
+                #{if target=='EDIT_ACAD_STR'}
+                <td class="ASTSearchTd nonner assignCourseTd ASTCoursesTdHead">
+                    <div class="inputDiv ASTSearchHolder hasSearchImg smallInputDiv">
+                        <input type="text" placeholder="runs Courses" data-entity-type='COURSE' class="ASTSearchCourses ASTSearchInput"/>                    
+                        <span class="inputSearchImg"></span>   
+                    </div>                    
+                </td>                
+                #{/if}
+            </tr>
+            <tr>
+                #{if target=='EDIT_ACAD_STR'}
+                <td class="ASTResultsTd ASTDeptsTd ASTResultsTdLoaded">
+                %{
+                    entities=_depts;
+			        org.json.JSONObject deptRenderInfo = new org.json.JSONObject();
+		            deptRenderInfo.put("entityType", "DEPARTMENT");
+		            deptRenderInfo.put("astClass", "getProgramsOfDept");
+		            deptRenderInfo.put("addClass", "addDept");
+		            deptRenderInfo.put("notFoundMessage", "DEPARTMENT_NOT_FOUND");
+		            renderInfo=deptRenderInfo;
+                }%
+                #{include 'QrAcadStr/acadEntities.html' /}   
+                </td>
+                #{/if}
+                <td class="ASTResultsTd ASTProgramsTd" data-entity-type="PROGRAM">
+                    #{if target=='CHANGE_PROGRAM'}
+                        %{
+                            entities=_programs;
+                        }%
+                       #{include 'QrAcadStr/acadEntities.html' /}                      
+                    #{/if}
+                    #{else}
+                    <div class="acadEntityDefaultText">
+                        Select a department to view its programs.
+                    </div>                    
+                    #{/else}
+                </td>  
+                <td class="ASTResultsTd ASTCentersTd editAcadStrTd" data-entity-type="CENTER">
+                    <div class="acadEntityDefaultText">
+                        Select a department and program to view the centers it is run.
+                    </div>                    
+                </td>  
+                <td class="ASTResultsTd ASTSectionsTd editAcadStrTd" data-entity-type="SECTION">
+                    <div class="acadEntityDefaultText">
+                        Select a program and center to view the sections.
+                    </div>                                        
+                </td>
+                #{if target=='EDIT_ACAD_STR'}
+                <td class="ASTResultsTd ASTCoursesTd nonner assignCourseTd" data-entity-type="COURSE">
+                    <div class="acadEntityDefaultText">
+                        Select a program to view the courses.
+                    </div>                                        
+                </td>                   
+                #{/if}
+            </tr>
+        </table>

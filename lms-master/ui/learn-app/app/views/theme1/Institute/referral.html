@@ -1,0 +1,66 @@
+#{if resp!=null && resp.errorCode.isEmpty()}
+%{
+    refer = resp.result;
+%}
+<div class="refer card" style="bottom: 20px;position: relative;padding-bottom: 20px;">
+    <center>
+        <img class="img-responsive" src="/public/images/refer.jpg">
+    </center>
+        #{if refer.message != null}
+        <div class="text-center f-20 c-black">
+            <b>INVITE TO LEARNPEDIA</b>
+        </div>
+        <div class="text-center f-18">
+        You get Rs ${refer.referrerRewards} <br> Your friend gets Rs ${refer.friendRewards}
+        <br><a class="f-12" href="/referralTerms">T&C</a>
+        </div>
+        #{/if}
+        #{else}
+            <div class="text-center f-20 c-black">
+                <b>Our Introductory Refer & Earn Is Now Over.</b>
+            </div>
+            <div class="text-center f-18">
+            You can still invite your friends and also use your credits
+            <br><a class="f-12 referterms">T&C</a>
+            </div>
+        #{/else}
+
+    <br>
+    <div class="text-center f-20" style="border:1px solid gray;border-radius:5px;color: black;width:250px;margin: 0 auto;">
+        <div class="f-18 c-gray">Share your Invite Code</div>
+        ${refer.referralCode}
+    </div>
+    <br>
+    <div>
+    <center>
+    <div class="card m-b-10" style="border: solid #eee;border-width: 1px;padding: 20px 20px;width: 250px;margin: 0 auto">
+        <span class="pull-left" style="bottom:10px;position: relative;">LP Credits</span>
+        <span class="pull-right" style="bottom:10px;position: relative;">Rs ${refer.existingRewardPoints}</span>
+    </div>
+        <input id="fbSharePageButton" type="image" src="/public/images/facebook-share-button.png" style="border-radius: 9px; width: 146px; height: 36px" data-existing-reward-points="${refer.existingRewardPoints}" data-base-url="${resp.baseUrl}" data-friend-rewards = "${refer.friendRewards}" data-referral-code = "${refer.referralCode}">'
+    </center>
+    </div>
+</div>
+#{/if}
+
+<script type="text/javascript">
+var refer;
+var liveShareUrl;
+var picUrl = "http://cdn.apk-cloud.com/detail/image/com.learnpedia.android-w250.png";
+var customOutMessage = "Learnpedia is an edu-tech company that promises to make learning a fun and fascinating experience for students preparing to write various competitive exams. Its flagship product ScoreJEE is already redefining preparation for IIT-JEE.";
+var header;
+var caption = "Enjoy Learning";
+refer = $("#fbSharePageButton").data();
+credits = refer.existingRewardPoints;
+referralcode = refer.referralCode;
+liveShareUrl = refer.baseUrl+"signup?referralcode="+referralcode;
+header="Signup with my Referral link, You get Rs."+ refer.friendRewards;
+$("#fbSharePageButton").on("click",function(){
+    var app_id = 1656748771289533;
+    var href = "https://www.facebook.com/dialog/feed?app_id="+app_id+"&caption="+caption+"&name="+header+"&link="+liveShareUrl+"&picture="+picUrl+"&description="+customOutMessage;
+    FB.AppEvents.logEvent('share');
+    window.open(href, "facebook", "left=600,top=200,height=200,width=200");
+});
+$(".instPageNavigator").find(".active").removeClass("active");
+$(".instPageNavigator").find(".instNavTab.instReferHolder").closest("li").addClass("active");
+</script>

@@ -1,0 +1,76 @@
+<div id="qrOrgCouponsDashboard">
+   <div class="pageHeadGrayDiv">
+    <div class="centerText">
+        <span class="big20">&{'COUPONS_DASHBOARD'}</span>
+    </div>
+   </div>
+    <div id="leftSection">
+        <div class="leftSecHeadsDiv">
+            <div class="leftSecHead" id="showActiveCoupons">&{'ACTIVE_COUPONS_PAGE'}</div>
+        </div>
+    </div>
+    <div id="mainSection"></div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<script type="text/javascript">
+var couponsDashBoard = new function(){
+    var pageElemId;
+    var parDiv,contentHolder;
+    var CLICK = "click.couponsdashboard";
+    var replaceState = true;
+    var pageIdElemMap = {
+        "active" : "showActiveCoupons",
+        "all" : "showAllCoupons",
+        "report" : "showCouponsReport"
+    };
+    this.open = function(pageId){
+        if(pageIdElemMap[pageId]){
+            this.init(pageIdElemMap[pageId]);
+        }
+    };
+    this.init = function(openPageId){
+        pageElemId = openPageId;
+        parDiv = $("#qrOrgCouponsDashboard");
+        contentHolder = parDiv.find("#mainSection");
+        parDiv.off(CLICK)
+            .on(CLICK,"#showActiveCoupons",showActiveCoupons)
+            .on(CLICK,"#showAllCoupons",showAllCoupons)
+            .on(CLICK,"#showCouponsReport",showCouponsReport)
+        if(pageElemId){
+            parDiv.find("#"+pageElemId).trigger(CLICK);
+        }
+    };
+    var openPage = function(url,params,append,replaceState){
+        bigLoader(contentHolder);
+        showTopLoader();
+        if(replaceState){
+            history.replaceState(null, null, "/organization/"+cmdsOrgId+"/couponsdashboard/"+append);
+        }else{
+            pushHistory(null, null, "/organization/"+cmdsOrgId+"/couponsdashboard/"+append);
+        }
+        vReq.get(url,params||{},function(data){
+            contentHolder.html(data);
+        });
+    };
+    var showActiveCoupons = function(e){
+        console.log("Show Active coupons function call");
+        parDiv.find("#showActiveCoupons").addClass("leftSecHeadActive").siblings().removeClass("leftSecHeadActive");
+        openPage("/QrCoupons/coupons",{},"active",replaceState);
+        replaceState = false;
+    };
+    var showAllCoupons = function(e){
+        parDiv.find("#showAllCoupons").addClass("leftSecHeadActive").siblings().removeClass("leftSecHeadActive");
+        openPage("/QrInventory/shipments",{},"all",replaceState);
+        replaceState = false;
+    };
+    var showCouponsReport = function(e){
+        parDiv.find("#showCouponsReport").addClass("leftSecHeadActive").siblings().removeClass("leftSecHeadActive");
+        var params = {start: 0, size: 50, "customer.id": cmdsOrgId, "customer.type": "ORGANIZATION"};
+        openPage("/QrInvoices/sellerDashboard",params,"report",replaceState);
+        replaceState = false;
+    };
+};
+$(function(){
+	couponsDashBoard.open("${openPageId}");
+});
+</script>

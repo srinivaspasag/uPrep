@@ -1,0 +1,286 @@
+%{
+    testName = _testName;
+    firstName = _firstName;
+    profilePic = _profilePic;
+    totalTime = _totalTime;
+    showGuidlinesInsideTest = _showGuidlinesInsideTest;
+}%
+<style type="text/css">
+.testGuidelines{
+    height: 96vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    padding: 0px 8px!important;
+    margin: 0px!important;
+}
+.swal2-modal .swal2-close {
+    font-size: 65px;
+    line-height: 36px;
+    font-family: serif;
+    position: absolute;
+    top: 12px;
+    right: 25px;
+    cursor: pointer;
+    color: #fff;
+    -webkit-transition: color .1s ease;
+    transition: color .1s ease;
+}
+.generalInstruction{
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    border-bottom: 1px #CCC solid;
+}
+.generalInstruction li{
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.4;
+}
+.profilePicHolder{
+    text-align: center;
+}
+.profilePicHolder img{
+    min-height: 125px;
+    margin-top: 40px;
+}
+.studentName{
+    font-size: 20px;
+    color: rgb(79, 104, 135);
+    font-weight: bold;
+    text-align: center;
+    margin-top: 40px;
+    text-transform: uppercase;
+}
+
+.each_question{
+    padding: 5px;
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid #cc3232;
+    margin: 5px 0 0 15px;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: none;
+}
+.visited{
+    background-color: #c4340a!important;
+    border: 1px solid #fff;
+    color: #fff!important;
+}
+.mark_for_review{
+    background-color: #6b4a89!important;
+    border-radius: 50%!important;
+    border: 1px solid #6b4a89!important;
+    color: #fff;
+}
+.save_and_next{
+    background-color: #58ad19!important;
+    color: #fff!important;
+    border: 1px solid #58ad19!important;
+}
+.saved_and_marked{
+    background: #6b4a89!important;
+    color: #fff;
+    position: relative;
+    border-radius: 50%!important;
+}
+.saved_and_marked:before{
+    position: absolute;
+    content: '';
+    width: 16px;
+    height: 16px;
+    bottom: 0;
+    background: url('/public/images/report16px.png') no-repeat;
+    right: 0;
+    z-index: 5;
+    /*border-radius: 50%;*/
+}
+.current{
+    background-color: #ff9800!important;
+    border: 1px solid #000!important;
+    color: #fff!important;
+}
+</style>
+<div class="testGuidelinesHolder container">
+    <div class="row p-10 bgm-bluegray" style="text-align: left;">
+        <span class="testName c-white text-uppercase f-700 col-xs-12" style="font-size: 24px;">${testName}</span>
+    </div>
+    <div class="row">
+        <div class="col-sm-10" style="padding: 0px;">
+            <div style="background: #82a0af;padding: 10px;text-align: left;">
+                <span class="c-white f-700 f-18 m-l-15">INSTRUCTIONS : </span>
+            </div>
+            <div class="generalInstruction">
+                <div class="cusInstText1" style="height: 100%; width: 100%; overflow: auto;">
+                    <div style="margin-top: 15px;color: black;">
+                        <center>
+                            <font size="4">Please read the instructions carefully </font>
+                        </center>
+                    </div>
+                    <p>
+                        <strong>
+                            <u style="font-size: 17px;">General Instructions:</u>
+                        </strong>
+                    </p>
+                    <ol style="TEXT-ALIGN: left; LIST-STYLE-TYPE: decimal; PADDING-LEFT: 4%; PADDING-TOP: 3px">
+                        <li>Total duration of examination is
+                            <span class="completeDuration"><b>${totalTime} Hours.</b></span>
+                        </li>
+                        <li>The clock will be set at the server. The countdown timer in the top right corner of screen will display the remaining time available for you to complete the examination. When the timer reaches zero, the examination will end by itself. You will not be required to end or submit your examination.</li>
+                        <li>The Question Palette displayed on the right side of screen will show the status of each question using one of the following symbols:
+                            <table class="instruction_area" style="FONT-SIZE: 100%">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span class="each_question" title="Not Answered">1</span>
+                                        </td>
+                                        <td style="padding: 0 30px;">"Not Visited" - You have not visited the question yet.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="each_question visited" title="Not Answered">2</span>
+                                        </td>
+                                        <td style="padding: 0 30px;">"Not Answered" - You have not answered the question.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="each_question save_and_next" title="Answered">3</span>
+                                        </td>
+                                        <td style="padding: 0 30px;">"Answered" - You have answered the question.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="each_question mark_for_review" title="Marked for Review">4</span>
+                                        </td>
+                                        <td style="padding: 0 30px;">"Marked for Review" - You have NOT answered the question, but have marked the question for review.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="each_question saved_and_marked" title="Answered &amp; Marked for Review">5</span>
+                                        </td>
+                                        <td style="padding: 0 30px;">"Answered and Marked for Review"- The question(s) "Answered and Marked for Review" will be considered for evaluation.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="each_question current" title="Current">6</span>
+                                        </td>
+                                        <td style="padding: 0 30px;">"Current"- You are currently viewing the question.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </li>
+                        <li style="LIST-STYLE-TYPE: none">The Marked for Review status for a question simply indicates that you would like to look at that question again.</li>
+                    </ol>
+                    <br>
+                    <strong>
+                        <u style="font-size: 17px;">Navigating to a Question:</u>
+                    </strong>
+                    <br>
+                    <ol start="4" style="TEXT-ALIGN: left; LIST-STYLE-TYPE: decimal; PADDING-LEFT: 4%; PADDING-TOP: 3px ">
+                        <li>To answer a question, do the following:
+                            <ol style="TEXT-ALIGN: left; PADDING-LEFT: 4%; PADDING-TOP: 3px " type="a">
+                                <li>Click on the question number in the Question Palette at the right of your screen to go to that numbered question directly. Note that using this option does NOT save your answer to the current question.</li>
+                                <li>Click on
+                                    <b>Save &amp; Next</b> to save your answer for the current question and then go to the next question.
+                                </li>
+                                <li>Click on
+                                    <b>Mark for Review &amp; Next</b> to save your answer for the current question, mark it for review, and then go to the next question.
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                    <p>
+                        <b>
+                            <u style="font-size: 17px;">Answering a Question : </u>
+                        </b>
+                    </p>
+                    <ol start="5" style="TEXT-ALIGN: left; LIST-STYLE-TYPE: decimal; PADDING-LEFT: 4%; PADDING-TOP: 3px ">
+                        <li>Procedure for answering a multiple choice type question:
+                            <ol style="TEXT-ALIGN: left; PADDING-LEFT: 4%; PADDING-TOP: 3px " type="a">
+                                <li>To select your answer, click on the button of one of the options</li>
+                                <li>To deselect your chosen answer, click on the button of the chosen option again or click on the
+                                    <b>Clear Response</b> button
+                                </li>
+                                <li>To change your chosen answer, click on the button of another option</li>
+                                <li>To save your answer, you MUST click on the
+                                    <b> Save &amp; Next</b> button
+                                </li>
+                                <li>To mark the question for review, click on the
+                                    <b> Mark for Review &amp; Next</b> button.
+                                </li>
+                            </ol>
+                            <ol start="6" style="PADDING-LEFT: 1px; ">
+                                <li>To change your answer to a question that has already been answered, first select that question for answering and then follow the procedure for answering that type of question.</li>
+                            </ol>
+                        </li>
+                    </ol>
+                    <p>
+                        <b>
+                            <u style="font-size: 17px;">Navigating through sections:</u>
+                        </b>
+                    </p>
+                    <ol start="7" style="TEXT-ALIGN: left; LIST-STYLE-TYPE: decimal; PADDING-LEFT: 4%; PADDING-TOP: 3px ">
+                        <li>Sections in this question paper are displayed on the top bar of the screen. Questions in a section can be viewed by clicking on the section name. The section you are currently viewing is highlighted.</li>
+                        <li>After clicking the Save &amp; Next button on the last question for a section, you will automatically be taken to the first question of the next section.</li>
+                        <li>You can shuffle between sections and questions anytime during the examination as per your convenience only during the time stipulated.</li>
+                        <li>Candidate can view the corresponding section summary as part of the legend that appears in every section above the question palette.</li>
+                    </ol>
+                    <b>
+                        <u>Instruction for images:</u>
+                    </b>
+                    <br>
+                    <ol start="11" style="TEXT-ALIGN: left; LIST-STYLE-TYPE: decimal; PADDING-LEFT: 4%; PADDING-TOP: 3px ">
+                        <li>To zoom the image provided in the question roll over it.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 hidden-xs bgm-grey">
+            <div class="profilePicHolder">
+                <img class="instSettingsPic myInstProfilePic" alt="&{'IMG_NA'}" onerror="this.src='/public/images/male.jpg'" src="${profilePic}"/>
+                <div class="studentName">
+                    ${firstName}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="checkbox m-15">
+            <label class="text-left">
+                <input type="checkbox" value="" class="chkbxToLabTakeTest">
+                <i class="input-helper"></i>
+                I have read and understood the instructions.
+            </label>
+        </div>
+        <button type="button" class="btn btn-default waves-effect bgm-bluegray" id="proceedTest" disabled="disabled">Agree & Continue</button>
+    </div>
+    <!-- <h3 class="text-left c-bluegray" style="margin-top: -10px;">Guidelines</h3>
+    <div class="c-red f-10 f-400 m-l-20 visible-xs">**Mobile phone users, locking your device will submit the test.</div>
+
+    <div class="text-left">
+            <ul>
+                <li> Do not press any keys while test is in progress.</li>
+                <li> Use mouse/touch-screen to answer all the questions.</li>
+                <li> Allow Full-Screen on start of the test</li>
+                <li> <span class="c-red f-400"> Exiting Full-Screen will end the test.</span></li>
+                <li> Use <span class="c-red f-400">End Test</span> Button on top-right corner when done.</li>
+                <li> Please note that your answer will be submitted only after you click on <span class="c-green f-400">'Save and Next'</span> option.</li>
+                <li> If Internet connection goes off, test will be paused, and extra time will not be provided in this scenario.</li>
+           </ul>
+    </div>
+<div class="pull-left c-green f-14 f-400 m-l-20">ALL THE BEST</div> -->
+</div>
+<script type="text/javascript">
+    var initGuidelinesHolder = function(par){
+       $(par).on("change",".chkbxToLabTakeTest",function(){
+        if($(this).is(":checked")){
+            $(par).find("#proceedTest").removeAttr("disabled");
+        }else{
+            $(par).find("#proceedTest").attr("disabled",true);
+        }
+    });
+   };
+</script>

@@ -1,0 +1,74 @@
+<div class="singleProgramPopup">
+    <h3 class="orgSiteColor big20 catProgramName">${params.itemName}</h3>
+    <table class="catProgramPrice transaction table table-condensed" cellspacing=10>
+       <tr>
+        <td colspan=2 class="formNote">&{'payment.PLEASE_NOTE_BELLOW_INFO'}</td>
+       </tr>
+       <tr>
+        <td colspan=2 class="formNoRefresh">&{'payment.NO_REFRESH_CLOSE'}</td>
+       </tr>
+       <tr>
+        <td class="formTitle">&{'payment.ORDER_ID'}</td>
+        <td class="formValue">${params.orderId}</td>
+       </tr>
+        #{if params.userRole == "STUDENT" && params.orgId == play.Play.configuration.getProperty("learnpedia.id") && play.Play.configuration.getProperty("referral.state") == "ACTIVE"}
+       <tr>
+        <td class="formTitle"><input class="lpBalance" id="lpBalance" type="checkbox"/>Learnpedia Credits</td>
+        <td class="formValue" id="balance" value="${params.lpCredits}">${params.lpCredits} </td>
+       </tr>
+
+       <tr id="lpCreditsMessageRow" class="nonner">
+        <td colspan=2 class="formTitle" style="font-size: small;"><span id="lpCreditsMessage"></span></td>
+       </tr>
+       #{/if}
+       <tr>
+        <td class="formTitle">&{'payment.TOTAL_AMOUNT'}</td>
+        <td class="formValue" id="popupOrderTotal">${params.orderTotal}</td>
+       </tr>
+       <tr>
+        <td class="formTitle">&{'TXT_CONTACT'}</td>
+        <td class="formValue">&{'payment.CONTACT_EMAIL'}</td>
+       </tr>
+       <tr>
+        <td class="formTitle confirm">&{'payment.CONFIRM_EMAIL'}</td>
+        <td>
+          <div class="formInput fg-line" id="emailgroup">
+            <input class="form-control emailUserName" id="paymentContactEmail"
+            placeholder="&{'payment.CONFIRM_EMAIL_PLACEHOLDER'}" value="${params.userEmail}" name='email' placeholder="Enter your email" required="" type="email"> <!-- <div class="signupErrorDiv" style="color: red;"></div> -->
+            <span class="zmdi form-control-feedback" id="emailDialog" style="display: none;"></span> <small class="help-block" id="emailHelp"></small>
+          </div>
+        </td>
+        <tr>
+          <td>Confirm your phone number</td>
+          <td>
+            <div class="formInput fg-line" id="phonegroup">
+            <input class="form-control phone" id="paymentContactPhone"
+            placeholder="Enter your contact number" value="${params.userPhone}" name='phone' required="" type="text"> <!-- <div class="signupErrorDiv" style="color: red;"></div> -->
+            <span class="zmdi form-control-feedback" id="phoneDialog" style="display: none;"></span> <small class="help-block" id="phoneHelp"></small>
+          </div>
+          </td>
+        </tr>
+        <!-- <td class="formInput fg-line">
+            <input type="email" class="form-control" id="paymentContactEmail"
+                placeholder="&{'payment.CONFIRM_EMAIL_PLACEHOLDER'}" value="${params.userEmail}"/>
+        </td> -->
+       </tr>
+       <tr>
+        <td class="formTitle confirm">&{'payment.COUPON_CODE'}</td>
+          <td class="formInput couponInput input-group">
+          <span class="fg-line">
+              <input type="text" class="form-control" id="couponCodeOrder" placeholder="&{'payment.ENTER_COUPON_CODE_PLACEHOLDER'}" />
+          </span>
+          <span class="orgButton applyCouponButton input-group-addon last"><button class="btn btn-info waves-effect">&{'payment.APPLY'}</button></span>
+          </td>
+       </tr>
+       <tr id="couponMessageRow" class="nonner">
+        <td></td>
+        <td><span id="couponMessage"></span></td>
+       </tr>
+       <tr>
+       </table>
+        <center>
+            <span class="orgButton redirectForTransaction btn btn-success waves-effect btn-block">&{'payment.PROCEED'}</span>
+        </center>
+</div>

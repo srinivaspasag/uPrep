@@ -1,0 +1,36 @@
+#{if entities==null||(entities.has('errorCode')&& entities.errorCode!='')||!entities.has('errorCode')}
+#{/if}
+#{else}
+    %{
+        target=params.target;
+        type=params.resultEntityType;
+        if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+        else loadMoreSize=0;
+    }%
+    #{if type=='QUESTION'}
+        #{questions.similarQuesns quesns:entities.result.questions/}
+    #{/if}
+
+
+    #{elseif type=='PLAYLIST'}
+        #{playlist.PLItems playlists:entities.result.playlists,target:target /}
+    #{/elseif}
+
+
+
+    #{elseif type=='TEST'}
+        #{test.testItems tests:entities.result.tests,target:target /}
+    #{/elseif}
+
+
+
+    #{elseif type=='DOCUMENT'}
+        #{if (params.excludeTypes!=null&&params.excludeTypes.get(0)=='video')}
+            #{doc.docItems docs:entities.result.documents,target:target /}
+        #{/if}
+        
+        #{elseif (params.includeTypes!=null&&params.includeTypes.get(0)=='video')}
+            #{doc.videoItems videos:entities.result.documents,target:target /}
+        #{/elseif}
+    #{/elseif}
+#{/else}

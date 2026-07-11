@@ -1,0 +1,33 @@
+<div class="scheduleEntity">
+    #{common.datevChoose date:'dd',month:'mm',year:'yyyy'/}
+    <div class="centry margHalfTop">                                    
+        <select class="timeSelectHrs">
+            #{list items:0..24,as:'hrs'}
+            <option value="${hrs}">${hrs}</option>
+            #{/list}
+        </select><span class="margRight10">Hrs</span>
+        <select class="timeSelectMins">
+            #{list items:0..60,as:'mins'}
+            <option value="${mins}">${mins}</option>
+            #{/list}
+        </select><span class="margRight10">Mins</span>                               
+        <input type="hidden" class="timeSelectSecs" value="0"/>                                
+    </div>                                
+</div> 
+<span class='scheduleEntityPipe'>to</span>
+<div class="scheduleEntity">
+    #{common.datevChoose date:'dd',month:'mm',year:'yyyy'/}
+    <div class="centry margHalfTop">                                    
+        <select class="timeSelectHrs">
+            #{list items:0..24,as:'hrs'}
+            <option value="${hrs}">${hrs}</option>
+            #{/list}
+        </select><span class="margRight10">Hrs</span>
+        <select class="timeSelectMins">
+            #{list items:0..60,as:'mins'}
+            <option value="${mins}">${mins}</option>
+            #{/list}
+        </select><span class="margRight10">Mins</span>                               
+        <input type="hidden" class="timeSelectSecs" value="0"/>                                
+    </div>                                
+</div> 

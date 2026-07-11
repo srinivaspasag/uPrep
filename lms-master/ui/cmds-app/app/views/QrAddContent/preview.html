@@ -1,0 +1,43 @@
+#{if finalResp.errorCode==''}
+%{
+    quesns=finalResp.result.list;    
+    fileName=params.qqfile;
+    fileName=fileName.substring(0,fileName.lastIndexOf("."));
+}%
+#{if quesns.length()>0}
+<div class='centry grayHead big16'>Preview Questions(Total ${quesns.length()})</div>
+<span class="grayHead">Question Set Name</span>
+<div class="inputDiv linBlk margBot20 margTop" style="width: 770px;">
+    <input type="text" class="formInput" value="${fileName}" name="questionsSetName">
+</div>
+<div class='margBot10 margTop'>
+    <div class='gBlueButton margRight5 savecmdsUploadedQuesns'>Save</div>
+    <div class='gButton cancelcmdsUploadedQuesns'>Cancel</div>     
+</div>
+<input type="hidden" class="formInput" value="${filePrefix}"
+       name="filePrefix"/>
+<input type="hidden" class="formInput" value="${questionSetId}"
+       name="questionSetId"/>
+<div class="mcWidget">
+    <div class="cmdsTableOptsAndSortDiv rightText">   
+        #{common.lmArrowsDiv /}  
+      </div>
+    %{
+        questions=finalResp;
+    }%
+    <div id="tableSection" class="LMHandlerDiv">
+        #{include 'QrQuestions/qrQuesns.html' /}
+    </div>     
+</div>     
+<div class='margTop10'>
+    <div class='gBlueButton margRight5 savecmdsUploadedQuesns'>Save</div>
+    <div class='gButton cancelcmdsUploadedQuesns'>Cancel</div>     
+</div>
+#{/if}        
+#{else}
+<div class="userMessage">There are no questions in the uploaded file</div>
+#{/else}
+#{/if}
+#{else}
+${finalResp.raw()}
+#{/else}

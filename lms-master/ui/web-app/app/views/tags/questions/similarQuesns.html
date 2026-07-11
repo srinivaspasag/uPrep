@@ -1,0 +1,51 @@
+        %{
+            quesns=_quesns;
+        }%
+        #{if quesns.length()>0}
+            #{list items:0..quesns.length()-1,as:'q'}
+                %{
+                    ques=quesns.get(q);
+                }%
+                <div class='ques' data-qid='${ques.id}' data-type="${ques.type}">
+                    <div class="margBot5">
+                        #{if ques.has('user')}
+                        %{
+                            user=ques.user;
+                        }%
+                        #{widgets.img20 user:user /}
+                        <span style="padding:0 4px"> by </span>
+		        #{institute.memberName user : user , classNames : "quesCreator singleLineText displayInBlock" /}
+                        <label class="feedPipe">|</label>
+                        #{/if}
+                        <span class="quesCreatedTime">Added on ${new Date(webUtils.TemplateHelper._getClientTimeOffsetCalc(ques.timeCreated,params.clientServerTimeDelta)).format('dd/MM/yy')}</span>
+                        #{if ques.boardTree.length()>0}
+                            %{
+                                sub=ques.boardTree.get(0);
+                            }%
+                                <a class='boardSubject floatRight margRight10 ptrTagInline doCStream singleLineText displayInBlock toolTipTitle' 
+				   data-brd-id="${sub.id}" style="max-width:70px;" data-title="${sub.name}"
+                                   /*href="${controllers.Boards.getBoardUrl('subject',sub.id)}"*/ data-name="BOARD_SUBJECT">
+                                    ${sub.name}
+                                </a>
+                        #{/if}
+                    </div>
+                    <div class="quesTextDivHolder">
+                        <a class='quesTextDiv openQuesPage blocky ptrTagInline rteTextDiv doCStream' data-qid='${ques.id}'
+                             href="${controllers.Questions.getQuesUrl(ques.id)}" data-org-id="${params.orgId}" data-name="OPEN_QUESTION">
+                            <div class="big14">${ques.content.raw()}</div>
+                        </a>
+                    </div>
+                </div>
+                #{/list}
+                #{if quesns.length() < Integer.parseInt(params.size)}
+                    <script type="text/javascript">
+                        $("#QPRightSec").children(".QPSimilarQuesnsAndTests").find(".QPSQNext").removeClass("QPSQNext");
+                    </script>
+                #{/if}
+             #{/if}
+             #{else}
+             <div class="userMessage">No questions available</div>
+                <script type="text/javascript">
+                    $("#QPRightSec").children(".QPSimilarQuesnsAndTests").find(".QPSQNext").removeClass("QPSQNext");
+                </script>
+             #{/else}

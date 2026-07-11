@@ -1,0 +1,910 @@
+span .textStyles{
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+#testCreation {
+height:100%;
+}
+ .testCreationHeader{
+	width:100%;
+	height:65px;
+	position:relative;
+	top:0px;
+	z-index:1000;
+}
+ .bgImageSprite{
+background-image:url('/public/images/test-creation-sprite.png');
+background-repeat:no-repeat;
+}
+ .dropDownArrow{
+position:absolute;
+width:12px;
+height:9px;
+background-position:-113px -10px;
+margin:3px 0 0 3px;
+}
+ .testCreationHeader .background{
+	position:absolute;
+	height:100%;
+	background-color:#ecf3f6;
+	border-bottom:1px solid #cccccc;
+}
+span .markReq,
+#testCreation .markReq{
+color:#FF0000;
+}
+/* textArea:focus{
+outline:none;border:0px;
+}*/
+ .testDetailsBtnHolder .next,
+.rightAndRelative,
+.testDetailsBtnHolder .cancel,
+ .testDetailsBtnHolder,
+.testDetailsBody .rhs{
+position:relative;
+float:right;
+}
+ .testCreationHeader  .createTestText{
+width:120px;
+padding:20px 0 0 20px;
+font-size:16px;
+font-weight:bold;
+}
+ .testCreationHeader  .separator{
+width:2px;
+margin:10px 0 0 0;
+height:40px;
+background-color:#373737;
+}
+ .testCreationHeader .stepsToCreateTest{
+height:100%;
+}
+ .testCreationHeader .stepsToCreateTest .eachStep{
+height:100%;
+width:90px;
+margin-left:30px;
+color:#b0bdc2;
+}
+ .testCreationHeader .stepsToCreateTest .eachStepSelected{
+background-color:#c1e0ed;
+width:88px;
+border-left:1px solid #cccccc;
+border-right:1px solid #cccccc;
+border-radius:0 0 1px 1px;
+}
+ .testCreationHeader .stepsToCreateTest .eachStep .stepNumber,
+ .testCreationHeader .stepsToCreateTest .eachStep .stepName{
+text-align:center;
+width:100%;
+padding-top:10px;
+}
+ .testCreationHeader .stepsToCreateTest .eachStep .stepNumber{
+font-size:20px;
+font-weight:bold;
+}
+ .testCreationHeader .stepsToCreateTest .eachStep .stepName{
+font-size:12px;
+}
+ .testCreationHeader .stepsToCreateTest .eachStepSelected .stepNumber{
+color:#33a3d7;
+}
+ .testCreationHeader .stepsToCreateTest .eachStepSelected .stepName{
+color:#5a6165;
+}
+ .testCreationHeader .stepsToCreateTest .eachStepSelected .arrowDownSide{
+	width: 0; 
+	height: 0; 
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 10px solid #c1e0ed;
+	margin:13px 0 0 35px;
+}
+ .testDetailsHolder{
+width:835px;
+height:345px;
+margin:40px 0 0 100px;
+position:relative;float:left;
+}
+ .testDetailsHolder .testDetailsBody{
+width:100%;
+height:305px;
+border-radius:4px;
+}
+.testDetailsHolder .testDetailsBody .titleText{
+font-size:12px;
+font-weight:bold;float:left;
+width:100%;
+color:#3f3f3f;
+}
+ .testDetailsHolder .testDetailsBody .testName{
+margin:3px 0 0 160px;
+width:414px;
+}
+ .testDetailsHolder .testDetailsBody .separator{
+float:left;position:relative;
+margin:20px 25% 20px -27%;
+width:150%;height:1px;background-color:#ccc;
+}
+.testDetailsHolder .testDetailsBody .testName .titleText{
+font-size:16px;
+}
+ .testDetailsHolder .testDetailsBody .testName .inputTestName{
+margin-top:10px;
+}
+/*  .testDetailsHolder .testDetailsBody .lhs .testDuration{
+margin-top:20px;
+width:135px;
+}
+ .testDetailsHolder .testDetailsBody .lhs .testDuration .colon{
+float:left;height:100%;width:16px;font-size:22px;font-weight:bold;
+text-align:center;padding-top:23px;
+}
+ .testDetailsHolder .testDetailsBody .lhs .testDuration .hrs,
+ .testDetailsHolder .testDetailsBody .lhs .testDuration .mins{
+width:57px;
+float:left;font-size:11px;
+color:#999999;
+padding-bottom:2px;
+}
+ .testDetailsHolder .testDetailsBody .lhs .testTotalMarks{
+margin-top:20px;
+float:right;
+right:0px;
+width:90px;
+}
+ .testDetailsHolder .testDetailsBody .lhs .testTotalMarks  .inputTotalMarks{
+margin-top:16px;
+} */
+
+ .testDetailsHolder .testDetailsBody .lhs{
+width:480px;
+margin-left:5px;
+background-color: rgba(218, 218, 218, 0.6);
+border-radius:3px;
+padding-bottom:30px;
+}
+ .testDetailsHolder .testDetailsBody .lhs .testTargetExam{
+margin:20px 0 0 20px;
+}
+.testDetailsHolder .testTargetExam .selectTargetExam{
+position:relative;
+width:200px;
+height:22px;
+float:left;
+}
+.testTargetExam .selectTargetExam .dropDownIcon{
+padding-top:7px;
+}
+.testDetailsHolder .lhs .selectCurriculum{
+margin:20px 0 0 20px;
+width:360px;
+overflow:hidden;
+}
+.testDetailsHolder .lhs .selectCurriculum .line{
+width:175px;
+margin:10px 0 0 2px;
+height:1px;
+background-color:#ccc;
+}
+.testDetailsHolder .lhs .selectCurriculum .selectAllSubs,
+.testDetailsHolder .lhs .selectCurriculum .selectAllTopics
+{
+/*margin:5px 0 0 1px;*/
+}
+.testDetailsHolder .lhs .selectCurriculum .subs{
+margin:0px 0 0 13px;
+width:100%;
+}
+.testDetailsHolder .lhs .selectCurriculum .selectText{
+font-weight:bold;
+margin:5px 0 0 1px;
+position:absolute;
+}
+.testDetailsHolder .lhs .selectCurriculum .subs .eachSub{
+width:100%;
+margin:2px 0 0 10px;
+}
+.testDetailsHolder .lhs .selectCurriculum .subs .eachSub .subName{
+padding:0px 20px 0 0;
+background-position:100% 3px;
+cursor:pointer;
+}
+.testDetailsHolder .lhs .selectCurriculum .subs .eachSub .selectTopics{
+width:100%;
+margin:2px 0 0 15px;
+}
+.testDetailsHolder .lhs .selectCurriculum .subs .eachSub .selectTopics .selectTopicText{
+margin:5px 0 0 1px;
+position:absolute;
+}
+ .testDetailsHolder .testDetailsBody .rhs{
+margin-right:5px;
+background:rgba(255, 255, 255, 0.8);
+border-radius:3px;
+width:310px;
+}
+ .testDetailsHolder .testDescription{
+margin:12px 0 0 160px;
+width:414px;
+}
+.testCreationFormatHolder .testSubjectDetails .optional,
+ .testDetailsHolder .testDescription .optional{
+font-size:11px;color:#75b4ce;padding-left:3px;
+}
+ .testDetailsHolder .testDescription .inputTestDesc{
+margin-top:5px;
+height:60px;
+font-size:12px;color:#6E6E6E;
+font-weight:normal;
+}
+.testDetailsHolder .rhs .choosenTargetExamPreview,
+.testDetailsHolder .rhs .choosenCurriculumPreview{
+margin:0 20px 20px 20px;
+padding-top:20px;
+width:270px;
+}
+.testDetailsHolder .rhs .choosenCurriculumPreview{
+border-top:1px solid #ccc;
+}
+.testDetailsHolder .rhs .choosenTargetExamPreview{
+margin-bottom:0px;
+}
+.testDetailsHolder .rhs .choosenTargetExamPreview .testCreateDetailTargetExamName{
+padding:5px 0 10px 0;
+}
+.testCreationLeftBar .testFormat .choosenCurriculumPreview .eachSub,
+.testDetailsHolder .rhs .choosenCurriculumPreview .eachSub{
+width:100%;
+overflow:hidden;
+margin-top:10px;
+}
+.testCreationLeftBar .testFormat .choosenCurriculumPreview .subTopicsList,
+.testDetailsHolder .rhs .choosenCurriculumPreview .eachSub .subTopicsList{
+width:100%;
+padding:5px 0 0 10px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+ .testDetailsHolder .testDetailsBtnHolder{
+height:40px;
+margin:15px 25px;
+width:300px;
+}
+.testCreationLeftBar .testCreationAddQuestions .back,
+.testCreationFormatHolder .back,
+.testDetailsHolder .testDetailsBtnHolder .cancel{
+color:#d06868;
+font-size:12px;
+margin:10px 15px 0 0;
+}
+ .testDetailsHolder .testDetailsBtnHolder .next{
+width:87px;
+height:30px;
+font-weight:bold;
+}
+.testCreationLeftBar{
+width:200px;
+top:0px;
+min-height:88%;
+border-right:1px solid #dadada;
+padding-bottom:25px;
+background-color:#fff;
+}
+/* Test Creation Left bar css */
+.testCreationLeftBar .testDetails{
+width:90%;
+margin:20px 0 0 5px;
+padding:0 0 25px 5px;
+border-bottom:1px solid #ccc;
+}
+.testCreationLeftBar .testDetails .testName{
+	line-height:20px;
+	font-size:18px;
+	font-weight:bold;
+	width:100%;
+}
+.testCreationLeftBar .testDetails .testName .instImgs{
+	padding: 13px;
+	background-position: -625px 1px;
+	margin-right: 6px;
+	position: relative;
+	top: -4px;
+}
+.testCreationLeftBar .testDetails .testTotalMarks,
+.testCreationLeftBar .testDetails .testDuration{
+font-size:13px;
+width:90%;
+margin:8px 0 0 0;
+}
+.testCreationLeftBar .testDetails .testTargetExam{
+width:100%;
+margin:8px 0 0 0;
+}
+.testCreationLeftBar .testDetails .testDescription{
+margin:20px 0 0 0;
+font-size:12px;
+width:100%;
+display:none;
+}
+.testCreationLeftBar .testFormatPreview{
+margin:15px 0 0 10px;
+width:190px;
+}
+.testCreationLeftBar .testFormatPreview .eachSubject{
+padding:10px 0 10px 0;
+border-bottom:1px solid #e9e9e9;
+width:100%;
+}
+.testCreationLeftBar .testFormatPreview .eachSubject .subjectName{
+width:100%;
+margin:0px;
+} 
+.testCreationLeftBar .testFormatPreview .eachSubject .subjectTopics{
+margin-top:5px;
+width:100%;
+}
+.testCreationLeftBar .testFormatPreview .eachSubject .subjectWiseMarks,
+.testCreationLeftBar .testFormatPreview .eachSubject .subjectWiseNoOfQuestions{
+padding:7px 5px 7px 0;
+font-size:12px;
+}
+.testCreationLeftBar .testFormat{
+margin:10px 0 0 5px;
+width:100%;
+}
+.testCreationLeftBar .testFormat .choosenCurriculumPreview{
+border-top:0px;
+margin:10px 5px;
+width:160px;
+}
+.testCreationLeftBar .testFormat .choosenCurriculumPreview{
+
+}
+.testFormatBtnHolder{
+text-align:center;
+width:100%;
+top:490px;
+}
+.testFormatBtnHolder .nextBtn{
+margin:-5px 0 0 0;
+width:70px;
+height:25px;
+}
+/* Test Creation Format page css */
+.testCreationFormatHolder{
+left:0px;
+width:590px;
+top:40px;
+padding-bottom:50px;
+z-index:100;
+}
+.testCreationFormatHolder .enterTotalQuestions{
+width:100%;
+margin:0px 0 10px 40px;
+}
+.testCreationFormatHolder .enterTotalQuestions .inputTotalQuestions{
+width:60px;
+height:30px;
+margin-left:10px;
+}
+.testCreationFormatHolder .customInputTextBox{
+text-align:center;
+}
+.testCreationFormatHolder .choosenSubjectsHolder{
+width:100%;overflow:hidden;height:96px;z-index:10;
+}
+.testCreationFormatHolder .choosenSubjects{
+min-width:100%;
+max-height:110px;
+border-top:1px solid #ccc;
+}
+.testCreationFormatHolder .choosenSubjects .eachSubject{
+margin:5px 10px 0 20px;
+width:90px;
+height:89px;
+text-align:center;
+cursor:pointer;border:1px solid transparent;
+}
+.testCreationFormatHolder .choosenSubjects .eachSubject:hover{
+background-color:#dbeef4;
+}
+.testCreationFormatHolder .choosenSubjects .selected{
+background-color:#dbeef4;
+border-radius:2px 2px 0 0;
+border:1px solid #3599ca;
+border-bottom-width:0px;
+}
+.testCreationFormatHolder .choosenSubjects .selected .dArrow{
+position:absolute;
+float:left;
+width:23px;height:13px;
+top:89px;left:38%;
+background-position:-86px -13px;
+}
+.testCreationFormatHolder .choosenSubjects .subName{
+font-weight:bold;
+font-size:12px;
+margin-top:6px;
+max-height:22px;
+overflow:hidden;
+float:left;width:100%;
+}
+.testCreationFormatHolder .choosenSubjects .inputTotalQuestions{
+margin:5px 20px 5px 18px;
+width:40px;
+height:30px;
+cursor:default;
+font-size:16px;
+}
+.chooseQuesFormat{
+padding:28px 0 0 20px;
+margin-left:20px;
+width:410px;
+background-color:#fff;
+border-radius:0 2px 2px 2px;
+border:1px solid #3599ca;
+z-index:5;
+top:-1px;
+}
+.testCreationFormatHolder .copyFormatBtn{
+width:170px;
+height:25px;
+margin:10px 0;
+}
+.testCreationFormatHolder .chooseAndAddTypes{
+position:relative;
+float:left;
+width:390px;
+height:25px;
+margin:20px 0 0 0;
+}
+.testCreationFormatHolder .chooseAndAddTypes .plusIcon{
+background-position:-149px -10px;
+width:25px;
+height:25px;
+position:absolute;
+left:3px;
+}
+.testCreationFormatHolder .chooseAndAddTypes .vSelectText{
+padding-left:28px;
+width:310px;
+font-size:12px;
+}
+.testCreationFormatHolder .chooseAndAddTypes .dropDownIcon{
+padding:14px 7px;
+}
+.quesTypesFormat{
+width:100%;
+margin-top:20px;
+}
+.quesTypesFormat .tHeaderBorder{
+border:0px solid #ccc;
+border-top-width:1px;
+border-bottom-width:1px;
+}
+.quesTypesFormat table .cellLeftBorder{
+border-left:1px solid #ccc;
+}
+.quesTypesFormat table .cellTopBorder{
+border-top:1px solid #ccc;
+}
+.quesTypesFormat table .totalNoOfQ,
+.quesTypesFormat table .totalMarksPerQ,
+.quesTypesFormat table .inputNoOfQ,
+.quesTypesFormat table .inputMarksPerQ,
+.quesTypesFormat table .inputNegMarksPerQ{
+width:50px;
+height:32px;
+margin:0 0 0 10px;
+background-color:#f0f0f0;
+font-size:16px;
+font-weight:bold;
+}
+.quesTypesFormat table .inputNegMarksPerQ{
+font-size:14px;
+color:#cc6666;
+}
+.quesTypesFormat table .cellWidthBig{
+width:165px;
+padding-left:5px;
+}
+.quesTypesFormat table .cellWidth{
+width:80px;
+height:54px;
+}
+.quesTypesFormat table .tableRow:nth-child(even){
+background-color:#fff;
+}
+/* Test Creation Add Questions Css starts */
+.testCreationLeftBar .testCreationAddQuestions{
+width:100%;
+margin:25px 0 0 0px;
+}
+.testCreationAddQuestions .btnsCollection{
+width:100%;
+background-color:#fff;
+}
+.testCreationAddQuestions .btnsCollection .saveAndAddLater,
+.testCreationAddQuestions .btnsCollection .doneWithAdd{
+height:30px;
+margin:10px 0 10px 7px;
+}
+.testCreationAddQuestions .btnsCollection .doneWithAdd{
+width:70px;
+font-weight:bold;
+}
+.testCreationAddQuestions .btnsCollection .saveAndAddLater{
+width:108px;
+font-size:11px;
+}
+.testCreationAddQuestions .subjectList{
+width:100%;
+margin:10px 0 10px 0;
+}
+.testCreationAddQuestions .subjectList .bottomBorder{
+background-position:10px -50px;
+height:8px;
+width:100%;
+border-bottom:2px dotted #cfcfcf;
+}
+.testCreationAddQuestions .quesTypes{
+width:100%;	
+margin:0 0 20px 0;
+}
+.testCreationAddQuestions .quesTypes .eachQType{
+width:100%;
+margin:10px 0 0 0;
+}
+.noCurriculumMsg{
+width:100%;
+padding:5px 0 0 5px;
+}
+.testCreationAddQuestions .eachQType .curriculumList,
+.testCreationAddQuestions .eachQType .dropBtn{
+border-radius:1px;
+}
+.testCreationAddQuestions .eachQType .dropBtn{
+height:18px;
+width:195px;
+/*background-color:#fff;*/
+border-top:1px solid #cccccc;
+padding:6px 5px 0 0;
+background-position:173px 5px;
+cursor:pointer;
+}
+.testCreationAddQuestions .eachQType .dropBtn .dropDownArrow{
+float:right;
+right:3px;
+}
+.testCreationAddQuestions .eachQType .curriculumList{
+width:190px;
+/*background-color:#f1f2a2;
+box-shadow:1px 1px 2px #ccc;*/
+}
+.eachQType .curriculumList .eachCurriculum{
+width:100%;
+margin:0 0 5px 5px;
+}
+.curriculumList .eachCurriculum .curriculumName{
+padding:5px 0 0 5px;
+width:100%;
+color:#373737;
+}
+.curriculumList .eachCurriculum .quesAdded{
+width:170px;
+padding:4px 0 0 14px;
+font-size:12px;
+color:#999966;
+height:16px;overflow:hidden;
+}
+.curriculumList .eachCurriculum .quesAdded .qt{
+width:100%;position:absolute;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+.curriculumList .eachCurriculum .quesAdded .removeQues{
+display:none;
+}
+.curriculumList .eachCurriculum .quesAdded:hover{
+background-color:#8ed4e3;
+color:#fff;
+}
+.curriculumList .eachCurriculum .quesAdded:hover .qt{
+width:120px;
+}
+.curriculumList .eachCurriculum .quesAdded:hover .removeQues{
+float:right;
+position:absolute;z-index:100;
+display:inline;
+right:5px;
+color:#fff;
+}
+ .testCreationQuestionList{
+left:0px;
+width:780px;
+top:0px;
+padding-bottom:50px;
+z-index:100;
+}
+.testCreationQuestionList .listTopBar{
+width:100%;
+height:60px;
+background-color:#f2f09c;
+}
+.testCreationQuestionList .listTopBar .searchQuestions{
+margin:17px 0 0 20px;
+height:30px;
+width:360px;
+font-size:12px;
+}
+.testCreationQuestionList .listTopBar .autoGenerateTest,
+.testCreationQuestionList .listTopBar .addQuestion{
+width:110px;
+height:22px;
+margin:18px 0 0 20px;
+text-align:center;
+padding:7px 0 0 20px;
+font-weight:bold;
+}
+.testCreationQuestionList .listTopBar .autoGenerateTest .icon,
+.testCreationQuestionList .listTopBar .addQuestion .icon{
+width:20px;
+height:22px;
+position:absolute;
+margin:-4px 0 0 -27px;
+}
+.testCreationQuestionList .listTopBar .addQuestion .icon{
+background-position:-20px -7px;
+}
+.testCreationQuestionList .listTopBar .autoGenerateTest .icon{
+background-position:-173px -7px;
+}
+.testCreationQuestionList .listTopBar .orText{
+width:60px;
+text-align:center;
+padding-top:23px;
+}
+.testCreationQuestionList .listTopBar .autoGenerateTest{
+width:150px;
+margin:18px 0 0 0px;
+}
+.testCreationQuestionList .addQuestionSearchParams{
+width:610px;
+height:35px;
+margin:0px;
+background-color:#d6e5e9;
+}
+.addQuestionSearchParams .selectSubject,
+.addQuestionSearchParams .selectTopics,
+.addQuestionSearchParams .selectQuesType,
+.addQuestionSearchParams .selectExams{
+height:20px;
+width:120px;
+font-size:12px;
+float:left;position:relative;
+margin:7px 0 0 18px;
+}
+.addQuestionSearchParams .selectSubject{
+width:150px;
+}
+.testCreationQuestionList .loadPlaylistBtn{
+width:128px;
+height:23px;font-size:12px;
+margin:8px 0 0 20px;
+}
+.testCreationQuestionList .addQuestionsHolder{
+margin:22px 0 0 22px;
+width:750px;
+}
+.testCreationQuestionList .questionsHolder .eachQuestion{
+margin:20px 0 20px 30px;
+width:650px;
+}
+.addQuestionsHolder .questionAddToListBtn{
+margin:8px 0;
+}
+.testCreationQuestionList .eachQuestion .qIdIcon{
+width:20px;
+height:20px;float:left;
+margin-left:20px;
+}
+.testCreationQuestionList .eachQuestion .questionId{
+font-size:13px;
+font-weight:bold;float:left;
+margin:3px 0 0 5px;
+}
+.testCreationQuestionList .eachQuestion .qInfo{
+max-width:410px;
+max-height:30px;
+right:7px;
+padding-top:3px;
+}
+.testCreationQuestionList .eachQuestion .qInfo .icon{
+background-position:0px -10px;
+width:18px;height:20px;float:left;
+margin:-2px 3px 0 0;
+}
+.testCreationQuestionList .eachQuestion .questionBody{
+width:570px;float:left;
+margin:5px 0 0 70px;
+border:1px solid #d9d9d9;
+border-left-width:2px;
+border-right-width:2px;
+background-color:#fff;
+border-radius:4px;
+color:#4d4d4d;
+}
+.testCreationQuestionList .eachQuestion .questionBody .questionTitle{
+width:95%;
+padding:16px;float:left;
+font-size:12px;
+}
+.testCreationQuestionList .eachQuestion .questionBody .quesOptions{
+width:90%;
+padding:18px;
+font-size:12px;
+font-weight:bold;
+}
+.testCreationQuestionList .eachQuestion .questionBody .bottomBar{
+width:100%;
+height:25px;
+background-color:#dbeaf2;
+}
+.questionBody .bottomBar .subject,
+.questionBody .bottomBar .level,
+.questionBody .bottomBar .topic{
+color:#758f95;
+padding:5px 0 0 20px;
+float:left;
+}
+.testCreationQuestionList .eachQuestion .qMoreInfo{
+width:570px;
+padding:3px 0 0 73px;
+color:#666666;
+}
+/* Test Creation Assign */
+ .testCreationAssign{
+margin:25px 0 0 25px;
+width:500px;
+}
+.testCreationAssign .publishDesc{
+margin-top:10px;
+background-color:#f2f2f2;
+width:100%;
+padding:15px;
+}
+.testCreationAssign .scheduleTest .noSchduleText,
+.testCreationAssign .publishDesc .radioText{
+position:absolute;
+margin:6px 0 0 2px;
+}
+.testCreationAssign .publishDesc .inputShareWithOnly{
+margin:2px 0 0 22px;
+width:350px;
+height:80px;
+background-color:#fff;
+overflow-x:hidden;overflow-y:auto;
+}
+.testCreationAssign .publishDesc .inputShareWithOnly .getName{
+float:left;position:relative;
+width:150px;
+height:20px;
+border:0px solid orange;
+margin:3px;
+font-size:12px;
+font-weight:normal;
+color:#424242;
+outline:none;
+background-color:transparent;
+}
+.testCreationAssign .publishDesc .inputShareWithOnly .selectedNames{
+float:left;position:relative;
+padding:0px 12px 2px 2px;
+margin:4px 2px 2px 2px;
+height:16px;
+font-size:12px;font-weight:normal;color:#352f39;
+background-color:#f9fab4;
+border:1px solid #d6d98c;border-radius:1px;
+}
+.testCreationAssign .publishDesc .inputShareWithOnly .cross{
+width:8px;height:8px;position:absolute;
+float:right;margin:6px 0 0 3px;
+background-position:-194px -15px;
+cursor:pointer;
+}
+.testCreationAssign .publishDesc .suggestionBox{
+position:absolute;
+margin:2px 0 0 22px;
+height:110px;
+z-index:200;
+border:0px solid #f2f2f2;
+border-width:0 0 2px 2px;
+width:352px;overflow:hidden;
+background:#fff;
+}
+/* textarea:focus{
+outline:none;
+}*/
+.testCreationAssign .scheduleTest{
+margin-top:30px;
+}
+.testCreationAssign .scheduleTest .scheduleDetails{
+width:400px;
+margin-top:20px;
+}
+.testCreationAssign .scheduleTest .scheduleDetails .startSchedule,
+.testCreationAssign .scheduleTest .scheduleDetails .endSchedule{
+width:100%;
+margin-top:20px;
+}
+.testCreationAssign .scheduleTest .scheduleDetails .title{
+min-width:40px;
+float:left;
+padding-top:5px;
+}
+.testCreationAssign .scheduleTest .scheduleDetails .inputDate{
+width:122px;
+height:22px;
+margin-left:15px;
+float:left;font-weight:normal;font-size:12px;
+z-index:200;
+}
+.testCreationAssign .scheduleTest .scheduleDetails .inputHrs,
+.testCreationAssign .scheduleTest .scheduleDetails .inputMins,
+.testCreationAssign .scheduleTest .scheduleDetails  .inputMeridiem{
+width:46px;
+height:22px;
+margin-left:15px;
+float:left;
+position:relative;
+}
+.testCreationAssign .scheduleTest .scheduleDetails .dropDownIcon{
+padding-top:20px;
+}
+.testCreationAssign .assignBtns{
+width:100%;
+margin:20px 0 0 0;
+}
+.testCreationAssign .assignBtns .scheduleLaterBtn,
+.testCreationAssign .assignBtns .publishBtn{
+height:28px;
+font-size:12px;
+font-weight:bold;
+}
+.testCreationAssign .assignBtns .publishBtn{
+width:120px;
+}
+.testCreationAssign .assignBtns .scheduleLaterBtn{
+margin-left:30px;
+}
+.testCreationAssign .scheduleDetails .calenderIcon{
+width:20px;
+height:22px;
+margin:2px 0 0 -20px;
+float:left;position:relative;
+background-position:-64px -9px;
+cursor:pointer;
+}
+.testCreationAssign .suggestionBox .eachSuggestion{
+float:left;
+width:100%;
+height:36px;
+cursor:pointer;
+}
+.testCreationAssign .suggestionBox .selected{
+background-color:#bedded;
+}
+.testCreationAssign .suggestionBox .eachSuggestion .profileImg{
+margin:5px 0 0 8px;
+width:30px;border-radius:22px;
+float:left;
+}
+.testCreationAssign .suggestionBox .eachSuggestion .name{
+float:left;
+width:250px;
+overflow:hidden;text-overflow:ellipsis;word-space:no-wrap;
+margin:12px 0 0 5px;
+color:#424242;
+}

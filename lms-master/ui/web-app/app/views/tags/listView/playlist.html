@@ -1,0 +1,58 @@
+#{if playlistData!=null && playlistData.has('title')}
+<div class="left relative eachPlaylistList eachListViewItem">
+	<img class="left relative playListIcon" alt="no preview" src="/public/images/playlist/plBack.png"/>
+	<div class="left relative listContentsDetails">
+		<span class="left relative big12 boldy listContentsText blackTextColor">${playlistData.title.raw()}</span>
+		<br/>
+	#{if playlistData.has('user') && playlistData.user!=null}
+		<span class="left relative big12 listContentsText blueTextColor" style="padding-top:0px;">by ${playlistData.user.firstName.raw()} ${playlistData.user.lastName.raw()}</span>
+	#{/if}
+		<br/>
+		<span class="left relative listContentsRankingHolder">
+			<span class="left relative listContentsRankingStars" style="width:${playlistData.avgRating*20}%"></span> 
+		</span>
+	</div>
+	<div class="left relative listContentsMiddle">
+		<span class="left relative listContentsText blackTextColor">Views - <b>${playlistData.views}</b> Saved - <b>${playlistData.follower}</b> </span>
+		<span class="left relative listContentsText blackTextColor" style="width:100%;">
+			#{if playlistData.has('boards') && playlistData.boards.length()>0}
+			#{list items:0..playlistData.boards.length()-1,as:'indx'}	
+				#{if playlistData.boards.get(indx).type=="COURSE"}
+					<span class="listMatchingTagsParent">${playlistData.boards.get(indx).name.raw()}</span> 
+				#{/if}
+				#{else}
+					<span class="listMatchingTags">${playlistData.boards.get(indx).name.raw()}</span>
+				#{/else}
+				#{if indx < (playlistData.boards.length()-1)}
+					<b>></b>
+				#{/if}
+			#{/list}
+			#{/if}
+		</span>
+		#{if playlistData.has('targets') && playlistData.targets.length()>0}
+		<span class="left relative big12 boldy listContentsText greyTextColor">Target - <span class="blueTextColor big14">
+			#{list items:0..playlistData.targets.length()-1,as:'indx'}
+			<a /*href="${controllers.Boards.getBoardUrl('exam',playlistData.targets.get(indx).brdId)}"*/ data-brd-id="${playlistData.targets.get(indx).brdId}" class="boardExam name blueTextColor big14">${playlistData.targets.get(indx).code.raw()}</a>,
+			#{/list}
+			</span>
+		</span>
+		#{/if}
+	</div>
+	<div class="right relative listContentsRight">
+		<a class="greenButton listContentBtn openPLView doCStream" data-pl-id="${playlistData.playlistId}" data-cs-name="OPEN_TEST">Open</a><br/>
+		<div class="onHoverListContentsItems">
+			<div class="listContentBtn">
+				#{widgets.followUnfollowEntity followType:playlistData.followType,entityType:'PLAYLIST',entityId:playlistData.playlistId/}
+			</div>
+			<span class="listContentsShareIt big14">Share</span>
+		</div>
+	</div>
+	#{if playlistData.has('tocs') && playlistData.tocs.length()>0}
+		<div class="left absolute listViewTOC boldy">Includes in TOC : 
+		#{list items:0..playlistData.tocs.length()-1,as:'indx'}
+			${playlistData.tocs.get(indx).raw()},
+		#{/list}
+		</div>
+	#{/if}
+</div>
+#{/if}

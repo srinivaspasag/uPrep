@@ -1,0 +1,24 @@
+<div class="instUpvoteHolder wi-stats" style="padding: 10px;">
+    #{if _upVotes!=null}
+    <!-- <span class="upvotesInstFeedCount">
+        <span class="instImgs"></span>
+        <a class="upvotesCount" data-entity-count="${_upVotes}">${_upVotes}</a>
+    </span> -->
+    #{/if}
+    #{if _comments!=null}
+    <!-- <span class=""> -->
+    <ul class="commentsInstFeedCount lgi-attrs">
+        <!-- <span class="instImgs"></span> -->
+            <i class="zmdi zmdi-comment"></i>
+            <a class="commentsCount" style="cursor: pointer;">${_comments}</a>
+             Answers
+    </ul>
+    <!-- </span> -->
+    #{/if}
+    #{if _followers!=null}
+    <!-- <span class="followersInstFeedCount">
+        <span class="instImgs" style="padding:4px 6px;"></span>
+        <a class="upvotesCount">${_followers}</a>
+    </span> -->
+    #{/if}
+</div>

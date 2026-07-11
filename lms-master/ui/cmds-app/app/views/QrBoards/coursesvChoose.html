@@ -1,0 +1,23 @@
+%{
+    courses=courses.result.list;
+}%
+<div class="vChoose bigvChoose" data-value="-1" data-onchange="getProgsOfCourses">
+  <div class="vChooseHead" style="width: 180px;">Select a Course</div>
+  <div class="vChooseDownIcon"></div>
+  <div class="vChooseDropDown">
+        #{if courses.length()>0}
+        #{list items:0..courses.length()-1,as:'c'}
+            %{
+                course=courses.get(c);
+            }%
+            <div class="vChooseOpt" data-value="${course.id}" 
+                 data-opt-params='{"courseName":"${course.name}"}'>${course.name}</div>
+        #{/list}
+        #{/if}            
+        #{else}
+        <div class="vChooseOpt invalidvChooseOpt">
+            <div class="smallThinGray">No course found</div>
+        </div>
+        #{/else}
+  </div>
+</div>

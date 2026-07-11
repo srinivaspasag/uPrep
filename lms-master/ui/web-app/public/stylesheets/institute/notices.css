@@ -1,0 +1,45 @@
+.noticeHeadText{
+	background-color:#f2f2f2;
+	opacity:0.7;
+	padding:7px 0 7px 15px;
+}
+.instNoticeHolder{
+	background-color:#f2f2f2;
+	opacity:0.55;
+	margin-top:5px;
+}
+.noticeNavigator{
+	padding-top:10px;
+	text-align:center;
+}
+.instNoticeBody{
+	padding:18px;
+	height:150px;
+	overflow:hidden;
+}
+.instNoticeCount{
+	font-size:20px;
+	width:20%;
+}
+.nextInstNotice,
+.prevInstNotice{
+	background-image:url('/public/images/LMS/inst-sprite.png');
+	background-repeat:no-repeat;
+	cursor:pointer;
+	width:7px;
+	height:11px;
+}
+.nextInstNotice{
+	margin-right:38%;
+	background-position: -493px -4px;
+}
+.prevInstNotice{
+	margin-left:35%;
+	background-position: -500px -4px;
+}
+.nextInstNotice.active{
+	background-position:-485px -4px
+}
+.prevInstNotice.active{
+	background-position: -506px -4px;
+}

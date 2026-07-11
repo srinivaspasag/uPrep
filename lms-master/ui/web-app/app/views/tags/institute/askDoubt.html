@@ -1,0 +1,52 @@
+<div class="instAddDoubtPopup nonner">
+	<table>
+		<tr>
+			<td class="centerText" colspan=2 style="height:30px;">
+				<span class="big16 boldy">&{'INST.ASK_DOUBT'}</span></br>
+			</td>
+		</tr>
+		<tr>
+			<td class="instAskDoubtTtlTxt">&{'TXT_TITLE'}</td>
+			<td>
+				<div class="instAddDoubtTitle">
+					<input placeholder="&{'ASK_DOUBT_TITLE_PLACEHOLDER'}" type="text"/>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="instAskDoubtTtlTxt">&{'TXT_DOUBT'}</td>
+			<td>
+				<div class="instRTEHolder"></div>
+			</td>
+		</tr>
+		<tr>
+			<td class="instAskDoubtTtlTxt">&{'TXT_TAGS'}</td>
+			<td>
+			   <div class="instAddDoubtTags">
+               			#{UIComWidgets.tagging target:'ADD_DISCUSSION',addTagsId:'addTagsForAddDisc'/}
+			   </div>
+			</td>
+		</tr>
+		<!-- ISSUE #344
+		*{<tr>
+			<td class="instAskDoubtTtlTxt" style="padding-top:4px;">&{'TXT_ASK'}</td>
+			<td>
+				<span class="instAskDbtScope">
+					<input class="instAskDbtScopeRad" name="instAskDbtScope" 
+						value="public" type="checkbox" checked/>
+					<span class="txt">Publicly</span>
+				</span>		
+				*{<span class="instAskDbtScope">
+					<input class="instAskDbtScopeRad" name="instAskDbtScope" 
+						value="message" type="checkbox"/>
+					<span class="txt">Privately</span>
+				</span>}*
+			</td>
+		</tr>}*-->
+		<tr>
+			<td class="centerText" colspan=2 style="height:40px;">
+				<span class="big14 doCStream" id="instPostDoubt">Done/Post</span>
+			</td>
+		</tr>
+	</table>
+</div>

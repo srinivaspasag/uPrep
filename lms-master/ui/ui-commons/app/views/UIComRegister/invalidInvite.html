@@ -1,0 +1,8 @@
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Invalid Invite Key' /}
+<div class="centry changePasswordHolder">
+    <input type="hidden" id="emailForVerify" value="${email}">
+    #{if resp.errorCode=='INVALID_INVITE_KEY'||resp.errorCode=='ALREADY_USED_INVITE_KEY'}
+        <div class="userMessage">Your invite key is invalid or has expired,Try signing up again by requesting invite from your IITD friends</div>
+    #{/if}
+</div>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+ <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}"></link>
+#{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /} 
+<style type="text/css">
+	@font-face {
+	font-family: Ubuntu;
+	src: url(../../public/fonts/Ubuntu-Regular.ttf);
+}
+body {
+    padding: 0;
+    line-height: 16px;
+    font-family:Ubuntu,sans-serif;
+    font-size: 12px;
+    background-attachment: fixed;
+    margin: 0px;
+    /*background: url("/public/images/bg.jpg");*/
+    background-color:#28bcec;
+    font-family:'Ubuntu',tahoma,verdana,arial,sans-serif;
+    color:#333;
+}
+.greenButton{
+        color:#fff;
+        background-color: rgb(114, 192, 34);
+        border:0px solid #88ad5f;
+        background-image:none;
+        border-radius:0px;
+        padding:6px 30px;
+        cursor:pointer;
+	font-size:15px;
+	padding-bottom: 8px;
+}
+.submitBtn{
+	margin-left:20px;
+}
+.greyButton{
+        cursor:pointer;
+	color:#333;
+        padding:6px 30px;
+	background-color:#ccc;
+	font-size:15px;
+	padding-bottom: 8px;
+}
+#TnCPopup{
+	display:none;
+}
+.acceptTnC{
+	width:500px;
+	padding-left:25px;
+}
+.TnCBody{
+	max-height:600px;
+	overflow-x:hidden;
+	overflow-y:scroll;
+	padding-right:20px;
+	margin:20px 0;
+}
+.TnCHead{
+	font-size:20px;
+	color:#28bcec;
+}
+.tncTitle{
+	font-weight:bold;
+	font-size:12px;
+}
+.tncBody{
+	font-size:12px;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+::-webkit-scrollbar-track {
+    background-color:#eee;
+}
+ 
+::-webkit-scrollbar-thumb {
+    background-color:#ccc;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	opacity:0.5; 
+}
+</style>
+#{gaTrackingCode /}
+</head>
+<body>
+      #{doLayout /}    
+      #{common.noscript/}
+      #{common.vPopup/}
+    </body>
+</html>

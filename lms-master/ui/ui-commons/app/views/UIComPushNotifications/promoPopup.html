@@ -1,0 +1,35 @@
+#{if resp!=null }
+%{
+    showWelcomeMessage = resp.showWelcomeMessage;
+}%
+   #{if showWelcomeMessage}
+   <div class="userPushNotifyPopupBody" style="border: 3px solid #FEA918;border-radius: 5px;padding: 20px;background: #fff!important;margin: 12px 0px;">
+        <p>
+                <div class="blueTextColor big14 boldy" style="padding-bottom:3px;">Congratulations! You can now enjoy our JEE/NEET free demo!</div>
+                <br>
+                <div class="" style="color:#666;">This Free sign-up gets you Rs.50 Paytm Cash which will be credited to your registered mobile number ${session.get("contactNumber")}  within 7 working days!!
+                <br>
+                You can also use code <b>LP500</b> to get Rs. 500 Off on any of our JEE/NEET programs, from the <b>Programs Tab</b>.
+                </div>
+
+        </p>
+    </br>
+        <div>
+                <!-- <span class="bigBlueButton regUserEmailNow">&{'BTN_REG_NOW'}</span> -->
+                <input type="button" class="closeUsrPushNotifyPopup" style="padding:15px;background-color: #62b23b!important;padding: 8px 35px;border:0px solid #88ad5f;color: white;cursor: pointer" value="OK">
+        </div>
+    </div>
+   #{/if}
+<script type="text/javascript">
+$(function(){
+    var doc = $(document).find("#userPromoPopup");
+    doc.on("click",".closeUsrPushNotifyPopup",function(){
+        var $this = $(this);
+            $.get("/UIComRegister/disableWelcomeMessage",function(data){
+                    
+            });
+            $(this).closest(".userPushNotifyPopupBody").remove();
+        })
+    });
+</script>
+#{/if}

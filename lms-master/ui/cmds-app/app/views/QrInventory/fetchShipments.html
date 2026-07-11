@@ -1,0 +1,27 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.accessCodes.list.length()>0}
+	%{
+		data = resp.result.accessCodes;
+		dataList = data.list;
+	}%
+	#{list items:0..dataList.length()-1,as:'index'}
+		#{qrInventory.entryShipment data : dataList.get(index) /}
+	#{/list}
+	%{
+        	totalHits = resp.result.accessCodes.totalHits;
+        	lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+	}%
+	#{if totalHits > lastCount }
+	<tr class="loadMoreDivTR">
+        	<td colspan=6>
+                	<div class="loadMoreItems" data-next-start="${lastCount}">&{'LOAD_MORE_item','Data'}</div>
+        	</td>
+	<tr>
+	#{/if}
+#{/if}
+#{else}
+<tr class="noRecordTR">
+     <td colspan=6>
+     	<div class="boldy big13 centerText">&{'INVENTORY_NO_RECORDS_FOUND'}</div>
+     </td>
+</tr>
+#{/else}

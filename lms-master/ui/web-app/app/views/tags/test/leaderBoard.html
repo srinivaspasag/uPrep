@@ -1,0 +1,46 @@
+<div class="absolute testLeaderBoardHolder nonner" data-leader-board="true">
+#{include 'Tests/leaderBoard.html'/}
+</div>
+<script>
+	function onLeaderBoardDataLoaded(){
+		try{
+			$($(".leaderBoardScrollHolder").find("table tr").get(0)).html(leaderBoardData_headers);
+			$($(".leaderBoardHeaderTable").find("tr").get(0)).html(leaderBoardData_headers);
+			$(".leaderBoardScrollHolder").useScrollBar(scrollBarOptions);
+		}catch(err){}
+		$(".leaderBoardHeaderTable").width($(".leaderBoardScrollHolder table").width()+1);
+		$(".testLeaderBoardHolder").css("left",(($(window).innerWidth()-$(".testLeaderBoardHolder").width())/2)+"px");
+	}
+	$(function(){
+		setTimeout(function(){initLeaderBoardPopup()},1000);
+	});
+	function initLeaderBoardPopup(){
+		$(".testLeaderBoardHolder").on("click",".closeLeaderBoardPopup",function(e){
+			$(e.currentTarget).closest(".testLeaderBoardHolder").addClass("nonner");
+			closeWrapperForPopup();
+		}).on("change",".showLeadersMarks",function(e){
+			if(e.currentTarget.checked){
+				$(e.delegateTarget).find(".leaderBoardShowMarks").removeClass("nonner");
+				$(e.delegateTarget).find(".leaderBoardShowPercentage").addClass("nonner");
+			}
+		}).on("change",".showLeadersPercentage",function(e){
+			if(e.currentTarget.checked){
+				$(e.delegateTarget).find(".leaderBoardShowMarks").addClass("nonner");
+				$(e.delegateTarget).find(".leaderBoardShowPercentage").removeClass("nonner");
+			}
+		});
+		$(".testLeaderBoardHolder").removeClass("nonner");
+               	onLeaderBoardDataLoaded();
+		$(".testLeaderBoardHolder").addClass("nonner");
+	};
+	function hideLeaderBoardPopup(e){
+		if($(e.currentTarget).closest(".testLeaderBoardHolder").get(0) || $(e.currentTarget).data("leaderBoard")=="true") return;
+		$(document).off("click",hideLeaderBoardPopup);
+		$(".testLeaderBoardHolder").addClass("nonner").find(".leaderBoardScrollHolder").html("");
+		closeWrapperForPopup();
+	}
+	function showLeaderBoardPopup(testId){
+		$(".testLeaderBoardHolder").removeClass("nonner");
+		putWrapperForPopup("#noTabSection",".testLeaderBoardHolder");
+	}
+</script>

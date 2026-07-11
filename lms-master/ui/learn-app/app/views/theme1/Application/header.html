@@ -1,0 +1,72 @@
+<header class="clearfix" data-ma-theme="blue" id="header" style=" min-height: 60px;">
+  <ul class="h-inner" style="padding: 0;">
+    <li class="hi-trigger ma-trigger" data-ma-action="sidebar-open" data-ma-target="#sidebar" style="top: 10px;">
+      <div class="line-wrap">
+        <div class="line top" style="background: black;"></div>
+        <div class="line center" style="background: black;" ></div>
+        <div class="line bottom" style="background: black;"></div>
+      </div>
+    </li>
+    <li class="hi-logo">
+      <a class="m-l-10" href="/"><img class="img-responsive" src="/public/outerAssets/images/newIndex/lplogo.png" style="width: 145px;top: 3px;left: 12px;position: relative;" id="banner" alt="logo"></a>
+    </li>
+    <li class="pull-left">
+      <div class="hi-menu" style="margin-left: 2em">
+        <nav class="ha-menu">
+          <ul>
+            <li id="home" #{if activeClass =="home"} class="active" #{/if}>
+              <a href="/">Home</a>
+            </li>
+            <li id="students" class="#{if activeClass =='students'} active #{/if}">
+              <a href="/students">Students</a>
+            </li>
+            #{if categoriesResponse.result.list.length() != 0}
+            <li id="programs" class="navlink dropdown #{if activeClass == 'programs'} active #{/if}">
+              <a href="/packages">Programs<i class="caret"></i></a>
+              <ul class="dropdown-menu navlink-menu">
+                #{if categoriesResponse.result.list.length() == 1}
+                  <li><a href="/packages/${catergoryName}">${categoriesResponse.result.list.get(0).name}</a></li>
+                #{/if}
+                #{else}
+                  #{list items:0..1,as:'index'}
+                  %{
+                    category = categoriesResponse.result.list;
+                    catergoryName = category.get(index).name;
+                  }%
+                  <li><a href="/packages/${catergoryName}">${catergoryName}</a></li>
+                  #{/list}
+                #{/else}
+                <li><a href="/packages">ALL PROGRAMS</a></li>
+              </ul>
+            </li>
+            #{/if}
+            <li id="exams"  class="dropdown #{if activeClass =='exam' || popup=='exam'} active #{/if} nonner" style="left: 8px;position: relative;cursor: pointer;">
+              <a href="/exams">Exams<i class="caret"></i></a>
+              <ul class="dropdown-menu navlink-menu">
+                <li><a href="/exam/aiims">AIIMS</a></li>
+                <li><a href="/exam/jeemain">JEE Main</a></li>
+                <li><a href="/exam/jeeadvanced">JEE Advanced</a></li>
+                <li><a href="/exam/neet">NEET</a></li>
+                <li><a href="/exam/bitsat">BITSAT</a></li>
+              </ul>
+            </li>
+            <li id="blog" class="nonner" style="left: 4px;position: relative;">
+              <a href="http://blog.learnpedia.in">Blog</a>
+            </li>
+            <!-- <li id="institutes" class="#{if activeClass =='institutes'} active #{/if}">
+              <a href="/institutes">Institutes</a>
+            </li> -->
+          </ul>
+        </nav>
+      </div>
+    </li>
+    <li class="pull-right #{if activeClass =='students' || activeClass == 'login' || activeClass == 'signup' || activeClass == 'programs'}  #{/if} #{else} nonner #{/else}" style="top: 15px; position: relative;right:60px;" id="buttonContainer">
+      <div class="hi-menu" style="margin-left: 2em">
+        <nav class="ha-menu" style="right: 3px;position: relative;">
+          <button class="btn btn-xs btn-light-green" id="signbtn" onclick="window.location.href='/signup'" style="top:-4px;border-radius:4px; width: 100px;height: 30px;font-weight:500!important;line-height: 1px;font-weight: normal;right:10px;font-size: 13px;box-shadow: none!important;" type="button">Signup</button>
+          <button class="btn btn-xs btn-light-green btn-bg" onclick="window.location.href='/login'" style="top:-4px;border-radius: 4px;width: 100px;height: 30px;line-height: 1px;font-weight:500!important;left:6px;font-weight:normal;background: #62b23b;font-size: 13px;box-shadow: none!important;" type="button">Login</button>
+        </nav>
+      </div>
+    </li>
+  </ul>
+</header>

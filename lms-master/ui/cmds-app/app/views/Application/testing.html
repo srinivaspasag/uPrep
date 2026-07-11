@@ -1,0 +1,83 @@
+<!--<!DOCTYPE HTML>
+<html>
+<head>
+    <script type="text/javascript"
+        src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<style>
+#div1 {width:350px;height:70px;padding:10px;border:1px solid #aaaaaa;}
+</style>
+<script>
+function allowDrop(ev)
+{
+ev.preventDefault();
+}
+
+function drag(ev)
+{
+ev.dataTransfer.setData("Text",ev.target.id);
+}
+
+function drop(ev)
+{
+ev.preventDefault();
+var data=ev.dataTransfer.getData("Text");
+ev.target.appendChild(document.getElementById(data));
+}
+$(document).on("drop","#div1",function(event){
+    drop(event);
+});
+</script>
+</head>
+<body>
+
+<p>Drag the W3Schools image into the rectangle:</p>
+ ondrop="drop(event)"
+<div id="div1" ondragover="allowDrop(event)"></div>
+<br>
+<div id="drag1" draggable="true" ondragstart="drag(event)" style="background-color: red;width: 30px;height: 30px">atkjhSA F</div>
+
+</body>
+</html>-->
+<script type="text/javascript"
+        src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<article>
+    
+
+    <div id="firstToDrag" class="todrag" draggable="true">First content to be dragged.</div>
+    <div id="secondToDrag" class="todrag" draggable="true">Second content to be dragged.</div>
+    <div id="thirdToDrag" class="todrag" draggable="true">Third content to be dragged.</div>        
+    <div id="fourthToDrag"  class="todrag">Fourth content to be dragged.</div>
+    
+</article>
+<script type="text/javascript">
+    
+    $(document).on('dragstart','.todrag', function(e) {
+        var dataTransfer = e.originalEvent.dataTransfer;
+        dataTransfer.effectAllowed = 'copy';
+        dataTransfer.setData('Text', this.id);        
+    });
+    $(document).on('dragover','.todrag', function(e) {
+        
+        var event = e.originalEvent;
+//        if (event.preventDefault) {
+//            event.preventDefault();
+//        }
+        $(this).css({background:'red'})
+//        event.dataTransfer.dropEffect = 'copy';
+        return false;
+    });
+    $(document).on('dragleave','.todrag', function(e) {
+        
+        $(this).css({background:'blue'})
+        
+    });
+
+    $(document).on('drop','.todrag', function(e) {
+        console.log("iamin")
+        var event = e.originalEvent;
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        }
+        return false;
+    });
+</script>

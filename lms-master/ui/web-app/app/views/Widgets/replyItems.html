@@ -1,0 +1,8 @@
+#{if !replies.equals(null) && replies.errorCode.isEmpty() && replies.result.list.length()>0}
+%{
+    replies=replies.result.list;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+#{widgets.replyItems replies:replies,loadMoreSize:loadMoreSize /}
+#{/if}

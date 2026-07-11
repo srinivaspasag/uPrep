@@ -1,0 +1,8 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Upload Route
+POST    /upload                     controllers.FileUploadController.upload
+GET     /reindex                    controllers.ReindexController.reindex
+GET     /checkReindex               controllers.ReindexController.checkReindex

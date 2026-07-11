@@ -1,0 +1,132 @@
+<style type="text/css">
+#vMessagePopup{
+    z-index: 10000;
+    display: none;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+	border-radius: 10px;
+}
+.vMessagePopupContainer{
+	text-align:left;
+        direction:ltr;
+        display:inline-block;
+        background-color: #FFFFFF;
+    	border: 1px solid #AAAAAA;
+    	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    	width: 400px;
+}
+#vMessagePopup .greenButton{
+	padding:4px 35px;
+}
+.vMsgBoxBody{
+    padding: 10px 20px;
+}
+.vMsgBoxHead{
+    padding:10px 20px;
+    font-size:20px;
+    color:#F1F1F1;
+    background-color:#666;
+}
+.vMsgBoxHead.boxTypeERROR{
+    background-color:#F66663;
+}
+.vMsgBoxHead.boxTypeSUCCESS{
+    background-color:rgba(6, 162, 240,0.7);
+}
+.vMessageBody{
+    padding: 15px 0 30px;
+    color:#666;
+    font-size:15px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+</style>
+<div class="popupWrapper nonner" id="vMsgPopup">
+<div id="vMessagePopup">
+  <div class="vMessagePopupContainer">
+    <div class="vMsgBoxHead boxTypeERROR">
+        <span class="">Error</span>
+    </div>
+    <div class="vMsgBoxHead boxTypeSUCCESS">
+        <span class="">Message</span>
+    </div>
+    <div class="vMsgBoxBody">
+        <div class="vMessageBody"></div>
+        <div class="margTop rightText vMsgBoxButtons">
+                <span class="greenButton closeVMessagePopup">Ok</span>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+	var cbFn = function(){};
+	var showVYesNoBox=function(text,extClasses,cbFunction){ //cbFn TODO
+		var popup = showVMsgBox(text,"No","SUCCESS");
+		cbFn = cbFunction ? cbFunction : function(){};
+		var buttons = "<span class='greenButton closeVMessagePopup "+extClasses+"' data-val='true'>Yes</span>";
+		buttons += "<span class='redButton closeVMessagePopup' style='margin-left:10px;' data-val='false'>No</span>";
+		popup.find(".vMsgBoxButtons").html(buttons);
+	};
+	var showMessage=function(text,cbFunction,extClasses){
+		showVMsgBox(text,"OK","SUCCESS");
+		cbFn = cbFunction ? cbFunction : function(){};
+	};
+	var showError=function(text,cbFunction,extClasses){
+		showVMsgBox(text,"OK","ERROR");
+		cbFn = cbFunction ? cbFunction : function(){};
+	};
+	var COMMON_ERROR_MESSAGE = "Something went wrong, Try Again!";
+	var showVMsgBox=function(err,cancelText,typeOfBox){
+    		cancelText=cancelText||"Ok";
+    		typeOfBox = typeOfBox ? typeOfBox : "ERROR" ;
+    		err=err||COMMON_ERROR_MESSAGE;
+    		var popup=$("#vMessagePopup").css("display","table-cell");
+		popup.closest(".popupWrapper").removeClass("nonner");
+    		popup.find(".vMsgBoxHead").addClass("nonner");
+    		popup.find(".boxType"+typeOfBox).removeClass("nonner");
+    		popup.find(".vMessageBody").html(err);
+		popup.find(".vMsgBoxButtons").html("<span class='greenButton closeVMessagePopup'>Ok</span>");
+    		popup.find(".closeVMessagePopup").text(cancelText);
+		$(document).off("keyup.cancelMsgBox",keyupVMsgBox).on("keyup.cancelMsgBox",keyupVMsgBox);
+		var sTop = $(window).scrollTop();
+                $("#mainContainHolder").addClass("disableMainBodyScroll").css({'top':"-"+sTop+'px'}).data('scrollTop',sTop);	
+    		return popup;
+	};
+	var hideVError=function(){
+        	hideVMsgBox();
+		if(cbFn){
+			var $this = $(this);
+			var arg = $this.data("val");
+			arg = arg == "true" ? true : arg;
+			cbFn(arg);
+			cbFn = function(){};
+		}
+	};
+	var hideVMsgBox=function(dontHideBlackOut){
+    		$("#vMessagePopup").hide().closest(".popupWrapper").addClass("nonner");
+		$(document).off("keyup.cancelMsgBox",keyupVMsgBox);
+                var sTop = $("#mainContainHolder").removeClass("disableMainBodyScroll").css({'top':''}).data('scrollTop');
+                window.scrollTo(0,sTop);
+		setTimeout(function(){
+			cbFn = function(){};
+		},100);
+	};
+	var keyupVMsgBox = function(e){
+		var key = e.which;
+		if(key == 13 || key == 27){
+			hideVMsgBox();
+		}
+	}
+	$(function(){
+		$(document).on("click",".closeVMessagePopup",hideVError);
+		$("#vMsgPopup").on("click",function(e){
+           	     	var $this = $(e.srcElement||e.target);
+                	var has = $(".vMessagePopupContainer").has($this);
+                	if(!has.get(0) && !$this.hasClass("vMessagePopupContainer")){
+                        	hideVError();
+                	}
+        	});
+	});
+</script>

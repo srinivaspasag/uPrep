@@ -1,0 +1,37 @@
+%{
+    testResponse=resp.result.testRes;
+}%
+
+#{list items:0..testResponse.list.length()-1,as:'Pindex'}
+%{
+    test = testResponse.list.get(Pindex);
+    timeObj=util.Utilities.getTimeFromMiliSec(test.duration);
+}%
+
+<div class="testClass card border8px p-t-15 p-b-15 p-l-15 p-r-15 m-b-10
+			#{if test.attempted}
+				attemptedHover
+			#{/if} 
+			#{else}
+				libraryHover
+			#{/else}" 
+		data-id="${test.id}" data-attempted="${test.attempted}">
+	<div class="card-body container">
+		<div class="row">
+			<div class="col-xs-9 row text-capitalize text-left f-14">
+				<img src="/public/assets/theme1/img/testIcon.png" class="analytics-img-browser imageStyle">
+	            ${test.name}
+	            <div class="visible-xs m-t-5">
+					<span class="f-14 text-center smallScreenFont">${timeObj.hrs}:${timeObj.mins}</span>
+					<span class="text-center smallScreenFont">Hours</span>
+	            </div>
+	        </div>
+			<div class="col-xs-3 hidden-xs">
+				<span class="f-14 text-center smallScreenFont">${timeObj.hrs}:${timeObj.mins}</span>
+				<span class="text-center smallScreenFont">Hours</span>
+			</div>
+			<i class="iconAllign zmdi zmdi-check-all #{if test.attempted || test.completed } c-blue #{/if}"></i>
+		</div>
+	</div>
+</div>
+#{/list}

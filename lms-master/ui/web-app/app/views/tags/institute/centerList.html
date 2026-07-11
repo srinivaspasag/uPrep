@@ -1,0 +1,8 @@
+<span class="vSelectEach" data-value="">All Centers</span>
+#{if centers.errorCode=="" && centers.result.length()>0}
+#{list items:0..centers.result.length()-1,as:'cIndex'}
+	%{ center = centers.result.get(cIndex);}%
+	<span class="vSelectEach doCStream" data-value="${center.name}"	name="SELECT_CENTER" title="Center : ${center.name}"
+		data-sections=${center.sections.raw()}>${center.name}</span>
+#{/list}
+#{/if}

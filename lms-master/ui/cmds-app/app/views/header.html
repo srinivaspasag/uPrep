@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Content Management and Delivery System</title>
+<meta charset="utf-8" />
+<meta content="Learnpedia Questions" name="application-name" />
+<link rel="shortcut icon" type="image/png"
+	href="@{'/public/images/favicon.ico'}"></link>
+#{stylesheet media:'screen', src:'jquery-libs/jquery-ui-1.10.4.custom.min.css' /}
+#{stylesheet media:'screen', src:'uicomCommon/buttonsAndTabs.css' /}
+#{stylesheet media:'screen', src:'uicomCommon/inputAndTextareas.css' /}
+#{stylesheet media:'screen', src:'uicomCommon/utilsUi.css' /}
+#{stylesheet media:'screen', src:'uicomWidgets/vChoose.css' /}
+#{stylesheet media:'screen', src:'uicomWidgets/rte.css' /}
+#{stylesheet media:'screen', src:'uicomWidgets/fe.css' /} 
+#{stylesheet media:'screen', src:'uicomWidgets/share.css' /} 
+#{stylesheet media:'screen', src:'uicomMain.css' /} 
+#{stylesheet media:'screen', src:'home.css' /}
+<!--    jQuery loading -->
+<script type="text/javascript"
+	src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="/public/javascripts/jquery-libs/jquery-ui-1.10.4.custom.min.js"></script>
+#{i18nJS /}
+#{gaTrackingCode /}        
+#{freshChat /}
+</head>
+<body>
+	<!--      <div id="feedBackButHolder" class="fixedLeftButton" style="top:530px;">
+         <span id="feedBackButton">Feedback</span>
+      </div>       -->
+	<div id="guideButHolder" class="fixedLeftButton"
+		style="left: -44px; top: 400px;">
+		<!--<span id="openGuideButton">Guide</span>-->
+		<a id="openGuideButton" href="/help" target="_blank">&{'help.GUIDE_BTN'}</a>
+	</div>
+	<script type="text/javascript">
+	new function($){
+        	$.fn.live = function(eventType,cbFn){
+                	if(cbFn){
+                        	$(document).on(eventType,this.selector,cbFn);
+                	}
+			return $(this);
+        	};
+	}(jQuery);
+        var asyncFnsStore=[];
+        var jsFileLogger=[];
+        var filesUpFront=[];
+        var cbfnUpFront;
+        var lazyFnCall=function(fn){
+            try{
+                fn();
+            }catch(err){
+                cbfnUpFront=fn;
+            }
+        } 
+        var lazyLoad=function(fileList){            
+            try{
+                fetchScripts(fileList);
+            }catch(err){    
+//                filesUpFront=fileList;
+                for(var k=0;k<fileList.length;k++){
+                    filesUpFront.push(fileList[k]);
+                }
+            }
+        }      
+        var serverSystemTimeDelta=parseInt("${new Date().getTime()}")-(new Date().getTime());
+    </script>
+    
+    	#{include 'Widgets/uiSamples.html' /}
+        #{include '/UIComTags/common/commonUi.html' /}
+	<script>
+        (function(){    
+            var u=$("#uiSamplesDiv");
+            //for profile pic and name of the user
+            img30Sample= $(document.createElement('div'));    
+            img30Sample.html(u.children("#img30Sample").html());
+            u.children("#img30Sample").remove();
+
+            img20Sample= $(document.createElement('div'));    
+            img20Sample.html(u.children("#img20Sample").html());
+            u.children("#img20Sample").remove();
+            
+            var createCommonUIEl=function(source){  
+                var targetVar= $(document.createElement('div'));    
+                targetVar.html(source.html());
+                source.remove();
+                if(img20Sample.children(".img20Wrapper").length>0){
+                    targetVar.find(".img20Holder").html(img20Sample.children().clone(true));
+                }
+                if(img30Sample.children(".img30Wrapper").length>0){
+                    targetVar.find(".img30Holder").html(img30Sample.children().clone(true));  
+                }       
+                return targetVar;
+            };            
+            
+
+            var sampleChildren=u.children();
+            for(var k=0;k<sampleChildren.length;k++){
+                var el=sampleChildren.eq(k);
+                var s=el.attr("id");               
+                window[s]=createCommonUIEl(el);
+            }
+        })();          
+       </script>
+    
+    
+	<!--      <script type="text/javascript">
+        (function(d, t) {
+            var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+            g.src = 'http://localhost:19002/public/javascripts/home.js';
+            s.parentNode.insertBefore(g, s);
+        }(document, 'script'));          
+      </script>-->
+        %{ userId=session.userId; 
+	org.json.JSONObject user = new org.json.JSONObject();
+        user.put('firstName',currentOrgInfo.getOrgUserFirstName());
+        user.put('lastName',currentOrgInfo.getOrgUserLastName());
+        user.put('id',userId);
+        user.put('profile',currentOrgInfo.getOrgUserProfile()); userFullName='';
+        userProfile=''; if(user.has('firstName')&&user.has('lastName')){
+        userFullName=user.firstName+' '+user.lastName; }
+        userProfile=currentOrgInfo.getOrgUserProfile(); 
+        }%         
+        <div id="FEWrapperHolder" class="nonner"></div>
+	<div id="topBlackBar">
+		<div class="topBarHead">
+			<span class="cmdsAbbr">CMDS</span> <span class="cmdsExplained"> - Content
+				Management and Distribution System</span>
+			<!--            <span class="cmdsByVedantu">by Learnpedia</span>
+            <span class="cmdsTM">TM</span>-->
+		</div>
+            <div class="topBarBox">
+			<a
+				class="cmdsaPush topBarUserBoxName topBarUsername
+                 ptrTagHovered openMemberPage"
+				data-user-id='${userId}'
+				href='/organization/${params.orgId}/member/${userId}'>
+				${userFullName} </a>
+				
+			<div class="showTopBarDropDown">
+				<a class="img30Wrapper"> <img
+					src="${currentOrgInfo.getOrgUserProfilePic()}" class="img30 topBarUserImg" />
+				</a>
+				<div class="margLeft5 downArrow"></div>
+			</div>
+			<div class="topBarBoxDropDown">
+				<a class="boxDropDownEntity cmdsaPush openMemberPage"
+					data-user-id='${userId}'
+					href='/organization/${params.orgId}/member/${userId}'>
+					<div class="img50Wrapper floatLeft">
+						<img src="${currentOrgInfo.getOrgUserProfilePic()}"
+							class="img50 topBarUserImg" />
+					</div>
+					<div class="img50Lefter">
+						<div class="big14 topBarUsername">${userFullName}</div>
+						<div class="color9 big12">${userProfile.toLowerCase().capitalizeWords()}</div>
+					</div>
+					<div class="cleaner_with_divider">&nbsp;</div> </a> <a
+					class="boxDropDownEntity cmdsaPush openMemberPage"
+					data-user-id='${userId}'
+					href='/organization/${params.orgId}/member/${userId}'>View
+					Profile</a> 
+					%{ 
+						ileUrl=play.Play.configuration.getProperty("ile.url");
+						ileRouteTitle=play.Play.configuration.getProperty("ile.route.title");
+					}% 
+                                        #{if !session.directLogin}
+                                        <a class="boxDropDownEntity changePublicSettings"> Settings </a>                                         
+                                        #{/if}
+                                        <a class="boxDropDownEntity openInstAboutApp">&{'settings.ABOUT_APP'}</a>                                   
+                                        <a href='@{Security.logout}' class="boxDropDownEntity" id="cmdsLogout">
+					Logout </a>
+			</div>                    
+            </div>        
+	</div>
+        #{if session.userId!=session.callingUserId}
+        <div style="border-bottom: 1px solid rgb(204, 204, 204); height: 20px; 
+             font-weight: bold; padding: 5px;">
+            You are currently browsing as ${userFullName}. 
+            <a class="removeBrowseAsUser liner smally">&{'BACK_TO_MY_ACCOUNT'}</a>
+        </div>
+        #{/if}
+	<div id="topBar">
+		<a class="goToHomePage cmdsaPush topBarInstiLogo"
+                   href="/organization/${params.orgId}/resources" title="${currentOrgInfo.getName()}"> <img
+			src="${currentOrgInfo.getOrgThumbnail()}"> </a>
+		<div class="menuItemsDiv">
+			<div class="cmdsHiddenMenuItemDiv">
+				<a id="cmdsResources"
+					class="hiddenMenuItemToggler cmdsaPush cmdsMenuItemNormal"
+					href="/organization/${params.orgId}/resources"> Resources </a>
+				<span class="topBarActivePtr"><span class=topBarActivePtrImg></span>
+				</span>
+			</div>
+			<div class="cmdsHiddenMenuItemDiv">
+				<a id="cmdsPrograms" class="cmdsaPush hiddenMenuItemToggler">Programs</a>
+				<span class="hiddenMenuItemTogglerImg"></span> <span
+					class="topBarActivePtr"><span class=topBarActivePtrImg></span>
+				</span>
+				<div class="hiddenMenuItems progMenuItems">
+					<a class="cmdsaPush hiddenMenuItem smallThinGray">Loading
+						programs</a>
+				</div>
+			</div>
+		</div>
+		<div class="topBarBox">
+			<div class="showSettingsDropDown">
+				<div class="topBarSettingsImg">Tools</div>
+				<div class="margLeft5 downArrow"></div>
+			</div>
+			<div class="topBarBoxDropDown settingsTopBarBoxDropDown">
+			#{if !"SALESPERSON".equals(currentOrgInfo.getOrgUserProfile())}
+				<a class="boxDropDownEntity cmdsaPush" id="cmdsInstituteInfo"
+					href='/organization/${params.orgId}/instituteinfo'>
+					Organization Info </a>
+				<a class="boxDropDownEntity cmdsaPush" id="cmdsAcadStr"
+					href='/organization/${params.orgId}/academicstructure'> Edit
+					Academic Structure </a> 
+			#{/if}
+				<a class="boxDropDownEntity cmdsaPush cmdsPeople" href='/organization/${params.orgId}/people'>
+					People Management </a> 
+			#{if !"SALESPERSON".equals(currentOrgInfo.getOrgUserProfile())}
+				<!-- <a class="boxDropDownEntity cmdsaPush cmdsPeople"
+                                        href='/organization/${params.orgId}/people?targetProfile=OFFLINE_USER&start=0&size=50'>
+					&{'OFFLINE_USERS_PAGE'}</a> --> 
+                		<a class="boxDropDownEntity cmdsaPush nonner" id="cmdsDevices"
+                   			href='/organization/${params.orgId}/devices'>
+                    			&{'DEVICE_MGMNT'}
+                			</a>                                       
+                            <!-- <a class="boxDropDownEntity cmdsaPush" id="cmdsLibraryExport"
+                   			href='/organization/${params.orgId}/exports'>
+                    			&{'LIBRARY_EXPORT'}
+						</a> -->
+				<a class="boxDropDownEntity cmdsaPush nonner"
+					id="cmdsChannels" href='/organization/${params.orgId}/channels'>
+					Challenge Channels </a>
+				#{if "MANAGER".equals(currentOrgInfo.getOrgUserProfile())}
+				%{
+					extraInfo = currentOrgInfo.getExtraInfo();
+				}%
+				#{if extraInfo!=null && extraInfo.has("isSuperAdmin") && extraInfo.isSuperAdmin == true}
+				<a class="boxDropDownEntity cmdsaPush"
+					id="cmdsSingUpMGMT" href='/organization/${params.orgId}/managesignup'>
+					&{'EXT_SIGN_UP_MGMNT'} </a>
+				#{/if}
+                                <a class="boxDropDownEntity cmdsaPush"
+					id="cmdsSellerDashboard" href='/organization/${params.orgId}/sellerdashboard'>
+					Seller Dashboard </a>                                
+					            <a class="boxDropDownEntity cmdsaPush"
+                    id="cmdsCouponsDashboard" href='/organization/${params.orgId}/couponsdashboard'>
+                    Coupons Dashboard </a>  
+                    <a class="boxDropDownEntity cmdsaPush nonner"
+                    id="cmdsSaleDetailsDashboard" href='/organization/${params.orgId}/saledetails'>
+                    Sales Dashboard </a>
+                    <a class="boxDropDownEntity cmdsaPush nonner"
+                    id="cmdsBillingDashboard" href='/organization/${params.orgId}/billing'>
+                    Billing Dashboard</a>
+				#{/if}
+                <!-- Show sendNotification to All Organizations-->
+                <a class="boxDropDownEntity cmdsaPush" id="cmdsNotification"
+                    href='/organization/${params.orgId}/sendPushNotification'>
+                    &{'SEND_TO_GCM'} </a>
+				#{if params.orgId == play.Play.configuration.getProperty("learnpedia.id")}
+                <a class="boxDropDownEntity cmdsaPush" id="referralUsers" href="/organization/${params.orgId}/referralUsers">
+                    Get Referral Data </a>
+
+                <a class="boxDropDownEntity cmdsaPush" id="sharequestions" href="/organization/${params.orgId}/sharequestions">
+                    Question Sharing </a>
+
+                #{/if}
+				#{/if}
+			</div>
+			<div class="displayInBlock toolTipTitle relative" style="top:-2px;"
+			   data-title="&{'LEARN_NETWORK_TOOL_TIP'}">
+                        	<a target="_blank" href="${ileUrl}" class="instNavCMDSLink">
+                            		<span class="bigGreenButton blackTextColor" style="padding:12px 25px;">
+						<span>&{'LEARN_NETWORK'}</span>
+						<span class="rightWhiteArrow absolute" style="right:4px;top:16px;"></span>
+						<span class="rightWhiteArrow absolute" style="right:9px;top:16px;"></span>
+					</span>
+                        	</a>
+			</div>
+		</div>
+		<div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+	<div id="contentSectionHolder">#{doLayout /}</div>
+        
+	<script>
+        (function(){    
+            cSecHolder=$("#contentSectionHolder");
+            topBar=$("#topBar");  
+        })();          
+       </script>        
+        
+        
+	<div id="dragID"></div>
+	<div id="scrollParent" class="scrollParent">
+		<div class="scrollBar">
+			<div class="scrollRail">
+				<div class="scrollThumb">
+					<img class="thumbImg" src="" />
+				</div>
+				<img class="railImg" src="" />
+			</div>
+		</div>
+		<div class="container">
+			<div class="textBody">
+				<!-- Insert your text here -->
+			</div>
+		</div>
+		<div class="scrollBarHorizon">
+			<div class="scrollRailHorizon">
+				<div class="scrollThumbHorizon"></div>
+			</div>
+		</div>
+	</div>
+	<div id="cmdsBlackOut"></div>
+        #{common.vPopup/}
+	<div id="cmdsPopup">
+		<div class="rightText closePopupDiv">
+			<a class="closecmdsPopup closePopup closePopupImg">x</a>
+		</div>
+		<div class="cmdsPopupBody"></div>
+		<span class="cmdsPopupError nonner">Fields marked with * are
+			compulsory</span>
+		<div class="nonner cmdsPopupBtns rightText"></div>
+	</div>
+	<div id="cmdsPopupAlt">
+		<div class="rightText closePopupDiv">
+			<a class="closePopupImg closecmdsPopupAlt">x</a>
+		</div>
+		<div class="cmdsPopupBody"></div>
+		<div class="cmdsPopupBtns rightText">
+			<div class="gBlueButton">Done</div>
+		</div>
+	</div>
+	<div id="topLoaderDiv" class="relative" style="z-index: 10000">
+		<div id="topLoader" class="nonner">
+			<span class="loadingSpanTop"></span>
+		</div>
+	</div>
+        <div class="nonner" id="tooltipContainer">
+		<span class="tooltipPointerUp tooltipPointer"></span>
+		<div class="tooltipBody"></div>
+		<span class="tooltipPointerDown nonner tooltipPointer"></span>
+	</div>        
+
+	<script type="text/javascript">
+        var USERID = cmdsUserId = "${userId}";
+        #{if currentOrgInfo!=null}
+        cmdsOrgId="${currentOrgInfo.getOrgId()}";
+        cmdsMemberId="${currentOrgInfo.getMemberId()}";
+        cmdsOrgMemberId="${currentOrgInfo.getOrgMemberId()}";
+        cmdsProfile="${currentOrgInfo.getOrgUserProfile()}";             
+        #{/if}
+        vedantuHub="${play.Play.configuration.getProperty('application.name')}";
+                          
+        cmdsOrgData={orgMemberId:cmdsOrgMemberId,orgId:cmdsOrgId,memberId:cmdsMemberId,
+            userRole:cmdsProfile,orgMemberProfile:cmdsProfile};
+        cmdsOrgData["myUserId"]="${session.get('userId')}";        
+        $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+            var data=originalOptions.data;  
+            data = transformParams(originalOptions.data);
+            options.data = $.param($.extend(data,cmdsOrgData));              
+        });
+    </script>
+
+	<!--    First set loading
+    utils,main-->
+
+	#{script src:'uicomUtils.js', charset:'utf-8' /} #{script
+	src:'uicomCommon/utils.js', charset:'utf-8' /} #{script
+	src:'uicomWidgets/tabModel.js', charset:'utf-8' /} #{script
+	src:'main.js', charset:'utf-8' /} #{script src:'utilsUi.js',
+	charset:'utf-8' /}
+
+
+	<!--    exclusive loading-->
+	<script type="text/javascript">
+        fetchScripts(filesUpFront);
+    </script>
+
+	<!--    last set loading
+    entrySugg,clickStream,vChoose,questions.js-->
+	#{script src:'uicomCommon/utilsUi.js', charset:'utf-8' /} 
+	#{script src:'uicomWidgets/entrySugg.js', charset:'utf-8' /} 
+	#{script src:'uicomWidgets/vChoose.js', charset:'utf-8' /} 
+	#{script src:'uicomCommon/scrollbar.js', charset:'utf-8' /} 
+	#{script src:'uicomWidgets/share.js', charset:'utf-8' /} 
+	#{script src:'uicomQuestions/questions.js', charset:'utf-8' /} 
+	#{script src:'history.js', charset:'utf-8' /}
+	#{script src:'uicomWidgets/fileuploader.js', charset:'utf-8' /}
+	#{script src:'uicomHistory/jquery.history.js', charset:'utf-8' /}
+	<script type="text/javascript">
+        if(cbfnUpFront){
+            cbfnUpFront();
+        }        
+        (function(){    
+            getMemberInfoPojo();
+            setUserOrgs();
+        })();                  
+    </script>
+	<!--rest of the files are loaded when needed  like managecontent,rte,moveItems,share with  -->
+	<script type="text/x-mathjax-config">
+                MathJax.Hub.Config({
+                        extensions : [ "tex2jax.js" ],
+                        jax : [ "input/TeX", "output/HTML-CSS" ],
+                        tex2jax : {
+                                inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+                        },
+                        TeX: {
+                        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                                }
+                });
+        </script>
+	<script type="text/javascript"
+		src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+	#{common.noscript/}
+</body>
+</html>

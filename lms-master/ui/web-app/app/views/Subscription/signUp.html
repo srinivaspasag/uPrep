@@ -1,0 +1,199 @@
+#{extends 'Subscription/header.html' /}
+<style>
+.memberIdBlock{
+	background-color:#F2F5A9;
+}
+</style>
+<div id="testSignUp">
+    <div class="pageHolderM">
+#{if testSeries.errorCode=="" && testSeries.result.has('testSeries') && testSeries.result.get('testSeries').length()>0}
+	<form id="testSignUpHolder" autocomplete="on" autofocus action="javascript:decideSignUp();" method="POST" data-submit-type="preview" class="CSWidget" data-widget="ADD_SUBSCRIPTION_FORM">
+		<div style="padding-bottom:20px;text-align:center;font-size:20px;">${heading}</div>
+		<div class="testSignUpRow memberIdBlock">
+			<span class="testSignUpText">Search Member by Id : </span>
+			<input class="testSignUpInputBox memberIdInput" placeholder="Member Id" />
+			<input type="button" class="button fetchMemberBtn doCStream" value="Fetch Member" 
+				data-name="FETCH_MEMBER_INFO"/>
+		</div>
+		<div style="font-size:16px;font-weight:bold;text-align:center;">Or</div>
+		<div class="testSignUpRow">
+			<span class="testSignUpText">Student Name : </span>
+			<input class="testSignUpInputBox firstNameInput" placeholder="First" 
+				pattern="^[a-zA-Z]+$" required />
+			<input class="testSignUpInputBox lastNameInput" placeholder="Last" 
+				pattern="^[a-zA-Z]+$" required />
+		</div>
+		*{<!-- <div class="testSignUpRow">
+			<span class="testSignUpText">Fathers' Name : </span>
+			<input class="testSignUpInputBox firstNameInput" placeholder="First" 
+				pattern="^[a-zA-Z]+$" required />
+			<input class="testSignUpInputBox lastNameInput" placeholder="Last" 
+				pattern="^[a-zA-Z]+$" required />
+		</div> -->}*
+		<div class="testSignUpRow">
+			<span class="testSignUpText">Contacts : </span>
+			<input class="testSignUpInputBox numberTextBox mobileNo" placeholder="Mobile / Landline Number" 
+				min="10" maxlength="12" required />
+			<input class="testSignUpInputBox emailId" type="email" placeholder="Email Id" required />
+		</div>
+		<div class="testSignUpRow">
+			<span class="testSignUpText">Select Test Series : </span>
+			<select class="testSignUpSelectBox testSeriesIdInput">
+			#{list items:0..testSeries.result.testSeries.length()-1,as:'index'}
+			%{ testSr = testSeries.result.testSeries.get(index);}%	
+				<option value="${testSr.id}">${testSr.name}</option>
+			#{/list}
+			</select>
+		</div>
+		*{<!-- <div class="testSignUpRow">
+			<span class="testSignUpText">Registration Duration : </span>
+			<input type="text" class="selectRegDurFrom testSignUpSelectBox" 
+				maxlength="10" placeholder="use calender to pick date" />
+			
+			<span style="font-size:15px;padding-right:10px;">to</span>
+			<input type="text" class="selectRegDurTo testSignUpSelectBox" 
+				maxlength="10" placeholder="use calender to pick date" />
+		</div> -->}*
+		<div style="margin:20px;">
+			<input type="submit" class="button right doCStream" id="previewTestSignUp" value="Submit" 
+				data-name="PREVIEW_BTN"/>
+			<input type="reset" class="button right doCStream" id="resetTestSignUp" value="Reset" 
+				data-name="RESET_BTN"/>
+			<input type="submit" class="blueButton right nonner doCStream" id="submitTestSignUp" value="Confirm" 
+				data-name="SUBMIT_BTN"/>
+			<input type="button" class="button right nonner doCStream" id="editTestSignUp" value="Back"
+				data-name="EDIT_BTN"/>
+			<!--<a class="goBackInHistory left">Cancel</a>-->
+			<div class="cleaner_with_divider">&nbsp;</div>
+		</div>
+		<div class="signUpMsg">
+		</div>
+	</form>
+#{/if}
+#{else}
+	<div style="font-size:16px;font-weight:bold;text-align:center;padding:30px;">
+		Your Organization does not has test series registered, please contact support
+	</div>
+#{/else}
+    </div>
+</div>
+<script type="text/javascript">
+	var msgTimeout;
+	var signUpMsg = function(msg,cssClass){
+		if(msgTimeout) clearTimeout(msgTimeout);
+		if(msg){
+			$(".signUpMsg").html("<span class='"+cssClass+"'>* "+msg+"</span>").removeClass("nonner");
+			msgTimeout =  setTimeout(function(){hide();},5000);	
+		}else{
+			hide();
+		}
+		function hide(){
+			$(".signUpMsg").html("").addClass("nonner");
+		}
+	}
+	function decideSubmitSignUpMsg(errorCode,errorMsg,data){
+		var cssClass = "redTextColor big14 italics";
+		var msg;
+		if(errorCode){
+			msg = "Error : "+errorMsg;
+		}else{
+			msg="Successfully registered !";
+			if(data && data.result){
+				if(data.result.isNewUser==true){
+					msg += " New User Created";
+				}else if(data.result.isNewUser==false){
+					if(data.result.memberId){
+						msg += " for existing member with ID = "+data.result.memberId;
+					}else{
+						msg += " for existing member";
+					}
+				}
+			}
+			cssClass="greenTextColor big14 italics";
+			reset();
+		}
+		alert(msg);
+		signUpMsg(msg,cssClass);
+	}
+	function decideSignUp(){
+		signUpMsg();
+		var frm = $("#testSignUpHolder");
+		if(frm.data("submitType") == "submit"){
+			submitSignUp(frm);	
+		}else{
+			showPreview(frm);
+		}
+	}
+	function showPreview(frm){
+		frm.data("submitType","submit").find(".testSignUpInputBox,.testSignUpSelectBox").prop("disabled",true);
+		$("#previewTestSignUp,#resetTestSignUp").addClass("nonner");
+		$("#submitTestSignUp,#editTestSignUp").removeClass("nonner");
+		$(".memberIdBlock").addClass("nonner");
+	}
+	function editPreview(){
+		var frm = $("#testSignUpHolder");
+		frm.data("submitType","preview").find(".testSignUpInputBox,.testSignUpSelectBox").prop("disabled",false);
+		$("#previewTestSignUp,#resetTestSignUp").removeClass("nonner");
+		$("#submitTestSignUp,#editTestSignUp").addClass("nonner");
+		$(".memberIdBlock").removeClass("nonner");
+	}
+	function submitSignUp(frm){
+		var params = {};
+		params['firstName'] = $(".firstNameInput").val();
+		params['lastName'] = $(".lastNameInput").val();
+		params['testSeriesId'] = $(".testSeriesIdInput").val();
+		params['mobileNo'] = $(".mobileNo").val();
+		if(params['mobileNo'].length<10){ alert("Contact Number minimum of 10 characters"); return;}
+		params['emailId'] = $(".emailId").val();
+		/*params['startTime'] = dateStrToLong($(".selectRegDurFrom").val());
+		params['endTime'] = dateStrToLong($(".selectRegDurTo").val());*/
+		
+		$("#testSignUpHolder").css("opacity","0.3");
+		$.post("/subscription/submitSignUp",params,function(data){
+			$("#testSignUpHolder").css("opacity","1");
+			editPreview();
+			if(data){
+				decideSubmitSignUpMsg(data.errorCode,data.errorMessage,data);
+			}else{
+				decideSubmitSignUpMsg("404","Please Re-try Later :(");
+			}
+		});
+	};
+	function reset(){
+		$(".firstNameInput").val("");
+		$(".lastNameInput").val("");
+		$(".mobileNo").val("");
+		$(".emailId").val("");
+		$(".memberIdInput").val("");
+	};
+	function fetchMemberData(e){
+		var memberId = $(".memberIdInput").val().trim();
+		if(memberId.length<1){
+			alert("Please enter a proper member Id");
+			return;
+		}
+		$("#testSignUpHolder").css("opacity","0.3");
+		$.get("/subscription/getMemberInfo",{"targetMemberId":memberId},function(data){
+			$("#testSignUpHolder").css("opacity","1");
+			if(data.errorCode){
+				if(data.errorCode == "USER_NOT_FOUND"){
+					decideSubmitSignUpMsg(data.errorCode,"Member not found !");
+				}else{
+					decideSubmitSignUpMsg(data.errorCode,data.errorMessage);
+				}
+				reset();
+			}else{
+				$(".firstNameInput").val(data.result.firstName);
+				$(".lastNameInput").val(data.result.lastName);
+				$(".emailId").val(data.result.username);
+				$(".mobileNo").val(data.result.contactNo);
+			}
+		});
+		if(e) e.preventDefault();
+	};
+	$(function(){
+		$(document).on("click","#editTestSignUp",editPreview)
+		.on("click",".fetchMemberBtn",fetchMemberData)
+		.on("keypress",".memberIdInput",function(e){ if(e.which == 13){ fetchMemberData(e);}});
+	});
+</script>

@@ -1,0 +1,1255 @@
+<style type="text/css">
+    .instPrPicHolder{
+   min-width:80px;
+   height:80px;
+   overflow:hidden;
+   background-color:#666;
+}
+.instPrPicHolderTd{
+   min-width:80px;
+   max-width:100px;
+   height:80px;
+   overflow:hidden;
+   margin-right:5px;
+}
+.instChngPicAnim,
+.instChngPicHold{
+   width:100%;
+   height:80px;
+   background-color:rgba(255,255,255,0.6);
+   position:relative;
+   top:-100%;
+   opacity:0;
+   transition: opacity 200ms linear;
+   -webkit-transition: opacity 200ms linear;
+   -moz-transition: opacity 200ms linear;
+   -o-transition: opacity 200ms linear;
+}
+.instChngPicHold:hover{
+   opacity:1;
+}
+.instChngPicAnim{
+   background-color:rgba(255,255,255,0.9);
+   opacity:1;
+   display:table;
+}
+.instChngPicAnim .smallLoader{
+   margin-top:0px;
+   padding-top:50px;
+}
+.instChngPicHold .qq-upload-drop-area{
+   min-width:80px;
+   max-width:80px;
+   font-size:12px;
+}
+.uploadProfilePicBtn{
+   padding:30px 0px;
+   text-align:center;
+   color:rgb(37, 37, 37);
+   font-size:14px;
+}
+.instPrPic{
+   width:80px;
+   max-height:100px;
+   border-radius: 50%;
+}
+</style>
+%{learnpediaId=play.Play.configuration.getProperty("learnpedia.id");}%
+<div id="uiSamplesDiv" class="nonner">
+    <div id="img30Sample">
+        <a class="img30Wrapper img30Round openMyProfile"  href="/myprofile">
+            <div class="img30DummyWrapper img30DummyRound">
+                <img src="${session.profilePic}" class="img30 img30Round myCurrentPic" alt="${session.fullname}"/>
+            </div>
+        </a>
+    </div>
+    <div id="img20Sample">
+        <a class='img20Wrapper img20Round openMyProfile'  href="/myprofile">
+            <div class="img20DummyWrapper img20DummyRound">
+                <img src='${session.profilePic}' class='img20 img20Round myCurrentPic' alt="${session.fullname}"/>
+            </div>
+        </a>
+    </div>
+    <div id="editNameDescSample">
+        <div class="cmdsPopupHead">Edit Details</div>
+        <table width="100%">
+            <tbody>
+                <tr class="nameTr">
+                    <td class="grayHead">Title*</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" name="name" data-req='true'
+                                   class="formInput" maxlength="120"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="descTr">
+                    <td class="grayHead">Description</td>
+                    <td>
+                        <div class="textareaDiv">
+                            <textarea class="formTextarea" name="description"></textarea>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="createFolderSample">
+        <div class="cmdsPopupHead">Create Folder</div>
+        <table width="100%">
+            <tbody>
+                <tr>
+                    <td class="grayHead">Title*</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" name="name" data-req='true'
+                                   class="formInput srcPopupTitle" maxlength="120"/>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="resourcesOptsSample">
+        <div class="gButton resourceOpt moveResources">Move</div>
+        <div class="gButton resourceOpt deleteResources">Delete</div>
+        <div class="gButton addToProgramLibrary resourceOpt">&{'ADD_TO_PROGRAMS'}</div>
+        <!--        <div class="vChoose optsvChoose noTickvChoose nonner" data-value="-1"
+                     data-onchange="addToOptForResources">
+                    <div class="vChooseHead">Add To</div>
+                  <div class="vChooseDownIcon"></div>
+                  <div class="vChooseDropDown">
+                      <div class="vChooseOpt resourceOpt" data-value="PACKAGE">Study Package</div>
+                      <div class="vChooseOpt resourceOpt" data-value="CDP">SLP(Sequential Learning Plan)</div>
+                      <div class="vChooseOpt vChooseOptAddToTS resourceOpt" data-value="TEST_SERIES">Test Series</div>
+                  </div>
+                </div>   -->
+    </div>
+    <div id="libraryOptsSample">
+        <div class="gButton removeFromProgramLibrary resourceOpt">&{'REMOVE_FROM_PROGRAM'}</div>
+    </div>
+    <div id="centerlibraryOptsSample">
+        <div class="gButton removeFromProgramLibrary resourceOpt">&{'REMOVE_FROM_CENTER'}</div>
+    </div>
+    <div id="sectionlibraryOptsSample">
+        *{<!--  <div class="gButton makeVisible">&{'MAKE_VISIBLE'}</div>-->}*
+        <div class="vChoose vChooseToManySections right" data-value="lastUpdated" data-onchange="onVisiblityMoreChooseChange">
+            <div class="vChooseHead">&{'CHOOSE_OPERATION'}</div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt makeVisible" data-type="visible"
+                     data-type-text="visible" data-value=true>&{'MAKE_VISIBLE'}</div>
+                <div class="vChooseOpt makeVisible" data-type="visible"
+                     data-type-text="in-visible" data-value=false>&{'MAKE_HIDDEN'}</div>
+                <div class="vChooseOpt makeVisible" data-type="downloadable"
+                     data-type-text="downloadable" data-value=true>&{'MAKE_DOWNLOADABLE'}</div>
+                <div class="vChooseOpt makeVisible" data-type="downloadable"
+                     data-type-text="non-downloadable" data-value=false>&{'MAKE_NON_DOWNLOADABLE'}</div>
+                <div class="vChooseOpt removeFromProgramLibrary">&{'REMOVE_FROM_SECTION'}</div>
+                <div class="vChooseOpt orderContentSectionLibrary">&{'MOVE_CONTENT'}</div>
+                #{if currentOrgInfo!=null && !currentOrgInfo.equals(null) && currentOrgInfo.getClassroomConnectStatus() == true}
+                    <div class="vChooseOpt addToClassroomConnect">Add To Classroom Connect</div>
+                #{/if}
+            </div>
+        </div>
+    </div>
+    <div id="normalquesnsOptsSample">
+        <div class="gButton moveResources nonner">Move To</div>
+        <div class="gButton addQuesnsToTest">Add To Test</div>
+        <div class="gButton postAsChallenge">Post As Challenge</div>
+        <div class="gButton addToProgramLibrary nonner">Add To Programs</div>
+        <div class="gButton resourceOpt deleteResources">Delete</div>
+    </div>
+    <div id="questionsetquesnsOptsSample">
+        <div class="gButton addQuesnsToTest">Add To Test</div>
+        <div class="gButton postAsChallenge">Post As Challenge</div>
+        <div class="gButton addToProgramLibrary">Add To Programs</div>
+    </div>
+    <div id="libraryquesnsOptsSample">
+        <div class="gButton makeVisible">&{'MAKE_VISIBLE'}</div>
+    </div>
+    <div id="downloadtomanysectionsOptsSample">
+        <div class="smallBlueButton showToManySections" data-type="visible" data-value=true>&{'MAKE_VISIBLE'}</div>
+        <div class="smallBlueButton showToManySections" style="margin-left:10px;" data-type="downloadable" data-value=true>&{'MAKE_DOWNLOADABLE'}</div>
+        <div class="vChoose vChooseToManySections right" data-value="lastUpdated" data-onchange="onVisiblityMoreChooseChange">
+            <div class="vChooseHead">&{'TXT_MORE'}</div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt showToManySections" data-type="visible"
+                     data-type-text="in-visible" data-value=false>&{'MAKE_HIDDEN'}</div>
+                <div class="vChooseOpt showToManySections" data-type="downloadable"
+                     data-type-text="non-downloadable" data-value=false>&{'MAKE_NON_DOWNLOADABLE'}</div>
+            </div>
+        </div>
+    </div>
+    <div id="showtomanysectionsOptsSample">
+        <div class="smallBlueButton showToManySections" data-type="visible" data-value=true>&{'MAKE_VISIBLE'}</div>
+        <div class="vChoose vChooseToManySections right" data-value="lastUpdated" data-onchange="onVisiblityMoreChooseChange">
+            <div class="vChooseHead">&{'TXT_MORE'}</div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt showToManySections" data-type="visible" data-value=false>&{'MAKE_HIDDEN'}</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="PACKAGE_CONTENT_COS">
+        <div class="gButton remFrmPkg">Remove From Package</div>
+    </div>
+    <div id="CDP_CONTENT_COS">
+        <div class="gButton remFrmCDPLibrary">Remove</div>
+    </div>
+    <div id="CDPS_COS">
+        *{relied on add to code which is being used for products}*
+        <div class="vChoose vChooseAddPrdtTo" data-value="-1" data-onchange="addToOptForPrdts">
+            <div class="vChooseHead" style="width: 75px">Add To</div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt" data-value="PACKAGE">Study Package</div>
+            </div>
+        </div>
+    </div>
+    <div id="addContentSample">
+        <div class="cmdsPopupHead">Add Content</div>
+        <div>
+            <input type="radio" checked="checked" name="addContentRadio"/>
+            <span class="boldy"> Assign Task to others</span>
+            #{sources.assignTasks /}
+        </div>
+        <div>
+            <input type="radio" class="addContentBySelf" name="addContentRadio" />
+            <span class="boldy"> I will add content by myself</span>
+        </div>
+    </div>
+    <div id="flagPopupSample">
+        <div class="cmdsPopupHead">Add Flag</div>
+        <table class="margLeft20" width="95%">
+            <tbody>
+                <tr>
+                    <td class="grayHead width100">
+                        Context
+                    </td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="flagContext" maxlength="120"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="grayHead">
+                        Description
+                    </td>
+                    <td>
+                        <div class="textareaDiv">
+                            <textarea class="formTextarea" name="description"></textarea>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="assignAddContentSample">
+        <div class="cmdsPopupHead assignAddContentHead">Add Content</div>
+        #{sources.assignTasks /}
+    </div>
+    <div id="assignAddTagsSample">
+        <div class="cmdsPopupHead assignAddTagsHead">Add Tags</div>
+        #{sources.assignTasks /}
+    </div>
+    <div id="postChlgSample">
+        #{sources.postChlgSample /}
+    </div>
+    <div id="entityClonesPopup">
+        <div class="cmdsPopupHead">
+            Publish
+        </div>
+        <table class="entityCloneTable">
+            <thead class="grayHead">
+                <tr>
+                    <td>Content</td>
+                    <td style="width: 25%">Status</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="checkResultSample">
+        <div class="cmdsPopupHead">
+            Result:
+        </div>
+        <table class="cmdsQuesnsPopup">
+            <thead class="grayHead">
+                <tr>
+                    <td class="width100">Title</td>
+                    <td style="width: 25%">Status</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div id="cmdsTestFormatSample">
+        <div class="CTFTitleTaker">
+            <div class="cmdsPopupHead">Create Test</div>
+            <table class="margLeft20" width="95%">
+                <tbody>
+                    <tr>
+                        <td class="grayHead width100">
+                            Name*
+                        </td>
+                        <td>
+                            <div class="inputDiv">
+                                <input type="text" class="formInput" name="name" data-req="true" maxlength="256"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="grayHead width100">
+                            Code*
+                        </td>
+                        <td>
+                            <div class="inputDiv">
+                                <input type="text" class="formInput" name="code" data-req="true" maxlength="256"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <!--                    <tr>
+                                            <td class="grayHead pad10Top alignTop">
+                                                Choose Exam*
+                                            </td>
+                                            <td class="pad10Top mvcExamsTd"></td>
+                                        </tr>                    -->
+                    <tr>
+                        <td class="grayHead pad10Top alignTop">
+                            Choose Subjects*
+                        </td>
+                        <td class="pad10Top mvcCTFSubsTd"></td>
+                    </tr>
+                    <tr class="sequenceSubj nonner">
+                        <td class="grayHead pad10Top alignTop">
+                            Select Sequence
+                        </td>
+                        <td class="pad10Top">
+                            <ul class="selectedSubjectsList">
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="testDurationTr">
+                        <td class="grayHead width100">
+                            Add Duration*
+                        </td>
+                        <td>
+                            #{common.timeDiv /}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="grayHead pad10Top alignTop">
+                            Description
+                        </td>
+                        <td class="pad10Top">
+                            <div class="textareaDiv">
+                                <textarea class="formTextarea" name="desc"></textarea>
+                            </div>
+                        </td>
+                    </tr>
+                     <!-- code for isNTAPattern -->
+                    <tr >
+                        <td class="grayHead pad10Top alignTop">
+                            Enable Optional Questions
+                        </td>
+                        <td>
+                            <div>
+                                <div class="displayInBlock margRight10">
+                                    <input class="formInput" type="radio" name="isNTAPattern" value="true"> Yes
+                                </div>
+                                <div class="displayInBlock margRight10">
+                                    <input  class="formInput" type="radio" name="isNTAPattern" value="false" checked> No
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="grayHead pad10Top alignTop">
+                            Show Results
+                        </td>
+                        <td class="pad10Top">
+                            <div class="vChoose formvChoose"
+                                 data-value="VISIBLE" data-param-name='resultVisibility'
+                                 data-onchange='resultVisibilityStatusChange'>
+                                <div class="vChooseHead">SHOW</div>
+                                <div class="vChooseDownIcon"></div>
+                                <div class="vChooseDropDown">
+                                    <div class="vChooseOpt" data-value="VISIBLE">SHOW</div>
+                                    <div class="vChooseOpt" data-value="HIDDEN">HIDE</div>
+                                </div>
+                            </div>
+                            <div class="resultVisibilityMessageDiv nonner">
+                                <div class="smallThinGray">Message to be displayed telling the user when the results will be available</div>
+                                <div class="textareaDiv">
+                                    <textarea class="formTextarea" name="resultVisibilityMessage"></textarea>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    #{if params.orgId == learnpediaId}
+                    <tr>
+                        <td class="grayHead pad10Top alignTop">
+                            Enable AIR
+                        </td>
+                        <td>
+                            <div>
+                                <div class="displayInBlock margRight10">
+                                    <input class="formInput" type="radio" name="showAIR" value="true"> Yes
+                                </div>
+                                <div class="displayInBlock margRight10">
+                                    <input  class="formInput" type="radio" name="showAIR" value="false" checked> NO
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    #{/if}
+                    </div>
+                </tbody>
+            </table>
+        </div>
+        <div class="CTFHolder nonner">
+            <div class="cmdsPopupHead">Test Format Details</div>
+            <div class="CTFSubs"></div>
+            <table class="CTFTable">
+                <thead class="boldy">
+                    <tr>
+                        <td class="width100">Type of Question</td>
+                        <td>Number of Questions</td>
+                        <td>Marks per Question</td>
+                        <td>Negative Marks per Question</td>
+                        <td class="maxQuestionsText nonner">Maximum Questions to be Attempted</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="width100">SCQ</td>
+                        <td><input type="text" class="CTFQuesNo CTFNum numberTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                        <td><input type="text" class="CTFMaxQuestions CTFNum markTextBox nonner" maxlength="3"  size="3" value="0"/></td>
+                        
+                    </tr>
+                    <tr>
+                        <td>MCQ</td>
+                        <td><input type="text" class="CTFQuesNo CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                        <td><input type="text" class="CTFMaxQuestions CTFNum markTextBox nonner" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>Numeric</td>
+                        <td><input type="text" class="CTFQuesNo CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                        <td><input type="text" class="CTFMaxQuestions CTFNum markTextBox nonner" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>PARA</td>
+                        <td><input type="text" class="CTFQuesNo CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                        <td><input type="text" class="CTFMaxQuestions CTFNum markTextBox nonner" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>MATRIX</td>
+                        <td><input type="text" class="CTFQuesNo CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                        <td><input type="text" class="CTFMaxQuestions CTFNum markTextBox nonner" maxlength="3"  size="3" value="0"/></td>
+                    </tr>
+                    <tr>
+                        <td>SUBJECTIVE</td>
+                        <td><input type="text" class="CTFQuesNo CTFNum numberTextBox" maxlength="3" size="3" value="0"/></td>
+                        <td><input type="text" class="CTFPosMarks CTFNum markTextBox" maxlength="3" size="3" value="0" /></td>
+                        <td><input type="text" class="CTFNegMarks CTFNum markTextBox" maxlength="3"  size="3" value="0"/></td>
+                        <td><input type="text" class="CTFMaxQuestions CTFNum markTextBox nonner" maxlength="3"  size="3" value="0"/></td>
+                    </tr>                
+                    <tr class="boldy">
+                        <td class="smally">Total Questions</td>
+                        <td class="CTFSubTotal">0</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="rightText">
+                <div class="gButton copyCTFToAllSubs" style="max-width: 200px;line-height: 23px;">Copy Format to other subjects</div>
+            </div>
+            <div class="boldy big15 margTop20">Total Questions in the test: <span class="CTFSubsTotal">0</span></div>
+        </div>
+        <div class="CTFQuesnsCountOnly nonner">
+            <div class="cmdsPopupHead">Assignment Format Details</div>
+            <table class="CTFTableForAssignment">
+                <thead class="boldy">
+                    <tr>
+                        <td class="width100">Subject</td>
+                        <td>Number of Questions</td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="createTSSample">
+        <div class="cmdsPopupHead">Create Test Series</div>
+        <table class="margLeft20" width="95%">
+            <tbody>
+                <tr>
+                    <td class="grayHead width100">
+                        Title*
+                    </td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="name" maxlength="256"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="grayHead pad10Top alignTop">
+                        Choose Exam*
+                    </td>
+                    <td class="pad10Top mvcExamsTd"></td>
+                </tr>
+                <tr>
+                    <td class="grayHead">
+                        Description
+                    </td>
+                    <td>
+                        <div class="textareaDiv">
+                            <textarea class="formTextarea" name="desc"></textarea>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="createPackageSample">
+        <div class="cmdsPopupHead">Create Study Package</div>
+        #{products.createPkgCDPPortion /}
+    </div>
+    <div id="createCDPSample">
+        <div class="cmdsPopupHead">Create Sequential Learning Program</div>
+        #{products.createPkgCDPPortion target:"CDP"/}
+    </div>
+    <div id="removeCDPSample">
+        <div class="boldy">Are you sure you want to <span class="remCDPText"></span></div>
+    </div>
+    <div id="exportPkgSample">
+        <div class="cmdsPopupHead">
+            Export Package
+        </div>
+        <table>
+            <tbody class="grayHead">
+                <tr>
+                    <td class="width150">Choose Encryption Level</td>
+                    <td>
+                        <select class="pkgEncLevel">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <ul class="margTop color8 smally margBot10" style="list-style: disc inside none;">
+            <li>Encryption Level 0 will not encrypt the videos in package.</li>
+            <li>Encryption Level 1 will encrypt the videos with the passphrase provided(if any) during video upload.</li>
+            <li>Encryption Level 2 will encrypt the video using passphrase and the institute details.</li>
+        </ul>
+    </div>
+    <div id="mvcItemSample">
+        <div class='mvcItem'>
+            <div class='gCBox' data-value=''>
+                <div class='gCBoxTicker'></div>
+            </div>
+            <span class='mvcItemText gCBoxText'></span>
+            <div class="mvcItemBody"></div>
+        </div>
+    </div>
+    <div id="publishTestOkSample">
+        <div class="cmdsPopupHead">Publish Test</div>
+        <table class="margLeft20" width="95%">
+            <tbody>
+                <tr>
+                    <td class="grayHead">
+                        Test Type*
+                    </td>
+                    <td>
+                        <div class="vChoose vChoosePublishType" data-value="LAB_TEST" data-onchange="onTestTypeChange">
+                            <div class="vChooseHead">Lab Test</div>
+                            <div class="vChooseDownIcon"></div>
+                            <div class="vChooseDropDown">
+                                <div class="vChooseOpt" data-value="LAB_TEST">Lab Test</div>
+                                <div class="vChooseOpt" data-value="ONLINE_TEST">Online Test</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="grayHead">
+                        Scope*
+                    </td>
+                    <td>
+                        <div class="vChoose formvChoose" data-value="PRIVATE" data-param-name="scope"
+                             data-onchange="onTestScopeChange">
+                            <div class="vChooseHead">Private</div>
+                            <div class="vChooseDownIcon"></div>
+                            <div class="vChooseDropDown">
+                                <div class="vChooseOpt" data-value="PRIVATE">Private</div>
+                                <div class="vChooseOpt" data-value="PUBLIC">Public</div>
+                            </div>
+                        </div>
+                        <div class="time prdtScope nonner">*This will make the test be visible to all.</div>
+                    </td>
+                </tr>
+                <tr class="addScheduleTr">
+                    <td colspan="2" class="rightText">
+                        <div class="gButton addScheduleToTest margBot20">Add Schedule</div>
+                        <div class="scheduleSample nonner">
+                            #{common.scheduleEntity /}
+                            <div class="linBlk margLeft" style="vertical-align: top">
+                                <div class="grayHead margBot5 smally">Questions State</div>
+                                <div class="vChoose vChooseQuesnsState" data-value="ORIGINAL">
+                                    <div class="vChooseHead">No Shuffle</div>
+                                    <div class="vChooseDownIcon"></div>
+                                    <div class="vChooseDropDown">
+                                        <div class="vChooseOpt" data-value="ORIGINAL">No Shuffle</div>
+                                        <div class="vChooseOpt" data-value="RANDOM">Shuffle</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class='remScheduleEntity'></span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="publishEntitySample">
+        <div class="cmdsPopupHead">Choose scope:</div>
+        <div class="vChoose formvChoose" data-value="PRIVATE" data-param-name="scope">
+            <div class="vChooseHead">Private</div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt" data-value="PRIVATE">Private</div>
+                <div class="vChooseOpt" data-value="PUBLIC">Public</div>
+            </div>
+        </div>
+    </div>
+    <div id="removeScheduleSample">
+        <div class="boldy">You are removing the last active schedule, you wont be able to add any more schedules.
+            Are you sure you want to delete it?</div>
+    </div>
+    <div id="publishBarSample">
+        #{common.publishProgressBar /}
+    </div>
+    <div id="mvsSample">
+        <div class="multipleVSelect">
+            <div class="mvsAllItems">
+                <div class="gCBox gCBoxChecked">
+                    <div class="gCBoxTicker"></div>
+                </div>
+                <span class="mvsAllItemsText"></span>
+            </div>
+            <div class='mvsItem'>
+                <div class='gCBox'>
+                    <div class='gCBoxTicker'></div>
+                </div>
+                <span class='mvsItemText gCBoxText'></span>
+            </div>
+        </div>
+    </div>
+    <div id="vChooseSample">
+        <div class="vChoose">
+            <div class="vChooseHead"></div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown"></div>
+        </div>
+    </div>
+    <div id="rteSample">
+        #{include 'UIComWidgets/rte.html' /}
+    </div>
+    <div id="timeDivSample">
+        #{common.timeDiv /}
+    </div>
+    <div id="QAOptSample">
+        <table>
+            <tbody>
+                <tr class="crossXPa">
+                    <td class="quesAddOptChoose width100"><input type="radio" name="quesAddOpt" class="quesAddOpt"/></td>
+                    <td class="quesAddOptHead"></td>
+                    <td style="width: 620px;">
+                        <div class="quesAddOptRTEDiv"></div>
+                    </td>
+                    <td><span class="quesAddOptCross crossX doCStream" data-cs-name="CROSS_A_OPTION" data-index="${i}"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="topSearchSample">
+        #{search.topSearch /}
+    </div>
+    <div id="quesFiltersSample">
+        #{include 'Widgets/mcvChooseQuesType.html' /}
+    </div>
+    <div id="addEditAcadEntitySample">
+        <input type="hidden" id="learnpediaId" name="learnpediaId" value="${learnpediaId}">
+        <input type="hidden" id="orgId" name="orgId" value="${params.orgId}">
+        <div class="cmdsPopupHead">
+            Add Department
+        </div>
+        <table width="100%">
+            <tbody class="grayHead">
+                <tr>
+                    <td class="width100">Name*:</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="name"
+                                   data-req="true" maxlength="256"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Code*:</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="code"
+                                   data-req="true" *{data-pattern-type="ACAD_ENTITY_CODE"}* maxlength="50"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="endDate nonner">
+                    <td>End Date:</td>
+                    <td>
+                            #{common.datevChoose /}
+                    </td>
+                </tr>
+                <tr class="isOffline nonner">
+                    <td>Is Offline Program:</td>
+                    <td>
+                        <input type="radio" name="TYPE" id="isOfflineProgram" value="true"> Yes
+                        <input type="radio" name="TYPE" id="isNotOfflineProgram" value="false"> No
+                    </td>
+                </tr>
+                <tr class="programCategory nonner">
+                    <td>Program Category</td>
+                    <td>
+                        <input type="radio" name="ProgramCategory" id="JEE" value="jee" checked> Jee
+                        <input type="radio" name="ProgramCategory" id="NEET" value="neet"> Neet
+                        <input type="radio" name="ProgramCategory" id="TEST_SERIES" value="test_series"> Test Series
+                    </td>
+                </tr>
+                #{if params.orgId == learnpediaId}
+                <tr class="sharedProgram nonner">
+                    <td>Shared Program Access</td>
+                    <td>
+                        <input
+                          id="sharedProgramAccessCheck" disabled type="checkbox" class="visibleCheck disabled sharedProgramAccess" name="sharedProgramAccess" style="display:none"/>
+                        <label for="sharedProgramAccessCheck" class="toggle disabled">
+                            <span>
+                            </span>
+                        </label>
+                    </td>
+                </tr>
+                #{/if}
+                    <tr class="descHolder nonner">
+                    <td>Description:</td>
+                    <td>
+                        <div class="textareaDiv">
+                            <textarea type="text" class="formInput" name="desc"></textarea>
+                        </div>
+                    </td>
+                </tr>
+                #{if params.orgId == learnpediaId}
+                <tr class="sectionPoint1 nonner">
+                    <td>Point 1 : *</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="point1"
+                                    />
+                        </div>
+                    </td>
+                </tr>
+                <tr class="sectionPoint2 nonner">
+                    <td>Point 2 : *</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="point2"
+                                    />
+                        </div>
+                    </td>
+                </tr>
+                <tr class="sectionPoint3 nonner">
+                    <td>Point 3 : *</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="point3"
+                                     />
+                        </div>
+                    </td>
+                </tr>
+                <tr class="sectionPoint4 nonner">
+                    <td>Point 4 : *</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="point4"
+                                    />
+                        </div>
+                    </td>
+                </tr>
+                <tr class="thumbnail nonner">
+                    <td>Program Type Image : *</td>
+                    <td>
+                        <div id="thumbnail" style="width: 100px; height: 20px;background: #333;cursor: pointer;color: #fff;">
+                            Update Image
+                        </div>
+                        <div class="imageHolder" style="width: 100px; height: 100px;border: 1px solid #f1f1f1;">
+                            <img class="sectionImage" style="width: 100px; height: 100px;" src="" alt="please upload image">
+                        </div>
+                    </td>
+                </tr>
+                #{/if}
+                
+            </tbody>
+        </table>
+    </div>
+    <div id="removeReactivateAcadEntitySample">
+        <div class="cmdsPopupHead">
+            Are you sure you want to <label>remove</label> the <span>department</span>?
+        </div>
+    </div>
+    <div id="addCenterSample">
+        <div class="cmdsPopupHead">
+            Add Center
+        </div>
+        <table width="100%">
+            <tbody class="grayHead">
+                <tr>
+                    <td class="width100">Name*:</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="name" data-req="true" maxlength="120"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="width100">Code*:</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="code" data-req="true"
+                                   *{data-pattern-type="ACAD_ENTITY_CODE"}* maxlength="50"/>
+                        </div>
+                    </td>
+                </tr>
+                <!--                <tr>
+                                    <td>Address Line 1 :</td>
+                                    <td>
+                                        <div class="inputDiv">
+                                            <input type="text" class="formInput" name="addressLine1"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Address Line 2 :</td>
+                                    <td>
+                                        <div class="inputDiv">
+                                            <input type="text" class="formInput" name="addressLine2"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>City* :</td>
+                                    <td>
+                                        <div class="inputDiv">
+                                            <input type="text" class="formInput" name="city" data-req="true"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>State* :</td>
+                                    <td>
+                                        <div class="inputDiv">
+                                            <input type="text" class="formInput" name="state" data-req="true"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Country* :</td>
+                                    <td>
+                                        <div class="inputDiv">
+                                            <input type="text" class="formInput" name="country" data-req="true"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Zip Code :</td>
+                                    <td>
+                                        <div class="inputDiv">
+                                            <input type="text" class="formInput" name="zipCode"/>
+                                        </div>
+                                    </td>
+                                </tr>                                 -->
+            </tbody>
+        </table>
+    </div>
+    <div id="addProgramSample">
+        <div class="cmdsPopupHead">
+            Add Program in a department
+        </div>
+        <table width="100%">
+            <tbody class="grayHead">
+                <tr>
+                    <td class="width100">Name*:</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="name" data-req="true" maxlength="120"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Code*:</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="code" data-req="true"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="grayHead">
+                        Start Date
+                    </td>
+                    <td>
+                        #{common.datevChoose /}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="grayHead">
+                        End Date
+                    </td>
+                    <td>
+                        #{common.datevChoose year:new Date().getYear()+1901 /}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Description:</td>
+                    <td>
+                        <div class="textareaDiv">
+                            <textarea class="formTextarea" name="description"></textarea>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="isOffline">
+                    <td>Is Offline Program:</td>
+                    <td>
+                        <input type="radio" name="TYPE" id="isOfflineProgram" value="true"> Yes <input type="radio" name="TYPE" id="isNotOfflineProgram" value="false"> No
+                    </td>
+                </tr>
+                <tr class="programCategory nonner">
+                    <td>Program Category</td>
+                    <td>
+                        <input type="radio" name="ProgramCategory" id="JEE" value="jee"> Jee
+                        <input type="radio" name="ProgramCategory" id="NEET" value="neet"> Neet
+                        <input type="radio" name="ProgramCategory" id="TEST_SERIES" value="test_series"> Test Series
+                    </td>
+                </tr>
+                #{if params.orgId == learnpediaId}
+                <tr class="sharedProgram">
+                    <td>Shared Program Access</td>
+                    <td>
+                        <input
+                          id="sharedProgramAccessCheck" type="checkbox" class="visibleCheck sharedProgramAccess visibleCheckbox" name="sharedProgramAccess" style="display:none"/>
+                        <label for="sharedProgramAccessCheck" class="toggle">
+                            <span>
+                            </span>
+                        </label>
+                    </td>
+                </tr>
+                #{/if}
+            </tbody>
+        </table>
+    </div>
+    <div id="ASTItemSample">
+        <div class="ASTItem">
+            <div class="ASTItemName"></div>
+            <div class="ASTItemImg"></div>
+        </div>
+    </div>
+    <div id="editBrdItemvChooseSample">
+        <div class="vChoose brdItemvChoose" data-value="-1" data-onchange="editBrdItem">
+            <div class="vChooseHead">
+                <div class="brdItemEdit"></div>
+            </div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt" data-value="RENAME">Rename</div>
+                <div class="vChooseOpt" data-value="REMOVE">Remove</div>
+                <div class="vChooseOpt vchooseOptAddSubTopic" data-value="ADD_SUBTOPIC">Add Sub Topic</div>
+            </div>
+        </div>
+    </div>
+    <div id="renameBrdItemSample">
+        <div class="cmdsPopupHead">
+            Rename
+        </div>
+        <table width="100%">
+            <tbody class="grayHead">
+                <tr>
+                    <td class="width100">Name*:</td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="name" data-req="true" maxlength="120"/>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="topicTreeTopicSample">
+        <div class='topicTreeTopic'>
+            <div class='topicTreeTopicItem instBrdItem unsavedBrdItem'>
+                <span class='brdItemName'></span>
+                #{boards.editBrdvChoose target:"TOPIC"/}
+            </div>
+            <div class='topicTreeTopicSubTopics'></div>
+        </div>
+    </div>
+    <div id="topicTreeSubTopicSample">
+        <div class='topicTreeSubTopicItem unsavedBrdItem instBrdItem'>
+            <span class='brdItemName'></span>
+            #{boards.editBrdvChoose target:"SUBTOPIC"/}
+        </div>
+    </div>
+    <div id="createChannelSample">
+        <div class="cmdsPopupHead">Create Channel</div>
+        <table class="margLeft20" width="95%">
+            <tbody>
+                <tr>
+                    <td class="grayHead width100">
+                        Title*
+                    </td>
+                    <td>
+                        <div class="inputDiv">
+                            <input type="text" class="formInput" name="name" data-req="true" maxlength="256"/>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="downloadTestUserData">
+    <form class="downloadData" action="@{QrPeople.getTestUsersData}" method="GET" onsubmit="return true;">
+      <div class="cmdsPopupHead">Download Offline Student Data</div>
+         <table style="margin-top: 20px;width: 100%">
+            <tr>
+                <td>
+                Start Date :
+                </td>
+                <td>
+                #{common.datevChoose /}
+            </tr>
+            <tr>
+                <td>
+                End Date :
+                </td>
+                <td>
+                    #{common.datevChoose /}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit" class="blueButton downloadOfflineStudentsData" >Submit</button>
+                </td>
+            </tr>
+        </table>
+    <input type="hidden" name="startDate" id="startDate">
+    <input type="hidden" name="endDate" id="endDate">
+    <input type="hidden" id="orgId" name="orgId" value="${params.orgId}">
+    </form>
+    </div>
+
+    <div id="scheduleTestSample">
+        <div style="max-width: 650px;margin: 0 auto">
+            <div id="scheduleTestName">
+
+            </div>
+            <table style="margin: 30px 25px 5px 30px;">
+                %{
+                    String[] dates  = ["Start","End","Close"];
+                }%
+                #{list items:0..dates.length-1, as:'date'}
+                <tr class="#{if date == 2} closeDateRow disableRow #{/if}">
+                    <td style="vertical-align: middle;">
+                        Select  ${dates[date]} Date and Time:
+                    </td>
+                    <td>
+                        <input type="text" placeholder="dd/mm/yyyy" class="datePickCalendar" readonly=true id="${dates[date]}" style="width: 70px;height: 25px;"/>
+                        <img src="/public/images/calendar.png" class="calendar" data-id="${date}" style="cursor: pointer;position: relative;top:8px;left: 3px;">
+                    </td>
+                    <td class="${dates[date]} Duration" style="top:15px;left: 30px;position: relative;">
+                        #{common.timeDiv /}
+                    </td>
+                </tr>
+                #{/list}
+                <tr>
+                    <td>
+                        <span class="redColor boldy publish-message">*
+                        This will publish the test.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit" class="blueButton scheduleTest" data-type="visible"
+                         data-type-text="visible" data-value=true >Schedule</button>
+                    </td>
+                </tr>
+            </table>
+            <div class="module-info-message nonner margBot5">
+            </div>
+            <div class="information" style="font-size: 11px;margin:0px 25px;color:#555">
+                <div class="margBot5"><span class="redColor">*</span>
+                    Start - The Date and Time at which the test is allowed to be taken.
+                </div>
+                <div class="margBot5"><span class="redColor">*</span>
+                    End - The Date and Time at which the test is not allowed to take,but allowed to resume
+                </div>
+                <div class="margBot5"><span class="redColor">*</span>
+                    Close - The Date and Time at which the test is neither allowed to take nor resume.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addToClassroomConnectPopupSample">
+        <div style="text-align: center;font-weight: bold;font-size: 16px;margin:10px 0px;">
+            Adding Content to Classroom Connect
+        </div>
+        <table style="margin: 10px auto;">
+            <tr>
+                <td style="vertical-align: middle;">
+                    Select Date:
+                </td>
+                <td>
+                    <input type="text" placeholder="dd/mm/yyyy" class="datePickCalendar" readonly=true id="fromDate" style="width: 70px;height: 25px;"/>
+                    <img src="/public/images/calendar.png" class="calendar" style="cursor: pointer;position: relative;top:8px;left: 3px;">    
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: middle;">
+                    Select Board:
+                </td>
+                <td>
+                    <select class="subjectsHolder">
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit" class="blueButton addContentToClassroomConnect">Add To Classroom Connect</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="addOrgStudentSample">
+        <div class="cmdsPopupHead">Add Students</div>
+        <div class="centry">
+            <div class="biggerBlueButton uploadStudentsFile margBot10">Upload Students File</div>
+            <br>
+            or
+            <br>
+            <div class="biggerBlueButton margTop10 margBot20 addOrgSingleStudent">Add Student Manually</div>
+        </div>
+    </div>
+    <div id="uploadStudentsFileSample">
+        <span class="cmdsPopupHead">Bulk upload of Students</span>
+        <div class="margTop boldy color6">Please choose a programme*</div>
+        <div class="vChoose mcvChoose progvChoose bluevChoose" data-value="-1"
+             data-param-name="programId">
+            <div class="vChooseHead">Select a program</div>
+            <div class="vChooseDownIcon"></div>
+            <div class="vChooseDropDown">
+                <div class="vChooseOpt invalidvChooseOpt" data-value="-1"></div>
+            </div>
+        </div>
+        <div class="margTop20 uploadDiv"></div>
+        <div class="uploadStudentsProgressDiv"></div>
+        #{common.downloadDocTemplate propertyName : "SAMPLE_TEMPLATE_STUDENT_BULK_UPLOAD" /}
+    </div>
+    <div id="uploadOfflineTestsSample">
+        <div id="uploadOfflineTestsHolder">
+            <span class="big20 color3 blocky padTop10 margLeft10">Upload Mark Sheets</span>
+            <div class="margTop20 uploadDiv margLeft10"></div>
+            #{common.downloadDocTemplate propertyName : "SAMPLE_TEMPLATE_MARKS_SHEET_UPLOAD" /}
+            <div class="uploadTestsProgressDiv"></div>
+            <div class="offlineTestsList"></div>
+        </div>
+    </div>
+    <div id="uploadPeopleProfilePicsSample">
+        <div class="cmdsPopupHead">
+            Upload Profile Images<br>
+            <div class="smallThinGray">Do not upload more than 50 images at a time.</div>
+        </div>
+        <div class="margTop20 uploadDiv"></div>
+        <div class="uploadProgressDiv"></div>
+    </div>
+    <div id="uploadedProfilePicsSample">
+        <div class="cmdsPopupHead">
+            List of uploaded profile pics
+        </div>
+        <table class="width100Percent entityCloneTable">
+            <thead class="grayHead">
+                <tr>
+                    <td>MemberId</td>
+                    <td style="width: 35%">Profile Image</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id='changeResultTestVisibilitySample'>
+        <div class="cmdsPopupHead">Edit Test Result Visibility</div>
+        <table width="100%">
+            <tbody>
+                <tr class="nameTr">
+                    <td class="grayHead pad10Top alignTop" style="width: 50%">
+                        Show Results after the student takes the test
+                    </td>
+                    <td class="pad10Top">
+                        <div class="vChoose formvChoose"
+                             data-value="VISIBLE" data-param-name='resultVisibility'
+                             data-onchange='resultVisibilityStatusChange'>
+                            <div class="vChooseHead">SHOW</div>
+                            <div class="vChooseDownIcon"></div>
+                            <div class="vChooseDropDown">
+                                <div class="vChooseOpt" data-value="VISIBLE">SHOW</div>
+                                <div class="vChooseOpt" data-value="HIDDEN">HIDE</div>
+                            </div>
+                        </div>
+                        <div class="resultVisibilityMessageDiv nonner">
+                            <div class="smallThinGray">Message to be displayed telling the user when the results will be available</div>
+                            <div class="textareaDiv">
+                                <textarea class="formTextarea" name="resultVisibilityMessage"></textarea>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="entryForDropDownSample">
+        <div class="margTop centry entryForDropDown">
+            <input type="text" class="dropDownValueForSignup"/>
+            <span class="addNewDropDownInputForSignup">+</span>
+            <span class="removeDropDownInputForSignup">x</span>
+        </div>
+    </div>
+    #{common.uiSamples /}
+</div>
+<script type="text/javascript">
+</script>

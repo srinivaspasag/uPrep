@@ -1,0 +1,58 @@
+%{
+	item_per_col = 3;
+	col_per_page = 3;
+}%
+<div class="instLibrarySubTopics CSWidget" data-widget="LIB_SUBTOPICS_HOLDER">
+	<div class="singleLineText big20" style="line-height:20px;">
+		<span class="instLibNavColor instLibSelSubName" style="cursor:pointer;"></span>
+		<span class="instLibBlueArrow"></span>
+		<span class="blueTextColor instLibSelTopicName"></span>
+	</div><br>
+	<div class="greyTextColor" style="padding-top:3px;">
+		&{'INST_LIB_TOPIC_SUB_HEAD'}
+	</div>
+	<!--*{<div id="instLibSubTopicsInfoH">
+		#{include 'tags/institute/library/brdInfoPopup.html'/}
+	</div>}*-->
+	#{if data!=null && data.errorCode=="" && data.result.list.length()>0}
+	<div class="left" style="margin:12px 0 0 0;white-space:nowrap;">
+		<span class="left big18 boldy whiteTextColor">&{'TXT_SUBTOPICS'}</span>
+		#{if data.result.list.length()>item_per_col*col_per_page}
+		<span class="nextPrevInstLibST">
+			<span class="prevInstLibST disPrevInstLib"></span>
+			<span class="nextInstLibST"></span>
+		</span>
+		#{/if}
+	</div>
+	%{
+	total = data.result.list.length();
+	holders = Math.ceil(total/item_per_col);
+	holders = holders<=0?1:holders;
+	}%
+	<div class="instLibSubTopicHolder absolute">
+	    <div class="instLibSubTopicH1 absolute" data-total="${holders+1}" data-cur=0>
+		#{list items:0..holders-1,as:'hIndex'}
+		<div class="instLibSubTopicH2 absolute" data-index="${hIndex}" style="left:${280*hIndex}px">
+		%{ 
+			st = item_per_col*hIndex;
+			end = st+item_per_col;
+			end = end>total?total:end;
+		}%
+			#{list items:st..end-1,as:'index'}
+			%{ subTopic = data.result.list.get(index);}%
+			#{if subTopic.has("recordState") && "ACTIVE".equals(subTopic.recordState)}
+			<div class="instLibEachSubTopic">
+				<span class="instLibSubTopicTxt doCStream" data-cs-name="SUB_TOPIC" 
+					data-brd-id="${subTopic.id}" title="${subTopic.name}" data-index="${index}">${subTopic.name}</span>
+			</div>
+			#{/if}
+			#{/list}
+		</div>
+		#{/list}
+	#{/if}
+	#{else}
+		<div class="centerText instLibNoItemTxt">&{'NO_SUB_TOPICS_FOUND'}</div>
+	#{/else}
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+</div>

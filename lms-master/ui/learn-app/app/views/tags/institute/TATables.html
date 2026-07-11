@@ -1,0 +1,102 @@
+#{if tests!=null && tests.errorCode.isEmpty() && tests.result.list.length()>0}
+#{if params.freshLoad=="true"}
+<table class="table table-bordered table-hover table-condensed fullWidth CSWidget tableInstTA" data-widget="RESULT_ANALYTICS_TESTS" cellspacing=0 cellpadding=0>
+   <tr>
+        <th>Test Name/ID</th>
+        <th>Date</th>
+        <th>Program</th>
+        <th>Center-Section</th>
+        <th>Subjects</th>
+        <th>Topper</th>
+    </tr>
+#{/if}
+#{list items:0..tests.result.list.length()-1,as:'tIndex'}
+%{
+    test = tests.result.list.get(tIndex);
+    testId = test.entity.id;
+}%
+<tr class="instTAEachTest">
+    %{
+        date = util.Utilities.getDateMonthYear(test.schedule.startTime);
+    }%
+        <td>
+        <div>
+        <a class="openInstiTestPage doCStream"
+            data-test-id="${testId}" data-test-group="${testId}" data-user-role="${userRole}" name="EACH_TEST_LINK"
+            href="/test/${testId}">
+            ${test.entity.name}
+        </a>
+        </div>
+        %{
+            testTypeText = play.i18n.Messages.get("test.TYPE_"+test.entity.mode);
+        }%
+        <div class="instTATableTestType ${test.entity.mode} c-red">${testTypeText}</div>
+    </td>
+        <td class="boldy">${date}</td>
+    #{if test.programs.length()>0}
+        <td>
+        #{list items:0..test.programs.length()-1,as:'index'}
+            <div>${test.programs.get(index).get("name")}</div>
+        #{/list}
+    </td>
+    <td>
+        <a class="showIntAnalyticsCenters" data-test-id="${testId}" data-test-name="${test.entity.name}">View Details</a>
+    </td>
+    #{/if}
+    #{if test.entity.boards.length()>0}
+    <td>
+        %{
+            bIndex = 0;
+        }%
+        #{if test.entity.boards.length()>1}
+            #{list items:0..test.entity.boards.length()-2,as:'bIndex'}
+                <span>${test.entity.boards.get(bIndex).get("name")} , </span>
+            #{/list}
+            <span>${test.entity.boards.get(bIndex+1).get("name")}</span>
+        #{/if}
+        #{else}
+            <span>${test.entity.boards.get(0).get("name")}</span>
+        #{/else}
+    </td>
+    #{/if}
+        <td>
+    #{if !test.topper.equals(null)}
+        %{
+            user = test.topper.user;
+        }%
+        <div class="tableInstTATopper media">
+            <!-- <div class="pull-left imgHolder">
+                <img class="instAnaProfilePic lgi-img img-circle" src="${user.thumbnail}" alt="&{'IMG_NA'}"/>
+            </div> -->
+            #{memberName user : user ,timeCreated: ""/}
+            <div class="f-14 percent">${test.topper.percentage}%</div>
+        </div>
+    #{/if}
+    </td>
+</tr>
+
+#{/list}
+#{if tests.result.totalHits > (Integer.parseInt(params.start)+Integer.parseInt(params.size)) }
+<tr>
+    <td colspan=6>
+            <div class="loadMoreItems view-more instTATestLoadMore doCStream" name="LOAD_MORE_TEST" style="cursor: pointer;">Load More Tests</div>
+    </td>
+<tr>
+#{/if}
+#{if params.freshLoad=="true"}
+</table>
+#{/if}
+<script type="text/javascript">
+    instAnalytics.showPage();
+    var instTATestData = ${tests.result.raw()};
+</script>
+#{/if}
+#{elseif params.initialDraw!=null && params.initialDraw.equals("true")}
+#{zeroLevel alt : play.i18n.Messages.get("NO_TEST")  , src : "/public/images/zeroLevel/4analytics-zero.jpg" /}
+<script type="text/javascript">
+    instAnalytics.hidePage();
+</script>
+#{/elseif}
+#{else}
+    <div class="text-center f-14 c-red boldy" style="padding:30px 0;">&{'NO_TEST'}</div>
+#{/else}

@@ -1,0 +1,217 @@
+#{if profileResponse==null||(profileResponse.has('errorCode')&& profileResponse.errorCode!='')||!profileResponse.has('errorCode')}
+    <script type="text/javascript">
+        showError(COMMON_ERROR_MESSAGE);
+    </script>
+#{/if}
+#{else}
+%{
+    profileResponse=profileResponse.result;
+    profile = profileResponse.get("GENERAL");
+    otherUserId = profile.userId;
+}%
+
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="vProfileStyles">
+    showNoTabSec("PROFILE_${profileResponse.firstName+' '+profileResponse.lastName}");
+</script>
+#{/if}
+#{stylesheet media:'screen', src:'profile.css' /}
+<div class="profile-wrapper">
+    <div class="profile-area">
+       <div class="profile-details CSWidget" data-widget="PROFILE_DETAILS">
+             <div class="profile-widget clearfix">
+              <div class="profile-picture"><img src="${profileResponse.profilePic}"></div>
+              <div class="pro-pic-info">
+                <h4>${profileResponse.firstName+' '+profileResponse.lastName}</h4>
+                <p class="college-from"></p>
+                #{if profile.basic.homeTown!=""}
+                    <p class="location-from">From-<b>${profile.basic.homeTown}</b></p>
+                #{/if}
+                #{widgets.followUnfollowEntity followType:profileResponse.followType,callback:'USER',
+                entityType:'USER',entityId:otherUserId,saveText:'Follow'/}  
+              </div>
+              <div class="pro-stats">
+	      	<ul class="pro-stats-points fullWidth">
+	      	#{if userPointsInfo!=null && userPointsInfo.has('result') && userPointsInfo.result!=""}
+			<li>
+				<span class="greyTextColor boldy">Points</span>
+			</li>
+			<li style="padding-top:4px;">
+				<span class="fontDigit" style="font-size:35px;">${userPointsInfo.result}</span>
+			</li>
+	      	#{/if}
+	      	</ul>
+                  <ul class="ques-stat clearfix">
+                      <li>
+                          <h5>Following</h5>
+                          <span>${profileResponse.following}</span>
+                      </li>
+                      <li>
+                          <h5>Followers</h5>
+                          <span>${profileResponse.follower}</span>
+                      </li>
+                  </ul>
+                  <ul class="test-stat clearfix">
+                      <li>
+                          <h5>Questions Added</h5>
+                          <span>${profileResponse.qusAdded}</span>
+                      </li>
+                      <li>
+                          <h5>Questions Attempted</h5>
+                          <span>${profileResponse.qusAttempted}</span>
+                      </li>
+                      <li>
+                          <h5>Tests Taken</h5>
+                          <span>${profileResponse.testTaken}</span>
+                      </li>
+                      <li>
+                          <h5>Content Saved</h5>
+                          <span>${profileResponse.docs}</span>
+                      </li>
+                      <li>
+                          <h5>Playlists Created</h5>
+                          <span>${profileResponse.plCreated}</span>
+                      </li>
+                  </ul>
+              </div>
+            </div>
+
+        </div>
+        <div class="more-profile-details" style="margin-top:0px;">
+            <div class="profile-info-wrapper clearfix">
+                <div class="profileLeftSec">
+                    <h3>${profileResponse.firstName}'s Recent Activities</h3>
+                    <div class="recent-activies" id="activityFeedsDiv"></div>
+                    <div class="profileDocRecos"></div>
+                </div>
+                <div class="info-section">
+
+
+                    <div class="educational-info">
+                        <div class="edu-header">
+                            <span><img src="/public/images/profile/edu-icon.jpg" alt="Educational Info" title="Educational Info"/></span>
+                            <h5>Educational Info</h5>
+                            <span class="right-line"></span>
+                        </div>
+                        %{ profile=profileResponse.get("GENERAL");}%
+                        #{if profile.length()>0}
+                        %{eduProfile=profile.educational;}%
+                        #{if eduProfile.length()>0 }
+
+                        #{list items:0..eduProfile.length()-1,as:'i'}
+                        #{if eduProfile.get(i).has('orgName')&& eduProfile.get(i).orgName!=''}
+                         <div class="college-info" id="institution-${i}">
+
+                             <h3>${eduProfile.get(i).orgName}</h3>
+                             <h5 class="dep-branch">${eduProfile.get(i).has('branch') ? eduProfile.get(i).branch : " " }</h5>
+                         #{if eduProfile.get(i).startDate>1900}
+                             <h5>
+                                 <span class="start-year">${eduProfile.get(i).startDate}</span> -
+                                 <span class="end-year">${eduProfile.get(i).endDate}</span>
+                             </h5>
+			 #{/if}
+                         </div>
+                        #{/if}
+                        #{/list}
+                        #{/if}
+                        #{/if}
+
+                         #{if profileResponse.has('ORG')}
+                         %{ orgProfile=profileResponse.get("ORG");%}
+                         #{if orgProfile.length()>0}
+                         %{orgEduProfile=orgProfile.educational;%}
+                         #{if orgEduProfile.length()>0 && orgEduProfile.get(0).orgName!=''}
+                         #{list items:0..orgEduProfile.length()-1,as:'i'}
+                         <div class="org-info" id="org-${i}">
+
+                             <h3>${orgEduProfile.get(i).orgName}</h3>
+                             <h5 class="dep-branch">${orgEduProfile.get(i).has('branch') ? orgEduProfile.get(i).branch : " " }</h5>
+                         #{if orgEduProfile.get(i).startDate>1900}
+                             <h5>
+                                 <span class="start-year">${orgEduProfile.get(i).startDate}</span> - <span class="end-year">${orgEduProfile.get(i).endDate}</span></h5>
+			 #{/if}
+                         </div>
+                         #{/list}
+                         #{/if}
+                         #{/if}
+                         #{/if}
+
+                    <div class="stripEdu"></div>
+                    </div>
+                    <div class="personal-info CSWidget" data-widget="PERSONAL_INFO_SECTION">
+                        <div class="personal-header">
+                            <span><img src="/public/images/profile/prof-icon.jpg" alt="Personal Info" title="Personal Info"/></span>
+                            <h5>Personal Info</h5>
+                            <span class="right-line"></span>
+                        </div>
+                        %{personal = profile.personal %}
+
+                        <dl class="personal-data-list">
+                            #{if personal.contactInfo.emailAddress!=''}
+                            <dt>Email</dt>
+                            <dd id="prof-email">${personal.contactInfo.emailAddress}</dd>
+                           <!--<dd class="edit-personal" id="edit-prof-email"><input type="text" data-name="email" size="22" class="edit-email profile-edit" value="${profileResponse.username}"></dd>-->
+                            #{/if}
+                            #{if profile.social.facebookLink!='' || profile.social.linkedinLink!='' || profile.social.twitterLink!=''}
+                            <dt>Social</dt>
+                            <dd class="show-personal" id="social-pro">
+                                    <ul class="social-profiles clearfix">
+                                            <li>
+                                                    #{if profile.social.facebookLink!=''}
+                                                    <a target="_blank" id="fb-link" class="doCStream" data-cs-name="FB_LINK" data-link="${profile.social.facebookLink}" href="${profile.social.facebookLink}"><img src="/public/images/profile/fbInactive.png" alt="fb"></a>
+                                                    #{/if}
+                                            </li>
+                                            <li>
+                                                    #{if profile.social.linkedinLink!=''}
+                                                    <a target="_blank" id="ln-link" class="doCStream" data-cs-name="LINKDIN_LINK" data-link="${profile.social.linkedinLink}" href="${profile.social.linkedinLink}"><img src="/public/images/profile/lnInactive.png" alt="linkedin"></a>
+                                                    #{/if}
+                                            </li>
+                                            <li>
+                                                    #{if profile.social.twitterLink!=''}
+                                                    <a target="_blank" id="tw-link" class="doCStream" data-cs-name="TWITTER_LINK" data-link="${profile.social.twitterLink}" href="${profile.social.twitterLink}"><img src="/public/images/profile/twInactive.png" alt="twitter"></a>
+                                                    #{/if}
+                                            </li>
+                                    </ul>
+                            </dd>
+                            #{/if}
+                            #{if personal!=null && personal.contactInfo!=null && personal.contactInfo.mobileNo!=null && personal.contactInfo.mobileNo!='' && personal.contactInfo.mobileNo!= '9999999999' }
+                            <dt> Contact  </dt>
+                            <dd class="show-personal" id="personal-no">
+                                ${personal.contactInfo.mobileNo}
+
+                            </dd>
+
+                             #{/if}
+
+
+                            #{if personal.ambition != ''}
+                            <dt>Ambition</dt>
+                            <dd class="show-personal" id="personal-ambi">
+                                ${personal.ambition}
+
+                            </dd>
+
+                             #{/if}
+                        </dl>
+                    <div class="stripEdu"></div>
+                    </div>
+                </div>
+                <div class="profileRightSec">
+                    <div class="follow-details">
+
+                    </div>
+                    <div class="profileFrndSuggs">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+        $.get("/widgets/otherconnections",{size:10,targetUserId:"${otherUserId}",start:0},function(data){
+            $(".follow-details").html(data);
+        });
+        getActivityFeeds("${otherUserId}");
+</script>
+</div>
+#{/else}

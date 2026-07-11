@@ -1,0 +1,86 @@
+<div id="deviceManagement">
+   <div class="centerText pageHeadGrayDiv">
+	<span class="big20">&{'DEVICE_MGMNT'}</span>
+	<div class="vChoose mcvChoose vChooseUserProfile margLeft10 alignMiddle" data-value="STUDENT" data-onchange="onmcvChooseChange" 
+		data-param-name="profile">
+                <div class="vChooseHead">Students</div>
+                <div class="vChooseDownIcon"></div>
+        	<div class="vChooseDropDown">
+                        <div class="vChooseOpt" data-value="STUDENT">Students</div>    
+                        <div class="vChooseOpt" data-value="TEACHER">Teachers</div>    
+                        <div class="vChooseOpt" data-value="MANAGER">Managers</div>    
+                        <div class="vChooseOpt" data-value="EDITOR">Editors</div>    
+        	</div>
+    	</div>
+   </div>
+   <div class="deviceMngFilters">
+	<div>
+	<span class="boldy big16">Filter By</span>
+	</div>
+	<table style="padding-top:10px;min-width:1120px;" class="fullWidth">
+	   <tr>
+	     <td>
+		<div class="vChoose mcvChoose vChooseUserDeviceStatus alignMiddle" data-value="-1" data-onchange="onmcvChooseChange" 
+			data-param-name="statusAndDeviceType" data-beforemccall="putStatusAndDeviceTypeParams">
+                	<div class="vChooseHead">All Members</div>
+                	<div class="vChooseDownIcon"></div>
+        		<div class="vChooseDropDown">
+                        	<div class="vChooseOpt" data-value="-1">All Members</div>
+                        	<div class="vChooseOpt" data-value="LOGGED_IN;WEB">
+					<span class="onlineWebIcon"></span>
+					<span class="margLeft5">Available on Web</span>
+				</div>
+                        	<div class="vChooseOpt" data-value="LOGGED_OUT;WEB">
+					<span class="offlineWebIcon"></span>
+					<span class="margLeft5">Un-Available on Web</span>
+				</div>
+                        	<div class="vChooseOpt" data-value="LOGGED_IN;MOBILE">
+					<span class="onlineDeviceIcon"></span>
+					<span class="margLeft5">Available on Device</span>
+				</div>
+                        	<div class="vChooseOpt" data-value="LOGGED_OUT;MOBILE">
+					<span class="offlineDeviceIcon"></span>
+					<span class="margLeft5">Un-Available on Device</span>
+				</div>
+        		</div>
+    		</div>
+		*{<!--<span class="depthTab mcSubTab" data-params={"status":"LOGGED_IN","appType":"WEB"} title="Available on Web">
+			<span class="onlineWebIcon"></span>
+		</span>
+		<span class="depthTab mcSubTab" data-params={"status":"LOGGED_OUT","appType":"WEB"} title="Un-available on Web">
+			<span class="offlineWebIcon"></span>
+		</span>
+		<span class="depthTab mcSubTab" data-params={"status":"LOGGED_IN","appType":"MOBILE"} title="Available on Device">
+			<span class="onlineDeviceIcon"></span>
+		</span>
+		<span class="depthTab mcSubTab" data-params={"status":"LOGGED_OUT","appType":"MOBILE"} title="Un-available on Device">
+			<span class="offlineDeviceIcon"></span>
+		</span>-->}*
+	     </td>
+    	     <td class="cmdsTableOptsAndSortDiv centry"> 
+      		#{common.filterProgCenterSecDiv /}
+    	     </td>
+	     <td class="right">
+	    	<div class="deviceUserFilterOpts">
+			<input type="text" class="inputDiv mcSearchDivInput" data-param-name="query" placeholder="search by Name"/>
+	    	</div>
+	     </td>
+	   </tr>
+	</table>
+      	<div class="cmdsTableSortDiv">
+        	#{common.lmArrowsDiv /}
+      	</div>
+   </div>
+   <div id="fixedSec">
+     <div class="userDevicesHolder">
+	<table class="fullWidth cmdsTable LMHandlerDiv" id="userDevicesTable">
+	</table>
+     </div>
+   </div>
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrDevice.init();}
+        lazyLoad([{fname:"qrDevice.js",cb:fn}]);        
+    }();    
+</script>

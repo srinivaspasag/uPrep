@@ -1,0 +1,35 @@
+<div class="instShareFeedsHold" style="border-right: 0px;">
+	#{if params.userRole != "STUDENT"}
+		#{institute.widgets.createShare/}
+	#{/if}
+	#{else}
+		<div style="margin:15px 0;">
+			<span class="instImgs instActivityImg"></span>
+			<span class="big14" style="color:rgb(20, 78, 116);padding-left:4px;">&{'TXT_RECENT_ACTIVITY'}</span>
+		</div>
+	#{/else}
+	<div class="instFeedPostContainer">
+	</div>
+	<div class="instActivitySelMyBatch right">
+		#{institute.widgets.dropDowns.mapping memberInfo : memberInfo , showCenters : true , showSections : false , showSelectAll : true /}
+	</div>
+	<div class="instFeedsContainer">
+		*{#{institute.widgets.feedsContainer/}}*
+	</div>
+</div>
+<div class="instHomeWidgets">
+	*{#{institute.widgets.notices/}}*
+	<div style="margin-top:25px;" class="instChlgBoardWidget">	
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		institute.activities.init();
+	});
+	$(document).ready(function(){
+		$("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+		$("#instPageNavigator").find(".instNavTab.instRATab").addClass("clInstTab");
+	});
+</script>
+<div class="cleaner_with_divider">&nbsp;</div>

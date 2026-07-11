@@ -1,0 +1,76 @@
+#{if resources!= null}
+%{
+    folderInfo=resources.result.folderInfo;
+    folderName=folderInfo.name;
+    folderParents=folderInfo.parents;
+    folderId=folderInfo.id;
+    if(folderName=='/'){
+        folderName='Institute Resources';
+	if(params.resourceType!=null){
+		folderName = play.i18n.Messages.get("INSTITUTE_RESOURCES_"+params.resourceType);
+	}
+    }
+}%  
+<div id="popupResources" class="mcWidget">
+    <div class="folderTitleDiv">        
+        <div class="inputDiv cmdsTableSearchBox hasSearchImg floatRight margRight10 whiteInputDiv">
+            <input type="text" class="mcSearchDivInput" data-param-name="query" value="${params.query}"
+                   placeholder="Search Resources"/>
+            <span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>                
+        </div>                  
+        <div class="srcDetTitleDiv" data-name='${folderName}'>
+            <span class="entityEditableName">${folderName}</span>
+        </div>
+        #{if folderParents.length()>0}
+        <div class="folderParents">
+            #{list items:0..folderParents.length()-1,as:'f'}
+            %{
+            folderPa=folderParents.get(f);
+            folderPaName=folderPa.name;
+            folderPaId=folderPa.id;
+            }%
+            
+            <a class="color6 getPopupResourcesFolderPage" data-entity-id='${folderPaId}'>
+                #{if f_isFirst}
+                Institute Resources
+                #{/if}
+                #{else}
+                > ${folderPaName}
+                #{/else}
+            </a>                 
+            #{/list}
+            <span class="color6" data-entity-id='${folderId}'>
+                > <span class="blueColor">${folderName}</span>
+            </span>
+        </div>
+        #{/if}
+    </div>
+    <div class="cmdsTableOptsAndSortDiv">
+        <div class="cmdsTableSortDiv">
+	    #{if params.resourceType == null || params.resourceType == "ALL"}
+            	#{common.mcvChooseContentTypes target:"POPUP_RESOURCES"/}
+	    #{/if}
+            #{include 'Widgets/mcvChooseAlpha.html' /}    
+            #{common.lmArrowsDiv /}  
+        </div>
+    </div>
+    <div id="tableSection" class="LMHandlerDiv">
+        #{include 'QrResources/popupResourcesTable.html' /}
+    </div>
+    <div class="centerText">
+        <div class="bigGreenButton margTop20 centerText addFromPopupResource">Add Selected</div>    
+    </div>
+    <script type="text/javascript">
+        new function() {
+            var fn = function() {
+                qrResources.init({target: "FOLDER_PAGE", mainResourcesPage: true,
+                    folderId: "${params.folderId}",popupResources:true});
+            }
+            lazyLoad([{fname: "qrResources.js", cb: fn}]);
+        }();
+    </script>  
+</div>
+#{/if}
+#{else}
+    <div class="centerText">Failed to load resources</div>
+#{/else}

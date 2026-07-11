@@ -1,0 +1,108 @@
+%{
+	test = _test;
+	caller = _caller == null ? "" : _caller;
+	testOpen = webUtils.TemplateHelper._getTestUrl(test,params.orgId,params.userRole);
+	recordState = test.has("recordState") && !test.recordState.equals(null) ? test.recordState : "ACTIVE";
+	target = _target;
+	targetUrl = "";
+	if(target != null){
+		targetUrl = "?targetType="+target.type+"&targetId="+target.id;
+	}
+}%
+<div class="left relative eachMyContentsTests myContentsEachIconItems myContentsEachItem" 
+	data-test-id="${test.id}" data-entity-type="test" data-entity-id="${test.id}">
+	#{if recordState == "TEMPORARY"}
+	<div class="absolute contentUnavailable">
+		<div class="contentUnavailableMsg">&{'TXT_UNAVAILABLE'}</div>
+	</div>	
+	#{/if}
+	#{elseif caller != "EXT" }
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+            <a  class="right relative greenButton myContentsButtonItem ${testOpen.className} doCStream" 
+			data-cs-name="OPEN" data-org-id="${params.orgId}"
+			data-user-role="${params.userRole}" #{if target != null } data-target-type="${target.type}" data-target-id="${target.id}" #{/if}
+	        data-test-id="${testOpen.id}" href="${testOpen.url}${targetUrl}">Open</a>
+		*{<!--Follow Test Disabled
+		<div class="right relative myContentsButtonItem">
+			#{widgets.followUnfollowEntity followType:test.followType,entityType:'TEST',entityId:test.id/}
+		</div>-->}*
+		<span class="left absolute myContentsItemInfo">
+			<span class="left relative blackTextColor">Attempts <span class="redTextColorTest">${test.attempts}</span></span>
+			#{if test.duration <= 0}
+				<span class="left relative blackTextColor" style="padding-left:7px;">Time <span class="redTextColorTest">No Limit</span></span><br/>
+			#{/if}
+			#{else}
+				%{
+                        		timeObj=uicom.util.Utilities.getTimeFromMiliSec(test.duration);
+				}%
+				<span class="left relative blackTextColor" style="padding-left:7px;">Time <span class="redTextColorTest">${timeObj.hrs}:${timeObj.mins} hrs</span></span><br/>
+			#{/else}
+		</span>
+		<span class="right absolute myContentsShareIt doCStream" data-cs-name="SHARE">Share</span>
+	</div>
+	#{/elseif}
+	%{
+		testIconClass = "";
+		attempted = test.has('attempted') && (test.attempted == true || test.attempted == "true");
+		if(attempted){
+			testIconClass = "attempted";
+		}
+		testOrAsnIconClass = "testIcon";
+		if("ASSIGNMENT".equals(test.type)){
+			testOrAsnIconClass = "assignmentIcon";
+		}
+	}%
+	<span class="left relative ${testOrAsnIconClass} ${testIconClass}"></span>
+	<div class="left relative myContentsTestDetails">
+		#{if caller != "EXT" }
+		<span class="left relative big12 boldy myContentsTestText blackTextColor singleLineText toolTipTitle" 
+			data-title="Test : ${test.name}" style="width:100%;">${test.name}</span>
+		#{/if}
+		#{else}
+		<a class="left relative big12 boldy myContentsTestText blackTextColor singleLineText toolTipTitle ${testOpen.className}" 
+			data-cs-name="OPEN" data-org-id="${params.orgId}" data-user-role="${params.userRole}" 
+            data-test-id="${testOpen.id}" href="${testOpen.url}${targetUrl}" #{if target != null } data-target-type="${target.type}" data-target-id="${target.id}" #{/if}
+			data-title="Test : ${test.name}">${test.name}</a>
+		#{/else}
+		</br>
+		<span class="left relative big12 myContentsTestText greyTextColor singleLineText" style="width:100%;">
+			#{if "TEST".equals(test.type)}
+				<span>&{'test.TYPE_'+test.mode}</span>
+			#{/if}
+			<span>&{'test.TYPE_'+test.type}</span>
+		</span><br/>
+		%{
+			boards = test.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   <span class="left relative myContentsTestText" style="width:100%;">
+		   #{if boards.length()<=2}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<span style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</span>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+		   	<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+	#{if test.has('user') && !test.user.equals(null) && test.user!=null}
+                      %{
+                        user=test.user;
+                      }%
+		<span class="left relative big12 myContentsTestText" style="width:100%;">
+			<span>by </span>
+			#{institute.memberName user : user , classNames : "blueTextColor" /}
+		</span>
+                      <br>                      		
+	#{/if}
+		<span class="left relative myContentsRankingHolder nonner" style="margin-left:4px;">
+			<span class="left relative myContentsRankingStars" style="width:${test.avgRating*20}%"></span> 
+		</span>
+	</div>
+</div>	

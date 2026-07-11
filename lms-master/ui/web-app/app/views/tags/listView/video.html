@@ -1,0 +1,56 @@
+#{if videoData!=null && videoData.has('title')}
+<div class="left relative eachVideoList eachListViewItem">
+	<div class="left relative listContentsDetails">
+		<span class="left relative big12 boldy listContentsText blackTextColor">${videoData.title.raw()}</span>
+		<br/>
+	#{if videoData.has('user') && videoData.user!=null}
+		<span class="left relative big12 listContentsText blueTextColor" style="width:100%;">by ${videoData.user.firstName.raw()} ${videoData.user.lastName.raw()}</span>
+	#{/if}
+		<br/>
+		<span class="left relative listContentsRankingHolder">
+			<span class="left relative listContentsRankingStars" style="width:${videoData.avgRating*20}%"></span> 
+		</span>
+		<img class="left relative lisViewVideoIcon openDocPage" alt="no preview" src="${videoData.thumbnail}" data-doc-id="${videoData.videoId}"/><br/>
+		%{
+			timeObj=uicom.util.Utilities.getTimeFromMiliSec(videoData.duration);
+		}%
+		<span class="right absolute listViewVideoDur boldy">
+		#{if timeObj.hrs > 0} ${timeObj.hrs}:#{/if}${timeObj.mins}:${timeObj.secs}</span>
+	</div>
+	<div class="left relative listContentsMiddle">
+		<span class="left relative listContentsText blackTextColor">Views - <b>${videoData.views}</b> Saved - <b>${videoData.follower}</b> </span>
+		<span class="left relative listContentsText blackTextColor" style="width:100%;">
+			#{if videoData.has('boards') && videoData.boards.length()>0}
+			#{list items:0..videoData.boards.length()-1,as:'indx'}	
+				#{if videoData.boards.get(indx).type=="COURSE"}
+					<span class="listMatchingTagsParent">${videoData.boards.get(indx).name.raw()}</span> 
+				#{/if}
+				#{else}
+					<span class="listMatchingTags">${videoData.boards.get(indx).name.raw()}</span>
+				#{/else}
+				#{if indx < (videoData.boards.length()-1)}
+					<b>></b>
+				#{/if}
+			#{/list}
+			#{/if}
+		</span>
+		#{if videoData.has('targets') && videoData.targets.length()>0}
+		<span class="left relative big12 boldy listContentsText greyTextColor">Target - <span class="blueTextColor big14">
+			#{list items:0..videoData.targets.length()-1,as:'indx'}
+				${videoData.targets.get(indx).code.raw()},
+			#{/list}
+			</span>
+		</span>
+		#{/if}
+	</div>
+	<div class="right relative listContentsRight">
+		<a class="greenButton listContentBtn openDocPage" data-doc-id="${videoData.videoId}">Open</a><br/>
+		<div class="onHoverListContentsItems">
+			<div class="listContentBtn">
+				#{widgets.followUnfollowEntity followType:videoData.followType,entityType:'DOCUMENT',entityId:videoData.docId/}
+			</div>
+			<span class="listContentsShareIt big14">Share</span>
+		</div>
+	</div>
+</div>
+#{/if}

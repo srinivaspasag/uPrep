@@ -1,0 +1,27 @@
+%{
+    videoResponse=resp.result.videoRes;
+}%
+<div class="table-responsive videos" data-total-hits="${videoResponse.totalHits}">
+    <table id="video-content" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Views</th>
+            </tr>
+        </thead>
+        <tbody id="video-content-body">
+        #{list items:0..videoResponse.list.length()-1,as:'Pindex'}
+        %{
+            video = videoResponse.list.get(Pindex);
+        }%
+        <tr  style="cursor: pointer;" data-id="${video.id}">
+            <td>${video.name}</td>
+            <td>${video.duration}</td>
+        </tr>
+        #{/list}
+        </tbody>
+    </table>
+</div>
+<center>
+    <div class="page-selection-video"></div>
+</center>

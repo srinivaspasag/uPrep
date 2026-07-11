@@ -1,0 +1,376 @@
+.instLinkPreview,
+.instVideoPreview{
+	font-size:12px;
+	background-color:#f4f4f4;
+	margin:6px;
+	max-width:96.8%;
+	border:1px solid #ddd;
+}
+.instTextPreview{
+	font-size:13px;
+	line-height:15px;
+	color:#2C2C2C;
+}
+.instLinkPreview:hover .instAttachDiscard,
+.instVideoPreview:hover .instAttachDiscard{
+	opacity:1;
+	filter:alpha(opacity=100);
+}
+.instVideoPreview .videoThumbWrapper{
+	height:100px;
+}
+.instAttachUrl{
+	font-size:13px;
+	color:#000;
+	padding:5px;
+	float:left;
+	max-width:85%;
+}
+.instAttachDiscard{
+	display:inline-block;
+	float:right;
+	margin:5px;
+	font-size:11px;
+	color:#F79F81;
+	padding:0 3px;
+	border-radius:5px;
+	cursor:pointer;
+	z-index:1000;
+	background-color:#eee;
+	opacity:0;
+	filter:alpha(opacity=0);
+}
+td.videoImgHold{
+	vertical-align:top;
+	padding-right:10px;
+	width:140px;
+}
+.instAttachTxtArea{
+	width:95%;
+	font-size:11px;
+	margin-right:5%;
+	min-height:38px;
+	color:#666;
+	max-height:65px;
+	overflow:hidden;
+	border:1px solid #eee;
+	resize:none;
+}
+.instAttachTxtArea:focus{
+	overflow-y:auto;
+}
+
+/* EXTERNAL LINK THUMBNAILS */
+.instLinkPreview .thumbnailCell{
+	width:140px;
+	margin-right:10px;
+	vertical-align:top;
+}
+.instAttachLinkAllImgs{
+	left:0px;
+	position: relative;
+	white-space:nowrap;
+	/*max-height:85px;*/
+}
+.instAttachLinkImg{
+	width: 140px;
+	min-height:80px;
+	vertical-align:top;
+	overflow: hidden;
+	position: relative;
+	display: inline;
+}
+.instAttachLinkImgContainer{
+	width: 140px;
+	/*max-height: 90px;*/
+	overflow: hidden;
+	position: relative;
+	margin-right:10px;
+	max-height:100px;
+}
+.instAttachKeywords{
+	background-color:rgb(229, 239, 248);
+	font-size:11px;
+	text-decoration:underline;
+}
+.instThumbNextPrevHold{
+	text-align:center;
+	margin-top:5px;
+}
+.instAttachThumbCount{
+	font-size:12px;
+	color:#666;
+}
+.instAttachLinkNext,
+.instAttachLinkPrev{
+	padding: 9px 3px;
+	font-size: 1px;
+	margin: 2px 5px;
+	position: relative;
+	cursor:pointer;
+}
+.instAttachLinkNext{
+	background-position:-492px -5px;
+}
+.instAttachLinkPrev{
+	background-position:-500px -5px;
+	margin-right:8px;
+}
+.instAttachLinkNext.active{
+	background-position:-485px -5px;
+}
+.instAttachLinkPrev.active{
+	background-position:-507px -5px;
+}
+
+/* UP VOTE WIDGET */
+.instUpvoteHolder,
+.instDbtAnsBar{
+	color:#598ea9;
+	font-size:11px;
+	padding:5px 0;
+}
+.instUpvoteHolder a,
+.instDbtAnsBar a{
+	color:#598ea9;
+}
+.upvoteInstSeparator{
+	font-size:15px;
+	margin:0px 3px;
+	position:relative;
+	top:-3px;
+}
+.instFeedAge{
+	color:#999;
+}
+.instUpvoteHolder .instImgs{
+	padding:3px 8px;
+	margin-right:4px;
+	font-size:12px;
+}
+.ansInstFeedCount,
+.followersInstFeedCount,
+.upvotesInstFeedCount,
+.commItemRepliesSec{
+	cursor:pointer;
+}
+.followersInstFeedCount{
+	margin-left:11px;
+}
+.commentsInstFeedCount .instImgs{
+	padding-left:6px;
+	background-position:-332px 0px;
+}
+.ansInstFeedCount .instImgs{
+	padding:13px 7px;
+	background-position:-332px 0px;
+	margin-right:5px;
+}
+.followersInstFeedCount .instImgs{
+	margin-right:5px;
+	padding:13px 5px;
+	background-position:-536px 0px;
+}
+.upvotesInstFeedCount .instImgs{
+	background-position:-302px 0px;
+}
+.upvotesInstFeedCount .instImgs.voted{
+	background-position:-316px 0px;
+}
+.commItemRepliesSec .instImgs{
+	padding:3px 7px;
+	background-position:-332px 0px;
+}
+.commItemRepliesSec{
+	margin-left:6px;
+}
+
+/* COMMENT COMPONENT */
+.instFeedsComments{
+}
+.instFeedsComments .instProfilePicContainer{
+	margin-right:10px;
+}
+.instFeedComContainer .loadMoreItems{
+	padding: 5px 0;
+	font-weight: normal;
+	margin: 0px 7px 4px;	
+}
+.instFeedAddComment,
+.instEachFeedCom{
+	padding:7px;
+	background-color:#f1f1f1;
+	margin-bottom:3px;
+}
+.instFeedCommentPic{
+	width:30px;
+}
+.instFeedCommentBody{
+	font-size:12px;
+	max-width:450px;
+}
+.instFeedCommAge{
+	color:#999;
+}
+.instFeedCommentInputHolder{
+	border:1px solid #bcc8d8;
+	background:#FFF;
+	padding:4px 4px 0 4px;
+}
+.instFeedCommentInput{
+	width:97.5%;
+	max-width:520px;
+	outline:none;
+	border-radius:0px;
+	line-height:12px;
+	font-size:12px;
+	height:14px;
+	border:none;
+}
+
+/* CHALLENGES WIDGET */
+.instChlWidgTop{
+	background-color:#9acd66;
+	border:1px solid #7fa955;
+	padding:10px 15px;
+	text-align:center;
+}
+.instChlWidgTop .instImgs{
+	padding:10px;
+	background-position:-360px 0px;
+	margin-right:5px;
+}
+.instChlWidgTop .chlgWidgText{
+	font-size:16px;
+	color:#000;
+	float:left;
+	margin-top:4px;
+}
+.instChlWidgTop .instChlgWidgTickerCnt{
+	background-color:#cc3234;
+	padding:2px 5px;
+	font-size:12px;
+	color:#f1f1f1;
+	margin-left:5px;
+}
+.instYourChlgBrd{
+	background-color:#e8e8e8;
+	margin-top:5px;
+	padding:5px 8px 5px 10px;
+}
+.instYourChlgBrd .instChlgWidgRank{
+	font-size:16px; 
+}
+.instChlgWidgProfilePic{
+	width:30px;
+	margin:0 5px;
+}
+.instYourChlgBrd .instChlgWidgUsrNm a{
+	color:rgb(15, 64, 116);
+	font-size:14px;
+}
+.instAllChlgBrdHold{
+	margin-top:5px;
+	padding:15px 10px;
+	background-color:#f4f4f4;
+}
+.selectInstChlgTimeSc{
+	display:inline-block;
+	border:0px solid transparent;
+	background-color:#fff;
+	background:#fff;
+	margin-left:10px;
+	position:relative;
+	height:25px;
+	padding-left:6px;
+	color:#666;
+	width:100px;
+	font-size:12px;
+	top:-1px;
+}
+.instAllChlgLeaders .instChlgWidgRank{
+	font-size:14px; 
+	color:#92b175;
+}
+.instAllChlgLeaders .instChlgWidgUsrNm a{
+	color:#333;
+	font-size:14px;
+}
+.instHomeLftWidget{
+	margin-bottom:30px;
+	opacity:0;
+	padding-left:10px;
+}
+.instSchedulePgWidget #myScheduleLeftSec{
+	width:initial;
+	float:none;
+	padding-right:10px;
+}
+/* DROP DOWN CSS */
+.instSelMyBatch.nonner{
+	display:none;
+}
+.instSelMyBatch{
+	display:inline-block;
+}
+.instSelMyBatch .nDropDown{
+	padding:0 7px;
+	min-width:250px;
+	background-color:#edeef0;
+	border:0px;
+	font-size:12px;
+	border-radius:10px;
+}
+.instSelMyBatch .dropDownHead{
+	color:#666;
+	font-size:14px;
+	padding:10px 0;
+}
+.instSelMyBatch .dropDownContainer{
+	margin:0px 0px 0px -7px;
+	/*min-width:245px;*/
+	min-width:336px;
+	max-height:500px;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+.instSelMyBatch .dropDownIcon{
+	padding:25px 10px;
+}
+.instItemStgs{
+	width: 20px;
+	height: 20px;
+	margin-top: -11px;
+	background-color: #eee;
+	visibility:hidden;
+}
+.instItemStgs .instImgs{
+	padding: 7px;
+	background-position: -460px -3px;
+	cursor: pointer;
+	overflow: hidden;
+	float: left;
+	margin: 4px 3px;
+}
+.instItemStgsDropped{
+	position:absolute;
+	min-width:60px;
+	border:1px solid #ccc;
+	margin-left:-47px;
+	background-color:#fff;
+	margin-top:-1px;
+	visibility:hidden;
+}
+.instItemStgsDropped div{
+	padding:2px 10px;
+	min-width:45px;
+	font-size:13px;
+	color:#666;
+	cursor:pointer;
+}
+.instItemStgsDropped div:hover{
+	background-color:#eee;
+}
+.vidPreviewEmbedHolder{
+	background-color:#000;
+}

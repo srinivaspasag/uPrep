@@ -1,0 +1,194 @@
+#{if challenges==null||(challenges.has('errorCode')&& challenges.errorCode!='')||!challenges.has('errorCode')}
+    <script type="text/javascript">
+        showError(COMMON_ERROR_MESSAGE);
+    </script>
+#{/if}
+#{else}
+%{
+   channels=channels.result.list;
+}%
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="vChallengesStyles">
+    showNoTabSec("CHALLENGES_PAGE");
+</script>
+#{/if}
+#{if channels.length()>0}
+#{stylesheet media:'screen', src:'challenges.css' /}
+<div id="challengePageHolder">
+    <div id="challengePage" class="activeChallenges mcWidget">
+        <div id="CPMainSec">
+            <div class="CPHead">
+                <span class="linBlk">Challenge Arena</span>
+                <div class='cleaner_with_divider linBlk' 
+                     style="border-bottom: 2px solid rgb(204, 204, 204);width: 35%;">&nbsp;</div>
+                        <div class="vChoose big12 relativePos"  style="top:8px" data-value="-1" data-onchange="onChannelChange">
+                          <div class="vChooseHead" style="width: 150px;">All Channels</div>
+                          <div class="vChooseDownIcon"></div>
+                          <div class="vChooseDropDown">
+                                <div class="vChooseOpt" data-value="-1">All Channels</div>
+                                #{list items:0..channels.length()-1,as:'c'}
+                                %{
+                                    channel=channels.get(c);
+                                }%
+                                <div class="vChooseOpt" data-value="${channel.id}">${channel.name}</div>
+                                #{/list}
+                          </div>
+                        </div>                            
+            </div>
+            <div class="CPTabs CSWidget mcTabs" data-active-class="activeCPTab" 
+                 data-widget="CHALLENGES_TYPE">
+                %{
+                    mainFacet=challenges.result.facet;
+                    if(mainFacet.has('statusFacet')&&mainFacet.statusFacet.has('active'))mainActive=mainFacet.statusFacet.active;
+                    else mainActive=0;
+                    
+                    if(mainFacet.has('statusFacet')&& mainFacet.statusFacet.has('ended'))mainEnded=mainFacet.statusFacet.ended;
+                    else mainEnded=0;
+
+                    if(mainFacet.has('pointStatFacet')&&mainFacet.pointStatFacet.has('total'))mainTotal=mainFacet.pointStatFacet.total;
+                    else mainTotal=0;
+                }%
+                <span class="CPTab activeCPTab showActiveChallenges doCStream mcTab" data-name="ACTIVE_TAB"
+                      data-url-str="/challenges/activeChallenges">
+                    <span class="boldy">Active Challenges</span> (<label class="activeChallengesCount">${mainActive}</label>)
+                </span>
+                <span class="CPTab showClosedChallenges doCStream mcTab" data-name="CLOSED_TAB"
+                      data-url-str="/challenges/closedChallenges">
+                    <span class="boldy">Closed Challenges</span>(<label class="closedChallengesCount">${mainEnded}</label>)
+                </span>
+                <span class="CPTab showAttemptedChallenges doCStream mcTab" data-name="ATTEMPTED_TAB"
+                      data-url-str="/challenges/attemptedChallenges">
+                    <span class="boldy">Your Challenges</span>(<label class="attemptedChallengesCount">${mainFacet.attemptFacet.count}</label>)
+                </span>
+            </div>
+            <div class="CPTotalCount">
+                <span class="leftText CPTotalActiveDiv">
+                    <label class="CPChallengeCount">${mainActive}</label>
+                    <span class="CPTotalCountText">Active Challenges</span>
+                </span>
+                <span class="leftText CPTotalPointsDiv">
+                    <label class="CPTotalPointsCount">${mainTotal}</label>
+                    <span class="CPTotalCountText">Points up for grabs</span>
+                </span>
+            </div>
+            <div id="CPChallengesHolder">
+                <div class="CPLeftRounder"></div>
+                <div class="CPRightRounder"></div>
+                <div class="CPSorters margBot20 centry CSWidget" data-widget="CHALLENGES_SORT">
+                    #{challenges.sorters/}
+                </div>
+                <div id="CPChallengesContent">
+                    #{include 'Challenges/activeChallenges.html' /}
+                </div>                
+            </div>
+        </div>
+        <div id="CPRightSec">
+            <div class="CPRSMultiplierDiv CPRSHelpHolder">
+                <div class="rightText"><span class="CPRSMultiplierHelp CPRSHelp" rel="475">?</span></div>
+                <div class="CPRSMultiplierHelpDiv CPRSHelpDiv">
+                    <div class="big13" style="padding: 5px 20px 0 20px;">
+                        <div class="big20">Multipliers</div>
+                        <div class="margHalfTop color8">Multipliers will multiply your earned points by respective number</div>
+                        <div class='cleaner_with_divider margHalfTop' style="border-bottom: 1px solid #cccccc;margin-bottom: 10px;">&nbsp;</div>
+
+                        <div class="boldy blueColor big14">Multiplier of excellence:</div>
+                        <ul class="margBot10" style="list-style: disc outside none;padding-left: 13px;">
+                            <li style="">
+                            Top the leaderboard of a challenge and win a multiplier of
+                            <span class="boldy big20 redColor">x3</span> for the <span class="greenColor">next 5 challenges!</span>
+                            </li>
+                        </ul>
+
+                        <div class="boldy blueColor margTop15 big14">Multiplier of consistency:</div>
+                        <ul class="margBot10" style="list-style: disc outside none;padding-left: 13px;">
+                            <li style="">
+                                <span class="margBot10">Solve 3 challenges continuously with 3 hats (without hints)
+                            and gain a multiplier of <span class="boldy big20 redColor">x2</span> for <span class="greenColor">next
+                                5 days!</span></span>
+                                <div class="margHalfTop margBot5">OR</div>
+                            </li>
+                            <li>
+                            Solve 5 challenges continuously with 3 hats and gain a
+                            multiplier of <span class="boldy big20 redColor">x3</span> for <span class="greenColor">next 5 days!</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="centry">
+                    <span class="CPRSMultiplierSymbol">x</span>
+                    <span class="CPRSMultiplierCount">1</span>
+                    <div class="CPRightSecColor">points multiplier</div>
+                </div>
+            </div>
+            <div class="CPRSMyPointsDiv">
+                <span class="boldy CPRightSecColor">Points Earned</span>
+                <div class="CPRSMyPoints">-</div>
+            </div>
+            <div class="CPRSStrikeRateDiv CPRSHelpHolder">
+                <div class="rightText"><span class="CPRSStrikeRateHelp CPRSHelp" rel="440">?</span></div>
+                <div class="CPRSStrikeRateHelpDiv CPRSHelpDiv">
+                    <div style="line-height: 20px; font-size: 13px; padding: 5px 20px 10px;">
+                        <div class="big20">Strike Rate</div>
+                        <div class="color8">Your challenges consistency</div>
+                        <div class='cleaner_with_divider margHalfTop' style="border-bottom: 1px solid #cccccc;
+                             margin-bottom: 10px;">&nbsp;</div>
+
+                        <div class="margTop">
+                            Your strike rate is the indicator of your consistency in cracking challenges.
+                            It is calculated as your correct challenge attempts percentage w.r.t your total challenge attempts.
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="boldy CPRightSecColor margHalfTop">Strike Rate</div>
+                    <span class="CPRSStrikeRate"></span>
+                </div>
+            </div>
+            <div class="CPRSHatsDiv">
+                <div class="margBot5 CPRSHatDiv">
+                    <span class="challengeHat"></span>
+                    <span class="challengeHat"></span>
+                    <span class="challengeHat"></span>
+                    <label class="margLeft big14">x</label>
+                    <span class="CPRS3HatsCount CPRSHatCount">0</span>
+                </div>
+                <div class="margBot5 CPRSHatDiv">
+                    <span class="challengeHat"></span>
+                    <span class="challengeHat"></span>
+                    <label class="margLeft big14">x</label>
+                    <span class="CPRS2HatsCount CPRSHatCount">0</span>
+                </div>
+                <div class="margBot5 CPRSHatDiv">
+                    <span class="challengeHat"></span>
+                    <label class="margLeft big14">x</label>
+                    <span class="CPRS1HatsCount CPRSHatCount">0</span>
+                </div>
+            </div>
+            <div id="CPRSGlobalLeaderBoard"></div>
+        </div>
+    <div class='cleaner_with_divider'>&nbsp;</div>
+
+    </div>
+    <script type="text/javascript">        
+        new function(){
+            var fn=function(){vChallenges.init();}
+            fetchScripts([{fname:"challenges.js",cb:fn}]);   
+        }();          
+    </script>     
+  <div class="nonner">
+    	#{common.testGuidelines type:'challenge',btnId:'approveChallenge'/}
+  </div>
+</div>
+#{/if}
+    #{else}
+    <div class="userMessage big15">
+        There are no channels available to show the challenges.
+    <br>Contact your admin for more details.</div>
+    #{/else}
+#{/else}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+        $("#instPageNavigator").find(".instNavTab.instOpenChallenges").addClass("clInstTab");
+    });
+</script>

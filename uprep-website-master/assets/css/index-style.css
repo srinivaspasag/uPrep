@@ -1,0 +1,300 @@
+:root{
+    --primary-color:rgb(53, 139, 141);
+}
+
+/*.teal{
+    background: var(--primary-color);
+}
+
+.teal{
+    background: var(--primary-color)!important;
+    color:#fff!important;
+}
+.offset{
+    color:var(--primary-color)!important;
+    background: white!important;
+    border: 1px solid var(--primary-color);
+}
+li.current > a{
+    color:#1fbff4!important;
+}*/
+.banner-two{
+    padding-top: 150px;
+    background: none!important;
+    /*padding-bottom: 200px;*/
+}
+.banner-two__title{
+    font-size: 50px;
+    line-height: 60px;
+}
+.banner-two__moc{
+    bottom: 0px;
+    right: 0px;
+    min-height:inherit;
+    background: none;
+}
+.banner-two__moc img{
+    top:120px;
+    animation:none;
+    width: 250px;
+}
+.banner-two__btn{
+    background: var(--primary-color);
+    color: white;
+}
+.cta-two__image{
+    animation:none;
+    bottom: inherit;
+}
+img{
+    animation:none!important;
+}
+.cta-two__content{
+    padding: 0px;
+}
+/*.cta-three{
+    padding-top:0px;
+    background: none;
+}*/
+.cta-two{
+    padding-top: 0px;
+}
+.cta-one{
+    padding-top: 20px;
+}
+.banner-two__btn.thm-btn:hover{
+    background: var(--primary-color);
+}
+/*.block-title__title{
+    text-align: center;
+}*/
+.service-one,.service-two,.service-three,.cta-one{
+    background: url(../../assets/images/net.png);
+    background-size: contain;
+    background-repeat: repeat-y;
+    background-attachment: fixed;
+}
+.sub-section{
+    min-height: 300px;
+    margin:50px 0px;
+}
+.sub-section img{
+    width: 350px;
+    height: 350px;
+}
+.banner-two{
+    /*padding-bottom: 100px;*/
+}
+.service-three{
+    padding-top: 60px;
+    padding-bottom:60px;
+}
+.service-one,.service-two{
+    padding-top: 20px!important;
+    padding-bottom: 20px;
+}
+@media(max-width: 500px){
+    .banner-two .container{
+        text-align: center;
+    }
+    .banner-two{
+        padding-top: 120px;
+        /*padding-bottom: 40px;*/
+    }
+    .sub-section .pull-left ,.sub-section .pull-right{
+        float: none;
+    }
+    .block-title__title{
+        font-size: 20px;
+    }
+    .banner-two__title{
+        font-size: 36px;
+    }
+    .service-one__inner{
+        padding: 10px 0px;
+    }
+    .service-one,.service-two,.service-three{
+        padding: 20px 0px;
+    }
+    .android-app-sc{
+        display: none!important;
+    }
+    .lps{
+        max-width: 350px;
+        margin :10px auto;
+    }
+}
+@media(max-width: 992px){
+    .banner-two__moc{
+        display: none;
+    }
+    .android-app-sc{
+        display: none!important;
+    }
+}
+.service-one__inner{
+    border: none;
+}
+.service-one .img-holder{
+    width: 80px;
+    background: var(--primary-color);
+    border-radius: 10px;
+    display: inline-block;
+    height: 80px;
+    position: relative;
+}
+.service-one__inner img{
+    width: 60px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+.service-one__inner::before{
+    content:none;
+}
+.border-top{
+    border-top:5px solid var(--primary-color)!important;
+    margin:0px auto;
+}
+.border-left{
+    border-left: 5px solid var(--primary-color)!important;
+    margin:0px auto;
+}
+.lps img:nth-child(2){
+    top: 5%;
+    left: 17%;
+    z-index: 1;
+    width: 65.5%;
+    height: 82%;
+    position: absolute;
+}
+.classroom-connect-container{
+    padding:50px 0px;
+}
+.block-title{
+    margin-top: 20px!important;
+}
+.lps::after{
+    width: 150px;
+    position: absolute;
+    font-size: 14px;
+    background: #00BCD4;
+    color: white;
+    text-align: center;
+    left: 50%;
+        top: -40px;
+        transform: translateX(-50%);
+}
+.teal{
+    background: var(--primary-color);
+}
+.teal .block-title__title,.teal .service-one__title{
+    color:#fff!important;
+}
+.teal .border-top{
+    border-top: 5px solid #fff;
+}
+.teal .border-left{
+    border-left: 5px solid #fff;
+}
+.lps-1::after{
+    content:'Month View';
+}
+.lps-2::after{
+    content:'Day View';
+}
+.lps-3::after{
+    content: 'Content View';
+}
+.block-title__title{
+    font-size: 32px;
+}
+/*.lps::after{
+    content:'';
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    position: absolute;
+    background-image: url('../../assets/images/other/laptop.png');
+}*/
+.w-80{
+    width: 80%;
+    margin:0px auto;
+}
+.sub-footer{
+    margin:30px 0px;
+}
+.sub-footer span{
+    display: block;
+}
+.sub-footer span:nth-child(2){
+    margin:20px 0px;
+    color:var(--primary-color);
+    font-size: 32px;
+}
+@media(min-width: 992px){
+    .android-app-sc::before{
+        top:-70px;
+        right: -15px;
+    }
+    .owl-item img{
+        width: 220px!important;
+    }
+    .show-banner .banner-title{
+        font-size: 1.1rem;
+    }
+}
+@media(min-width: 1200px){
+    .android-app-sc::before{
+        top:-35px;
+        right: -20px;
+    }
+    .owl-item img{
+        width: 250px!important;
+    }
+    .show-banner .banner-title{
+        font-size: 1.2rem;
+    }
+}
+.android-app-sc::before{
+    /*top: -35px;*/
+    content: '';
+    background: url(../images/mia2Splashscreen.png);
+    background-position: center;
+    background-size: contain;
+    height: 600px;
+    width: 100%;
+    position: absolute;
+    background-repeat: no-repeat;
+    /*right: -20px;*/
+
+}
+.owl-carousel .owl-item img{
+    border-radius: 5px;
+    /*min-width: 250px;*/
+    /*width: 250px;*/
+    /*float:right;*/
+    margin:0 auto;
+}
+@media only screen and (max-width:  450px){
+    .block-title__title{
+        font-size: 24px;
+    }
+    .download-app-holder .block-title{
+        font-size: 24px;
+    }
+
+    .download-app-holder .cta-one__text{
+        font-size: 18px;
+        line-height: 1.3;
+    }
+    .show-banner .banner-title{
+        font-size: 0.7rem;
+    }
+
+}

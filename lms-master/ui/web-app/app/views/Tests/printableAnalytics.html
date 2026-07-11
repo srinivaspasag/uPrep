@@ -1,0 +1,156 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.6/jspdf.plugin.autotable.min.js"></script>  
+<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>
+<style type="text/css">
+  @font-face {
+    font-family: Ubuntu;
+    src: url(../../../public/fonts/Ubuntu-Regular.ttf);
+} 
+    body {
+        font-family: Ubuntu;
+    }
+    table, th, td {
+        border-collapse: collapse;
+    }
+</style>
+#{if response!=null && response.errorCode.isEmpty() && response.result.results.length()>0}
+    %{
+        subjects = response.result.results.get(0).results;
+        students = response.result.results;
+        
+    }%
+<center>
+    <div><h1><b>${response.result.orgName}</b></h1></div>
+    <div><h2><b>${response.result.testName}</b></h2></div>
+</center>
+<hr>
+<div>
+<center>
+    Maximum Marks : ${response.result.totalMarks} (
+#{list items:response.result.subjectMaxMarksMap.keys(), as:'key'}
+   ${key} : ${response.result.subjectMaxMarksMap.get(key)}
+#{/list}
+)</center>
+<center>
+Class Highest : ${response.result.highestMarks}
+</center>
+<center>    
+    Class Average : ${response.result.averageMarks}
+</center>
+<center>
+    Rank Vs Roll Number Each subject marks and total marks
+</center>
+<div style="float: right; padding-bottom: 20px;">
+    <input type="button" onclick="tableToExcel('printsheet')" value="Export to Excel">
+        <button class="btn" onclick="generate()">Export to PDF</button>
+</div>
+<br>
+</div>
+
+   <div>
+    <table border=1 style="width: 100%" cellpadding="10px" id="printsheet">
+       <tr style="background: #353535;color: white;">
+           <th>ID NO</th>
+           <th>Name</th>
+           <th>Contact Number</th>
+                #{list items:0..subjects.length()-1,as:'index'}
+                %{
+                    subjectsData = subjects.get(index);
+                }%
+                <th>${subjectsData.subjectName}</th>
+                <th>Rank</th>
+                #{/list}
+            <th>Start Time</th>
+            <th>End Time</th>
+       </tr>
+                #{list items:0..students.length()-1,as:'index'}
+                %{
+                    studentsData = students.get(index);
+                }%
+                <tr>
+                    <td>${studentsData.memberId}</td>
+                    <td>${studentsData.userName}</td>
+                    #{if studentsData.phoneNumber != null && !studentsData.phoneNumber.isEmpty()}
+                        <td>${studentsData.phoneNumber}</td>
+                    #{/if}
+                    #{else}
+                        <td>NOT AVAILABLE</td>
+                    #{/else}
+                    %{
+                        subjects = studentsData.results;
+                    }%
+                    #{list items:0..subjects.length()-1,as:'index'}
+                    %{
+                        subjectsData = subjects.get(index);
+                    }%
+                    <td>${subjectsData.subjectMarks}</td>
+                    <td>${subjectsData.rankOfStudent}</td>
+                    #{/list}
+                    %{
+                        startTimeObj=uicom.util.Utilities.getDateMonthYearTime(studentsData.startTime);
+                    }%
+                    <td>${startTimeObj}</td>
+                    %{
+                        timeObj=uicom.util.Utilities.getDateMonthYearTime(studentsData.endTime);
+                    }%
+                    <td>${timeObj}</td>
+                </tr>
+                #{/list}
+    </table>
+   </div>
+#{/if}
+#{else}
+<center>No Student have taken the test.</center>
+#{/else}
+   <!-- code to download result as excel -->
+   <script type="text/javascript">
+    var tableToExcel = (function() {
+      var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+        , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+      return function(table, name) {
+        if (!table.nodeType) table = document.getElementById(table)
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = uri + base64(format(template, ctx))
+      }
+    })()
+    </script>
+
+<!-- code to download result as pdf -->
+<script type="text/javascript">
+    function generate() {
+        var doc = new jsPDF('l', 'pt', 'a4');
+        var htmlstring = '';
+        var tempVarToCheckPageHeight = 0;
+        var pageHeight = 0;
+        pageHeight = doc.internal.pageSize.height;
+        specialElementHandlers = {
+            // element with id of "bypass" - jQuery style selector
+            '#bypassme': function(element, renderer) {
+                // true = "handled elsewhere, bypass text extraction"
+                return true
+            }
+        };
+        margins = {
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10,
+            width: 800
+        };
+        var y = 20;
+        doc.setLineWidth(2);
+        doc.text(200, y = y + 30, '${response.result.testName}');
+        doc.autoTable({
+            html: '#printsheet',
+            startY: 70,
+            theme: 'grid',
+            styles: {
+                minCellHeight: 40
+            }
+        })
+        doc.save('${response.result.testName}.pdf');
+    }
+    </script>

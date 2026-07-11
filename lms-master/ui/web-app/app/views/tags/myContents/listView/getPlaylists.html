@@ -1,0 +1,62 @@
+#{if playlist!=null && playlist.has('result') && playlist.result.has('playlists') && playlist.result.playlists.length()>0}
+<input type="hidden" class="resultDataCount" value="${playlist.result.totalHits}" 
+	data-real-count="${playlist.result.totalHits}"/>
+#{list items:0..playlist.result.playlists.length()-1, as:'tIndex'}
+%{ playlistData = playlist.result.playlists.get(tIndex); }%
+<a class="relative openPLView doCStream" data-pl-id="${playlistData.playlistId}" data-cs-name="OPEN"
+	href="${controllers.Playlists.getPLUrl(playlistData.title,playlistData.playlistId)}">
+   <div class="relative myContentsEachListItems myContentsEachItem" 
+	data-pl-id="${playlistData.playlistId}" data-entity-type="playlist" data-entity-id="${playlistData.playlistId}">
+	<div class="left relative myContentsListLeft">
+		<div class="relative big12 boldy blackTextColor singleLineText" 
+			title="${playlistData.title}">${playlistData.title}</div>
+		<div class="relative singleLineText">
+		#{if playlistData.has('user') && playlistData.user!=null}
+                      %{
+                        user=playlistData.user;
+                        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                      }%
+			<span class="blackTextColor">by</span>
+			<a class="relative big12 blueTextColor ${getUserClassAndUrl.className} doCStream" 
+				data-cs-name="UPLOADER"
+                   		style="padding-top:0px;" href="${getUserClassAndUrl.url}" data-user-id="${getUserClassAndUrl.id}">
+                    		 ${user.firstName} ${user.lastName}
+			</a>
+		#{/if}
+		</div>
+	</div>
+	<div class="left relative myContentsListMiddle greyTextColor">
+	#{if playlistData.avgRating>0}
+            <div class="left relative myContentsRankingHolder">
+		<div class="relative boldy leftText">Rating</div>
+		<div class="relative myContentsRankingStars" style="width:${playlistData.avgRating*20}%"></div>
+	    </div>
+	    <div class="left verticalItemDivider"></div>
+	#{/if}
+	    <div class="left myContentsItemInfo">
+		<div class="boldy">Views</div>
+		<div>${playlistData.views}</div>
+	    </div>
+	</div>
+	<div class="right relative myContentsListRight">
+                <a class="right relative smallBlueButton myContentsButtonItem openPLView doCStream" data-cs-name="OPEN"
+                   data-pl-id="${playlistData.playlistId}" href="${controllers.Playlists.getPLUrl(playlistData.title,playlistData.playlistId)}">Open</a>
+		#{if playlistData.followType == "OWNER"}
+			<a class="right relative smallBlueButton myContentsButtonItem editPlaylist doCStream" data-pl-id="${playlistData.playlistId}" data-title="${playlistData.title}" data-cs-name="EDIT">Edit</a>
+		#{/if}
+		<span class="right relative myContentsButtonItem">
+			#{widgets.followUnfollowEntity followType:playlistData.followType,entityType:'PLAYLIST',entityId:playlistData.playlistId/}
+		</span>
+		<span class="right relative myContentsShareIt big14 doCStream" data-cs-name="SHARE">Share</span>
+	</div>
+   </div>
+</a>
+#{/list}
+#{/if}
+*{#{elseif playlist==null}
+	#{include '/tags/comingSoon/playlist.html'/}
+#{/elseif}}*
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_PLAYLIST'}</div>
+#{/else}

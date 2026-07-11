@@ -1,0 +1,89 @@
+package com.vedantu.eventbus.email.details;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.vedantu.commons.constants.ConstantsGlobal;
+import com.vedantu.commons.enums.EntityType;
+import com.vedantu.commons.utils.JSONUtils;
+import com.vedantu.user.event.details.IndividualEmailTemplateDetails;
+
+public abstract class AbstractEmailNotificationDetails extends
+		IndividualEmailTemplateDetails {
+
+	public JSONObject details;
+
+	public AbstractEmailNotificationDetails(String configurationName) {
+
+		super(configurationName);
+	}
+
+	@Override
+	public JSONObject toJSON() throws JSONException {
+
+		JSONObject json = super.toJSON();
+		json.put("details", details);
+		return json;
+	}
+
+	@Override
+	public void fromJSON(JSONObject json) {
+
+		super.fromJSON(json);
+		details = JSONUtils.getJSONObject(json, "details");
+
+	}
+
+	@Override
+	public String getSubject() {
+
+		return null;
+	}
+
+	@Override
+	public boolean verify() {
+
+		return true;
+	}
+
+	public StringBuilder _getStringBuilderWithActorData() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(getActor());
+		return sb;
+	}
+
+	public String getActor() {
+		JSONObject actor = JSONUtils.getJSONObject(details, "actor");
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(JSONUtils.getString(actor, ConstantsGlobal.FIRST_NAME));
+		sb.append(" ");
+		if (JSONUtils.getString(actor, ConstantsGlobal.LAST_NAME)!=null) {
+			sb.append(JSONUtils.getString(actor, ConstantsGlobal.LAST_NAME));
+		}
+		return sb.toString();
+	}
+
+	public static String getTypeName(String entityType) {
+
+		EntityType value = EntityType.valueOfKey(entityType);
+		if (value == EntityType.UNKNOWN) {
+			return entityType;
+		}
+		return getTypeName(value);
+	}
+
+	public static String getTypeName(EntityType entityType) {
+
+		switch (entityType) {
+		case DISCUSSION:
+			return "doubt";
+		case STATUSFEED:
+			return "post";
+		default:
+			return entityType.name().toLowerCase();
+		}
+	}
+
+}

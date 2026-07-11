@@ -1,0 +1,21 @@
+%{
+	data = _data;
+	user = data.user;
+}%
+<table>
+	<tr>
+		<td class="instChlgWidgRank">${data.rank}</td>
+		<td>
+			<img class="instChlgWidgProfilePic" src="${user.thumbnail}"/>
+		</td>
+		<td>
+			<div class="instChlgWidgUsrNm">
+		                #{institute.memberName user : user /}
+			</div>
+			<div class="instChlgWidgUsrPoints">
+				<span class="greenTextColor">${data.points}</span>
+				<span style="color:#b0afad;">&{'TXT_POINTS'}</span>
+			</div>
+		</td>
+	</tr>
+</table>

@@ -1,0 +1,193 @@
+<div class="quesTail"> 
+        %{
+            hasAns=false;
+            if(solutionInfo!=null&&solutionInfo.has('answer')&&solutionInfo.answer.length()>0)hasAns=true;
+        }%    
+    <table class="quesTailTable" data-q-type="${qType}" data-has-ans=${hasAns} data-qid="${qid}">
+        <tbody>
+            <tr>
+                #{if hasAns}
+                <td>Answer:</td>
+                <td>
+                    <div class="quesTailAnsDiv">
+                        #{if hasAns}
+                            %{answer=solutionInfo.answer}%
+                            #{if qType=="SCQ"}
+                                <span class="qrsmcqTailAns" data-ans='${answer}'>
+                                    ${uicom.util.Utilities.getOption(Integer.parseInt(answer))}
+                                </span>
+                            #{/if}
+                            #{elseif qType=="MCQ" || qType == "MATRIX"}
+                                #{list items:0..answer.length()-1,as:'an'}
+                                <span class="qrsmcqTailAns" data-ans='${answer.get(an)}'>
+                                    ${uicom.util.Utilities.getOption(Integer.parseInt(answer.get(an)))}
+                                </span>${an_isLast?'':', '}
+                                #{/list}                            
+                            #{/elseif}
+                            #{else}
+                                ${answer.raw()}
+                            #{/else}
+                        #{/if}
+                    </div>                              
+                </td>                
+                #{/if}
+                #{else}
+                <td></td>
+                <td></td>               
+                #{/else} 
+                <td colspan="3" class="alignTop">
+                #{if canEdit&&target!='PREVIEW_QUESTIONS' && qType!="PARA" && qType!="PARA_QUESTION" && ques.recordState == "ACTIVE"}
+                    <a class="${qType} gButton editcmdsQues ptrTagInline cmdsaPush floatRight"
+                       href="/organization/${params.orgId}/question/${qid}"
+                       data-qid="${qid}">
+                        <img alt="" src="/public/images/edit.png">
+                        Edit Question
+                    </a>                    
+                #{/if}
+                #{if ques.recordState == "DELETED"}
+                    <span class="redColor floatRight boldy">DELETED</span>
+                #{/if}                      
+                </td>
+            </tr>
+            #{if qType == "PARA" && params.orgId != play.Play.configuration.getProperty("learnpedia.id") && scope != "PRIVATE"}
+            <tr>
+                <td colspan="3" class="alignTop">
+                    <a class="${qType} gButton addCmdsQues ptrTagInline cmdsaPush floatRight"
+                       href="/organization/${params.orgId}/question/${qid}"
+                       data-qid="${qid}">
+                        <img alt="" src="/public/images/edit.png">
+                        Add Question to Paragraph
+                    </a>
+                </td>
+            </tr>
+            #{/if}
+            <tr>
+                <td class="alignTop">Topics and SubTopics</td>
+                <td class="quesTopicsDiv">
+                    <div>
+                         #{if topics!=null&&topics.length()>0}
+                         #{list items:0..topics.length()-1,as:'to'}
+                         %{
+                                 topic=topics.get(to);
+                         }%
+                         <div class="topicDiv margBot10">
+                             <div>
+                                 ${topic.name}
+                             </div>
+                             %{
+                                subTopics=topic.children;
+                             }%
+                             #{if subTopics.length()>0}
+                             <div class="margLeft10 smally color6">
+                             #{list items:0..subTopics.length()-1,as:'st'}
+                             <div>${subTopics.get(st).name}</div>
+                             #{/list}
+                             </div>
+                             #{/if}
+                         </div>
+                         #{/list}
+                         #{/if}
+                         #{else}
+                         <div class="smallThinGray">Not specified</div>
+                         #{/else}
+                     </div>
+                </td>
+                <td></td>
+            </tr>            
+            <tr>
+                <td>Level</td>
+                <td>
+                    <div class="quesLevel">
+                    #{if !ques.isNull('difficulty')}
+                        ${ques.difficulty.toLowerCase().capFirst()}                                      
+                    #{/if}
+                    #{else}
+                    <div class="smallThinGray">Not specified</div>
+                    #{/else}
+                    </div>  
+                </td>
+                <td></td>
+            </tr>            
+            %{
+                tags=ques.tags;
+            }%
+            #{if tags.length()>0}
+            <tr>
+                <td>Tags</td>
+                <td class="quesNormalTagsDiv">     
+                    #{list items:0..tags.length()-1,as:'t'}
+                        ${tags.get(t)}${(i_isLast?'':',')}
+                    #{/list}                    
+                </td>
+                <td></td>
+            </tr>
+            #{/if}           
+        </tbody>
+    </table>
+    #{if solutionInfo!=null&&solutionInfo.solutions.length()>0}
+    %{
+        solutions=solutionInfo.solutions;
+    }%
+    <div class="qrQuesSolns">
+        <div class="qrQuesSolnsHead">Solutions</div>
+        #{list items:0..solutions.length()-1,as:'i'}
+	%{
+	   soln = solutions.get(i);
+	   attachments = soln.attachmentsInfo;
+	}%
+        <div class="qrQuesSoln">
+            <div class="quesSolnNo">${i_index}</div>
+	    #{if !soln.newText.equals(null) && !soln.newText.isEmpty()}
+            	<div class="quesSolnBody">${soln.newText.raw()}</div>
+	    #{/if}
+	    #{else}
+            	<div class="quesSolnBody greyTextColor italics smally">&{'TXT_TEXT_NOT_PROVIDED'}</div>
+	    #{/else}
+	    #{if !attachments.equals(null) && attachments.length()>0}
+	    <div class="quesSolnAttachments">
+		<div class="greyTextColor big12 boldy" style="padding-bottom:6px;">&{'VIDEO_SOL'}</div>
+		#{list items:0..attachments.length()-1,as:'attachIndex'}
+			%{ 
+				attachEntity = attachments.get(attachIndex).entity; 
+				attachInfo = attachments.get(attachIndex).info; 
+				entityName = attachInfo.name;
+			}%
+			#{aTagMapper entityName:entityName,entityId:attachEntity.id,entityType:attachEntity.type/}
+		#{/list}
+	    </div>
+	    #{/if}
+	    #{elseif !soln.attachments.equals(null) && soln.attachments.length()>0}
+	    <div class="quesSolnAttachments">
+		<div class="greyTextColor big12 boldy" style="padding-bottom:6px;">&{'VIDEO_SOL'}</div>
+		<div class="quesSolnAttachmentsHolder">
+			<a class="fetchQuesSolAttachments"
+				data-id="${qid}">&{'FETCH_VIDEO_SOLN',soln.attachments.length()}</a>
+		</div>
+	    </div>
+	    #{/elseif}
+        </div>
+        #{/list}
+    </div>
+    #{/if}
+    #{if quesHints.length()>0}
+    <div class="quesHintsDisplay margTop">
+        <div class="qrQuesSolnsHead">Hints</div>
+        %{
+            hints=ques.hints.hints;
+        }%
+        #{list items:0..hints.length()-1,as:'h'}
+        <div class="chlgHint margBot5">
+            <div class="chlgHintText">
+                <span class="grayHead">${h_index+") "}</span>
+                ${hints.get(h).newText.raw()}
+            </div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>                  
+        #{/list}        
+    </div>     
+    #{/if}
+    <div class="cleaner_with_divider">&nbsp;</div>    
+</div>
+
+
+

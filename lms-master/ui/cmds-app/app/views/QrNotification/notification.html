@@ -1,0 +1,181 @@
+<style type="text/css">
+.resourseType{
+    margin-left: 50px;
+}
+.resourseType input{
+    margin-left: 20px;
+}
+#qrOrgNotification{
+    background: #fff;
+}
+.notificationTable{
+    margin:auto;
+}
+.notificationTable tr{
+    height: 60px;
+}
+.notificationInput{
+    width: 480px;
+    height: 24px;
+    padding: 5px;
+}
+.label{
+    text-align: left;
+}
+.disableRow{
+    background: #f1f1f1;
+    opacity: 0.3;
+}
+.selectPicker{
+    margin-left: 10px;
+    height: 100%;
+    display: inline-block;
+    background-color: #F2F2F2;
+    width: 150px;
+    padding: 5px;
+    line-height: normal;
+    font-size: 15px;
+    color: #3d3d3d;
+}
+</style>
+<div id="qrOrgNotification">
+    <div class="centerText pageHeadGrayDiv">
+        <div class="centerText">
+            <span class="big20">&{'PUSH NOTIFICATION'}</span>
+        </div>
+    </div>
+    <div class="cleaner_with_divider">&nbsp;
+    </div>
+    <div class = "centerText nonner">
+        Enter Message <input  id="message" type="text" name="message">
+        <span class="blueButton showNewNotificationPopup">Send</span>
+        <br>
+        ScoreJEE<input type="checkbox" value="ScoreJEE" class="programs" name="programs">
+        ScorePMT<input type="checkbox" value="ScorePMT" class="programs" name="programs">
+        SriSanjeevani<input type="checkbox" value="SriSanjeevani" class="programs" name="programs">
+        RaoIIT<input type="checkbox" value="RaoIIT" class="programs" name="programs">
+    </div>
+
+
+    <!-- This is new Notification UI -->
+    <div class="centerText FCMNotifiction">
+        <table class="notificationTable">
+            <tbody>
+                <tr class="title">
+                    <td class="label">
+                        <label for="notificationTitle">Enter the Notification Title* :</label>
+                    </td>
+                    <td>
+                        <input class="notificationInput" type="text" name="notificationTitle" id="notificationTitle" placeholder="Enter the Notification Title" maxlength="40">
+                    </td>
+                </tr>
+                <tr class="message">
+                    <td  class="label">
+                        <label for="notificationMessage">Enter the Notification Message* :</label>
+                    </td>
+                    <td>
+                        <input class="notificationInput" type="text" name="notificationMessage" id="notificationMessage" placeholder="Enter the Notification Message" >
+                    </td>
+                </tr>
+                <tr class="summary">
+                    <td  class="label">
+                        <label for="notificationSummary">Enter the Notification summary :</label>
+                    </td>
+                    <td>
+                        <input  class="notificationInput" type="text" name="notificationSummary" id="notificationSummary" placeholder="Enter the Notification Summary" >
+                    </td>
+                </tr>
+                <tr class="imageUrl">
+                    <td  class="label">
+                        <label for="notificationBigImage">Enter the Url of Image :</label>
+                    </td>
+                    <td>
+                        <input class="notificationInput" type="text" name="notificationBigImage" id="notificationBigImage" placeholder="Enter the URL of image">
+                    </td>
+                </tr>
+                <tr class="programCheck">
+                    <td colspan="2" style="text-align: left;">
+                        <input type="checkbox" name="ProgramCheckbox" id="programCheckbox">
+                        <label style="text-align: left;" for="programCheckbox">Send Program Specific Message</label>
+                    </td>
+                </tr>
+                <tr class="programSelect disableRow">
+                    <td class="label">
+                        <label for="resourceId">Select the program :</label>
+                    </td>
+                    <td>
+                        <select class="programSelector selectPicker notificationInput" disabled="true">
+                            <option selected="true" disabled="true">Select Program</option>
+                        </select>
+                        <select class="centerSelector selectPicker notificationInput" disabled="true">
+                            <option selected="true" disabled="true">Select Center</option>
+                        </select>
+                        <select class="sectionSelector selectPicker notificationInput" disabled="true">
+                            <option selected="true" disabled="true">Select Section</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="resourseCheck disableRow">
+                    <td colspan="2" style="text-align: left;">
+                        <input type="checkbox" name="resourceCheckbox" id="resourceCheckbox" disabled="true">
+                        <label style="text-align: left;" for="resourceCheckbox">Send Resource Specific Message</label>
+                    </td>
+                </tr>
+                <tr class="resourseType disableRow">
+                    <td  class="label">
+                        Resource Type* :
+                    </td>
+                    <td>
+                        <div class="resourseType">
+                            <input type="radio" value="MODULE" class="programs" name="resourseType" id="MODULE" disabled="true">
+                            <label for="MODULE">
+                                <span class="resourceIconMODULE"></span>
+                                <span>Module</span>
+                            </label>
+
+                            <input type="radio" value="VIDEO" class="programs" name="resourseType" id="VIDEO" disabled="true">
+                            <label for="VIDEO">
+                                <span class="resourceIconVIDEO"></span>
+                                <span>Video</span>
+                            </label>
+
+                            <input type="radio" value="TEST" class="programs" name="resourseType" id="TEST" disabled="true">
+                            <label for="TEST">
+                                <span class="resourceIconTEST"></span>
+                                <span>Test</span>
+                            </label>
+
+                            <input type="radio" value="DOCUMENT" class="programs" name="resourseType" id="DOCUMENT" disabled="true">
+                            <label for="DOCUMENT">
+                                <span class="resourceIconDOCUMENT"></span>
+                                <span>E-Book</span>
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="resourseId disableRow">
+                    <td class="label">
+                        <label for="resourceId">Enter the Resource ID* :</label>
+                    </td>
+                    <td>
+                        <input class="notificationInput" type="text" name="resourceId" id="resourceId" placeholder="Enter the resourceId" disabled="true">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class='redColor boldy'>* Fields are Mandatory</span>
+                    </td>
+                    <td>
+                        <span class="blueButton sendNotification">Send</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        new function(){
+            var fn=function(){qrNotification.init();}
+            lazyLoad([{fname:"qrNotification.js",cb:fn}]);
+        }();
+    </script>

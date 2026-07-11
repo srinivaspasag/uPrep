@@ -1,0 +1,465 @@
+body{
+    padding: 0;
+    line-height: 16px;
+    font-family:Ubuntu,sans-serif;
+    font-size: 12px;
+    margin: 0px;
+    background: url("/public/images/bg.jpg") repeat scroll 0 0 transparent;
+    color: #373737;
+    overflow-y:scroll;overflow-x:auto;
+}
+a img{
+    border-width: 0;
+}
+
+a{
+    color: #006699;
+    text-decoration:none;
+    cursor: pointer;
+    position: relative;
+}
+.cleaner_with_divider {
+    clear: both;
+    width: 100%;
+    height: 0px;
+    font-size: 1px;
+}
+input,select{
+    border: 1px solid #e0e0e0;
+    color: #333333;
+    font-family: arial,sans-serif;
+    font-size: 13px;
+    min-height: 19px;
+    outline: medium none;
+}
+input[type="checkbox"],input[type="radio"]{
+    width: 14px;
+    height: 14px;
+}
+ul{
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    padding: 0;
+    margin: 0;
+}
+textarea{
+    resize:none;
+    margin: 0 auto;
+    border: 1px solid #e0e0e0;
+    font-family: arial,sans-serif;
+    font-size: 13px;
+}
+.textareaDiv textarea,.inputDiv input{
+    border: medium none;
+    width: 100%;
+}
+.textareaDiv,.inputDiv{
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    padding: 7px 10px;
+}
+.inputDivFocused{
+    border: 1px solid #666666;
+}
+textarea:focus{
+    border: 1px solid #289bb4;
+}
+.textareaDiv textarea:focus{
+    border: medium none;
+}
+.smallThinGray{
+    font-size: 10px;
+    color: #888888;
+}
+.userMessage{
+    font-weight: bold;
+    color: #373737;
+    text-align: center;
+    margin-top: 20px;
+}
+.normalHeading{
+    color: #666666;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.rightText{
+    text-align: right;
+}
+.boldy{
+    font-weight: bold;
+}
+.margTop5{
+    margin-top: 5px;
+}
+.margBot5{
+    margin-bottom: 5px;
+}
+
+
+
+#topBarHolder{
+    background-color: #888888;
+}
+#topBar{
+    width: 1002px;
+    margin: 0 auto;
+}
+.menuItem{
+    border-bottom: 5px solid transparent;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    margin-right: 20px;
+    padding: 15px 7px 10px;    
+}
+.activeMenuItem{
+    border-color: #33BAD7;
+}
+.logout {
+    color: #FFFFFF;
+    float: right;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 20px;
+    text-decoration: underline;
+}
+#mainSection{
+    background-color: #FFFFFF;
+    margin: 10px auto 100px;
+    min-height: 800px;
+    padding: 20px;
+    width: 962px;
+}
+.addOrgHeading,.toolsPageHeading{
+    color: #666666;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px;
+    text-align: center;    
+}
+#addOrgForm{
+    padding: 10px 150px 20px 20px;    
+}
+.orgTable,.pricingPlanTable{
+    width: 100%;
+    font-size: 15px;
+}
+.orgTable td,.pricingPlanTable td{
+    padding-bottom: 15px;
+    vertical-align: top;
+}
+.orgTable td:first-child,.pricingPlanTable td:first-child {
+    font-weight: bold;
+    width: 200px;
+}
+.orgTable input[type="radio"],
+.orgTable input[type="checkbox"],
+.pricingPlanTable input[type="radio"],
+.pricingPlanTable input[type="checkbox"]{
+	font-size:16px;
+	width:18px;
+	height:18px;
+	margin-right:10px;
+}
+.orgTable input[type="text"],
+.orgTable textarea,
+.pricingPlanTable input[type="text"],
+.pricingPlanTable textarea{
+    padding: 5px 10px;
+    width: 100%;
+}
+.orgTable select{
+    font-size: 15px;
+}
+.locationsTd input {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    width: 145px !important;
+}
+.adminDetailsTd input{
+    margin-bottom: 10px;
+}
+.addNewLocation,.removeLocation{
+    font-size: 11px;
+}
+.addOrgSubmit{
+    float: right;
+    font-size: 16px;
+    padding: 7px 20px !important;
+    width: 150px !important;    
+}
+.editOrganization,.addOrgButton,.createPricingPlanBtn{
+    float: right;
+    margin-bottom: 10px;
+}
+.orgWebsiteError{
+    font-size: 11px;
+    color: red;
+    font-weight: bold;
+}
+
+#allOrgsPage table,#allPricingPlansPage table{
+    border-collapse: collapse;
+    width: 100%;    
+}
+#allOrgsPage td,#allPricingPlansPage td{
+    border: 1px solid #888888;
+    font-size: 15px;
+    padding: 10px;
+}
+#allOrgsPage thead td,#allPricingPlansPage thead td{
+    border-color: #666666;
+    font-weight: bold;
+}
+
+/*pricing plans*/
+.pricingPlanTable {
+    font-size: 15px;
+    padding: 10px 30px 10px 10px;
+    width: 100%;
+}
+.planDetails {
+    display: none;
+    font-size: 13px;
+    margin-top: 10px;
+}
+.planDetail {
+    margin-bottom: 5px;
+}
+.planDetailsHead {
+    display: inline-block;
+    width: 110px;
+}
+.planDetailsValue {
+    display: inline-block;
+}
+
+/*boards pages*/
+.uploadDiv {
+    border-bottom: 1px solid #EEEEEE;
+    margin-bottom: 50px;
+    padding-bottom: 20px;
+}
+.boardsDisplayTable{
+    width: 100%;
+    border-collapse: collapse;
+}
+.boardsDisplayTable td{
+    border: 1px solid #CCCCCC;
+    padding: 5px 10px;
+}
+.boardNode {
+    font-size: 15px;
+    padding: 4px 8px;
+    background-color:#F4F4F4;
+    margin-bottom:4px;
+}
+.getMyChildren{
+	font-size:15px;
+}
+.viewBoards{
+    font-size: 11px;
+    text-decoration: underline;
+}
+.treeName{
+    color: #999999;
+    font-size: 11px;    
+}
+
+
+
+
+
+/*commons*/
+.toolsErrorCode,.toolsSuccessMessage{
+    color: red;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+.toolsErrorMessage{
+    color: #888888;
+}
+.toolsSuccessMessage{
+    color: #009933;
+}
+
+.nonner{
+    display: none;
+}
+.floatRight{
+    float: right;
+}
+.centerText{
+    text-align:center;
+}
+.floatLeft{
+    float: left;
+}
+.slugCheckStatus{
+    font-size:14px;
+    font-weight:bold;
+    padding:5px 0 0 10px;
+}
+.greenTextColor{
+    color:green;
+}
+.redTextColor{
+    color:red;
+}
+.errorBorder{
+    box-shadow:1px 0px 6px 2px rgba(245, 30, 11, 0.9);
+}
+.successBorder{
+    box-shadow:1px 0px 6px 1px rgba(137, 231, 255,0.6);
+}
+.checkRefererAvailability input[type="text"],
+.checkSlugAvailability input[type="text"]{
+    width:400px;
+}
+/* ORG MEMBERS */
+.chooseMemberType{
+    background-color:#F9F9F9;
+    border:1px solid #CCC;
+    padding:5px 25px;
+    font-size:14px;
+}
+.tableWithBorder{
+    width: 100% !important;
+    border-collapse: collapse;
+}
+.tableWithBorder th,
+.tableWithBorder td{
+    padding: 10px !important;
+    vertical-align: middle !important;
+    border: 1px solid #CCCCCC !important;
+    width: auto !important;
+}
+.fullWidth{
+    width:100%;
+}
+.orgMembersContainer{
+    padding:25px 0;
+}
+input[type="checkbox"].canImpersonate{
+    width:30px;
+    height:30px;
+}
+#searchMember{
+    width: 300px;
+    height: 23px;
+    background-color: #FFF;
+    border: 1px solid #CCC;
+    padding: 3px 10px;
+    font-size:14px;
+}
+
+
+
+#toolsPopup{
+    background-color: #FFFFFF;
+    border: 1px solid #AAAAAA;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    left: 0;
+    margin: 0 auto;
+    min-height: 100px;
+    position: absolute;
+    right: 0;
+    top: 120px;
+    width: 500px;    
+    padding: 0 20px 20px 20px;
+    z-index: 2050;
+    display: none;
+}
+.toolsPopupHead{
+    color: #333333;
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0 0 13px;  
+}
+.toolsPopupBody {
+    font-size: 15px;
+    position: relative;
+    word-wrap: break-word;
+}
+.closePopupImg{
+    background-image: url("/public/images/closePopup.png");
+    display: inline-block;
+    height: 8px;
+    left: 7px;
+    position: relative;
+    top: 5px;
+    width: 10px;
+    cursor: pointer;
+}
+.closePopupImg:hover,.remScheduleEntity:hover{
+    background-image: url("/public/images/closePopupHovered.png");
+}
+.closePopupImg.nonner{
+    display: none;
+}
+.toolsPopupBtns{
+    clear: both;
+}
+.eachVPlanTable{
+        padding:20px 10px;
+        width:100%;
+        background-color:#EEE;
+        border-bottom:1px solid #CCC;
+        margin-bottom:20px;
+}
+.eachVPlanTable td{
+        color:#333;
+}
+.eachVPlanTable th{
+        width:150px;
+        color:#777;;
+}
+.vplanUsers{
+        padding:3px 0 0 3px;
+        font-size:14px;
+}
+.vplanDuration{
+        font-size:16px;
+        font-weight:300;
+}
+.alignTop{
+	vertical-align:top;
+	top:3px;
+	position:relative;
+}
+.big12{
+	font-size:12px;
+}
+.crossIcon{
+    display: inline-block;
+    background: url("/public/images/uicomCommon/remove.png") no-repeat scroll 0 center transparent;
+    padding-left: 16px;
+    position: relative;
+    min-height: 15px;
+    right: -10px;
+    padding-top:1px; 
+    cursor:pointer;
+    vertical-align: sub;
+    color:green;
+	font-weight:bold;
+}
+.deletedItem{
+	text-decoration:line-through;
+	opacity:0.8;
+}
+.popupTable{
+	font-size:14px;
+}
+.popupTable th,
+.popupTable td{
+	padding:4px 8px;
+	color:#666;
+}
+.popupTable th{
+	color:#333;
+}

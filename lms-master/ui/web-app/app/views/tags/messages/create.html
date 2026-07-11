@@ -1,0 +1,44 @@
+<div class="msgCreatePopup nonner" data-sender-id="${session.userId}">
+	<table>
+		<tr>
+			<td class="" colspan=2 style="height:30px;">
+				<span class="msgBlueIcon instImgs"></span>
+				<span class="big16 relative" style="padding:0 6px;top:4px;">&{'NEW_MSG'}</span></br>
+			</td>
+		</tr>
+		<tr>
+			<td class="crtMsgTtlTxt">&{'TXT_TO'}:</td>
+			<td>
+				<div class="msgCrtTitle">
+					*{<input placeholder="&{'CREATE_MSG_TITLE_PLACEHOLDER'}" type="text" 
+						class="itlPlaceHolder"/>}*
+					%{
+						placeHolder = play.i18n.Messages.get("CREATE_MSG_TITLE_PLACEHOLDER");
+					}%
+					#{institute.widgets.typeSearchMembers divClass:"inputFld",inputClass:"itlPlaceHolder",inputType:"text",placeHolder:placeHolder /}
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="crtMsgTtlTxt">&{'TXT_SUB'}:</td>
+			<td>
+				<div class="msgCrtTitle">
+					<input placeholder="&{'CREATE_MSG_SUB_PLACEHOLDER'}" 
+						class="itlPlaceHolder inputFld msgSubjectInput" type="text"/>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="crtMsgTtlTxt"></td>
+			<td>
+				<div class="msgRTEHolder"></div>
+			</td>
+		</tr>
+		<tr>
+			<td class="centerText" colspan=2 style="height:40px;">
+				<span class="right big14 doCStream" id="msgSendBtn">&{'TXT_SEND'}</span>
+				<a class="right closeVPopup big14" style="margin:7px 15px;">&{'TXT_CANCEL'}</a>
+			</td>
+		</tr>
+	</table>
+</div>

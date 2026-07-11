@@ -1,0 +1,35 @@
+#[Auto generated class files]
+tmp/
+
+#[Dependencies]
+modules/
+
+#[Eclipsify]
+eclipse/
+.classpath
+.project
+.settings/
+.metadata/
+
+#[Netbeansify]
+nbproject/
+
+#[pid]
+server.pid
+
+#[logs]
+logs/
+logs
+
+#[data]
+data/
+
+#[Auto generated script files]
+public/javascripts/**/o.*
+public/javascripts/o.*
+public/stylesheets/**/o.*
+public/stylesheets/o.*
+public/outerAssets/assets/js/o.*
+public/outerAssets/assets/css/o.*
+#[uploads]
+uploads/

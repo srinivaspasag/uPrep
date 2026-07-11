@@ -1,0 +1,89 @@
+<div id="sdCardContents" class="mcWidget">
+%{
+	resourcesResult=resp.result;
+	totalHits=resourcesResult.totalHits;
+	resources=resourcesResult.list;
+	noOfCards = params.totalCards;
+	noOfCards = noOfCards == null ? 1 : Integer.parseInt(noOfCards);
+}%
+  <div class="pagin right nonner" style="right: 60px;padding:5px;position: relative;">
+      #{common.lmArrowsDiv /}
+  </div>
+  <div class="LMHandlerDiv">
+    <input type="hidden" class="totalHitsHider" value="${totalHits}" />
+    <div class="headSecTableDiv">
+        <table class="headSecTable">
+          <thead>
+              <tr>
+                  <td class="width16 tdPadLeft5">
+                      *{#{if resources.length()>0}
+                        <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                            <div class="gCBoxTicker"></div>
+                        </div>
+                      #{/if}}*
+                  </td>
+                  <td class="tdPadLeft5 itemTitleTH">Title</td>
+                  <td class="width150 maxWidth150"><span style="padding-left:30px;">Imported By</span></td>
+                  <td class="width100 maxWidth100"><span style="padding-left:12px;">Date Added</span></td>
+                  <td class="width100 maxWidth100"><span style="padding-left:12px;">&{'CONTENT_SIZE'}</span></td>
+                  #{if noOfCards > 1}
+                  <td class="width100 maxWidth100"><span style="padding-left:12px;">Action</span></td>
+                  #{/if}
+              </tr>
+          </thead>
+        </table>
+    </div>
+    <div id="fixedSec">
+        <table class="cmdsTable">
+          <tbody>
+              #{if resources.length()>0}
+              #{list items:0..resources.length()-1,as:'i'}
+              %{
+                  vStatus=resources.get(i).scope;
+                  resource=resources.get(i).source;
+                  entityName=resource.name;
+                  entityId=resource.id;
+                  entityType=resource.type;
+                  sectionId=params.get('orgEntity.id');
+                  start = params.start!=null?Integer.parseInt(params.start):0;
+                  moveIndex = i + start;
+              }%
+              <tr class="entity_${entityId} sectionContentEntity" data-entity-type="${entityType}" data-entity-id="${entityId}"
+                  data-entity-name="${entityName}" data-move-index="${moveIndex}" data-server-position="${resources.get(i).position}" data-section-id="${sectionId}">
+                <td class="width16 tdPadLeft5">
+                  *{<div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                      <div class="gCBoxTicker"></div>
+                  </div>}*
+                </td>
+                <td class="tdPadLeft5 color0 entityTitleTd">
+                    #{aTagMapper entityName:entityName,entityId:entityId,entityType:entityType,converted:converted,completed:completed/}
+                </td>
+                <td class="width150 maxWidth150">
+                      #{widgets.user20 user:resource.addedBy /}
+                </td>
+                <td class="width100 maxWidth100">
+                    ${new Date(resource.timeCreated).format('dd/MM/yyyy')}
+                </td>
+                <td class="width100 maxWidth100">
+                %{
+                  sizeObj = uicom.util.Utilities._getCalcSize(resource.size);
+                }%
+                  <span>${sizeObj.value}</span> <span class="boldy"> ${sizeObj.text}</span>
+                </td>
+                #{if noOfCards > 1}
+                <td class="width100 maxWidth100">
+                  <span class="smallBlueButton moveSdCardContent">&{'TXT_MOVE'}</span>
+                </td>
+                #{/if}
+              </tr>
+              #{/list}
+              #{/if}
+              #{else}
+                #{sources.noResourcesFound colspan:5,target:'LIBRARY_RESOURCES'/}                   
+              #{/else}
+          </tbody>
+        </table>
+        #{footer /}
+      </div>
+    </div>
+</div>

@@ -1,0 +1,116 @@
+<head>
+<link href="/public/stylesheets/o.programs.css" rel="stylesheet"/>
+</head>
+<div id="overlayFull" class="nonner"></div>
+<div id="topLoaderDiv">
+  <div class="preloader pls-blue card nonner" id="topLoader">
+    <svg class="pl-circular" viewBox="25 25 50 50">
+      <circle class="plc-path" cx="50" cy="50" r="20" />
+    </svg>
+  </div>
+</div>
+<div class="container container-alt" style="min-height: 700px;" id="myProgramsPage">
+    <div class="pm-overview c-overflow">
+    <div class="pm-body clearfix" role="tabpanel">
+        <ul class="tab-nav tn-justified card" role="tablist">
+            <li class="active"><a href="#allPrograms" aria-controls="activity" role="tab" data-toggle="tab">Available programs</a></li>
+            <li><a href="#myPrograms" aria-controls="doubts" role="tab" data-toggle="tab">My Programs</a></li>
+        </ul>
+        <div class="tab-content">
+           <div id="myPrograms" role="tabpanel" class="tab-pane">
+           <div class="pmb-block myEnrolledPrograms" id="removeText">
+                <div class="pageHolderM">
+                <!-- <span class="f-400 m-l-10" style="font-size: 27px;">&{'TXT_MY_PROGRAMS'}</span> -->
+                <div class="pmbb-body categoryProgramsContainer"></div>
+            </div>
+           </div>
+           </div>
+           <br>
+           <div id="allPrograms" role="tabpanel" class="tab-pane active">
+           <div class="pmb-block availablePrograms">
+                <div class="pageHolderM">
+            %{
+                programText = "AVAILABLE PROGRAMS";
+            }%
+            #{widgets.categorySections orgId : params.orgId , programText : programText /}
+            </div>
+           </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<div class="nonner" id="myProgramsUiSamples">
+   <div id="programPaymentConfirmPopup">
+   <div class="buyProgramPopup">
+    <div class="orgSiteColor big20 catProgramName centerText" style="margin-top:30px;"></div>
+    <div class="centerText big16 boldy" style="margin-top:20px;">
+            <div class="paymentSuccess nonner">&{'payment.success'}</div>
+            <div class="paymentFailed nonner">&{'payment.failed'}</div>
+            <div class="paymentCancelled nonner">&{'payment.cancelled'}</div>
+            <div class="partOfProgram nonner">You are part of the above program now.</div>
+    </div>
+        <div class="centerText" style="margin:40px 0 30px;">
+                <span class="orgButton btn btn-info waves-effect closeVPopup">&{'TXT_OK'}</span>
+        </div>
+   </div>
+   </div>
+   <div id="myProgramInfoPopup">
+   <div class="myProgramInfoPopup">
+    <div class="orgSiteColor big20 catProgramName"></div>
+    <div class="catProgramPrice"></div>
+    <div class="catProgramDetailInfo">
+        <div class="titleRobotoMedium14">&{'TXT_DESCRIPTION'}</div>
+                <div class="catProgramDesc m-l-10"></div>
+        <!--DATA NA FROM SERVER
+        <div class="titleRobotoMedium14">&{'TXT_COURSES'}</div>
+        <ul class="catProgramCourses">
+        </ul>-->
+    </div>
+        <div style="margin:30px 0 25px;">
+        <span class="visitProgramLibrary orgButton displayInBlock btn btn-info waves-effect">&{'TXT_VISIT_LIBRARY'}</span>
+        <span class="myProgPaymentInfo blueButton btn btn-warning waves-effect displayInBlock alignTop">&{'payment.TXT_PAYMENT_INFO'}</span>
+    </div>
+   </div>
+   </div>
+</div>
+#{script src:"programs.js", charset:'utf-8' /}
+#{if play.mode.name()=='PROD'}
+  #{script src:"o.programHelpers.js", charset:'utf-8' /}
+  #{script src:"o.Invoice.js", charset:'utf-8' /}
+#{/if}
+#{else}
+  #{script src:"payments.js", charset:'utf-8' /}
+  #{script src:"category.js", charset:'utf-8' /}
+  #{script src:"Invoice.js" , charset:'utf-8' /}
+#{/else}
+
+<script type="text/javascript">
+    var instHmPgOpenTimer;
+    var paymentInfo;
+    #{if transactionId!=null && !transactionId.isEmpty()}
+        paymentInfo = {
+        item_sku : "${item_sku}",
+        transactionId : "${transactionId}",
+        transactionStatus : "${transactionStatus}"
+        }
+    #{/if}
+    $(function(){
+        if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+        instHmPgOpenTimer = setInterval(function(){
+        if(myPrograms){
+          clearInterval(instHmPgOpenTimer);
+          myPrograms.init(paymentInfo);
+          paymentInfo = null;
+        }
+        },10);
+      });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".instPageNavigator").find(".active").removeClass("active");
+        $(".instPageNavigator").find(".instNavTab.openInstAvailPrograms").closest("li").addClass("active");
+    });
+
+</script>

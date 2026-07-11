@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta charset="${_response_encoding}">
+        #{stylesheet media:'screen', src:'main.css' /}
+        #{stylesheet media:'screen', src:'common.css' /}
+        #{stylesheet media:'screen', src:'uicomCommon/buttonsAndTabs.css' /}
+        #{stylesheet media:'screen', src:'uicomCommon/inputAndTextareas.css' /}
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/vedantu.png'}">
+        #{i18nJS /}
+        #{script src:'jquery-1.8.1.min.js', charset:'utf-8' /}
+        #{script src:'common.js', charset:'utf-8' /}
+        #{script src:'uicomUtils.js', charset:'utf-8' /}
+        #{script src:'uicomCommon/utilsUi.js', charset:'utf-8' /}
+        #{script src:'tools.js', charset:'utf-8' /}
+    </head>
+    <body>
+        <div id="topBarHolder">
+            <div id="topBar">
+                <a class="menuItem" id="organizationsMenu" href="@{Organizations.index}">Organizations</a>
+                <a class="menuItem" id="boardsMenu" href="@{Boards.index}">Boards</a>
+                <a class="menuItem" id="releaseInfoMenu" href="@{Widgets.sysInfo}">Release Info</a>
+                <a class="menuItem" id="pricingMenu" href="@{Licensing.index}">Licensing</a>
+                <a class="logout" href="@{Security.logout}">Logout</a>
+            </div>
+        </div>
+        <div id="contentSectionHolder">
+	    <div id="mainSection">
+            	#{doLayout /}
+	    </div>
+        </div>        
+        <div id="toolsPopup">
+            <div class="rightText closePopupDiv">
+                <a class="closetoolsPopup closePopup closePopupImg"></a>
+            </div>
+            <div class="toolsPopupBody"></div>
+            <div class="toolsPopupBtns rightText">
+                <div class="gButton closetoolsPopup">Close</div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            cmdsUrlPrefix = "${play.Play.configuration.getProperty('cmds.url')}";
+            ileUrlPrefix = "${play.Play.configuration.getProperty('ile.url')}";
+        </script>
+	#{common.vPopup/}
+    </body>
+</html>

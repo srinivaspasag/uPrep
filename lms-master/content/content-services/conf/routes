@@ -1,0 +1,177 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+POST    /application/getContentResponse                             controllers.Application.getContentResponse()
+POST    /application/getContentForDemo                              controllers.Application.getContentForDemo()
+POST    /application/ping                                           controllers.Application.ping()
+GET     /application/ping                                           controllers.Application.ping()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                                               controllers.Assets.at(path="/public", file)
+
+# Catch all
+
+# this is common controller across all services and will provide information about currently deployed build
+POST	/sysinfo/get                              controllers.SysInfo.getInfo()
+
+#~~~~~~ FOR ANY TYPE OF CONTENT ~~~~~~
+POST    /contents/getContents	                                    controllers.Contents.getContents()
+POST    /contents/getContentLinks                                   controllers.Contents.getContentLinks()
+POST    /contents/getRemovedContentLinks                            controllers.Contents.getRemovedContentLinks()
+POST    /contents/getContentDownloadLink                            controllers.Contents.getContentDownloadLink()
+POST    /contents/getPdfDownloadLink                                controllers.Contents.getPdfDownloadLink()
+POST    /contents/getSecureLink                                     controllers.Contents.getSecuredLink()
+POST    /contents/reIndexContents                                   controllers.Contents.reIndexContents()
+POST    /contents/reIndexContentLinks                               controllers.Contents.reIndexContentLinks()
+POST    /videos/getVideoInfo                                        controllers.Videos.getVideoInfo()
+POST    /contents/getEntityInfoForApp                               controllers.Contents.getEntityInfoForApp()
+POST    /contents/getCMDSEntityInfo                                 controllers.Contents.getCMDSEntityInfo()
+POST    /contents/addRatingAndFeedback                              controllers.Contents.addRatingAndFeedback()
+POST    /contents/getEntityReviews                                  controllers.Contents.getEntityReviews()
+POST    /contents/getFileInfos                                      controllers.Contents.getFileInfos()
+POST    /contents/validateResource	                                controllers.Contents.validateResource()
+POST    /contents/checkWhetherProgramIsCompleted                    controllers.Contents.checkWhetherProgramIsCompleted()
+
+
+# ~~~ COMMENT ~~~
+POST    /classroomconnect/addSchedule                               controllers.ClassroomConnect.addSchedule()
+POST    /classroomconnect/getSchedule                               controllers.ClassroomConnect.getSchedule()
+POST    /classroomconnect/removeDaySchedule                         controllers.ClassroomConnect.removeDaySchedule()
+POST    /classroomconnect/removeSchedule                            controllers.ClassroomConnect.removeSchedule()
+POST    /classroomconnect/getDaySchedule                            controllers.ClassroomConnect.getDaySchedule()
+
+# ~~~ MODULES ~~~
+POST    /modules/updateUserModuleStatus                             controllers.Modules.updateUserModuleStatus()
+#POST    /modules/syncUserModuleStatus                              controllers.Modules.syncUserModuleStatus()
+POST    /modules/getUserModuleStatus                                controllers.Modules.getUserModuleStatus()
+POST    /modules/getUserModulesStatus                               controllers.Modules.getUserModulesStatus()
+POST    /modules/getModules                                         controllers.Modules.getModules()
+POST 	/modules/syncModule                                         controllers.Modules.syncModule()
+POST   /modules/getModule                                           controllers.Modules.getModule()
+POST   /modules/getModuleSchedules                                  controllers.Modules.getModuleSchedules()
+
+# ~~~ QUESTIONS ~~~
+POST    /questions/addQuestion                                      controllers.Questions.addQuestion()
+POST    /questions/getQuestions                                     controllers.Questions.getQuestions()
+POST    /questions/getSimilarQuestions                              controllers.Questions.getSimilarQuestions()
+POST    /questions/getQuestionInfo                                  controllers.Questions.getQuestionInfo()
+POST    /questions/addSolution                                      controllers.Questions.addSolution()
+POST    /questions/getSolutions                                     controllers.Questions.getSolutions()
+POST    /questions/getQuestionsSolutions                            controllers.Questions.getQuestionsSolutions()
+
+
+# ~~~ DISCUSSION ~~~
+POST   /discussions/addDiscussion                                   controllers.Discussions.addDiscussion()
+POST   /discussions/removeDiscussion                                controllers.Discussions.removeDiscussion()
+POST   /discussions/getDiscussionInfo                               controllers.Discussions.getDiscussionInfo()
+POST   /discussions/getDiscussions                                  controllers.Discussions.getDiscussions()
+POST   /discussions/fixDiscussions                                  controllers.Discussions.fixDiscussions()
+POST   /discussions/getSimilarDiscussions                           controllers.Discussions.getSimilarDiscussions()
+POST   /discussions/recordTeacherResponse                           controllers.Discussions.recordTeacherResponse()
+#POST   /discussions/addDiscussionToS3								controllers.Discussions.addDiscussionToS3()
+#POST   /discussions/addDiscussionForApp                             controllers.Discussions.addDiscussionForApp()
+
+# ~~~ COMMENT ~~~
+POST   /comments/addComment                                         controllers.Comments.addComment()
+POST   /comments/getComment                                         controllers.Comments.getComment()
+POST   /comments/getComments                                        controllers.Comments.getComments()
+
+
+# ~~~ CHALLENGE ~~~
+POST   /challenges/addChallenge                                     controllers.Challenges.addChallenge()
+POST   /challenges/getChallengeInfo                                 controllers.Challenges.getChallengeInfo()
+POST   /challenges/getChallengeDetails                              controllers.Challenges.getChallengeDetails()
+POST   /challenges/getHint                                          controllers.Challenges.getHint()
+POST   /challenges/attemptChallenge                                 controllers.Challenges.attemptChallenge()
+POST   /challenges/getChallengeStats                                controllers.Challenges.getChallengeStats()
+POST   /challenges/getChallenges                                    controllers.Challenges.getChallenges()
+POST   /challenges/getChallengeUserAttemptInfo                      controllers.Challenges.getChallengeUserAttemptInfo()
+POST   /challenges/getUserChallengeInfo                             controllers.Challenges.getUserChallengeInfo()
+POST   /challenges/getChallengeLeaderBoard                          controllers.Challenges.getChallengeLeaderBoard()
+POST   /challenges/getChallengeGlobalLeaderBoard                    controllers.Challenges.getChallengeGlobalLeaderBoard()
+
+
+# ~~~ CHANNEL ~~~
+POST   /channels/addChannel                                         controllers.Channels.addChannel()
+POST   /channels/getChannels                                        controllers.Channels.getChannels()
+POST   /channels/editChannel                                        controllers.Channels.editChannel()
+POST   /channels/addContentToChannel                                controllers.Channels.addContentToChannel()
+
+
+# ~~~ TEST ~~~~
+POST   /tests/getTestInfo                                           controllers.Tests.getTestInfo()
+POST   /tests/getTestQuestions                                      controllers.Tests.getTestQuestions()
+POST   /tests/getTests                                         	    controllers.Tests.getTests()
+POST   /tests/getTestSubjectiveQuestions                            controllers.Tests.getTestSubjectiveQuestions()
+POST   /tests/getSubjectiveQuestionUserAttempts                     controllers.Tests.getSubjectiveQuestionUserAttempts()
+POST   /tests/updateMarksStatus                                     controllers.Tests.updateMarksStatus()
+
+
+# ~~~ TEST ~~~~
+POST   /assignments/getAssignmentInfo                               controllers.Assignments.getAssignmentInfo()
+POST   /assignments/getAssignmentQuestions                          controllers.Assignments.getAssignmentQuestions()
+POST   /assignments/getAssignments                                  controllers.Assignments.getAssignments()
+
+
+# ~~~ VIDEOS ~~~~
+POST   /videos/getVideoInfo                                         controllers.Videos.getVideoInfo()
+POST   /videos/getVideos					    controllers.Videos.getVideos()
+POST   /videos/getVideo						    controllers.Videos.getVideo()
+POST   /videos/getSimilarVideos					    controllers.Videos.getSimilarVideos()
+POST   /videos/getPlaylistVideos                    controllers.Videos.getPlaylistVideos()
+
+# ~~~ DOCUMENTS ~~~~
+POST   /documents/getDocuments					    controllers.Documents.gets()
+POST   /documents/getDocument					    controllers.Documents.get()
+POST   /documents/getSimilarDocuments				    controllers.Documents.getSimilarDocs()
+
+# ~~~ FILE ~~~~
+POST   /files/getFiles						    controllers.Files.gets()
+POST   /files/getFile						    controllers.Files.get()
+POST   /files/getSimilarFiles					    controllers.Files.getSimilarFiles()
+
+# ~~~ ANALYTICS ~~~
+POST   /analytics/startAttempt                                      controllers.Analytics.startAttempt()
+POST   /analytics/endAttempt                                        controllers.Analytics.endAttempt()
+POST   /analytics/recordAttempt                                     controllers.Analytics.recordAttempt()
+POST   /analytics/resetQuestionAttempt                              controllers.Analytics.resetQuestionAttempt()
+POST   /analytics/getQuestionAnalytics                              controllers.Analytics.getQuestionAnalytics()
+POST   /analytics/getEntityResultAnalytics                          controllers.Analytics.getEntityResultAnalytics()
+POST   /analytics/getEntityLeaderBoard                              controllers.Analytics.getEntityLeaderBoard()
+POST   /analytics/getUserEntityAnalytics                            controllers.Analytics.getUserEntityAnalytics()
+POST   /analytics/getUserEntityResultAnalytics                      controllers.Analytics.getUserEntityResultAnalytics()
+POST   /analytics/getUserEntityQuestionAttempts                     controllers.Analytics.getUserEntityQuestionAttempts()
+POST   /analytics/getEntityQuestionAttempts                     	controllers.Analytics.getEntityQuestionAttempts()
+POST   /analytics/getStudentsQuestionsAnsweredList                  controllers.Analytics.getStudentsQuestionsAnsweredList()
+POST   /analytics/getEntityMarkDistribution                     	controllers.Analytics.getEntityMarkDistribution()
+POST   /analytics/getEntityScheduleAnalytics                        controllers.Analytics.getEntityScheduleAnalytics()
+POST   /analytics/getEntityScheduleInfo                        	    controllers.Analytics.getEntityScheduleInfo()
+POST   /analytics/getUserAnalyticsStats                        	    controllers.Analytics.getUserAnalyticsStats()
+POST   /analytics/getUserEntityAttemptStatusInfo                    controllers.Analytics.getUserEntityAttemptStatusInfo()
+POST   /analytics/getUserEntityQuestionsAttemptStatInfo             controllers.Analytics.getUserEntityQuestionsAttemptStatInfo()
+POST   /analytics/getEntityTestStatus                               controllers.Analytics.getEntityTestStatus()
+POST   /analytics/getEntityMeasures                        	        controllers.Analytics.getEntityMeasures()
+POST   /analytics/getUserEntityMeasures                        	    controllers.Analytics.getUserEntityMeasures()
+POST   /analytics/getUserEntityRank                        	    	controllers.Analytics.getUserEntityRank()
+POST   /analytics/syncTabletAnalytics                        	    controllers.Analytics.syncTabletAnalytics()
+POST   /analytics/getAttemptedEntities                        	    controllers.Analytics.getAttemptedEntities()
+POST   /analytics/getUserEntityAnalyticsBySubject                   controllers.Analytics.getUserEntityAnalyticsBySubject()
+
+POST   /analytics/recomputeEntitynalytics                           controllers.Analytics.recomputeEntitynalytics()
+POST   /analytics/regenerateStudentTestAnalytics                    controllers.Analytics.regenerateStudentTestAnalytics()
+
+POST   /analytics/resetStudentTest                                  controllers.Analytics.resetStudentTest()
+POST   /analytics/pauseStudentTest                                  controllers.Analytics.pauseStudentTest()
+POST   /analytics/resumeStudentTest                                 controllers.Analytics.resumeStudentTest()
+POST   /analytics/getStudentsListFromEntityAttempts                 controllers.Analytics.getStudentsListFromEntityAttempts()
+POST   /analytics/endStudentAttempt                                 controllers.Analytics.endStudentAttempt()
+POST   /analytics/testStatus                                        controllers.Analytics.testStatus()
+POST   /analytics/_testStatus                                       controllers.Analytics._testStatus()
+POST   /analytics/gradeTestSubjectiveQuestion                       controllers.Analytics.gradeTestSubjectiveQuestion()
+
+# ~~~ FOR UPLOADING TEMP IMAGES ~~~
+POST   /uploads/uploadImage                        	    			controllers.Uploads.uploadImage()
+
+

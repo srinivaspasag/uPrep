@@ -1,0 +1,74 @@
+<!-- https://www.playframework.com/documentation/latest/SettingsLogger -->
+<configuration>
+
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${application.home:-.}/logs/application.log</file>
+        <encoder>
+            <pattern>%date [%level] from %logger - %message%n%xException</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="UPLOAD-FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${application.home:-.}/logs/fileupload.log</file>
+        <encoder>
+            <pattern>%date [%level] from %logger - %message%n%xException</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="REINDEX-FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${application.home:-.}/logs/reindex.log</file>
+        <encoder>
+            <pattern>%date [%level] from %logger - %message%n%xException</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%coloredLevel %logger{15} - %message%n%xException{10}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE" />
+    </appender>
+
+    <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <logger name="play" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="application" level="ALL" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="FileUploadController" level="ALL" additivity="false">
+        <appender-ref ref="UPLOAD-FILE"/>
+    </logger>
+    <logger name="ReindexController" level="ALL" additivity="false">
+        <appender-ref ref="REINDEX-FILE"/>
+    </logger>
+    <logger name="ProcessLogs" level="ALL" additivity="false">
+        <appender-ref ref="UPLOAD-FILE"/>
+    </logger>
+    <logger name="ElasticSearchUtil" level="ALL" additivity="false">
+        <appender-ref ref="UPLOAD-FILE"/>
+    </logger>
+    <logger name="CommonRequestHandler" level="ALL" additivity="false">
+        <appender-ref ref="UPLOAD-FILE"/>
+    </logger>
+    <logger name="ErrorHandler" level="ALL" additivity="false">
+        <appender-ref ref="UPLOAD-FILE"/>
+    </logger>
+
+    <!-- Off these ones as they are annoying, and anyway we manage configuration ourselves -->
+    <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
+
+    <root level="ALL">
+        <appender-ref ref="ASYNCFILE" />
+        <appender-ref ref="ASYNCSTDOUT" />
+    </root>
+
+</configuration>

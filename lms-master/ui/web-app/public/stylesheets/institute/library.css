@@ -1,0 +1,594 @@
+.instLibraryHolder{
+	background-color:#F7F7F4;
+	color:#666;
+	min-height:800px;
+	width: 94%;
+	margin: 0 auto;
+}
+.instLibMainControls{
+	overflow: hidden;
+	padding-top: 10px;
+	max-height:300px;
+	transition: all 300ms linear;
+	-webkit-transition: all 300ms linear;
+	-moz-transition: all 300ms linear;
+	-o-transition: all 300ms linear;
+}
+.instLibMainControls.hide{
+	border-bottom: 1px solid #ddd;
+	max-height:0px;
+}
+.instLibMainControls.hide50{
+	border-bottom: 1px solid #ddd;
+	max-height:50px;
+}
+.hideShowInstLibCntrls{
+	background-color:#393939;
+	padding:4px 15px;
+	border-radius:0 0 5px 5px;
+	color:#fff;
+	font-size:13px;
+	cursor:pointer;
+	position:relative;
+	top:4px;
+}
+.hideShowInstLibCntrls .instImgs{
+	padding:5px;
+	font-size:1px;
+	margin:0 3px;
+	background-position:-474px -5px;
+	transform: rotate(180deg);
+	-ms-transform: rotate(180deg); /* IE 9 */
+	-webkit-transform: rotate(180deg);
+	display:inline-block;
+}
+.hideShowInstLibCntrls.showCntr .hideTxt,
+.hideShowInstLibCntrls .showTxt{
+	display:none;
+}
+.hideShowInstLibCntrls .hideTxt,
+.hideShowInstLibCntrls.showCntr .showTxt{
+	display:inline;
+}
+.hideShowInstLibCntrls.showCntr .instImgs{
+	transform: rotate(0deg);
+	-ms-transform: rotate(0deg); /* IE 9 */
+	-webkit-transform: rotate(0deg);
+	background-position-y:-3px;
+}
+.instLibraryHolder .myContentsListsHolder .blackTextColor{
+	color:#666;
+}
+.instLibraryHolder .instSmallLogo{
+	padding:12px 0;
+	float:none;
+}
+.instLibNavColor{
+	color:#eee;
+}
+.eachInstDetail{
+	padding:0 1px;
+	margin-top:-5px;
+}
+.eachInstDetail font{
+	width:100%;
+	float:left;
+}
+.instLibraryControls,
+.instLibSlide{
+	height:200px;
+}
+.instLibSlideHolder{
+	min-width:780px;
+	max-height:200px;
+	width:100%;
+}
+.instLibraryControls{
+	background-image:url('/public/images/LMS/texture.jpg');
+	overflow:hidden;
+	margin:0px 16px;
+	border-radius: 10px;
+}
+.instLibSlide{
+	float:left;
+	z-index:50;
+	width:100%;
+}
+.instLibrarySubs{
+	padding:20px 40px;
+}
+.instLibEachSub{
+	position:relative;
+	float:left;
+	margin:10px 10px 0 0;
+	cursor:pointer;
+	opacity:0;
+}
+.instLibSubTopicTxt,
+.instLibTopicTxt,
+.instLibSubTxt{
+	padding:10px 22px;
+	background-color: rgba(255, 255, 255, 0.2);
+	font-size:16px;
+	float:left;
+	color:#fff;
+	border-radius: 10px;
+}
+.selectedInstLibTxt,
+.instLibSubTopicTxt:hover,
+.instLibTopicTxt:hover,
+.instLibSubTxt:hover{
+	background-color: rgba(255, 255, 255, 1);
+	color:#333;
+}
+.instLibNewSub{
+	background-color: #F24C60;
+	border-radius: 10px;
+	font-size: 10px;
+	font-weight: bold;
+	padding: 1px 7px 0;
+	position: absolute;
+	right: -6px;
+	top: -10px;
+	float:right;
+	box-shadow:0px 1px 3px 0px #3b3e37;
+	display:none;
+}
+.instLibrarySubTopics,
+.instLibraryTopics {
+	padding: 20px 25px 20px 80px;
+}
+.instLibEachSubTopic,
+.instLibEachTopic{
+	float:left;
+	width:210px;
+	overflow:hidden;
+}
+.instLibSubTopicTxt,
+.instLibTopicTxt{
+	font-size:13px;
+	padding:6px 10px;
+	cursor:pointer;
+	margin:6px 6px 0 0;
+	max-width:210px;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	cursor:pointer;
+}
+.instLibSubTopicTxt{
+	padding:4px 5px;
+}
+#instLibTopicsInfoH{
+}
+.instLibTopicInfoSec{
+	width:180px;
+	height:110px;
+	border-radius:5px;
+	background-color: rgba(255, 255, 255, 0.2);
+	margin:10px 0;
+}
+.instTopicBrdWeightHold{
+	margin:10px 0 0 0;
+	height:50px;
+	overflow:hidden;
+	width:255px;
+}
+.instTopicBrdWeight{
+	font-size:12px;
+	color:#ccc;
+	white-space:nowrap;
+	margin:0 10px 5px 0;
+	float:left;
+}
+.instLibTaughtBy{
+	white-space:nowrap;
+	padding:7px 0;
+	overflow:hidden;
+}
+.instLibTaughtBy .icon{
+	width:20px;
+	height:20px;
+	border-radius:10px;
+	margin-right:7px;
+}
+.instLibPrevSlide{
+	width:50px;
+	background-color:rgba(255,255,255,0.1);
+	height:200px;
+	float:left;
+	z-index:100;
+	cursor:pointer;
+	background-image:url('/public/images/LMS/library/arrows_10.png');
+	background-repeat:no-repeat;
+	background-position:16px 95px;
+	left:-50px;
+}
+.instLibPrevSlide:hover{
+	background-color:rgba(255,255,255,0.25);
+}
+.instLibBlueArrow{
+	padding:6px;
+	background-image:url('/public/images/LMS/library/arrows.png');
+	background-repeat:no-repeat;
+	background-position:-1px 11px;
+}
+.nextInstLibT, .prevInstLibT,
+.nextInstLibST, .prevInstLibST {
+	background-color: rgba(255, 255, 255, 0.2);
+	padding: 10px;
+	border-radius: 10px;
+	background-repeat: no-repeat;
+	float: left;
+	margin: -3px 0 0 6px;
+	cursor:pointer;
+}
+.nextInstLibT,
+.nextInstLibST{
+	background-image: url('/public/images/LMS/library/arrows_05.png');
+	background-position: 7px 4px;
+}
+.prevInstLibT,
+.prevInstLibST{
+	background-image: url('/public/images/LMS/library/arrows_03.png');
+	background-position: 6px 4px;
+}
+.disPrevInstLib{
+	opacity:0.4;
+	filter:alpha(opacity=40);
+	cursor:default;
+}
+.instLibNavig{
+	height:50px;
+	margin-top:3px;
+	background-color:#ecede8;	
+}
+#instLibNavBar{
+	padding:15px;
+}
+#instLibNavBar span:hover{
+	cursor:pointer;
+	color:#32A3CF;
+}
+.upNavBarArrow{
+	width: 0px;
+	height: 0px;
+	border-left: 17px solid transparent;
+	border-right: 17px solid transparent;
+	border-bottom: 17px solid #ECEDE8;
+	margin: -16px 0px 0 60px;
+	position: absolute;
+}
+.instLibFacetHolder{
+	margin:15px 10px 10px 10px;
+	width:18%;
+	display:none;
+	min-height:100px;
+}
+.instLibSubSubTopics,
+.rearrangeBy,
+.showContentBy{
+	margin: 20px 0 10px 12px;
+}
+.showContentBy div,
+.rearrangeBy div{
+	padding:0 0 5px 0;
+}
+.showContentBy div span,
+.rearrangeBy div span{
+	margin:2px 0 0 2px;
+	position:absolute;
+}
+.instLibFacetSubSubTopic{
+	margin:5px 0;
+	overflow:hidden;
+	white-space:nowrap;
+}
+.instLibFacetSubSubTopic .instLibFacetSST{
+	padding:2px;
+	border-radius:3px;
+	border:1px solid #e8e8e6;
+	background-color:#eee;
+	color:#656563;
+}
+.instLibFacetAllSubSubTopic{
+	margin:5px 0;
+	padding:2px;
+}
+.instLibFacetSubSubTopic span{
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	max-width:175px;
+	position:absolute;
+	margin:2px;
+}
+.instLibContentHolder{
+	min-height:100px;
+	/*background-color:#fff;*/
+	position:relative;
+	width:100%;
+}
+.instLibAllContentFilter{
+	padding:0 15px;
+	margin-top:15px;
+}
+.instLibSearchBox{
+}
+.instLibSearchBox input{
+	width:400px;
+}
+.instLibContentsControl{
+	margin:30px 10px;
+}
+.instLibFltrTab{
+	padding:10px 0;
+	background-color:#eee;
+	font-size:15px;
+	border-radius: 10px;
+	margin: 2px;
+}
+.instLibFltrTab .tabFilterType{
+	padding:0 5px;
+        display: inline-block;
+	/* border-right:1px solid #ccc; */
+}
+.instLibFltrTab:hover .tabFilterType,
+.instLibFltrTab.activeLibTab .tabFilterType,
+.instLibFltrTab:last-child .tabFilterType{
+	border-right:1px solid transparent;
+}
+.instLibFltrTab:hover,
+.instLibFltrTab.activeLibTab:hover,
+.instLibFltrTab.activeLibTab{
+	background-color:#3bb5e6;
+	color:#fff;
+	cursor:pointer;
+	border-radius: 10px;
+}
+.instLibFltrTab:hover{
+	background-color:rgb(151, 211, 235);
+}
+.FilterForAttemptType{
+	margin:4px 10px 0 0;
+}
+.FilterForAttemptType .SSCTabs{
+	float:none;
+}
+.FilterForAttemptType .SSCTab{
+	font-weight:normal;
+	font-size:12px;
+	border-right:0px;
+	padding:0 5px 0 0;
+}
+.instLibContents{
+	padding-bottom:30px;
+	width:100%;
+	position:absolute;
+}
+.instLibEachContentList{
+	border-bottom:1px solid #eee;
+	padding: 0 16px 20px;
+	background-color:#fff;
+}
+.instLibItemsHead{
+	padding:12px 15px;
+	background-color:#eee;
+}
+.instLibItemsHead .headText{
+	cursor:pointer;
+	color:#333;
+}
+.instLibHeadLeftArrow,
+.instLibHeadRightArrow{
+	width:27px;
+	height:27px;
+	margin:-5px 5px -6px 0;
+	cursor:pointer;
+}
+
+.instLibHeadRightArrow{
+background:url('/public/images/questions/ANextQues.png') no-repeat;
+}
+.instLibHeadLeftArrow{
+background:url('/public/images/questions/APrevQues.png') no-repeat;
+}
+.rightArrowDisabled{
+background:url('/public/images/questions/INextQues.png') no-repeat;
+}
+.leftArrowDisabled{
+background:url('/public/images/questions/IPrevQues.png') no-repeat;
+}
+.instLibListsHolder{
+max-height:130px;
+overflow:hidden;
+}
+.instLibDocumentslist .instLibListsHolder,
+.instLibVideoslist .instLibListsHolder{
+	max-height:none;
+}
+.instLibPagination{
+}
+.viewAllCont.opcHide,
+.instLibPagination .viewAllCont{
+	opacity:0;
+	filter:alpha(opacity=0);
+	transition: opacity 200ms linear;
+	-webkit-transition: opacity 200ms linear;
+	-moz-transition: opacity 200ms linear;
+	-o-transition: opacity 200ms linear;
+}
+.instLibListsHolderPagination{
+	max-height:550px;
+}
+.instLibVideoslist .instLibListsHolderPagination{
+	max-height:890px;
+}
+.instLibQuestionslist .instLibListsHolder{
+	max-height:0px;
+}
+.instLibQuestionslist .instLibListsHolderPagination{
+	max-height:none;
+}
+.instLibQuestionslist .userMessage{
+	font-weight:normal;
+	font-size:14px;
+	padding-bottom:20px;
+	color:rgb(204, 102, 102);
+}
+.instLibCenterInitial{
+	z-index:1;
+	background-color:#fff;
+	width:100%;
+	height:400px;
+}
+.instLibCenterInitial div{
+	padding:100px 0;
+	color:#ccc;
+	font-size:28px;
+}
+.instLibCenter .pageHolderM{
+	z-index:0;
+}
+.instLibSubTopicHolder{
+	margin:30px 0 0 0;
+	width:90%;
+	height:95px;
+	overflow:hidden;
+}
+.instLibTopicH2,
+.instLibSubTopicH2{
+	width:275px;
+}
+.instLibTopicHolder{
+	margin-top:12px;
+	width:90%;
+	height:110px;
+	overflow:hidden;
+}
+.nextPrevInstLibT{
+	margin:-18px 0 0 170px;
+}
+.instLibNoItemTxt{
+	padding-top:20px;
+	font-size:24px;
+	color:rgba(255,255,255,0.2);
+}
+.instLibViewTypes{
+	margin-right:25px;
+}
+.instLibViewTypes .instLibListView,
+.instLibViewTypes .instLibIconView{
+	background-image:url('/public/images/LMS/library/viewType.png');
+	width:13px;
+	height:13px;
+	margin:2px;
+	background-repeat:no-repeat;
+	cursor:pointer;
+	border:1px solid transparent;
+}
+.instLibViewTypes .instLibListView{
+	background-position:-13px 0;
+}
+.instLibViewTypes .selectedView,
+.instLibViewTypes .instLibListView:hover,
+.instLibViewTypes .instLibIconView:hover{
+	border: 1px solid #AAA;
+	border-radius: 1px;
+	box-shadow: 0px 1px 1px 2px #EEE;
+}
+.instLibListsHolder .myContentsShareIt{
+	display:none;
+}
+.libContentListView .instLibListsHolder{
+	max-height:150px;
+}
+.libContentListView .instLibQuestionslist .instLibListsHolder{
+	max-height:0px;
+}
+.instLibQuestionslist.instLibEachContentList{
+	border-bottom:0px;
+	padding:0 0 0;
+	background-color:transparent;
+}
+.instLibPagination .instLibQuestionsIconsHolder{
+	padding:0;
+	border:1px solid #ccc;
+	border-top:0px;
+}
+.instLibPagination .instLibQuestionsIconsHolder .quesHolder{
+	margin:20px 30px;
+}
+.instLibQuestionslist .askQuesInst{
+	margin:0px;
+	background-color:#66cc00;
+	background-image:none;
+	border:0px;
+	margin-right:4px;
+}
+.dropDownsInstLibrary{
+	padding:10px 15px 20px;
+}
+.instLibarySelMyProg,
+.instLibarySelMyCenter,
+.instLibarySelMySection{
+	display:inline-block;
+	margin-right:20px;
+	width:30%;
+}
+.instLibarySelMyProg .nDropDown{
+	background-color:#3bb5e6;
+	font-size:12px;
+	max-width:100%;
+	min-width:100%;
+	border-radius: 10px;
+}
+.instLibarySelMyProg .dropDownHead{
+	color:#fff;
+	font-size:16px;
+	border-radius: 10px;
+}
+.instLibarySelMyCenter .nDropDown,
+.instLibarySelMySection .nDropDown{
+	max-width:100%;
+	min-width:100%;
+	border-radius: 10px;
+}
+.instLibarySelMyCenter .dropDownContainer,
+.instLibarySelMySection .dropDownContainer{
+	/*min-width:200px;*/
+	min-width:335px;
+	border-radius: 10px;
+}
+.instLibContentAttemptFilter{
+	padding-left:10px;
+}
+.instLibContentSortFilter{
+	display:none;
+	float:right;
+	margin-right:20px;
+}
+.instLibContentSortFilter .nDropDown{
+	width:105%;
+	border-radius: 10px;	
+}
+.libAllContentFilterDrop{
+	float:right;
+	margin-right:5px;
+}
+.libAllContentFilterDrop .nDropDown{
+	width:103%;
+	border-radius: 10px;
+	
+}
+.libAllContentFilterDrop .nDropDown .dropDownHead{
+	padding:8px 5px 8px 20px;
+	background-color:#eee;
+	border:1px solid #ccc;
+	color:#333;
+	border-radius: 10px;
+	border-radius: 10px;
+}
+.instSubHolder::-webkit-scrollbar {
+    width: 5px;
+}

@@ -1,0 +1,12 @@
+#{if _user!=null}
+%{
+    user=_user;
+    getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user); 
+}%
+
+<a class="img20Wrapper floatLeft cmdsaPush ${getUserClassAndUrl.className} margRight5" 
+   data-user-id="${getUserClassAndUrl.id}" href="${getUserClassAndUrl.url}">
+    <img src="${user.thumbnail}" class="img20"/>
+</a>
+#{institute.memberName user : user , classNames : "cmdsaPush" , getUser : getUserClassAndUrl /}
+#{/if}

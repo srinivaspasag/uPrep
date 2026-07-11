@@ -1,0 +1,39 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           				controllers.Application.index()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               				controllers.Assets.at(path="/public", file)
+
+# this is common controller across all services and will provide information about currently deployed build
+POST	/sysinfo/get                              controllers.SysInfo.getInfo()
+
+# event bus processor urls
+GET    /EventBusProcessors/startAll			controllers.EventBusProcessors.startAll()
+GET    /EventBusProcessors/stopAll			controllers.EventBusProcessors.stopAll()
+GET    /EventBusProcessors/restartAll			controllers.EventBusProcessors.restartAll()
+POST    /EventBusProcessors/restartAll			controllers.EventBusProcessors.restartAll()
+
+GET    /EventBusProcessors/start			controllers.EventBusProcessors.start(eventType)
+GET    /EventBusProcessors/stop				controllers.EventBusProcessors.stop(eventType)
+GET    /EventBusProcessors/getStatus			controllers.EventBusProcessors.getStatus(eventType)
+GET    /EventBusProcessors/getStatusAll			controllers.EventBusProcessors.getStatusAll()
+GET    /EventBusProcessors/enqueeFailedEvents		controllers.EventBusProcessors.enqueeFailedEvents(size: Int ?=0)
+GET    /EventBusProcessors/stopEnqueeFailedEvents	controllers.EventBusProcessors.stopEnqueeFailedEvents()
+
+# email apis
+POST   /Mailer/testEmail		controllers.Mailer.testEmail()
+GET    /Mailer/getStatus		controllers.Mailer.getStatus()
+GET    /Mailer/setEmailStatus		controllers.Mailer.setEmailStatus()
+GET    /Mailer/testConfig	        controllers.Mailer.testConfig()
+POST   /Mailer/informOrgs 		controllers.Mailer.informOrgs()
+
+#billMocker
+#POST   /BillMocker/generate		        controllers.BillMocker.generate()
+
+# storage handling
+GET    /ObjectStorageToS3Migrator/migrate		controllers.ObjectStorageToS3Migrator.migrate()
+

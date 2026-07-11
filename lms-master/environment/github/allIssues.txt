@@ -1,0 +1,79 @@
+
+#1227 :ILE & Mobile: Payment Gateway - Remove "+" from email ID before initiating payment and display it as communication Email ID
+#1224 :ILE & Mobile: Payment Gateway : User should be able to check status of any disputed transaction of mobile from web and vice versa
+#1222 :Mobile : Payment Gateway - Add Payment guidelines pop-up and ask user to enter email id if not provided.
+#1220 :Mobile: SLP - Upgrade of app - App crashed when module is accessed
+#1211 :Mobile:  Content do not open some time when tapped on it (Inconsistent) 
+#1210 :Mobile: SLP - file type resource not marked completed after consumption
+#1200 :Mobile : SLP - If user makes any content in module invisible which is present in library, content in module disappears
+#1199 :ILE: Payment Gateway - Programs - My programs - Paid program -  Payment info popup - Order ID displayed as null
+#1196 :Mobile: Payment Gateway -  "Check Status" for program where user already has paid for program and program not added to library is not working
+#1194 :CMDS & Mobile : SLP - Yotube and vimeo videos in module should not be applicable for download 
+#1193 :Mobile: Payment Gateway - If internet is disconnected when user is submits bank details, it shows webpage not available and screen keeps flickering
+#1187 :Mobile: SLP - Downloading of video and document shows error '"Downloading not allowed,content not available for for download for link"
+#1182 :Mobile: Payment Gateway - Error message with proper language should be displayed
+#1181 :Mobile: Payment Gateway - Popup text color is not proper
+#1179 :Mobile& ILE: Payment Gateway - Email for purchase details
+#1174 :Mobile: SLP - Module consumption updates of web are not reflected after clcking on refresh. It is updated after opening module again from library
+#1168 :Mobile : Payment Gateway - CCAvenue page shows loading for long time,after buying program even if account is debited. 
+#1167 :Mobile: Payment Gateway - Unable to enter payment details, backspace not working
+#1164 :Mobile: SLP - info button tap on SLP contents - 'clicked' message displayed
+#1143 :Mobile: SLP - Refresh button does not have loading effect
+#1130 :Mobile: SLP - Library - scrolling is not working if resource filter is applied after module filter
+#1129 :Mobile: SLP - Content completeness status sync from mobile to web is triggered on network connection on/off only
+#1128 :Mobile: SLP - Module completeness should be updated on sync 
+#1127 :Mobile: SLP - Content head in not present in subject library page
+#1104 :Mobile: Teacher - When user closes app or switches to other app after opening test and download is in progress, app crashes
+#1103 :Mobile: App crashes when user clicks on any program under "My programs" section
+#1095 :Mobile: Teacher - When analytics are loading and user clicks on screen, app crashes
+#1092 :Mobile: Teacher: App crashes when teacher clicks on test which does not have any attempt
+#1090 :Mobile: Teacher - App crashes if user clicks on any test multiple times on Library and Analytics screen
+#1089 :Mobile: Manager login - Library  - No courses displayed 
+#1088 :Mobile - Teacher login - Library - Only subject which teacher have access displayed in library
+#1085 :Mobile: Teacher Login - Test analytic - if avg mark in not integer number then % should display till 2 points after decimal displayed 
+#1083 :Mobile: Teacher Login - App crashes when teacher opens any test and navigates back to library using back button (Before loading test)
+#1082 :Mobile: Teacher login - Library - Test - 'Attempt now' button should be 'View analytic'
+#1080 :Mobile: Teacher Login - App crashed when navigated to profile screen in landscape mode
+#1079 :Mobile: App crashes when user clicks on "ALL" on navigation drawer
+#1077 :Mobile: Library - Vimeo video - HTML tags displayed in description of Vimeo videos
+#1071 :Mobile : SLP - Recently viewed,Recently added filter do not show "Modules" and "Content" title at correct position
+#1069 :Mobile : SLP - Consumption data is not synced to web
+#1066 :CMDS & Mobile: SLP -Download should be applicable for module
+#1065 :Mobile: - Mobile: SLP - Module info pop up -  Module Run: NON_SEQUENTIAL
+#1064 :Mobile: SLP - Module info pop up - Creator name is empty
+#1063 :Mobile : SLP - Non sequential module progress is not displayed
+#1062 :Mobile : Video is not marked as completed after watching it 
+#1061 :Mobile: SLP - Subject library screen - Module portion is not scrollable
+#1060 :Mobile: SLP - Sequential - Resources are not getting marked completed even when consumed 
+#1059 :Mobile: SLP - File type are not displaying
+#1038 :Mobile: Screens to be defined in which Logout option displayed
+#1036 :Mobile: Doubt - Ask a doubt - Subject / topic pop up text color issue
+#1035 :Mobile: Signup - Male/ female pop up background color is black
+#1032 :Mobile: When user opens navigation drawer on Library screen,  "Alphabetical" is displayed as selected filter and content is displayed according to last selected filter
+#1031 :Mobile: Ui issue on "All Programs" screen (Related to width of program boxes)
+#1030 :Mobile: Test taking - resume - Question marked for review are not displayed as marked after resume
+#1026 :Mobile - Test- Time Taken is displayed 2 seconds less than actual attempted time
+#1025 :Mobile: Resume Test - After resuming test when user clicks on "Next" button for question, it shows "Please answer the question first" message even if answer is saved. 
+#1024 :Mobile: User guide popup on first login - UI distorted when orientation changed
+#1023 :Mobile: Infinite scrolling of doubt's answer is not working
+#1016 :Mobile: App crash google analytics - NullPointerException at MyProgramsActivity
+#1015 :Mobile: App crash google analytics - IllegalStateException: Can't start async operation (launchPurchaseFlow) because another async operation(launchPurchaseFlow) is in progress
+#1007 :Mobile: App crash google analytics - NullPointerException at AppLandingPageActivity
+#1005 :Mobile: App crash google analytics - Library course screen - onItemSelected
+#1002 :Mobile : Library Filter (Alphabetical,Recently added,Recently viewed) - Two filters are displayed as selected 
+#1001 :Mobile: Text color of popup messages is not proper
+#992 :Mobile: Login / Signup - When 'Show password' option enabled then cursor moves to first field of the screen
+#990 :CMDS, ILE & Mobile: Login - Password field should not get cleared when user get invalid UN/PW error
+#988 :Mobile: Old state of screen displayed when navigating after a back button tap
+#987 :Mobile: signup form - Email field should displayed as *
+#986 :Mobile: Library -  inconsistent behavior when there is no resource in any cource
+#957 :Mobile: Incorrect behavior of app when mobile switched off / App crashed during test taking
+#954 :Mobile: Incorrect time taken for test is displayed  when user sets mobile clock manually 
+#944 :Mobile: Doubts- Sync button is displayed on navigation drawer only when user navigates to doubt after clicking on sync on course selection screen 
+#930 :Mobile: App crashes when user clicks on mobile's back button before app loads 
+#917 :Mobile: Test taking - Text selection option and mathjex option displayed
+#892 :Mobile: Doubt - Error displayed while opening image viewer (Android 4.4 - kitkat)
+#871 :Mobile: App crashed when logout instantaneously after login
+#866 :Mobile : Videos - Youtube videos are not playing on Android 2.3, 4.4 
+#778 :Mobile: Vimeo videos are not playing on mobile (inconsistent behaviour, videos are playing after navigating back and opening video 2-3 times)
+#630 :Mobile: Able to open document when shared (email) from adobe reader

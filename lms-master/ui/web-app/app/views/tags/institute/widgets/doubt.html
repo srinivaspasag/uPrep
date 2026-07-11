@@ -1,0 +1,134 @@
+%{
+	if(_data != null){
+    		discuss = _data;
+	}
+	rowspan = 4;
+	drawBody = _drawDesc;
+	if(drawBody){
+		rowspan = 5;
+	}
+}%
+#{if discuss != null && discuss !=""}
+%{
+    if(discuss.has('dissId'))dissId=discuss.dissId;
+    else if(discuss.has('id'))dissId=discuss.id;
+    orgId = params.orgId;
+    userId = "";
+}%
+<div class="instEachDbt" data-diss-id="${dissId}">
+	<table cellspacing=0 cellpadding=0 class="fullWidth">
+		<tr>
+		#{if discuss.has('user') && !discuss.user.equals(null)}
+		%{
+                        user=discuss.user;
+			getUser=(controllers.Profile.getUserClassAndUrl(user));
+                        userClass = getUser.get("className");
+                        userUrl = getUser.get("url");
+                        userId = getUser.get("id");
+		}%
+			<td rowspan=${rowspan} style="vertical-align:top;">
+			    <a class="${userClass} doCStream displayInBlock" href="${userUrl}" 
+                        	name="UPLOADER_LINK" data-user-id="${userId}">
+				<div class="instProfilePicContainer">
+					<img class="instDbtProfilePic" alt="" src="${user.thumbnail}"/>
+				</div>
+			    </a>
+			</td>
+			<td>
+		            #{institute.memberName user : user , classNames : "instDbtPostNm ptrTag" , getUser : getUser /}
+			</td>
+		#{/if}
+		#{else}
+			<td rowspan=${rowspan} style="vertical-align:top;">
+			    <span class="doCStream ptrTag instProfilePicContainer">
+			    </span>
+			</td>
+			<td>
+			</td>
+		#{/else}
+			<td class="right">
+			#{if params.userRole != "STUDENT" || userId == session.userId}
+				<div class="instItemStgs">
+					<div class="instImgs"></div>
+				</div>
+				<div class="instItemStgsDropped nonner">
+					<div class="delInstDbt" data-id="${dissId}">&{'TXT_DELETE'}</div>
+				</div>
+			#{/if}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="instDbtTitle">
+					#{if !discuss.boardTree.equals(null) && discuss.boardTree.length()>0 }
+			  		%{ board = discuss.boardTree.get(0);}%
+					<span class="instDbtTitleSubNm" data-brd-id="${board.id}">${board.name}:</span>
+					#{/if}
+					<a class="txtBd doCStream" data-diss-id="${dissId}"
+					data-cs-name="DISCUSSION_TITLE"
+					href="/organization/${orgId}/discussion/${dissId}" target="_blank">
+					${discuss.name}
+					</a>
+				</div>	
+			</td>
+			<td class="instDbtAgeH" rowspan=${rowspan-2}>
+				<span class="instImgs"></span>
+				<span class="smally">${new Date(discuss.timeCreated).since(false)}</span>
+			</td>
+		</tr>
+		#{if drawBody==true}
+		<tr>
+			<td>
+				<div class="instDbtDesc">
+					${discuss.content.raw()}
+				</div>
+			</td>
+		</tr>
+		#{/if}
+		<tr>
+			<td>
+			<!-- TODO -->
+			#{if !discuss.boardTree.equals(null) && discuss.boardTree.length()>0 }
+			  %{ board = discuss.boardTree.get(0);}%
+				#{if board.has('children') && board.children!="" && board.children.length()>0}
+				<div class="instDbtTags">
+				#{list items:0..board.children.length()-1, as:'childIndex'}
+				%{ child = board.children.get(childIndex);}%
+					<span class="instDbtTag instTrTopicText doubtBrd-${child.id} left" 
+						data-brd-id="${child.id}">
+						${child.name}
+					</span>
+				#{/list}
+				<div class='cleaner_with_divider'>&nbsp;</div>
+				</div>
+				#{/if}
+			 #{/if}
+			<td>
+		</tr>
+		<tr>
+			<td>
+				<div class="instDbtAnsBar">
+					<span class="ansInstFeedCount">
+						<span class="instImgs"></span>
+						<a class="ansCount doCStream openInstDoubtAns" 
+							data-diss-id="${dissId}" data-cs-name="DISCUSSION_TITLE" 
+							href="/organization/${orgId}/discussion/${dissId}"><span class="commCount">${discuss.comments}</span> &{'INST_DOUBT_ANSWERS'}</a>
+					</span>
+					<span class="followersInstFeedCount" data-entity-count="${discuss.followers}" 
+						data-entity-type="DISCUSSION" data-entity-id="${dissId}">
+						<span class="instImgs"></span>
+						<a class="followersCount">&{'INST_DOUBT_FOLLOWERS',discuss.followers}</a>
+					</span>
+				</div>
+			</td>
+			<td>
+                	#{if discuss.has('followType')}
+			<span class="right followInstDbt">
+				#{widgets.followUnfollowEntity followType:discuss.followType,entityType:'DISCUSSION',entityId:dissId,'saveText':'Follow','callback':'FOLLOW_DISCUSSION'/}
+			</span>	
+                	#{/if}
+			</td>
+		</tr>
+	</table>	
+</div>
+#{/if}

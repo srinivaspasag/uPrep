@@ -1,0 +1,14 @@
+#{if modules.errorCode.isEmpty() &&modules.result.has('list')&& modules.result.list.length()>0}
+<input type="hidden" class="resultDataCount" value="${modules.result.totalHits}" data-real-count="${modules.result.totalHits}"/>
+#{list items:0..modules.result.list.length()-1, as:'tIndex'}
+%{ 
+	module = modules.result.list.get(tIndex); 
+}%
+	#{myContents.iconView.module module : module /}
+#{/list}
+#{/if}
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_MODULES'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+#{/else}

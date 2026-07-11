@@ -1,0 +1,53 @@
+<div class="card">
+<div class="card-header" style="background-color: ghostwhite;">
+    <div class="postTestHead">
+        <img src="/public/assets/theme1/img/testIcon.png"
+            style="height: 30px;margin-right: 5px;">
+        <span class="f-18 bold testName" data-test-id = "${testInfo.result.id}">${testInfo.result.name}</span>
+        #{if params.orgId == play.Play.configuration.getProperty("learnpedia.id")}
+            <!-- <button class="btn btn-danger retakeTest nonner pull-right">Retake Test</button> -->
+        #{/if}
+    </div>
+
+    <ul class="tab-nav tn-justified tn-icon test-tabs" role="tablist">
+        <li class="active" role="presentation">
+            <a  aria-controls="performance" class="col-xs-6" data-toggle="tab" data-tab-history="true"
+        data-tab-history-changer="replace" href="#performance" role="tab" aria-expanded="false">
+                <span class="hidden-xs">Your Performance</span>
+                <i class="zmdi zmdi-equalizer visible-xs"></i>
+            </a>
+        </li>
+        <li role="presentation">
+            <a aria-controls="solution" class="col-xs-6" data-toggle="tab" data-tab-history="true"
+        data-tab-history-changer="replace" href="#solution" role="tab" aria-expanded="false">
+                <span class="hidden-xs">Solution</span>
+                <i class="zmdi zmdi-puzzle-piece visible-xs"></i>
+            </a>
+        </li>
+        <li role="presentation">
+            <a aria-controls="result" class="col-xs-6" data-toggle="tab" data-tab-history="true"
+        data-tab-history-changer="replace" href="#result" role="tab" aria-expanded="false">
+                <span class="hidden-xs">Result Sheet</span>
+                <i class="zmdi zmdi-account-calendar visible-xs"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+    <div class="card-body">
+        <div class="tab-content p-20">
+            <div class="tab-pane animated fadeIn in active" role="tabpanel" id="performance">
+                #{include 'theme1/Library/testPerformance.html', testAnalytics:testAnalytics, testInfo: testInfo /}
+            </div>
+            <div class="tab-pane animated fadeIn in" role="tabpanel" id="solution">
+                #{include 'theme1/Library/testSolution.html', questions:questions, testInfo: testInfo /}
+            </div>
+            <div class="tab-pane animated fadeIn in" role="tabpanel" id="result">
+                #{include 'theme1/Library/testResultSheet.html', resultSheet:resultSheet, testInfo: testInfo /}
+            </div>
+        </div>
+    </div>
+</div>
+#{script src:'test/o.postTest.js', charset:'utf-8' /}
+<script type="text/javascript">
+    postTest.init();
+</script>

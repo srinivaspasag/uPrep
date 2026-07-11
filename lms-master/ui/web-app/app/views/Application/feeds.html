@@ -1,0 +1,38 @@
+#{if feeds!=null && feeds.has("result") && feeds.result.newsFeedCount>0}
+%{
+  template='';
+  if(feedType=='NEWS_FEEDS'||feedType=='ACTIVITY_FEEDS')templateRoot="NewsFeeds/";
+  else if(feedType=='NOTIFICATIONS')templateRoot='Notifications/';
+  feedCount=feeds.result.newsFeedCount;
+  feeds=feeds.result.newsFeeds;
+}%
+
+    #{list items:0..feeds.length()-1,as:'i'}
+        %{            
+            feed=feeds.get(i);
+            template=templateRoot+feed.src.type+"/"+feed.eType+".html";
+        }%
+        #{include arg:template /}   
+    #{/list}
+        #{if params.count!=null&&Integer.parseInt(params.count)==feeds.length()}
+        <div class="loadMoreItems LMHandlerDivLoadMore doCStream" data-cs-name="LOAD_MORE_ORG_FEEDS">Load More Feeds</div>
+        #{/if}    
+#{/if}
+#{else}
+<div class="userMessage">No feeds available</div>
+#{/else}
+*{
+        %{            
+            try{
+            feed=feeds.get(i);
+            template=templateRoot+feed.src.type+"/"+feed.eType+".html";
+        }%
+        #{include arg:template /}
+        %{
+            }catch(Exception e){
+             out.print(e.getMessage());   
+            }
+        }%  
+}*
+
+

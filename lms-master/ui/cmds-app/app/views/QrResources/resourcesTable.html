@@ -1,0 +1,117 @@
+%{
+  resourcesResult=resources.result;
+  totalHits=resourcesResult.totalHits;
+  resources=resourcesResult.list;
+  questionsCount=0;
+  paraHits = 0;
+  if(resourcesResult.has('totalQuestions')){
+  	questionsCount=resourcesResult.totalQuestions;
+  }
+  if(resourcesResult.has('totalQuestions')){
+    paraHits = resourcesResult.totalParagraphs;
+  }
+}%
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv">
+    <table class="headSecTable">
+      <thead>
+          <tr>
+              <!--<td class="width10 tdPadLeft5"></td>-->
+              <td class="width16 tdPadLeft5">
+                  #{if resources.length()>0 && !orgUserProfile.equals("SALESPERSON")}
+                    <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                        <div class="gCBoxTicker"></div>                    
+                    </div>   
+                  #{/if}
+              </td>
+              <td class="tdPadLeft5 itemTitleTH">Title</td>
+              <td class="width170 maxWidth170"><span class="padLeft10">Added By<span></td>
+              <td class="width100 maxWidth100">Date Added</td>
+<!--              <td class="width100 maxWidth100">Status</td>-->
+              <td class="width75 maxWidth75">Added To</td>
+          </tr>	  
+          #{sources.questionsLinkTr colspan:6 , questionsCount:questionsCount,
+          msg : "(Click to open all the questions available in this folder)" , paraHits : paraHits /}
+      </thead>
+    </table>                    
+</div>                
+<div id="fixedSec">
+    <table class="cmdsTable">
+      <tbody>
+          #{if resources.length()>0}
+          #{list items:0..resources.length()-1,as:'i'}
+          %{
+            resource=resources.get(i);            
+            resource=resource.source;
+            entityId=resource.id;
+            entityName=resource.name;
+            entityType=resource.type;
+            if (resource.has('conversionStates')){
+              entityStates = resource.conversionStates;
+              entityStatesString = entityStates.toString();
+              if (entityStatesString.contains('ENCRYPTED')){
+                encrypted = true;
+              }else{
+                encrypted = false;
+              }
+            }else{
+              entityStates = null;
+              encrypted = true;
+            }
+            converted = resource.has('converted')?resource.converted:true;
+            completed = resource.completed;
+            if(entityType=="FOLDER"||entityType=="CMDSQUESTIONSET"){
+                status='-';
+            }else if(resource.has("published")&&resource.published){
+                status='PUBLISHED';
+            }else{
+                status='UNPUBLISHED';
+            }   
+	    isDownloadable = util.TemplateHelper.isEntityDownloadable(resource); 
+          }%
+          <tr class="" data-entity-type="${entityType}" data-entity-id="${entityId}"
+              data-entity-name="${entityName}" data-status='${status}'>
+<!--            <td class="width10 tdPadLeft5">
+                  <span class="cmdsItemInfo"></span>
+            </td>-->
+            #{if !orgUserProfile.equals("SALESPERSON")}
+            <td class="width16 tdPadLeft5">
+                  <div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                      <div class="gCBoxTicker"></div>                      
+                  </div>  
+            </td>
+            #{/if}
+            <td class="tdPadLeft5 color0 entityTitleTd">
+                #{aTagMapper entityName:entityName,entityId:entityId,entityType:entityType,converted:converted,completed:completed,encrypted:encrypted/}
+            </td>
+            <td class="width170 maxWidth170">
+		#{if resource.has('addedBy') && !resource.addedBy.equals(null)}
+                  #{widgets.user20 user:resource.addedBy /}
+		#{/if}
+            </td>
+            <td class="width100 color6 maxWidth100">
+                ${new Date(resource.timeCreated).format('dd/MM/yyyy')}
+            </td>
+            *{<td class="width75 maxWidth75">${status}</td>}*
+            <td class="width75 color6 maxWidth75">
+                #{if entityType!="FOLDER"&&entityType!="CMDSQUESTIONSET"}
+                %{
+                    progNo=resource.programsAddedTo;
+                }%
+                <a class="getVisibilityStatus" data-allow-download=${isDownloadable}>${progNo} Program${progNo.pluralize()}</a>
+                #{/if}
+                #{else}
+                -
+                #{/else}
+            </td>                
+          </tr>   
+          #{/list}
+          #{/if}
+          #{elseif questionsCount==0}
+            #{sources.noResourcesFound colspan:7,target:'RESOURCES'/}                   
+          #{/elseif}          
+      </tbody>
+    </table>
+    #{footer /}
+</div>       
+    

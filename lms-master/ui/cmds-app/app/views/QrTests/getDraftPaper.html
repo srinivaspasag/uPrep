@@ -1,0 +1,263 @@
+#{if questions.errorCode!='' || finalResp.errorCode != ''}
+        #{common.errorCodes resp:questions/}
+#{/if}
+#{else}
+%{
+    testDetails = finalResp.result;
+    //Changing font family for Trividyaa Organization
+    orgClass ='default';
+    if(params.orgId == '5bacb325e4b0ff57ab848e07'){
+        orgClass = 'trividyaa';
+    }
+    result=questions.result;
+    quesns=result.list;
+    boardMap =[:];
+    questionNumber =0;
+}%
+#{if quesns!=null && quesns.length()>0}
+#{list items:0..quesns.length()-1,as:'q'}
+     %{
+        ques = quesns.get(q);
+        if(ques.has('detail')){
+            ques=ques.detail;
+        }
+        boardTree = ques.boardTree.get(0);
+        if(!boardMap.containsKey(boardTree.id)){
+            quesList = [ques]
+            boardMap.put(boardTree.id,quesList);
+        }
+        else{
+            quesList = boardMap.get(boardTree.id);
+            quesList.add(ques);
+            boardMap.put(boardTree.id,quesList);
+        }
+    }%
+#{/list}
+#{/if}
+<style type="text/css">
+    body,span,div{
+        font-size: 13.0pt!important;
+        font-family: sans-serif!important;
+    }
+    .questionPaperHolder{
+        padding: 0px 20px;
+    }
+    .questionPaperHeader img{
+        height: 38px;
+        max-width: 140px;
+        padding: 3px;
+        position: absolute;
+    }
+    .questionPaperTitle{
+        font-size: 26px !important;
+        font-weight: bold;
+        text-align:  center;
+        line-height: 34px;
+        top: 5px;
+        position: relative;
+        text-transform: capitalize;
+    }
+    .cleaner_with_divider{
+        clear: both;
+        width: 100%;
+    }
+    .instName{
+     text-align: center;
+     font-size: 30px !important;
+     font-weight: bold;
+     line-height: 1.5;
+    }
+    .marksDetails{
+        float: right;
+        margin:10px 0px;
+    }
+    .boardHeading{
+        padding: 5px;
+        background: black;
+        color: white;
+        text-align: center;
+        min-width: 80px;
+        max-width: 150px;
+        margin: 10px auto;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    .questionType{
+        font-size: 18px !important;
+        font-weight: bold;
+        text-align: center;
+    }
+    .nonner{
+        display: none;
+    }
+    .line{
+        height: 1px;
+        margin-top:20px;
+        background:#3d3d3d;
+    }
+    .mainContent{
+        width: 90%;
+        margin: auto;
+    }
+    .instructionHlder ul{
+        margin: 0;
+    }
+    .instructionHlder ul li{
+        padding: 3px 0px;
+    }
+    .markingScheme{
+        margin-left: 40px;
+        margin-top: 5px;
+    }
+    .markingScheme ul{
+        list-style: none;
+    }
+    .markingScheme ul li{
+        padding: 5px 0px;
+    }
+    .questionBody{
+        margin-top:15px;
+        margin-left: 15px;
+        margin-bottom: 35px;
+    }
+    .eachOptHolder{
+        display: inline-block;
+        min-width: 250px;
+        margin-top: 15px;
+        margin-left: 10px;
+    }
+    .questionNumber{
+        margin-right: 5px;
+        font-size: 18px!important;
+        font-weight: bold;
+    }
+    .RTELatex{
+        display: inline-block;
+    }
+    .RTEImageDiv {
+        margin-left: 25px;
+    }
+    .boldy{
+        font-weight: bold;
+    }
+    .testStatus{
+        background: #F44336;
+        color:white;
+        padding: 7px 10px;
+    }
+    .userMessage{
+        text-align: center;
+    }
+    @font-face{
+        font-family: trividyaaOrg;
+        src:url('../../public/Samarkan.ttf') format('truetype')
+    }
+    .trividyaa{
+        font-family: trividyaaOrg !important;
+        letter-spacing: 1.6;
+    }
+</style>
+<div class="questionPaperHolder">
+    <div class="questionPaperHeader">
+       <img src="${currentOrgInfo.getOrgThumbnail()}" alt="${currentOrgInfo.getFullName()}">
+        <div class="instName ${orgClass}">
+            ${currentOrgInfo.getFullName()}
+        </div>
+        <div class="questionPaperTitle">
+            ${testDetails.name}
+        </div>
+        <span class="testStatus">
+            #{if testDetails.completed != true}
+                    <span class='boldy'>DRAFT</span>
+            #{/if}
+            #{else}
+                #{if testDetails.published != true}
+                    <span class='boldy'>NOT PUBLISHED</span>
+                #{/if}
+            #{/else}
+        </span>
+        <div class="marksDetails">
+            <div class="totalMarks">
+                <strong>Total Marks : </strong>${testDetails.totalMarks}
+            </div>
+            #{if testDetails.duration>0}
+            %{
+                    timeObj=uicom.util.Utilities.getTimeFromMiliSec(testDetails.duration);
+                    totalTimeHrs = timeObj.hrs;
+                    totalTimeMins = timeObj.mins;
+                    totalTime = totalTimeHrs + ":" + totalTimeMins;
+
+            }%
+            <div class="Duration">
+                <strong>Duration : </strong>${totalTime} hrs
+            </div>
+            #{/if}
+        </div>
+    </div>
+    <hr class="cleaner_with_divider">
+    <div class="mainContent">
+        #{if quesns!=null && quesns.length()>0}
+        <!-- Starting Map iteration-->
+        %{
+            for(e in boardMap) {
+                quesns = e.value
+        }%
+        <div class="boardHeading">${quesns.get(0).boardTree.get(0).name}</div>
+
+        #{list items:0..quesns.size()-1,as:'q'}
+        %{
+            ques = quesns.get(q);
+            content = ques.questionBody.newText;
+            if(!ques.isNull('solutionInfo'))solutionInfo=ques.solutionInfo;
+            else solutionInfo=null;
+            if(solutionInfo!=null)options=solutionInfo.optionBody.newOptions;
+        }%
+        <div class="questionBody">
+            <div class="questionText">
+                <span class="questionNumber">${++questionNumber}.  </span>
+                ${content.raw()}
+            </div>
+            <div class="choices">
+                %{
+                    alphabet = "ABCDEFGHIJKLMNOPQRSTWXYZ";
+                    question = question;
+                }%
+                #{if options!=null&&options.length()>0}
+                    #{list items:0..options.length()-1, as:'index'}
+                        <div class="eachOptHolder">
+                           <div>
+                            <span class="optAlphaCount">(${alphabet.charAt(index)})</span>
+                            <span>
+                                ${options.get(index).raw()}
+                            </span>
+                           </div>
+                        </div>
+                   #{/list}
+                #{/if}
+            </div>
+        </div>
+        #{/list}
+        <!-- Ending Map iteration-->
+        %{
+            }
+        }%
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                    extensions : [ "tex2jax.js" ],
+                    jax : [ "input/TeX", "output/HTML-CSS" ],
+                    tex2jax : {
+                            inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+                    },
+                    TeX: {
+                    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                            }
+            });
+        </script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        #{/if}
+    #{else}
+        <div class="userMessage noResultsTr">No questions found.</div>
+    #{/else}
+    </div>
+</div>
+#{/else}

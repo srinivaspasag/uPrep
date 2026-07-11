@@ -1,0 +1,161 @@
+#{stylesheet media:'screen', src:'test/o.preTest.css' /}
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    $(function(){
+        showNoTabSec("TEST");
+    });
+</script>
+#{/if}
+
+<input type="hidden" class="incommingTestId nonner" value='${testIdStr}'/>
+<input type="hidden" class="serverPreTestLoadTime nonner" value='${new Date().getTime()}'/>
+#{if data!=null && data.has('name') && data.errorCode.isEmpty()}
+<script src="@{'/public/javascripts/test/o.preTest.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+    #{if data.pdfId!=null && data.has('pdfId') && data.errorCode.isEmpty()}
+        <input type="hidden" class="incommingPdfId nonner" value='${data.pdfId}'/>
+    #{/if}
+    #{if data.password!=null && data.has('password') && data.errorCode.isEmpty()}
+        <input type="hidden" class="incommingPasswordForTest nonner" value='${data.password}'/>
+    #{/if}
+    #{if data.subjectiveTest != null && data.has('subjectiveTest') && data.errorCode.isEmpty()}
+        <input type="hidden" class="subjectiveTest nonner" value='${data.subjectiveTest}'/>
+    #{/if}
+<div id="preTest" class="pageHolderNM">
+    <div class="left testCreationLeftBar CSWidget" data-widget="LEFT_BAR">
+        #{test.testDetailsLeftBar data : data , testAnalytics : testAnalytics /}
+        <input type="hidden" class="incommingTestName nonner" value='${data.name}'/>
+
+            #{if data.has('avgMarks') && data.has('attempts')}
+            <div class="left testTakenSummary">
+                    <span class="avgMarks">
+                            <span class="smally">Average Score : </span>
+                            <span class="big14 padText blackTextColor">${Math.round(data.avgMarks)}</span>
+                    </span><br/><br>
+                    <span class="avgTimeTaken">
+                            <span class="smally">Average Time <span>:</span> </span>
+                            %{
+                                    timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.avgTimeTaken);
+                            }%
+                            <span class="big14 blackTextColor">${timeObj.hrs}:${timeObj.mins} hrs</span>
+                    </span>
+            </div>
+            #{/if}
+        <div id="preTestTakeTestBtnHold" class="left">
+           <input type="button" class="left blueSubmitButton takeTestBtn doCStream"
+                       data-cs-name="TAKE_TEST_BTN" value="Take This Test" data-send="{testID:${testIdStr}}"/>
+           <div class="nonner">
+               #{if data.duration>0}
+            %{
+                    timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.duration);
+                    totalTimeHrs = timeObj.hrs;
+                    totalTimeMins = timeObj.mins;
+                    totalTime = totalTimeHrs + ":" + totalTimeMins;
+
+            }%
+            #{/if}
+               %{
+               testName = data.name;
+               firstName = myOrgInfo.get('firstName');
+               profilePic = myOrgInfo.get('profilePic');
+           }%
+               #{common.testGuidelines showGuidlinesInsideTest:false, btnId:'proceedToTakeTest',testName:testName,firstName:firstName,profilePic:profilePic,totalTime:totalTime/}
+           </div>
+        </div>
+        <div class="left separator"></div>
+        #{if data.has('desc') && !data.desc.isEmpty()}
+            <div style="float: left;">
+                <span style="color:#888;"><span class="blackTextColor big14">Description </span><b>:</b> ${data.desc}</span>
+            </div>
+            <div class="left separator"></div>
+        #{/if}
+
+        <!-- #{if false && toppersData.has('result') && toppersData.result.has('list') && toppersData.result.list.length()>0}
+            <div class="left leaderBoard">
+                    <span class="boldy big12">&{'TXT_LEADER_BOARD'}</span>
+                    <div class="left leadersList">
+                    #{list items:0..toppersData.result.list.length()-1,as:'tIndex'}
+                    %{
+                            if(tIndex >= 10) break;
+                            topper = toppersData.result.list.get(tIndex);
+                            user = topper.user;
+                            analytics = topper.info.measures;
+                            getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(topper.user);
+                    }%
+        <table class="eachLeader">
+            <tr>
+            <td rowspan="4" class="alignTop"><span class="boldy big14 rank">${topper.rank}.</span></td>
+            <td rowspan="4" class="alignTop">
+              <a href="${getUserClassAndUrl.url}" data-user-id="${getUserClassAndUrl.id}"
+                class="left ${getUserClassAndUrl.className} doCStream"
+                data-cs-name="OPEN_TEST_LEADERS" data-test-id="${testIdStr}">
+                <img class="icon img" src="${user.thumbnail}" alt=" "/>
+              </a>
+            </td>
+            <td>
+            <a href="${getUserClassAndUrl.url}" data-user-id="${getUserClassAndUrl.id}"
+                class="left ${getUserClassAndUrl.className} doCStream"
+                data-cs-name="OPEN_TEST_LEADERS" data-test-id="${testIdStr}">
+                    <span class="name">${user.firstName} ${user.lastName}</span>
+            </a>
+            </td>
+            </tr>
+            <tr>
+            <td>
+                <span class="greyTextColor smally">${analytics.score} marks</span>
+            </td>
+            </tr>
+            <tr>
+            <td>
+                %{
+                    timeObj=uicom.util.Utilities.getTimeFromMiliSec(analytics.timeTaken);
+                }%
+                <span class="greyTextColor smally" style="margin:3px 2px 0 0;">${timeObj.hrs}:${timeObj.mins} hrs</span>
+            </td>
+            </tr>
+        </table>
+                    #{/list}
+                </div>
+        </div>
+        #{/if} -->
+    </div>
+
+    <div class="left centerBody CSWidget bodyWhiteBg" data-widget="TEST_DETAILS_CENTER_BODY">
+        <!--<input type="button" class="curriculumAndFormatBtn vDropDown btnSelected" value="Curriculum & Format"/>
+        <input type="button" class="readInstructionBtn vDropDown" value="Instructions"/>-->
+        #{include 'tags/test/viewTestDetails.html'/}
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        try{
+            preTest.init();
+        }catch(err){
+            putConsoleError(err);
+        }
+    });
+</script>
+*{#{include 'tags/test/leaderBoard.html'/}}*
+#{include 'tags/test/testDetailsPopup.html'/}
+#{/if}
+#{elseif data!=null && !data.errorCode.isEmpty()}
+    #{common.messagePage msgTextColor : "redTextColor" , msg : data.errorMessage /}
+#{/elseif}
+#{else}
+    <div class="bodyWhiteBg">
+    <div class="pageHolderNM" style="height:700px;">
+        #{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+        <div class="boldy big14 centerText" style="padding:30px 0;">Test data not available, please try later</div>
+    </div>
+    </div>
+#{/else}
+<script type="text/javascript">
+    $(document).ready(function(){
+    #{if params.orgId != null}
+        try{
+        if(institute){
+            institute.init();
+        }
+        }catch(err){}
+    #{/if}
+    });
+</script>

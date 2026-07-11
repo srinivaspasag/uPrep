@@ -1,0 +1,50 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+	<script type="text/javascript">
+    		$(function(){
+        		showNoTabSec("MY_INSTITUTE");
+    		});
+	</script>
+#{/if}
+<script type="text/javascript">
+	$(function(){
+		instHeader.show("${params.orgId}");
+	});
+</script>
+#{stylesheet media:'screen', src:'institute/profile.css' /}
+<!-- PROFILE PAGE HTML -->
+#{if /*profileResp!=null && profileResp.errorCode.isEmpty() && */ memberInfo!=null && memberInfo.errorCode.isEmpty()}
+%{
+	memberInfo = memberInfo.result.info;
+	if(userInfo!=null && userInfo.errorCode.isEmpty()){
+		userInfo = userInfo.result.info;
+	}
+	targetUserRole = memberInfo.get("profile");
+	targetUserProgId = null;
+	if(memberInfo.mappings.has('programs') && memberInfo.mappings.programs.length()>0){
+		targetUserProgId = memberInfo.mappings.programs.get(0).get("id");
+	}
+	org = myOrgInfo;
+	userRole = myOrgInfo.get('userRole');
+}%
+<div id="instProfilePage" data-profile-user-id="${params.targetUserId}" 
+	data-profile-member-id="${memberInfo.id}"
+	data-profile-user-role="${targetUserRole}">
+	#{institute.profile.topBar profileResp : profileResp , memberInfo : memberInfo , profileData : profileAnalytics , myOrgInfo : myOrgInfo , targetUserId : params.targetUserId , userInfo : userInfo /}
+	
+	#{if targetUserRole == "STUDENT"}	
+		#{if userRole == "STUDENT"}
+			#{institute.profile.studentMiddleBar profileData : profileAnalytics /}
+		#{/if}
+		#{else}
+			#{institute.analytics.extGraph userRole : targetUserRole , progId : targetUserProgId , targetUserId : params.targetUserId /}
+		#{/else}
+	#{/if}
+	#{elseif targetUserRole == "TEACHER"}
+		*{#{institute.profile.profMiddleBar/}}*
+	#{/elseif}	
+	#{institute.profile.bottomBar memberInfo : memberInfo , userRole : userRole , targetUserRole : targetUserRole /}
+</div>
+#{/if}
+
+#{institute.pageFooter/}
+#{script src:'institute/profile.js', charset:'utf-8' /}

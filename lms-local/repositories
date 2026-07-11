@@ -1,0 +1,6 @@
+[repositories]
+  local
+  maven-central-https: https://repo1.maven.org/maven2/
+  typesafe-maven-releases: https://dl.cloudsmith.io/public/lightbend/maven-releases/maven/
+  typesafe-ivy-releases: https://scala.jfrog.io/artifactory/ivy-releases/, [organisation]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]
+  vedantu-local: file:///root/lms/vedantu/zowie/local-repo/, [module]/[revision]/[artifact]-[revision].[ext]

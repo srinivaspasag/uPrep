@@ -1,0 +1,61 @@
+%{
+	profileData = _profileData;
+}%
+#{if profileData!=null && profileData.errorCode.isEmpty()}
+%{
+	profile = profileData.result;
+	speed = "-";
+	accuracy = "-";
+	attempts = 0;
+	if(!profile.measures.equals(null)){
+		if(profile.measures.timeTaken > 0){
+			speed = (profile.measures.timeTaken/60000) / profile.measures.attempts;
+			speed = uicom.util.Utilities.roundDecimals(speed);
+		}
+		acc = uicom.util.Utilities.calcPercentage(profile.measures.correct,profile.measures.attempts);
+		accuracy = acc + "%";
+		attempts = profile.measures.attempts;
+	}
+}%
+<div>
+    <div class="relative pageHolderM">
+	<div class="instProfileMiddleBar">
+	   <div class="big24">Performance Overview
+		<span id="info-on-hover" title="Data refreshes every 30 mins">
+			<img src="/public/images/info30.png" width="15px">
+		</span>
+		</div>
+	   <table cellspacing=0 cellpadding=0 class="fullWidth instPrMidTable">
+		<tr>
+			<td class="instPrMidTxt">
+				<span class="relative" style="left:25px;">&{'TXT_TESTS'} &{'TXT_ATTEMPTED'}</span>
+			</td>
+			<td class="instPrMidTxt">
+				<span>&{'TXT_QUES'} &{'TXT_ATTEMPTED'}</span>
+				<span class="questionMark questionAttemptedQues" data-msg="&{'QUESTION_ATTEMPTED_INFO'}"></span>
+			</td>
+			<td class="instPrMidTxt">&{'TXT_AVERAGE'} &{'TXT_SCORE'}</td>
+			<td class="instPrMidTxt">&{'TXT_AVERAGE'} &{'TXT_SPEED'}</td>
+			<td class="instPrMidTxt">&{'TXT_AVERAGE'} &{'TXT_ACCURACY'}</td>
+		</tr>
+		<tr>
+			<td class="instPrMidVal">
+				<span class="relative" style="left:25px;">${profile.totalAttempts}</span>
+			</td>
+			<td class="instPrMidVal">${attempts}</td>
+			<td class="instPrMidVal">${Math.round(profile.percentage)}%</td>
+			<td class="instPrMidVal">${speed}</td>
+			<td class="instPrMidVal">${accuracy}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="instPrMidTxt big14">mins/question</td>
+			<td></td>
+		</tr>
+	   </table>
+	</div>
+    </div>
+</div>
+#{/if}

@@ -1,0 +1,502 @@
+%{
+    data = response.result;
+    //Changing font family for Trividyaa Organization
+    orgClass ='default';
+    if(params.orgId == '5bacb325e4b0ff57ab848e07'){
+        orgClass = 'trividyaa';
+    }
+}%
+<style type="text/css">
+    body,span,div{
+        font-size: 13.0pt!important;
+        font-family: sans-serif!important;
+    }
+    .questionPaperHolder{
+        padding: 0px 20px;
+    }
+    .questionPaperHeader img{
+        height: 38px;
+        max-width: 140px;
+        padding: 3px;
+        position:absolute;
+    }
+    .questionPaperTitle{
+        font-size: 26px !important;
+        font-weight: bold;
+        text-align:  center;
+        line-height: 34px;
+        top: 5px;
+        position: relative;
+        text-transform: capitalize;
+    }
+    .cleaner_with_divider{
+        clear: both;
+        width: 100%;
+    }
+    .instName{
+     text-align: center;
+     font-size: 30px !important;
+     font-weight: bold;
+     line-height: 1.5;
+    }
+    .marksDetails{
+        float: right;
+        margin:10px 0px;
+    }
+    .boardHeading{
+        padding: 5px;
+        background: black;
+        color: white;
+        text-align: center;
+        min-width: 80px;
+        max-width: 150px;
+        margin: 10px auto;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    .questionType{
+        font-size: 18px !important;
+        font-weight: bold;
+        text-align: center;
+    }
+    .nonner{
+        display: none;
+    }
+    .line{
+        height: 1px;
+        margin-top:20px;
+        background:#3d3d3d;
+    }
+    .mainContent{
+        width: 90%;
+        margin: auto;
+    }
+    .instructionHlder ul{
+        margin: 3px 0px;
+    }
+    .instructionHlder ul li{
+        /*padding: 3px 0px;*/
+    }
+    .markingScheme{
+        margin-left: 40px;
+        margin-top: 5px;
+    }
+    .markingScheme ul{
+        list-style: none;
+    }
+    .markingScheme ul li{
+        /*padding: 5px 0px;*/
+    }
+    .questionBody{
+        margin-top:15px;
+        margin-left: 15px;
+        margin-bottom: 35px;
+    }
+    .eachOptHolder{
+        display: inline-block;
+        min-width: 250px;
+        margin-top: 15px;
+        margin-left: 10px;
+    }
+    .questionNumber{
+        margin-right: 5px;
+        font-size: 18px !important;
+        font-weight: bold;
+    }
+    .RTELatex{
+        display: inline-block;
+    }
+    .RTEImageDiv {
+        margin-left: 25px;
+    }
+    @font-face{
+        font-family: trividyaaOrg;
+        src:url('../../public/Samarkan.ttf') format('truetype')
+    }
+    .trividyaa{
+        font-family: trividyaaOrg !important;
+        letter-spacing: 1.6;
+    }
+    .marksTitle{
+        display: inline-block;
+        width: 125px;
+    }
+</style>
+<div class="questionPaperHolder">
+    <div class="questionPaperHeader">
+             <img src="${currentOrgInfo.getOrgThumbnail()}" alt="${currentOrgInfo.getFullName()}">
+        <div class="instName ${orgClass}">
+            ${currentOrgInfo.getFullName()}
+        </div>
+        <div class="questionPaperTitle">
+            ${data.name}
+        </div>
+        <div class="marksDetails">
+            <div class="totalMarks">
+                <strong>Total Marks : </strong>${data.totalMarks}
+            </div>
+            #{if data.duration>0}
+            %{
+                    timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.duration);
+                    totalTimeHrs = timeObj.hrs;
+                    totalTimeMins = timeObj.mins;
+                    totalTime = totalTimeHrs + ":" + totalTimeMins;
+
+            }%
+            <div class="Duration">
+                <strong>Duration : </strong>${totalTime} hrs
+            </div>
+            #{/if}
+        </div>
+    </div>
+    <hr class="cleaner_with_divider">
+
+
+    <div class="mainContent">
+        %{
+            questionIndex = 0;
+        %}
+    #{list items:0..data.boards.length()-1, as:'index'}
+        %{
+            board = data.boards.get(index);
+            section = 1
+        }%
+            <div class="boardHeading">
+                ${board.name}
+            </div>
+            <hr class="line">
+            #{list items:0..board.questions.length()-1, as:'boardIndex'}
+                %{
+                    boardQuestion = board.questions.get(boardIndex).questions;
+                    boardQuestionType = board.questions.get(boardIndex).type;
+                    boardQuestionTotalMarks = board.questions.get(boardIndex).totalMarks;
+                    boardMaxQuestionsToBeAttempted=board.questions.get(boardIndex).maxQuestionsToBeAttempted;
+                }%
+
+                #{if !boardQuestion.equals(null) && !boardQuestion.equals("null") && boardQuestion != "null" &&  boardQuestion != null}
+                %{
+                    boardQuestionTotalQuestion = boardQuestion.length();
+                }%
+                    <div class="questionType">SECTION ${section} - (${boardQuestionType}) (Maximum Marks : ${boardQuestionTotalMarks})</div>
+                    <div class="instructionHlder">
+                        <div class="changingInstructionList">
+                            <ul class='numericInstr #{if boardQuestionType == "NUMERIC"} visible #{/if} #{else} nonner #{/else}'>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        This section has
+                                        <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                        questions
+                                    </span>
+                                </li>
+                                #{if boardMaxQuestionsToBeAttempted > 0}
+                                    <li>
+                                        <span style="font-size: medium;">
+                                            Out of <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                            questions,Only <strong class="maxQuestionsToBeAttempted">${boardMaxQuestionsToBeAttempted}</strong> needs to be attempted.
+                                        </span>
+                                    </li>
+                                #{/if}
+                                <li>
+                                    <span style="font-size: medium;">
+                                        The answer to each question is a
+                                        <strong>NUMERICAL ANSWER</strong>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        For each question, type the numerical value in the space provided below the question using provided keys.
+                                    </span>
+                                </li>
+                            </ul>
+
+
+                            <ul class='mcqInstr #{if boardQuestionType == "MCQ" || boardQuestionType == "MATRIX"} visible #{/if} #{else} nonner #{/else}'">
+                                <li>
+                                    <span style="font-size: medium;">
+                                        This section contains
+                                        <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                        questions
+                                    </span>
+                                </li>
+                                #{if boardMaxQuestionsToBeAttempted > 0}
+                                    <li>
+                                        <span style="font-size: medium;">
+                                            Out of <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                            questions,Only <strong class="maxQuestionsToBeAttempted">${boardMaxQuestionsToBeAttempted}</strong> needs to be attempted.
+                                        </span>
+                                    </li>
+                                #{/if}
+                                <li>
+                                    <span style="font-size: medium;">
+                                        From given
+                                        <strong class="optionCount"></strong>
+                                        options
+                                        #{if !data.oneOrMoreMarksQTypes.equals(null) && data.oneOrMoreMarksQTypes.toString().contains(boardQuestionType)}
+                                            <strong>ONE OR MORE THAN ONE</strong>
+                                        #{/if}
+                                        #{else}
+                                            <strong>,ONLY ONE</strong>
+                                        #{/else}
+                                        of these option(s) is(are) correct
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        For each question, select the alphabets corresponding to
+                                        #{if !data.oneOrMoreMarksQTypes.equals(null) && data.oneOrMoreMarksQTypes.toString().contains(boardQuestionType)}
+                                            all
+                                        #{/if}
+                                        #{else}
+                                        #{/else}
+                                        the correct option(s) provided below the questions
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <ul class='scqInstr #{if boardQuestionType == "SCQ"} visible #{/if} #{else} nonner #{/else}'">
+                                <li>
+                                    <span style="font-size: medium;">
+                                        This section contains 
+                                        <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                        questions
+                                    </span>
+                                </li>
+                            
+                                #{if boardMaxQuestionsToBeAttempted > 0}
+                                    <li>
+                                        <span style="font-size: medium;">
+                                            Out of <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                            questions,Only <strong class="maxQuestionsToBeAttempted">${boardMaxQuestionsToBeAttempted}</strong> needs to be attempted.
+                                        </span>
+                                    </li>
+                                #{/if}                                    
+                                
+                                <li>
+                                    <span style="font-size: medium;">
+                                        From given
+                                        <strong class="optionCount"></strong>
+                                        options
+                                        <strong>,ONLY ONE</strong>
+                                        of these option(s) is correct.
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        For each question, select the alphabets corresponding to the correct option(s) provided below the questions
+                                    </span>
+                                </li>
+                            </ul>
+
+
+                            <ul class='paraInstr #{if boardQuestionType == "PARA"} visible #{/if} #{else} nonner #{/else}'>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        This section contains
+                                        <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                        Paragraphs
+                                    </span>
+                                </li>
+                                #{if boardMaxQuestionsToBeAttempted > 0}
+                                    <li>
+                                        <span style="font-size: medium;">
+                                            Out of <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                            questions,Only <strong class="maxQuestionsToBeAttempted">${boardMaxQuestionsToBeAttempted}</strong> needs to be attempted.
+                                        </span>
+                                    </li>
+                                #{/if}
+                                <li>
+                                    <span style="font-size: medium;">
+                                        This paragraph has
+                                        <strong class="paraQuestionCount"></strong>
+                                        questions
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        From given
+                                        <strong class="optionCount"></strong>
+                                        options.
+                                        #{if !data.oneOrMoreMarksQTypes.equals(null) && data.oneOrMoreMarksQTypes.toString().contains(boardQuestionType)}
+                                            <strong>ONE OR MORE THAN ONE</strong>
+                                        #{/if}
+                                        #{else}
+                                            <strong>,ONLY ONE</strong>
+                                        #{/else}
+                                        of these four option(s) is(are) correct
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        For each question, select the alphabets corresponding to 
+                                        #{if !data.oneOrMoreMarksQTypes.equals(null) && data.oneOrMoreMarksQTypes.toString().contains(boardQuestionType)}
+                                            all
+                                        #{/if}
+                                        #{else}
+                                        #{/else}
+                                        the correct option(s) provided below the questions
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <ul class='subjInstr #{if boardQuestionType == "SUBJECTIVE"} visible #{/if} #{else} nonner #{/else}'>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        This section contains
+                                        <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                        subjective questions.
+                                    </span>
+                                </li>
+                                #{if boardMaxQuestionsToBeAttempted > 0}
+                                    <li>
+                                        <span style="font-size: medium;">
+                                            Out of <strong class="questionsCount">${boardQuestionTotalQuestion}</strong>
+                                            questions,Only <strong class="maxQuestionsToBeAttempted">${boardMaxQuestionsToBeAttempted}</strong> needs to be attempted.
+                                        </span>
+                                    </li>
+                                #{/if}
+                                <li>
+                                    <span style="font-size: medium;">
+                                        The answer to each question is a
+                                        <strong>TEXTUAL ANSWER OR AN IMAGE UPLOAD</strong>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        For each question, enter the appropriate text or upload an image.
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="markingScheme">
+                            <span style="font-size: medium;">
+                                <span style="font-size: medium;">For each question, marks will be awarded in one of the following categories :</span>
+                            </span>
+                            <ul>
+                                <li>
+                                    <span style="font-size: medium;">
+                                        <span class="marksTitle">Full Marks</span> : 
+                                        <strong class="correctMarks">+${boardQuestion.get(0).marks['positive']} </strong>
+                                        #{if (!data.oneOrMoreMarksQTypes.equals(null) && data.oneOrMoreMarksQTypes.toString().contains(boardQuestionType))}
+                                            <span class="correctText">If only all corresponding option(s) is(are) chosen.</span>
+                                        #{/if}
+                                        #{elseif boardQuestionType == "NUMERIC" }
+                                            <span class="correctText">If the correct numerical value is typed in the provided space.</span>
+                                        #{/elseif}
+                                        #{else}
+                                            <span class="correctText">If only corresponding option is chosen.</span>
+                                        #{/else}
+                                    </span>
+                                </li>
+                                #{if data.enablePartialMarks && !data.partialMarksQTypes.equals(null) && data.partialMarksQTypes.toString().contains(boardQuestionType)}
+                                <li class="partialMarksList">
+                                    %{
+                                        presentQuestion = boardQuestion.get(0);
+                                    }%
+                                    #{if presentQuestion.has('options') && !presentQuestion.options.equals(null) && presentQuestion.options.length()>0}
+                                    %{
+                                        options = presentQuestion.options;
+                                        countOptions = options.length();
+                                    }%
+                                    #{list items:1..options.length()-1, as:'index'}
+                                        %{
+                                            partialMark = Math.round((presentQuestion.marks['positive']/options.length()) * (options.length() - index) * 100)/100;
+                                            chosenOptions = options.length() - index;
+                                        }%
+                                        <div class="">
+                                        <span class="marksTitle ">Partial Marks</span> :
+                                        <span class="">
+                                            +
+                                            <strong>${partialMark}</strong>
+                                            If ${countOptions} #{if countOptions != options.length()} or more#{/if} options are correct but ONLY ${chosenOptions} #{if chosenOptions >1} are #{/if}#{else} is #{/else} chosen.
+                                        </span>
+                                        </div>
+                                        %{countOptions--}%
+                                    #{/list}
+                                    #{/if}
+                                </li>
+                                #{/if}
+                                <li>
+                                    <span style="font-size: medium;">
+                                        <span class="marksTitle">Zero Marks</span> :
+                                        <strong>0</strong>
+                                        #{if boardQuestionType == "NUMERIC"}
+                                            If the question is unanswered
+                                        #{/if}
+                                        #{else}
+                                            <span class="skippedText">If none of the options is chosen.(i.e the question is unanswered)</span>
+                                        #{/else}
+                                    </span>
+                                </li>
+                                #{if boardQuestion.get(0).marks['negative'] > 0}
+                                <li class="inCorrectMarksList">
+                                    <span style="font-size: medium;" >
+                                        <span class="marksTitle">Negative Marks</span> :
+                                        <strong class="inCorrectMarks">
+                                            #{if boardQuestion.get(0).marks['negative'] > 0}
+                                            -
+                                            #{/if}
+                                            ${boardQuestion.get(0).marks['negative']}
+                
+                                        </strong>
+                                        <span class="inCorrectText">In all other cases</span>
+                                    </span>
+                                </li>
+                                #{/if}
+                            </ul>
+                        </div>
+                    </div>
+                    <hr class="line">
+                    #{list items:0..boardQuestion.length()-1, as:'boardQuestionIndex'}
+                    <div class="questionBody">
+                        <!-- <div style="background: #2e6fb6;padding: 5px;display: inline-block;"> -->
+                            
+                        <!-- </div> -->
+                        <div class="questionText">
+                            <span class="questionNumber">${++questionIndex}.  </span>
+                            %{
+                                question = boardQuestion.get(boardQuestionIndex);
+                            }%
+                        ${question.content.raw()}
+                        </div>
+                        <div class="choices">
+                            %{
+                                alphabet = "ABCDEFGHIJKLMNOPQRSTWXYZ";
+                                question = question;
+                            }%
+                            #{if question.has('options') && !question.options.equals(null) && question.options.length()>0}
+                                #{list items:0..question.options.length()-1, as:'index'}
+                                    <div class="eachOptHolder">
+                                       <div>
+                                        <span class="optAlphaCount">(${alphabet.charAt(index)})</span>
+                                        <span>
+                                            ${question.options.get(index).raw()}
+                                        </span>
+                                       </div>
+                                    </div>
+                               #{/list}
+                            #{/if}
+                        </div>
+                    </div>
+                    #{/list}
+                    %{section++}%
+                    <hr class="line">
+                #{/if}  
+            #{/list}
+        #{/list}
+        </div>
+</div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            extensions : [ "tex2jax.js" ],
+            jax : [ "input/TeX", "output/HTML-CSS" ],
+            tex2jax : {
+                    inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+            },
+            TeX: {
+            extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                    }
+    });
+</script>
+<script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>

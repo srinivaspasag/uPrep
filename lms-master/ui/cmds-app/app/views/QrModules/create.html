@@ -1,0 +1,200 @@
+%{
+    gCboxClass='';
+    moduleTitle='';
+    hasModuleInfo=false;
+    moduleId='';
+    prerequisiteModuleId='';    
+    if(moduleInfo!=null){        
+        boards=moduleInfo.result.boardTree;
+        schedules = [:];
+        if(moduleInfo.result.schedules){
+            schedules = moduleInfo.result.schedules;
+        }
+        moduleInfo=moduleInfo.result.moduleInfo;
+        moduleId=moduleInfo.id;
+        moduleTitle=moduleInfo.name;
+        moduleRun='NON_SEQUENTIAL';
+        if(!moduleInfo.isNull('moduleRun')){
+            moduleRun=moduleInfo.moduleRun;
+        }        
+        if(moduleRun=='SEQUENTIAL'){
+            gCboxClass=' gCBoxChecked';
+        }    
+        hasModuleInfo=true;
+        if(!moduleInfo.isNull('prerequsiteModuleId')){
+            prerequisiteModuleId=moduleInfo.prerequsiteModuleId;
+        }
+    }
+}%
+<div id="modulePage" data-module-id="${moduleId}" data-module-title="${moduleTitle}" #{if params.targetId != null} data-target-id="${params.targetId}"#{/if}>   
+    <div id="leftSection"></div> 
+    <div id="mainSection">      
+        <div id="topicDotsLiner"></div>
+        <div class="moduleTitleDiv">    
+            <div class="moduleTitleTextHead">
+                <div class="moduleTitleTextBox resourceIconMODULE"></div>
+                <span>&{'MODULE_TITLE_HEAD'}</span>
+            </div>
+            <div class="linBlk">
+                <div class="big14 boldy color3">&{'MODULE_MODULE_TITLE_HEAD'}</div>
+                <div class="inputDiv moduleTitleInputDiv">
+                    <input type="text" id="moduleTitleInput"
+                           placeholder="&{'MODULE_TITLE_INPUT_PLACE_HOLDER'}" value="${moduleTitle}"/>
+                </div> 
+            </div>
+            <div class="linBlk hider" style="position: relative; margin-left: 50px; top: 10px;">
+                <div class="big14 boldy color3 margBot5">Add prerequisite (To view this module)</div>
+                <div class="vChoose" data-value="-1">
+                    <div class="vChooseHead"
+                         style="background-color: rgb(255, 255, 255); 
+                         padding-top: 7px; padding-bottom: 7px;width: 150px;">No prerequisites</div>
+                    <div class="vChooseDownIcon"></div>
+                    <div class="vChooseDropDown">
+                        <div class="vChooseOpt" data-value="-1">No prerequisites</div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="gCBox${gCboxClass}" data-callback="toggleModuleSequential">
+                <div class="gCBoxTicker"></div>                    
+            </div>   
+            <span class="big12 color6">&{'MODULE_MAKE_MODULE_SEQUENTIAL'}</span><br>
+            #{include 'QrModules/moduleTags.html' /}
+            <a class='small10 liner addModuleTags'>Add Tags</a>
+        </div> 
+        <div class="moduleMainSectionHead">&{'MODULE_CONTENTS'}</div>
+        <div id="moduleEntriesHolder">
+            #{if !hasModuleInfo||moduleInfo.isNull('children')||(!moduleInfo.isNull('children')&&moduleInfo.children.length()==0)}
+                #{qrModules.topicEntry/}
+            #{/if}
+            #{else}
+                %{
+                    children=moduleInfo.children;
+                    firstChild=children.get(0);
+                }%
+                   #{if !firstChild.isNull('entity')}
+                   %{
+                        isTestScheduled = false;
+                        schedule = null;
+                        if(firstChild.entity.type == "CMDSTEST" && schedules){
+                            if(schedules.has(firstChild.entity.id)){
+                                schedule = schedules.get(firstChild.entity.id);
+                                isTestScheduled = true;
+                            }
+                        }
+                    }%
+                        <div class="moduleEntry moduleEntryTopicType moduleEntryTopicTypeWithAddCircle"
+                             rel="moduleEntryTopicTypeWithAddCircle">
+                            <div class="moduleEntryLeftSec">
+                                <span class="moduleEntryTopicTypeAddBox moduleEntryAddNotation">+</span>                    
+                            </div>
+                            <div class="moduleEntryMoveDisplayer"></div>
+                        </div>                    
+                        #{qrModules.contentEntry entry:firstChild, isFinalised:true,isTestScheduled:isTestScheduled , schedule:schedule/}                                          
+                   #{/if}
+                   #{elseif !firstChild.isNull('name')}
+                        #{qrModules.topicEntry entry:firstChild, isFinalised:true/}
+                   #{/elseif}
+                   #{if children.length()>1}
+                  #{list items:1..children.length()-1,as:"i"}            
+                      %{
+                        entry=children.get(i);
+                        isTestScheduled = false;
+                        schedule = null;
+                        if(!entry.isNull('entity') && entry.entity.type == "CMDSTEST" && schedules){
+                            if(schedules.has(entry.entity.id)){
+                                schedule = schedules.get(entry.entity.id);
+                                isTestScheduled = true;
+                            }
+                        }
+                      }%
+                      #{if !entry.isNull('entity')}
+                            #{qrModules.contentEntry entry:entry,isFinalised:true , isTestScheduled:isTestScheduled , schedule:schedule/}                            
+                      #{/if}
+                      #{elseif !entry.isNull('name')}
+                            #{qrModules.topicEntry entry:entry,isFinalised:true/}
+                      #{/elseif }
+                  #{/list}
+                  #{/if}
+            #{/else}                           
+        </div>
+        <div class="moduleAddContentButtonDiv">
+            <div class="bigGreenButton addContentToModule" id="moduleAddContentButton">
+                <span class="big24 boldy">+</span> Add Content
+            </div>    
+        </div>          
+        <div class="moduleSaveDiv">
+            <div class="bigBlueButton" id="saveModule" 
+                 data-back-up-url="/organization/${params.orgId}/resources">
+                Save & Close
+            </div>
+        </div>
+    </div> 
+    <div id="modulePageSamples" class="nonner">
+        #{qrModules.topicEntry/}
+        <div class="moduleEntry moduleEntryTopicType moduleEntryTopicTypeWithAddCircle"
+             rel="moduleEntryTopicTypeWithAddCircle">
+            <div class="moduleEntryLeftSec">
+                <span class="moduleEntryTopicTypeAddBox moduleEntryAddNotation">+</span>                    
+            </div>
+            <div class="moduleEntryMoveDisplayer"></div>
+        </div>    
+        <div class="moduleAddContentButtonDiv moduleEntryAddContentButtonDiv"
+             rel="moduleEntryAddContentButtonDiv">
+            <div class="bigGreenButton addContentToModule">
+                <span class="big24 boldy">+</span> Add Content
+            </div>    
+        </div>           
+        <div class="moduleEntry moduleEntryContentType" rel="moduleEntryContentType" draggable="true">
+            <span class="moduleEntryAddNotation moduleEntryAddNewTopicType">+</span>
+            <div class="moduleEntryContentTypeMainSec">
+                <div class="moduleEntryRightSec">
+                    <div class="vChoose" data-value="-1" data-onchange="updateModuleEntryCompletionReq">
+                        <div class="vChooseHead">Not Required</div>
+                        <div class="vChooseDownIcon"></div>
+                        <div class="vChooseDropDown">
+                            <div class="vChooseOpt" data-value="-1">Not Required</div>
+                            <div class="vChooseOpt" data-value="VIEW">Required</div>
+                        </div>
+                    </div>
+                    <span class="moduleEntryDeleteNotation moduleDeleteContentType"></span>
+                </div> 
+                <div class="moduleEntryLeftSec">            
+                    <span class="moduleEntryMoveNotation"></span>
+                    <span class="moduleContentNo">1.</span>        
+                    <div class="linBlk alignTop">
+                        <div class="moduleContentStat"></div>
+                    </div>
+                </div>        
+                <div class="cleaner_with_divider">&nbsp;</div>
+            </div>
+            <div class="moduleEntryMoveDisplayer"></div>
+        </div>         
+        <div id="addModuleTagsSample" rel="addModuleTagsSample">
+            <div class="cmdsPopupHead">
+                Choose Subject
+            </div>
+            <table  class="margLeft20" width="95%">
+                <tbody>
+                    <tr>
+                        <td class="grayHead pad10Top alignTop width150">
+                            Choose Subjects*
+                        </td>
+                        <td class="pad10Top mvcCTFSubsTd"></td>
+                    </tr>                    
+                </tbody>
+            </table> 
+            <div class="centerText">
+                <div class="bigGreenButton margTop20 centerText" id="addFinalModuleTags">Add Tags</div>    
+            </div>            
+        </div>   
+    </div>
+</div>
+<script type="text/javascript">
+    new function() {
+        var fn = function() {
+            qrModules.init({prerequisiteModuleId:"${prerequisiteModuleId}",published:false});
+        };
+        lazyLoad([{fname: "qrModules.js", cb: fn}]);
+    }();
+</script>  

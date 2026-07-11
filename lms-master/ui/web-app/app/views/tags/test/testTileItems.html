@@ -1,0 +1,65 @@
+%{
+    tests=_tests;
+    target=_target;
+    loadMoreSize=_loadMoreSize;
+}%
+
+    #{if tests.length()>0}
+    #{list items:0..tests.length()-1,as:'q'}
+    %{
+        testData=tests.get(q);
+        testUrl=webUtils.TemplateHelper._getTestUrl(testData);
+    }%
+            <div class="left relative eachTestList eachListViewItem testTile" title="${testData.desc}" data-test-id="${testData.testId}">
+                    <img class="left relative listTestIcon" alt="" src="/public/images/questions/testBack.png"/>
+                    <div class="left relative listContentsDetails">
+                            <span class="left relative big12 boldy listContentsText blackTextColor TTTitle">${testData.name.raw()}</span>
+                            <br/>
+                    #{if testData.has('user') && testData.user!=null}
+                            <span class="left relative big12 listContentsText blueTextColor" style="padding-top:0px;">by ${testData.user.firstName.raw()} ${testData.user.lastName.raw()}</span>
+                    #{/if}
+                            <br/>
+                            <span class="left relative listContentsRankingHolder">
+                                    <span class="left relative listContentsRankingStars" style="width:${testData.avgRating*20}%"></span>
+                            </span>
+                    </div>
+                    <div class="left relative listContentsMiddle">
+                                    <span class="left relative listContentsText blackTextColor">Attempts - <b>${testData.attempts}</b>
+                                            #{if testData.duration <= 0}
+                                                    Time - <b>No Limit</b>
+                                            #{/if}
+                                            #{else}
+                                                    %{
+						    timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(testData.duration);
+                                                    }%
+                                                    Time - <b>${timeObj.hrs}:${timeObj.mins} hrs</b>
+                                            #{/else}
+                                    Saved - <b>${testData.views}</b> </span>
+                            <span class="left relative listContentsText blackTextColor" style="width:100%;">
+                                    <span class="listMatchingTags"></span>
+                            </span>
+                            <span class="left relative big12 boldy listContentsText greyTextColor">Target -
+                                <a href="${controllers.Boards.getBoardUrl('exam',testData.target.brdId)}"
+                                   data-brd-id="${testData.target.brdId}" class="boardExam blueTextColor big14">${testData.target.code}</a>
+                            </span>
+                    </div>
+                    <div class="right relative listContentsRight">                            
+                           #{if target=="PLAYLIST_ADD"}
+                            <span class="blueSubmitButton addTestToPLSec">Add to Topic</span>
+                            #{/if}
+                            #{else}
+                            <input class="greenButton listContentBtn openTestPage"
+                                   type="button" value="Open" data-test-id="${testData.testId}"/><br/>
+                            #{/else}
+                            <div class="onHoverListContentsItems"></div>
+                    </div>
+            </div>
+    #{/list}
+    #{/if}
+    #{else}
+    <div class="userMessage">No Tests found</div>
+    #{/else}
+
+    #{if loadMoreSize != 0&& tests.length()==loadMoreSize}
+    <div class="loadMoreItems LMHandlerDivLoadMore">Load More Tests</div>
+    #{/if}

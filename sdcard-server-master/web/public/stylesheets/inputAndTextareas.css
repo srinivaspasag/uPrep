@@ -1,0 +1,77 @@
+textarea{
+    resize:none;
+    margin: 0 auto;
+    border: 1px solid #e0e0e0;
+    font-family: arial,sans-serif;
+    font-size: 13px;
+}
+textarea:focus{
+    border: 1px solid #289bb4;
+}
+.textareaDiv textarea,
+.inputDiv input[type='text'],
+.inputDiv input[type='email'],
+.inputDiv select,
+.inputDiv input[type='password']{
+    border: medium none;
+    width: 100%;
+    background-color: #F4F4F4;
+}
+.textareaDiv,.inputDiv{
+    background-color: #F4F4F4;
+    border: 1px solid transparent;
+    padding: 5px 15px;
+    color: #333333;
+    font-size: 14px;
+    position: relative;
+}
+.inputDiv.hasSearchImg{
+    padding-left: 30px;
+}
+.textareaDiv textarea:focus{   
+    border: medium none;
+    outline: none;
+}
+.textareaDiv:hover,.inputDiv:hover{
+    border-color: #CCCCCC;
+}
+.inputDivFocused,.textareaDivFocused{
+    border: 1px solid #666666;
+}
+.bigInputDiv{    
+    background-color: #EEEEEE;
+    font-size: 15px;
+    padding: 13px 20px;
+}
+.bigInputDiv.hasSearchImg{
+    padding-left: 30px;
+}
+.bigInputDiv input[type='text'],.bigInputDiv input[type='password']{
+    background-color: #EEEEEE;
+}
+.smallInputDiv{    
+    padding: 3px 15px;
+}
+.smallInputDiv.hasSearchImg{
+    padding-left: 30px;
+}
+.whiteInputDiv{
+    background-color: #FFFFFF;
+    padding: 5px 15px;
+}
+.whiteInputDiv input[type='text'],.whiteInputDiv input[type='password']{
+    background-color: #FFFFFF;
+}
+.whiteInputDiv.hasSearchImg{
+    padding-left: 30px;
+}
+.inputSearchImg{
+    background: url("/vedantu-ext-cmds-uploader/public/images/inputSearch.png") no-repeat scroll 0 center transparent;
+    bottom: 0;
+    cursor: pointer;
+    display: inline-block;
+    left: 13px;
+    position: absolute;
+    top: 0;
+    width: 13px;  
+}

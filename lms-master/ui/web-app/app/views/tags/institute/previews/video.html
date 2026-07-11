@@ -1,0 +1,73 @@
+%{
+	data = _source;
+	contentHolderEditable = _target=="editable"?true:false;
+}%
+#{if data.has('url')}
+%{
+    url = data.url;
+    domainUrl = '';
+    domainName = data.caption;
+    originalUrl = data.url;
+    playUrl = data.url;
+    if(data.has('linkInfo') && !data.linkInfo.equals('null') && !webUtils.TemplateHelper.isNull(data,"linkInfo")){
+	extInfo = data.linkInfo;
+	domainUrl = extInfo.domainURL;
+	domainName = extInfo.domainName;
+	playUrl = extInfo.embedURL;
+	if(domainName != null){
+	   if("YOUTUBE".equals(domainName.toUpperCase())){
+		playUrl = uicom.util.Utilities.putParamInUrl(playUrl,"rel","0");
+		playUrl = uicom.util.Utilities.putParamInUrl(playUrl,"showinfo","0");
+	   }
+	}
+	originalUrl = extInfo.originalURL;
+    }else{
+    	url = url.replace("http://", "https://");
+    	domainUrl = url.substring(0,url.indexOf('/',url.lastIndexOf('.')));
+    }
+}%
+<div class="instVideoPreview instItemPreview" data-src="${_target=='editable'?data.toString():''}">
+   #{if _target=="editable"}
+    <div>
+   	<span class="instAttachUrl"><b>${data.site_name} : </b> ${_inUrl!=null?_inUrl:url}</span>
+   	<span class="instAttachDiscard" title="discard the attachment">Discard</span>
+	<div class='cleaner_with_divider'>&nbsp;</div>
+    </div>
+   #{/if}
+   <table class="fullWidth">
+   	<tr>
+   	   <td rowspan="2" class="videoImgHold">
+		<a class="videoThumbWrapper playInstVideo instActFeedImgHolder" rel="${url}" data-play-url="${playUrl}">
+		   <img src="${data.image}" class="instActFeedImg" alt="&{'IMG_NA'}">
+		#{if data.has('duration') && data.duration!="" && data.duration>0}
+		%{
+			timeObj = uicom.util.Utilities.getTimeObjFromMilliSec(data.duration*1000);
+		}%
+		   <div class="videoDuration" rel="${data.duration}">#{if Integer.parseInt(timeObj.hrs) > 0} ${timeObj.hrs}:#{/if}${timeObj.mins}:${timeObj.secs}</div>
+		#{/if}
+		</a> 
+	   </td>
+	   <td>
+		<a class="boldy" target="_blank" href="${url}">${data.title}</a>
+		<a href="${domainUrl}" target="_blank" class="blocky">${data.caption}</a>
+	   </td>
+	</tr>
+	<tr>
+	   <td>
+                #{if data.has('content') && data.content!=""}
+			<div contenteditable=${contentHolderEditable} style="background-color:#{if contentHolderEditable}white#{/if}";
+				class="instAttachTxtArea">${data.content.trim().raw()}</div>
+                #{/if}
+	   </td>
+	</tr>
+   </table>
+   #{if _target=="preview"}
+   	<div class="videoPlayPreview nonner">
+		<div class="crossVidPreview right blueTextColor smally" style="cursor:pointer;">Close Preview</div>
+		<div class="vidPreviewEmbedHolder" style="min-width:510px;min-height:287px;">
+			*{<iframe width="510" height="287" src="${playUrl}" frameborder="0" allowfullscreen></iframe>}*
+		</div>
+   	</div>
+   #{/if}
+</div>
+#{/if}

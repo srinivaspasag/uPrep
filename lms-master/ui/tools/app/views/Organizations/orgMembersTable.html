@@ -1,0 +1,76 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.list.length()>0}
+	%{
+		members = resp.result.list;
+	}%
+	<div class="centerText" style="font-size:13px;padding-bottom:10px;">
+		%{
+			start = Integer.parseInt(params.start);
+			size = Integer.parseInt(params.size);
+			total = resp.result.totalHits;
+			cur = members.length()+start;
+			preStart = start - size;
+			preStart = preStart < 0 ? 0 : preStart;
+		}%
+		#{if start>0}
+			<a class="floatLeft moreMembers" data-start="${preStart}">Prev</a>
+		#{/if}
+		<span>Showing <b>${start}</b> - <b>${cur}</b> of <b>${total}</b></span>
+		#{if (start + cur)<total}
+			<a class="floatRight moreMembers" data-start="${start+cur}">Next</a>
+		#{/if}
+	</div>
+	<table class="tableWithBorder fullWidth">
+	   <tr>
+		<th>Name</th>
+		<th>Member Id</th>
+		<th>Gender</th>
+		<th>Part Of Programs</th>
+		<th>Impersonate Others</th>
+                <th>Direct Access Url</th>
+	   </tr>
+	   #{list items:0..members.length()-1,as:'index'}
+		%{ member = members.get(index);}%
+	   <tr>
+		<td>${member.firstName} ${member.lastName}</td>
+		<td>${member.memberId}</td>
+		<td>${member.gender}</td>
+		<td>
+		   #{if member.has('mappings') 
+				&& !member.mappings.equals(null) 
+				&& member.mappings.has("programs") 
+				&& !member.mappings.programs.equals(null)
+				&& member.mappings.programs.length()>0}
+			#{list items:0..member.mappings.programs.length()-1,as:'m'}
+				%{ prog = member.mappings.programs.get(m);}%
+				<div data-id="${prog.id}">${prog.name}</div>
+			#{/list}
+		   #{/if}
+		</td>
+		<td>
+		#{if member.profile == "MANAGER"}
+		    <div style="text-align:center;">
+			<input type="checkbox" class="canImpersonate" data-member-id="${member.id}"
+				data-user-id="${member.userId}"
+				#{if member.canImpersonate==true} checked #{/if}/>
+		    </div>
+		#{/if}
+		#{else}
+		    <div style="text-align:center;">
+			<span style="font-size:14px;color:red;">NA</span>	
+		    </div>
+		#{/else}
+		</td>
+                <td style="text-align: center;">
+                    <a class="getDirectURL" style="font-size: 11px;" data-user-id="${member.userId}">
+                        Get Direct Access Url
+                    </a>
+                </td>
+	   </tr>
+	   #{/list}
+	</table>
+#{/if}
+#{else}
+	<div class="centerText">
+	    <div style="font-weight:bold;font-size:14px;">No Members Found</div>
+	</div>
+#{/else}

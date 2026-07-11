@@ -1,0 +1,69 @@
+    %{
+        target=_target;        
+        cmdsResp=_cmdsResp;
+        includeName='';
+        quesnsUrl='QrQuestions/qrQuesns.html';
+        optsType="QUESTIONS";
+    }%    
+    <div class="mcWidget">
+        <div class="cmdsTableSearchDiv">
+            <div class="inputDiv cmdsTableSearchBox hasSearchImg">
+                <input type="text" class="mcSearchDivInput" data-param-name="query" value="${params.keyWord}"/>
+                <span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>                
+            </div>
+        </div>        
+        <div class="cmdsTableOptsAndSortDiv">
+          <div class="cmdsTableCheckedOpts floatLeft"></div>  
+          <div class="cmdsTableSortDiv"> 
+              #{if opsType=="QUESTIONS"}
+               <div class="pageSetterDiv floatRight margTop20"></div>
+              #{/if}
+              #{else}
+              #{common.lmArrowsDiv /}              
+              #{/else}
+                Sort by
+                #{include 'Widgets/mcvChooseAlpha.html' /}  
+                #{include 'Widgets/mcvChooseLevel.html' /}
+                #{include 'Widgets/mcvChooseQuesType.html' /}               
+          </div>
+          <div class="cleaner_with_divider">&nbsp;</div>
+        </div>    
+        <div id="leftSection" class="fixedLeftSec">
+            #{common.courseTopicChooseDiv /}
+            *{%{
+                testsClass='';
+                testHead='';
+                if(target=="SOURCES"||target=="SOURCE_PAGE"){
+                    testHead='Get Questions/folders whose content is added to';                    
+                }else if(target=='TEST_CREATION'){
+                    testHead='Get Questions added to';
+                }
+            }%
+            <div class="margTop20 cmdsSearchTestsHolder${testClass}">
+                <div class="grayHead">${testHead}</div>
+                <div class="cmdsSearchTestsDiv"></div>
+            </div>
+            %{
+                srcsClass='';
+                srcHead='';
+                if(target=="PRODUCTS"){
+                    srcHead='Get Products made from';                    
+                }
+            }%
+            <div class="cmdsSearchSourcesHolder${srcsClass}">
+                <div class="grayHead">${srcHead}</div>
+                <div class="cmdsSearchSourcesDiv"></div>
+            </div>      }*      
+        </div>   
+        %{
+            tableClasses='';
+            if(target!='TEST_CREATION'||target!='SOURCE_PAGE_QUESTIONS'){
+                tableClasses='cmdsContentTBody LMHandlerDiv';
+            }
+        }%
+        <div id="tableSection" class="${tableClasses}">
+            #{if includeName!=''}
+                #{include arg:includeName /}
+            #{/if}            
+        </div>    
+    </div>  

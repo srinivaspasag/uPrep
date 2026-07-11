@@ -1,0 +1,77 @@
+#{stylesheet media:'screen', src:'institute/o.myPrograms.css' /}
+<div id="myProgramsPage">
+   <div class="myEnrolledPrograms" style="border-bottom: 1px solid #e6e6e6;">
+      	<div class="pageHolderM">
+		<div class="big28">&{'TXT_MY_PROGRAMS'}</div>
+		<div class="categoryProgramsContainer"></div>
+   	</div>
+   </div>
+   <div class="availablePrograms" style="padding:0px 50px;">
+      	<div class="pageHolderM">
+	%{
+		programText = play.i18n.Messages.get("category.AVAILABLE_PROGRAMS");
+	}%
+	#{UIComWidgets.categorySections orgId : params.orgId , programText : programText /}
+   	</div>
+   </div>
+</div>
+<div class="nonner" id="myProgramsUiSamples">
+   <div id="programPaymentConfirmPopup">
+   <div class="buyProgramPopup">
+	<div class="orgSiteColor big20 catProgramName centerText" style="margin-top:30px;"></div>
+	<div class="centerText big16 boldy" style="margin-top:20px;">
+        	<div class="paymentSuccess nonner">&{'payment.success'}</div>
+        	<div class="paymentFailed nonner">&{'payment.failed'}</div>
+        	<div class="paymentCancelled nonner">&{'payment.cancelled'}</div>
+        	<div class="partOfProgram nonner">You are part of the above program now.</div>
+	</div>
+        <div class="centerText" style="margin:40px 0 30px;">
+                <span class="orgButton closeVPopup">&{'TXT_OK'}</span>
+        </div>
+   </div>
+   </div>
+   <div id="myProgramInfoPopup">
+   <div class="myProgramInfoPopup">
+	<div class="orgSiteColor big20 catProgramName"></div>
+	<div class="catProgramPrice"></div>
+	<div class="catProgramDetailInfo">
+		<div class="titleRobotoMedium14">&{'TXT_DESCRIPTION'}</div>
+                <div class="catProgramDesc"></div>
+		<!--DATA NA FROM SERVER
+		<div class="titleRobotoMedium14">&{'TXT_COURSES'}</div>
+		<ul class="catProgramCourses">
+		</ul>-->
+	</div>
+        <div style="margin:30px 0 25px;">
+		<span class="visitProgramLibrary orgButton displayInBlock">&{'TXT_VISIT_LIBRARY'}</span>
+		<span class="myProgPaymentInfo blueButton displayInBlock alignTop">&{'payment.TXT_PAYMENT_INFO'}</span>
+	</div>
+   </div>
+   </div>
+</div>
+#{script src:"institute/o.myPrograms.js", charset:'utf-8' /}
+<script type="text/javascript">
+        var instHmPgOpenTimer;
+	var paymentInfo;
+	#{if transactionId!=null && !transactionId.isEmpty()}
+	paymentInfo = {
+		item_sku : "${item_sku}",
+		transactionId : "${transactionId}",
+		transactionStatus : "${transactionStatus}"
+	}
+	#{/if}
+        $(function(){
+                if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+                instHmPgOpenTimer = setInterval(function(){
+                        if(myPrograms){
+                                clearInterval(instHmPgOpenTimer);
+                                myPrograms.init(paymentInfo);
+				paymentInfo = null;
+                        }
+                },10);
+        });
+        $(document).ready(function(){
+    $("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+    $("#instPageNavigator").find(".instNavTab.openInstAvailPrograms").addClass("clInstTab");
+  });
+</script>

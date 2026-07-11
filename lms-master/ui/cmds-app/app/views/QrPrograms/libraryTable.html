@@ -1,0 +1,90 @@
+%{
+  resourcesResult=resources.result;
+  totalHits=resourcesResult.totalHits;
+  resources=resourcesResult.list;
+  questionsCount=0;
+  if(resourcesResult.has('totalQuestions')){
+  	questionsCount=resourcesResult.totalQuestions;
+  }
+  orgUserProfile=currentOrgInfo.getOrgUserProfile();
+}%
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv">
+    <table class="headSecTable">
+      <thead>
+          <tr>         
+              <td class="width16 tdPadLeft5">
+                  #{if resources.length()>0 && !orgUserProfile.equals("SALESPERSON")}
+                    <div class="gCBox cmdsAllgCBox" data-callback="cmdsTableAllCheck">
+                        <div class="gCBoxTicker"></div>                    
+                    </div>   
+                  #{/if}
+              </td>
+              <td class="tdPadLeft5 itemTitleTH">Title</td>
+              <td class="width170 maxWidth170"><span class="padLeft10">Created By</span></td>
+              #{if !orgUserProfile.equals("SALESPERSON")}
+              <td class="width120 maxWidth120">&{'TXT_VISIBILITY_STATUS'}</td>
+              #{/if}
+          </tr>          	  
+          #{sources.questionsLinkTr colspan:4 ,questionsCount:questionsCount, 
+          msg : "(Click to open all the questions available in the Program/Center)" /}          
+      </thead>
+    </table>                    
+</div>                
+<div id="fixedSec">
+    <table class="cmdsTable">
+      <tbody>
+          #{if resources.length()>0}
+          #{list items:0..resources.length()-1,as:'i'}
+          %{
+            resource=resources.get(i).source;
+            entityName=resource.name;
+            entityId=resource.id;
+            entityType=resource.type;
+	    converted = resource.has('converted')?resource.converted:true;
+	    completed = resource.completed!=null?resource.completed:true;
+            if(resource.has("published")&&resource.published){
+                status='PUBLISHED';
+            }else if(resource.has("published")){
+                status='UNPUBLISHED';
+            }
+	    isDownloadable = util.TemplateHelper.isEntityDownloadable(resource); 
+          }%          
+          <tr class="" data-entity-type="${entityType}" data-entity-id="${entityId}"
+              data-entity-name="${entityName}" data-status="${status}">
+            #{if !orgUserProfile.equals("SALESPERSON")}
+            <td class="width16 tdPadLeft5">
+                  <div class="gCBox" data-callback="cmdsTablegCBoxCheck">
+                      <div class="gCBoxTicker"></div>                      
+                  </div>  
+            </td>
+            #{/if}
+            <td class="tdPadLeft5 color0 entityTitleTd">
+                #{aTagMapper entityName:entityName,entityId:entityId,entityType:entityType,converted:converted,completed:completed/}
+            </td>
+            <td class="width170 maxWidth170">
+                  #{widgets.user20 user:resource.addedBy /}                
+            </td>
+            <td class="width120 maxWidth120">
+             #{if !orgUserProfile.equals("SALESPERSON")}
+		<a class="getVisibilityStatus" 
+			data-allow-download=${isDownloadable} 
+			#{if completed == false}
+				data-completed-error="&{'NOT_COMPLETED'}"
+			#{/if}
+			#{if converted == false}
+				data-converted-error="&{'NOT_CONVERTED'}"
+			#{/if}>View Status</a>
+      #{/if}
+	    </td>
+          </tr>        
+          #{/list}
+          #{/if}
+          #{elseif questionsCount==0}
+            #{sources.noResourcesFound colspan:3,target:'LIBRARY_RESOURCES'/}                   
+          #{/elseif}                  
+      </tbody>
+    </table>
+    #{footer /}
+</div>       
+    

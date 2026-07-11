@@ -1,0 +1,67 @@
+/*START OF CSS For Footer Section */
+.footer{
+	font-family: sans-serif;
+	background: rgb(27, 27, 27);
+}
+.footer .heading{
+	font-size: 16px;
+	line-height: 18px;
+	font-weight: 600;
+	color: #585858;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+.footer .sub-menu{
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 10px;
+	color: #fff;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+.footer .address{
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 15px;
+	color: #fff;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+.footer ul{
+	list-style: none;
+}
+.footer li{
+	padding: 5px;
+	border-bottom: 2px solid #2f2f2f;
+}
+.footer li:last-child{
+	border-bottom: none;
+}
+.footer li:first-child{
+	border-bottom: none;
+}
+
+.footer .socialMedia{
+	color: #585858;
+}
+.footer .socialMedia:hover{
+	color: #fff;
+}
+
+/*END OF CSS For Footer Section */
+
+@media(max-width: 780px){
+	.footer .heading{
+		font-size: 14px;
+	}
+	.footer .sub-menu{
+		font-size: 12px;
+	}
+	.footer ul{
+		padding: 0px;
+	}
+
+}

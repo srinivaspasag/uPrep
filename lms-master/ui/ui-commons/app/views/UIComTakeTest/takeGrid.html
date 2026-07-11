@@ -1,0 +1,476 @@
+#{if data!=null && data.has('name')}
+#{if play.mode.name()=='PROD'}
+	<LINK href="/public/stylesheets/takeTest/o.take.css" rel="stylesheet" type="text/css">
+	<script src="@{'/public/javascripts/takeTest/o.takeNew.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/if}
+#{else}
+	<LINK href="/public/stylesheets/uicomTakeTest/take.css" rel="stylesheet" type="text/css">
+	<LINK href="/public/stylesheets/uicomTakeTest/question.css" rel="stylesheet" type="text/css">
+	<script src="@{'/public/javascripts/uicomTakeTest/takeNew.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/else}
+<div class="test_head" data-test-data="${data}">
+	%{
+		instLogo = uicom.util.Utilities.getInstLogo(myOrgInfo.getString('instLogo'));
+	}%
+	<div class="instThumbnailLogoHolder">
+		<img src="${instLogo}" alt="${myOrgInfo.getString('instFullName')} Logo"
+		class="instThumbnailLogo"/>
+	</div>
+	<div>
+		<span class="onlineIcon">ONLINE</span>
+		<span class="offlineIcon nonner">OFFLINE</span>
+	</div>
+	<div class="testOfflineMsg redTextColor nonner big18" style="padding:10px 0;">
+		&{'TEST_OFFLINE_ERROR'}
+	</div>
+</div>
+<div class="nonner">
+	#{if data.duration>0}
+	    %{
+	        timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.duration);
+	        totalTimeHrs = timeObj.hrs;
+	        totalTimeMins = timeObj.mins;
+	        totalTime = totalTimeHrs + ":" + totalTimeMins;
+
+	    }%
+    #{/if}
+	%{
+		testName = data.name;
+		firstName = myOrgInfo.get('firstName');
+		profilePic = myOrgInfo.get('profilePic');
+	}%
+	#{common.testGuidelines showGuidlinesInsideTest:true, testName:testName,totalTime:totalTime/}
+</div>
+<div class="nonner">
+	#{common.questionPaper data:data/}
+</div>
+<div class="nonner">
+	<div class="TestQuestionSummary">
+		<div style="text-align: center; font-size: 17px; font-weight: bold;margin: 20px 0px;">
+			 <span>Exam Summary</span>
+		</div>
+		<div class="scrollTable">
+			<table id="TestQuestionAnalyticsTable" border="1" style="text-align: center;">
+				<thead>
+					<tr style="text-align: center;">
+						<th>Section Name</th>
+						<th>No. of Questions</th>
+						<th>Answered</th>
+						<th>Not Answered</th>
+						<th>Marked for Review</th>
+						<th style="max-width: 200px;">Answered &amp; Marked for Review (will be considered for evaluation)</th>
+						<th>Not Visited</th></tr>
+				</thead>
+				<tbody>
+
+				</tbody>
+			</table>
+		</div>
+		<div style="text-align: center; margin: 20px 0px;">
+			<div>Are you sure to submit this group of questions for marking?</div>
+			 <div class="submissionButtons">
+			 	<input type="button" class="submitTestFinal" data-cs-name="MARK_REVIEW_BTN"
+			 					value="Yes"/>
+			 	<input type="button" class="revertBack" data-cs-name="MARK_REVIEW_BTN" value="No"/>
+			 </div>
+		</div>
+	</div>
+</div>
+
+<div class="test_name_block">
+	<span class="test_name">Test Name : </span>
+	<span class="test_name">${data.name}
+	</span>
+</div>
+<div class="qpandinstr">
+	<span class="read_instr" ><img src="/public/images/information.png">Read Instructions</span>
+	<span class="questionPaper"><img src="/public/images/report20px.png"> Question Paper</span>
+</div>
+
+
+
+<div class="test_subjects timer CSWidget test_endexam_timer" data-widget="TEST_ATTEMPT_TOP_BAR">
+	<div class="endtest_time">
+		#{if data.has('duration') && data.duration > 0}
+		<span class="test_timer">
+			<span class="test_timer_graph" style="display: none;">
+				*{#{include '/UIComTags/common/arc_drawing.html' /}}*
+			</span>
+			<span class="time_left">
+				Time Left
+			</span>
+			%{
+				timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.duration);
+			}%
+			<span class="total_time_left">${timeObj.hrs}:${timeObj.mins}:${timeObj.secs}</span>
+		</span>
+		#{/if}
+	</div>
+</div>
+<div class="userInfo">
+	<div class="profileImg">
+		<img class="instSettingsPic myInstProfilePic" alt="&{'IMG_NA'}" onerror="this.src='/public/images/defaultProfilePic.jpg';" src="${session.profilePic}"/>
+	</div>
+	<span>${session.fullname}</span>
+</div>
+
+
+
+%{
+	firstChild = 0;
+	arrayIndex = 0;
+}%
+
+<div class="test_subjects CSWidget boards" data-widget="TEST_ATTEMPT_TOP_BAR">
+	<div class="test_subjects_tabs">
+		#{list items:0..data.boards.length()-1, as:'index'}
+			%{
+				questionBoard = data.boards.get(index).questions;
+			}%
+			#{if questionBoard != null && !questionBoard.equals(null)}
+			%{sectionNumber  = 0}%
+				#{list items:0..questionBoard.length()-1, as :'questionIndex'}
+					%{
+						questionListOfType = questionBoard.get(questionIndex);
+					}%
+					#{if questionListOfType.questions != null && !questionListOfType.questions.equals(null)}
+						%{
+							++sectionNumber;
+						}%
+						#{if index == firstChild }
+							<span class="selected doCStream testBoard" data-cs-name="SUBJECT_TAB"
+								data-subject-id=${data.boards.get(index).id} data-type="${questionListOfType.type}" data-section-number = "${sectionNumber}">
+								<p>${data.boards.get(index).name} Sec${sectionNumber}</p>
+								<img data-section = "${arrayIndex++}" src="/public/images/info30.png">
+							</span>
+								%{
+									firstChild--;
+								}%
+						#{/if}
+						#{else}
+							<span class="doCStream testBoard" data-subject-id=${data.boards.get(index).id} data-type="${questionListOfType.type}" data-section-number = "${sectionNumber}">
+								<p>${data.boards.get(index).name} Sec${sectionNumber}</p>
+								<img data-section = "${arrayIndex++}" src="/public/images/info30.png">
+							</span>
+						#{/else}
+					#{/if}
+				#{/list}
+			#{/if}
+		#{/list}
+	</div>
+</div>
+
+
+
+%{
+	openBoardIndex = 0;
+}%
+
+
+
+
+
+<div class="mainContent">
+	%{
+	alphabet = "abcdefghijklmnopqrstwxyz";
+	testQuestions = data.boards.get(openBoardIndex).questions;
+	question = testQuestions;
+	questionsCount = 0;
+	eachType = "";
+	}%
+	#{list items:0..testQuestions.length()-1,as:'qTypeIndex'}
+		%{
+			eachType = testQuestions.get(qTypeIndex);
+		}%
+		#{if !eachType.equals(null) && eachType.has('questions') && !eachType.questions.equals(null) && eachType.questions.length()>0}
+		%{
+			question = eachType.questions.get(0);
+			questionsCount = eachType.questions.length();
+			break;
+		}%
+		#{/if}
+	#{/list}
+	<div class="test_questions CSWidget" data-widget="QUES_BODY_HOLDER">
+		<div style="text-align: center;background: #2e6fb6;padding: 5px;">
+			<span style="font-size: 12px;color: #fff;">
+				Question Type :
+			</span>
+			<span class="questionType" style="font-weight: bold;font-size: 14px;color: #fff;">
+				${question.type}
+			</span>
+			<span class="questionNumber">Question 1 : </span>
+		</div>
+		<div class="questionBody" data-q-type="${question.type}">
+			<!-- <div class="paraText">
+				*{#{if question.type == "PARA"}
+					${question.paraContent.raw()}
+				#{/if}}*
+			</div> -->
+			<div class="sectionWiseInstruction">
+				<div class="SectionHeader">
+					<span class="sectionName"></span>
+					<span class="totalMarks">(Maximum Marks : ${eachType.totalMarks})</span>
+				</div>
+				<div class="instructionHlder">
+					<div class="changingInstructionList">
+						<ul class='numericInstr #{if !question.type == "NUMERIC"} nonner #{/if}'>
+							<li>
+								<span style="font-size: medium;">
+									This section has
+									<strong class="questionsCount"></strong>
+									questions
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									The answer to each question is a
+									<strong>SINGLE DIGIT INTEGER</strong>
+									ranging from 0 to 9, both inclusive.
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									For each question, type the correct integer in the space provided below the question using provided number keys.
+								</span>
+							</li>
+						</ul>
+
+
+						<ul class='mcqInstr #{if !question.type == "MCQ" || !question.type == "MATRIX"} nonner #{/if}'">
+							<li>
+								<span style="font-size: medium;">
+									This section contains <strong class="questionsCount"></strong> questions
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									Each question has
+									<strong class="optionCount"></strong>
+									options
+									<strong>ONE OR MORE THAN ONE</strong>
+									of these option(s) is(are) correct
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									For each question, select the alphabets corresponding to all the correct option(s) provided below the questions
+								</span>
+							</li>
+						</ul>
+
+						<ul class='scqInstr #{if !question.type == "SCQ"} nonner #{/if}'">
+							<li>
+								<span style="font-size: medium;">
+									This section contains <strong class="questionsCount"></strong> questions
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									Each question has
+									<strong class="optionCount"></strong>
+									options
+									<strong>,ONE</strong>
+									of these option(s) is correct.
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									For each question, select the alphabets corresponding to the correct option(s) provided below the questions
+								</span>
+							</li>
+						</ul>
+
+
+						<ul class='paraInstr #{if !question.type == "PARA"} nonner #{/if}'>
+							<li>
+								<span style="font-size: medium;">
+									This section contains
+									<strong class="paraCount"></strong>
+									paragraphs.
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									This paragraph has
+									<strong class="paraQuestionCount"></strong>
+									questions
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									Each question has
+									<strong class="optionCount"></strong>
+									options.
+									<strong>ONE OR MORE THAN ONE</strong>
+									of these four option(s) is(are) correct
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									For each question, select the alphabets corresponding to all the correct option(s) provided below the questions
+								</span>
+							</li>
+						</ul>
+					</div>
+					<li class="markingScheme">
+						<span style="font-size: medium;">
+							<span style="font-size: medium;">Marking scheme:</span>
+						</span>
+						<ul>
+							<li>
+								<span style="font-size: medium;">
+									<strong class="correctMarks">+</strong>
+									<span class="correctText"></span>
+								</span>
+							</li>
+							<li class="inCorrectMarksList">
+								<span style="font-size: medium;" >
+									<strong class="inCorrectMarks">-</strong>
+									<span class="inCorrectText">In all other cases</span>
+								</span>
+							</li>
+							<li>
+								<span style="font-size: medium;">
+									<strong>0</strong>
+									<span class="skippedText">If Skipped</span>
+								</span>
+							</li>
+						</ul>
+					</li>
+				</div>
+			</div>
+			<div class="questionText">${question.content.raw()}</div>
+			<div class="choices #{if question.type=='NUMERIC'}nonner#{/if}">
+			%{
+				inputType="radio";
+				if(question.type == "MCQ" || question.type == "PARA" || question.type == "MATRIX"){
+					inputType = "checkbox";
+				}
+			}%
+			#{if question.has('options') && !question.options.equals(null) && question.options.length()>0}
+		   		#{list items:0..question.options.length()-1, as:'index'}
+					<table class="eachOptHolder">
+					   <tr>
+						<td style="width:20px;">
+							<input type="${inputType}" data-cs-name="QUES_OPTION_${inputType}" name="takeTestOptInput"
+								value="${index}" class="doCStream"/>
+						</td>
+						<td class="optAlphaCount">(${alphabet.charAt(index)})</td>
+						<td>
+							<div class="eachOpt">${question.options.get(index).raw()}</div>
+						</td>
+					   </tr>
+					</table>
+			   #{/list}
+			#{/if}
+			</div>
+			<div class="testNumAns #{if question.type!="NUMERIC"}nonner#{/if}">
+				<span class="">Answer : </span>
+				<input class="numberTextBox numericAnsInputBox"
+					placeholder="Use below keyboard for input" type="text"/>
+				#{common.virtualNumKeypad inputClassName:".numericAnsInputBox"/}
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class="questionsBlock">
+	<div class="questionsStateMode">
+		<span class="answered">
+			<span class="eachquestion save_and_next">
+				Q
+			</span>
+			<span class="modeHeading">
+				Answered
+			</span>
+		</span>
+		<span class="notAnswered">
+			<span class="eachquestion">
+				Q
+			</span>
+			<span class="modeHeading">
+				Not Visited
+			</span>
+		</span>
+		<span class="marked">
+			<span class="eachquestion mark_for_review">
+				Q
+			</span>
+			<span class="modeHeading">
+				Marked for Review
+			</span>
+		</span>
+		<span class="present">
+			<span class="eachquestion current">
+				Q
+			</span>
+			<span class="modeHeading">
+				Current
+			</span>
+		</span>
+		<span class="answerandmarked">
+			<span class="eachquestion saved_and_marked">
+				Q
+			</span>
+			<span class="modeHeading">
+				Answered & Marked for Review <small>(will be considered for evaluation)</small>
+			</span>
+		</span>
+		<span class="visitedstatic">
+			<span class="eachquestion visited">
+				Q
+			</span>
+			<span class="modeHeading">
+				Not Answered
+			</span>
+		</span>
+	</div>
+	<div class="test_question_summary CSWidget" data-widget="ATTEMPT_TEST_QUES_SUMMARY_HOLDER">
+		<div class="sub_name"></div>
+		<div class="q_list">
+		</div>
+		<div class="show_only_marked">
+			<input type="checkbox" class="doCStream" data-cs-name="SHOW_ONLY_QUES_MARKED_REVIEW" value="" name="markedCheck" />
+			<label for="markedCheck">Show only marked for review questions</label>
+		</div>
+	</div>
+</div>
+
+<div class="allbtnholder">
+	<div class="btnsHolder">
+		<input type="button" class="left mark_review_btn btns doCStream" data-cs-name="MARK_REVIEW_BTN"
+		value="Mark For Review & Next"/>
+		<input type="reset" class="left reset_btn btns doCStream" data-cs-name="RESET_BTN" value="Clear Response"/>
+		<input type="button" class="right save_next_btn btns doCStream" data-cs-name="SAVE_BTN" value="Save & Next"/>
+		<!-- <input type="button" class="right skip_btn btns doCStream" data-cs-name="SKIP" value="Skip"/> -->
+	</div>
+	<div class="submitButton">
+		<span class="test_end_btn doCStream" data-cs-name="END_TEST_BTN">Submit</span>
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<script type="text/javascript">
+	loadTestMJEqns($(".test_questions .question_body").get(0));
+	$($(".test_question_summary").find(".q_list .each_question").get(0)).addClass("current");
+	//takeTest.init();
+</script>
+	#{if play.mode.name()=='PROD'}
+	<script type="text/javascript">
+		$(function(){
+			try{
+                // $(window).bind("blur",windowOutFocused);//ALT+TAB SCENARIO
+            }catch(err){}
+        });
+    </script>
+	#{/if}
+#{/if}
+#{else}
+	<script type="text/javascript">
+	$(function(){
+		alert("&{'TEST_TRY_AGAIN'}");
+		endCurrentExam("${testIdStr}");
+	});
+	</script>
+#{/else}

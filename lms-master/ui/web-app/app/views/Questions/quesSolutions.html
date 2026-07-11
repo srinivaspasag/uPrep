@@ -1,0 +1,76 @@
+%{
+    solutions=solutions.result.list;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+
+#{if solutions.length()>0}
+#{list items:0..solutions.length()-1,as:'s'}
+    %{
+        soln = solutions.get(s);
+	attachments = soln.attachmentsInfo; 
+        user=soln.user;
+    }%
+    <div class='quesSoln CSWidget' data-sol-id='${soln.id}' data-widget="SOLUTION">
+        <div class='quesSolnVoteDiv'>
+            #{widgets.upVoteItem entityType:"SOLUTION",entityId:soln.id,upVote:soln.upVotes,voted:soln.voted /}
+        </div>
+        <div class="quesSolnContent">
+            <div class="quesSolnContentBody">
+                <div class="margBot10">
+                    #{widgets.img20 user:user /}
+                    <div class="img20Lefter">
+			#{institute.memberName user : user /}
+                        <span class='time floatRight'>${new Date(soln.timeCreated).since(true)}</span>
+                    </div>
+                </div>
+		#{if !soln.content.equals(null) && !soln.content.isEmpty()}
+                	<div class="quesSolnText rteTextDiv">${soln.content.raw()}</div>
+		#{/if}
+		#{if !attachments.equals(null) && attachments.length()>0}
+		<div class="quesSolnAttachments">
+			<div class="boldy big12">&{'VIDEO_SOL'}</div>
+			#{list items:0..attachments.length()-1,as:'aIndex'}
+			%{
+                                attachEntity = attachments.get(aIndex).entity;
+                                attachInfo = attachments.get(aIndex).info;
+                                entityName = attachInfo.name;
+                        }%
+			#{aTagUtils.aTagMapper entityType : attachEntity.type , entityId : attachEntity.id , entityName : entityName , entityObj : attachEntity , info : attachInfo /}
+			#{/list}
+		</div>
+		#{/if}
+                <div class='floatRight smally margHalfTop'>
+                    <a class='liner showQSComments doCStream' data-name="SHOW_COMMENTS"><span>Show Comments(</span><label>${soln.comments}</label>)</a>
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+                #{if !soln.isNull('answers')&&soln.answers.length()>0}
+                <div class="margHalfTop">
+                    Answer: 
+                    <span class="boldy">                    
+                        #{list items:0..soln.answers.length()-1,as:'sa'}
+                            ${soln.answers.get(sa)}${sa_isLast?'':','}
+                        #{/list}
+                    </span>
+                </div>
+                #{/if}
+            </div>
+            <div class="QSCommentsHolder nonner"></div>
+        </div>
+    </div>
+#{/list}
+        #{if loadMoreSize!= 0&& solutions.length()==loadMoreSize}
+        <div class="loadMoreItems LMHandlerDivLoadMore doCStream"  data-name="LOAD_MORE_SOLUTIONS">Load More Solutions</div>
+        #{/if}
+#{/if}
+#{else}
+<div class="userMessage">No Solutions available</div>
+#{/else}
+<script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+</script>
+
+
+
+
+

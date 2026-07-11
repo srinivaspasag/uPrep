@@ -1,0 +1,20 @@
+<div class="instUpvoteHolder upVoteDiv" data-entity-id="${_entityId}" data-entity-type="${_entityType}">
+	#{if _voted==false}
+	  <a class="upvoteInstItem">&{'INST_DOUBT_UPVOTES'}</a>
+		<span class="upvotedInstItem nonner">&{'TXT_UPVOTED'}</span>
+	#{/if}
+	#{else}
+	  <span class="upvotedInstItem">&{'TXT_UPVOTED'}</span>
+	#{/else}
+	<span class="upvoteInstSeparator">.</span>
+	<a class="replyToCommItem">&{'INST_DOUBT_REPLY'}</a>
+	<span class="upvoteInstSeparator">.</span>
+	<span class="upvotesInstFeedCount commReviewVoteDiv" data-entity-count="${_upVote}">
+		<span class="instImgs #{if _voted==true}voted #{/if}"></span>
+		<span class="upvotesCount upVoteItemCount">${_upVote}</span>
+	</span>
+	<span class="showCommentReplies commItemRepliesSec">
+		<span class="instImgs"></span>
+		<span class="commRepliesNum"><label>${_replies}</label></span>
+	</span>
+</div>

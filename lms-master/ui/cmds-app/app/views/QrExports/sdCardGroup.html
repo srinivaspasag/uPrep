@@ -1,0 +1,110 @@
+#{if resp!=null && resp.errorCode.isEmpty()}
+%{
+	data = resp.result.recordInfo;
+	cards = data.cardInfos;
+	noOfCards = cards.length();
+	gbInBytes = 1073741824;
+	showArrow = false;
+	if(noOfCards>4){
+		showArrow = true;
+	}
+	cardSizeObj = uicom.util.Utilities._getCalcSize(data.cardSize);
+}%
+<div id="sdCardGroupPage">
+   <div class="pageHolderM">
+	<div class="sdgTopBar">
+	    <table cellpadding=0 class="fullWidth">
+	      <tr>
+		<td class="big24 boldy">${data.name}</td>
+		<td style="width:50px;">
+			<!--<span class="bigGreenButton boldy sdgSaveBtn">&{'TXT_SAVE'}</span>-->
+			<span class="sdgSaveBtn smallBlueButton">&{'TXT_BACK'}</span>
+		</td>
+	      </tr>	
+	      <tr>
+		<td colspan=2 class="big14">
+			<span style="color:#333;">${noOfCards}</span>
+			<span style="color:#666;">&{'SD_CARDS_OF_SIZE'}</span>
+			<span style="color:#333;">${cardSizeObj.value} <b>${cardSizeObj.text}</b></span>
+		</td>
+	      </tr>	
+	    </table>
+	</div>
+	<div class="sdgCardsHolder">
+	   #{if showArrow == true}
+	   <span class="sdgPrevArrow sdCardSprite disable"></span>
+	   #{/if}
+	   <div class="sdgCards">
+	     <div class="sdgCardsScroll">
+	     #{if noOfCards>0}
+	     #{list items:0..noOfCards-1,as:'index'}
+		%{
+			card = cards.get(index);
+			//card = cards.get(0);
+			size = uicom.util.Utilities.roundDecimals(card.contentSize/gbInBytes);
+			sizeObj = uicom.util.Utilities._getCalcSize(card.contentSize);
+			freeSpaceObj = uicom.util.Utilities._getCalcSize(card.maxSize - card.contentSize);
+			contentFilled = uicom.util.Utilities.calcPercentage(card.contentSize,card.maxSize);
+			extraClass = "";
+			if(index == 0){
+				extraClass = "active";
+			}
+		}%
+	     <div class="sdgEachCard ${extraClass}" data-id="${card.id}">
+		<table>
+		   <tr>
+			<td class="alignTop">
+			    <div class="sdgCardIcon sdCardSprite"></div>
+			    <div class="sdgCardIconBgHolder">
+				<div class="sdgCardIconBg" style="height:${contentFilled}%"></div>
+			    </div>
+			</td>
+			<td class="alignTop">
+			    <div class="sdgCardNm">Card ${index+1}</div>
+			    <div class="sdgCardCapacity">
+				<span>&{'SDCARD_USED'}</span>
+				<span class="boldy blackTextColor">${sizeObj.value} ${sizeObj.text}</span>
+			    </div>
+			    <div class="sdgCardFree">
+				<span>&{'SDCARD_FREE'}</span>
+				<span class="boldy blackTextColor">${freeSpaceObj.value} ${freeSpaceObj.text}</span>
+			    </div>
+			</td>
+		   </tr>	
+		</table>
+	     </div>
+	     #{/list}
+	     #{/if}
+	    </div>
+	   </div>	
+	   #{if showArrow == true}
+	   <span class="sdgNextArrow sdCardSprite"></span>
+	   #{/if}
+	</div>
+	<div class="sdgContentsHolder">
+	</div>
+	<div id="sdgContentBlackout">
+		<div class="closeContentMove">X</div>
+		<div class="sdgContentMoveHelp">
+			&{'SD_CONTENT_MOVE_HELP'}
+		</div>
+		<div id="moveSdContentInfo">
+			<span class="big14 boldy" style="padding-left:15px;">&{'TXT_MOVING'}:</span>
+			<span class="reorderingItem"></span>
+			<div class="closeContentMove">X</div>
+		</div>
+	</div>
+   </div>
+</div>
+<script type="text/javascript">
+    new function(){             
+        var fn=function(){qrSdCards.init(${noOfCards});}
+        lazyLoad([{fname:"qrSdCards.js",cb:fn}]);        
+    }();    
+</script>
+#{/if}
+#{else}
+<div style="padding:20px;">
+	<div class="boldy big16 redTextColor centerText">&{'NO_item_FOUND',"data"}</div>	
+</div>
+#{/else}

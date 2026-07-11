@@ -1,0 +1,38 @@
+<div class="instIncommingFacets nonner">
+#{if dicussionsData.has('result') && dicussionsData.result.has('facet')} 	
+%{ facets = dicussionsData.result.facet; }%
+    <div class="instPageFacets">
+	#{if facets.has('courses') && facets.courses.length()>0}
+	<span class="smally boldy instTopicHead">SUBJECTS</span>
+	<form class="instSubjectTree CSWidget" data-widget="FILTER_DISCUSSION_BY_SUBS">
+		<div class="instSubFacetHold">
+			<input type="radio" class="instSubjectFacet doCStream" name="instSubs" checked="checked" value="all" name="SUB_CHK_BOX"/> 
+			<span class="boldy">All (${totalCount})</span>
+		</div>
+		#{list items:0..facets.courses.length()-1, as:'cIndex'}
+		%{ courseFacet = facets.courses.get(cIndex); }%
+			<div class="instSubFacetHold">
+				<input type="radio" class="instSubjectFacet doCStream" name="instSubs" value="${courseFacet.obj.brdId}" name="SUB_${courseFacet.obj.code}_CHK_BOX"/> 
+				<span>${courseFacet.obj.name} (${courseFacet.count})</span>
+			</div>
+		#{/list}
+	</form>
+	#{/if}	
+
+	#{if facets.has('topics') && facets.topics.length()>0}
+	<span class="smally boldy instTopicHead">TRENDING TOPICS</span>
+	<div class="left instTopicTree CSWidget" data-widget="FILTER_DISCUSSION_BY_TRENDING_TOPICS">
+		*{<span class="instEachTrTopic instEachTrTopicSelect doCStream" data-name="Preperation" name="TRENDING_TOPIC">Preperation(12)</span></br>}*
+		#{list items:0..facets.topics.length()-1, as:'tIndex'}
+		%{ topicFacet = facets.topics.get(tIndex); }%
+			<div class="instEachTrTopic doCStream" data-name="${topicFacet.obj.name}" name="TRENDING_TOPIC_LINK" 
+				data-brd-id="${topicFacet.obj.brdId}">
+				<span class="instTrTopicText">${topicFacet.obj.name}</span>
+				<span class="instTrTopicCount">(${topicFacet.count})</span>
+			</div>
+		#{/list}
+	</div>
+	#{/if}
+    </div>
+#{/if}
+</div>

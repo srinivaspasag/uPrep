@@ -1,0 +1,17 @@
+%{
+	userRole = _userRole;
+}%
+#{if userRole == "STUDENT"}
+<span class="FilterForAttemptType nonner">
+  <span class="SSCTabsHolder">
+    <span class="SSCTabs">
+        <a class="ptrTagInline SSCTab activeSSCTab doCStream" name="FILTER_TEST_TAB" 
+		data-tab-id='ALL'>&{'TXT_ALL'} <span class="blackTextColor">/</span> </a>
+        <a class="ptrTagInline SSCTab doCStream" name="FILTER_TEST_TAB" 
+		data-tab-id='ATTEMPTED'>&{'TXT_ATTEMPTED'} <span class="blackTextColor">/</span> </a>
+        <a class="ptrTagInline SSCTab doCStream" name="FILTER_TEST_TAB" 
+		data-tab-id='UNATTEMPTED'>&{'TXT_UNATTEMPTED'}</a>
+    </span>
+  </span>
+</span>
+#{/if}

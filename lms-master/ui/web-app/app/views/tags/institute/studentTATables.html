@@ -1,0 +1,108 @@
+#{if tests!=null && tests.errorCode.isEmpty() && tests.result.list.length()>0}
+#{if params.freshLoad=="true"}
+<table class="fullWidth CSWidget tableInstTA" data-widget="RESULT_ANALYTICS_TESTS" cellspacing=0 cellpadding=0>
+   <tr>
+        <th>Date</th>
+        <th>Test Name/ID</th>
+        <th>Subjects</th>
+        <th>Your Score</th>
+        <th>Highest</th>
+        <th>Total</th>
+        <th>Rank</th>
+    </tr>
+#{/if}
+#{list items:0..tests.result.list.length()-1,as:'tIndex'}
+%{ 
+	test = tests.result.list.get(tIndex);
+    resultVisibility = test.resultVisibility;
+}%
+#{if test.info.has('boards') && test.info.boards.length()>0}
+%{
+	boards = test.info.boards;
+	rowspan = boards.length();
+	indpRowClass = "";
+}%
+#{list items:0..boards.length()-1,as:'bIndex'}
+%{ 
+	board = boards.get(bIndex);
+}%
+<tr class="instTAEachTest">
+	#{if testId != test.id}
+	%{
+		date = uicom.util.Utilities.getDateMonthYear(test.info.startTime);
+	}%
+        <td class="boldy" rowspan=${rowspan} >${date}</td>
+        <td class="" rowspan=${rowspan} >
+		<a class="openInstiTestPage doCStream"
+			data-test-id="${test.id}" data-test-group="${test.id}" data-user-role="${userRole}" name="EACH_TEST_LINK"
+			href="/organization/${params.orgId}/test/${test.id}">
+			${test.info.entity.name}
+		</a>
+	</td>
+	#{/if}
+	#{else}
+		%{
+			indpRowClass = "indpRowCell";
+		}%
+	#{/else}
+	<td class="${indpRowClass}">
+		<div>${board.entity.name}</div>
+	</td>
+        <td style="width:15%;">
+        #{if resultVisibility == "HIDDEN"}Hidden#{/if}
+        #{else}
+		<span class="big18 boldy" style="padding-right:6px">${board.measures.score}</span>
+		<span class="TAOutOf">out of ${board.totalMarks}</span>
+        #{/else}
+	</td>
+	<td class="${indpRowClass}">
+        #{if resultVisibility == "HIDDEN"}Hidden#{/if}
+        #{else}
+		<div>${board.entity.measures.maxScore}</div>
+        #{/else}
+	</td>
+	#{if testId != test.id}
+	<td rowspan=${rowspan} >
+        #{if resultVisibility == "HIDDEN"}Hidden#{/if}
+        #{else}
+		<div class="big16 boldy">${test.info.measures.score}</div>
+		<div class="TAOutOf">out of ${test.info.totalMarks}</div>
+        #{/else}
+	</td>
+	<td rowspan=${rowspan} >
+        #{if resultVisibility == "HIDDEN"}Hidden#{/if}
+        #{else}
+		<div class="big16 boldy">${test.rank}</div>
+		<div class="TAOutOf">out of ${test.info.entity.totalAttempts}</div>
+        #{/else}
+	</td>
+	#{/if}
+</tr>
+%{
+	testId = test.id;
+}%
+#{/list}
+#{/if}
+#{/list}
+#{if tests.result.totalHits > (Integer.parseInt(params.start)+Integer.parseInt(params.size)) }
+<tr>
+	<td colspan=7 >
+        	<div class="loadMoreItems instTATestLoadMore doCStream" name="LOAD_MORE_TEST">Load More Tests</div>
+	</td>
+<tr>
+#{/if}
+#{if params.freshLoad=="true"}
+</table>
+#{/if}
+<script type="text/javascript">
+	var instTATestData = ${tests.result.raw()};
+	instAnalytics.showPage();
+</script>
+#{/if}
+#{else}
+<!--*{<div class="centerText big14 redTextColor boldy" style="padding:30px 0;">&{'NO_TEST'}</div>}*-->
+#{institute.zeroLevel alt : play.i18n.Messages.get("NO_TEST")  , src : "/public/images/zeroLevel/4analytics-zero.jpg" /}
+<script type="text/javascript">
+	instAnalytics.hidePage();
+</script>
+#{/else}

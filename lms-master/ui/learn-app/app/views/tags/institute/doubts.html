@@ -1,0 +1,36 @@
+#{if discussions!=null && discussions.errorCode.isEmpty() && discussions.result.has('list') && discussions.result.list.length()>0}
+%{
+    dicussionsData = discussions;
+    totalCount = discussions.result.totalHits;
+    discussions = discussions.result.list;
+}%
+#{list items:0..discussions.length()-1, as:'index'}
+        #{institute.widgets.doubt data:discussions.get(index) /}
+#{/list}
+    <input type="hidden" class="nonner instDiscussionCount" value="${totalCount}"/>
+    #{if totalCount > (Integer.parseInt(params.start)+Integer.parseInt(params.size)) }
+            <div class="view-more loadMoreItems LMHandlerDivLoadMore doCStream loadMoreDoubts" name="LOAD_MORE_DISCUSSIONS">Load More Doubts</div>
+    #{/if}
+
+<div class="instIncomingDbtFacets nonner">
+    #{include 'tags/institute/facets.html'/}
+</div>
+#{/if}
+#{else}
+    <div class="relative boldy centerText">
+        <p>
+            #{if params.resultType=="FOLLOWING"}
+                #{zeroLevel alt : play.i18n.Messages.get('NO_DOUBT') , src : "/public/images/zeroLevel/2doubts-zero.jpg" /}
+            #{/if}
+            <!--*{#{else}
+                &{'NO_DOUBT'}
+                </br>
+                &{'HAVE_DOUBT'} <a class="blueTextColor askDoubtBtn" style="padding:0 2px">
+                    &{'ASK_HERE'}</a>
+            #{/else}}*-->
+            #{else}
+                #{zeroLevel alt : play.i18n.Messages.get('NO_DOUBT') , src : "/public/images/zeroLevel/2doubts-zero.jpg" /}
+            #{/else}
+        </p>
+    </div>
+#{/else}

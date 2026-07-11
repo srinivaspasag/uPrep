@@ -1,0 +1,34 @@
+        <div class="big15 boldy margBot10">List of Schedules and their keys</div>
+        %{
+            scheduleList=scheduleList.result.schedules;
+        }%
+        #{if schedules!=null&& schedules.length()>0}
+        <table class="scheduleListTable" width="95%">
+            <thead class="grayHead boldy color8">
+                <tr>
+                    <td style="width: 300px;">Schedule</td>
+                    <td>Key</td>
+                </tr>
+            </thead>                
+            <tbody>
+                #{list items:0..schedules.length()-1,as:'i'}
+                    %{
+                        schedule=schedules.get(i);
+                    }%
+                <tr>
+                    <td class="grayHead boldy color8">
+                        ${new Date(webUtils.TemplateHelper._getClientTimeOffsetCalc(schedule.startTime,params.clientServerTimeDelta)).format('dd MMMM yyyy hh:mm')}
+                        <span class="margLeft margRight10">to</span>
+                        ${new Date(webUtils.TemplateHelper._getClientTimeOffsetCalc(schedule.endTime,params.clientServerTimeDelta)).format('dd MMMM yyyy hh:mm')}
+                    </td>
+                    <td>
+                         ${schedule.key}                         
+                    </td>
+                </tr>           
+                #{/list}
+            </tbody>
+        </table> 
+        #{/if}
+        #{else}
+        <div class="userMessage">This Test is not scheduled</div>
+        #{/else}

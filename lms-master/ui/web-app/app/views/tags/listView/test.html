@@ -1,0 +1,51 @@
+#{if testData!=null && testData.has('testId')}
+<div class="left relative eachTestList eachListViewItem" title="${testData.desc.raw()}">
+	<img class="left relative listTestIcon" alt="" src="/public/images/questions/testBack.png"/>
+	<div class="left relative listContentsDetails">
+		<span class="left relative big12 boldy listContentsText blackTextColor">${testData.name.raw()}</span>
+		<br/>
+	#{if testData.has('user') && testData.user!=null}
+		<span class="left relative big12 listContentsText blueTextColor" style="padding-top:0px;">by ${testData.user.firstName.raw()} ${testData.user.lastName.raw()}</span>
+	#{/if}
+		<br/>
+		<span class="left relative listContentsRankingHolder">
+			<span class="left relative listContentsRankingStars" style="width:${testData.avgRating*20}%"></span> 
+		</span>
+	</div>
+	<div class="left relative listContentsMiddle">
+			<span class="left relative listContentsText blackTextColor">Attempts - <b>${testData.attempts}</b>
+				#{if testData.duration <= 0}
+					Time - <b>No Limit</b> 
+				#{/if}
+				#{else}
+					%{
+					timeObj=uicom.util.Utilities.getTimeFromMiliSec(testData.duration);
+					}%
+					Time - <b>${timeObj.hrs}:${timeObj.mins} hrs</b> 
+				#{/else}			
+			Saved - <b>${testData.follower?testData.follower:0}</b> </span>
+		<span class="left relative listContentsText blackTextColor nonner" style="width:100%;">
+			<span class="listMatchingTags"></span>
+		</span>
+            #{if testData.has('target')}
+		<span class="left relative big12 boldy listContentsText greyTextColor">Target -
+                    <a /*href="${controllers.Boards.getBoardUrl('exam',testData.target.brdId)}"*/
+                       data-brd-id="${testData.target.brdId}" class="boardExam blueTextColor big14">${testData.target.code}</a>
+                </span>
+            #{/if}
+	</div>
+	<div class="right relative listContentsRight">
+		<a class="greenButton listContentBtn openTestPage doCStream" data-test-id="${testData.testId}" 
+			href="/test/${testData.testId}" data-cs-name="OPEN_TEST">Open</a><br/>
+		<div class="onHoverListContentsItems">
+			*{#{if testData.followType=="NONE"}
+				<a class="blueButton listContentBtn saveTest" type="button" data-callback-fn="saveBtnCallbackFn" data-test-id="${testData.testId}">Save</a><br/>
+			#{/if}}*
+			<div class="listContentBtn">
+				#{widgets.followUnfollowEntity followType:testData.followType,entityType:'TEST',entityId:testData.testId/}
+			</div>
+			<span class="listContentsShareIt big14">Share</span>
+		</div>
+	</div>
+</div>
+#{/if}

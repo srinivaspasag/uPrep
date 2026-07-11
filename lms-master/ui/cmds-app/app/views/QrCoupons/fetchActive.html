@@ -1,0 +1,90 @@
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.couponCodes.list.length()>0}
+    %{
+        data = resp.result.couponCodes;
+        dataList = data.list;
+    }%
+    #{list items:0..dataList.length()-1,as:'index'}
+        %{
+            couponData = dataList.get(index);
+        }%
+        <tr class="eachCouponInfo" data-id="${couponData.code}">
+            <td class="width 100 maxWidth100">
+                <div class="boldy big14 centerText">${couponData.code}</div>
+            </td>
+            <td class="width75 maxWidth75">
+                <div class="centerText">${couponData.couponType}</div>
+            </td>
+            <td class="width75 maxWidth75">
+                #{if couponData.couponType.equals("FLAT")}
+                    <div class="centerText">${couponData.discountValue / 100} Rs.</div>
+                #{/if}
+                #{elseif couponData.couponType.equals("PERCENTAGE")}
+                    <div class="centerText italics">${couponData.discountPercentage}%</div>
+                #{/elseif}
+                #{else}
+                    <div class="centerText">&{'TXT_UNAVAILABLE'}</div>
+                #{/else}
+            </td>
+            <td>
+                <div class="width75 maxWidth75">
+                    #{if !couponData.maxDiscount.equals(null) && !couponData.maxDiscount.equals(0)}
+                        <div class="centerText">${couponData.maxDiscount / 100} Rs.</div>
+                    #{/if}
+                    #{else}
+                        <div class="centerText">&{'TXT_UNAVAILABLE'}</div>
+                    #{/else}
+                </div>
+            </td>
+            <td>
+                <div class="width75 maxWidth75">
+                    #{if !couponData.minPurchaseValue.equals(null) && !couponData.minPurchaseValue.equals(0)}
+                        <div class="centerText">${couponData.minPurchaseValue / 100} Rs.</div>
+                    #{/if}
+                    #{else}
+                        <div class="centerText">&{'TXT_UNAVAILABLE'}</div>
+                    #{/else}
+                </div>
+            </td>
+
+            <td class="width40 maxWidth40">
+                <div class="centerText">${couponData.usageCount}</div>
+            </td>
+            <td class="width40 maxWidth40">
+                <div class="centerText">${couponData.maxUsageCount}</div>
+            </td>
+            <td class="width75 maxWidth75">
+                #{if !couponData.expiryTime.equals(null) && couponData.expiryTime > 0}
+                    <div class="centerText">
+                    <span class="updateClientTime" data-time="${couponData.expiryTime}" data-format="dd/mm/yyyy"></span>
+                    </div>
+                #{/if}
+                #{else}
+                    <div class="centerText">&{'TXT_UNAVAILABLE'}</div>
+                #{/else}
+            </td>
+            <td class="width100 maxWidth100">
+                <span class="editCouponBtn couponActionBtn left" data-code="${couponData.code}">Edit</span>
+                <span class="deleteCouponBtn couponActionBtn right" data-code="${couponData.code}">Delete</span>
+            </td>
+        </tr>
+
+    #{/list}
+    %{
+            totalHits = resp.result.couponCodes.totalHits;
+            lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+    }%
+    #{if totalHits > lastCount }
+    <tr class="loadMoreDivTR">
+            <td colspan=7>
+                    <div class="loadMoreItems" data-next-start="${lastCount}">&{'LOAD_MORE_item','Data'}</div>
+            </td>
+    <tr>
+    #{/if}
+#{/if}
+#{else}
+<tr class="noRecordTR">
+     <td colspan=7>
+        <div class="boldy big13 centerText">&{'INVENTORY_NO_RECORDS_FOUND'}</div>
+     </td>
+</tr>
+#{/else}

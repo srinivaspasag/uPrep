@@ -1,0 +1,583 @@
+{%
+	signupError = flash.get('signupError');
+	loginError = flash.get('loginError');
+	emailVerified = flash.get('emailVerified');
+}%
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Learnpedia-Online JEE NEET TEST PREP</title>
+	<meta name="google-site-verification" content="6DhL-KLdd2mI5o_YprF32lNPpE56x8ig7Yc1SKtlQ-4" />
+	<meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+	<meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+	<meta content="width=device-width, initial-scale=1, maximum-scale=3" name="viewport">
+	<meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+	<meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+	<meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+	<link rel="manifest" href="/public/images/favicons/manifest.json">
+	<link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+	<meta name="theme-color" content="#ffffff">
+	<link href="@{'/public/stylesheets/o.app-theme.css'}" rel="stylesheet">
+	<link href="@{'/public/stylesheets/o.material_style.css'}" rel="stylesheet">
+	<link href="@{'/public/outerAssets/assets/css/o.intlTelInput.css'}" rel="stylesheet">
+	#{if play.mode.name()=='PROD'}
+	<link rel="stylesheet" type="text/css" href="/public/outerAssets/assets/css/o.index.css"/>
+	<link rel="stylesheet" type="text/css" href="/public/outerAssets/assets/css/o.packages.css"/>
+	<link rel="stylesheet" type="text/css" href="/public/outerAssets/assets/css/o.index-780px.css" media="(max-width: 780px)" />
+	#{/if}
+	#{else}
+	<link rel="stylesheet" type="text/css" href="/public/outerAssets/assets/css/index.css"/>
+	<link rel="stylesheet" type="text/css" href="/public/outerAssets/assets/css/packages.css"/>
+	<link rel="stylesheet" type="text/css" href="/public/outerAssets/assets/css/index-780px.css" media="(max-width: 780px)" />
+	#{/else}
+	#{gaTrackingCode /}
+	<noscript id="deferred-styles">
+		<link href="/public/assets/theme1/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+		<link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+		<link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+		<link href="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+	</noscript>
+	<script>
+		var loadDeferredStyles = function() {
+			var addStylesNode = document.getElementById("deferred-styles");
+			var replacement = document.createElement("div");
+			replacement.innerHTML = addStylesNode.textContent;
+			document.body.appendChild(replacement)
+			addStylesNode.parentElement.removeChild(addStylesNode);
+		};
+		var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+		webkitRequestAnimationFrame || msRequestAnimationFrame;
+		if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+		else window.addEventListener('load', loadDeferredStyles);
+	</script>
+</head>
+<body>
+	#{include 'theme1/Application/header.html' /}
+	<!-- Remove after few days. -->
+	<div id="videoPopupHolder" class="nonner">
+		<a class="btn btn-tv-play bgm-green m-btn"><i class="zmdi zmdi-tv-play"></i></a>
+	</div>
+	<section id="main">
+		#{include 'theme1/Application/sidebar.html' /}
+
+		<!-- Part of mainSection -->
+		<section class="topScreen" id="mainScreen">
+			<div class="jumbotron text-center c-white" style="background: none;">
+				<h1 class="heading">Transform your Test Preparation with Learnpedia</h1>
+				<small>Signup & Get immediate access to our in-depth JEE/NEET program.</small>
+			</div>
+			<div class="text-center top-input">
+				<div class="input-group">
+					<input class="getStartedInput" title="phone" id="phone" placeholder="Enter Mobile Number" style="font-family: sans-serif;position: static;" aria-label="phone" type="tel">
+					<button aria-label="Get Started" role="presentation" class="btn btn-primary get-started-submit-btn" value="Get Started" type="button" data-type="top">
+						<span class="hidden-xs">Get Started</span>
+						<i class="visible-xs hidden-sm zmdi zmdi-arrow-forward"></i>
+					</button>
+				</div>
+				<span id="phone-help" class="hidden"></span>
+			</div>
+			<div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Signing You Up</h4>
+						</div>
+						<div class="modal-body">
+							<div class="container">
+								<div class="col-sm-6 hidden-xs">
+
+								</div>
+								<div class="col-sm-6">
+									<div class="input-group  m-b-20">
+										<span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+										<div class="fg-line" id="name-group">
+											<input id="full-name" type="text" class="form-control" placeholder="Full Name" required="">
+											<span class="zmdi form-control-feedback" id="name-dialog" style="display: none;"></span> <small class="help-block" id="name-help"></small>
+										</div>
+									</div>
+									<div class="input-group  m-b-20">
+										<span class="input-group-addon"><i class="zmdi zmdi-smartphone-portrait-lock"></i></span>
+										<div class="fg-line" id="otp-group">
+											<input id="otp" type="text" class="form-control" placeholder="OTP" required="">
+											<span class="zmdi form-control-feedback" id="otp-dialog" style="display: none;"></span> <small class="help-block" id="otp-help"></small>
+										</div>
+									</div>
+									<div class="input-group m-b-20" id="radiogroup">
+										<span class="input-group-addon">
+											Course
+										</span>
+										<label class="radio radio-inline" style="vertical-align: -webkit-baseline-middle;">
+											<input checked="" name="programType" type="radio" value="JEE"> <i class="input-helper"></i> JEE
+										</label>
+										<label class="radio radio-inline" style="vertical-align: -webkit-baseline-middle;">
+											<input name="programType" type="radio" value="NEET"> <i class="input-helper"></i> NEET
+										</label>
+									</div>
+									%{
+									learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id");
+								}%
+								<input id="orgId" name="orgId" type="hidden" value="${learnpediaOrgId }">
+								<input name="isOTPsignup" type="hidden" value="true" id="signupFlag">
+								<input id="contact-number" name="contact-number" type="hidden"
+								value="true">
+								<input id="flagCode" name="countryCode" type="hidden">
+								<input id="progType" name="progType" type="hidden">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-link sign-up-modal-btn">Sign Up</button>
+						<button type="button" class="btn btn-link resend-otp-modal-btn">Resend-OTP
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Login</h4>
+					</div>
+					<div class="modal-body">
+						<div class="container">
+							<div class="col-sm-6 hidden-xs">
+
+							</div>
+							<div class="col-sm-6">
+								<div class="input-group  m-b-20">
+									<span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+									<div class="fg-line" id="name-group">
+										<input id="full-name" type="text" class="form-control" placeholder="Full Name" required="">
+										<span class="zmdi form-control-feedback" id="name-dialog" style="display: none;"></span> <small class="help-block" id="name-help"></small>
+									</div>
+								</div>
+								<div class="input-group  m-b-20">
+									<span class="input-group-addon"><i class="zmdi zmdi-smartphone-portrait-lock"></i></span>
+									<div class="fg-line" id="otp-group">
+										<input id="otp" type="text" class="form-control" placeholder="OTP" required="">
+										<span class="zmdi form-control-feedback" id="otp-dialog" style="display: none;"></span> <small class="help-block" id="otp-help"></small>
+									</div>
+								</div>
+								%{
+								learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id");
+							}%
+							<input id="orgId" name="orgId" type="hidden" value="${learnpediaOrgId }">
+							<input id="contact-number" name="contact-number" type="hidden"
+							value="true">
+							<input id="flagCode" name="countryCode" type="hidden">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-link login-modal-btn">Login</button>
+					<button type="button" class="btn btn-link resend-otp-modal-btn">Resend-OTP
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- End of mainSection -->
+#{if categoriesResponse.result.list.length() != 0}
+<section class="preparation">
+	<div class="container" style="">
+		<div class="row">
+			%{
+				category = categoriesResponse.result.list;
+				description="";
+				shortDescription="";
+				priority="3";
+				thumbnail="";
+			}%
+			#{if categoriesResponse.result.list.length() == 1}
+				%{
+					catergoryName = category.get(0).name;
+				}%
+				#{if category.get(0).has("description") && !category.get(0).description.equals(null)}
+					%{description = category.get(0).description.trim()}%
+				#{/if}
+
+				#{if category.get(0).has("shortDescription") && !category.get(0).shortDescription.equals(null)}
+					%{shortDescription = category.get(0).shortDescription.trim() }%
+				#{/if}
+				#{if category.get(0).has("thumbnail") && !category.get(0).thumbnail.equals(null)}
+					%{thumbnail = category.get(0).thumbnail }%
+				#{/if}
+				<div class="col-xs-12 col-sm-offset-3 col-sm-6 text-center f-18">
+					#{include 'theme1/Application/categoryHolder.html', catergoryName:catergoryName, description:description, shortDescription:shortDescription, thumbnail:thumbnail/}
+				</div>
+			#{/if}
+
+			#{elseif categoriesResponse.result.list.length() == 2}
+				<div class="col-sm-2"></div>
+				#{list items:0..1,as:'index'}
+					%{
+						catergoryName = category.get(index).name;
+					}%
+					#{if category.get(index).has("description") && !category.get(index).description.equals(null)}
+						%{description = category.get(index).description.trim()}%
+					#{/if}
+
+					#{if category.get(index).has("shortDescription") && !category.get(index).shortDescription.equals(null)}
+						%{shortDescription = category.get(index).shortDescription.trim() }%
+					#{/if}
+					#{if category.get(index).has("thumbnail") && !category.get(index).thumbnail.equals(null)}
+						%{thumbnail = category.get(index).thumbnail }%
+					#{/if}
+		           <div class="col-xs-12 col-sm-4 text-center f-18">
+						#{include 'theme1/Application/categoryHolder.html', catergoryName:catergoryName, description:description, shortDescription:shortDescription, thumbnail:thumbnail/}
+		          </div>
+				#{/list}
+				<div class="col-sm-2"></div>
+			#{/elseif}
+
+			#{else}
+				#{list items:0..2,as:'index'}
+					%{
+						catergoryName = category.get(index).name;
+					}%
+		           #{if category.get(index).has("description") && !category.get(index).description.equals(null)}
+		           %{description = category.get(index).description.trim()}%
+		           #{/if}
+
+		           #{if category.get(index).has("shortDescription") && !category.get(index).shortDescription.equals(null)}
+		           %{shortDescription = category.get(index).shortDescription.trim() }%
+		           #{/if}
+		           #{if category.get(index).has("thumbnail") && !category.get(index).thumbnail.equals(null)}
+		           %{thumbnail = category.get(index).thumbnail }%
+		           #{/if}
+		           <div class="col-xs-12 col-sm-4 text-center f-18">
+		            #{include 'theme1/Application/categoryHolder.html', catergoryName:catergoryName, description:description, shortDescription:shortDescription, thumbnail:thumbnail/}
+		          </div>
+	            #{/list}
+	        #{/else}
+		</div>
+	</div>
+</section>
+#{/if}
+
+<!-- Part of journey -->
+<section class="journey" id="journey">
+	<div class="container" style="width: 100%;">
+		<div class="row block" style="background-color: #03303B;">
+			<h2 class="heading c-white">Our Salient Features</h2>
+			<div class="img-block m-auto">
+				<img style="width: 600px; margin-top: 50px;" class="img-responsive m-auto" src="/public/outerAssets/images/newIndex/video-journey.png" alt="videos">
+			</div>
+			<div class="inner-heading video-heading">
+				Engaging Video Lectures
+			</div>
+			<div class="inner-description video-description">
+				When it comes to learning difficult subjects, videos & illustrations are always better than textbooks. Access over 5000 videos spanning more than 900 hours,that covers all the concepts of Maths, Physics, Chemistry & Biology of 11th/12th std JEE & NEET syllabus.
+			</div>
+		</div>
+		<div class="row block" style="background-color: #ff5722;">
+			<div class="img-block m-auto">
+				<img style="width: 600px;" class="img-responsive m-auto" src="/public/outerAssets/images/newIndex/challenge-journey-1.png" alt="challenge">
+			</div>
+			<div class="inner-heading challenge-heading">
+				Challenging Tests
+			</div>
+			<div class="inner-description challenge-description">
+				Attempt over 1500 Tests spanning (JEE-Mains, JEE Advanced, AIPMT, BITSAT) with hints & video solutions to boost your confidence across subjects. Practise until every concept has been thoroughly drilled into your head. Leave no stone unturned.
+			</div>
+		</div>
+		<div class="row block" style="background-color: #FFB51E;">
+			<div class="img-block m-auto">
+				<img style="width: 600px;" class="img-responsive m-auto" src="/public/outerAssets/images/newIndex/analytics-journey.png" alt="analytics">
+			</div>
+			<div class="inner-heading analytics-heading" >
+				Insightful Analytics
+			</div>
+			<div class="inner-description analytics-description">
+				Every exam requires a robust strategy, which requires a thourough anlaysis on one's performance. In addition to marks and ranks, get detailed analysis of your strengths & weaknesses based on your performance across multiple tests.
+			</div>
+		</div>
+		<div class="row block" style="background-color: #4CAF50;">
+			<div class="img-block m-auto">
+				<img style="width: 600px;" class="img-responsive m-auto" src="/public/outerAssets/images/newIndex/doubts-journey.png" alt="doubts">
+			</div>
+			<div class="inner-heading doubts-heading">
+				Doubts Forum
+			</div>
+			<div class="inner-description doubts-description">
+				Every great construction requires a strong foundation. Similarly your scores are also a reflection of your subject clarity. Don’t let any doubt nag you anymore. Post it Doubts Forum for others (peers, faculty, IITians, etc) to come to your rescue.
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- End of journey -->
+
+<section class="features" id="features">
+	<div class="container">
+		<div class="row">
+			<h2 class="heading c-black">Additional Features</h2>
+		</div>
+		<div class="row">
+			<div class=" col-sm-4">
+				<div class="feature-block">
+					<img class="m-auto img-responsive" src="/public/outerAssets/images/newIndex/video-feature.png" alt="Past Papers">
+					<div class="feature-heading text-center">
+						Video Solutions of Question Papers
+					</div>
+					<div class="feature-description text-center">
+						<p>Get video solutions of previous years question papers answered by experienced faculties along with intersting short cut techniques. </p>
+					</div>
+				</div>
+			</div>
+			<div class=" col-sm-4">
+				<div class="feature-block">
+					<img class="m-auto img-responsive" src="/public/outerAssets/images/newIndex/mock-test-feature.png" alt="E-Books">
+					<div class="feature-heading text-center">
+						Mock Test Series
+					</div>
+					<div class="feature-description text-center">
+						<p>Get simulation of the real examination through our Mock Test Series. This is where it matters, if you are able to keep up your performance levels here, you will succeed.</p>
+					</div>
+				</div>
+			</div>
+			<div class=" col-sm-4">
+				<div class="feature-block">
+					<img class="m-auto img-responsive" src="/public/outerAssets/images/newIndex/pratice-feature.png" alt="Pratice Questions">
+					<div class="feature-heading text-center">
+						Pratice Questions
+					</div>
+					<div class="feature-description text-center">
+						<p>With over 20,000+ questions you will never be short of practice on any topic.The more you practice the better prepared you will be for the tests to come.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class=" col-sm-4">
+				<div class="feature-block">
+					<img class="m-auto img-responsive" src="/public/outerAssets/images/newIndex/ebook-feature.png" alt="E-Books">
+					<div class="feature-heading text-center">
+						E-Books
+					</div>
+					<div class="feature-description text-center">
+						<p>Over 150+ chapter-wise ebooks that will complement your learning thorughout the course. You don't need to look for reference study material anywhere else.</p>
+					</div>
+				</div>
+			</div>
+			<div class=" col-sm-4">
+				<div class="feature-block">
+					<img class="m-auto img-responsive" src="/public/outerAssets/images/newIndex/cheat-feature.png" alt="Cheat Sheets">
+					<div class="feature-heading text-center">
+						Cheat Sheets
+					</div>
+					<div class="feature-description text-center">
+						<p>Run through the most important concepts bundled together for your quick revision. Cheat Sheets are most critical, especially before an exam.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class=" col-sm-4">
+				<div class="feature-block">
+					<img class="m-auto img-responsive" src="/public/outerAssets/images/newIndex/varients-feature.png" alt="varients">
+					<div class="feature-heading text-center">
+						Available both Online & Offline
+					</div>
+					<div class="feature-description text-center">
+						<p>Experiencing slow internet? No issues switch to offline offline mode & go through the entire course on your Mobile/Desktop without internet.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Part of Video Section -->
+<section class="videos" id="videos">
+	<div class="container" style="background-color: #999966;">
+		<div class="row">
+			<h2 class="heading c-white" style="margin-top: 40px;">Watch Our Videos</h2>
+		</div>
+		<div class="row video-row">
+			<div class=" col-sm-3">
+				<div class="video-holder">
+					<img class="video img-responsive m-auto" id="vid-1" data-url="https://www.youtube.com/embed/bij544NWtBE?autoplay=1" src="/public/outerAssets/images/newIndex/Yvideo/video-thumb-1.jpg" alt="video" style="">
+				</div>
+			</div>
+			<div class=" col-sm-3">
+				<div class="video-holder">
+					<img class="video img-responsive m-auto" id="vid-2" data-url="https://www.youtube.com/embed/ZvOE_uWtxlA?autoplay=1" src="/public/outerAssets/images/newIndex/Yvideo/video-thumb-2.jpg" alt="video">
+				</div>
+			</div>
+			<div class=" col-sm-3">
+				<div class="video-holder">
+					<img class="video img-responsive m-auto" id="vid-2" data-url="https://www.youtube.com/embed/l-zEvOa0w2Q?autoplay=1" src="/public/outerAssets/images/newIndex/Yvideo/video-thumb-3.jpg" alt="video">
+				</div>
+			</div>
+			<div class=" col-sm-3">
+				<div class="video-holder">
+					<img class="video img-responsive m-auto" id="vid-3" data-url="https://www.youtube.com/embed/L55RdsIgEnI?autoplay=1" src="/public/outerAssets/images/newIndex/Yvideo/video-thumb-4.jpg" alt="video">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- End of Video Section -->
+
+<!-- Part of testimonials -->
+<div class="heading c-black m-t-20">What Our Students Have To Say</div>
+<section class="testimonials">
+	<div class="container">
+		<div class="row">
+			<div class="testimonial-left hidden">
+				<i class="zmdi zmdi-chevron-left"></i>
+			</div>
+			<div class="testimonial-holder">
+				<div class="testimonial active" data-number="0">
+					<div class="testimonial-avatar">
+						<img class="img-circle avatar-img" src="/public/outerAssets/images/newIndex/testimonials/2.jpg" alt="user">
+					</div>
+					<div class="testimonial-content">
+						I had difficulty in retaining information while preparing for the JEE Main exam, that's when I was introduced to Learnpedia's ScoreJEE. It has helped me immensely to perform to my fullest and clear the JEE exams with ease. Its interactive feature makes learning fun. Time management is another factor that scares us - ScoreJEE's tests also improved my time management skills
+					</div>
+					<div style="float: right;margin-top: 20px;">
+						<b>-DARSHAN KARRA</b>
+					</div>
+				</div>
+				<div class="testimonial hidden" data-number="1">
+					<div class="testimonial-avatar">
+						<img class="img-circle avatar-img" src="public/outerAssets/images/newIndex/testimonials/7.jpg" alt="user">
+					</div>
+					<div class="testimonial-content">
+						I personally feel that the videos offered by <b>Learnpedia</b> help students in learning concepts faster than light. This not only helps for the exams such as IIT-JEE but also for SRM,VITEE,GITAM,etc.,
+					</div>
+					<div style="text-align: right; margin-top: 20px;">
+						<b>-Aravind (KMIIT Student)</b>
+						<div>
+							Hyderabad.
+						</div>
+					</div>
+				</div>
+				<div class="testimonial hidden" data-number="2">
+					<div class="testimonial-avatar">
+						<img class="img-circle avatar-img" src="/public/outerAssets/images/newIndex/testimonials/3.jpg" alt="user">
+					</div>
+					<div class="testimonial-content">
+						With ScoreJEE, one will not find it difficult to follow the lectures which one has missed. Its video lectures with classroom atmosphere can be accessed from the comfort of our homes. It has given me the confidence and clarity in many concepts.
+					</div>
+					<div style="float: right;margin-top: 20px;">
+						<b>-RAAJ BORA</b>
+					</div>
+				</div>
+				<div class="testimonial hidden" data-number="3">
+					<div class="testimonial-avatar">
+						<img class="img-circle avatar-img" src="/public/outerAssets/images/newIndex/testimonials/4.jpg" alt="user">
+					</div>
+					<div class="testimonial-content">
+						Learnpedia's ScoreJEE is unique and innovative in its approach to identify the gaps for JEE preparations. Apart from that, the segregation of chapters into separate concepts helps us as students to understand the basics at large. Simple and clear explanation of concepts helped me score well in JEE Main examination.
+					</div>
+					<div style="float: right;margin-top: 20px;">
+						<b>-DEEPAK BHARAMBE</b>
+					</div>
+				</div>
+			</div>
+			<div class="testimonial-right">
+				<i class="zmdi zmdi-chevron-right"></i>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- End of testimonials -->
+
+<section class="app-link">
+	<div class="container">
+		<div class="row">
+			<h2 class="heading c-white">
+				YOUR TEST-PREP GETS EVEN MORE INTERESTING
+			</h2>
+			<div class="app-icon text-center">
+				<a href='https://play.google.com/store/apps/
+				developer?id=Learnpedia&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1' >
+					<img alt='Get it on Google Play' style="max-width: 200px;" src='/public/outerAssets/images/newIndex/google-play-badge.png'/>
+				</a>
+			</div>
+			<div class="c-white text-center f-15">
+				<a href="https://play.google.com/store/apps/
+				developer?id=Learnpedia&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1">Click here </a>to download Learnpedia's Mobile App
+			</div>
+		</div>
+	</div>
+</section>
+<style type="text/css">
+.sticky-footer{
+	background-color: #3C4C5B;
+	box-shadow: 0 0px 10px rgba(0,0,0,.4);
+	padding: 10px 0px;
+}
+.bottom-input{
+	margin: 0 auto;
+	position: relative;
+	max-width: 700px;
+}
+.bottom-input .input-group{
+	width: 90%;
+	margin:auto;
+}
+
+@media(max-width: 780px){
+	.bottom-input .input-group{
+		width: 80%;
+	}
+}
+</style>
+<div class="sticky sticky-footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-4">
+				<h5 class="c-white text-center f-20" style="font-weight: 600">
+					Prepare for JEE/NEET
+				</h5>
+			</div>
+			<div class="col-sm-8">
+				<form class="form-inline" id="footerform" name="footerform" role="form" style="position: relative;left: 0;">
+					<div class="text-center bottom-input">
+						<div class="input-group">
+							<input class="getStartedInput" title="phone" id="phone-footer" placeholder="Mobile Number" style="font-family: sans-serif;position: static;height: 40px;" aria-label="phone" type="tel">
+							<button aria-label="Get Started" role="presentation" class="btn btn-primary get-started-submit-btn" value="Get Started" type="button" style="top: 7px;" data-type="footer">
+								<span class="hidden-xs">Get Started</span>
+								<i class="visible-xs hidden-sm zmdi zmdi-arrow-forward"></i>
+							</button>
+						</div>
+						<span id="phone-help" class="hidden"></span>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Footer Section    -->
+#{include 'theme1/Application/footer.html' /}
+
+</section>
+</body>
+<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js"></script>
+<script src="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.js"></script>
+<script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/public/assets/theme1/js/app.min.js"></script>
+<script src="@{'/public/outerAssets/assets/js/o.intlTelInput-min.js'}"></script>
+#{if play.mode.name()=='PROD'}
+<script type="text/javascript" src='/public/outerAssets/assets/js/o.index.js'></script>
+#{/if}
+#{else}
+<script type="text/javascript" src='/public/outerAssets/assets/js/index.js'></script>
+#{/else}
+<script type="text/javascript" src="/public/outerAssets/assets/js/dropdown-on-hover.js"></script>
+<script type="text/javascript" src="/public/outerAssets/assets/js/drift_chat_application.js"></script>
+</html>

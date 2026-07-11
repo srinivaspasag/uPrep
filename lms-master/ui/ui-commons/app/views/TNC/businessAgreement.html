@@ -1,0 +1,30 @@
+    #{extends 'tncHeader.html' /}
+    #{set title:'Business Agreement' /}
+<div id="TnCPopup">
+		<div class="acceptTnC">
+			<div class="TnCHead">&{'BUSINESS.AGREEMENT.TITLE'}</div>
+			<div class="TnCBody">
+				#{include 'TermsAndConditions/businessAgreement.html' /}
+			</div>	
+			<div style="text-align:right;">
+				<span class="greyButton submitBtn" data-agrees=false >&{'TNC.TXT_DONT_AGREE'}</span>
+				<span class="greenButton submitBtn" data-agrees=true >&{'TNC.TXT_AGREED'}</span>
+			</div>
+		</div>
+	</div>
+        <script type="text/javascript">
+                $(function(){
+                        var popup = showVPopup(0.6,true);
+                        var div = $("#TnCPopup");
+                        popup.html(div.html());
+                        $(".submitBtn").on("click",function(){
+                                var $this = $(this);
+                                var params = {"agrees":$this.data("agrees"),
+                                    "version":"${flash.get('version')}",
+                                    orgId:"${flash.get('orgId')}"};
+                                window.top.location.href = "@{TNC.acceptBusinessAgreement}?"+$.param(params);
+                        });
+                        $(".TnCBody").css({"max-height":(0.7*window.innerHeight)+"px"});
+                        $(".crossVPopup").remove();
+                });	
+        </script>

@@ -1,0 +1,53 @@
+%{
+	plansResp = _resp;
+}%
+#{if plansResp!=null && plansResp.errorCode.isEmpty() && plansResp.result.list.length()>0}
+ 	<tr>
+	   <td class="formTdName req" style="width:165px;">Choose your plan*</td>
+	#{list items:0..plansResp.result.list.length()-1,as:'index'}
+	%{
+		plan = plansResp.result.list.get(index);
+	}%
+	   <td class="eachPlan">
+	   	<div class="planName centerText">${plan.name}</div>
+		<table class="planTable" cellspacing=0 cellpadding=0>
+		   <tr>
+		 	<td>
+				<input type="radio" name="planId" value="${plan.id}" data-plan-name="${plan.name}" required/>
+			</td>
+			<td class="planPrice">
+				<span>$</span>
+				<span style="margin-left:-6px;">${plan.cost}</span>
+			</td>
+			<td>
+				#{if plan.peruser == true}
+					<div class="planDuration">&{'TXT_MONTHLY'}</div>
+					<div class="planUsers">per active user</div>
+				#{/if}
+				#{elseif plan.users > 0}
+					<div class="planDuration">&{'TXT_ANNUALY'}</div>
+					<div class="planUsers">${plan.users} users</div>
+				#{/elseif}
+				#{else}
+					<div class="planDuration">&{'TXT_ANNUALY'}</div>
+					<div class="planUsers">Unlimited Users</div>
+				#{/else}
+				<div class="planDuration">&{'INVOICING_MONTHLY'}</div>
+			</td>
+		   </tr>
+		</table>
+		*{<!--#{if !plan.features.equals(null) && plan.features.length()>0}
+		<div class="centerText fontRoboto fs16">INCLUDES</div>
+		<div class="planDetails">
+			#{list items:0..plan.features.length()-1,as:'fIndex'}
+				<div>-${plan.features.get(fIndex)}</div>
+			#{/list}
+		</div>
+		#{/if}-->}*
+		#{if !plan.desc.equals(null) && !plan.desc.isEmpty()}
+			<div class="planDetails">${plan.desc.raw()}</div>
+		#{/if}
+	   </td>
+	#{/list}
+	</tr>
+#{/if}

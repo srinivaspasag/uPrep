@@ -1,0 +1,160 @@
+<style type="text/css">
+    .instDbtTag{
+        cursor: pointer;
+    }
+    .closeDbtTopic{
+        cursor: pointer;
+    }
+    .like{
+        cursor: pointer;color: #4b4f56;font-weight: bold;font-size: 12px;font-family: Helvetica, Arial, sans-serif;    
+    }
+    .instEachDbt:hover .followInstDbt {
+        opacity: 1;
+    }
+    .followInstDbt {
+        opacity: 0;
+    }
+    .followersPopup{
+        min-width: 300px;
+    }
+    .popupHeading{
+        text-align: left!important;
+    }
+    .followersPopup .titleTable{
+        text-align: left!important;
+    }
+</style>
+%{
+    if(_data != null){
+            discuss = _data;
+    }
+    rowspan = 4;
+    drawBody = _drawDesc;
+    if(drawBody){
+        rowspan = 5;
+    }
+}%
+#{if discuss != null && discuss !=""}
+%{
+    if(discuss.has('dissId'))dissId=discuss.dissId;
+    else if(discuss.has('id'))dissId=discuss.id;
+    orgId = params.orgId;
+    userId = "";
+}%
+<div class="instEachDbt card w-item" data-diss-id="${dissId}">
+        <div class="card-header">
+        #{if discuss.has('user') && !discuss.user.equals(null)}
+        %{
+                        user=discuss.user;
+            getUser=(controllers.Profile.getUserClassAndUrl(user));
+                        userClass = getUser.get("className");
+                        userUrl = getUser.get("url");
+                        userId = getUser.get("id");
+        }%
+            <div class="media">
+                <div class="instProfilePicContainer pull-left">
+                    <a class="${userClass} doCStream displayInBlock" name="UPLOADER_LINK" data-user-id="${userId}">
+                        <img class="instDbtProfilePic img-circle avatar-img" src="${user.thumbnail}">
+                    </a>
+                </div>
+                    #{memberName user : user , classNames : "instDbtPostNm ptrTag" , getUser : getUser , timeCreated:discuss.timeCreated/}
+            </div>
+        #{/if}
+        #{else}
+            <div class="media">
+                <div class="instProfilePicContainer pull-left">
+                    <img class="instDbtProfilePic img-circle avatar-img" src="">
+                </div>
+                <div class="media-body">
+                    <h2>Unknown user</h2>
+                </div>
+            </div>
+        #{/else}
+        </div>
+            #{if params.userRole != "STUDENT" || userId == session.userId}
+            <ul class="actions" style="bottom:90px;position: relative;">
+                <li class="dropdown pull-right">
+                    <a href="" data-toggle="dropdown">
+                    <i class="zmdi zmdi-more-vert"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li >
+                            <a class="delInstDbt" data-id="${dissId}">&{'TXT_DELETE'}</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            #{/if}
+                <div class="instDbtTitle card-body card-padding" style="padding-top: 0px!important;"">
+                    #{if !discuss.boardTree.equals(null) && discuss.boardTree.length()>0 }
+                    %{ board = discuss.boardTree.get(0);}%
+                    <span class="instDbtTitleSubNm f-16 f-500" data-brd-id="${board.id}">${board.name}:</span>
+                    #{/if}
+                    <a class="txtBd openInstDoubt doCStream f-16" data-diss-id="${dissId}"
+                    data-cs-name="DISCUSSION_TITLE"
+                    href="/discussion/${dissId}" target="_blank">
+                    <span style="word-wrap: break-word;">${discuss.name}</span>
+                    </a>
+        #{if drawBody==true}
+                <div class="p-t-10" style="word-wrap: break-word;">
+                    ${discuss.content.raw()}
+                </div>
+        #{/if}
+            #{if !discuss.boardTree.equals(null) && discuss.boardTree.length()>0 }
+              %{ board = discuss.boardTree.get(0);}%
+                #{if board.has('children') && board.children!="" && board.children.length()>0}
+                    <ul class="instDbtTags lgi-attrs p-t-10">
+                    #{list items:0..board.children.length()-1, as:'childIndex'}
+                    %{ child = board.children.get(childIndex);}%
+                        <li class="instDbtTag instTrTopicText doubtBrd-${child.id} left" 
+                            data-brd-id="${child.id}">
+                            ${child.name}
+                        </li>
+                    #{/list}
+                    </ul>
+                #{/if}
+             #{/if}
+                <div class="instDbtAnsBar p-t-10 m-t-10" style="border-top: 1px solid #e5e5e5;padding-top: 8px;">
+                    <span class="ansInstFeedCount">
+                        <i class="zmdi zmdi-comment-edit" style="top:2px;position: relative;font-size: 15px;"></i>
+                        &nbsp;&nbsp;
+                        <a class="ansCount doCStream openInstDoubtAns like" data-diss-id="${dissId}" data-cs-name="DISCUSSION_TITLE" 
+                            href="/discussion/${dissId}"><span class="commCount">${discuss.comments}</span> &{'INST_DOUBT_ANSWERS'}</a>
+                    </span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="followersInstFeedCount" data-entity-count="${discuss.followers}" 
+                        data-entity-type="DISCUSSION" data-entity-id="${dissId}">
+                        <i class="zmdi zmdi-accounts" style="font-size: 15px;"></i>
+                        &nbsp;&nbsp;
+                        <a class="followersCount like">&{'INST_DOUBT_FOLLOWERS',discuss.followers}</a>
+                    </span>
+                </div>
+            </div>
+            #{if discuss.has('followType')}
+                <span class="pull-right followInstDbt" style="bottom:50px;right:20px;position: relative;">
+                    #{widgets.followUnfollowEntity followType:discuss.followType,entityType:'DISCUSSION',entityId:dissId,'saveText':'Follow','callback':'FOLLOW_DISCUSSION'/}
+                </span>
+            #{/if}
+</div>
+#{/if}
+
+#{if discuss != null && discuss !="" && flag.equals('singleDoubt')}
+     <script type="text/javascript">
+      (function(){
+        swal({
+          type: "success",
+          title: "Doubt Posted Successfully"
+        });
+      })();
+      </script>
+#{/if}
+#{if  (discuss == null || discuss =="") && flag.equals('singleDoubt')}
+    <script type="text/javascript">
+      (function(){
+        swal({
+          type: "warning",
+          title: "Something went wrong"
+        });
+      })();
+      </script>
+#{/if}

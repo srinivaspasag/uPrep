@@ -1,0 +1,69 @@
+#{if files!=null && files.errorCode.isEmpty() && files.result.list.length()>0}
+<input type="hidden" class="resultDataCount" value="${files.result.totalHits}" data-real-count="${files.result.totalHits}"/>
+#{list items:0..files.result.list.length()-1, as:'tIndex'}
+%{ 
+	file = files.result.list.get(tIndex);
+	caller = _caller == null ? "" : _caller;
+	fileOpenUrl = webUtils.TemplateHelper._getFileUrl(file,params.orgId);
+	recordState = file.has("recordState") && !file.recordState.equals(null) ? file.recordState : "ACTIVE"; 
+}%
+<a class="doCStream ${fileOpenUrl.className}" data-id="${fileOpenUrl.id}" href="${fileOpenUrl.url}" data-cs-name="DOWNLOAD">
+   <div class="relative myContentsEachListItems myContentsEachItem"
+	data-video-id="${fileOpenUrl.id}" data-entity-type="video" data-entity-id="${fileOpenUrl.id}">
+	<div class="left relative myContentsListLeft">
+		<span class="resourceIconFILE"></span>
+		<span class="relative big12 boldy blackTextColor"
+			 title="${file.name}">${file.name}</span>
+		<!-- <div class="relative singleLineText">
+		#{if file.has('user') && file.user!=null}
+                      %{
+                        user=file.user;
+                        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                      }%
+			<span class="blackTextColor">by</span>
+			<a class="relative big12 blueTextColor ${getUserClassAndUrl.className}"
+                   		style="padding-top:0px;" href="${getUserClassAndUrl.url}" data-user-id="${user.id}">
+                    		 ${user.firstName} ${user.lastName}
+			</a>
+		#{/if}
+		</div> -->
+	</div>
+	<div class="left relative myContentsListMiddle greyTextColor">
+	    <div class="left myContentsItemInfo">
+		<div class="leftText"><b>Views</b> - ${file.views}</div>
+		#{if file.has('extension')}
+		<div class="leftText"><b>Type</b> - ${file.extension}</div>
+		#{/if}
+	</div>
+	<div class="right relative myContentsListRight">
+	<span class="left relative myContentsDocumentsText" style="width:100%;">
+		%{
+			boards = file.boardTree;
+		}%
+		#{if !boards.equals(null) && boards.length()>0}
+		   #{if boards.length()<=2}
+			#{list items:0..boards.length()-1,as:'bIndex'}
+				#{if boards.get(bIndex).type=="COURSE"}
+				<div style="color:#f44446;padding-right:6px">${boards.get(bIndex).name}</div>
+				#{/if}
+			#{/list}
+		   #{/if}
+		   #{else}
+		   	<span style="color:#f44446;padding-right:6px" class="toolTipTitle"
+				data-title="#{list items:0..boards.length()-1,as:'bIndex'} #{if boards.get(bIndex).type=="COURSE"}${boards.get(bIndex).name}, #{/if}#{/list}"
+				>${boards.length()} &{'TXT_SUBJECTS'}</span>
+		   #{/else}
+		   </span>
+		#{/if}
+	</span>
+		<a class="right relative greenButton myContentsButtonItem ${vidUrl.className} doCStream" data-id="${vidUrl.id}" href="${vidUrl.url}" data-cs-name="DOWNLOAD">&{'TXT_DOWNLOAD'}</a>
+	</div>
+   </div>
+</a>
+#{/list}
+#{/if}
+#{else}
+	<input type="hidden" class="resultDataCount" value="1" data-real-count="0"/>
+	*{<div class="left relative big14 textCenter fullWidth redTextColor" style="padding:10px 0;">&{'NO_DOCS'}</div>}*
+	#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+#{/else}

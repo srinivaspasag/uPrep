@@ -1,0 +1,56 @@
+%{
+gaDomain=play.Play.configuration.getProperty("ga.domain");
+gaPropertyId=play.Play.configuration.getProperty("ga.property.id");
+sessionUserId=session.userId;
+sessionUserFullName=session.fullname;
+organizationId=session.loginOrgId;
+if(session.myOrgInfo != null){
+   organizationdetails=session.myOrgInfo
+org.json.JSONObject orgName = new org.json.JSONObject(organizationdetails);
+orgFullName=orgName.instFullName;
+
+    }
+}%
+#{if gaDomain!=null}
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', "${gaPropertyId}"]);
+    _gaq.push(['_setDomainName', "${gaDomain}"]);
+    _gaq.push(['_trackPageview']);
+    #{if sessionUserId != null && sessionUserId != ''}
+    _gaq.push(['_setCustomVar',
+            1,
+            'USERID',
+            "${sessionUserId}",
+            1
+    ]);
+            _gaq.push(['_setCustomVar',
+            2,
+            "FULLNAME",
+            "${sessionUserFullName}",
+            1
+    ]);
+  _gaq.push(['_setCustomVar',
+            3,
+            "ORGID",
+            "${organizationId}",
+            1
+    ]);
+  _gaq.push(['_setCustomVar',
+            4,
+            "ORG_NAME",
+            "${orgFullName}",
+            1
+    ]);
+
+    #{/if}
+    (function() {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+#{/if}

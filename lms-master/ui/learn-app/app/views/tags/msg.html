@@ -1,0 +1,51 @@
+%{
+    msg = _msg;
+    target = _target;
+    user = msg.get('mostRecentSender');
+    getUser=(controllers.Profile.getUserClassAndUrl(user));
+        userClass = getUser.get("className");
+        userUrl = getUser.get("url");
+        userId = getUser.get("id");
+    rdClass = msg.status=="UNREAD"?"convUnRead":"";
+    amISender = false;
+    if(userId == session.userId){
+        amISender = true;
+    }
+}%
+<div class="msgEachOne ${rdClass}">
+<a class="openMsgConversation ptrTag" data-sender-id="${userId}" data-conversation-id="${msg.conversationId}" data-user-conversation-id="${msg.userConversationId}" data-timestamp="${msg.mostRecentMessageTiming}">
+    #{if target!="CONVERSATION"}
+    <div class="checkbox pull-left">
+        <label>
+            <input type="checkbox" class="msgSelectionCHK">
+            <i class="input-helper"></i>
+        </label>
+    </div>
+    #{/if}
+    <div class="media-body">
+        <a class="${userClass} doCStream ptrTag displayInBlock" href="${userUrl}" data-user-id="${userId}">
+        <img class="msgProfilePic lgi-img" src="${user.thumbnail}" alt=""/>
+        </a>
+        #{memberName user : user , classNames : "msProfileNm displayInBlock" , getUser : getUser /}
+        <span class="convCountPerConv #{if msg.messageCount<=1}nonner#{/if}">
+        (<span class="convCount-${msg.conversationId}">${msg.messageCount}</span>)
+        </span>
+        #{if msg.numOfParticipants>1}
+            #{if amISender == true}
+                        and <a class="msgOtherRecieversList" data-count="${msg.numOfParticipants-1}">${msg.numOfParticipants-1}</a> others
+                    #{/if}
+                    #{else}
+                        <span>to me</span>
+                        #{if msg.numOfParticipants>2}
+                        <span> and <a class="msgOtherRecieversList" data-count="${msg.numOfParticipants-2}">${msg.numOfParticipants-2}</a> others
+                        <span>
+                        #{/if}
+                    #{/else}
+            #{/if}
+        #{if target!="CONVERSATION"}
+            <div class="inboxMsgTitle singleLineText lgi-heading">${msg.subject}</div>
+        #{/if}
+        <span class="msgDate smally pull-right">${new Date(controllers.TemplateHelper._getClientTimeOffsetCalc(msg.mostRecentMessageTiming,params.clientServerTimeDelta)).format('dd/MM/yyyy')}</span>
+        <span class="msgTime smally pull-right">${new Date(controllers.TemplateHelper._getClientTimeOffsetCalc(msg.mostRecentMessageTiming,params.clientServerTimeDelta)).format('hh:mm a')}</span>
+    </div>
+

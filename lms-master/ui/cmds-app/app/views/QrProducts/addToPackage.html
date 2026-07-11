@@ -1,0 +1,29 @@
+#{if packages.errorCode!=''}
+    #{common.errorCodes resp:packages /}
+#{/if}
+#{else}
+%{
+    pkgs=packages.result.packages;
+}%
+#{if pkgs.length()>0}
+<div class="cmdsPopupHead">Add to Package</div>
+<table class="margLeft20" width="95%">
+    <tbody>
+        <tr>
+            <td class="grayHead pad10Top alignTop">
+                Choose Package
+            </td>
+            <td class="pad10Top entityListDiv">
+                <input type="hidden" class="entityListTotal" value="${packages.result.totalHits}"/>
+                <div class="vRadioGrp formvRadioGrp entityList" data-param-name="packageId">            
+                    #{include 'QrProducts/addToPackageList.html' /}
+                </div>                
+            </td>
+        </tr>
+    </tbody>
+</table>   
+#{/if}
+#{else}
+<div class="userMessage">No study packages found.</div>
+#{/else}
+#{/else}

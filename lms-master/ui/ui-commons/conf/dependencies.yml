@@ -1,0 +1,16 @@
+# Application dependencies
+
+require:
+    - play
+    - external -> json 1.0
+    - external -> vedantu-util 1.0
+    - external -> jericho-html 3.2
+    - external -> log4j-rolling-appender 20150607-2059
+
+repositories:
+           
+    - external:
+        type:       local
+        artifact:   "${application.path}/../local-repo/[module]-[revision].jar"
+        contains:
+            - external -> * 

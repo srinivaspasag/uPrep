@@ -1,0 +1,16 @@
+#{if products.errorCode!=''}
+    #{common.errorCodes resp:products /}
+#{/if}
+#{else}
+<div id="productsPage">                
+        #{products.createPrdtvChoose targetPage:"PRODUCTS"/}
+    #{search.mainWrapper target:"PRODUCTS",cmdsResp:products/} 
+</div>
+<script type="text/javascript">
+    new function(){
+        var fn=function(){qrProducts.init();}
+        lazyLoad([{fname:"qrProducts.js",cb:fn}]);
+    }();       
+</script> 
+#{/else}
+

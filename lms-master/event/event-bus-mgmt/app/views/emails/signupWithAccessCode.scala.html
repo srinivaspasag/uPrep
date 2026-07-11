@@ -1,0 +1,31 @@
+@(emailDetails: com.vedantu.organization.event.details.SignupWithAccessCodeEmailDetails)
+@appDomain( emailDetails ) { host =>  
+
+<div style="font-size:14px;color:#333;font-weight:bold;">We wholeheartedly welcome you to @emailDetails.organization.name. </div>
+
+<div style="font-size:14px;color:#333;padding-top:7px;">
+<div>You have specified this email-id for communication with us. You need to verify this email-id (by clicking on Verification Link sent in a separate email).</div>
+<div style="padding:20px 0 30px;">You can now login to @emailDetails.organization.name using the following <b>Login Credentials:</b></div>
+<div><b>Login ID: </b><span style="color:#333;">@emailDetails.userName</span></div>
+<div><b>Password: </b><span style="color:#333;">@emailDetails.password</span></div>
+</div>
+<div style="padding:30px 0 25px;">
+<div style="font-weight:bold;border-bottom:1px solid #D9D9D9;padding-bottom:3px;">Steps to Login to @emailDetails.organization.name on Web : </div>
+<ol type="1" style="margin:0px;padding-left:10px;-webkit-padding-start:10px;-moz-padding-start:10px;">
+	<li style="padding:10px 0;">Open URL - <a href="@host" style="color:#006699;">@emailDetails.orgInfo.orgURL</a></li>
+	<li style="padding-bottom:10px;">Click on Login</li>
+	<li style="padding-bottom:10px;">Enter the above mentioned Login ID and Password </li>
+</ol>
+</div>
+<div style="font-size:13px;color:#333;padding:25px;background-color:#fffdd0;">
+<div style="font-weight:bold;font-size:16px;">Go ahead, login to <span style="color:#006699;">@emailDetails.organization.name.</span></div> 
+<div style="font-size:14px;">Following is what you can do on @emailDetails.organization.name which will help you learn better:</div>
+<div style="padding-top:15px;">
+<div style="padding-bottom:11px;"><b>Practice Questions and Tests -</b> Prepare yourself better by attempting practice questions and tests added by the Teachers of your Institute under Library Section.</div>
+<div style="padding-bottom:11px;"><b>Compete in Challenges -</b> Compete with other students in your Institute by participating in the Challenges added by your Teachers in the Challenge Section. You can earn points, rise up the leader-board and learn tricky concepts the fun way.</div>
+<div style="padding-bottom:11px;"><b>Assess your Performance -</b> @emailDetails.organization.name generates detailed result analytics by tracking your performance in the Tests you attempt on the system. Know your strengths, weakness and plan your studies better .</div>
+<div><b>Discuss and Ask Doubts -</b> We know that your doubts pop up anytime. Now, ask doubts anytime by posting it on @emailDetails.organization.name. Use intuitive formula editor to add complex formulae, add images to discuss problems with your friends and teachers. Get your queries answered and be inspired.</div>
+</div>
+</div>
+<div style="padding-top:25px;">You can do all this and more from the ease of your Mobile Device and also from Web. @emailDetails.organization.name keeps everything on Mobile and Web in SYNC.</div>
+}

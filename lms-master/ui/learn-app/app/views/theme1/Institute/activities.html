@@ -1,0 +1,51 @@
+<head>
+<link href="/public/stylesheets/o.activity.css" rel="stylesheet"/>
+</head>
+<div class="block-header">
+    <h2>&{'TXT_RECENT_ACTIVITY'}</h2>
+</div>
+<div class="instShareFeedsHold col-md-8" style="border-right: 0px;">
+    <div class="row wall instCreateShare">
+        <div class="col-md-12">
+            <div class="card w-post" id="instCreateShrTable">
+                <div class="card-body media">
+                    <div class="pull-left" style="padding: 9px;">
+                        <img src="${myOrgInfo.get('profilePic')}" class="lgi-img" alt="">
+                    </div>
+                    <div class="wp-text" contenteditable=true data-placeholder="&{'CREATE_SHR_PLACEHOLDER'}" >
+                    </div>
+                    <div class="tab-content p-0 instShareInput">
+                        <div class="instAttachPreviewHold">
+                        </div>
+
+                        <div class="wp-actions clearfix instShrOptionsCol">
+                            <button class="btn btn-primary btn-sm pull-right shrWithBtn">Post</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="instFeedPostContainer">
+            </div>
+            <div class="instFeedsContainer">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-4 card hidden-xs hidden-sm" style="padding-left: 0px; padding-right: 0px;">
+    <div class="card-header f-20 f-700 bgm-teal c-white" style="color: #222; line-height: 25px; text-align: left;">
+        <center>How Activity works ?</center>
+    </div>
+    <div class="card-body card-padding f-15" style="padding-top: 25px!important; color: #4E4E4E; min-height: 140px; line-height: 24px; text-align: left;">
+        Find the latest content updates and your institute's feed in this section. 
+        <img class="img-responsive p-t-20" src="/public/images/notification.png"> 
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".instPageNavigator").find(".active").removeClass("active");
+        $(".instPageNavigator").find(".instNavTab.instRATab").closest("li").addClass("active");
+        institute.activities.init();
+        $(".wp-text").html("");
+    });
+</script>
+#{script src:'o.activityHelpers.js', charset:'utf-8' /}

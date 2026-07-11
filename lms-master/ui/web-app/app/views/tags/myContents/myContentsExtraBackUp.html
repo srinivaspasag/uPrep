@@ -1,0 +1,48 @@
+<div class="left relative myContentsPageTopSection">
+	*{#{if recommendations.has("result") && recommendations.result.has("documents") && recommendations.result.documents.length()>0}
+	<div class="left relative contentsRecomendation">
+		<div class="left relative contentRecomendationHolder">
+			<div class="left relative contentReccHeader">
+				<span class="left relative big16 boldy">Recommended for You</span>
+				<span class="left relative recommendationLeftArrow recommendationDisableArrow"></span>
+				<span class="left relative recommendationCurrentCount greyTextColor"></span>
+				<span class="left relative recommendationRightArrow"></span>
+			</div>
+			<div class="left relative contentRecommendationList">
+				#{include 'MyContents/getRecommendations.html' /}
+			</div>
+		</div>
+		<div class="left contentRecomendationInfo">
+			<span class="left relative peopleFollowingRecommendation blackTextColor"><span class="blueTextColor">Rakesh</span> and <span class="otherRecommendationFollowers blueTextColor">4 others</span> friends follow this book</span>
+			<span class="relative recommendationMatchingTags"><b>Matching Tags :</b> AIEEE , IIT-Delhi , Physics</span>
+		</div>	
+	</div>
+	#{/if}}*
+	<div class="left relative myContentSearch">
+		<div class="left relative chooseContents vDragAndChoose smally boldy">
+			<span class="left relative chooseMyContents vChoosenTag">My Content</span>				
+			<span class="left relative chooseInstituteContents">Institute Content</span>				
+		</div>
+		<input class="left relative searchTypeInputBox searchMyContents" placeholder="search content below" type="text" />	
+	<div class="right relative"><span class="big14 boldy left" style="padding-top:5px;">Sort By : </span>
+		<div class="vselect vselectHide selectMyContents vDropDown left relative" onstatechange="myContentsTypeChange" data-value="most_popular">
+			<span class="vSelectHead">
+				<input type="text" class="vSelectText" value="Most Popular" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect" ></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+					<span class="vSelectEach" data-value="avgRating">Most Popular</span>
+					<span class="vSelectEach" data-value="timeCreated">Recent one</span>
+					<span class="vSelectEach" data-value="views">Most Visited</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	<div class="left relative filterMyContentsSearchBy">
+		<input type="button" class="filterByAllContents vDropDown btnSelected" value="All" data-type="ALL"/>
+		<input type="button" class="filterByFollowingContents vDropDown" value="Saved" data-type="FOLLOWING"/>
+		<input type="button" class="filterByCreatedContents vDropDown" value="Created" data-type="CREATED"/>
+	</div>
+</div>

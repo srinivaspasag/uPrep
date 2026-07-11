@@ -1,0 +1,47 @@
+%{
+	plan = _plan;
+}%
+#{if plan != null && plan.has("id")}
+	<table class="eachVPlanTable">
+	   <tr>
+		<th class="fontRobotoLight alignTop">&{'PLAN_NAME'}</th>
+		<td class="fontRoboto big18 boldy" style="padding-bottom:0px;">
+			<div>${plan.name}</div>
+			#{if "OBSOLETE".equals(plan.planState)}
+				<div class="redTextColor fs12" style="padding:10px;">
+					<div>This plan will not be available anymore in future.</div>
+					<div>Please choose another plan for your organization.</div>
+				</div>
+			#{/if}
+		</td>
+	   </tr>
+	   #{if !plan.desc.equals(null) && !plan.desc.isEmpty()}
+	   <tr>
+		<th></th>
+		<td class="fontRobotoLight big14" style="padding-bottom:15px;">${plan.desc.raw()}</td>
+	   </tr>
+	   #{/if}
+	   <tr>
+		<th class="fontRobotoLight alignTop">&{'PLAN_PRICE'}</th>
+		<td class="fontRoboto boldy">
+		   <div>
+			<span class="big20">$</span>
+			<span class="big20" style="margin-left:-2px;">${plan.cost}</span>
+			#{if plan.peruser == true}
+				<span class="vplanUsers">&{'PER_ACTIVE_USER'}</span>
+				<div class="vplanDuration">&{'MONTHLY_PLAN'}</div>
+			#{/if}
+			#{elseif plan.users > 0}
+				<span class="vplanUsers">&{'PER_no_USERS',plan.users}</span>
+				<div class="vplanDuration">&{'ANNUALY_PLAN'}</div>
+			#{/elseif}
+			#{else}
+				<span class="vplanUsers">Unlimited Users</span>
+				<div class="vplanDuration">&{'ANNUALY_PLAN'}</div>
+			#{/else}
+			<div class="planDuration">&{'INVOICING_MONTHLY'}</div>
+		   </div>
+		</td>
+	   </tr>
+	</table>
+#{/if}

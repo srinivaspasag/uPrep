@@ -1,0 +1,13 @@
+@(emailDetails:com.vedantu.eventbus.email.details.RemarkEmailNotificationDetails)
+
+@appDomain( emailDetails) { host =>  
+@defining(emailDetails.details.getJSONObject("src")) { srcDetails =>
+@defining(srcDetails.getJSONObject("contentSrc").getString("id")) { orgId =>
+@defining( emailDetails.details.getJSONObject("actor")){ actor =>
+			@userNewsDetails(host)(orgId)(actor)
+			<span> has left you a remark.</span>
+			}	
+		}	
+     } 
+}
+<div>View it on your profile.</div>

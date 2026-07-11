@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Learnpedia</title>
+<meta charset="utf-8" />
+<meta content="Learnpedia Questions" name="application-name" />
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" charset="utf-8"></script>
+<style type="text/css">
+body{
+    padding: 0;
+    line-height: 16px;
+    font-family:Ubuntu,sans-serif;
+    font-size: 12px;
+    margin: 0px;
+    color: #404040;
+    background: #F2F2F2;
+}
+body #noscript-warning{
+	padding:20px 0;
+}
+#topBarHolder{
+    width: 100%;
+    height: 44px;
+    background-color: #363636;
+    z-index: 1;
+    top: 0;
+}
+#topBar{
+    width: 900px;
+    margin: 0 auto;
+    padding: 14px 0;
+    font-weight: bold;
+}
+#loginBlock{
+    margin: 100px auto auto;
+    width: 260px;
+}
+#username,#password{
+    border: medium none;
+    box-shadow: 1px 1px 2px #CCCCCC inset;
+    -moz-box-shadow: 1px 1px 2px #CCCCCC inset;
+    -webkit-box-shadow: 1px 1px 2px #CCCCCC inset;
+    font-family: arial,sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 8px 5px;
+    width: 250px;
+}
+#submitLogin{
+    background: url("/public/images/editBack.png") repeat-x scroll 0 0 transparent;
+    border: 1px solid #A6BC63;
+    border-radius: 2px 2px 2px 2px;
+    -moz-border-radius: 2px 2px 2px 2px;
+    -webkit-border-radius: 2px 2px 2px 2px;
+    cursor: pointer;
+    float: right;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 15px;
+}
+.loginError{
+    color: red;
+    font-weight: bold;
+}
+</style>
+  </head>
+  <body>
+      <div id="topBarHolder"><div id="topBar"></div></div>
+      <div id="loginBlock">
+          <h2>Login</h2>
+          #{if flash.get("LoginError")!=""}
+          <span class="loginError">${flash.get("LoginError")}</span>
+          #{/if}
+          <form action="@{Security.authentify}" method="post">
+              <input type="text" id="username" PlaceHolder="Username" name="username"/>
+              <input type="password" id="password" PlaceHolder="Password" name="password"/>
+              <input id="submitLogin" value="Submit" type="submit"/>
+          </form>
+      </div>
+    #{common.noscript/}
+    </body>
+</html>
+
+
+
+
+
+
+
+
+

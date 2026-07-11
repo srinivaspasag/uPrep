@@ -1,0 +1,194 @@
+<!-- SIGN UP POPUP -->
+#{stylesheet media:'screen', src:'jquery-libs/jquery-ui-1.10.4.custom.min.css' /}
+<!-- Scripts for Intl-tel-input plugin -->
+#{script src:'intlTelInput.js', charset:'utf-8' /}
+#{script src:'utils.js', charset:'utf-8' /}
+<!--End of Script -->
+#{stylesheet media:'screen', src:'uicomRegister.css' /}
+<!-- Stylesheet for Intl-tel-input plugin -->
+#{stylesheet media:'screen',src:'intlTelInput.css'/}
+<!-- End of Stylesheet -->
+#{if resp!=null && resp.errorCode !=""}
+  <div style="font-size: 24px;line-height: 1.5;max-width: 400px;min-height: 50px;word-wrap: break-word;padding: 20px;">
+    <div>${resp.errorMessage}</div>
+  </div>
+#{/if}
+#{else}
+<div class="signupPopup">
+   <div class="orgSiteColor big20">&{'microsite.ENTER_YOUR_DETAILS'}</div>
+   <div class="right" style="top: -15px;position: relative;">
+	<span class="big12" style="color:#666;">&{'ALREADY_A_MEMBER'}</span>
+	<span class="big14 blueLoginButton loginPopupBtn">&{'login.SIGNIN'}</span>
+   </div>
+   <div class="loginErrorMsg nonner"></div>
+   <form action="@{Security.signup}" method="POST" id="memberSignupForm">
+       <table cellspacing=0 cellpadding=0 class="memberSignupTable">
+       <tr>
+   	<td class="signupTitleTd">
+   	   <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span>
+   	</td>
+   	<td>
+      <input type="text" class="loginInputField firstName" required name="firstName" placeholder="Enter Full Name"/>
+   	</td>
+       </tr>
+       <tr>
+   	<td class="signupTitleTd">
+   	   <span class="loginFieldTitle">&{'signup.EMAIL_ID'} <span class="redTextColor">*</span></span>
+   	</td>
+   	<td>
+        <input type="email" class="loginInputField emailUserName" required name="email" placeholder="Enter Your Email Id" id="email"/>
+   	   <div class="signupErrorDiv"></div>
+   	</td>
+       </tr>
+       <tr>
+    <td class="signupTitleTd">
+       <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span>
+    </td>
+    <td>
+       <input type="tel" class="loginInputField contactNumber" required name="contactNumber"
+    placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;top:-2px;" />
+    <div class="signupErrorDiv" id="contactNumbererrorDiv"></div>
+    #{if resp.result.enableOTP}
+      <div class="otp-verification-section nonner" style="cursor: pointer;padding: 0px 20px;">
+          <div class="send-otp-section">
+            <img src="/public/images/common/right-point-hand.png">
+            <span class="sendOTP redTextColor" style="position: relative;bottom: 5px;">Click here to send OTP.</span>
+          </div>
+      </div>
+    #{/if}
+    </td>
+       </tr>
+       #{if resp.result.enableOTP}
+       <tr class="otp-form-field-row">
+          <td class="signupTitleTd">
+             <span class="loginFieldTitle">OTP<span class="redTextColor">*</span></span>
+          </td>
+          <td>
+            <input type="hidden" name="isValidPhone" value="true"/>
+            <input type="text" name="OTP" class="loginInputField OTP" required placeholder="Enter OTP"/>
+            <!-- <div class="nonner" style="height: 25px;"> -->
+              <div class="resend-otp-section nonner" style="padding: 0px 20px;cursor: pointer;">
+                <img src="/public/images/common/right-point-hand.png">
+                  <span class="sendOTP redTextColor" style="position: relative;bottom: 5px;">Click here to resend OTP.</span>
+              </div>
+            <!-- </div> -->
+          </td>
+       </tr>
+       #{/if}
+       #{if params.orgId == play.Play.configuration.getProperty("learnpedia.id") && play.Play.configuration.getProperty("referral.state") == "ACTIVE"}
+      <tr>
+   <td class="signupTitleTd">
+      <span class="loginFieldTitle">&{'signup.REFERRAL'}</span>
+   </td>
+   <td>
+      <input type="text" class="loginInputField" id="referral" name="referrerCode"
+   placeholder="Enter Referral Code"/>
+   </td>
+      </tr>
+      #{/if}
+       #{if resp!=null && resp.errorCode.isEmpty()}
+	%{
+		fields = resp.result.fields;
+	}%
+        #{if !fields.equals(null)&&fields.length()>0}
+	#{list items:0..fields.length()-1,as:'index'}
+	%{
+            field = fields.get(index);
+            fieldType = field.fieldType;
+	    validationType = field.validationType;
+            valueSet = field.valueSet;
+	    required = field.required;
+	    placeHolder = field.placeHolder.equals(null)?"":field.placeHolder;
+	    requiredText = "";
+	    if(required == true){
+		requiredText = "required";
+	    }
+        }%
+       	<tr>
+   		<td class="signupTitleTd">
+   	   		<span class="loginFieldTitle">
+				 <span>${field.name}</span>
+				 #{if required == true}
+				 	<span class="redTextColor">*</span>
+				 #{/if}
+			</span>
+   		</td>
+   		<td>
+			<input type="hidden" name="extraInfo[${index}].name" value="${field.name}"/>
+                        #{if fieldType.equals(null)}
+   	   		<input type="text" class="loginInputField" ${requiredText} placeholder="${placeHolder}"
+				name="extraInfo[${index}].value"/>                        
+                        #{/if}
+                        #{elseif validationType == "LIST"}
+                            #{if !valueSet.equals(null) && valueSet.length()>0}
+                            <select ${requiredText} name="extraInfo[${index}].value" 
+                                class="loginSelectField" >
+                                #{list items:0..valueSet.length()-1,as:'i'}
+				%{ 
+					value = valueSet.get(i);
+					selectedTxt = "";
+					if(value == field.defaultValue){
+						selectedTxt = "selected";
+					}
+				}%
+                                	<option value='${value}' ${selectedTxt}>${value}</option>
+                                #{/list}
+                            </select>
+                            #{/if}
+                        #{/elseif}
+                        #{elseif validationType == "REGEX"}
+                            #{if !valueSet.equals(null) && valueSet.length()>0}
+   	   			<input type="text" class="loginInputField" ${requiredText} placeholder="${placeHolder}"
+					pattern="${valueSet.get(0)}" name="extraInfo[${index}].value"/>
+                            #{/if}
+                        #{/elseif}
+			#{else}
+				%{
+			  		inputObj = uicom.util.Utilities._getInputTypeByServerType(fieldType);
+				}%
+   	   			<input type="${inputObj.inputType}" class="loginInputField ${inputObj.inputClass}" ${requiredText}
+					placeholder="${placeHolder}" name="extraInfo[${index}].value"/>
+			#{/else}
+   		</td>
+       	</tr>
+	#{/list}
+        #{/if}
+       #{/if}
+       <tr>
+   	<td class="signupTitleTd">
+   	   <span class="loginFieldTitle">&{'signup.PWD'} <span class="redTextColor">*</span></span>
+   	</td>
+   	<td>
+   	   <input type="password" class="loginInputField" required name="password"
+		placeholder="&{'signup.PWD_REQUISITE'}"/>
+   	</td>
+       </tr>
+       <tr>
+   	<td class="signupTitleTd">
+   	   <span class="loginFieldTitle">&{'signup.CONFIRM_PWD'} <span class="redTextColor">*</span></span>
+   	</td>
+   	<td>
+   	   <input type="password" class="loginInputField" required name="confirmpassword"
+		placeholder="&{'signup.CONFIRM_PWD_REQUISITE'}"/>
+   	</td>
+       </tr>
+       </table>
+       <div>
+       	<span class="left greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span>
+       </div>
+       <input type="hidden" id="orgId" value="${params.orgId}" name="orgId"/>
+       <input type="hidden" id="countryCode" name="countryCode"/>
+       <input type="hidden" value="" name="sectionId"/>
+       <div class="centerText" style="padding-top:27px;">
+       		<input class="loginButton orgButton" id="clickToSignUp" value="&{'login.SIGNUP_CAPS'}" type="submit"/>
+       </div>
+   </form>
+   <br>
+   <div id='terms' style="bottom:13px;position: relative;">
+       <center>
+         By signing up you agree to our <a href="/terms" target="_blank">Terms and Conditions</a>
+       </center>
+  </div>
+</div>
+<script src="/public/javascripts/jquery-libs/jquery-ui-1.10.4.custom.min.js"></script>
+#{/else}

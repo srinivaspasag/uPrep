@@ -1,0 +1,92 @@
+    #{if sourceInfo.has('thumbnail')}
+        <div class="srcImgWrapper">
+            <img class="srcImg" src="${sourceInfo.thumbnail}" />
+        </div>     
+        #{/if}
+        <div class="sourceDetails">
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td class="sourceDetHead">Title</td>
+                        <td>
+                            <div class="srcDetContent srcDetTitle" title="${sourceInfo.name}">
+                                ${sourceInfo.name}
+                            </div>
+                        </td>                     
+                    </tr>
+                    <tr>
+                        <td class="sourceDetHead">Type</td>
+                        %{
+                            srcType=sourceInfo.type;
+                        }%
+                        <td class="srcDetType srcDetContent" data-type="${sourceInfo.type}">
+                            ${srcType.toLowerCase().camelCase()}
+                        </td>                     
+                    </tr>
+                    #{if sourceInfo.authors.length()>0}
+                    <tr>
+                        <td class="sourceDetHead">Authors</td>
+                        <td>
+                            %{
+                                authors=sourceInfo.authors;
+                            }%
+                            <div class="srcDetContent srcDetAuthors" data-authors='${sourceInfo.authors}'>
+                                #{list items:0..authors.length()-1,as:'i'}
+                                <span>${authors.get(i)}</span>${i_isLast?'':','}
+                                #{/list}
+                            </div>
+                        </td>                     
+                    </tr>
+                    #{/if}
+                    #{if sourceInfo.tags.length()>0}
+                    <tr>
+                        <td class="sourceDetHead">Tags</td>
+                        <td>
+                            %{
+                                tags=sourceInfo.tags;
+                            }%
+                            <div class="srcDetContent srcDetTags" data-tags='${sourceInfo.tags}'>
+                                #{list items:0..tags.length()-1,as:'i'}
+                                <span>${tags.get(i)}</span>${i_isLast?'':','}
+                                #{/list}
+                            </div>
+                        </td>                     
+                    </tr>
+                    #{/if}
+                    <tr>
+                        <td class="sourceDetHead">Added by</td>
+                        <td>
+                            #{widgets.user20 user:sourceInfo.user /}
+                            <span class="time">
+                                on ${new Date(sourceInfo.timeCreated).format('dd/MM/yyyy')}
+                            </span>
+                        </td>                     
+                    </tr>
+                    #{if sourceInfo.has('edition')&&sourceInfo.edition!=""}
+                    <tr>
+                        <td class="sourceDetHead">Edition</td>
+                        <td>
+                            <div class="srcDetContent srcDetEdition">${sourceInfo.edition}</div>
+                        </td>                     
+                    </tr>
+                    #{/if}
+                    #{if sourceInfo.has('year')&&sourceInfo.year!=0}
+                    <tr>
+                        <td class="sourceDetHead">Year</td>
+                        <td class="srcDetYear" data-year="${sourceInfo.year}">${sourceInfo.year}</td>                     
+                    </tr>
+                    #{/if}
+<!--                    <tr>
+                        <td class="sourceDetHead">Folders</td>
+                        <td>xxx</td>
+                        <td class="sourceDetHead">Content</td>
+                        <td>7 sxxxx</td>                           
+                    </tr>                                  -->
+                </tbody>
+            </table>
+        </div>
+        <div class="sourcePageBtns">
+            <div class="gRedButton createLevel">Add Folder</div>            
+            <div class="gRedButton addContentToSource">Add Content</div>
+<!--            <div class="gButton editSrcDetails">Edit Details</div>            -->
+        </div>

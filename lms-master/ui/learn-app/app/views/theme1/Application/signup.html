@@ -1,0 +1,218 @@
+{%
+  signupError = flash.get('signupError');
+}%
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Latest compiled and minified CSS -->
+  <meta charset="UTF-8">
+  <title>Learnpedia-Online JEE NEET TEST PREP</title>
+  <meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+  <!-- <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}"> -->
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+  <meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+  <meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+  <meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description"><!-- Latest compiled JavaScript -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+  <link rel="manifest" href="/public/images/favicons/manifest.json">
+  <link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+  <meta name="theme-color" content="#ffffff">
+  <link href="@{'/public/outerAssets/assets/css/bootstrap.min.css'}" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+  <link href="/public/stylesheets/o.intlTelInput.css" rel="stylesheet">
+  <link href="@{'/public/stylesheets/material_style.css'}" rel="stylesheet">
+  #{gaTrackingCode /}
+</head>
+<body>
+  #{include 'theme1/Application/header.html' /}
+  <section id="main">
+    #{include 'theme1/Application/sidebar.html' /}
+    <!-- <div class="login-content"> -->
+      <!-- Register -->
+    <!-- <div class="container">
+      <div class="row"> -->
+        <!-- <div class="col-md-6 col-md-offset-1 hidden-xs hidden-sm">
+          <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+            </ol>
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <img src="/public/images/1.jpg" alt="">
+                    <div class="carousel-caption">
+                        <p>&{'login.SLIDES_TEXT_1'}</p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="/public/images/2.jpg" alt="">
+                    <div class="carousel-caption">
+                        <p>&{'login.SLIDES_TEXT_2'}</p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="/public/images/3.jpg" alt="">
+                    <div class="carousel-caption">
+                        <p>&{'login.SLIDES_TEXT_3'}</p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="/public/images/4.jpg" alt="">
+                    <div class="carousel-caption">
+                        <p>&{'login.SLIDES_TEXT_4'}</p>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div> -->
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3 ">
+              #{if resp!=null && resp.has('errorCode') && resp.errorCode.isEmpty()}
+              <div class="card" id="l-register" style=" margin-bottom: 60px;">
+                <!-- <div class="lcb-form"> -->
+                  <div class="card-header">
+                    <center>
+                      <img class="img-responsive" id="lpimage" src="/public/outerAssets/images/vedantutm.png">
+                    </center>
+                  </div>
+                  <div class="card-body">
+                    <form action="@{Security.signup}" id="memberSignupForm" method="post" name="registration" onsubmit="return signupProcess.validate();">
+                      <div class="input-group m-b-20" id="usernamegroup">
+                        <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                        <div class="fg-line">
+                          <input class="form-control" name="firstName" placeholder="Enter your name" required="" type="text">
+                        </div>
+                      </div>
+                      <div class="input-group m-b-20">
+                        <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
+                        <div class="fg-line" id="emailgroup">
+                          <input class="form-control emailUserName" id="email" name='email' placeholder="Enter your email" required="" type="email"> <!-- <div class="signupErrorDiv" style="color: red;"></div> -->
+                          <span class="zmdi form-control-feedback" id="emailDialog" style="display: none;"></span> <small class="help-block" id="emailHelp"></small>
+                        </div>
+                      </div>
+                      <div class="input-group m-b-20">
+                        <span class="input-group-addon"><i class="zmdi zmdi-phone"></i></span>
+                        <div class="fg-line" id="contactNumbergroup">
+                          <input class="form-control contactNumber" id="contactNumber" name="contactNumber" placeholder="Enter your contact number" required="" type="tel"> <!-- <div class="signupErrorDiv" id="contactNumbererrorDiv"></div> -->
+                          <span class="zmdi form-control-feedback" id="contactNumberDialog" style="display: none;"></span> <small class="help-block" id="contactNumberHelp"></small>
+                        </div>
+                      </div>
+              <!-- <div class="input-group m-b-20" id="promogroup">
+                <span class="input-group-addon"><i class="zmdi zmdi-local-offer"></i></span>
+                <div class="fg-line">
+                  <input class="form-control" id="campaignCode" name="campaignCode" placeholder="Enter Promo Code" type="text">
+                </div>
+              </div> -->
+              <div class="input-group m-b-20" id="passwordgroup">
+                <span class="input-group-addon"><i class="zmdi zmdi-lock-outline"></i></span>
+                <div class="fg-line">
+                  <input class="form-control" id="password" name="password" placeholder="Enter your password" required="" type="password">
+                </div>
+              </div>
+              <div class="input-group m-b-20" id="radiogroup">
+                <span class="input-group-addon">Course</span> <label class="radio radio-inline m-r-20" style="vertical-align: -webkit-baseline-middle;"><input checked name="programType" type="radio" value="JEE"> <i class="input-helper"></i> JEE</label> <label class="radio radio-inline m-r-20" style="vertical-align: -webkit-baseline-middle;"><input name="programType" type="radio" value="NEET"> <i class="input-helper"></i> NEET</label>
+              </div>
+              #{if play.Play.configuration.getProperty("referral.state") == "ACTIVE"}
+              <div class="input-group m-b-20 m-l-10" id="referrerEnableLink">
+                <a class="referralCodeEnable" style="cursor: pointer;">Have a ReferralCode</a>
+              </div>
+              <div class="input-group m-b-20 nonner" id="referrergroup">
+                <span class="input-group-addon"><i class="zmdi zmdi-local-offer"></i></span>
+                <div class="fg-line">
+                  <input class="form-control" id="referral" name="referrerCode" placeholder="Enter your referral code" type="text">
+                </div>
+              </div>
+              #{/if}
+              <div class="text-center" id="match" style="color: red;"></div>
+              <div class="text-center" id="numberlength" style="color: red;"></div>
+              <div class="text-center" id="passwordlength" style="color: red;"></div>
+              <div class="text-center" id="referralErrorDiv" style="color: red;"></div>
+              <div class="text-center" id="campaignErrorDiv" style="color: red;"></div>
+              %{
+              learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); 
+            }%
+            <input name="orgId" type="hidden" value="${learnpediaOrgId }"> <input name="sectionId" type="hidden" value=""> <input id="countryCode" name="countryCode" type="hidden"> <input id="progType" name="progType" type="hidden">
+            <center>
+              <button class="btn btn-success btn-block btn-md waves-effect" id="clickToSignUp" type="submit">Signup</button>
+            </center><br>
+            <center>
+              By signing up you agree to our <a href="/terms" target="_blank">Terms and Conditions</a></center>
+            </form>
+          </div>
+          <!-- </div> -->
+        </div>
+        #{/if}
+        #{else}
+          <div class="card" style="margin: 10px auto 50px auto;">
+            <div class="card-header">
+                <center>
+                  <img class="img-responsive" id="lpimage" src="/public/outerAssets/images/vedantutm.png">
+                </center>
+              </div>
+              <div class="card-body text-center">
+                  #{if resp!=null && resp.has('errorMessage') && resp.errorMessage != null}
+                    <div style="font-size: 20px;line-height: 2">${resp.errorMessage}</div>
+                  #{/if}
+              </div>
+          </div>
+        #{/else}
+      </div>
+    </div>
+  </div>
+  <span id="result" style="font-size: 14px;color: #777;font-weight: 600;" data-error="&{'login.'+signupError}"></span>
+    <!-- </div>
+    </div> -->
+    <!-- </div> -->
+    #{include 'theme1/Application/footer.html' /}
+  </section>
+  <!-- Footer Section    -->
+  <script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js">
+  </script>
+  <script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js">
+  </script>
+  <script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js">
+  </script>
+  <script src="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.js"></script> 
+  <script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js">
+  </script>
+  <script src="/public/assets/theme1/js/app.min.js">
+  </script>
+  <script src="/public/javascripts/o.application.js">
+  </script>
+  #{script src:'o.intlTelInput.js', charset:'utf-8' /}
+  <script type="text/javascript">
+   signupProcess.init();
+ </script>
+ #{if signupError!=null}
+ <script type="text/javascript">
+  (function(){
+    var data = $("#result").data('error');
+    swal({
+      type: "warning",
+      title: ""+data,
+      timer: 5000
+    });
+  })();
+</script>
+#{/if}
+
+<!--LeadSquared Tracking Code Start-->
+<script type="text/javascript" src="https://web.mxradon.com/t/Tracker.js"></script>
+<script type="text/javascript">
+  pidTracker('17140');
+</script>
+<!--LeadSquared Tracking Code End-->
+<script type="text/javascript" src="/public/javascripts/dropdown-on-hover.js"></script>
+</body>
+</html>

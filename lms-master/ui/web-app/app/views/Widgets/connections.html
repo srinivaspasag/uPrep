@@ -1,0 +1,30 @@
+<div class="peopleWidget">
+    <div class="peopleWidgetHead">
+        <span class="boldy">Followers </span>(<label class="peopleWidgetCount">${followers.result.total}</label>)
+        #{if followers.result.total>Integer.parseInt(params.size)}
+        <a class="floatRight small10 margHalfTop seeMoreFollowers" data-target-user-id="${params.targetUserId}">see more</a>
+        #{/if}
+    </div>
+    <div class="peopleWidgetPeople">
+        %{
+                followers=followers.result.followSet;
+        }%
+        #{widgets.userItems users:followers /}
+    </div>
+</div>
+
+<div class="peopleWidget">
+    <div class="peopleWidgetHead">
+        <span class="boldy">Following </span>(<label class="peopleWidgetCount">${following.result.total}</label>)
+        #{if following.result.total>Integer.parseInt(params.size)}
+        <a class="floatRight small10 margHalfTop seeMoreFollowing" data-target-user-id="${params.targetUserId}">see more</a>
+        #{/if}
+    </div>
+    <div class="peopleWidgetPeople">
+    %{
+            following=following.result.followSet;
+    }%
+    #{widgets.userItems users:following /}
+    </div>
+</div>
+

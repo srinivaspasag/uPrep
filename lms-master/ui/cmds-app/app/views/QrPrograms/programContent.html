@@ -1,0 +1,57 @@
+#{if resources.errorCode!=''}
+    #{common.errorCodes resp:resources /}
+#{/if}
+#{else}  
+<div id="programContent">           
+    <div class="cmdsTableOptsAndSortDiv">
+      <div class="cmdsTableCheckedOpts floatLeft" 
+	data-opts-type="library" 
+	data-section-id="${params.sectionId}"
+	data-center-id="${params.centerId}">
+	</div>  
+      <div class="cmdsTableSortDiv">                                    
+        *{#{sources.addResource addText:'+ Add Content',addFolder:false,cbfn:'addContentFromProgram'/}}*
+        #{common.mcvChooseContentTypes target:"LIBRARY_RESOURCES"/} 
+	%{
+		if(params.sectionId != null){
+			showCustomOrder = true;
+		}
+	}%
+        #{include 'Widgets/mcvChooseAlpha.html' /}        
+        #{common.lmArrowsDiv /}          
+      </div>
+    </div>
+    <div id="tableSection" class="LMHandlerDiv">
+            #{if params.includes=='CMDSQUESTION'}
+                %{
+                    questions=resources;
+                }%
+                #{include 'QrQuestions/qrQuesns.html' /}
+            #{/if}
+            #{else}
+                #{if params.sectionId==null}
+                #{include 'QrPrograms/libraryTable.html' /}    
+                #{/if}
+                #{else}
+                #{include 'QrPrograms/sectionLibraryTable.html' /}
+                #{/else}
+            #{/else}                  
+    </div>                    
+</div>
+%{
+    programId=params.programId;
+    centerId=params.centerId;
+    sectionId=params.sectionId;
+}%
+<script type="text/javascript">
+    new function(){      
+        var params={};
+        if("${programId}")params.programId="${programId}";
+        if("${centerId}")params.centerId="${centerId}";
+        if("${sectionId}")params.sectionId="${sectionId}";        
+        params.courseId="${params.courseId}";
+        var fn=function(){qrProgramContent.init(params);};
+        lazyLoad([{fname:"qrProgramContent.js",cb:fn}]);        
+    }();    
+</script>
+#{/else}

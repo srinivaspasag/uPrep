@@ -1,0 +1,130 @@
+#{extends 'header.html'/}
+<div class="left relative" style="width:780px;margin:10px 0 0 200px">	
+		<div class="left relative testTopicsWeightage">
+			<span class="boldy big14 fullWidth textCenter left" style="padding-top:15px;">Topic Level Marks Distribution</span> 
+			<div class="vselect vselectHide resultPreviewChooseSubject vDropDown left" onstatechange="topicWeightageSubjectChanged" data-value="">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText blueTextColor boldy big16" value="Physics" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+						<span class="vSelectEach" data-value="">Physics</span>
+						<span class="vSelectEach" data-value="">Chemistry</span>
+						<span class="vSelectEach" data-value="">Mathematics</span>
+					</div>
+				</div>
+			</div>
+			<div class="left testTopicsWeightageHolder">
+				<center><table cellspacing=0 cellpadding=10 class="testTopicsWeightageTable">
+					<tr>
+						<th class="borderBottom borderRight">Topic Name</th>
+						<th class="borderBottom borderRight">Number of Questions</th>
+						<th class="borderBottom">Weightage %</th>
+					</tr>
+					<tr>
+						<td>Electrostatics</td>
+						<td>23</td>
+						<td>50%</td>
+					</tr>
+					<tr>
+						<td>Magnetic</td>
+						<td>23</td>
+						<td>50%</td>
+					<tr>
+				</table></center>
+			</div>
+		</div>
+<div class="left userScoreBoard">
+	<div class="left miniBoard">
+		<span class="userRank left nonner">
+			<span class="boldy">Ranking</span><br/>
+			<span class="big16 blueTextColor boldy">10</span>
+		</span>
+		<span class="userScore left">
+			<span class="boldy left scoreTitle" style="width:100%">Score</span>
+			<span class="big25 blueTextColor boldy left">185/</span><span class="big18 boldy left" style="padding-top:3px;"> 230</span>
+		</span>
+		<span class="userScorePercentage scoreInPercentage left relative">
+			<span class="right scorePercentVal relative greyTextColor" style="width:50%;">50%</span>
+		</span>
+		<span class="userTimeTaken left">
+			<span class="boldy">Time Taken</span><br/>
+			<span class="big16 blueTextColor boldy">2:10</span><span class="big14"> hrs</span>
+		</span>
+		<div class="left relative miniBoardQuesAHolder">
+			<span class="left boldy big16">Questions</span>
+			<span class="left big12 miniQuesACorrect"><span class="left miniQuesACorrectIndi"></span>% Correct</span>
+			<span class="left big12 miniQuesAIncorrect"><span class="left miniQuesAIncorrectIndi"></span>% Incorrect</span>
+			<div class="left relative miniBoardQuesAnalytics testQuesAnalyticsBar">
+				<div class="left testQuesAnalyticsBarHold">
+					<span class="left testQuesAnalyticsBarCorrect" style="width:50%;"></span>
+					<span class="left testQuesAnalyticsBarIncorrect" style="width:30%;"></span>
+				</div>
+				<div class="left testQuesAnalyticsCount">
+					<span class="left">Correct <b>30</b></span>
+					<span class="left">Incorrect <b>30</b></span>
+					<span class="left">Left <b>30</b></span>
+					<span class="left">Total Questions <b>30</b></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="left relative detailsScoreBoard">
+		<div class="left detailsScoreBoardHeader">
+			<span class="left subNameScoreBoardHeader boldy">Score</span>
+			<span class="left questionsScoreBoardHeader boldy">Questions</span>
+			<span class="left timeTakenScoreBoardHeader boldy">Time Taken</span>
+		</div>
+		<div class="left detailsScoreBoardBody">
+			<div class="left detailsScoreEachSubject">
+				<span class="big14 boldy detailsScoreSubjectName left">Physics</span>
+				<span class="big14 boldy detailsScoreSubjectScore greyTextColor left"><span class="left blueTextColor big16">47/</span>50</span>
+				<span class="userScorePercentage scoreInPercentage left relative">
+					<span class="right scorePercentVal relative greyTextColor" style="width:50%;">50%</span>
+				</span>
+				<div class="left relative detailsBoardQuesAnalytics testQuesAnalyticsBar">
+					<div class="left testQuesAnalyticsBarHold">
+						<span class="left testQuesAnalyticsBarCorrect" style="width:50%;"></span>
+						<span class="left testQuesAnalyticsBarIncorrect" style="width:30%;"></span>
+					</div>
+					<div class="left testQuesAnalyticsCount">
+						<span class="left">Correct <b>30</b></span>
+						<span class="left">Incorrect <b>30</b></span>
+						<span class="left">Left <b>30</b></span>
+						<span class="left">Total Questions <b>30</b></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="left relative topicsScoreBoard">
+		<table cellspacing=0 cellpadding=0 class="topicScoreTable">
+			<tr>
+				<th class="borderBottom"><span class="left topicScoreTopicName">Topic Name</span></td>
+				<th class="borderBottom">Score</th>
+				<th class="borderBottom">Questions</th>
+				<th class="borderBottom"></th>
+				<th class="borderBottom"></th>
+				<th class="borderBottom"></th>
+			</tr>
+			<tr> 
+				<td class="noBottomBorder"><span class="left topicScoreSubName blueTextColor big16 boldy">Physics</span></td>
+				<td class="noBottomBorder"></td>
+				<td class="">Total</td>
+				<td class="">Correct</td>
+				<td class="">Incorrect</td>
+				<td class="">Left</td>
+			</tr>
+			<tr>
+				<td class="noBottomBorder"><span class="left topicScoreTopicName big14 boldy">Electrostatics</span></td>
+				<td class="blueTextColor boldy">10</td>	
+				<td class="boldy">10</td>	
+				<td class="boldy">10</td>	
+				<td class="redTextColor boldy">0</td>	
+				<td class="boldy">10</td>	
+			</tr>
+		</table>
+	</div>
+</div>
+</div>

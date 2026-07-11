@@ -1,0 +1,26 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+	<script type="text/javascript">
+    		$(function(){
+        		showNoTabSec("MESSAGES");
+    		});
+	</script>
+#{/if}
+<script type="text/javascript">
+	var msgHmPgOpenTimer;
+</script>
+#{stylesheet media:'screen', src:'userMessages/o.main.css' /}
+<div id="msgsHeader" class="pageFullWidth">
+	#{messages.topNavBar/}
+	<div class="relative" id="msgsHome">
+       		#{include arg:includePgFile /}
+	</div>
+</div>
+#{institute.pageFooter/}
+#{if params.orgId!=null && !params.orgId.isEmpty()}
+<script type="text/javascript">
+	$(function(){
+		instHeader.show("${params.orgId}");
+	});
+</script>
+#{/if}
+#{script src:'userMessages/o.home.js', charset:'utf-8' /}

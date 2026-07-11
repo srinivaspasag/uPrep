@@ -1,0 +1,111 @@
+<div class="instMembersInfo CSWidget" data-widget="INSTITUTE_MEMBERS_SEARCH">
+	<span class="big18 boldy left instMembersType">${params.name} </span>
+	<span class="big12 left instMembersTotal">(${params.totalMembers})</span>
+	<div class="right">
+		#{if params.role=="PROFESSOR" && courses.errorCode=="" && courses.result.length()>0}
+		<div class="vselect vselectHide instMembersBySub vDropDown" onstatechange="instMembersBySubject" title="Search Teachers By a subject">
+			<span class="vSelectHead">
+				<span class="bgImageSprite"></span>
+				<input type="text" class="vSelectText blackTextColor big14 boldy" value="All Subjects" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect"></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+					<span class="vSelectEach" data-value="">All Subjects</span>
+				#{list items:0..courses.result.length()-1,as:'sIndex'}
+				%{ sub = courses.result.get(sIndex);}%
+					<span class="vSelectEach doCStream" 
+						data-value="${sub._id}" name="SELECT_SUBJECT">${sub.name}</span>
+				#{/list}
+				</div>
+			</div>
+		</div>
+		#{/if}
+	#{if programmes.errorCode=="" && programmes.result.length()>0 }
+		%{
+			prog1 = programmes.result.get(0);
+			center1 = null;
+		}%
+		<div class="vselect vselectHide instMembersByDept vDropDown" onstatechange="instMembersByDept" 
+				data-value="" data-prog-id="" title="Select Institute Programmes">
+			<span class="vSelectHead">
+				<span class="bgImageSprite"></span>
+				<input type="text" class="vSelectText blackTextColor big14 boldy" 
+					value="All Programmes" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect"></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+				<span class="vSelectEach" data-value=""	data-prog-id="">All Programmes</span>
+				#{list items:0..programmes.result.length()-1,as:'pIndex'}
+				%{ prog = programmes.result.get(pIndex);}%
+					<span class="vSelectEach doCStream" data-value=${prog.departmentId} 
+						name="SELECT_PROGRAMME" title="Programme : ${prog.name}"
+						data-prog-id="${prog._id}">${prog.name}</span>
+				#{/list}
+				</div>
+			</div>
+		</div>
+		<div class="vselect vselectHide instMembersByCenter vDropDown" onstatechange="instMembersByCenter" data-value="" title="Select Institute Centers">
+			<span class="vSelectHead">
+				<span class="bgImageSprite"></span>
+				<input type="text" class="vSelectText blackTextColor big14 boldy" value="All Centers" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect"></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+					<span class="vSelectEach" data-value="">All Centers</span>
+				*{#{if prog1.has('centers') && prog1.centers.length()>0}
+					%{ center1 = prog1.centers.get(0); }%
+				#{list items:0..prog1.centers.length()-1,as:'cIndex'}
+				%{ center = prog1.centers.get(cIndex);}%
+					<span class="vSelectEach doCStream" data-value="${center.name}" 
+						name="SELECT_CENTER" title="Center : ${center.name}"
+						data-sections=${center.sections.raw()}>${center.name}</span>
+				#{/list}
+				#{/if}}*
+				</div>
+			</div>
+		</div>
+		<div class="vselect vselectHide instMembersBySec vDropDown" onstatechange="instMembersBySection" data-value="" title="Select Institute Sections">
+			<span class="vSelectHead">
+				<span class="bgImageSprite"></span>
+				<input type="text" class="vSelectText blackTextColor big14 boldy" value="All Sections" readonly="readonly"/>
+				<span class="dropDownIcon noUserSelect"></span>
+			</span>
+			<div class="vSelectListHolder">
+				<div class="vSelectList">
+					<span class="vSelectEach" data-value=''>All Sections</span>
+				*{#{if center1!=null && center1.has('sections') && center1.sections.length()>0}
+				#{list items:0..center1.sections.length()-1,as:'sIndex'}
+				%{ section = center1.sections.get(sIndex);}%
+					<span class="vSelectEach doCStream" data-value="${section}" 
+						name="SELECT_SECTION" title="Section : ${section}">${section}</span>
+				#{/list}
+				#{/if}}*
+				</div>
+			</div>
+		</div>
+	#{/if}
+	
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<div class="instMemberSearch CSWidget" data-widget="INSTITUTE_MEMBERS_SEARCH">
+	#{if params.get('role')==null}
+		<input type="text" class="customSearchBox relative doCStream" data-param-name="query" 
+			placeholder="Search by Name"/>	
+	#{/if}
+	#{elseif params.get('role') == "MEMBER"}
+		<input type="text" class="customSearchBox relative doCStream" data-param-name="query" 
+			placeholder="Search by Student Name"/>	
+	#{/elseif}
+	#{elseif params.get('role') == "PROFESSOR"}
+		<input type="text" class="customSearchBox relative doCStream" data-param-name="query" 
+			placeholder="Search by Teacher Name"/>	
+	#{/elseif}
+</div>
+<div class="instMembersHolder CSWidget" data-widget="INSTITUTE_MEMBERS_SEARCHED_MEMBERS">
+	*{#{include 'tags/institute/members.html'/}}*
+</div>
+<div class="cleaner_with_divider">&nbsp;</div>

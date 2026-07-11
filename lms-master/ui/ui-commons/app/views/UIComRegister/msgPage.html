@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>Learnpedia - Message</title>
+#{stylesheet media:'screen', src:'uicomMain.css' /}
+<style>
+body{
+	background-color:#EEE;
+}
+#mainContainHolder{
+	padding:30px 0;
+}
+.responseBlock{
+	width:570px;
+	margin:0 auto;
+	background-color:#FFF;
+}
+.block1,
+.block2{
+	padding:20px 50px;
+	color:#666;
+}
+.block1{
+	background-color:#F7F7F7;
+}
+</style>
+</head>
+<body>
+<div id="mainContainHolder" class="">
+   <div class="responseBlock">
+	<div class="block1">
+		<div class="fontRoboto big18 greenTextColor">&{'TXT_MESSAGE'}</div>
+	</div>
+	<div class="block2">
+	    <div class="fontRobotoLight big18">${msg.raw()}</div>
+	    #{if session!=null && session.userId!=null && !session.userId.isEmpty()}
+	    <div style="text-align:right;padding:20px 0;">
+		<a class="big14 fontRoboto" href="/">&{'TXT_HOME'}</a>
+		<span class="big16"> | </span>
+		<a class="big14 fontRoboto" href="/Security/logout">&{'TXT_LOGOUT'}</a>
+	    </div>
+	    #{/if}
+	</div>
+   </div>
+</div>
+</body>
+</html>

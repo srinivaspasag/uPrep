@@ -1,0 +1,71 @@
+<div class="instChallengeWidget">
+	<!-- <div class="instChlWidgTop">
+	   <table cellspacing=0 cellpadding=0 style="display:inline-table;">
+	     <tr>
+		<td>
+			<span class="instImgs"></span>
+		</td>
+		<td>
+			<a href="/organization/${params.orgId}/challenges" class="goToInstChallengesPage">
+			   <div>
+				<span class="chlgWidgText">&{'TXT_CHALLENGES_ARENA'}</span>
+			   </div>
+			</a>
+		</td>
+		<td style="vertical-align:top;">
+			#{if statsInfo.errorCode == "" && statsInfo.result.has('statusFacet') 
+			&& statsInfo.result.statusFacet.has('active') 
+			&& statsInfo.result.statusFacet.active>0 }
+				<span class="instTicker instChlgWidgTickerCnt">${statsInfo.result.statusFacet.active}</span>
+			#{/if}
+		</td>
+	     </tr>
+	   </table>
+	</div> -->
+	<div class="instYourChlgBrdHolder">
+	#{if leaders.errorCode == "" && leaders.result.has('list') && leaders.result.list.length()>0}
+	%{
+		users = leaders.result.list;
+	}%
+	#{list items:0..users.length()-1,as:'uIndex'}
+	%{ userChlg = users.get(uIndex);}%
+	#{if !userChlg.equals(null) && !userChlg.user.equals(null)}
+	   #{if userChlg.user.id==session.userId}
+		<div class="instYourChlgBrd">
+			#{institute.previews.challenge data:userChlg /}
+		</div>
+	   %{ break; }%
+	   #{/if}
+	#{/if}
+	#{/list}
+	#{/if}
+	</div>
+	<div class="instAllChlgBrdHold">
+		<div style="padding:0 0 10px 5px;">
+			<span class="big14 boldy">&{'TXT_LEADERBOARD'}</span>
+			<select class="selectInstChlgTimeSc">
+				<option value="WEEKLY">&{'THIS_WEEK'}</option>
+				<option value="MONTHLY">&{'THIS_MONTH'}</option>
+				<option value="OVERALL">&{'TXT_OVERALL'}</option>
+			</select>
+		</div>
+		<div class="instAllChlgLeaders">
+		#{if leaders.errorCode == "" && leaders.result.has('list') && leaders.result.list.length()>0}
+		%{
+			users = leaders.result.list;
+		}%
+		#{list items:0..users.length()-1,as:'uIndex'}
+		%{ userChlg = users.get(uIndex);}%
+		#{if !userChlg.equals(null) && !userChlg.user.equals(null)}
+	   	   #{if userChlg.user.id!=session.userId}
+			#{institute.previews.challenge data:userChlg /}
+	   	   #{/if}
+		#{/if}
+		#{/list}
+		#{/if}
+		#{else}
+			<div class="boldy centerText greyTextColor">&{'NO_LEADERS'}</div>
+		#{/else}
+		</div>
+	</div>
+</div>

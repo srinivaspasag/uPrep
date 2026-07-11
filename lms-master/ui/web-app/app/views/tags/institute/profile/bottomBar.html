@@ -1,0 +1,58 @@
+<div>
+    <div class="relative pageHolderM">
+	<div class="instProfileBottomBar bodyWhiteBg">
+	   <table cellspacing=0 cellpadding=0 class="fullWidth instPrBottomTable left">
+		<tr>
+		   <td class="instPrBottomTD">
+			<div class="big22">&{'TXT_RECENT_ACTIVITY'}</div>
+			<div class="instPrActivityContainer">
+			</div>
+		   </td>
+		   <td class="instPrBottomTD">
+			<div class="big22">&{'TXT_DOUBTS_ASKED'}</div>
+			<div class="instPrDbtsContainer">
+			</div>
+		   </td>
+		#{if (params.targetUserId == session.get("userId") && _targetUserRole == "STUDENT") || (_userRole != "STUDENT" && _targetUserRole == "STUDENT")}
+		   <td class="instPrBottomTD">
+			<div class="big22">&{'TXT_REMARKS'}</div>
+			#{if _userRole == "TEACHER"}
+			<div class="right">
+				<span class="showUserRemarkPopup">&{'TXT_POST_REMARKS'}</span>
+			</div>
+			<div id='profileRemarkPopupId' class='nonner'>
+			   <div class='profileRemarkPopup'>
+				<div class="blackTextColor big14" style="padding-bottom:10px;">&{'POST_REMARK_FOR_USER'}</div>
+				<table>
+					<tr>
+						<td rowspan=2 class="alignTop">
+							<img class="instRemarkProfilePic" src="${session.profilePic}" alt="&{'IMG_NA'}">
+						</td>
+						<td>
+							<div class="blueTextColor">${session.fullname}</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						<textarea class='profilePostRemarkBox' placeholder="&{'TXT_REMARKS'}"></textarea>						      </td>
+					</tr>
+				</table>
+				<div><span class='postUserRemark right' style="margin-top:10px;">Post</span></div>
+			   </div>
+			</div>
+			#{/if}
+			<div class="instPrRemarksContainer" data-profile="STUDENT"></div>
+		   </td>
+		#{/if}
+		#{elseif params.targetUserId == session.get("userId") && _targetUserRole == "TEACHER"}
+		   <td class="instPrBottomTD">
+			<div class="big22">&{'TXT_REMARKS_POSTED'}</div>
+			<div class="instPrRemarksContainer" data-profile="TEACHER"></div>
+		   </td>
+		#{/elseif}
+		</tr>
+	   </table>
+	   <div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+    </div>
+</div>

@@ -1,0 +1,190 @@
+<!--for tag tree
+brdid and name on ASTTTSub,ASTTTTopic,ASTTTSubTopic and id ASTTTSubTopicsDiv_xxx on ASTTTSubTopicsDiv,
+ASTSTPopupList_xxxx for ASTSTPopupList
+
+for  select options box
+brdId and name for ASTSelectOpt and ASTTopicCBox, id ASTCBox_xxx for ASTSubjectCBox,ASTTopicCBox
+and id ASTTopicCount_xxx for ASTSelectOptTopicCount-->
+
+<!--for exam selection
+brdId and name to AETTTExam, id AETCBox_xxxx, brdId,name for AETExamCBox-->    
+%{
+    exams=_exams;
+    subjects=_subjects;    
+    tags=_tags;
+    if(_addTagsId!=null)addTagsId=_addTagsId;
+    else addTagsId='';
+}%
+<div id="addTagsMasterDiv" class="${addTagsId} CSWidget" data-widget="TAGGING"> 
+    <div class="addTagsWrapper" id="ATWrapper">
+        <div class="AETHolder ATHolder" data-tags-type="EXAM" style="display: none">
+            <div class='ATSelectBoxHead doCStream' data-cs-name="SELECT_EXAM">
+		Exam<span class="ATSelectBoxHeadIcon"></span></div>
+            <div class='ATSelectOptionsDiv' data-callback="showTagTrees">
+                #{if exams!=null&&exams.length()>0}
+                <div class="ATSelectOptList">
+                #{list items:0..exams.length()-1,as:'e'}
+                %{
+                    exam=exams.get(e);
+                }%
+
+                    <div class='ATSelectOpt'>
+                        <input type='checkbox' class='ATCRBox doCStream' id="ATCRBox_${exam.id}"
+                               data-name="${exam.code}" data-brd-id="${exam.id}" data-cs-name="TAG_EXAM_BRD_CHKBX"/>
+                        <span class='ATCRBoxName'>${exam.code}</span>
+                    </div>
+                #{/list}
+                </div>
+                <div class='addTagsBtns'>
+                    <a class='confirmAT liner margRight5 doCStream' data-cs-name="TAG_EXAM_DONE">Done</a>
+                    <a class='redColor liner doCStream' onclick="insideOutClick()" data-cs-name="TAG_EXAM_CANCEL">Cancel</a>
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+                #{/if}
+            </div>
+            <div class='ATTagTreeDiv'>
+                #{if exams!=null&&exams.length()>0}
+                   #{list items:0..exams.length()-1,as:'fe'}
+                    <div class='ATTTExam ATTTItem doCStream' data-name="${exams.get(fe).code}" 
+			data-brd-id="${exams.get(fe).id}" data-cs-name="REMOVE_SEL_TAG_EXAM">
+                        <span class='ATTTRemoveExam ATTTRemoveTag ATRemImg'></span>
+                        <span class='ATTTItemName'>${exams.get(fe).code}</span>
+                    </div>
+                   #{/list}
+                #{/if}
+            </div>
+        </div>
+        <div class="ASTHolder ATHolder" data-tags-type="SUBJECT">
+            <div class='ATSelectBoxHead'>Subject<span class="ATSelectBoxHeadIcon"></span></div>
+            <div class='ATSelectOptionsDiv' data-callback="showTagTrees">
+                #{if !subjects.equals(null)&&subjects.length()>0}
+                %{
+                    parentIdForCourses=subjects.get(0).id;
+                }%
+                <div class="ATSelectOptList">
+                #{list items:0..subjects.length()-1,as:'t'}
+                %{
+                    sub=subjects.get(t);
+                }%
+
+                    <div class='ATSelectOpt'>
+                        <input type='radio' name="ATCRBox" class='ATCRBox doCStream' id="ATCRBox_${sub.id}"
+                               data-name="${sub.name}" data-brd-id="${sub.id}" data-cs-name="TAG_SUB_BRD_RADIO"/>
+                        <span class='ATCRBoxName'>${sub.name}</span>
+                    </div>
+                #{/list}
+                </div>
+                <div class='addTagsBtns'>
+                    <a class='confirmAT liner margRight5 doCStream' data-cs-name="TAG_SUB_DONE">Done</a>
+                    <a class='redColor liner' onclick="insideOutClick()" data-cs-name="TAG_SUB_CANCEL">Cancel</a>
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+                #{/if}
+            </div>
+            <div class='ATTagTreeDiv'>
+                #{if !subjects.equals(null)&&subjects.length()>0}
+                   #{list items:0..subjects.length()-1,as:'fs'}
+                    <div class='ATTTSubject ATTTItem doCStream' data-name="${subjects.get(fs).name}"  
+                         data-cs-name="REMOVE_SEL_TAG_SUBJECT" data-brd-id="${subjects.get(fs).id}">
+                        <span class='ATTTRemoveSubject ATTTRemoveTag ATRemImg'></span>
+                        <span class='ATTTItemName'>${subjects.get(fs).name}</span>
+                    </div>
+                   #{/list}
+                #{/if}
+            </div>
+        </div>    
+        <div class="ATTHolder ATHolder" data-tags-type="TOPIC">
+            <div class='ATSelectBoxHead'>Topics<span class="ATSelectBoxHeadIcon"></span></div>
+            <div class='ATSelectOptionsDiv' data-callback="showTagTrees">
+                <div class='ATSelectOptList'></div>
+            </div>
+            <div class='ATTagTreeDiv'>
+                %{
+                    topics=new org.json.JSONArray();
+                    if(parentIdForCourses!=null&&subjects.get(0).has('children')
+                        &&subjects.get(0).children.length()>0){
+                        topics=subjects.get(0).children;
+                    }
+                }%
+                #{if topics.length()>0}
+                #{list items:0..topics.length()-1,as:'t'}
+                %{
+                    topic=topics.get(t);
+                }%
+                    <div class='ATTTTopic ATTTItem doCStream' data-name="${topic.name}" 
+                         data-brd-id="${topic.id}" data-cs-name="REMOVE_SEL_TAG_TOPIC">
+                        <div class="ATTTTopicNameDiv">
+                            <span class='ATTTRemoveTopic ATTTRemoveTag ATRemImg'></span>
+                            <span class='ATTTTopicName ATTTItemName'>${topic.name}</span>                        
+                        </div>                    
+                        <div class='ATTTSubTopicsDiv' id="ATTTTSubTopicsDiv_${topic.id}">
+                            #{if topic.has('children')&& topic.children.length()>0}
+                                #{list items:0..topic.children.length()-1,as:'st'}
+                                    %{
+                                        subTopic=topic.children.get(st);
+                                    }%
+                                    <div class='ATTTSubTopic ATTTItem' data-name="${subTopic.name}" data-brdId="${subTopic.id}">
+                                        <div class="ATTTSubTopicNameDiv">
+                                            <div class="ATTTSubSubTopicLeftLine"></div>
+                                            <span class='ATTTRemoveSubTopic ATRemImg ATTTRemoveTag'></span>
+                                            <span class='ATTTSubTopicLine'></span>
+                                            <span class='ATTTSubTopicName ATTTItemName'>${subTopic.name}</span>                                          
+                                        </div> 
+                                        #{if subTopic.has('children')&&subTopic.children.length()>0}
+                                        <div class="ATTTSubSubTopicsDiv">
+                                            #{list items:0..subTopic.children.length()-1,as:'sst'}
+                                            %{
+                                                subSubTopic=subTopic.children.get(sst);
+                                            }%
+                                            <div class="ATTTSubSubTopic ATTTItem" data-name="${subSubTopic.name}" data-brd-id="${subSubTopic.id}">
+                                                <span class='ATTTSubSubTopicLine'></span>
+                                                <span class='ATTTSubSubTopicName ATTTItemName'>${subSubTopic.name}</span>                                              
+                                            </div>                                                                             
+                                            #{/list}
+                                        </div>
+                                        #{/if}
+                                    </div>
+                                #{/list}
+                            #{/if}
+                        </div>                    
+                        <div class="linBlk relativePos">
+                            <a class='ATTTAddST'>Add Subtopic</a>
+                            <div class="ATSTPopup"></div>
+                        </div>
+                    </div>
+                #{/list} 
+                #{/if}
+            </div>
+        </div>
+        <div class='cleaner_with_divider'>&nbsp;</div>
+    </div>
+    *{<div class="cmdsTaggingExams floatLeft" style="margin-right: 50px;"></div>
+    <div class="cmdsTaggingSubs linBlk"></div>
+    <div class="cleaner_with_divider">&nbsp;</div>}*
+    
+    
+    #{if _target!="ADD_DISCUSSION" && _target!="ADD_MULT_QUESTION" && _target!="EDIT_QUESTION" && _target!="EDIT_QUESTION_TAGS"  && _target!="ADD_VIDEO" && _target!="POPUP_ADD_RESOURCE"&& _target!="ADD_MODULE_TAGS"}
+    <div class="addNormalTagsDiv">
+        <span class="boldy big16">Add Tags </span><label class="acacac smally italica">(separate tags by comma/press enter)</label>
+        <div class="addTagsClass">
+            <div class="addTagsList">
+            #{if tags!=null && tags.length()>0}
+                #{list items:0..tags.length()-1,as:'k'}
+                    <div class='addedTag'><span>${tags.get(k)}</span><label>x</label></div>
+                #{/list}
+            #{/if}
+            </div>
+            <input type='text' size='1' class='addTagsInput noNullInput' value=""/>
+        </div>
+        <div class="addSuggTagsClass"></div>
+    </div>
+    #{/if}
+</div>
+
+    <script type="text/javascript">
+    new function(){
+        var fn=function(){vTagging.init({parentIdForCourses:"${parentIdForCourses}"
+                ,addTagsId:"${addTagsId}",targetPage:"${_target}"});}
+        lazyLoad([{fname:"uicomWidgets/tagging.js",cb:fn}]);   
+    }();
+    </script>         

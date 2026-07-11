@@ -1,0 +1,159 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="vBoardsStyles">
+    if("${flash.get('pageType')}"=="BOARD_SUB_TOPIC"){
+        showNoTabSec("BOARD_SUB_TOPIC");
+    }
+    else{
+        showNoTabSec("BOARD_TOPIC");
+    }
+</script>
+#{/if} 
+#{stylesheet media:'screen', src:'boards.css' /}
+%{
+    topicInfo=topicInfo.result;
+}%
+<div id="boardPage">
+    <div id="BPTopBarHolder">
+        <div id="BPTopBar">
+            <div id="BTPNavDiv" class="CSWidget"  data-widget="BOARD_ENTITY_PATH">
+                #{if params.examCode!=null&&params.examId!=null}
+                <a class="boardExam ptrTagHovered doCStream" data-brd-id="${params.examId}"
+                   /*href="${controllers.Boards.getBoardUrl('exam',params.examId)}"*/ data-cs-name="BOARD_EXAM">
+                    ${params.examCode} /
+                </a>
+                #{/if}
+                <a class="boardSubject ptrTagHovered doCStream" data-brd-id="${topicInfo.parent.brdId}"
+                   /*href="${controllers.Boards.getBoardUrl('subject',topicInfo.parent.brdId)}"*/ data-cs-name="BOARD_SUBJECT">
+                    ${topicInfo.parent.name} /
+                </a>
+                <div class="BTPNavTopicsHolder">
+                    <a class="BTPNavActiveTopic ptrTagHovered doCStream"
+                       data-brd-id="${topicInfo.brdId}" data-cs-name="BOARD_TOPIC">
+                        ${topicInfo.name}
+                    </a>
+                    <span class="BTPShowNavTopics"></span>
+                    <span class="BTPNavTopicsDiv ptrTagsDiv"></span>
+                </div>
+                #{if flash.get('pageType')=="BOARD_SUB_TOPIC"}
+                <a class="BTPNavActiveSubTopic ptrTagHovered doCStream"
+                   data-brd-id="${params.subTopicId}"  data-cs-name="BOARD_SUBTOPIC"> / ${params.subTopicName}</a>
+                #{/if}
+            </div>
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+    <div id="BP1002">
+        <div id="BTPLeftSec">
+            #{if topicInfo.has('targets')&&topicInfo.targets.boards.length()>0}
+            <div class="BTPExamsList CSWidget" data-widget="RELATED_EXAMS">
+                <div class="boldy margBot10">Target Exams</div>
+                %{
+                    exams=topicInfo.targets.boards;
+                }%
+                <div>
+                    <span>ALL</span>
+                    <input type="checkbox" class="BTPAllExamCheck doCStream" checked="checked" data-cs-name="ALL_EXAMS_CHBX" 
+			data-e-type="CHECK"/>
+                </div>
+                #{list items:0..exams.length()-1,as:'e' }                
+                <div>
+                    <span>${exams.get(e).code}</span>
+                    <input type="checkbox" class="BTPExamCheck doCStream" value="${exams.get(e).brdId}"
+                           rel="${exams.get(e).brdId}" name="${exams.get(e).code}"
+                           data-cs-name="BOARD_EXAM_CHKBX" data-e-type="CHECK"/>
+                </div>
+                #{/list}
+            </div>
+            #{/if}
+            <div class="BTPLeftSecItems CSWidget" data-widget="SUBTOPICS_LIST">
+                <div class='BTPLeftSecTopic activeBTPLeftSecItem doCStream' 
+                     data-brd-id='${topicInfo.brdId}' data-cs-name="BOARD_TOPIC">${topicInfo.name}</div>
+                #{if topicInfo.has('children')&&topicInfo.children.boards.length()>0}
+                %{
+                    subTopics=topicInfo.children.boards;
+                }%
+                #{list items:0..subTopics.length()-1,as:'s'}
+                <div class='BTPLeftSecSubTopic doCStream' data-brd-id='${subTopics.get(s).brdId}'
+                     rel='${subTopics.get(s).brdId}' data-cs-name="BOARD_SUBTOPIC">${subTopics.get(s).name}</div>
+                #{/list}
+                #{/if}
+            </div>
+        </div>
+        <div id="BTPMiddleDiv">
+            <div id="BTPContent">
+                <div class="mcWidget">                   
+                    <div class="SSCTabsHolder CSWidget"  data-widget="BOARD_WISE_CONTENT_FILTER_HOLDER">
+                        <div class="SSCTabs mcTabs" data-beforemccall="boardPageContentType">
+                            <a class="ptrTagInline mcTab SSCTab activemcTab doCStream" 
+                               data-cs-name="QUESTIONS" data-url-str="/questions/quesItems">
+                                Questions
+                            </a>
+                            <a class="ptrTagInline SSCTab mcTab doCStream" 
+                               data-cs-name="PLAYLISTS" data-url-str="/playlists/PLItems">
+                                Playlists
+                            </a>
+                            <a class="ptrTagInline SSCTab mcTab doCStream"
+                               data-cs-name="DOCUMENTS" data-url-str="/doc/docItems">
+                                Documents
+                            </a>
+                            <a class="ptrTagInline SSCTab mcTab doCStream"
+                               data-cs-name="TESTS" data-url-str="/Tests/testItems">
+                                Tests
+                            </a>
+                            <a class="ptrTagInline SSCTab mcTab doCStream" 
+                               data-cs-name="VIDEOS" data-url-str="/doc/videoItems">
+                                Videos
+                            </a>                            
+                        </div>
+                        <div class='cleaner_with_divider'>&nbsp;</div>
+                    </div>
+                    <div class="shadowDivHolder"><div class="shadowDiv"></div></div>
+                    <div class="SSCSearchSortDiv CSWidget" data-widget="CONTENT_SORT_AND_FILTER">
+                            <div class="SSCSearchDiv">
+                                <input type="text" class="SSCSearchDivInput mcSearchDivInput"
+                                       placeholder="Search Questions"
+                                       data-cs-name="SEARCHBOX" data-param-name="query"/>
+                                <span class="SSCSearchDivImg mcSearchDivImg" data-param-name="query"></span>
+                            </div>
+                            <div class="vselect vselectHide SSCSelect mcSelect" 
+                             onstatechange="onmcSelectChange" data-value="mostPopular" 
+                             data-cs-name="SELECT_MC" data-default-value="mostPopular" data-default-name="Most Popular"
+                             data-param-name="orderBy">
+                                    <span class="vSelectHead">
+                                            <input type="text" class="vSelectText" value="Most Popular" readonly="readonly"/>
+                                            <span class="dropDownIcon noUserSelect" ></span>
+                                    </span>
+                                    <div class="vSelectListHolder">
+                                            <div class="vSelectList">
+                                                <span class="vSelectEach" data-value="mostPopular">Most Popular</span>
+                                                <span class="vSelectEach" data-value="timeCreated">Most Recent</span>
+                                            </div>
+                                    </div>
+                            </div>
+                    </div>
+                    <div class="cleaner_with_divider" style="margin-left: -7px; border-bottom: 1px solid rgb(195, 210, 218); width: 102%;">&nbsp;</div>
+                    <div class="LMHandlerDiv CSWidget" data-widget="CONTENT_HOLDER"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+%{
+    if(params.examCode!=null)examCode=params.examCode;
+    else examCode='';
+
+    if(params.examId!=null)examId=params.examId;
+    else examId='';    
+    
+    pageType=flash.get('pageType');
+    subTopicId=params.subTopicId;
+}%
+<script type="text/javascript">
+    new function(){
+        var fn=function(){vBoards.init({targetPage:'BOARD_TOPIC',examCode:"${examCode}",examId:"${examId}",pageType:"${pageType}",
+                    subTopicId:"${subTopicId}"});}
+        fetchScripts([{fname:"boards.js",cb:fn}]);   
+    }();         
+</script>  
+ 

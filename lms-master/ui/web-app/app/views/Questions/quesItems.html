@@ -1,0 +1,13 @@
+#{if !quesns.equals(null) && quesns.errorCode.isEmpty()}
+    %{
+	totalHits = quesns.result.totalHits;
+        quesns=quesns.result.list;
+        target=params.target;
+        if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+        else loadMoreSize=0;
+    }% 
+    #{if target == "TEST_ADD" || target == "MY_INSTITUTE"}
+	<input type="hidden" class="totalQuesItemsCount nonner" value="${totalHits}"/>
+    #{/if}
+    #{questions.quesItems quesns:quesns,target:target,loadMoreSize:loadMoreSize/}
+#{/if}

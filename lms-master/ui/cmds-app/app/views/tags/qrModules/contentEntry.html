@@ -1,0 +1,102 @@
+#{if _entry!=null&&!_entry.isNull('entity')}
+%{ 
+    entry=_entry;
+    schedule = _schedule;
+    isTestScheduled = _isTestScheduled;
+    entity=entry.entity;
+    entityId=entity.id;
+    entityType=entity.type;
+    extraClass=' moduleEntryFinalised';
+    if(_isFinalised==null){
+        extraClass='';
+    }    
+    
+    forDisplay=false;
+    if(_forDisplay!=null){
+        forDisplay=_forDisplay;
+    }
+    
+    resource=entry.info;
+    entityId=resource.id;
+    entityName=resource.name;
+    entityType=resource.type;
+    converted = resource.has('converted')?resource.converted:true;
+    completed = resource.completed;    
+    
+    reqText='Required';
+    if(entityType=="CMDSTEST"||entityType=="CMDSASSIGNMENT"){
+        qusCount=resource.qusCount;
+        extraInfo=qusCount+" question"+qusCount.pluralize();
+    }else if(entityType=="CMDSVIDEO"){
+        duration = resource.has('duration') ? resource.duration : 0;
+        timeObj=uicom.util.Utilities.getTimeFromMiliSec(duration);            
+        if(timeObj.getInt("hrs") > 0){
+            extraInfo=timeObj.hrs+':'+timeObj.mins+':'+timeObj.secs+' hrs';
+        }else{
+            extraInfo=timeObj.mins+':'+timeObj.secs+' mins';
+        }      
+    }else{
+        extraInfo='';
+    }
+    
+    currentReqText='Not Required';    
+    currentReqValue='-1';
+    if(!entry.isNull('completionRule')){
+        reqValue=entry.completionRule.type;
+        if(reqValue=="VIEW"){
+            currentReqValue=reqValue;
+            currentReqText=reqText;
+        }        
+    }
+}%
+<div class="moduleEntry moduleEntryContentType${extraClass}" rel="moduleEntryContentType"
+     data-entity-id="${entityId}" data-entity-type="${entityType}" draggable="true" >
+    #{if !forDisplay}
+    <span class="moduleEntryAddNotation moduleEntryAddNewTopicType" title="&{'MODULE_ADD_TITLE'}">+</span>
+    #{/if}
+    <div class="moduleEntryContentTypeMainSec">
+        <div class="moduleEntryRightSec">
+            #{if entityType == "CMDSTEST" && params.targetType == "SECTION" && params.targetId != null && !isTestScheduled}
+                <div class="scheduleTestInModule"><img src="/public/images/alarm-white.png"><span> Schedule Test </span></div>
+            #{/if}
+            #{if !forDisplay}
+            <div class="vChoose" data-value="${currentReqValue}" data-onchange="updateModuleEntryCompletionReq">
+                <div class="vChooseHead">${currentReqText}</div>
+                <div class="vChooseDownIcon"></div>
+                <div class="vChooseDropDown">
+                    <div class="vChooseOpt" data-value="-1">Not Required</div>
+                    #{if entityType!="CMDSFILE"}
+                    <div class="vChooseOpt" data-value="VIEW">${reqText}</div>
+                    #{/if}
+                </div>
+            </div>  
+            <span class="moduleEntryDeleteNotation moduleDeleteContentType"></span>
+            #{/if}
+            #{else}
+                <div class="big14">${currentReqText}</div>
+            #{/else}
+        </div> 
+        <div class="moduleEntryLeftSec">            
+            #{if !forDisplay}
+            <span class="moduleEntryMoveNotation"></span>
+            #{/if}
+            <span class="moduleContentNo">1.</span>        
+            <div class="linBlk alignTop">
+                #{aTagMapper entityName:entityName,entityId:entityId,entityType:entityType,
+                converted:converted,completed:completed/}
+                <div class="moduleContentStat">${extraInfo}</div>
+            </div>
+        </div>
+        <div class="moduleScheduleHolder">
+        #{if entityType == "CMDSTEST" && isTestScheduled && schedule != null}
+            #{common.moduleSchedules schedule:schedule,showCloseTimer:true,isWebReq:false/}
+            <div class="deleteSchedule" title="Remove Schedule">
+                <img  src="/public/images/uicomCommon/remove.png">
+            </div>
+        #{/if}
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+    <div class="moduleEntryMoveDisplayer"></div>
+</div> 
+#{/if}

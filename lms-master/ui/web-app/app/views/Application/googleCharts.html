@@ -1,0 +1,88 @@
+#{extends 'header.html' /}
+#{script src:'widgets/manageContent.js', charset:'utf-8' /} 
+ <div class="mcWidget">
+                <div class="cleaner_with_divider">&nbsp;</div>
+                <div style="font-family: georgia; color: rgb(204, 204, 204); line-height: 23px; font-size: 22px;
+                     margin-left: -3px; margin-top: 25px;">Questions</div>
+                <div class="margBot10 SSCTabsHolder">
+                    <div class="SSCTabs CSWidget" data-widget="QUESTIONS_TYPE">
+                        <a class="ptrTagInline mcTab activemcTab">
+                            Feed
+                        </a>
+                        <a class="ptrTagInline mcTab">
+                            Saved
+                        </a>
+<!--                        <a class="ptrTagInline mcTab" data-params='{"resultType":"ATTEMPTED","target":"HOME_PAGE_ATTEMPTED"}'
+                           data-url-str="/questions/quesItems" data-order='{"orderBy":"timeCreated","orderName":"Most Recent"}'
+                           data-cs-name="ATTEMPTED_TAB">
+                            Attempted
+                        </a>-->
+                        <a class="ptrTagInline mcTab">
+                            Shared
+                        </a>                        
+                        <a class="ptrTagInline mcTab">
+                            Added
+                        </a>
+                        <div class='cleaner_with_divider'>&nbsp;</div>
+                    </div>
+                    <a class="askQues ptrTagInline" href="/addquestion"><span class="askQuesQicon"></span><span class="big14">Contribute Question</span></a>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                </div>
+                <div class="shadowDivHolder"><div class="shadowDiv"></div></div>
+                <div class="SSCSubTabs floatLeft mcSubTabs">
+                    <span class="mcSubTab activemcSubTab">All</span>
+                    <span class="mcSubTab">/ Attempted</span>
+                    <span class="mcSubTab">/ Unattempted</span>
+                </div>                
+                <div class="SSCSearchSortDiv CSWidget" data-widget="QUESTIONS_SORT_AND_FILTER">
+                        <div class="SSCSearchDiv CSWidget">
+                            <input type="text" class="SSCSearchDivInput mcSearchDivInput doCStream" 
+                            data-cs-name="SEARCHBOX" placeholder="Search Questions" 
+                            data-param-name="query" data-e-type="ENTER"/>
+                            <span class="SSCSearchDivImg mcSearchDivImg" data-param-name="query"></span>
+                            <div class="SSCSearchNoMoreDiv nonner">
+                                <div class="SSCSearchVal"></div>
+                                <span class="SSCSearchCross doCStream" data-cs-name="REMOVE_SEARCH_QUERY"></span>
+                            </div>
+                        </div>
+			<div class="vselect vselectHide SSCSelect mcSelect" 
+                             onstatechange="onmcSelectChange" data-value="timeCreated" 
+                             data-cs-name="DROPDOWN"  data-e-type="CHANGE"
+                             data-default-value="timeCreated" data-default-name="Most Recent"
+                             data-param-name="orderBy">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText" value="Most Recent" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+                                            <span class="vSelectEach" data-value="mostPopular">Most Popular</span>
+                                            <span class="vSelectEach" data-value="timeCreated">Most Recent</span>
+					</div>
+				</div>
+			</div>	
+                </div>
+                <div class="LMHandlerDiv CSWidget" data-widget="QUESTIONS_HOLDER">
+                       
+                </div>
+            </div>
+
+
+
+
+<script type="text/javascript" id="newPLVarJSDiv"> 
+//         loadJSFilesNew(["/public/javascripts/playlist.js"],"newPLVar",{a:23});
+$("body").css("background","white")
+</script>
+
+*{
+%{
+    try{
+}%
+#{include arg:'Questions/quesGraph.html' /}
+%{
+    }catch(Exception e){
+        out.print(e.getMessage());
+    }
+}%
+}*

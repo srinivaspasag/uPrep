@@ -1,0 +1,45 @@
+<head>
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}">
+    <title>Institute Learning Environment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/public/assets/theme1/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+            <!-- CSS -->
+    <link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+</head>
+
+<header id="header" class="clearfix" style=" min-height: 60px;background:white;">
+<ul class="h-inner">
+    <li class="hi-logo">
+        #{if session!=null && session.userId!=null}
+        <a href="/security/logout?orgId=${params.orgId}" class="m-l-10"><img src="/public/images/lplogo.png" class="img-responsive" style="width: 145px;bottom: 10px;position: relative;"/></a>
+        #{/if}
+
+        #{else}
+        <a href="/" class="m-l-10">
+            <img src="/public/images/lplogo.png" class="img-responsive" style="width: 145px;"/>
+        </a>
+        #{/else}
+    </li>
+</ul>
+</header>
+<section id="main">
+    <div class="container">
+        <center>
+        <img src="/public/images/lptagline.png" class="img-responsive">
+        <br>
+        <span style="font-size:20px;color: black;"><b>Organization Not Found</b></span>
+        #{if session!=null && session.userId!=null}
+            <h4><a href="/security/logout?orgId=${params.orgId}"><u>Logout & Try Again</u></a></h4>
+        #{/if}
+
+        #{else}
+            <h4><a href="/"><u>Exit from here</u></a></h4>
+        #{/else}
+        </center>
+    </div>
+</section>

@@ -1,0 +1,459 @@
+#{stylesheet media:'screen', src:'test/o.preTest.css' /}
+#{stylesheet media:'screen', src:'test/o.postTest.css' /}
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    $(function(){
+        showNoTabSec("TEST");
+    });
+</script>
+#{/if}
+    %{
+        alphabets=['(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'];
+    }%
+<input type="hidden" class="incommingTestId nonner" value='${testIdStr}'/>
+<script src="@{'/public/javascripts/test/o.postTest.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{if data!=null && data.has('name')}
+<div id="postTest" class="pageHolderT">
+	<div class="leftAndRelative testCreationLeftBar CSWidget" data-widget="LEFT_BAR">
+		#{include '/tags/test/testDetailsLeftBar.html' /}
+
+		#{if testAttemptData.has('result') && testAttemptData.result.has('avgMarks') && testAttemptData.result.has('attemptCount')}
+		<div class="leftAndRelative testTakenSummary">
+			<span class="avgMarks">
+				<span class="smally">Average Score : </span>
+				<span class="boldy big16 padText blackTextColor">${Math.round(testAttemptData.result.avgMarks)}</span>
+			</span><br/>
+			<span class="avgTimeTaken">
+				<span class="smally">Average Time <span style="padding-left:5px;">:</span> </span>
+				%{
+					timeObj=uicom.util.Utilities.getTimeFromMiliSec(testAttemptData.result.avgTime);
+				}%
+				<span class="boldy big16 blackTextColor">${timeObj.hrs}:${timeObj.mins} hrs</span>
+			</span>
+		</div>
+		#{/if}
+		<input type="button" class="leftAndRelative blueButton viewResultBtn doCStream" name="VIEW_RESULT_SHEET_BTN" value="View Overall Result"/>
+		<div class="leftAndRelative separator"></div>
+		#{if toppersData.has('result') && toppersData.result.has('leaderboard') && toppersData.result.leaderboard.length()>0}
+		<div class="leftAndRelative leaderBoard">
+			<span class="boldy big12">Leader Board</span><a class="viewAll">view all</a>
+			<div class="leftAndRelative leadersList">
+			#{list items:0..toppersData.result.leaderboard.length()-1,as:'tIndex'}
+			%{
+				if(tIndex >= 10) break;
+				topper = toppersData.result.leaderboard.get(tIndex);
+			}%
+				<a href="/user/${topper.userId}" data-user-id="${topper.userId}"  class="leftAndRelative eachLeader openUserProfile blackTextColor doCStream" name="OPEN_TEST_LEADERS" data-test-id="${testIdStr}">
+					<span class="boldy big14 rank">${topper.rank}.</span>
+					<img class="icon img leftAndRelative" src="${topper.profilePic}" alt=" "/>
+					<span class="name">${topper.firstName} ${topper.lastName}</span>
+					<span class="marks greyTextColor smally">${topper.scoredMarks} marks</span>
+					%{
+						timeObj=uicom.util.Utilities.getTimeFromMiliSec(topper.avgTime);
+					}%
+					<span class="left greyTextColor smally" style="margin:3px 2px 0 0;"> | ${timeObj.hrs}:${timeObj.mins} hrs</span>
+				</a>	
+			#{/list}
+			</div>
+		</div>
+		#{/if}
+	</div>
+#{if testAnalytics.has('result') && testAnalytics.result.has('testName')}
+	<div class="leftAndRelative centerBody">
+		<div class="centerText">
+		#{if testAnalytics.has('result') && testAnalytics.result.has('user') && params.targetUserId!=null}
+			%{
+				user = testAnalytics.result.get('user');
+                                getUserClass=(controllers.Profile.getUserClassAndUrl(user)).className;
+                                getUserUrl=(controllers.Profile.getUserClassAndUrl(user)).url;
+                        }%
+			<div class="left testUserInfo CSWidget" data-widget="TEST_DETAILS_USER">
+				<div class="left smally greyTextColor" style="padding:5px;">Test Taken By</div>
+				<a href="${getUserUrl}" data-user-id="${user._id}"
+				class="openUserProfile doCStream" name="USER_LINK">
+					<img class="icon left" src="${user.profilePic}" alt="${user.firstName}"/>
+					<span class="left" style="padding:5px;">${user.firstName} ${user.lastName}</span>
+				</a>
+			</div>
+		#{/if}
+		#{if data.has('childrenTestIds') && data.get('childrenTestIds').length()>0}
+			<div class="vselect vselectHide selectChildrenTest vDropDown" 
+				onstatechange="childrenTestChanged" data-value="" style="margin-top:12px;">
+			   <span class="vSelectHead">
+				<span type="text" class="vSelectText" readonly="readonly">Select Paper</span>
+				<span class="dropDownIcon noUserSelect" ></span>
+			   </span>
+			   <div class="vSelectListHolder">
+				<div class="vSelectList">
+					#{list items:0..data.get('childrenTestIds').length()-1,as:'index'}
+					<span class="vSelectEach" 
+						data-value="${data.get('childrenTestIds').get(index).testId}"
+						data-target-user-id="${params.targetUserId}">
+						${data.get('childrenTestIds').get(index).name.raw()}
+					</span>
+					#{/list}
+				</div>
+			    </div>
+			</div>
+		#{/if}
+		#{if data.has('testGroup') && data.get('testGroup').length()>0}
+			<div class="vselect vselectHide selectChildrenTest vDropDown" 
+				onstatechange="childrenTestChanged" data-value="" style="margin-top:12px;">
+			   <span class="vSelectHead">
+				<span type="text" class="vSelectText" readonly="readonly">Select Test Group</span>
+				<span class="dropDownIcon noUserSelect" ></span>
+			   </span>
+			   <div class="vSelectListHolder">
+				<div class="vSelectList">
+					#{list items:0..data.get('testGroup').length()-1,as:'index'}
+					<span class="vSelectEach" 
+						data-value="${data.get('testGroup').get(index).testId}"
+						data-target-user-id="${params.targetUserId}">
+						${data.get('testGroup').get(index).name.raw()}
+					</span>
+					#{/list}
+				</div>
+			    </div>
+			</div>
+		#{/if}
+		</div>
+	<div class="left relative postTestMainTabs CSWidget" data-widget="POST_TEST_MAIN_TAB_HOLDER">
+		<span class="depthTab doCStream" name="TEST_DETAILS_TAB" data-tab-id="testDetails">Test Details</span>
+		<span class="depthTab activeDepthTab doCStream" name="Your_Performance_tab" data-tab-id="performance">
+			#{if params.targetUserId==null}Your #{/if}Performance</span>
+		<span class="depthTab doCStream" name="YOUR_ANSWER_TAB" data-tab-id="yourAnswer">
+			#{if params.targetUserId==null}Your #{/if}Answers</span>
+	</div>
+	<div class="relative left postTestDetails nonner">
+		#{include 'tags/test/viewTestDetails.html'/}
+	</div>
+	<div class="leftAndRelative userScoreBoard">
+	<div class="leftAndRelative miniBoard CSWidget" data-widget="USER_MINI_SCORE_BOARD">
+		<span class="userRank left absolute">
+			<span class="boldy">Rank</span><br/>
+			<span class="big16 blueTextColor boldy">${(int)testAnalytics.result.userRank}</span>
+			#{if testAttemptData.result.has('attemptCount')}
+				<span class="big14 boldy">/${testAttemptData.result.get('attemptCount')}</span>
+			#{/if}
+		</span>
+		<span class="userScore left">
+			<span class="boldy left scoreTitle" style="width:100%">Score</span>
+			<span class="big25 blueTextColor boldy left">${(int)testAnalytics.result.scoredMarks}/</span><span class="big18 boldy left" style="padding-top:3px;"> ${(int)testAnalytics.result.totalMarks}</span>
+		</span>
+		<span class="userScorePercentage scoreInPercentage left relative">
+			%{
+				percentScore = testAnalytics.result.percent;
+				percentScore = percentScore<0?0:percentScore;
+			}%
+			<span class="right scorePercentVal relative greyTextColor" style="width:${100-percentScore}%;"><span class="left">${percentScore}%</span></span>
+		</span>
+		<span class="userTimeTaken left">
+			<span class="boldy">Time Taken</span><br/>
+			%{
+                                        if(testAnalytics.result.has('startTime') && testAnalytics.result.has('endTime') && testAnalytics.result.endTime!="" && testAnalytics.result.startTime!=""){
+                                                Milliseconds = Long.parseLong(testAnalytics.result.endTime) - Long.parseLong(testAnalytics.result.startTime);
+						timeObj=uicom.util.Utilities.getTimeFromMiliSec(Milliseconds);
+                             	     }
+                        }%
+			<span class="big16 blueTextColor boldy">${timeObj.hrs}:${timeObj.mins}</span><span class="big14"> hrs</span>
+		</span>
+		<div class="left relative miniBoardQuesAHolder">
+			<span class="left boldy big16">Questions</span>
+			<span class="left big12 miniQuesACorrect"><span class="left miniQuesACorrectIndi"></span>% Correct</span>
+			<span class="left big12 miniQuesAIncorrect"><span class="left miniQuesAIncorrectIndi"></span>% Incorrect</span>
+			<div class="left relative miniBoardQuesAnalytics testQuesAnalyticsBar">
+				<div class="left testQuesAnalyticsBarHold">
+					%{
+						percentCorrect = testAnalytics.result.correctPercent;
+						percentIncorrect = testAnalytics.result.incorrectPercent;
+						percentCorrect = percentCorrect<0?0:percentCorrect;
+						percentIncorrect = percentIncorrect<0?0:percentIncorrect;
+					}%
+					<span class="left testQuesAnalyticsBarCorrect" style="width:${percentCorrect}%;" title="${percentCorrect}%"></span>
+					<span class="left testQuesAnalyticsBarIncorrect" style="width:${percentIncorrect}%;" title="${percentIncorrect}%"></span>
+				</div>
+				<div class="left testQuesAnalyticsCount">
+					<span class="left">Correct <b>${(int)testAnalytics.result.correct}</b></span>
+					<span class="left">Incorrect <b>${(int)testAnalytics.result.incorrect}</b></span>
+					<span class="left">Left <b>${(int)testAnalytics.result.left}</b></span>
+					<span class="left">Total Questions <b>${(int)testAnalytics.result.quesTotal}</b></span>
+				</div>
+			</div>
+		</div>
+		<div class="left absolute userScoreBoardBottomBorder"></div>
+	</div>
+	#{if testAnalytics.result.has('questionDistribution') && testAnalytics.result.questionDistribution.length()>0}
+	<div class="left relative detailsScoreBoard">
+		<span class="left fullWidth big16 boldy" style="padding:10px 0 20px 0;text-align:center;">Subject Level Analytics</span>
+		<div class="left detailsScoreBoardHeader">
+			<span class="left subNameScoreBoardHeader boldy">Score</span>
+			<span class="left questionsScoreBoardHeader boldy">Questions</span>
+			<!--<span class="left timeTakenScoreBoardHeader boldy">Time Taken</span>-->
+		</div>
+		<div class="left detailsScoreBoardBody">
+			#{list items:0..testAnalytics.result.questionDistribution.length()-1,as:'index'}
+                        %{
+                         	subData = testAnalytics.result.questionDistribution.get(index);
+			}%
+			<div class="left detailsScoreEachSubject">
+				<span class="big14 boldy detailsScoreSubjectName left">${subData.name}</span>
+				<span class="big14 boldy detailsScoreSubjectScore greyTextColor left"><span class="blueTextColor big16">${(int)subData.marks}/</span>${(int)subData.totalMarks}</span>
+				<span class="userScorePercentage scoreInPercentage left relative">
+					%{ percentMarks = subData.percent;
+					   percentMarks = percentMarks<0?0:percentMarks;
+					}%
+					<span class="right scorePercentVal relative greyTextColor" style="width:${100-percentMarks}%;"><span class="left">${percentMarks}%</span></span>
+				</span>
+				<div class="left relative detailsBoardQuesAnalytics testQuesAnalyticsBar">
+					<div class="left testQuesAnalyticsBarHold">
+						%{
+							percentCorrect = subData.correctPercent;
+							percentIncorrect = subData.incorrectPercent;
+							percentCorrect = percentCorrect<0?0:percentCorrect;
+							percentIncorrect = percentIncorrect<0?0:percentIncorrect;
+						}%
+						<span class="left testQuesAnalyticsBarCorrect" style="width:${percentCorrect}%;" title="${percentCorrect}%"></span>
+						<span class="left testQuesAnalyticsBarIncorrect" style="width:${percentIncorrect}%;" title="${percentIncorrect}%"></span>
+					</div>
+					<div class="left testQuesAnalyticsCount">
+						<span class="left">Correct <b>${(int)subData.correct}</b></span>
+						<span class="left">Incorrect <b>${(int)(subData.attempt-subData.correct)}</b></span>
+						<span class="left">Left <b>${(int)(subData.quesTotal - subData.attempt)}</b></span>
+						<span class="left">Total Questions <b>${(int)(subData.quesTotal)}</b></span>
+					</div>
+				</div>
+			</div>
+			#{/list}
+		</div>
+		<div class="left absolute userScoreBoardBottomBorder"></div>
+	</div>
+	#{if !data.has('mode') || (data.has('mode') && data.mode != "OFFLINE")}
+	<div class="left relative topicsScoreBoard">
+		<span class="left relative fullWidth big16 boldy" style="padding:10px 0 20px 0;text-align:center;">Topic Level Analytics</span>
+		<table cellspacing=0 cellpadding=0 class="topicScoreTable">
+			<tr>
+				<th class="borderBottom"><span class="left topicScoreTopicName">Topic Name</span></td>
+				<th class="borderBottom">Score</th>
+				<th class="borderBottom">Questions</th>
+				<th class="borderBottom"></th>
+				<th class="borderBottom"></th>
+				<th class="borderBottom"></th>
+			</tr>
+			#{list items:0..testAnalytics.result.questionDistribution.length()-1,as:'index'}
+                        %{
+                         	subData = testAnalytics.result.questionDistribution.get(index);
+			}%
+			<tr> 
+				<td class="noBottomBorder"><span class="left topicScoreSubName blueTextColor big16 boldy">${subData.name}</span></td>
+				<td class="noBottomBorder"></td>
+				<td class="">Total</td>
+				<td class="">Correct</td>
+				<td class="">Incorrect</td>
+				<td class="">Left</td>
+			</tr>
+			#{if subData.has('children') && subData.children.length()>0}
+				#{list items:0..subData.children.length()-1,as:'chIndex'}
+				%{ childData = subData.children.get(chIndex); }%
+				<tr>
+					<td class="noBottomBorder"><span class="left topicScoreTopicName big14 boldy">${childData.name}</span></td>
+					<td class="blueTextColor boldy">${(int)childData.marks}</td>	
+					<td class="boldy">${childData.questions.length()}</td>
+					<td class="boldy">${childData.correct}</td>
+					<td class="redTextColor boldy">${childData.incorrect}</td>
+					<td class="boldy">${childData.left}</td>
+				</tr>
+			#{/list}
+			#{/if}
+			#{/list}
+		</table>
+		<div class="left absolute userScoreBoardBottomBorder"></div>
+	</div>
+	#{/if}
+	#{/if}
+	</div>
+	  <div class="leftAndrelative userQuestionAttemptDetails nonner CSWidget" data-widget="YOUR_ANSWER_HOLDER">
+		#{if data.has('childrenTestIds') && data.get('childrenTestIds').length()>0}
+		<div class="centerText" style="padding-top:50px;">
+			<div class="big14 redTextColor"> 
+				Please select a test-paper to view question attemted in test
+			</div>
+		<div class="vselect vselectHide selectChildrenTest vDropDown" onstatechange="childrenTestChanged" data-value="">
+				<span class="vSelectHead">
+					<span type="text" class="vSelectText" readonly="readonly">Select Paper</span>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+						#{list items:0..data.get('childrenTestIds').length()-1,as:'index'}
+						<span class="vSelectEach" 
+							data-value="${data.get('childrenTestIds').get(index).testId}"
+							data-target-user-id="${params.targetUserId}">
+							${data.get('childrenTestIds').get(index).name.raw()}
+						</span>
+						#{/list}
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		#{/if}
+		#{else}
+			<center><span class="quesGridViewBtn blackTab activeBlackTab quesGridViewBtnSelected doCStream" data-active-class="quesGridViewBtnSelected" name="SHOW_GRID_VIEW_TAB">Grid View</span>
+			#{if !data.has('mode') || (data.has('mode') && data.mode != "OFFLINE")}
+				<b> | </b>
+				<span class="quesListViewBtn blackTab doCStream" data-active-class="quesListViewBtnSelected" name="SHOW_QUESTION_VIEW_TAB">Question View</span></center>
+			#{/if}
+			<div class="leftAndRelative questionsDataHolder postTestQuesGridView">
+				<div class="IHolder">
+					<span class="each">
+						<span class="smallRect correct" style="margin-left:7px;"></span></br>
+						<center>correct</center>
+					</span>
+					<span class="each">
+						<span class="smallRect inCorrect" style="margin-left:14px;"></span></br>
+						<center>In correct</center>
+					</span>
+					<span class="each">
+						<span class="smallRect notAttempted"></span></br>
+						<center>left</center>
+					</span>
+				</div>
+				<div class="leftAndRelative subjectQuesList">
+					#{if testAnalytics.result.has('questionDistribution') && testAnalytics.result.questionDistribution.length()>0}
+					%{ qIndex=0; }%
+					#{list items:0..testAnalytics.result.questionDistribution.length()-1,as:'index'}
+					<div class="leftAndRelative eachSubjectQues">
+						%{ subData = testAnalytics.result.questionDistribution.get(index);}%
+						<span class="leftAndRelative boldy big14">${subData.name}</span><br/>
+						#{if subData.has('children') && subData.children.length()>0}
+						<div class="leftAndRelative qIconList">
+						#{list items:0..subData.children.length()-1,as:'chIndex'}
+							#{if subData.children.get(chIndex).has('questions') && subData.children.get(chIndex).questions.length()>0}
+							#{list items:0..subData.children.get(chIndex).questions.length()-1,as:'qIndx'}
+							%{ 
+							ques = subData.children.get(chIndex).questions.get(qIndx);
+							   qIndex++; className = "";
+							   if(ques.isCorrect == "CORRECT") className="correct";
+							   else if(ques.attempt > 0) className="inCorrect";
+							   else className="notAttempted";
+							}%
+							<span class="qIcon ${className}">Q${qIndex}</span>
+							#{/list}
+							#{/if}
+						#{/list}
+						</div>
+						#{/if}
+					</div>
+					#{/list}
+					#{/if}
+				</div>
+			</div>
+			
+			#{if !data.has('mode') || (data.has('mode') && data.mode != "OFFLINE")}
+			<div class="leftAndRelative questionsDataHolder postTestQuesView nonner CSWidget" data-widget="QUESTION_VIEW_HOLDER">
+			#{if testAnalytics.result.has('questionDistribution') && testAnalytics.result.questionDistribution.length()>0}
+			<div class="vselect vselectHide resultPreviewChooseSubject vDropDown" onstatechange="resultPreviewSubjectChanged" data-value="">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText blueTextColor boldy" value="All Subjects" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+						<span class="vSelectEach" data-value="">All Subjects</span>
+						#{list items:0..testAnalytics.result.questionDistribution.length()-1,as:'index'}
+						<span class="vSelectEach" data-value="${testAnalytics.result.questionDistribution.get(index).brdId}">${testAnalytics.result.questionDistribution.get(index).name}</span>
+						#{/list}
+					</div>
+				</div>
+			</div>
+			<table class="testResultQuesTable" cellpadding=0 cellspacing=0>
+				<tr>
+					<th class="testResultEachCellHeader">Questions</th>
+					<th class="testResultEachCellHeader borderRight borderBottom">
+						#{if params.targetUserId==null}Your #{/if}Answer</th>
+					<th class="testResultEachCellHeader borderBottom">Correct Answer</th>
+				</tr>
+				%{qIndex = 0;}%
+				#{list items:0..testAnalytics.result.questionDistribution.length()-1,as:'index'}
+				%{ subData = testAnalytics.result.questionDistribution.get(index);}%
+					#{list items:0..subData.children.length()-1,as:'chIndex'}
+					#{if subData.children.get(chIndex).has('questions') && subData.children.get(chIndex).questions.length()>0}
+						#{list items:0..subData.children.get(chIndex).questions.length()-1,as:'qIndx'}
+						%{ 
+							ques = subData.children.get(chIndex).questions.get(qIndx);
+							qIndex++; className = "";
+							if(ques.isCorrect == "CORRECT"){ className="correct";}
+							else if(ques.attempt > 0){ className="inCorrect";}
+							else{ className="notAttempted";}
+						}%
+				<tr class="cls-${subData.brdId} tableRowResultQues">
+					<td style="width:550px;" class="postTestEachQuesList">
+						<div class="postTestEachQues leftAndRelative">
+							<span class="questionNumber">${qIndex}.</span>
+							<a class="questionBody blackTextColor openQuesPage ptrTagInline" data-qid="${ques._id}" href="${controllers.Questions.getQuesUrl(ques._id)}">
+							<span class="questionText">${ques.questionText.raw()}</span>
+							#{if ques.has('questionOptions') && ques.questionOptions.length()>0}
+							#{list items:0..ques.questionOptions.length()-1,as:'optIndex'}
+								<div class="resultPreviewEachOptHolder"><div class="eachOption">${alphabets[optIndex]} ${ques.questionOptions.get(optIndex).raw()}</div></div>
+							#{/list}
+							#{/if}
+							</a>
+							<span class="postTestQuesInfo">
+								<a class="big12 greenBrdTopic boardSubject ptrTagInline" data-brd-id="${subData.brdId}" href="/subject/${subData.brdId}">${subData.name}</a> > 
+								<a class="big12 yellowBrdSubSubTopic boardTopic ptrTagInline" data-brd-id="${subData.children.get(chIndex).brdId}" href="/topic/${subData.children.get(chIndex).brdId}">${subData.children.get(chIndex).name}</a>
+							</span>
+						</div>
+					</td>
+					#{if ques.has('myAnswer') && ques.myAnswer.length()>0}
+						%{	
+							yourAnswer = "";
+							for(ansIndex=0;ansIndex<ques.myAnswer.length()-1;ansIndex++){
+								yourAnswer+=alphabets[Integer.parseInt(ques.myAnswer.get(ansIndex))-1]+",";
+							}
+							yourAnswer+=alphabets[Integer.parseInt(ques.myAnswer.get(ansIndex))];
+						}%
+						<td class="testResultEachCellValue big14 boldy borderRight borderBottom"><span class="${className}">${yourAnswer}</span></td>
+					#{/if}
+					#{else}
+						<td class="testResultEachCellValue big14 boldy borderRight borderBottom"><span class="${className}">N.A.</span></td>
+					#{/else}
+					#{if ques.has('correctAnswer') && ques.correctAnswer.length()>0}
+						%{
+							correctAnswer = "";
+							for(ansIndex=0;ansIndex<ques.correctAnswer.length()-1;ansIndex++){
+								correctAnswer+=alphabets[Integer.parseInt(ques.correctAnswer.get(ansIndex))]+",";
+							}
+							correctAnswer+=alphabets[Integer.parseInt(ques.correctAnswer.get(ansIndex))-1];
+						}%
+						<td class="testResultEachCellValue big12 boldy borderBottom">${correctAnswer}</td>
+					#{/if}
+					#{else}
+						<td class="testResultEachCellValue big12 boldy borderBottom"></td>
+					#{/else}
+				</tr>
+						#{/list}
+					#{/if}
+					#{/list}
+				#{/list}
+			</table>	
+			#{/if}
+			</div>
+		     #{/if}
+		</div>
+		#{/else}
+	</div>
+	#{/if}
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		try{ 
+			initPostTest();
+		}catch(err){
+        		showError("Some Data failed to load, check your internet connection!");
+			putConsoleError(err);
+		}
+	});
+</script>
+#{/if}
+#{include 'tags/test/leaderBoard.html'/}
+#{include 'tags/test/testDetailsPopup.html'/}

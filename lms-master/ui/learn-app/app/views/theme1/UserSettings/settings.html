@@ -1,0 +1,257 @@
+<head>
+<style type="text/css">
+    .nonner{
+        display: none!important;
+    }
+    #settingsContainer{
+        text-align: left;
+    }
+    #settingsContainer h2{
+        text-align: left!important;
+        font-size: 23px!important;
+    }
+    #settingsContainer .tdlabel{
+		font-weight: 700;
+		font-size: 16px!important;
+		padding-right: 30px;
+		padding-bottom: 15px;
+		padding-top: 15px;
+    }
+	.settingsPopup{
+		width: 500px!important;
+	}
+	.myStngsChngPwd,.showChngPwdDoneBtnHold{
+		display: none;
+	}
+	.greenTextColor,.success{
+		color: green;
+	}
+	.redTextColor,.nosuccess{
+		color: red;
+	}
+	.emailHeader{
+		font-size: 16px;
+		font-weight: 500;
+		padding-top: 20px;
+	}
+	.highlight {
+		background-color: #eee;
+		border-bottom: 1px solid #e6e6e6;
+	}
+	.instStngInfoArrow {
+		width: 0;
+		height: 0;
+		border-bottom: 15px solid transparent;
+		border-top: 15px solid transparent;
+		border-right: 15px solid #eee;
+		margin-left: -30px;
+	}
+	.chngPwdMsgs{
+		bottom: 5px;
+		position: relative;
+	}
+	.pmbb-view{
+		font-size: 14px;
+	}
+</style>
+</head>
+#{if memberInfo.errorCode.isEmpty() && userInfo.errorCode.isEmpty()}
+%{
+	member = memberInfo.result.info;
+	user = userInfo.result.info;
+	loginType = "EMAIL";
+	username = user.username;
+	isSysGenPassword = user.isSysGenPassword;
+	isOTPuser = user.isOTPuser;
+	if(member.isUsernameOrgSpecific){
+            username = member.memberId;
+            loginType = "MEMBER";
+	}
+	extStngsClass = "";
+	if(params.useExtClassName!=null){
+		extStngsClass = params.useExtClassName;
+	}
+	isSubscribed = userInfo.result.unsubscribeInfo == null || userInfo.result.unsubscribeInfo.equals(null) ? true : false;
+}%
+<body>
+<div id="settingsPopupH">
+	<div class="instSettingsPopup ${extStngsClass}">
+	<div id="settingsContainer">
+	<div class="col-sm-12">
+		<div class="pmb-block">
+            <div class="pmbb-header">
+                <h2>&{'settings.TITLE'}</h2>
+            </div>
+            <div class="pmbb-body instStngLogin p-t-20">
+                <div class="pmbb-view">
+                    <dl class="dl-horizontal">
+                        <dt>&{'settings.LOGINID'}</dt>
+                        <dd data-login-type="${loginType}" data-username="${username}">${username}</dd>
+                    </dl>
+                    #{if !"EXT_AUTH_ORG".equals(session.get("userAuthType"))}
+	                    <dl class="dl-horizontal">
+	                    #{if isSysGenPassword==true && isOTPuser==true}
+						#{/if}
+						#{else}
+                        <dt>&{'login.PASSWORD'}</dt>
+                        <dd class="myStngsPwd">**********</dd>
+                        <dd class="myStngsChngPwd">
+	                        <div class="fg-line">
+							<input class="myStngsChngOldPwd form-control" placeholder="&{'settings.CURR_PASSWORD'}" type="password"/>
+							</div>
+						</dd>
+						<dd class="myStngsChngPwd">
+							<div class="fg-line">
+							<input class="myStngsChngNewPwd form-control" placeholder="&{'settings.NEW_PASSWORD'}" type="password"/>
+							</div>
+						</dd>
+						<dd class="myStngsChngPwd">
+							<div class="fg-line">
+							<input class="myStngsChngReNewPwd form-control" placeholder="&{'settings.REENTER_NEW_PASSWORD'}" type="password"/>
+							</div>
+						</dd>
+						<dl class="dl-horizontal">
+						<dt></dt>
+						<dd class="showChngPwdBtnHold">
+							<button class="blueButton instStngsChngPassBtn btn btn-primary waves-effect">&{'login.CHNG_PASSWORD'}</button>
+						</dd>
+						#{/else}
+						<dd class="showChngPwdDoneBtnHold p-t-10">
+							<button class="blueButton instStngsChngPassDoneBtn btn btn-primary waves-effect">Done</button>
+						</dd>
+						</dl>
+						<div class="chngPwdMsgs nonner f-12">
+							<div class="redTextColor pwdLengthError nonner" style="color: #CC3333!important;">&{'settings.SERVICE_MSG_PWD_LENGTH_ERROR'}</div>
+							<div class="redTextColor pwdNotMatch nonner" style="color: #CC3333!important;">&{'settings.SERVICE_MSG_PWD_NOT_MATCH'}</div>
+							<div class="redTextColor curPwdNotMatch nonner" style="color: #CC3333!important;">&{'settings.SERVICE_MSG_CURR_PWD_NOT_MATCH'}</div>
+							<div class="redTextColor unknownError nonner" style="color: #CC3333!important;">&{'settings.SERVICE_ERROR'}</div>
+							<div class="greenTextColor pwdChngSuccess nonner">&{'settings.SERVICE_MSG_CHNG_PWD_SUCCESS'}</div>
+						</div>
+                    </dl>
+                    #{/if}
+                    %{
+						regEmailBtn = "nonner";
+						regEmailHolder = "nonner";
+						regEmailNotVerified = "nonner";
+						regEmailVerified = "nonner";
+						emailChangeRequested = user.email;
+						if(user.email.equals(null) || user.email.isEmpty()){
+							regEmailBtn = "";
+						}else if(user.has('emailChangeRequested') && 
+							!user.emailChangeRequested.equals(null) && 
+							!user.emailChangeRequested.isEmpty()){
+							regEmailNotVerified = "";
+							emailChangeRequested = user.emailChangeRequested;
+						}
+						if(user.isEmailVerified){
+							regEmailVerified = "";
+						}
+						if(regEmailVerified.equals("")){
+							regEmailNotVerified = "nonner";
+						}
+					}%
+					<dl class="dl-horizontal instStngEmail">
+						<dt>&{'settings.EMAIL'}</dt>
+						<dd class="regEmailBtn ${regEmailBtn} regEmailEachDiv relative">
+							<button class="greenButton btn btn-success waves-effect btn-sm instStngsRegEmail">&{'settings.REGISTER_EMAIL'}</button>
+						</dd>
+						<dd class="regEmailHolder ${regEmailHolder} regEmailEachDiv relative">
+							<div class="fg-line">
+								<input class="myStngsChngEmail emailUserName form-control" placeholder="&{'login.PLACEHOLDER_USERNAME'}" name="email" type="email"/>
+							</div>
+							<span class="signupErrorDiv f-12"></span>
+						<!-- </dd> -->
+					#{if isSysGenPassword==true && isOTPuser==true}
+						<!-- <dd class="otpDetails"> -->
+						<div class="fg-line">
+							<input class="form-control" placeholder="&{'settings.NEW_PASSWORD'}" name="password" type="password" id="newpassword"/>
+						</div>
+						<div class="fg-line">
+							<input class="form-control" placeholder="&{'settings.REENTER_NEW_PASSWORD'}"
+								name="confpassword" type="password" id="confirmpassword"/>
+						</div>
+						<button class="blueButton instStngsRegUpdateBtn btn btn-primary waves-effect">&{'TXT_ADD'}</button>
+						</dd>
+					#{/if}
+					#{else}
+						<span class="blueButton instStngsRegEmailBtn btn btn-primary waves-effect">&{'TXT_ADD'}</span>
+					#{/else}
+					<div class="c-gray f-14 p-t-10">&{'settings.EMAIL_VERIFICATION_LINK_SEND'}</div>
+					<dd class="regEmailNotVerified ${regEmailNotVerified} regEmailEachDiv">
+						${emailChangeRequested}
+						<div class="f-12">
+							<span class="redTextColor boldy big14" style="padding-right:20px;color:#ed3237 !important;">&{'TXT_NOT_VERIFIED'}</span>
+							<a class="resendEmailVerifyLink hidden-xs" style="color:#ed3237 !important;">&{'settings.RESEND_VERIFICATION_LINK'}</a>
+							<div class="visible-xs">
+								<a class="resendEmailVerifyLink" style="color:#ed3237 !important;">&{'settings.RESEND_VERIFICATION_LINK'}</a>
+							</div>
+							<div class="emailVerifyLinkSent smally greyTextColor nonner">
+								&{'settings.EMAIL_VERIFICATION_LINK_SENT'}</div>
+						</div>
+					</dd>
+					<dd class="regEmailVerified ${regEmailVerified} regEmailEachDiv">
+						${user.email}
+						<div class="f-12">
+							<span class="greenTextColor boldy big14" style="padding-right:20px;">&{'TXT_VERIFIED'}</span>
+							<!-- <a class="instStngsRegEmail">&{'TXT_CHANGE'}</a> -->
+						</div>
+						<div class="subscriptionEmail" style="padding:6px 0;"
+							data-text-subscribed="&{'settings.YOU_ARE_SUBSCRIBED_EMAIL'}"
+							data-text-unsubscribed="&{'settings.YOU_ARE_UNSUBSCRIBED_EMAIL'}">
+						#{if isSubscribed==true}
+							<div class="f-12">&{'settings.YOU_ARE_SUBSCRIBED_EMAIL'}</div>
+							<a class="redTextColor unsubscribeBtn f-12">&{'settings.UNSUBSCRIBE_BTN'}</a>
+						#{/if}
+						#{else}
+							<div class="redTextColor f-12">&{'settings.YOU_ARE_UNSUBSCRIBED_EMAIL'}</div>
+							<button class="smallGreenButton subscribeBtn btn btn-success waves-effect">&{'settings.SUBSCRIBE_BTN'}</button>
+						#{/else}
+						</div>
+					</dd>
+					</dl>
+                </div>
+            </div>
+         </div>
+	</div>
+	<input type="hidden" id="user" data-user-details="${user}">
+</body>
+#{/if}
+<script type="text/javascript">
+	$(document).ready(function(){
+		/*----------------------------------------------------------
+	        Text Field
+	    -----------------------------------------------------------*/
+	    //Add blue animated border and remove with condition when focus and blur
+	    if($('.fg-line')[0]) {
+	        $('body').on('focus', '.fg-line .form-control', function(){
+	            $(this).closest('.fg-line').addClass('fg-toggled');
+	        })
+
+	        $('body').on('blur', '.form-control', function(){
+	            var p = $(this).closest('.form-group, .input-group');
+	            var i = p.find('.form-control').val();
+
+	            if (p.hasClass('fg-float')) {
+	                if (i.length == 0) {
+	                    $(this).closest('.fg-line').removeClass('fg-toggled');
+	                }
+	            }
+	            else {
+	                $(this).closest('.fg-line').removeClass('fg-toggled');
+	            }
+	        });
+	    }
+
+	    //Add blue border for pre-valued fg-flot text feilds
+	    if($('.fg-float')[0]) {
+	        $('.fg-float .form-control').each(function(){
+	            var i = $(this).val();
+
+	            if (!i.length == 0) {
+	                $(this).closest('.fg-line').addClass('fg-toggled');
+	            }
+
+	        });
+	    }
+	});
+</script>

@@ -1,0 +1,53 @@
+#{if resp!=null && resp.errorCode.isEmpty()}
+%{
+	contents = resp.result.contentInfo;
+}%
+#{if contents.length()>0}
+	#{list items:0..contents.length()-1,as:'index'}
+	%{
+		entity = contents.get(index);
+	}%
+	<tr>
+		<td>
+			#{aTagMapper entityName : entity.name , entityId : entity.content.id , entityType: entity.content.type /}
+		</td>
+		<td>
+			#{if entity.succeeded == true}
+				<div class="big14 greenTextColor boldy">&{'TXT_DONE'}</div>
+			#{/if}
+			#{elseif entity.errorCode.equals(null) || entity.errorCode.isEmpty()}
+				<div class="big14">&{'TXT_PENDING'}</div>
+			#{/elseif}
+			#{else}
+				<div class="big14 redTextColor boldy">${entity.errorMessage}</div>
+			#{/else}
+		</td>	
+	</tr>
+	#{/list}
+	%{
+        	totalHits = resp.result.totalHits;
+        	lastCount = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+	}%
+	#{if totalHits > lastCount }
+	<tr class="loadMoreDivTR">
+        	<td colspan=2 style="padding-top:20px;">
+                	<div class="loadMoreItems" data-next-start="${lastCount}">&{'LOAD_MORE_item','Resources'}</div>
+        	</td>
+	<tr>
+	#{/if}
+#{/if}
+#{else}
+<tr>
+   <td colspan=2>
+	<div class="boldy big14 redTextColor centerText">&{'TXT_NO_CONTENT_TO_SHOW'}</div>
+   </td>
+</tr>
+#{/else}
+#{/if}
+#{elseif resp!=null}
+<tr>
+   <td colspan=2>
+	<div class="boldy big14 redTextColor centerText">${resp.errorMessage}</div>	
+   </td>
+</tr>
+#{/elseif}

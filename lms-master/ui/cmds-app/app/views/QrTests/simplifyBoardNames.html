@@ -1,0 +1,63 @@
+%{
+    res = resp.result;
+    if(res.has("testBrdIdsWithNames") && !res.isNull("testBrdIdsWithNames")){
+        subjects = res.testBrdIdsWithNames;
+    }
+    if(res.has("simplifiedBrdInfo") && !res.isNull("simplifiedBrdInfo")){
+        simplifiedBrdInfo = res.simplifiedBrdInfo;
+    }
+}%
+<head>
+    #{stylesheet media:'screen', src:'simplifyBoardNames.css' /}
+</head>
+<div class="simplifyBoardNames">
+    <h3 class="heading">Simplify Subject Names</h3>
+    <div class="simplifyBoardForm">
+        #{if !subjects.equals(null) && subjects.length()>0}
+        <div class="inputDiv">
+            <input id="simplifyBoardFormValue" type="text" placeholder="Enter subject name"/>
+        </div>
+        #{/if}
+        #{if !simplifiedBrdInfo.equals(null) && simplifiedBrdInfo.length()>0}
+        #{list items:0..simplifiedBrdInfo.length()-1,as:'i'}
+        %{
+            brd = simplifiedBrdInfo.get(i);
+        }%
+        <div class='ATTagTreeDiv'>
+            <div class='ATTTSubject ATTTItem doCStream' data-cs-name="REMOVE_SEL_TAG_SUBJECT" >
+                <span class='ATTTRemoveSubjectTag  ATRemImg' data-brd-info="${brd.brdInfo}" data-simplified-name = "${brd.simplifiedName}"></span>
+                <span class='ATTTItemName'>${brd.simplifiedName}</span>
+                %{
+                    boardInfo = brd.brdInfo;
+                }%
+                #{list items:0..boardInfo.length()-1, as: 'j'}
+                    %{
+                        bInfo = boardInfo.get(j);
+                    }%
+                    <span class="boardNames">${bInfo.boardName}</span>
+                #{/list}
+            </div>
+        </div>
+        #{/list}
+        #{/if}
+    </div>
+    <div class="checkboxDiv">
+        #{if !subjects.equals(null) && subjects.length()>0}
+        #{list items:0..subjects.length()-1,as:'t'}
+        %{
+            sub=subjects.get(t);
+        }%
+        <div class="SCHolder">
+            <input type='checkbox' name="ATCRBox" class='ATCRBox doCStream' id="ATCRBox_${sub.boardId}"
+                   data-name="${sub.boardName}" data-brd-id="${sub.boardId}" data-cs-name="TAG_SUB_BRD_RADIO"/>
+            <span class='ATCRBoxName'>${sub.boardName}</span>
+        </div>
+        #{/list}
+    </div>
+    <div class="cleaner_with_divider"></div>
+    <div class="simplifyBoardFormButtons">
+        <button class="blueButton submitSimplify">Submit</button>
+    </div>
+    #{/if}
+    <input type="hidden" name="" class="getcmdsTestId">
+</div>

@@ -1,0 +1,33 @@
+%{
+    replies=_replies;
+    loadMoreSize=_loadMoreSize;
+}%
+
+#{if replies.length()>0}
+#{list items:0..replies.length()-1,as:'r'}
+    %{
+        reply=replies.get(r);
+        user=reply.user;
+    }%
+    <div class='replyItem CSWidget' data-widget="REPLY" data-reply-id="${reply.id}" >
+        #{widgets.img20 user:user /}
+        <div class='itemContent30'>
+            <div class='replyItemWhity'>
+                <div class="itemHorn"></div>
+                <div class='margBot10'>
+		    #{institute.memberName user : user /}
+                    <span> says</span>
+                    <span class="floatRight time">${new Date(reply.timeCreated).since(true)}</span>
+                </div>
+                <div class="replyItemText">${reply.content.raw()}</div>
+            </div>
+        </div>
+    </div>
+#{/list}
+        #{if loadMoreSize != 0 && replies.length()==loadMoreSize}
+        <div class="loadMoreItems LMHandlerDivLoadMore" data-cs-name="LOAD_MORE_REPLIES">Load More Replies</div>
+        #{/if}
+#{/if}
+#{else}
+    <div class="userMessage">No Replies found</div>
+#{/else}

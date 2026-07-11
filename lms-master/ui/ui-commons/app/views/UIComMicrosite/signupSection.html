@@ -1,0 +1,115 @@
+#{extends 'UIComMicrosite/header.html'/}
+#{set title:'Signup to program, Learnpedia' /}
+#{stylesheet media:'screen', src:'institute/o.myPrograms.css' /}
+#{stylesheet media:'screen', src:'uicomMain.css' /}
+<style>
+.loadingIcon{
+	width:300px;
+	padding:50px 0;
+}
+</style>
+%{
+	targetOrgMemberId = "";
+	targetProfile = "STUDENT";
+	if(memberResponse!=null && memberResponse.errorCode.isEmpty()){
+		memberInfo = memberResponse.result.info;
+		targetOrgMemberId = memberInfo.id;
+		targetProfile = memberInfo.profile;
+	}	
+}%
+#{script src:'uicomPayments/home.js', charset:'utf-8' /}
+<script type="text/javascript">
+        var showLoadingDiv = "<div class='centerText loadingIcon'><img src='/public/images/microsite/loading.gif' alt='Loading'/></div>";
+	$(function(){
+	   var popup;
+	   var orgId = "${orgId}";
+	   var targetOrgMemberId = "${targetOrgMemberId}";
+	   var targetProfile = "${targetProfile}";
+	   if(targetProfile != "STUDENT"){
+           	location.href = "/";
+	   }
+	   var openProgPopup = function(sectionId,orgId){
+                popup = showVPopup(0.7,true,true);
+                popup.html(showLoadingDiv);
+                var params = {
+                        orgId : orgId,
+                        sectionId : sectionId
+                };
+                popup.load("/UIComRegister/getSignleProgramPopup",params,function(){
+			popup.on("click",".joinProgramForFree",joinNow);
+			popup.on("click",".signupPaidProgram",buyNow);
+			popup.on("click",".closeVPopup",function(){
+                        	location.href = "/";
+			});
+		});
+           };
+	   setTimeout(function(){
+	   	openProgPopup("${sectionId}","${orgId}"); 
+	   },1000);
+	   var joinNow = function(){
+		var sectionId = popup.find("#sectionId").val();
+		var centerId = popup.find("#centerId").val();
+		var programId = popup.find("#programId").val();
+		var params = {
+			orgId : orgId,
+			"sectionIds[0]" : sectionId,
+			centerId : centerId,
+			programId : programId,
+			targetOrgMemberId : targetOrgMemberId,
+			targetProfile : targetProfile
+		};
+                popup.html(showLoadingDiv);
+		$.post("/Security/addMemberToSection",params,function(data){
+			if(data){
+				if(data.errorCode){
+					var error = "Error while joining : "+data.errorMessage;
+					showVMsgBox(error,null,"ERROR",function(){
+						location.reload();
+					});
+				}else if(data.result && data.result.done){
+					var message = "Successfully joined the program, click proceed to continue";
+					showVMsgBox(message,"PROCEED","SUCCESS",function(){
+                                                location.href = "/home";
+                                        });
+				}else{
+					var error = "Error while joining , try refreshing the page!";
+					showVMsgBox(error,null,"ERROR",function(){
+						location.reload();
+					});
+				}
+			}	
+		});
+	   };
+	   var buyNow = function(){
+                var sectionId = popup.find("#sectionId").val();
+                var centerId = popup.find("#centerId").val();
+                var programId = popup.find("#programId").val();
+                var packageDays = popup.find(".packageSelect").val();
+                var itemName = popup.find(".catProgramName").text();
+                var packageOrgId = popup.find(".packageSelect").data("packageOrgId");
+                var params = {
+                        orgId : orgId,
+                        "sectionIds[0]" : sectionId,
+                        centerId : centerId,
+                        programId : programId,
+                        targetOrgMemberId : targetOrgMemberId,
+                        targetProfile : targetProfile,
+                        packageDays : packageDays,
+                        itemName : itemName
+                }
+                if(makePayments){
+                	popup.html(showLoadingDiv);
+                        var callBackUrl = "/organization/"+orgId+"/postPaymentAddSection";
+                        makePayments.setOrgId(orgId);
+                        makePayments.init("SECTION",sectionId,itemName,packageOrgId,packageDays,callBackUrl,params,function(payStatus){
+			   if(!payStatus){
+                                var message = "Transaction failed to execute, Try again later!";
+				showVMsgBox(message,"OK","ERROR",function(){
+                                	location.href = "/home";
+                                });
+			   }
+                        });
+                };
+            };
+	});
+</script>

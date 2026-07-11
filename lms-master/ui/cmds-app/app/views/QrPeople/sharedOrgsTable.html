@@ -1,0 +1,48 @@
+%{
+    totalHits=people.result.totalHits;
+    members=people.result.subscriberOrgsInfos;
+    orgUserProfile=currentOrgInfo.getOrgUserProfile();
+    sharedProgDetails = people.result.list;
+}%
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv">
+    <table class="headSecTable">
+        <thead>
+            <tr>
+            #{if orgUserProfile=="MANAGER"}
+                <td class="width100 maxWidth100">Shared With Organization</td>
+                <td class="width100 maxWidth100">Remove Sharing</td>
+            #{/if}
+            </tr>
+        </thead>
+    </table>
+</div>
+<div id="fixedSec">
+    <table class="cmdsTable">
+        <tbody>
+        #{if members.length()>0}
+            #{list items:0..members.length()-1,as:'m'}
+                %{
+                    member=members.get(m);
+                }%
+                <tr class="big13 memberTr">
+                    <td class="width100 maxWidth100">${member.fullName}</td>
+                    <td class="width100 maxWidth100">
+                        <span class="removeSharingBtn"
+                         data-subscriber-org-id=${member.id}
+                         data-provider-org-id=${sharedProgDetails.get(m).providerOrgId}
+                         data-program-id=${sharedProgDetails.get(m).programId}></span>
+                    </td>
+                </tr>
+            #{/list}
+        #{/if}
+        #{else}
+            <tr class="noResultsTr">
+            <td colspan="7">
+                <div class="userMessage">No members found.</div>
+            </td>
+            <tr>#{/else}
+        </tbody>
+    </table>
+#{footer /}
+</div>

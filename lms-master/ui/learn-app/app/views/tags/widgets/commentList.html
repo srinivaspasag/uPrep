@@ -1,0 +1,16 @@
+#{if comments!=null && comments.errorCode=="" && comments.result.has("list") && comments.result.list.length()>0}
+%{
+    comms = comments.result.list;
+    totalCount = comments.result.totalHits;
+    nextStart = Integer.parseInt(params.start)+Integer.parseInt(params.size);
+}%
+   #{list items:0..comms.length()-1,as:'cIndex'}
+    #{widgets.commItem data : comms.get(cIndex) /}
+   #{/list}
+   #{if totalCount > nextStart }
+    <div class="loadMoreItems instLoadMoreFeedComments doCStream view-more" name="LOAD_MORE_FEED_COMMENTS"
+        data-entity-type="${params.rootType}"
+        data-entity-id="${params.rootId}"
+        data-next-start="${nextStart}">&{'LOAD_MORE_item','Comments'}</div>
+   #{/if}
+#{/if}

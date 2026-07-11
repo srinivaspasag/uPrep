@@ -1,0 +1,278 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    $(function(){
+        showNoTabSec("VIDEO");
+    });
+</script>
+#{/if}
+#{if video !=null && video.errorCode.isEmpty()}
+#{stylesheet media:'screen', src:'myContents/o.video.css' /}
+%{
+	vid = video.result;	
+}%
+<div id="videoPage" class="pageHolderM" data-video-id="${vid.id}">
+	<div class="videoSec">
+	    <div class="videoSecHold">
+		<div class="vidInfo">
+			<div class="big18">
+				<span class="left">
+					<span class="videoTitle">${vid.name}</span>
+				</span>
+				#{if vid.has('linkInfo') && !vid.linkInfo.equals(null) && vid.linkInfo.has('originalURL')}
+				%{
+					extInfo = vid.linkInfo;
+				}%
+				<!-- <span class="right">
+					<a href="${extInfo.domainURL}" class="big14" target="_blank">${extInfo.domainName}</a>
+				</span> -->
+				#{/if}
+				<div class="cleaner_with_divider">&nbsp;</div>
+			</div>
+			<div style="padding-top:2px;">
+				#{if vid.has("boardTree") && !vid.boardTree.equals(null) && vid.boardTree.length()>0}
+					%{
+						boards = vid.boardTree;
+					}%
+					#{list items:0..boards.length()-1,as:'bIndex'}
+					%{
+						subject = boards.get(bIndex);	
+					}%
+					<div class="left">
+						<span class="resourceSubTag">${subject.name}</span>
+						#{if subject.has("children") && !subject.children.equals(null) && subject.children.length()}
+							#{list items:0..subject.children.length()-1,as:'cIndex'}
+							%{
+								topic = subject.children.get(cIndex);
+							}%
+							<span class="resourceTopicTag">${topic.name}</span>
+							#{/list}
+						#{/if}
+					</div>
+					#{/list}
+				#{/if}
+				*{#{if vid.has('user') && !vid.user.equals(null)}
+                      		%{
+                        		user=vid.user;
+                      		}%
+				<span class="right" style="margin-top:2px;">
+                    			<span style="padding-right:2px">by</span>
+		    			#{institute.memberName user : user /}
+				</span>
+				#{/if}}*
+				<div class="cleaner_with_divider">&nbsp;</div>
+			</div>
+		</div>
+		<div class="videoPlayerHolder">
+			#{if "UPLOADED".equals(vid.linkType)}
+			<link href="/public/stylesheets/videojs/videojs.min.css" rel="stylesheet">
+			<script src="/public/javascripts/videojs/videojs.min.js" type="text/javascript"></script>
+            <script src="/public/javascripts/videojs/videojs.hotkeys.min.js" type="text/javascript"></script>
+			%{
+				callingAppName = play.Play.configuration.getProperty("application.name");
+				playUrl = uicom.util.Utilities.putParamInUrl(vid.s3url,"callingApp",callingAppName);
+                playBackupVideoUrl = "";
+                if(vid.has('backupVideoUrl') || vid.backupVideoUrl != null ||  vid.backUpVideoUrl !=""){
+                        playBackupVideoUrl = uicom.util.Utilities.putParamInUrl(vid.s3HDurl,"callingApp",callingAppName);
+                }
+                origextension = "";
+                if(vid.has('originalFileName') && vid.originalFileName != null &&  vid.originalFileName !=""){
+                    splitFile = vid.originalFileName.tokenize(".");
+                    size = splitFile.size();
+                    if(size!=0){
+                        origextension = splitFile[size-1];
+                    }
+                }
+			}%
+            #{if vid.disableDownload}
+            <div class="videoJsPlayer displayInline nonner">
+            #{/if}
+			<video width="100%" #{if vid.poster != null && !vid.poster.equals(null) && vid.poster != ""} poster="${vid.poster}" #{/if} height="100%" controls id="html5VideoTag"
+			   preload="#{if vid.disableDownload}none#{/if}#{else}auto#{/else}" data-setup='{"playbackRates": [0.5, 1, 1.5, 2, 2.5, 3]}' class="video-js">
+                                <source src="#{if origextension == 'mp4' && vid.extension == 'webm'}${playUrl}#{/if}" type="video/${vid.extension}" class='webm'>
+                                <!-- If video is not yet converted,play backupUrl-->
+                                <source src="${playBackupVideoUrl}" type="video/${origextension}"class='${origextension}' data-video-src="playBackupVideoUrl">
+                                <!-- End if-->
+                                *{<source src="${playUrl}" type="video/webm">
+                                <object data="${playUrl}" width="100%" height="100%">
+                                        <embed src="${playUrl}" width="100%" height="100%">
+                                </object>}*
+			</video>
+            #{if vid.disableDownload}
+            </div>
+            #{/if}
+
+            #{if vid.disableDownload}
+                <script src="/public/javascripts/bowser/bowser.js"  type="text/javascript"></script>
+                <script src="/public/javascripts/detectExtension.js" type="text/javascript"></script>
+            #{/if}
+            <script type='text/javascript'>
+                videojs('html5VideoTag').ready(function() {
+                    this.hotkeys({
+                      volumeStep: 0.1,
+                      seekStep: 5,
+                      enableMute: true,
+                      enableFullscreen: true
+                    });
+                });
+            </script>
+			#{/if}
+			#{elseif "ADDED".equals(vid.linkType)}
+			%{
+				playUrl = vid.url;
+			}%
+			#{if vid.has('linkInfo') && !vid.linkInfo.equals(null) && vid.linkInfo.has('id')}
+				%{
+                                	playUrl = vid.linkInfo.embedURL;
+					if(extInfo.domainName != null && "YOUTUBE".equals(extInfo.domainName.toUpperCase())){
+						playUrl = uicom.util.Utilities.putParamInUrl(playUrl,"rel","0");
+						playUrl = uicom.util.Utilities.putParamInUrl(playUrl,"showinfo","0");
+					}
+                        	}%
+				<div class="right nonner">
+					<a href="${extInfo.originalURL}" class="whiteTextColor big14" 
+						target="_blank">&{'WATCH_VIDEO_IN_site',extInfo.domainName}</a>
+				</div>
+			#{/if}
+				<iframe width="100%" height="100%" src="${playUrl}" frameborder="0" allowfullscreen></iframe>
+			#{/elseif}
+		</div>
+        <div style="margin-top: 10px;">
+            #{if ratings !=null && ratings.errorCode.isEmpty() && myOrgInfo!=null}
+                %{
+                    ratings = ratings.result;
+                    if(myOrgInfo.has('userRole') && myOrgInfo.userRole != null &&
+                        myOrgInfo.userRole !=""){
+                        userRole = myOrgInfo.userRole;
+                    }
+                }%
+                #{if userRole == "STUDENT"}
+                    #{institute.ratings entity : vid , entityType:"VIDEO" ,ratings:ratings /}
+                #{/if}
+            #{/if}
+            #{if "UPLOADED".equals(vid.linkType) && origextension == "mp4" && vid.extension == "webm" && playBackupVideoUrl!=""}
+            <div class="switchTabHolder" id="switchVideoType">
+                <span class="switchTabON switchTab" data-value="mp4">HD</span>
+                <span class="switchTabOFF activeSwitch switchTab" data-value="webm">SD</span>
+            </div>
+            #{/if}
+        </div>
+                #{if vid.has('description') && !vid.description.equals(null) && !vid.description.isEmpty()}
+                <div class="margBot5 grayHead big15" style="margin-top:20px;">&{'TXT_DESCRIPTION'}</div>
+                <div class="videoDescription">
+                    ${vid.description.raw()}
+                </div>
+                #{/if}
+        %{
+            enableVideoComment = true;
+            //Disable video comment option for students of Trividyaa organization.
+            if(params.orgId == "5bacb325e4b0ff57ab848e07" && params.userRole == "STUDENT"){
+                enableVideoComment = false;
+            }
+        }%
+        #{if enableVideoComment}
+		<div class="videoComments instCommentWidgetHolder">
+		</div>
+        #{/if}
+            </div>
+	</div>
+    #{if !params.moduleId.equals(null)}
+        <div style="float: right;width: 24.5%;min-height: 400px;">
+            <div class="vidSuggHolder">
+            #{if nextVideosInfo != null}
+            <div class="big18">&{'TXT_SUGGS'}</div>
+            #{if nextVideosInfo.result.videoIds.length() == 0}
+            <div style="margin-top: 50px;font-size: 16px;line-height: 1.5">
+                No more videos available in this module.
+            </div>
+            #{/if}
+            #{else}
+            #{list items:0..nextVideosInfo.result.videoIds.length()-1,as:'index'}
+            %{
+                vid = nextVideosInfo.result.videoIds.get(index);
+                vidUrl = webUtils.TemplateHelper._getVidUrl(vid,params.orgId);
+                duration = vid.has('duration') ? vid.duration : 0;
+                timeObj=uicom.util.Utilities.getTimeFromMiliSec(duration);
+            }%
+            <div class="eachVidSugg">
+                <a class="${vidUrl.className} ptrTag" data-module-id="${params.moduleId}"data-id="${vidUrl.id}" href="${vidUrl.url}?moduleId=${params.moduleId}">
+                <div class="vidThumbHold">
+                    <div class="vidThumbImg">
+                        <img alt="&{'IMG_NA'}" src="${vid.has('thumbnail') ? vid.thumbnail : ''}"/>
+                    </div>
+                    <div class="vidThumbInfo">
+                        <div class="vidPlayIcon"><span></span></div>
+                        <div class="vidThumbDuration">
+                            #{if timeObj.getInt("hrs") > 0}
+                                            ${timeObj.hrs}:
+                                    #{/if}
+                                        ${timeObj.mins}:${timeObj.secs}
+                        </div>
+                    </div>
+                </div>
+                </a>
+                <div class="big16">${vid.name}</div>
+                <div class="greyTextColor">
+                    #{if vid.has("boardTree") && !vid.boardTree.equals(null) && vid.boardTree.length()>0}
+                        #{list items:0..vid.boardTree.length()-1,as:'bIndex'}
+                                <span style="padding-right:12px;">${vid.boardTree.get(bIndex).name}</span>
+                            #{/list}
+                    #{/if}
+                </div>
+                #{if vid.has('user') && !vid.user.equals(null)}
+                    %{
+                        user=vid.user;
+                    }%
+                        <span style="padding-right:2px">by</span>
+                    #{institute.memberName user : user , classNames : "smally" /}
+                #{/if}
+            </div>
+            #{/list}
+            #{/else}
+            #{/if}
+            </div>
+        </div>
+    #{/if}
+    #{else}
+    <div class="videoSugg">
+    </div>
+    #{/else}
+	<div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$("#html5VideoTag").on("contextmenu",false);	
+                if(window["markContentCompleted"] && "${params.get('userRole')}"=="STUDENT"){
+                    markContentCompleted();
+                }                
+	});
+</script>
+<script src="@{'/public/javascripts/myContents/o.video.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{if "UPLOADED".equals(vid.linkType) && origextension == "mp4" && vid.extension == "webm" && playBackupVideoUrl!=""}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#videoPage").on("click","#switchVideoType .switchTab",switchTabHolder);
+
+        function switchTabHolder(){
+           $("#html5VideoTag").find(".webm").removeClass("nonner");
+            $("#html5VideoTag").find(".mp4").removeClass("nonner");
+            var $this = $(this);
+            if($this.hasClass("activeSwitch")){ return;};
+            var par = $this.closest("#switchVideoType");
+            var videoType = $this.data("value") === "mp4" ? "mp4" : "webm";
+            console.log(videoType);
+            $this.addClass("activeSwitch").siblings().removeClass("activeSwitch");
+            if(videoType === "mp4"){
+                $("#html5VideoTag video").attr("src","${playBackupVideoUrl}");
+            }else{
+            $("#html5VideoTag video").attr("src","${playUrl}");
+        }
+           $("#html5VideoTag video")[0].load();
+           $("#html5VideoTag video")[0].play();
+     }
+});
+</script>
+#{/if}
+#{/if}
+#{elseif video!=null && !video.errorCode.isEmpty()}
+	#{common.messagePage msgTextColor : "redTextColor" , msg : video.errorMessage /}
+#{/elseif}

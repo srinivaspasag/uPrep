@@ -1,0 +1,49 @@
+<style type="text/css">
+.invoicesList{
+	margin:20px 0;
+	padding:0 15px;
+}
+.eachOrder{
+	padding:10px 20px;
+	background-color:#EEEEEE;
+	border-bottom:1px solid #CCC;
+	margin-bottom:10px;
+}
+</style>
+<div id="orgInvoices">
+	<div class="boldy big20 borderBottom" style="padding:4px 0;">
+        	<span>Invoices</span>
+	</div>
+	<div class="invoicesList">
+		#{include 'UIComInvoices/invoiceList.html'/}
+	</div>
+</div>
+<script type="text/javascript">
+	var invoicesList = new function(){
+		var parDiv;
+		this.init = function(){
+			parDiv = $("#orgInvoices");
+			parDiv.on("click",".loadMoreOrders",loadMoreOrders);
+			parDiv.updateClientTime();
+		};
+		var loadMoreOrders = function(){
+			var $this = $(this);
+			var start = $this.data("nextStart");
+			var params = {
+				start : start
+			};
+			var holder = parDiv.find(".invoicesList");
+			try{
+				smallLoader(holder);
+			}catch(err){}
+			$.get("/UIComInvoices/loadOrders",params,function(data){
+				$this.remove();
+				holder.append(data);
+				holder.updateClientTime();
+			});
+		};
+	};
+	$(function(){
+		invoicesList.init();
+	});
+</script>

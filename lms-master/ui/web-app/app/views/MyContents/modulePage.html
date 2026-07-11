@@ -1,0 +1,250 @@
+#{if moduleInfo.errorCode.isEmpty()}
+%{
+    moduleResp=moduleInfo.result;
+    schedules = [:];
+    if(moduleSchedules.errorCode.isEmpty()){
+        schedules = moduleSchedules.result.schedules;
+    }
+}%
+#{stylesheet media:'screen', src:'slpmodules/modules.css' /}
+<script>
+    $(function() {
+        try {
+            institute.init();
+        } catch (err) {
+        }
+    });
+</script>
+<div id="modulePage">
+    <div id="topicDotsLiner"></div>
+    <div id="modulePageHeader">
+        <div class="modulePageTitleInfo">
+            <div class="moduleTitleTextBox resourceIconMODULE"></div>
+            <span class="moduleTitle">${moduleResp.name}</span>
+            *{#{if moduleResp.has('user')&&!moduleResp.isNull('user')}
+            %{
+                user=moduleResp.user;
+            }%            
+            <label class="color6">Module By</label> #{widgets.user20 user:user /}            
+            #{/if}}*
+            %{
+                boardTree=moduleResp.boardTree;
+            }%
+            #{if boardTree.length()>0}
+                <div class="modulePageTags">
+                    #{list items:0..boardTree.length()-1,as:'s'}
+                        %{
+                            brd=boardTree.get(s);                                
+                            topics=brd.children;
+                        }%                    
+                    <span class="moduleTag">${brd.name}</span>                    
+                        #{if topics!=null&&topics.length()>0}
+                            #{list items:0..topics.length()-1,as:'d'}
+                            %{
+                                topic=topics.get(d);                                
+                            }%
+                            <span  class="moduleTag">${topic.name}</span>
+                            #{/list}
+                        #{/if}                    
+                    #{/list}
+                </div>            
+            #{/if}            
+        </div>
+        <div class="modulePageHeaderArrow"></div>
+    </div>
+    <div>
+        %{
+            moduleRun= 'NON_SEQUENTIAL';
+            if(!moduleResp.isNull('moduleRun')){
+                moduleRun=moduleResp.moduleRun;
+            }
+        }%                
+        #{if moduleRun=='SEQUENTIAL'}
+        <div class="moduleRunDiv">
+            <span class="moduleRunIcon modulePageSprite"></span>
+            <div class="moduleRunInfo">
+                <b>This module is sequential</b><br>
+                <span class="color6">You are required to go through this module in sequential order</span>
+            </div>
+        </div>
+        #{/if}
+    </div>
+    <div id="moduleEntriesHolder">
+        %{
+            moduleEntryInfos=moduleResp.moduleEntryInfos;
+            foundNowContentForSequentialRun=false;
+            compulsoryContentCount=0;
+            completedCompulsoryContentCount=0;
+        }%
+        #{if moduleEntryInfos.length()>0}
+        #{list items:0..moduleEntryInfos.length()-1,as:'i'}
+        %{
+            entryInfo=moduleEntryInfos.get(i);
+        }%
+        #{if entryInfo.isNull('entity')&&!entryInfo.isNull('name')}
+        <div class="moduleEntry moduleEntryTopicType">
+            <span class="moduleEntryTopicCircle">A</span>
+            ${entryInfo.name}
+        </div>
+        #{/if}
+        #{elseif !entryInfo.isNull('entity')&&entryInfo.has('info')&&!entryInfo.isNull('info')}
+        %{
+            entity=entryInfo.entity;            
+            entityId=entity.id;
+            entityType=entity.type;
+            info=entryInfo.info;
+            entityName=info.name;
+            info.put('attempted',entryInfo.attempted);
+            moduleOpenUrl=webUtils.TemplateHelper.EntityUrl.valueOfKey(entityType)._getEntityUrl(info,params.orgId,params.userRole);
+            ModuleDisplayTextForEntity=webUtils.ModuleDisplayTextForEntity;
+            entityTextHelper=ModuleDisplayTextForEntity.valueOfKey(entityType);
+            isCompleted=entryInfo.completed;
+            if(entryInfo.attempted){
+                isCompleted=true;
+            }
+            completionRuleType='NONE';
+            if(!entryInfo.isNull('completionRule')){
+                completionRuleType=entryInfo.completionRule.type;
+            }
+            if(params.userRole=="STUDENT"){
+                contentUrl=moduleOpenUrl.url+'?context.id='+moduleResp.id+'&context.type=MODULE'+'&userRole='+params.userRole+'&entity.type='+entityType+'&entity.id='+entityId;
+                if(entityType == "TEST"){
+                    contentUrl = contentUrl + (params.sectionId !=null ? "&sectionId="+params.sectionId : "")+"&targetType=MODULE"+"&targetId="+moduleResp.id;
+                }
+                else if(entityType == "VIDEO"){
+                    contentUrl = contentUrl+"&moduleId="+moduleResp.id;
+                }
+            }
+            else{
+                contentUrl=moduleOpenUrl.url;
+                if(entityType == "TEST" && !isCompleted){
+                    contentUrl = contentUrl + "?targetType=MODULE"+"&targetId="+moduleResp.id;
+                }
+                else if(entityType == "VIDEO"){
+                    contentUrl = contentUrl + "?moduleId="+moduleResp.id;
+                }
+            }
+            //Check whether schedule available for Module Test
+            isTestScheduled = false;
+            schedule = null;
+            if(entityType == "TEST" && schedules){
+                if(schedules.has(entityId)){
+                    schedule = schedules.get(entityId);
+                    isTestScheduled = true;
+                }
+            }
+            moduleStatusText='';
+            moduleStatusTextClasses='';
+            moduleStatusIconClasses='';
+            moduleEntryContentClass='';
+            if(entryInfo.completed||entryInfo.attempted){
+                moduleStatusText=entityTextHelper.consumedText;                
+                if(completionRuleType=='VIEW'){
+                    compulsoryContentCount++;
+                    completedCompulsoryContentCount++;
+                }
+            }else{
+                if(completionRuleType=='VIEW'){
+                    compulsoryContentCount++;
+                    moduleStatusText=entityTextHelper.consumeTextCompulsory;
+                    if(moduleRun=='SEQUENTIAL'){
+                        if(!foundNowContentForSequentialRun){
+                            foundNowContentForSequentialRun=true;
+                            moduleStatusText=entityTextHelper.consumeNowText;
+                            moduleStatusIconClasses=' moduleStatusIconConsumeNow';                            
+                            moduleStatusTextClasses=' moduleTextBlueColor';
+                        }else{
+                            moduleStatusIconClasses=' hider';
+                            if(params.userRole=="STUDENT"){
+                                moduleEntryContentClass=' moduleContentNoAccess';
+                            }                            
+                            contentUrl="";
+                        }
+                    }
+                }else{
+                            moduleStatusText=entityTextHelper.consumeTextOptional;
+                }
+            }
+            
+            if(entityType=='TEST'||entityType=='ASSIGNMENT'){
+                qusCount=info.qusCount;
+                extraInfo=entityType.toLowerCase().camelCase()+"<span class='pipe'>|</span>"+qusCount+" question"+qusCount.pluralize();
+            }else if(entityType=='VIDEO'){
+                duration = info.has('duration') ? info.duration : 0;
+        timeObj=uicom.util.Utilities.getTimeFromMiliSec(duration);
+                if(timeObj.getInt("hrs") > 0){
+                    extraInfo=timeObj.hrs+':'+timeObj.mins+':'+timeObj.secs+' hrs';
+                }else{
+                    extraInfo=timeObj.mins+':'+timeObj.secs+' mins';
+                }      
+                extraInfo="Video<span class='pipe'>|</span>"+extraInfo;
+            }else{
+                extraInfo=entityType.toLowerCase().camelCase();
+            }   
+        }%
+        #{if moduleOpenUrl!=null&&moduleOpenUrl.has('url')&&!entityTextHelper.equals(ModuleDisplayTextForEntity.UNKNOWN)}
+        <a class="${moduleOpenUrl.className}${moduleEntryContentClass} moduleEntry moduleEntryContentType blocky"
+           data-id="${moduleOpenUrl.id}" href="${contentUrl}" title="${entityName}" 
+                           data-entity-id="${entityId}"  data-user-role='${params.userRole}' ${moduleOpenUrl.dataAttrs} data-module-id="${moduleResp.id}" data-org-id="${params.orgId}" data-target-id="${moduleResp.id}" data-target-type="MODULE">
+            <div class="moduleEntryRightSec">            
+                #{if params.userRole=="STUDENT"}
+                <span class="resourceIcon${entityType}"></span>
+                <span class="moduleStatusText${moduleStatusTextClasses}">${moduleStatusText}</span>
+                <span class="moduleStatusIcon modulePageSprite${moduleStatusIconClasses}"></span>                
+                #{/if}
+            </div> 
+            <div class="moduleEntryLeftSec">            
+                <span class="moduleContentNo">1.</span>        
+                <div class="linBlk alignTop">
+                    <div class="entityNameDiv">                        
+                        <span class="singleLineText displayInBlock">${entityName}</span>
+                    </div>                               
+                    <div class="moduleContentStat">${extraInfo.raw()}</div>
+                </div>
+            </div>
+            <div class="moduleScheduleHolder margBot10">
+                #{if entityType == "TEST" && isTestScheduled && schedule != null}
+                    #{common.moduleSchedules schedule:schedule,showCloseTimer:false,isWebReq:true,attempted:entryInfo.attempted/}
+                #{/if}
+            </div>
+            <div class="moduleEntryContentTypeDivider"></div>
+            #{if entryInfo.completed||entryInfo.attempted}
+            <div class="moduleEntryContentTypeTicked"></div>
+            #{/if}
+            <div class="cleaner_with_divider">&nbsp;</div>            
+        </a>
+        #{/if}
+        #{/elseif}
+        #{/list}        
+        #{/if}
+        #{else}
+        <div class="userMessage margTop20">No content found</div>
+        #{/else}
+    </div>
+    <div class="relativePos">
+        #{if params.userRole=="STUDENT"}
+        <div id="moduleProgressBlackBar"></div>
+        <div id="moduleProgressGreenBar"></div>
+        <div id='moduleProgressText'> Progress 0%</div>
+        #{/if}
+    </div>
+</div>
+<script src="@{'/public/javascripts/slpmodules/modules.js'}" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        try {
+            $("#userPushNotifyPopup").css("display","none");
+            modules.init({completedCompulsoryContentCount:"${completedCompulsoryContentCount}",
+                compulsoryContentCount:"${compulsoryContentCount}",userRole:"${params.userRole}"});
+        } catch (err) {
+            putConsoleError(err);
+        }
+    });
+</script>
+
+<script src="/public/javascripts/scheduleTest.js" type="text/javascript" ></script>
+
+#{/if}
+#{elseif moduleInfo.errorCode!=''}
+#{common.messagePage msgTextColor : "redTextColor" , msg : moduleInfo.errorMessage /} 
+#{/elseif}

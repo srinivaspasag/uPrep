@@ -1,0 +1,33 @@
+<div class="addAnsBlock" data-qid="${qid}" data-type="${qType}">
+    #{if qType=="SCQ"||qType=="MCQ"}   
+        %{
+            if(qType=='SCQ')inputType="Radio";
+            else inputType="Checkbox";
+        }%
+        #{if options.length()>0}
+        #{list items:0..options.length()-1, as:'j'}
+        <span class='quesAns${inputType}Span boldy'>
+            <input type='${inputType}' class='quesAns${inputType}' name="quesAns${inputType}" value="${j_index}"/>
+            ${uicom.util.Utilities.getOption((j+1))}
+        </span>
+        #{/list}
+        #{/if}
+    #{/if}
+    #{elseif qType=="NUMERIC"}
+     <input type="text" class="QATextNumInput" placeHolder="Enter number only" style="padding: 3px;"/>
+         #{if ques.has('precision')&&ques.precision>0}
+         <span class='color8 small10'> (precision upto ${ques.precision} decimal places)</span>
+         #{/if}
+    #{/elseif}
+    #{elseif qType=="TEXT"}
+     <input type="text" class="QATextNumInput" placeHolder="Enter here"/>
+    #{/elseif}
+    #{elseif qType=="PARA"}
+     <div class="addAnsBlockrteDiv"></div>
+    #{/elseif}
+</div>
+<div class="smally">
+    <span class="gBlueButton margRight5 qrQuesAnsSubmit">Submit</span>
+    <span class="gButton cancelQrQuesAnsSubmit">Cancel</span>
+</div>
+<div class='cleaner_with_divider'>&nbsp;</div>

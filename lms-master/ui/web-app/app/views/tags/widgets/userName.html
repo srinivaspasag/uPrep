@@ -1,0 +1,7 @@
+#{if _user!=null}
+%{
+    user=_user;
+    getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user); 
+}%
+#{institute.memberName user : user , classNames : "cmdsaPush" , getUser : getUserClassAndUrl /}
+#{/if}

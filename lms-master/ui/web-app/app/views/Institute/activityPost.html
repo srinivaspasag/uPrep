@@ -1,0 +1,21 @@
+<script type="text/javascript">
+	institute.activities.postSuccess = false;
+</script>
+#{if resp!=null && resp.errorCode=="" && resp.result.list.length()>0}
+	<div class="centerText big12 greenTextColor feedPostSuccessMsg" style="padding:10px 0;">&{'SHARED_SUCCESSFULLY'}</div>
+	%{
+		feed = resp.result.list.get(0);
+		feed.put("time",new Date().getTime());
+	}%
+	#{institute.widgets.feedsContainer feedData:feed /}
+<script type="text/javascript">
+	institute.activities.postSuccess = true;
+	institute.activities.postData = ${feed.raw()};
+</script>
+#{/if}
+#{else}
+	<div class="centerText big12 redTextColor" style="padding:15px 0;">&{'UNABLE_TO_SHARE_ACTIVITY'}</div>
+<script type="text/javascript">
+	institute.activities.postSuccess = false;
+</script>
+#{/else}

@@ -1,0 +1,99 @@
+
+<div class="cmdsPopupHead">Add details</div>
+<table width="100%">
+    <tbody>
+        <tr>
+            <td class="grayHead">Reference Number*</td>
+            <td>
+                <div class="inputDiv">
+                    <input type="text" name="sellerReferenceNo" data-req='true' class="formInput" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="grayHead pad10Top alignTop">Choose a seller point*</td>
+            <td class="pad5Top">
+            <select type="text" name="pointOfSale" class="posSelectBox formSelect">
+                <option value="">Choose your Selling point/Franchise</option>
+                #{if pointsOfSale!=null && pointsOfSale.errorCode.isEmpty() 
+                    && pointsOfSale.result.pointsOfSale.length()>0}
+                #{list items:0..pointsOfSale.result.pointsOfSale.length()-1,as:'index'}
+                    %{ value = pointsOfSale.result.pointsOfSale.get(index);}%
+                <option value="${value}">${value}</option>
+                #{/list}
+                #{/if}
+            </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="cmdsPopupHead">Program Pricing</div>
+#{if sectionResp!=null && sectionResp.errorCode.isEmpty()}
+%{
+    sectionPackageInfo = sectionResp.result.info;
+    packages = null;
+    packageOrgId = params.orgId;
+    maxDiscount = 25;
+    if (sectionPackageInfo.has("packagesMap")) {
+        packagesMap = sectionPackageInfo.packagesMap;
+        if (!packagesMap.equals(null)) {
+            if (sectionPackageInfo.packagesMap.has(params.orgId)) {
+                packages = sectionPackageInfo.packagesMap.getAt(params.orgId);
+            }
+            if (packages.equals(null) || packages.length() == 0) {
+                packageOrgId = sectionPackageInfo.orgId;
+                packages = sectionPackageInfo.packagesMap.getAt(sectionPackageInfo.orgId);
+            }
+        }
+    }
+    if (sectionPackageInfo.has("maxDiscount")) {
+        maxDiscount = sectionPackageInfo.maxDiscount;
+    }
+}%
+    <div class="programPriceDiv">
+          <span class="packageSelectText">&{'CHOOSE_SUBSCRIPTION'}</span>
+          <select class="packageSelect" data-package-org-id="${packageOrgId}" data-max-discount="${maxDiscount}">
+                    #{if !packages.equals(null)}
+                       #{list items:0..packages.length()-1,as:'pIndex'}
+                       %{
+                          pkg = packages.get(pIndex);
+                          days = pkg.numDays;
+                          displayDays = pkg.displayDays;
+                          costRate = pkg.costRate;
+                          costValue = 0;
+                          if(costRate.has("value") && !costRate.value.equals(null)){
+                           if(costRate.value>0){
+                                   costValue = costRate.value/100;
+                           }
+                          }
+                          displayOption = "Rs. ${costValue} for ${displayDays}";
+                          if (pkg.has("savingsTxt") && !pkg.savingsTxt.equals(null) && !pkg.savingsTxt.isEmpty()) {
+                            displayOption = "Rs. ${costValue} for ${displayDays} (${pkg.savingsTxt})";
+                          }
+                       %}
+                   <option value=${days} data-cost="${costRate.value}">${displayOption}</option>
+                   #{/list}
+                   #{/if}
+          </select>
+     </div>
+#{/if}
+
+<div class="cmdsPopupHead">Discount Details</div>
+<span> Discount Percentage </span>
+<input type="number" id="discountPercentage" placeholder="discount" value="0.0"></input>
+<span> Roundoff Discount </span>
+<input type="number" id="roundoffInput" value="0.0"></input>
+<br/>
+<span> Total Amount: </span>
+<span id="totalAmountDisplay"></span>
+<div class="cmdsPopupHead">Add Payment Details</div>
+<table width="100%" class="paymentItemsTable">
+
+</table>
+<div>
+    <span class="blueButton addPaymentItem" data-action="ADD">Add Payment</span>
+</div>
+<div class="cmdsPopupBtns rightText">
+    <div class="gBlueButton margRight5 addStudentToPaidProgram">Submit</div>
+    <div class="gButton closecmdsPopup">Cancel</div>
+</div>

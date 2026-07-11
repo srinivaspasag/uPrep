@@ -1,0 +1,26 @@
+	<div class="left instLibTopicInfoSec whiteTextColor">
+	    <div style="padding:10px 15px">
+		<div class="instTopicBrdWeightages">
+			<div class="big12 boldy">Predicted Weightage</div>
+			<div class="instTopicBrdWeightHold">
+				<span class="instTopicBrdWeight">CBSE - 15%</span>	
+			</div>
+		</div>
+		#{if courseProf.errorCode=="" && courseProf.result.has('professors') && courseProf.result.professors.length()>0}
+			<div class="big12 boldy">Taught by</div>
+			<div class="instLibTaughtBy">
+			#{list items:0..courseProf.result.professors.length()-1,as:'pIndex'}
+			    %{
+				prof = courseProf.result.professors.get(pIndex);
+        			userClass=(controllers.Profile.getUserClassAndUrl(prof)).className;
+        			userUrl=(controllers.Profile.getUserClassAndUrl(prof)).url;
+			    }%
+				<a class="${userClass} ptrTag" href="${userUrl}" data-user-id="${prof._id}">
+				<img class="icon" alt="PROF" src="${prof.profilePic}" 
+					title="${prof.firstName} ${prof.lastName}"/>
+				</a>
+			#{/list}
+			</div>
+		#{/if}
+	    </div>
+	</div>

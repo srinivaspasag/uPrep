@@ -1,0 +1,224 @@
+<div class="bodyWhiteBg">
+<div class = "programSelection">
+	#{institute.library.selectPrograms memberInfo : memberInfo /}
+</div>
+<div class="instLibMainControls">
+	#{institute.library.topAnimBar /}
+</div>
+<div class="centerText">
+	<span class="hideShowInstLibCntrls">
+		<span class="hideTxt">&{'TXT_HIDE'}</span>
+		<span class="showTxt">&{'TXT_SHOW'}</span>
+		<span class="instImgs"></span>
+	</span>
+</div>
+<div class="instLibAllContentFilter">
+	<div class="left instLibSearchBox nonner CSWidget searchInputDiv" data-widget="CONTENT_HOLDER_SEARCH_BOX">
+		<span class="instImgs"></span>
+        	<input type="text" class="searchInputBox relative doCStream" data-param-name="query" 
+               		data-cs-name="SEARCH_INST_CONTENT" placeholder="Search Library"/>
+	</div>
+	<div class="libAllContentFilterDrop">
+		%{
+			sortType0 = sortTypeList.get('list').get(0);
+		}%
+               	#{institute.widgets.dropDowns.singleList list : sortTypeList.get('list') , selectedVal : sortType0.get('id') , selectedText : sortType0.get('name') , listType : "Sort" , showSelectAll : false /}
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+</div>
+%{
+	hiddenFields = fields.toString();
+}%
+<div class="relative instLibContentsControl CSWidget centerText" data-widget="CONTENT_HOLDER">
+	<div class="instLibMainHolder">
+                <span class="instLibFltrTab activeLibTab doCStream nonner" name="show_all_tab" data-tab-id=''>
+			<span class="tabFilterType singleLineText">&{'TXT_ALL'}</span>
+		</span>
+
+                <!--<span class="instLibFltrTab doCStream nonner" name="show_playlist_tab" 
+			data-tab-id='instLibPlaylist'>
+			<span class="tabFilterType">&{'TXT_PLAYLIST'}</span>
+		</span>-->
+		#{if !hiddenFields.contains("Video Lectures")}
+                <span class="instLibFltrTab doCStream" name="show_module_tab" data-tab-id='instLibModuleslist'>
+			<span class="tabFilterType singleLineText">&{'TXT_MODULES'}</span>
+		</span>
+		#{/if}
+		#{if !hiddenFields.contains("Tests")}
+                <span class="instLibFltrTab doCStream" name="show_test_tab" data-tab-id='instLibTestslist'>
+			<span class="tabFilterType singleLineText">&{'TXT_TESTS'}</span>
+		</span>
+		#{/if}
+		#{if !hiddenFields.contains("E-Books")}
+                <span class="instLibFltrTab doCStream" name="show_documents_tab"
+			data-tab-id='instLibDocumentslist'>
+			<span class="tabFilterType singleLineText">&{'TXT_DOCS'}</span>
+		</span>
+		#{/if}
+		#{if !hiddenFields.contains("Videos")}
+                <span class="instLibFltrTab doCStream" name="show_video_tab" data-tab-id='instLibVideoslist'>
+			<span class="tabFilterType singleLineText">&{'TXT_VIDS'}</span>
+		</span>
+		#{/if}
+		#{if !hiddenFields.contains("Assignments")}
+                <span class="instLibFltrTab doCStream" name="show_assignment_tab" data-tab-id='instLibAssignmentslist'>
+			<span class="tabFilterType singleLineText">&{'TXT_ASSIGNMENTS'}</span>
+		</span>
+		#{/if}
+		#{if !hiddenFields.contains("Files")}
+                <span class="instLibFltrTab doCStream" name="show_file_tab" data-tab-id='instLibFileslist'>
+			<span class="tabFilterType singleLineText">&{'TXT_FILES'}</span>
+		</span>
+		#{/if}
+		#{if !hiddenFields.contains("Questions")}
+                <span class="instLibFltrTab doCStream" name="show_question_tab" 
+			data-tab-id='instLibQuestionslist'>
+			<span class="tabFilterType singleLineText">&{'TXT_QUES'}</span>
+		</span>
+		#{/if}
+        </div>
+</div>
+*{<!--list and icon view disabled 
+<div class="right instLibViewTypes">
+	<span class="left instLibIconView selectedView doCStream" name="VIEW_TYPE_ICON" data-type="icon"></span>
+	<span class="left instLibListView doCStream" name="VIEW_TYPE_LIST" data-type="list"></span>
+</div>
+-->}*
+<div class='cleaner_with_divider'>&nbsp;</div>
+</div>
+<div class="instLibContents">
+	<!-- Playlist Disabled
+	*{<div class="relative instLibPlaylist instLibEachContentList CSWidget" data-widget="PLAYLISTS_HOLDER">
+		<div class="relative instLibItemsHead">
+			<span class="left relative headText big16 doCStream" name="show_playlist_tab"
+				data-tab-id='instLibPlaylist' data-par-tab-index="2">Playlists
+				(<span class="totCount">0</span>)
+			</span>
+			<span class="right relative instLibHeadRightArrow"></span>
+			<span class="right relative instLibHeadLeftArrow"></span>
+            		<div class='cleaner_with_divider'>&nbsp;</div>
+		</div>
+		<div class="relative instLibListsHolder instLibPlaylistsIconsHolder">
+		</div>
+	</div>}*
+	-->
+	<div class="relative instLibDocumentslist instLibEachContentList CSWidget" data-widget="DOCUMENTS_HOLDER">
+		<div class="relative instLibItemsHead">
+			<span class="relative headText big16 doCStream" name="show_document_tab"
+				data-tab-id='instLibDocumentslist' data-par-tab-index="4">&{'TXT_DOCS'}
+				(<span class="totCount">0</span>)
+				<a class="big12 viewAllCont" style="padding-left:5px;">&{'TXT_VIEW_ALL'}</a>
+			</span>
+			<span class="right relative instLibHeadRightArrow"></span>
+			<span class="right relative instLibHeadLeftArrow"></span>
+            		<div class='cleaner_with_divider'>&nbsp;</div>
+		</div>
+		<div class="relative instLibListsHolder instLibDocumentsIconsHolder">
+		</div>
+	</div>
+	<div class="relative instLibVideoslist instLibEachContentList CSWidget" data-widget="VIDEOS_HOLDER">
+		<div class="relative instLibItemsHead">
+			<span class="relative headText big16 doCStream" name="show_video_tab"
+				data-tab-id='instLibVideoslist' data-par-tab-index="5">&{'TXT_VIDS'}
+				(<span class="totCount">0</span>)
+				<a class="big12 viewAllCont" style="padding-left:5px;">&{'TXT_VIEW_ALL'}</a>
+			</span>
+			<span class="right relative instLibHeadRightArrow"></span>
+			<span class="right relative instLibHeadLeftArrow"></span>
+            		<div class='cleaner_with_divider'>&nbsp;</div>
+		</div>
+		<div class="relative instLibListsHolder instLibVideosIconsHolder">
+		</div>
+	</div>
+	<div class="relative instLibFileslist instLibEachContentList CSWidget" data-widget="FILES_HOLDER">
+		<div class="relative instLibItemsHead">
+			<span class="relative headText big16 doCStream" name="show_file_tab"
+				data-tab-id='instLibFileslist' data-par-tab-index="6">&{'TXT_FILES'}
+				(<span class="totCount">0</span>)
+				<a class="big12 viewAllCont" style="padding-left:5px;">&{'TXT_VIEW_ALL'}</a>
+			</span>
+			<span class="right relative instLibHeadRightArrow"></span>
+			<span class="right relative instLibHeadLeftArrow"></span>
+            		<div class='cleaner_with_divider'>&nbsp;</div>
+		</div>
+		<div class="relative instLibListsHolder instLibFilesIconsHolder">
+		</div>
+	</div>
+	<div class="relative instLibModuleslist instLibEachContentList CSWidget" data-widget="MODULES_HOLDER">
+		<div class="relative instLibItemsHead">
+			<span class="relative headText big16 doCStream" name="show_module_tab"
+				data-tab-id='instLibModuleslist' data-par-tab-index="6">&{'TXT_MODULES'}
+				(<span class="totCount">0</span>)
+				<a class="big12 viewAllCont" style="padding-left:5px;">&{'TXT_VIEW_ALL'}</a>
+			</span>
+			<span class="right relative instLibHeadRightArrow"></span>
+			<span class="right relative instLibHeadLeftArrow"></span>
+            		<div class='cleaner_with_divider'>&nbsp;</div>
+		</div>
+		<div class="relative instLibListsHolder instLibModulesIconsHolder">
+		</div>
+	</div>        
+	<div class="relative instLibTestslist instLibEachContentList CSWidget" data-widget="TESTS_HOLDER">
+		<div class="relative instLibItemsHead">
+			<span class="relative headText big16 doCStream" name="show_test_tab"
+				data-tab-id='instLibTestslist' data-par-tab-index="2">&{'TXT_TESTS'}
+				(<span class="totCount">0</span>)
+				<!--<a class="big12 viewAllCont" style="padding-left:5px;">&{'TXT_VIEW_ALL'}</a>-->
+			</span>
+			<span class="instLibContentAttemptFilter">
+			</span>
+			<span class="right relative instLibHeadRightArrow"></span>
+			<span class="right relative instLibHeadLeftArrow"></span>
+			<div class="instLibContentSortFilter">
+			</div>
+            		<div class='cleaner_with_divider'>&nbsp;</div>
+		</div>
+		<div class="relative instLibListsHolder instLibTestsIconsHolder">
+		</div>
+	</div>
+	<div class="relative instLibAssignmentslist instLibEachContentList CSWidget" data-widget="ASSIGNMENTS_HOLDER">
+		<div class="relative instLibItemsHead">
+			<span class="relative headText big16 doCStream" name="show_assignments_tab"
+				data-tab-id='instLibAssignmentslist' data-par-tab-index="3">&{'TXT_ASSIGNMENTS'}
+				(<span class="totCount">0</span>)
+				<!--<a class="big12 viewAllCont" style="padding-left:5px;">&{'TXT_VIEW_ALL'}</a>-->
+			</span>
+			<span class="instLibContentAttemptFilter">
+			</span>
+			<span class="right relative instLibHeadRightArrow"></span>
+			<span class="right relative instLibHeadLeftArrow"></span>
+			<div class="instLibContentSortFilter">
+			</div>
+            		<div class='cleaner_with_divider'>&nbsp;</div>
+		</div>
+		<div class="relative instLibListsHolder instLibAssignmentsIconsHolder">
+		</div>
+	</div>
+	<div class="relative instLibQuestionslist instLibEachContentList CSWidget" data-widget="QUESTIONS_HOLDER">
+		<div class="relative instLibItemsHead">
+			<span class="relative headText big16 doCStream" name="show_question_tab"
+				data-tab-id='instLibQuestionslist' data-par-tab-index="1">&{'TXT_QUES'}
+				(<span class="totCount">0</span>)
+				<!--<a class="big12 viewAllCont" style="padding-left:5px;">&{'TXT_VIEW_ALL'}</a>-->
+			</span>
+			<span class="instLibContentAttemptFilter">
+				#{institute.library.filterAttemptEntity userRole : params.userRole /}
+			</span>
+			<div class="instLibContentSortFilter">
+			%{
+                        	resultType0 = resultTypeList.get('list').get(0);
+                        }%
+                        	#{institute.widgets.dropDowns.singleList list : resultTypeList.get('list') , selectedVal : resultType0.get('id') , selectedText : resultType0.get('name') , listType : "Sort" , showSelectAll : false /}
+			</div>
+			*{#{if params.userRole != "STUDENT"}
+			<a class="askQuesInst ptrTagInline" href="/organization/${params.orgId}/addquestion">
+                        	<span class="askQuesQicon"></span>
+                        	<span class="big14">&{'TXT_CONTRIBUTE_QUES'}</span>
+                    	</a>
+			#{/if}}*
+            		<div class='cleaner_with_divider'>&nbsp;</div>
+		</div>
+		<div class="relative instLibListsHolder instLibQuestionsIconsHolder">
+		</div>
+	</div>
+</div>

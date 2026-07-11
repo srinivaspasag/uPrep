@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta charset="${_response_encoding}">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/uicomMain.css'}">        
+        #{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /}                
+    
+    <link rel="stylesheet" media="screen" href="/public/stylesheets/docView.css"> 
+        
+    </head>
+    <body>
+<div id="docViewPage">    
+    <div id='DTDoc1002'>        
+        <div id='DTDocMiddle'>
+            <div id="docViewOptionsHolder">
+                <div  id='docViewOptions'>
+                            <div class="DVContents" rel="">
+                                <div class="showContents ptr">
+                                    <div class="showConDiv">Contents</div>
+                                </div>
+                                <div id="docContentsBody"></div>
+                            </div>
+                           <div class='DVOptions'>
+                               <span class="docOptComm"></span>
+                               <div>Comment</div>
+                           </div>
+                            <div class='DVOptions'>
+                                <span class="docOptColor"></span>
+                                <div>Highlight</div>
+                                <div class='colorPicker' rel=''>
+                                    <span style='background-color: #ebd819;' rel='ebd819'> </span>
+                                    <span style='background-color: #ff8800;' rel='ff8800'> </span>
+                                    <span style='background-color: #00ffc7;' rel='00ffc7'> </span>
+                                    <span style='background-color: #4ee8ff;' rel='4ee8ff'> </span>
+                                </div>
+                            </div>
+<!--                            <div class='DVOptions'>
+                                <span class="docOptZoomClass"></span>                             
+                                <div>Zoom In</div>
+                            </div>
+                            <div class="DVOptions">
+                                <span class="docOptBoomClass"></span>
+                                <div>Zoom Out</div>
+                            </div>
+                            <div class='DVOptions docOptFS' id='docOptFS'>
+                                <span class="docOptFSImg"></span>
+                                <div>Full View</div>
+                            </div>-->
+                            <div class='DVOptions docOptBM'>
+                                <span class="docOptBMImg"></span>
+                                <div id='BMDiv'>
+                                    <b>Bookmark Title</b>
+                                    <input type='text' class='BMInput' />
+                                    <input type='submit' class='blueSubmitButton submitBM' value='save' />
+                                </div>
+                                <div>Bookmark</div>
+                            </div>
+                </div>
+            </div>
+            <div id="docViewer">
+                <div class="cleaner_with_divider">&nbsp;</div>
+                <div id="pageViewHolder">
+                        <div id="page1" class="docDivs" data-page-id="sa" >
+                                    <img alt="sorry for the delay" class="docPages" src="/public/images/siteDown.jpg"
+                                     data-page-id="asdfsa" lang="" />
+                                <div class="hocrDivision" rel="80"></div>
+                                <div class="highlighter LINE_WISE" lang="80" rel="40"></div>                            
+                            *{#{if page.hasHocr&&page.hocrQuality>80}
+                                <img alt="sorry for the delay" class="docPages" src="${page.images}"
+                                     data-page-id="${page._id}" lang="" />
+                                <div class="hocrDivision" rel="${page.hocr}"></div>
+                                <div class="highlighter LINE_WISE" lang="${hocrQ}" rel="${charQ}"></div>
+                            #{/if}
+                            #{else}
+                                <div class="highlighter AREA_WISE"  lang="${hocrQ}" rel="${charQ}"></div>
+    <!--                            <script type="text/javascript">
+                                        var i=new Image();
+                                        i.onload=function(){
+                                           $("#pag").attr("lang",i.width);
+                                        }
+                                        i.src="${pages.get(i-1).images}";
+
+                                </script>-->
+                                <img onload='noHocr("${i}","")' alt="sorry for the delay" class="docPages"
+                                     src="${page.images}" lang=""/>
+                            #{/else}}*
+                        
+                        </div>
+                </div>
+<!--                <div id="highlightOptions">
+                   <div class='DVOptions'>
+                       <span class="docOptComm"></span>
+                   </div>
+                   <div class='DVOptions'>
+                       <span class="docOptColor"></span>
+                   </div>
+                   <div class="colorPicker" style="margin-top: 8px;" rel="">
+                          <span style="background-color: #ebd819;" rel="ebd819"> </span>
+                          <span style="background-color: #ff8800;" rel="ff8800"> </span>
+                          <span style="background-color: #00ffc7;" rel="00ffc7"> </span>
+                          <span style="background-color: #4ee8ff;" rel="4ee8ff"> </span>
+                   </div>
+                </div>-->
+                <div id="docOptCommBox">
+                    <div class="docOptCommBoxBody">
+                       <textarea class="docCommentInput" id="docCommentInput_"></textarea>
+                       <select class="commentType" id="commentType_">
+                           <option value="public" selected="selected">Public</option>
+                           <option value="private">Private</option>
+                       </select>
+                       <input type="submit" value="Submit" class="blueSubmitButton submitCommentHL"/>
+    <!--                   <div id="docOptCommOptions_" class="docOptCommOptions">
+                            <img alt="attach" src="/public/images/uicomDocuments/attach.png" class="commAttach" />
+                            <img alt="formula" src="/public/images/uicomDocuments/formula.png" class="commFormula" />
+                       </div>-->
+                     </div>
+                 </div>
+            </div>
+        </div>
+        <div class='cleaner_with_divider'>&nbsp;</div>
+    </div>
+    <script type="text/javascript">
+        $(function(){
+            $("#pageViewHolder #page1").addClass("pageInAction");
+            docDivsAdjust();
+            onImgDivLoad(1);
+        });
+        maxPageWidth=700;
+        //for highlighting
+  var x1,y1,gx1,gy1,heightH=0,widthH=0,pageOwner=1,xh1,yh1,xh2,yh2;
+  //reset values on mouse down to preserve the context
+  $(".highlighter").live('click',function(){
+      var parentId=$(this).parent().parent().attr("id").substring(15);
+      $("#searchDocument_"+parentId).focus();
+  });
+  $(".highlighter").live('mousedown',function(e) {
+      var parentNameId=$(this).parent().parent().attr("id");
+      var pageId=$(this).parent().attr("id");
+     //if($("#"+parentNameId+" #"+pageId+" .notConfirmed").hasClass("hasColor"))$("#"+parentNameId+" #"+pageId+" .notConfirmed").attr("id","");
+     $("#"+parentNameId+" #"+pageId+" .notConfirmed").remove();
+        insideOutClick();
+        $("#"+parentNameId+" #"+pageId+" .highlighter").html('<div class="light" style="opacity:0.5;border: 1px dotted #404040;position:absolute;">');
+        gx1 = e.pageX-$("#"+parentNameId).offset().left;
+        gy1 = e.pageY-$("#"+parentNameId).offset().top;
+        pageOwner=onWhichPage(gy1,parentNameId.substring(15));
+        y1=gy1-$("#"+parentNameId+" #page"+pageOwner).position().top;
+        x1=gx1;
+        $("#"+parentNameId+" #"+pageId+" .light").css("top",y1+"px").css("left",x1+"px");
+  });
+  $(".highlighter").live('mousemove',function(e) {
+      var parentNameId=$(this).parent().parent().attr("id");
+      var pageId=$(this).parent().attr("id");
+      $("#"+parentNameId+" #"+pageId+" .light").css("width",Math.abs(e.pageX-$("#"+parentNameId).offset().left - x1)).css("height",Math.abs(e.pageY-$("#"+parentNameId).offset().top -gy1));
+       xh1=x1,yh1=y1;
+//          if((startedHL&&$("#page"+pageOwner+" .hocrDivision").html()=="")||$("#page"+pageOwner).attr("rel")==''||$("#page"+pageOwner).attr("rel")==undefined){
+//              alert("Please refresh the page or wait for sometime, since the image did not load properly due to some techincal reasons");
+//              startedHL=false;
+//              return false;
+//          }
+      if((e.pageX-$("#"+parentNameId).offset().left)<x1){
+          $("#"+parentNameId+" #"+pageId+" .light").css("left",(e.pageX-$("#"+parentNameId).offset().left)+"px");
+          xh1=(e.pageX-$("#"+parentNameId).offset().left);
+      }
+      if((e.pageY-$("#"+parentNameId).offset().top)<gy1){
+          $("#"+parentNameId+" #"+pageId+" .light").css("top",(e.pageY-$("#"+parentNameId).offset().top)+"px");
+          yh1=(e.pageY-$("#"+parentNameId).offset().top);
+      }
+       xh2=(xh1+$("#"+parentNameId+" #"+pageId+" .light").width()),yh2=(yh1+$("#"+parentNameId+" #"+pageId+" .light").height());
+  });
+  $(".highlighter").live('mouseup',function() {
+      var parentNameId=$(this).parent().parent().attr("id");
+      var dimens=getHocrDivDimens;
+      if($(this).hasClass("LINE_WISE")){
+          var t=parseFloat($("#"+parentNameId+" #page"+pageOwner).attr("rel"));
+               $("#"+parentNameId+" #page"+pageOwner+" .hocrDivision .ocr_page .ocr_carea").each(function(){
+                   var block="#"+parentNameId+" #page"+pageOwner+" #"+$(this).attr("id");
+                   var cordis=paraCoord($(this).attr("title"),t);
+                   if(!(cordis[3]<yh1||(cordis[1]>yh2)))
+                    {
+                       $(block+" .ocr_line").each(function(){
+                           var paris=paraCoord($(this).attr("title"),t);
+                            if(!(paris[3]<yh1||(paris[1]>yh2))){
+                               var re="<div class='HOCRDiv "+$(this).attr("id")+"' style='position:absolute;top:"+paris[1]+"px;left:"+paris[0]+"px;width:"+(paris[2]-paris[0])+"px;height:"+(paris[3]-paris[1])+"px'></div>";
+                               $("#"+parentNameId+" #page"+pageOwner+" .highlighter").append(re);
+                            }
+                       });
+                    }
+// var re="<div class='HOCRDiv "+$(this).attr("id")+"' style='position:absolute;top:"+paris[1]+"px;left:"+xh1+"px;width:"+(paris[2]-xh1)+"px;height:"+(paris[3]-paris[1])+"px'></div>";
+               });
+          var hocrDivs=$("#"+parentNameId+" #page"+pageOwner+" .highlighter .HOCRDiv");
+          var firstEl=hocrDivs.first(),firstElDimens=dimens(hocrDivs.first());
+          firstEl.css({width:firstElDimens.width+firstElDimens.x1-xh1,left:xh1});
+          var lastEl=hocrDivs.last(),lastElDimens=dimens(hocrDivs.last());          
+          lastEl.css("width",xh2-lastElDimens.x1);
+      }
+      else{
+          $("#"+parentNameId+" #page"+pageOwner+" .highlighter").append("<div class='HOCRDiv' style='position:absolute;top:"+yh1+"px;left:"+xh1+"px;width:"+(xh2-xh1)+"px;height:"+(yh2-yh1)+"px'></div>");
+      }
+      var pageId=$(this).parent().attr("id");
+      heightH=$("#"+parentNameId+" #"+pageId+" .light").height();
+      widthH=$("#"+parentNameId+" #"+pageId+" .light").width();
+      $("#"+parentNameId+" #"+pageId+" .light").remove();
+      var hocrDivs=$("#"+parentNameId+" #page"+pageOwner+" .highlighter").html();
+
+      $("#"+parentNameId+" .highlighter").html("");
+      if(heightH>0&&widthH>0){
+      $("#"+parentNameId+" #page"+pageOwner).append("<div class='notConfirmed'>"+hocrDivs+"</div>");
+      $("#highlightOptions").css("top",(gy1)).css("left",(x1-60)).attr("rel",(gy1)).attr("lang",(x1-60));
+      addToggler($("#highlightOptions"),$(this));
+    }
+  });
+  $(".colorPicker span").live('click',function(){
+        var parentId=$(this).parent().attr("rel");
+        var newColor=$(this).attr("rel");
+        var bb = hocrCoords();
+        $.post("/doc/addhighlight",{pageId:$("#pageViewHolder .pageInAction").data("pageId"),docId:parentId,
+            bb:bb,color:$(this).attr("rel"),scope:"private"},function(data){
+//         if(data.errorMessage==""){
+//            $("#pageViewHolder .pageInAction .notConfirmed").attr("id","bBoxDiv_"+data.result.highlightId);
+//         }
+//         $("#pageViewHolder .pageInAction .notConfirmed .HOCRDiv").css("background-color","#"+newColor);
+//         $("#pageViewHolder .pageInAction .notConfirmed").addClass("hasColor").removeClass("notConfirmed");
+        });
+
+
+            $("#pageViewHolder .pageInAction .notConfirmed").attr("id","bBoxDiv_");
+
+         $("#pageViewHolder .pageInAction .notConfirmed .HOCRDiv").css("background-color","#"+newColor);
+         $("#pageViewHolder .pageInAction .notConfirmed").addClass("hasColor").removeClass("notConfirmed");
+
+
+
+        insideOutClick();
+   });
+
+
+  $(".docOptColor").live('click',function(){
+    if($("#pageViewHolder .notConfirmed").html()==undefined)showError("please highlight a portion of the document first");
+    else{
+        var target=$("#docViewOptions  .colorPicker");
+        addToggler(target,$(this));
+    }
+   });
+        
+        
+        
+        //utils fns
+    function onWhichPage(y1){
+              var foundPage=false,page=1;
+                $("#pageViewHolder .docDivs").each(function(){
+                    if(y1< $(this).position().top){
+                       foundPage=true;
+                        page=parseInt($(this).attr('id').substring(4))-1;
+                        return false;
+                    }
+                });
+                if(foundPage==false)page=$("#pageViewHolder .docDivs").length;
+                return page;
+    }
+
+
+    function paraCoord(str,t){
+           var d=[];
+           var spaceInd=str.indexOf(" ");
+           while(spaceInd!=-1&&spaceInd!=str.length){
+               var sp=str.indexOf(" ",spaceInd+1);
+               if(sp==-1)sp=str.length;
+               d.push(parseFloat(str.substring(spaceInd,sp))*t);
+               spaceInd=sp;
+           }
+           return d;
+    }
+    function hocrCoords(){
+        var bbb=[];
+        var page=$("#pageViewHolder .pageInAction");
+        var dimens=getHocrDivDimens;
+        var Hfactor=parseFloat(page.attr("rel"));
+            page.find(".notConfirmed .HOCRDiv").each(function(){
+                var coords=dimens($(this));    
+                var xdh1=coords.x1/Hfactor;
+                var ydh1=coords.y1/Hfactor;
+                var xdh2=(coords.width/Hfactor)+xdh1;
+                var ydh2=(coords.height/Hfactor)+ydh1;
+                bbb.push(ydh1+","+xdh1+","+ydh2+","+xdh2);
+            });
+            return bbb;
+    }    
+        
+        
+function docDivsAdjust(){
+    $("#pageViewHolder .docDivs").each(function(){
+        if($(this).children("img").attr("class")!=undefined&&$(this).children("img").height()>800){
+                $(this).height($(this).children("img").height());
+        }
+    });
+}
+function onImgDivLoad(pageNum){
+    var pa=$("#pageViewHolder #page"+pageNum);
+    if(pa.children(".highlighter").hasClass("LINE_WISE")){
+         var urlStr=pa.children(".hocrDivision").attr("rel");
+///doc/hocrGetter
+           var scaler=getScaledHocrDivDimens;
+           $.get("/application/result",{url:urlStr},function(data){
+               pa.children(".hocrDivision").html(data);               
+               var t= maxPageWidth/parseFloat($("#pageViewHolder #page"+pageNum+" .hocrDivision #page_width").attr("rel"));
+               pa.attr("rel",t);
+                pa.children("img").attr("lang",parseFloat($("#pageViewHolder #page"+pageNum+" #page_width").attr("rel")));
+                pa.children(".bBoxDiv").each(function(){
+                    $(this).children(".HOCRDiv").each(function(){
+                       var z=scaler($(this),t);
+                       $(this).css({left:z.x1,top:z.y1,width:z.width,height:z.height});
+                    });
+                });
+           });
+    }
+}
+var getHocrDivDimens=function(hocrDiv){
+//    var p=hocrDiv.attr("style").split(";");
+//    var stylesMap={};
+//    for(var k=0;k<p.length;k++){
+//        var styleAttr=p[k].split(":");
+//        if(styleAttr.length>1){
+//            styleAttr[1].trim();
+//            var dimenLength=styleAttr[1].length;            
+//            stylesMap[styleAttr[0].trim()]=parseFloat(styleAttr[1].substring(0,dimenLength-2));
+//        }
+//    }    
+    return getScaledHocrDivDimens(hocrDiv,1);
+}
+var getScaledHocrDivDimens=function(hocrDiv,scaleFactor){
+    return {width:(hocrDiv.width()*scaleFactor),height:(hocrDiv.height()*scaleFactor),
+        x1:(parseInt(hocrDiv.css("left"))*scaleFactor),y1:(parseInt(hocrDiv.css("top"))*scaleFactor)};    
+}    
+var openToggler,toggleClick,openTogglerCallback={};
+function addToggler(target,$this){
+    insideOutClick();
+    openToggler=target;
+    toggleClick=$this;
+    if(openToggler)openToggler.addClass("openToggler");
+    if(toggleClick)toggleClick.addClass("toggleClick");
+    $(window).bind('click.openToggler',function(e) {
+        var t=$(e.target);
+        if(!(t.is(openToggler))&&t.closest(openToggler).length==0&&!(t.is(toggleClick))&&t.closest(toggleClick).length==0){
+            insideOutClick();
+        }
+    });
+}
+function insideOutClick(){
+    if(openToggler&&openToggler.data("callback")){
+        openTogglerCallback[openToggler.data("callback")](openToggler);
+    }
+    if(openToggler!=undefined)openToggler.removeClass("openToggler");
+    $(window).unbind('click.openToggler');
+    if(toggleClick!=undefined)toggleClick.removeClass("toggleClick");
+    openToggler=null;
+    toggleClick=null;
+}
+    </script>
+</div> 
+    </body>
+</html>

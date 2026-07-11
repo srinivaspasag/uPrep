@@ -1,0 +1,196 @@
+body{
+	background-color:#EEE;
+}
+body::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background-color:#eee;
+}
+::-webkit-scrollbar-thumb {
+    background-color:#ccc;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color:#666;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+        opacity:0.5;
+}
+#mainContainHolder{
+	color: #373737;
+}
+#addOrgForm{
+	background-color:#FFF;
+	margin:30px 0 50px;
+	padding: 25px 25px 25px 50px;
+	box-shadow: 0 1px 5px 0 rgba(204,204,204,0.5);
+}
+#addOrgForm .orgTable{
+	margin-top:20px;
+}
+.orgTable .cstTextBox{
+	width:600px;
+	border:1px solid #DDD;
+	background-color:rgba(250, 250, 250,0.7);
+	color:#555;
+}
+.orgTable .cstTextBox:focus{
+	color:#333;
+}
+.cstTextBox.width250{
+	width:192px;
+}
+.smallThinGray{
+	font-size: 11px;
+	color: #888;
+}
+.addOrgHeading{
+	font-size:25px;
+	color:#666;
+	font-family:Roboto;
+	font-weight:300;
+	padding-bottom:5px;
+}
+.orgTable select {
+	font-size: 15px;
+	padding:3px 10px;
+}
+.formTdInput{
+	padding-top:12px;
+	vertical-align:top;
+	width:700px;
+}
+.formTdInput .eachInputRow{
+	margin-bottom:10px;
+}
+.formTdName{
+	vertical-align:top;
+	font-size:15px;
+	color:#999;
+	font-family:Roboto;
+	font-weight:400;
+	padding:15px 30px 15px 0;
+	max-width:180px;
+}
+.formTdName.req{
+	color:#666;
+}
+.locationDiv{
+	margin-bottom:10px;
+}
+.addOrgSubmit.blueButton{
+	padding:8px 70px;
+	font-size:18px;
+}
+.termsAndCondition{
+	width:600px;
+	padding:20px 50px;
+}
+.trmsCondBody{
+	color:#666;
+	font-size:13px;
+	max-height:450px;
+	overflow:hidden;
+	padding:10px 0px;
+	margin:10px 0px;
+	border:1px solid #CCC;
+}
+.termsAndCondition iframe{
+	border:0px;
+	width:100%;
+	height:444px;
+	outline:0px;
+}
+.eachPlan{
+	padding:0 15px;
+	border-right:1px solid #EEE;
+	vertical-align: top;
+}
+.eachPlan:last-child{
+	border-right:0px;
+}
+.planName{
+	color:#2AA6D4;
+	font-weight:bold;
+	font-size:16px;
+}
+.planTable{
+	padding:5px 0 10px;
+	font-family:roboto;
+}
+.planTable input[type="radio"]{
+	width:20px;
+	height:20px;
+	vertical-align:middle;
+}
+.planPrice{
+	padding:0 5px;
+	font-size:25px;
+	font-weight:bold;
+	color:#000;
+}
+.planPrice span{
+	display:inline;
+}
+.planUsers,
+.planDuration{
+	font-weight:500;
+	font-size:13px;
+	line-height:12px;
+	padding-top:2px;
+}
+.planDetails{
+	padding-top:4px;
+	color:#666;
+	font-family:roboto;
+	font-weight:300;
+	line-height:14px;
+	font-size:12px;
+	text-align:center;
+	max-width:200px;
+}
+#addOrgForm .captchaDiv{
+	bottom:0px;
+}
+.cstTextBox.hasError,
+.errorBorder{
+	box-shadow:0px 0px 4px 1px rgba(245, 30, 11, 0.9);
+}
+.successBorder{
+	box-shadow:0px 0px 6px 1px rgba(137, 231, 255,0.6);
+}
+.checkSlugAvailability input[type="text"]{
+	width:160px;
+	margin-left:0px;
+	height:22px;
+}
+.whatIsThisField:before{
+	content:'?';
+}
+.whatIsThisField{
+	font-size:15px;
+	font-family:Roboto;
+	font-weight:bold;
+	color:#333;
+	background-color:#CCC;
+	padding:0px 6px;
+	border-radius:10px;
+	cursor:pointer;
+}
+.whatIsThisField:hover{
+	background-color:#2AA6D4;
+	color:#FFF;
+}
+.slugCheckStatus {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px 0 0 10px;
+	display:inline;
+}
+.slugVal{
+	color:#999;
+	margin-left:-4px;
+}

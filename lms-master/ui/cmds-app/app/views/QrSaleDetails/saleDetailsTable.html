@@ -1,0 +1,41 @@
+<div id="qrSaleDetailsPage">
+   <div class="pageHolderNM">
+    <table class="qrSaleDetailsTable" cellspacing=0 cellpadding=0 border=1>
+       <tr class="qrSaleDetailsTableHead">
+        <th class="width100">Student Name</th>
+        <th class="width75">Sales Person Name</th>
+        <th class="width75">Program Name</th>
+        <th class="width75">Order Id</th>
+        <th class="width75">Point of Sale </th>
+        <th class="width75">Sale Amount</th>
+        <th class="width40">Date</th>
+        <th class="width40">Payment Items</th>
+       </tr>
+       #{if resp!=null && resp.errorCode.isEmpty() && resp.result.saleDetailsDisplayInfos.length()>0}
+        %{
+            data = resp.result.saleDetailsDisplayInfos;
+            
+        }%
+        #{list items:0..data.length()-1,as:'index'}
+        %{
+            saleDetailsData = data.get(index);
+            totalSaleAmount = saleDetailsData.saleDetailsInfo.totalSaleAmount/100;
+        }%
+       <tr class="eachSaleDetailInfo">
+        <td class="width100">${saleDetailsData.studentName}</td>
+        <td class="width75">${saleDetailsData.salesPersonName}</td>
+        <td class="width75">${saleDetailsData.programName}</td>
+        <td class="width75">${saleDetailsData.saleDetailsInfo.orderId}</td>
+        <td class="width75">${saleDetailsData.saleDetailsInfo.pointOfSale}</td>
+        <td class="width75">${totalSaleAmount}</td>
+        <td class="width75">${new Date(saleDetailsData.saleHappenedOn).format('dd/MM/yyyy')}</td>
+        <td class="width40 center">
+            <div class="blueButton paymentItems" data-paymentitems='${saleDetailsData.saleDetailsInfo.paymentItems}'>View Details</div>
+        </td>
+       </tr>
+        #{/list}
+        #{/if}
+
+    </table>
+   </div>
+</div>

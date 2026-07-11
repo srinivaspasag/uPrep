@@ -1,0 +1,15 @@
+%{
+    user=_user;
+    shareId=_shareId;
+}%
+        %{
+            user=user;
+        }%
+	#{institute.memberName user : user /}
+        shared with <div class="sharedInfoHolder linBlk relativePos">
+            <div class="sharedInfoBtn showSharedInfo" data-share-id="${shareId}">
+                <span class="sharedInfoBtnImg"></span>
+                <span class="sharedInfoBtnArrow"></span>
+            </div>
+            <div class="sharedInfoDiv nonner"></div>                    
+        </div> 

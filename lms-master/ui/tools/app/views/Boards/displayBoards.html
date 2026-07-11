@@ -1,0 +1,36 @@
+#{extends 'main.html' /}
+#{set title:pageTitle /}
+%{
+    boards=boards.result.list;
+}%
+<div id="boardsDisplayPage">
+    <h2>Board Tree for ${pageTitle}<span style="color: #999999;font-size: 12px;"> (Click on a node to view the children)</span></h2>    
+    #{if boards.length()>0}
+    #{list items:0..boards.length()-1,as:'b'}
+    %{
+        board=boards.get(b);
+	isRemoved = false;
+	classNmForBrd = "";
+	if(board.recordState == "DELETED"){
+		isRemoved = true;
+		classNmForBrd = "deletedItem";
+	}
+    }%
+    <div style="padding-bottom:6px;">
+        <a class="getMyChildren" data-brd-id='${board.id}'
+           data-org-id='${params.orgId}' data-context="${params.context}"
+           data-title='${board.name}(${board.treeName})'>
+            <span class="${classNmForBrd} brdName">${board.name}</span>
+            <span class="treeName">(${board.treeName})</span>
+        </a>
+	#{if isRemoved != true}
+	<span class="removeBoard crossIcon" data-brd-id="${board.id}" data-org-id="${params.orgId}"></span>
+	#{/if}
+    </div>    
+    #{/list}    
+    <div class="rootNodeChildrenDiv"></div>
+    #{/if}
+    #{else}
+    <h3>There are no boards uploaded yet.</h3>
+    #{/else}
+</div>

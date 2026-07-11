@@ -1,0 +1,81 @@
+	%{
+appName = play.Play.configuration.getProperty("application.name");
+}%    
+	<div class="testSeriesTest" data-test-id="${test.testId}">
+                <div class="floatLeft">
+                    <div class="testSeriesDate testSeriesDate${test.isCompleted}">${new Date(test.startTime).format('dd')}</div>
+                    <div class="testSeriesMonth">${new Date(test.startTime).format('MMM yy')}</div>
+                </div>
+                <div class="testSeriesTestDetails">
+                    <div class="testSeriesTestName">${test.name}</div> 
+                    #{if test.boards.length()>0}
+                    <div class="testSeriesTestSubs">
+                        #{list items:0..test.boards.length()-1,as:'s'}
+                            %{
+                                sub=test.boards.get(s);
+                            }%
+                            <span data-brd-id="${sub.brdId}" class="color8">${sub.name}</span>${s_isLast?'':','}
+                        #{/list}
+                    </div>                    
+                    #{/if}
+                    <div class="smally boldy margTop">
+                        #{if test.isLabTest}
+                        Lab Test
+                        #{/if}
+                        #{else}
+                        Online Test
+                        #{/else}
+                    </div>                                      
+                </div>
+                <div class="testSeriesTestDue">             
+                    #{if appName=="test-app"&&test.isLabTest}
+                        #{if !test.isExpired&&!test.isCompleted&&test.startTime< new Date().getTime()}
+                        <a class="blueSubmitButton openTestPage doCStream" data-name="TAKE_LAB_TEST" 
+                                href="${controllers.TakeTest.getTestUrl(test.name,test.testId)}" 
+                                data-test-id="${test.testId}">Take This Test</a>                     
+                         #{/if}
+                         #{elseif test.isCompleted&&!test.isExpired}
+                         <div class="smally color8 boldy">Results Pending.</div>
+                         #{/elseif}
+                         #{elseif test.isExpired&&test.isCompleted}
+                         %{
+                            if (play.mode.name()=='PROD'){
+				seeAnalytics='http://lakshya.vedantu.com';
+			    }else{
+			 	seeAnalytics='http://staging.vedantu.com';
+			    }
+			    seeAnalytics += controllers.TakeTest.getTestUrl(test.name,test.testId);
+                         }%
+                            <a class="blueSubmitButton" 
+                               href="${seeAnalytics}" target="_blank">View Analytics</a>                  
+                         #{/elseif}
+                     #{/if}
+                     #{elseif appName=="web-app"}
+                        #{if !test.isLabTest&&!test.isCompleted}
+                        <a class="blueSubmitButton openTestPage doCStream" data-name="TAKE_TEST_BUTTON"
+                                href="${controllers.Tests.getTestUrl(test.name,test.testId)}" 
+                                data-test-id="${test.testId}">Take This Test</a>                     
+                         #{/if}
+                         #{elseif test.isLabTest&&test.isCompleted&&!test.isExpired}
+                         <div class="smally color8 boldy">Results Pending.</div>
+                         #{/elseif}                     
+                         #{elseif test.isExpired&&test.isCompleted}
+                        <a class="blueSubmitButton openTestPage doCStream" data-name="VIEW_ANALYTICS"
+                                href="${controllers.Tests.getTestUrl(test.name,test.testId)}" 
+                                data-test-id="${test.testId}">View Analytics</a>                           
+                         #{/elseif}
+                         #{elseif test.isLabTest&&!test.isCompleted&&!test.isExpired}
+                         %{
+                            if (play.mode.name()=='PROD')testTakeAt='http://test.vedantu.com';
+                            else testTakeAt='http://test.staging.vedantu.com';                         
+                         }%
+                         <span class="color8 boldy">Take this test at 
+                             <a href="${testTakeAt}" target="_blank" class="doCStream" 
+                                data-name="TAKE_LAB_TEST">test.vedantu.com</a>
+                         </span>
+                         #{/elseif}
+                     #{/elseif}
+                     <div class="time margBot5" style="display: block;">Due ${new Date(test.endTime).format('dd/MM/yy hh:mm a')}</div>
+                </div>
+                <div class="cleaner_with_divider">&nbsp;</div>
+	    </div>

@@ -1,0 +1,45 @@
+    %{
+        comments=_comments;
+        loadMoreSize=_loadMoreSize;
+    }%
+
+    #{if comments.length()>0}
+            #{list items:0..comments.length()-1,as:'i'}
+                %{
+                    comment= comments.get(i);
+                    user=comment.user;
+                    getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                }%
+                <div class="docPageCommItem"  data-root-id="${comment.rootId}" 
+                     data-root-type="${comment.rootType}" data-comment-id="${comment.commentId}">
+                    <div class="commItemLeftSec">
+                        #{widgets.img30 user:user /}
+                        <div class="smally commReviewVoteDiv margHalfTop linBlk" data-comment-id="${comment.commentId}">
+                            #{widgets.upVoteItem entityType:"COMMENT",entityId:comment.commentId,
+                            upVote:comment.upVotes,voted:comment.voted /}
+                        </div>
+                    </div>
+                    <div class="postShortContent itemContent40">
+                         <img class="commPtr" src="/public/images/uicomDocuments/commPtr.png" alt="" />
+                         <a class="${getUserClassAndUrl.className}" data-user-id="${user.id}" href="${getUserClassAndUrl.url}">
+                             <b>${user.firstName} ${user.lastName}</b> -
+                         </a>&nbsp;
+                         <span class="docPageCommItemText">${comment.textContent}</span>
+                         <div class="docCommentNo">
+                             <a style="color:#868686;">
+                                 <label>${comment.replies}</label> repl${comment.replies.pluralize('y','ies')}
+                             </a>
+                         </div>
+                         <div class='cleaner_with_divider'>&nbsp;</div>
+                    </div>
+                </div>
+            #{/list}
+            #{if loadMoreSize!= 0&& comments.length()==loadMoreSize}
+            <div class="loadMoreItems LMHandlerDivLoadMore">Load More Comments</div>
+            #{/if}
+       #{/if}
+       #{else}
+       <div class="userMessage">
+           There are no comments on this Page
+       </div>
+       #{/else}

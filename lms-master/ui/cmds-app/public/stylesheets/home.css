@@ -1,0 +1,3800 @@
+@font-face {
+    font-family: Ubuntu;
+    src: url(../fonts/Ubuntu-Regular.ttf);
+}
+
+body{
+    background: none;
+    color: #222222;   
+    overflow-y: scroll;
+    overflow-x: hidden;
+    min-width: 1002px;    
+}
+input[type="checkbox"],input[type="radio"]{
+    margin: 0;
+    vertical-align: middle;
+}
+ul{
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    padding: 0;
+    margin: 0;
+}
+.blocky {
+color:#393939 !important;
+}
+.cmdsaPush {
+color:#393939 !important;
+}
+.getVisibilityStatus {
+color:#393939 !important;
+}
+.openProgramSections {
+color:#393939 !important;
+}
+.addModuleTags {
+color:#393939 !important;
+}
+.confirmAT {
+color:#393939 !important;
+}
+.doCStream {
+color:#393939 !important;
+}
+.showUserMappings {
+color:#393939 !important;
+}
+.smally {
+color:#393939 !important;
+}
+.liner {
+color:#393939 !important;
+}
+.getProgramPage{
+color:#ed3237 !important;
+}
+td.focusedTD{
+    background-color:rgba(245, 175, 175,0.7);
+}
+
+#cmdsBlackOut{
+    background-color: #AAAAAA;
+    bottom: 0;
+    left: 0;
+    opacity: 0.6;
+    position: fixed;
+    right: 0;
+    top: 0;    
+    display: none;
+    z-index: 2049;
+}
+#cmdsPopup,#cmdsPopupAlt{
+    background-color: #FFFFFF;
+    border: 1px solid #AAAAAA;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    left: 0;
+    margin: 0 auto;
+    min-height: 100px;
+    position: absolute;
+    right: 0;
+    top: 120px;
+    width: 500px;    
+    padding: 0 20px 20px 20px;
+    z-index: 2050;
+    display: none;
+    border-radius: 10px;
+}
+#cmdsPopupAlt{
+    z-index: 2051;
+}
+.cmdsPopupHead{
+    color: #333333;
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0 0 13px;  
+}
+.cmdsErrorPopup .cmdsPopupBody{
+    padding-top: 20px;
+    word-wrap: break-word;
+}
+.cmdsPopupBody{
+    position: relative;
+}
+.cmdsPopupBody td{
+    padding-bottom: 15px;
+    vertical-align: top;
+}
+.cmdsPopupBody td:first-child {
+    padding-top: 3px;
+}
+.remScheduleEntity{
+    background-image: url("/public/images/closePopup.png");
+    display: inline-block;
+    height: 8px;
+    left: 7px;
+    position: relative;
+    top: 5px;
+    width: 10px;
+    cursor: pointer;
+}
+.remScheduleEntity:hover{
+    background-image: url("/public/images/closePopupHovered.png");
+}
+.closePopupImg{
+    color: #999999;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Comic Sans MS;
+    font-size: 21px;
+    font-weight: bold;
+    left: 8px;
+    padding: 0;
+    position: relative;
+    top: 5px;    
+}
+.closePopupImg:hover{
+    color: #333333;
+    text-decoration: none;
+}
+.closePopupImg.nonner{
+    display: none;
+}
+.cmdsPopupError,.addScheduleErr{
+    color: #CC3333;
+    float: left;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.cmdsPopupBtns{
+    clear: both;
+}
+#cmdsPopup .quesTextDiv img{
+    max-width: 500px;
+}
+
+
+
+#contentSectionHolder{	
+    min-height: auto !important;
+    word-wrap: break-word;   
+    width: 100%;
+    max-width:100%;
+    overflow:auto;
+}
+#topBlackBar{
+    background-color: #282828;
+    color: #FFFFFF;
+    font-size: 15px;
+    height: 40px;
+    position: relative;
+    z-index:1000;
+}
+#topBar{
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #CCCCCC;
+    font-size: 16px;
+    padding: 0 65px 0 35px;
+    position: relative;
+    text-align: center;
+    width: inherit;
+    z-index:999;
+}
+.topBarHead{
+    font-family: 'Ubuntu';
+    position: relative;
+    text-align: center;
+    top: 12px;    
+}
+.cmdsAbbr{
+    color: #fff;
+    font-size: 23px;
+}
+.centerText a, .eachShipmentInfo td a{
+color:#363636;
+}
+.openQuesPage{
+color:#363636;
+}
+
+.cmdsExplained{
+    color: #fff;
+    font-size: 14px;    
+    vertical-align: top;
+}
+.cmdsByVedantu{
+    font-size: 12px;
+    vertical-align: top;
+}
+.cmdsTM{
+    font-family: sans-serif;
+    font-size: 7px;
+    position: absolute;    
+}
+.topBarInstiLogo{
+    left: 35px;
+    overflow: hidden;
+    position: absolute;
+    text-align: left;
+    width: 140px;   
+}
+.topBarInstiLogo img{
+    height: 38px;
+    max-width: 140px;
+    padding: 3px;
+    vertical-align: middle; 
+}
+.hiddenMenuItemToggler{
+    /* border-right: 1px solid #CCCCCC; */
+    color: #666666;
+    display: inline-block;
+    margin: 0 -1px;
+    padding: 7px 40px 10px 12px;
+}
+.cmdsMenuItemNormal{
+    padding-right: 15px;
+}
+.hiddenMenuItemTogglerImg{
+    background: url("/public/images/uicomCommon/dropDownArrow.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 5px;
+    position: absolute;
+    right: 16px;
+    top: 22px;
+    width: 10px;
+}
+.cmdsHiddenMenuItemDiv{
+    /* border-left: 1px solid transparent; */
+    /* border-right: 1px solid transparent; */
+    display: inline-block;
+    padding: 8px 0;
+    position: relative;
+    text-align: left;
+    margin-left: -5px;
+}
+.cmdsHiddenMenuItemDiv:last-child .hiddenMenuItemToggler{
+    border-color: transparent;
+}
+.cmdsHiddenMenuItemDiv:hover,.cmdsHiddenMenuItemDiv:hover .hiddenMenuItemToggler{
+    border-color: #CCCCCC;
+}
+.hiddenMenuItems{
+    background-color: #333333;
+    border-width: 0 1px 0 1px;
+    display: none;
+    font-size: 14px;
+    left: -1px;
+    position: absolute;
+    right: -1px;
+    top: 49px;
+    z-index: 2000;    
+}
+.hiddenMenuItem{
+    border-bottom: 1px solid #666666;
+    border-top: 0 none;
+    color: #FFFFFF;
+    display: block;
+    padding: 7px 30px 7px 12px;
+}
+.hiddenMenuItem:hover{
+    background-color: #000000;
+    color: #FFFFFF;
+}
+.cmdsHiddenMenuItemDiv:hover .hiddenMenuItems,.hiddenMenuItems:hover{
+    display: block;
+}
+.progMenuItems{
+    width: 220px;
+}
+.hiddenMenuItemToggler:hover{
+    text-decoration: none;
+    color: #333333;
+}
+.cmdsActiveMenuItem .hiddenMenuItemToggler,.cmdsActiveMenuItem:hover .hiddenMenuItemToggler{
+    color: #3399CC;
+    text-decoration: none;
+}
+#topBar a:hover{
+    text-decoration: none;
+}
+.topBarActivePtr {
+    bottom: -12px;
+    display: none;
+    left: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    z-index: 100;
+}
+.topBarActivePtrImg{
+    background: url("/public/images/downArrowWhite.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 10px;
+    width: 10px;    
+}
+.cmdsActiveMenuItem .topBarActivePtr{
+    display: block;
+}
+.topBarvChoose .vChooseHead{
+    line-height: 25px;
+    margin-bottom: 2px;
+    min-height: 25px;    
+}
+.topBarBox{
+    bottom: 0;
+    font-size: 13px;
+    position: absolute;
+    right: 48px;
+    text-align: left;
+    top: 0;
+    vertical-align: middle; 
+}
+.topBarUserBoxName{
+    color: #FFFFFF !important;
+    display: inline-block;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 200px;
+    z-index: 100;
+}
+.showTopBarDropDown{    
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-block;
+    padding: 4px 0;
+    position: relative;
+    vertical-align: middle;
+    width: 50px;
+}
+.showSettingsDropDown{
+    border: 1px solid transparent;
+    display: inline-block;
+    height: 33px;
+    margin-right: 10px;
+    padding: 15px 25px 0 7px;
+    position: relative;
+    width: auto;
+}
+.showSettingsDropDown.toggleClick{
+    border-color: #888888;
+}
+.showTopBarDropDown .downArrow{
+    position: absolute;
+    right: 4px;
+    top: 18px;
+}
+.topBarSettingsImg{
+    background: url("../images/tools.png") no-repeat scroll left center transparent;
+    cursor: pointer;
+    display: inline-block;
+    height: 20px;
+    padding-left: 26px;
+    position: relative;
+    vertical-align: middle;
+}
+.showSettingsDropDown .downArrow{
+    position: absolute;
+    right: 7px;
+    top: 22px;
+}
+.topBarBoxDropDown {
+    background-color: #333333;
+    display: none;
+    position: absolute;
+    right: -5px;
+    top: 40px;
+    width: 235px;
+    z-index: 2100;
+}
+.settingsTopBarBoxDropDown{
+    left: -141px;
+    top: 50px;
+}
+.openToggler.topBarBoxDropDown{
+    display: block;
+}
+.boxDropDownEntity {
+    border-bottom: 1px solid #666666;
+    clear: both;
+    color: #EEEEEE !important;
+    display: block;
+    padding: 10px;
+}
+.boxDropDownEntity:hover{
+    background-color: #666666;
+}
+#cmdsPopup.cmdsSettingsPopup{
+    padding: 0;
+    width: 720px;   
+}
+.cmdsSettingsPopup .closePopupImg{
+    background-image: url("/public/images/closePopupHovered.png");
+    height: 8px;
+    left: -10px;
+    position: relative;
+    top: -1px;
+    width: 10px;
+}
+.cmdsSettingsPopup .cmdsPopupBody td{
+    padding-bottom: 0;
+    vertical-align: middle;    
+}
+.cmdsSettingsPopup .cmdsPopupBody td.alignTop{
+    vertical-align:top;
+}
+.cmdsSettingsPopup .regEmailBtn{
+    top: 0;
+}
+
+
+.pageHeadGrayDiv{
+    background-color: #F2F2F2;
+    box-shadow: 2px 1px 6px #CCCCCC;
+    height: 41px;
+    padding: 18px 50px 6px 30px;
+    position: relative;
+    z-index: 3;
+}
+
+
+.progvChoose .vChooseHead{
+    width: 215px;
+    padding-right: 20px;
+}
+.centervChoose .vChooseHead,.sectionvChoose .vChooseHead{
+    width: 125px;
+    padding-right: 20px;
+}
+
+
+.sec1002{
+    width: 1002px;
+    margin: 0 auto;
+}
+#levelsSection{
+    position: relative;
+}
+
+
+#leftSection{
+    background-color: #F7F7F7;
+    /* border-right: 1px solid #CCCCCC; */
+    float: left;
+    padding-left: 30px;
+    width: 220px;
+    position: relative;
+}
+.leftSecHeadsDiv{
+    margin: 43px 0;
+}
+.leftSecHead{
+    border: 1px solid #F7F7F7;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    left: 1px;
+    padding: 12px 15px;
+    position: relative;
+    /* border-right: 1px solid #CCCCCC; */
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.leftSecHead:hover{
+    background-color: #EEEEEE;
+}
+.leftSecHeadActive,.leftSecHeadActive:hover{
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-right-color: #ffffff;
+    z-index: 3;
+}
+#leftSection .mvsItem,#leftSection .mvsAllItems{
+    padding: 4px 0;
+}
+#leftSection .mvsItemText{
+    width: 165px;
+}
+#fixedLeftSecPortion .gCBox{
+    float: left;
+    margin-top: 3px;
+}
+#dummySection{
+    bottom: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: -1;    
+}
+#mainSection{
+    background-color: #FFFFFF;
+    border-left: 1px solid #CCCCCC;
+    border-right: 65px solid #F7F7F7;
+    margin-left: 250px;
+    position: relative;
+    z-index: 2;
+}
+#mainSection.incrZIndex{
+    z-index:10000;
+}
+#fixedLeftSecPortion{
+    overflow: hidden;
+}
+#fixedLeftSecPortion:hover {
+    overflow: auto;
+}
+#fixedSec{
+    overflow-y: scroll;
+}
+#reorderContentInfo{
+	position:absolute;
+	bottom:0px;
+	padding:10px 0;
+	background-color:#99d6eb;
+	width:100%;
+}
+#reorderContentInfo .entityNameDiv{
+	display:inline-block;
+	padding-left:10px;
+}
+.reorderContentMoveHere{
+	padding:4px 0 6px;
+	color:#333;
+	background-color:rgba(153, 214, 235, 0.40);
+	font-size:12px;
+	cursor:pointer;
+	text-align: center;
+	height:14px;
+}
+.reorderContentMoveHere:hover{
+	background-color:#7CC3D3;
+	color:#FFF;
+}
+.reorderContentMoveHere img{
+	position:relative;
+	top:1px;
+	right:4px;
+}
+#reorderContentMoveHereTR td{
+	padding:0px;
+}
+.selectAllQuesnsCBox{
+    color: #666666;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 7px 0 13px 14px;    
+}
+.editEntityDetailsStyles {
+    background: url("/public/images/edit.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    font-size: 11px;
+    height: 20px;
+    margin-left: 10px;
+    vertical-align: middle;
+    width: 20px;
+}
+
+
+/*vChoose overriding styles*/
+/*.vChooseOpt{
+    padding-left: 25px;
+}*/
+/*.vChooseOptTicked{
+    background: url("/public/images/checkmark.png") no-repeat scroll left center transparent;    
+}*/
+/*vchoose width styles*/
+.vChooseCompleteStatus .vChooseHead{
+    width: 80px;
+}
+.addCDPContentvChoose .vChooseOpt{
+    padding-left: 6px;
+}
+.vChooseLabel{
+    color: #666666;
+    font-size: 10px;
+    font-weight: normal;
+    margin-bottom: 2px;
+    position: absolute;
+    top: -18px;   
+}
+/*vRadio*/
+.vRadio{
+    background: url("/public/images/vRadio.png") no-repeat scroll 0 center transparent;
+    padding: 3px 10px 3px 20px;    
+    cursor: pointer;
+}
+.vRadioChecked{
+    background-image: url("/public/images/vRadioChecked.png");
+}
+
+/*moveWidget*/
+.moveWidget {
+    border: 1px solid #CCCCCC;
+    margin: 10px 0;
+    min-height: 175px;
+    padding: 10px 0;
+}
+.moveItemHead{
+    padding: 3px 0;
+    overflow:auto;
+}
+.moveItemHead::-webkit-scrollbar{
+    height:5px;
+    width:5px;
+}
+.moveItemHead:hover{
+    background-color: #EEEEEE;
+}
+.moveItemOpen,.moveItemClose{
+    background: url("/public/images/moveItemOpen.png") no-repeat scroll center center transparent;
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+}
+.moveItemClose{
+    background-image: url("/public/images/moveItemClose.png");
+}
+.moveItemChecker{
+    display: inline-block;
+    height: 10px;
+    width: 13px;    
+}
+.activeMoveItem > .moveItemHead > .moveItemChecker {
+    background: url("/public/images/checkmark.png") repeat scroll -6px center transparent;
+}
+
+/*mvselect and mvchoose*/
+.mvsItemText{
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;        
+}
+.mvcItemBody .multiplevChoose{
+    margin-left: 25px;
+}
+/*sourcePages*/
+.addResourcevChoose .vChooseHead {
+    border: medium none;
+    font-size: 11px;
+    padding: 5px 40px 4px 15px;
+    border-radius: 5px;
+}
+.addResourcevChoose .vChooseDropDown{
+    border: 1px solid #888888;
+    right: 0;
+    width: 260px;    
+}
+.addResourcevChoose .vChooseOpt{
+    border: medium none;
+    font-size: 14px;
+    padding: 10px 30px 15px;    
+}
+.addResourcevChoose .vChooseOptAddFolder{
+    background-color: #F7F7F7;
+    border-bottom: 1px solid #CCCCCC;    
+}
+.addFolderPlusSign{
+    color: #666666;
+    display: inline-block;
+    font-size: 18px;
+    margin-left: -12px;
+    position: relative;
+    right: 5px;
+    top: 3px;    
+}
+.sourceTypeBtns,.prdtTypeBtns{
+    margin-left: 235px;
+    margin-top: 8px;
+}
+.sourceTypeBtns .gButton,.prdtTypeBtns .gButton{
+    float: left;
+    padding: 0 30px;
+}
+#sourceDetailsSection{
+    margin: 0 auto;
+    position: relative;
+    width: 1002px;
+}
+.srcImgWrapper{
+    line-height: 75px;
+    margin: 0 10px 0 0;
+    max-height: 100px;
+    overflow: hidden;
+    vertical-align: middle;
+    width: 80px;
+    float: left;
+}
+.srcImg{
+    vertical-align: middle;
+    width: 80px;    
+}
+.sourceDetails{
+    display: inline-block;
+    height: 85px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    width: 600px;    
+}
+.sourceDetHead,.testPageDetHead{
+    color: #555555;
+    font-weight: bold;
+    width: 100px;
+}
+.testTitle{
+    max-width:550px;
+}
+.testTitle.elipsifiedText{
+    display:inline-block;
+}
+.folderTitleDiv{
+    margin-bottom: 50px;
+}
+.folderTitleDiv .inputDiv{
+    border: 1px solid #CCCCCC;
+    margin-top: 15px;    
+}
+.srcDetTitleDiv{
+    color: #666666;
+    font-size: 20px;
+    margin-left: 30px;
+    padding-top: 18px;
+}
+.folderParents{
+    margin: 10px 0 -30px 30px;
+}
+.sourcePageBtns{
+    float: right;
+    vertical-align: top;
+    width: 300px;  
+}
+.sourcePageBtns .gButton,.sourcePageBtns .gRedButton{
+    margin: 5px 0 10px 0;
+}
+.createSourceTagsDiv{
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+.showHideSrcDets{
+    float: right;
+    right: 10px;
+    top: -20px;
+}
+#sourcePageContent{
+    border-top: 1px solid #CCCCCC;
+    padding-top: 10px;    
+}
+.addedToTable{
+    width: 100%;
+    border-collapse: collapse;
+}
+.addedToTable td{
+    border: 1px solid #cccccc;
+    padding: 5px;
+}
+.ATTContentTd{
+    width: 150px;
+}
+
+.entityCloneTable,.cmdsQuesnsPopup{
+    width: 100%;
+    border-collapse: collapse;
+}
+.entityCloneTable td,.cmdsQuesnsPopup td{
+    border: 1px solid #E5E5E5;
+    padding: 8px 15px;   
+}
+.entityNameDiv .singleLineText{
+    max-width:94%;
+}
+
+/*questions*/
+#questionSetPage{
+    padding-top: 20px;
+}
+.cmdsQuesnsDiv{
+    padding: 10px 20px 0;
+}
+.ques{
+    border: 0;
+    box-shadow: none;
+    margin-bottom: 20px;
+}
+.cmdsQuesngCBox{
+    left: -20px;
+    position: absolute;
+    top: 2px;    
+}
+.quesHeadDiv{
+    margin: 0;
+    min-height: 28px;
+    padding: 6px 10px;
+}
+.quesStatus{
+    font-weight: bold;
+    font-size: 11px;
+    margin-left: 5px;
+}
+.quesStatusINCOMPLETE{
+    color: #cc3333;
+}
+.quesStatusCOMPLETE{
+    color: #3399cc;
+}
+.quesStatusPUBLISHED{
+    color: #339900;
+}
+.editcmdsQues img{
+    margin-right: 3px;
+    vertical-align: text-bottom;    
+}
+.ques:hover .showQuesTail,.ques:hover .cmdsQuesnInfo{
+    display: inline-block;
+}
+#qrQuestionPage .showQuesTail{
+    display: none;
+}
+.quesBody{
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    position: relative;
+    background: none;
+}
+.quesBody:hover,.qrQuesActive .quesBody,#qrQuestionPage .quesBody{
+    border-color: #333333;
+}
+.quesTextDivHolder{
+    background-color: #F7F7F7;
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    box-shadow: 0 1px 2px #CCCCCC inset, 0 -1px 2px #CCCCCC inset;
+    padding: 2px 10px;   
+}
+.quesTextDiv{
+    cursor: default;
+    margin: 0;
+    padding: 0;
+}
+.quesMetatags{
+    margin: 0;
+    padding: 0 10px;
+}
+.quesMetatags td:first-child{
+    width: 75px;
+    font-weight: bold;
+}
+.quesTailHolder{
+    display: none;
+}
+.qrQuesActive .quesTailHolder,
+#qrQuestionPage .quesTailHolder{
+    display: block;
+}
+.quesTail{
+    background-color: #F8F8F8;
+    border: 1px solid #d5d5d5;
+    border-top: 0 none;
+    box-shadow: 0 0 1px #CCCCCC;
+    margin: 0 5px 5px;
+    padding: 7px 20px;       
+}
+.quesTailTable{
+    width: 100%
+}
+.quesTailTable td{
+    padding: 5px;
+}
+.quesTailTable td:first-child{
+    font-weight: bold;  
+    width: 100px;
+}
+.quesFlagsTable tr:nth-child(3n+3) td{
+    vertical-align: top;
+    padding-bottom: 30px;
+}
+.qrQuesSolnsHead{
+    color: #555555;
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-top: 10px;    
+}
+.qrQuesSoln{
+    padding: 10px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #cccccc;
+}
+
+/*//single question page*/
+#qrQuestionPage{
+    margin: 0 auto;
+    width: 1002px;
+    padding: 30px 0;
+}
+.quesSolnNo{
+    float: left;
+    font-size: 15px;
+    font-weight: bold;
+}
+.quesSolnBody{
+    padding-bottom: 6px;
+    padding-left:20px;
+}
+.quesSolnAttachments{
+    padding: 5px 20px;
+    background-color: #EBEBEB;
+}
+/*ui samples*/
+.chlgHint{
+    padding: 5px;    
+}
+.chlgHintText{
+    float: left;
+    width: 460px;
+}
+
+
+
+/*add content page*/
+#addContentPage{
+    width: 1002px;
+    margin: 0 auto;
+}
+.addContentBtns .gButton{
+    float: left;
+}
+#addContentPageMain{
+    border: 1px solid #CCCCCC;
+    margin: 5px 0 30px;
+    min-height: 700px;
+    padding: 10px;
+}
+
+
+/*products*/
+.createProduct{
+    width: 125px;
+    max-width: 125px;
+    padding-left: 3px;
+}
+.CTFTable{
+    border-collapse: collapse;
+    border-top: 1px solid #cccccc;
+}
+.CTFTable thead{
+    background-color: #f7f7f7;
+}
+.CTFTable td{
+    padding: 10px;
+    text-align: center;
+    width: 100px;
+}
+.CTFTable td:first-child{
+    text-align: left;
+}
+.CTFSubTotal,.CTFTable tr:last-child{
+    border-top: 1px solid #cccccc;
+}
+
+/*test creation page*/
+.testPageDetails{
+    background-color: #F7F7F7;
+    border-bottom: 1px solid #EEEEEE;
+    position: relative;
+    padding: 15px 0px;
+}
+.testPageBtns{
+    position: absolute;
+    right: 45px;
+    top: 10px;    
+}
+.publishTest{
+    color: #CC3333;
+    cursor: default;
+    font-size: 12px;
+}
+.publishTestOk{
+    color: #009933;
+}
+.TPDTable{
+    box-sizing: border-box;
+    width: 100%;
+}
+#testPage .TPDTable {
+    /*margin-left: 245px;*/
+    /*margin-right: 475px;*/
+    padding: 0px 45px;
+    /*top:25px;
+    position: relative;*/
+}
+#previewTestPage .TPDTable{
+    margin: 0 0 0 10px;
+    /*padding: 10px 0px;*/
+}
+#previewTestPage .sectionLockingOptionDiv{
+    position: absolute;
+    /*right: 2px;*/
+    bottom: 20px;
+    padding: 5px 0px;
+}
+#previewTestPage .spanTitle{
+    font-weight: bold;
+    color:#555;
+}
+.spanTitle{
+    width: 175px;
+    display: inline-block;
+}
+#previewTestPage .sectionLockingOptionDiv tr td:first-child{
+    width: auto;
+}
+/*#testPage .sectionLockingOptionDiv tr td:first-child{
+    width: 340px;
+}*/
+.TPDTitle{
+    color:#555555;
+    font-weight: 600;
+}
+#testPage .sectionLockingOptionDiv{
+    /*position: absolute;*/
+    right: 125px;
+    bottom: 10px;
+    position: relative;
+    float: right;
+    /*padding: 2px;*/
+    width: 300px
+    /*top: 90px;*/
+}
+#testPage .enableAutoResumeTestDiv{
+    display: inline-block;
+    float: right;
+    right: 125px;
+    position: relative;
+    width: 300px;
+    bottom: 30px;
+}
+#previewTestPage .radioButtonDiv{
+    display: none;
+}
+#previewTestPage .testPageDetails{
+    /*padding: 20px 0px;*/
+    padding: 20px 0px 40px 0px;
+}
+#previewTestPage .partialText{
+    position: absolute;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.TPDSubTable td{
+    font-size: 11px;
+    padding: 0;
+    vertical-align: top;
+    width: 100px;    
+}
+.TPDTopicTable,.TPDQTypeTable{
+    width: 100%;
+    border-collapse: collapse;
+}
+.TPDQTypeTable{
+    width: 50%;
+}
+.TPDTopicTable td,.TPDQTypeTable td{
+    border: 1px solid #cccccc;
+    padding: 7px;
+}
+.TPDTopicTable td:first-child,.TPDQTypeTable td:first-child{
+    width: auto;
+}
+.TPDTopicTable td:last-child,.TPDQTypeTable td:last-child{
+    width: 100px;
+}
+#testPage .cmdsTableOptsAndSortDiv{
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 22px;
+    padding-bottom: 12px;
+    padding-right: 80px;    
+}
+#testPage .cmdsTableSearchDiv{
+    float: left;
+    margin-left: 250px;    
+}
+#testPage .ques:first-child{
+    margin-top: 20px;
+}
+.addQuesToTest,.removeQuesFromTest{
+    float: right;
+    min-width: 50px;
+}
+.scheduleEntity{
+    display: inline-block;
+    margin: 0 0 20px;
+}
+.scheduleEntityPipe{
+    color: #555555;
+    display: inline-block;
+    font-weight: bold;
+    margin: 0 10px 0 -10px;
+    vertical-align: top;  
+}
+.remScheduleEntity{
+    margin-left: 20px;
+    vertical-align: top;    
+}
+.scheduleListTable{
+    border-collapse: collapse;
+    margin-left: 20px;
+}
+.scheduleListTable td{
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+}
+.scheduleKeyTd{
+    font-family: Georgia,Verdana,Tahoma;
+}
+.publishStatusDiv{
+    margin-top: 7px;
+    position: relative;    
+}
+.publishGrayBar{
+    background-color: #DDDDDD;
+    height: 11px;
+    max-width: 450px; 
+}
+.pkgPageBtnsBody .publishGrayBar{
+    width: 250px;
+}
+.pkgPageBtnsBody .cmdsPopupHead{
+    display: none;
+}
+.publishGreenBar{
+    background-color: #339900;
+    height: 11px;
+    position: absolute;
+    top: 0;    
+}
+/*test series*/
+.tsDetails,.pkgDetails,.cdpDetails{
+    display: inline-block;
+    height: 85px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    width: 600px;  
+    font-size: 14px;
+}
+.tsDetHead{
+    color: #555555;
+    font-weight: bold;
+    width: 100px;
+}
+.tsDetTitle{
+    height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;    
+}
+.tsPageBtns,.pkgPageBtns,.cdpPageBtns{
+    float: right;
+    vertical-align: top;
+    width: 300px;  
+}
+.tsPageBtns .gButton,.tsPageBtns .gRedButton{
+    margin: 5px 0 10px 0;
+}
+
+/*edit question*/
+#EQPage{
+    padding-bottom: 100px;
+}
+.EQHead{
+    color: #DD4B39;
+    font-size: 21px;
+    padding: 10px 0;    
+}
+.EQOptRTEDiv .RTEArea{
+    min-height: 45px;
+}
+.EQSaveText{
+    display: none;
+    margin-left: 10px;
+}
+
+
+
+/*documents*/
+#docViewPage{
+    background-color: #f7f7f7;
+}
+body.PL_DOC_VIEW #contentSectionHolder{
+    top:30px;
+}
+#docViewOptionsHolder{
+    position: fixed;
+    top: 30px;
+    width: 700px;
+    z-index: 1;
+}
+.DTDocLeftBody{
+    position: fixed;
+    top: 30px;
+    width: 260px;
+}
+
+/*packages*/
+.packageContentsList,.packagePageTabs,#packageDetailsSection{
+    margin: 10px auto 0;
+    width: 1002px;    
+}
+.pkgListUl{
+    font-size: 18px;
+    list-style: disc inside none;
+    padding: 0 0 0 20px;
+    margin: 10px 0;
+}
+
+#cdpPage{
+    background-color: #F7F7F7;
+}
+#cdpDetailsSection{
+    margin: 0 auto;
+    width: 1002px;    
+}
+.cdpPageContent,.cdpLibraryContent{
+    margin: 0 50px;
+}
+.cdpTopHead{
+    font-size: 16px;
+    max-width: inherit;
+    padding: 5px 0;
+    width: 250px;    
+}
+.cdpHeadContent{
+    border: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 2px 8px #CCCCCC inset;
+    min-height: 800px;
+    padding: 10px 10px 10px 0;      
+    background-color: #FFFFFF;
+    margin-bottom: 30px;
+    margin-top: 2px;
+    min-height: 250px;
+    overflow: auto;
+    padding: 10px 30px 25px;    
+}
+.cdpTopicDiv{
+    border: 5px solid transparent;
+    margin: 5px 5px 7px;
+    position: relative;   
+}
+.cdpTopicHeading{
+    background-color: #3399CC;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 13px 8px 5px;  
+}
+.removeCDPTopicNode{
+    color: #FFFFFF;
+    display: none;
+    float: right;
+    font-size: 11px;
+    font-weight: normal;
+    text-decoration: underline;    
+}
+.cdpTopicDiv:hover .removeCDPTopicNode,.cdpContentDiv:hover .removeCDPContentNode{
+    display: inline-block;
+}
+.cdpTopicBody{
+    font-size: 13px;
+    margin: 10px 20px 0;
+}
+.cdpTopicDivViewToggle{
+    position: absolute;
+    right: -28px;
+    top: 7px;    
+}
+.cdpContentDiv{
+    border-bottom: 3px solid transparent;
+    margin-bottom: 7px;
+}
+.cdpDivBordered{
+    border-color: green;
+}
+.cdpContentHeading{
+    font-weight: bold;
+}
+.cdpContentBody{
+    font-size: 12px;
+    color: #888888;
+}
+.removeCDPContentNode{
+    margin-left: 20px;
+    text-decoration: underline;
+    color: #888888;
+    display: none;
+}
+.addToCDPMoveWidget .moveItem2Checker,.addToCDPMoveWidget .moveItem1Checker,.addToCDPMoveWidget .moveItem3Opener{
+    display: none;
+}
+/*.cdpTopicHeading:hover{
+    background-image: -moz-linear-gradient(center top , #F0F0F0, #EDEDED);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    box-shadow: 1px 1px 8px rgba(241, 241, 241, 0.2) inset;
+    transition: -moz-box-shadow 0.2s ease-out 1s;     
+}*/
+
+
+/*academic structure*/
+#acadStrPage{
+    background-color: #F7F7F7;
+}
+.acadStrLeftSec{
+    width: 250px;
+}
+#acadStrPage #mainSection {
+    padding: 30px;
+}
+.acadStrInstCentersDiv{
+    padding: 15px 10px 20px 0;    
+}
+.ASICenter{
+    padding-bottom: 5px;
+}
+.acadStrCreateDiv{
+    bottom: 0;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+.acadStrCreateDiv .gButton{
+    padding: 10px 0;
+    width: 100%; 
+}
+.ASTResultsTdLoaded .acadStrCreateDiv .gButton{
+    background-color: #99CC66;
+}
+#acadStrTable{
+    border-collapse: collapse;
+    margin-top: 20px;   
+    width: 100%;
+}
+.ASTSearchTd{
+    background-color: #EEEEEE;
+    border: 1px solid #CCCCCC;
+    padding: 5px 0;  
+    width: 25%;
+}
+.ASTSearchHolder{
+    background-color: transparent;
+    display: block;
+    margin: 0 10px; 
+}
+.ASTSearchInput{
+    background-color: transparent !important;
+    font-size: 14px !important;
+}
+.ASTResultsTd{
+    border: 1px solid #CCCCCC;
+    box-shadow: 1px -1px 4px #DDDDDD;
+    padding: 10px 0 0 !important;
+    vertical-align: top;
+}
+.ASTCoursesTd,.ASTSectionsTd{
+    box-shadow: none;
+}
+.ASTResultsHolder{
+    min-height: 300px;
+    position: relative;
+}
+.ASTResultsDiv {
+    height: 265px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.ASTItem{
+    cursor: pointer;
+    padding: 7px 12px;
+    position: relative;    
+}
+.ASTItem:hover {
+    background-color: #F4F4F4;
+}
+.ASTSectionsTd .ASTItem,.ASTCoursesTd .ASTItem,.acadStrInstCentersDiv .ASTItem{
+    cursor: default;
+}
+.ASTItemActive,.ASTItemActive:hover{
+    background-color: #DDDDDD;
+}
+.ASTResultsTdClicked .ASTItemActive,.ASTResultsTdClicked .ASTItemActive:hover{
+    background-color: #bae3f5;
+}
+.ASTItemName {
+    display: inline-block;
+}
+.ASTItemState{
+    color: #888888;
+    display: inline-block;
+    font-size: 11px;
+    font-style: italic;    
+}
+.ASTItemImg{
+    height: 30px;
+    position: absolute;
+    right: -11px;
+    top: 0;
+    width: 10px;
+}
+.ASTItemActive .ASTItemImg{
+    background: url("/public/images/acadEntityArrowGray.png") no-repeat;
+}
+.ASTResultsTdClicked .ASTItemActive .ASTItemImg{
+    background: url("/public/images/acadEntityArrow.png") no-repeat;
+}
+.activeASTItem .ASTItemState{
+    display: none;
+}
+.activeASTItem:hover .editASTItem,.activeASTItem:hover .removeASTItem,
+.inactiveASTItem:hover .reactivateASTItem,.ASTItem:hover .removeProgMapping{
+    display: inline-block;
+}
+.editASTItem,.removeASTItem,.reactivateASTItem,.removeProgMapping{    
+    display: none;
+    padding-left: 13px;
+    position: absolute;
+    right: 5px;
+    top: 7px;  
+    min-height: 15px;
+    min-width: 15px;
+}
+.editASTItem{
+    background: url("/public/images/edit.png") no-repeat scroll 0 center transparent;
+}
+.removeASTItem,.removeProgMapping{
+    background: url("/public/images/uicomCommon/remove.png") no-repeat scroll 0 center transparent;
+    right: -10px;
+    padding-top:1px; 
+}
+.ASTItemDeactivated{
+    background-color: transparent !important;
+    color: #999999 !important;
+    cursor: default !important; 
+}
+.ASTItemDeactivated:hover{
+    background-color: transparent !important;
+}
+.acadEntityDefaultText{
+    color: #999999;
+    font-size: 11px;
+    line-height: 14px;
+    padding: 0 10px;
+    text-align: center;    
+}
+.selectSectionForProgChange{
+    cursor: pointer !important;
+}
+.selectSectionForProgChange .ASTItemImg{
+    display: none;
+}
+.gCBoxNoMoreTick{
+    background: url("/public/images/checkmark.png") no-repeat scroll -5px -2px transparent;
+    display: inline-block;
+    height: 17px;
+    vertical-align: middle;
+    width: 18px;
+}
+/*institute settings*/
+.instituteInfoTable,#editInstituteInfoPage{
+    margin: 0 auto;
+    padding: 20px 0;
+    width: 650px;
+}
+.instituteInfoTable{
+    width: 400px;
+}
+.instituteInfoTable td:first-child,#editInstituteInfoPage td:first-child {
+    color: #333333;
+    font-size: 14px;
+    padding-bottom: 20px;
+    vertical-align: top;
+    width: 150px;
+}
+.instituteInfoTable td:last-child,#editInstituteInfoPage td:last-child {
+    font-size: 12px;
+    padding-bottom: 20px;
+    width: 500px;
+}
+.locationDiv .inputDiv{
+    display: inline-block;
+    width: 100px;
+    margin: 0 10px 10px 0;
+}
+
+
+
+
+/*courses page*/
+#coursesPageCourses{
+    width: 500px;
+    margin: 0 auto;
+}
+.searchCoursesHead{
+    font-size: 25px;
+    margin: 35px 0 20px;    
+}
+.coursesESHolder .entrySuggDiv{
+    background-color: #EEEEEE;
+    border: medium none;
+    box-shadow: none;
+    min-height: 30px;    
+}
+.coursesESHolder .entrySuggInput{
+    background-color: #EEEEEE;
+    min-height: 30px;
+    width: 444px;    
+}
+.coursesESHolder .ESList{
+    background-color: #FFFFFF;
+    width: 99.5%;
+    border: 1px solid #888888;
+    border-top: 0;
+}
+.coursesESHolder .ESPTile{
+    padding: 10px 20px;
+}
+.coursesPageDownArrow{
+    background-color: #CCCCCC;
+    bottom: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50px;
+    cursor: pointer;
+}
+.addedCoursesHead{
+    font-size: 22px;
+    margin: 75px 0 35px;
+}
+.courseItem{
+    margin-bottom: 25px;
+}
+.courseItemName{
+    background-color: #EEEEEE;
+    display: inline-block;
+    font-size: 15px;
+    padding: 10px 15px;
+    width: 323px;    
+}
+.editCourse{
+    background-color: #BBE0F2;
+    color: #888888;
+    display: inline-block;
+    left: -1px;
+    padding: 10px 18px 10px 15px;
+    position: relative;
+    top: -1px;    
+    cursor: pointer;
+}
+#coursesPageTopics{
+    width: 800px;
+    margin: 0 auto;
+}
+.coursePath{
+    font-size: 25px;
+    margin: 35px 0;
+}
+.coursePathSubName{
+    color: #888888;
+}
+#topicTreeTable{
+    border-collapse: collapse;
+    width: 100%;    
+}
+#topicTreeTable td{
+    border: 1px solid #CCCCCC;
+    padding: 0;
+    width: 325px;
+    vertical-align: top;
+}
+#topicTreeTable td:nth-child(2){
+    padding-top: 100px;
+    text-align: center;      
+    width: 150px;
+}
+.topicTreeHead{
+    border-bottom: 1px solid #CCCCCC;
+    font-size: 19px;   
+    padding: 7px 5px 17px 10px;  
+}
+.importAllTopics{
+    background-color: #9A9A9A;
+    color: #FFFFFF;
+    font-size: 12px;
+    padding: 7px 16px;    
+}
+.topicTreeList{
+    min-height: 400px;
+    padding: 20px 10px;
+}
+.topicTreeTopic{
+    margin-bottom: 15px;   
+    position: relative;
+}
+.topicTreeTopicItem{
+    font-size: 15px;
+    margin-bottom: 7px;  
+    position: relative;
+}
+.topicTreeTopicSubTopics{
+    font-size: 13px;
+    margin: 0 0 10px 25px;    
+}
+.topicTreeSubTopicItem{
+    margin-bottom: 15px;
+    position: relative;    
+}
+.grayState{
+    color: #888888;
+}
+.blueState{
+    color: #33bad7;
+}
+#topicTreeTable .gCBox{
+    vertical-align: middle;
+}
+.topicTreeCBox{
+    background-color: #cccccc;
+    border: 1px solid #B2B2B2;
+    display: inline-block;
+    font-size: 1px;
+    height: 11px;
+    margin: 0 4px 0 1px;
+    outline: 0 none;
+    vertical-align: middle;
+    width: 11px;        
+}
+.topicTreeCBox .gCBoxTicker{
+    background: url("/public/images/checkmark.png") no-repeat scroll -6px -5px transparent;
+    height: 17px;
+    left: 1px;
+    position: relative;
+    top: -1px;
+    width: 15px;
+}
+.openSubTopics{
+    background-color: green;
+    cursor: pointer;
+    height: 10px;
+    position: absolute;
+    right: -7px;
+    top: 0;
+    width: 10px;   
+}
+.brdItemvChoose{
+    position: absolute;
+    right: 10px;
+    top: -1px;    
+}
+.brdItemvChoose .vChooseHead{
+    min-height: 23px;
+    min-width: 0;
+    padding-right: 17px;    
+}
+.brdItemEdit{
+    background: url("/public/images/edit.png") no-repeat scroll 0 0 transparent;
+    height: 16px;
+    position: relative;
+    top: 5px;
+    width: 11px;
+}
+.brdItemvChoose .vChooseDropDown{
+    border-top: 1px solid #CCCCCC;
+    width: 120px;    
+}
+.topicTreeSubmit{
+    font-size: 16px;
+    padding: 5px 30px;    
+}
+
+.addEditMemberPage,.addEditStudentPage,.addEditOfflineUserPage{
+    margin: 0 auto 75px;
+    width: 565px;    
+}
+.addEditStudentPage{
+    width: 1002px;    
+}
+.addMemHead{
+    color: #333333;
+    font-size: 24px;
+    margin: 40px 0 30px;    
+}
+.memProfileBtns{
+    margin: 12px auto 35px;
+}
+.addMemStepHead{
+    background-color: #F7F7F7;
+    color: #CCCCCC;
+    cursor: pointer;
+    font-size: 20px;
+    margin-bottom: 10px;
+    padding: 12px;
+}
+.addMemStepBodyHead1{
+    font-size: 20px;
+    color: #333333;
+}
+.addMemStepBodyHead2{
+    color: #666666;
+    margin: 12px 0;
+}
+.addMemStepBody{
+    margin: 15px 0 20px 0;
+}
+.addMemStepBodyMain #acadStrTable{
+    width: 770px;
+}
+.addMemDetailsDiv{
+    background-color: #F4F4F4;
+    padding: 30px 30px 15px 30px;
+    position: relative;    
+}
+.addMemDetailsDiv td{
+    padding-bottom: 20px;
+}
+.addMemDetailsDiv .inputDiv{
+    border: medium none;
+    padding: 5px;    
+}
+.finaliseSecsForMem{
+    border: 1px none;
+    bottom: 0;
+    max-width: inherit;
+    padding: 6px 0;
+    position: absolute;
+    width: 100%;   
+}
+.addMemEachCourse{
+    margin-top: 10px;
+}
+.addMemCourseHead{
+    color: #666666;
+    font-size: 14px;
+}
+.addMemProgCenter{
+    background-color: #E0F3F9;
+    color: #666666;
+    font-size: 14px;
+    margin-bottom: 10px;
+    padding: 12px;    
+}
+.addADMINPage .openCoursevChoose,.addEDITORPage .openCoursevChoose,
+.addADMINPage .addMemCourseHead,.addEDITORPage .addMemCourseHead{
+    display: none;
+}
+#addEditPeoplePage .acadStrTableNotFound{
+    display: none;
+}
+.memberPicDiv .qq-upload-cancel{
+    display: none;
+}
+
+
+/*people page*/
+.addPeopleBtn{
+    padding: 1px 45px 3px 40px;
+}
+#peoplePage .cmdsTableSortDiv{
+    bottom: 10px;
+    color: #555555;
+    position: absolute;
+    right: 0;
+}
+.memberTr{
+    vertical-align: top;
+}
+.editPeopleImg{
+    background: url("/public/images/edit.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+    display: inline-block;
+    height: 16px;
+    width: 11px;
+}
+
+/*add edit student*/
+#cmdsPopup.editStudentInfoPopup{
+    padding: 0;
+    width: 1000px;    
+}
+.editStudentInfoPopup>.closePopupDiv{
+    display: none;
+}
+#editBasicInfo,.peoplePageLeftSec{
+    /* border-right: 1px solid #CCCCCC; */
+    float: left;
+    min-height: 500px;
+    padding: 20px;
+    width: 450px;
+}
+.addEditOfflineUserPage #editBasicInfo{
+    float:none;
+    border-right: 0px;
+    min-height: 400px;
+}
+.editStudentInfoHead{
+    color: #333333;
+    font-size: 22px;
+    margin-bottom: 25px;    
+    vertical-align: sub;
+}
+.editBasicInfoTable,.peoplePageLeftSec table{
+    margin-bottom: 40px;
+    width: 430px;
+}
+.addMemDetailsDiv .vChooseHead,
+.addMemDetailsDiv .inputDiv{
+    background-color: #FFFFFF;
+}
+.addMemDetailsDiv input[type="email"],
+.addMemDetailsDiv select,
+.addMemDetailsDiv input[type="text"]{
+    background-color: #FFFFFF;
+    padding: 4px 0;
+    border: 0px;
+}
+#editParentInfo,.peoplePageRightSec{
+    margin-left: 500px;
+    padding: 0 20px 20px;
+    width: 460px;    
+}
+#editParentInfo table,.peoplePageRightSec table{
+    width: 400px;
+}
+#editParentInfo  tr:nth-child(2n-1) td{
+    padding-bottom: 3px
+}
+#editParentInfo tr:nth-child(2n) td{
+    padding-bottom: 20px        
+}
+#editParentInfo tr:nth-child(2n) .inputDiv{
+    width: 150px; 
+}
+.submitStudentInfoDiv{
+    bottom: 10px;
+    position: absolute;
+    right: 25px;   
+    background-color:#F4F4F4;
+}
+.peopleInstiInfo{
+    padding-right: 20px;
+}
+
+
+/*student and member page*/
+.studentPage,.memberPage,.publicProfilePage{
+    margin: 30px 50px;
+}
+.peoplePageLeftSec, .peoplePageRightSec{
+    margin-top: 30px;
+    padding: 0 30px 40px 40px;
+}
+.peoplePageLeftSec td:first-child,.peoplePageRightSec td:first-child{
+    color: #333333;
+    font-size: 13px;
+    font-weight: bold;
+    padding-bottom: 15px;
+    padding-right: 15px;
+    vertical-align: top;
+    width: 120px;
+}
+.peoplePageLeftSec td:last-child,.peoplePageRightSec td:last-child{
+    color: #999999;
+    font-size: 13px;
+    padding-bottom: 15px;
+    padding-right: 15px;
+}
+.mappingsDisplayTable{
+    width: 100% !important;
+    border-collapse: collapse;    
+}
+.mappingsDisplayDiv td{
+    padding: 10px !important;
+    vertical-align: middle !important;
+    border: 1px solid #CCCCCC !important;
+    width: auto !important;
+}
+
+/*channels*/
+.channelsTable{
+    border-collapse: collapse;
+    margin: 50px auto 0; 
+    width: 70%;
+}
+.channelsTable thead{
+    color: #333333;
+    font-size: 15px;
+    font-weight: bold;    
+}
+.channelsTable td{
+    border: 1px solid #CCCCCC;
+    padding: 8px 15px;    
+}
+
+
+/*program pages*/
+#programPage .cmdsTableOptsAndSortDiv,
+#peoplePage .cmdsTableOptsAndSortDiv{
+    padding-top: 35px;
+}
+#programPage .leftSecHeadsDiv{
+    margin: 65px 0 43px;    
+}
+#uploadOfflineTestsHolder{
+    padding: 20px;
+}
+#programPage .filterProgCenterSecDiv{
+    margin-bottom: 30px;
+    margin-top: -15px;
+    text-align: center;    
+}
+#programPage #peoplePage .filterProgCenterSecDiv{
+    margin-bottom: 45px;
+}
+.nonner{
+    display: none;
+}
+
+/* ADD VIDEO/RESOURCE POPUP*/
+#addVideoContainer{
+    padding:20px 40px;
+}
+#addResourcePopupDiv .addResourcePopupTd,
+#addVideoDiv .addVideoTd{
+    vertical-align:top;
+    padding:12px 12px 0 0;
+    min-width:85px;
+}
+#addResourcePopupDiv .addResourcePopupInputTd,
+#addVideoDiv .addVideoInputTd{
+    vertical-align:top;
+}
+#addResourcePopupDiv .textareaDiv,
+#addResourcePopupDiv .inputDiv,
+#addVideoDiv .textareaDiv,
+#addVideoDiv .inputDiv{
+    width:91.5%;
+}
+#addResourcePopupDiv .textareaDiv,
+#addVideoDiv .textareaDiv{
+    height:60px;
+}
+#addResourcePopupContainer .ATHolder,
+#addVideoContainer .ATHolder{
+    margin:0px 0px 15px 0px;
+}
+#addResourcePopupContainer .ATSelectBoxHead,
+#addVideoContainer .ATSelectBoxHead{
+    padding:5px 12px;
+    border:0px;
+}
+.addVideoByUploadTR,
+.addVideoByUrlTR{
+    display:none;
+}
+.addVideoByUpload .addVideoByUploadTR,
+.addVideoByUrl .addVideoByUrlTR{
+    display:table-row;
+}
+.addedVideoPreview.appended{
+    max-width:500px;
+    overflow:auto;
+    background-color:#eee;
+    border:1px solid #ccc;
+    padding:10px;
+    margin-bottom:12px;
+}
+.addedVideoPreview td{
+    padding-bottom:0px;
+}
+/* ADD VIDEO/RESOURCE END */
+/* CORS UPLOAD */
+.corsUploadProgressDiv{
+    width:100%;
+    padding-top:7px;
+}
+.corsUploadProgressDiv .progressBarTd{
+    width:320px;
+}
+.corsUploadProgressDiv .progressBar{
+    height:8px;
+    background-color:#ccc;
+    float:left;
+    width:76.5%;
+    margin-top:4px;
+}
+.corsUploadProgressDiv .progressPercent{
+    color:#666;
+    font-size:13px;
+}
+.corsUploadProgressDiv .progressDone{
+    height:100%;
+    float:left;
+    background-color:#8CC750;
+    width:20%;
+}
+.corsUploadFileName{
+    color:#888;
+    max-width:400px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.corsUploadProgressDiv td{
+    padding-bottom:3px;
+}
+.corsUploadProgressDiv .cancelCorsUpload{
+    color:rgb(196, 33, 33);
+}
+/* CORS UPLOAD END */
+/* DEVICE MANAGEMENT */
+#deviceManagement{
+    min-width:1200px;
+}
+#cmdsSingupMGMTPage .pageHeadGrayDiv,
+#cmdsCustomizeSignupPage .pageHeadGrayDiv,
+#deviceManagement .pageHeadGrayDiv{
+    padding:10px 0 20px;
+    height:20px;
+    color:#666;
+}
+.deviceMngFilters{
+    padding:15px 30px;
+    background-color:#F5F5F5;
+    color:#333;
+}
+#deviceManagement .depthTab{
+    background-color:#FFF;
+    color:#FFF;
+    padding:10px;
+    margin:2px;
+}
+#deviceManagement .depthTab:hover{
+    box-shadow:inset 0px 0px 6px 2px #DDD;
+}
+#deviceManagement .activeDepthTab,
+#deviceManagement .activeDepthTab:hover{
+    box-shadow:inset 0px 0px 12px 5px #CCC;
+}
+.deviceUserFilterOpts .inputDiv{
+    background-color:#FFFFFF;
+    border:1px solid #CCC;
+    width:250px;
+    height:22px;
+}
+.deviceUserFilterOpts .inputDiv:focus{
+    border:1px solid #666;
+}
+#deviceManagement .cmdsTableOptsAndSortDiv{
+    padding-top:5px;
+    border-bottom:0px;
+}
+#deviceManagement .cmdsTableSortDiv{
+    top:60px;
+    position:absolute;
+    right:40px;
+}
+.libraryExportsHolder,
+.userDevicesHolder{
+    background-color:#FFF;
+    padding:10px 0;
+}
+#libraryExportsTable th,
+#userDevicesTable th{
+    font-size:16px;
+    padding:5px 20px;
+    background-color:#FFF;
+    border-bottom:1px solid #CCC;
+    text-align:left;
+}
+#deviceManagement .vChooseUserProfile .vChooseHead{
+    background-color:#FFF;
+    border:1px solid #CCC;
+    font-size:15px;
+}
+.onlineWebIcon,
+.offlineWebIcon,
+.onlineDeviceIcon,
+.offlineDeviceIcon{
+    background-image:url('/public/images/icons/device-icons.png');
+    background-repeat:no-repeat;
+    padding:10px 12px;
+    font-size:1px;
+}
+.onlineWebIcon{
+    background-position:-31px -4px;
+}
+.offlineWebIcon{
+    background-position:-4px;
+}
+.onlineDeviceIcon{
+    background-position:-85px -4px;
+}
+.offlineDeviceIcon{
+    background-position:-58px -4px;
+}
+.deviceIconHolderTable{
+    padding:8px 5px;
+    display:inline-block;
+}
+.deviceIconHolderTable:hover{
+    background-color:#FFF;
+}
+.userDeviceDetailsHold{
+    max-height:400px;
+    overflow:auto;
+    padding:10px 5px;
+}
+.userDeviceDetailsHold .greenTextColor,
+#deviceManagement .greenTextColor{
+    color:#2F6611;
+}
+.vChooseUserDeviceStatus .vChooseHead{
+    width:150px;
+    background-color:#FFF;
+    border:1px solid #CCC;
+}
+.vChooseUserDevices{
+    display:inline-block;
+    width:170px;
+}
+.vChooseUserDevices .vChooseHead{
+    background-color:#FFF;
+    border:1px solid #CCC;
+    color:#666;
+}
+.showAllDevices .deviceClassWEB,
+.showAllDevices .deviceClassMOBILE{
+    display:table-row;
+}
+.showOnlyWebDevices .deviceClassWEB{
+    display:table-row;
+}
+.showOnlyWebDevices .deviceClassMOBILE{
+    display:none;
+}
+.showOnlyMobileDevices .deviceClassWEB{
+    display:none;
+}
+.showOnlyMobileDevices .deviceClassMOBILE{
+    display:table-row;
+}
+/* DEVICE MANAGEMENT END */
+/* LIB EXPORTS */
+#libraryExports{
+    min-width:1200px;
+}
+#libraryExports .pageHeadGrayDiv{
+    padding:10px 0 20px;
+    height:60px;
+    color:#666;
+}
+#libraryExports .cmdsTableOptsAndSortDiv{
+    border:0px;
+    padding:12px 0;
+    z-index:100;
+}
+#libraryExports .cmdsTableSortDiv{
+    position:absolute;
+    right:50px;
+    float:right;
+    top:5px;
+}
+.exportItem .exportBody{
+    padding:10px;
+    border-bottom:1px solid #CCC;
+}
+.libraryExportsHolder .exportItem:nth-child(2n-1) .exportBody{
+    background-color: #F7F7F7;
+}
+.exportDetails{
+    margin:2px 20px;
+    background:#EEE;
+    padding:12px 20px;
+    border-bottom:1px solid #CCC;
+}
+#libraryExports .totalProgressTD{
+    width:85%;
+}
+#libraryExports .cmdsTableSortDiv,
+#libraryExports .filterProgCenterSecDiv{
+    display:inline-block;
+}
+.vChooseExportState{
+    float:right;
+    right:0px;	
+}
+.downloadExport{
+    margin-right:15px;
+}
+/* LIB EXPORTS END */
+.besideEntityTag,
+.incompleteStateTag{
+    color:#FFF;
+    background-color:rgba(204, 102, 102,0.75);
+    margin:2px 4px;
+    padding:1px 5px;
+    font-size:12px;
+    border-radius:5px;
+    position:relative;
+    top:2px;
+    white-space:nowrap;
+}
+.scheduleTestButton{
+    color:#FFF;
+    background-color:#3943ca;
+    margin:2px 4px;
+    padding:1px 5px;
+    font-size:12px;
+    border-radius:5px;
+    position:relative;
+    top:2px;
+    white-space:nowrap;
+    float: right;
+    cursor: pointer;
+}
+#planPage{
+    padding:30px 0;
+    background-color:#F8F8F8;
+}
+.otherPlans,
+.yourPlan{
+    width:500px;
+    margin:20px auto;
+}
+.yourPlan .eachVPlanTable{
+    background-color:#97F697;
+}
+.sampleUploadFile{
+    font-size:12px;
+    color:#666;
+    padding:6px 0;
+    display:none;
+}
+body div.vpopupWrapper{
+    z-index:3050;
+}
+
+/* EXT SIGN UP */
+#cmdsSingupMGMTPage{
+    min-width: 1200px;
+}
+.cmdsSingupMGMTSec{
+    background-color:#EEE;
+    padding:20px 0;
+    min-height:470px;
+}
+.cmdsCustSignupTable,
+.cmdsSignupTable{
+    background-color:#FFF;
+    margin:0 auto;
+    width:auto !important;
+    min-width:700px;
+}
+.cmdsCustSignupTable th,
+.cmdsSignupTable th{
+    background-color:#E2E2E4;
+}
+.cmdsCustSignupTable td.addNewField,
+.cmdsSignupTable th.addNewCategory{
+    background-color:#50B0DD;
+    color:#FFF;
+}
+.cmdsCustSignupTable td.addNewField:hover,
+.cmdsSignupTable th.addNewCategory:hover{
+    background-color: #0099CC;
+}
+.cmdsCustSignupTable .addNewFieldBtn,
+.cmdsSignupTable .addCategoryBtn{
+    cursor:pointer;
+}
+.cmdsCustSignupTable input[type="checkbox"],
+.cmdsSignupTable input[type="checkbox"]{
+    width:20px;
+    height:20px;
+}
+.cmdsSignupTable .pricePerSec{
+    width:60px;
+    font-size:13px;
+    padding:3px 5px;
+}
+.cmdsSignupTable .chooseSecOpenness{
+    padding:3px 10px;
+    font-size:13px;
+}
+.cmdsSignupTable .sectionName{
+    max-width:300px;
+    color:#555;
+}
+.cmdsSignupTable .addCategoryInput{
+    padding:3px 5px;
+    font-size:13px;
+    width:160px;
+}
+.cmdsSignupTable .categoryName{
+    font-size:16px;
+    color:#666;
+    background-color:#EEE;
+    max-width:220px;
+}
+.cmdsCustSignupTable .removeField,
+.cmdsSignupTable .removeCategory{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    background-image:url('/public/images/closePopup.png');
+    background-repeat:no-repeat;
+    cursor: pointer;
+    vertical-align: super;
+    margin-left:4px;
+}
+.cmdsSignupTable .removeCategory{
+    position: relative;
+    right: 0px;
+    float: right;
+}
+.cmdsCustSignupTable .removeField{
+    vertical-align: middle;
+}
+.cmdsCustSignupTable .removeField:hover,
+.cmdsSignupTable .removeCategory:hover{
+    background-image:url('/public/images/closePopupHovered.png');
+}
+.cmdsSignupTable .blueButton{
+    min-width: 50px;
+    padding: 6px 4px;
+}
+.customizeSignupBtn{
+    right:45px;
+}
+.cmdsCustSignupTable td{
+    color:#666;
+}
+.cmdsCustSignupTable .addNewFieldInput{
+    padding:4px 10px;
+    font-size:14px;
+    width:230px;
+}
+.cmdsCustSignupTable .addNewFieldType{
+    padding: 4px 3px;
+    font-size: 13px;
+}
+.submitThisNewFieldForSignup{
+    padding: 5px 20px;
+    vertical-align: top;
+    top: 1px;
+    position: relative;
+}
+.chooseCurrencyPopup{
+    width:300px;
+    min-height:80px;
+    text-align:center;
+}
+.chooseCurrencySignup{
+    padding:5px 10px;
+    font-size:15px;
+    border:1px solid #CCC;
+}
+.vpopupBodyHolder{
+    margin:20px 0;
+    border-radius: 10px;
+}
+.dropDownValueForSignup{
+    width: 300px;
+}
+.addNewDropDownInputForSignup,.removeDropDownInputForSignup{
+    cursor: pointer;
+    background-color: #EEEEEE;
+    padding: 4px 5px;
+
+}
+.entryForDropDown:last-child {
+    margin-bottom: 20px;
+}
+.entryForDropDown:nth-child(2) .removeDropDownInputForSignup {
+    visibility: hidden;
+}
+
+/*module pages*/
+#modulePage {
+    background-color: #F7F7F7;
+    padding-right: 65px;
+}
+#modulePage #mainSection {
+    /* border-right: 1px solid #CCCCCC; */
+    min-height: 700px;
+}
+.moduleTitleDiv {
+    background-color: #F7F7F7;
+    padding: 27px 0 20px 60px;
+}
+.moduleTitleTextHead {
+    color: #333333;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+.moduleTitleTextBox {
+    background-color: #61A200;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 3px;
+    display: inline-block;
+    height: 19px;
+    vertical-align: sub;
+    width: 20px;
+}
+.moduleTitleInputDiv{
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    margin-top: 5px;
+    margin-bottom: 14px;
+    width: 400px;
+    border-radius: 10px;
+}
+#moduleTitleInput,#moduleTitle {
+    background-color: #FFFFFF;
+    color: #333333;
+    font-size: 16px;
+}
+#moduleTitle{
+    background-color: transparent;
+    line-height: 21px;
+}
+.modulePageView .moduleTitleInputDiv{
+    background-color: #F7F7F7;
+    border-color: transparent;
+    display: inline-block;
+    padding-left: 0;
+}
+.modulePageView .moduleTitleInputDiv:hover,.modulePageView .inputDivFocused{
+    border-color: #CCCCCC;
+    background-color: #FFFFFF;
+}
+.modulePageView #moduleTitleInput{
+    background-color: #F7F7F7;    
+}
+.modulePageView .inputDivFocused #moduleTitleInput,
+.modulePageView #moduleTitleInput:hover{
+    background-color: #FFFFFF;
+}
+.moduleMainSectionHead{
+    color: #333333;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    margin-top: 45px;
+    padding-left: 60px;    
+}
+#moduleEntriesHolder {
+    padding: 0 50px 0 60px;
+}
+.moduleEntryTopicTypeWithInput:hover,.moduleEntryContentType:hover .moduleEntryContentTypeMainSec{
+    background-color: #FFFED1;
+}
+.moduleEntryLeftSec {
+    color: #333333;
+    font-size: 18px;
+    margin-right: 300px;
+    padding-left: 15px;
+    position: relative;
+}
+.moduleEntryTopicType .moduleEntryLeftSec{
+    padding-left: 20px;
+}
+.moduleEntryRightSec {
+    text-align: center;
+    float: right;
+}
+.scheduleTestInModule{
+    display:inline-block;
+    position:relative;
+    bottom: 10px;
+    right: 20px;
+    padding: 1px 5px;
+    background: #3943ca;
+    cursor: pointer;
+    color:white;
+    border-radius: 5px;
+    z-index: 1;
+}
+.scheduleTestInModule img{
+    top:2px;
+    position: relative;
+}
+.moduleEntryAddNotation {
+    background-color: #6ABBFF;
+    border-radius: 25px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: bold;
+    height: 20px;    
+    line-height: 18px;    
+    text-align: center;
+    width: 20px;
+}
+.moduleEntryAddNewTopicType{
+    left: 0;
+    position: absolute;
+    visibility: hidden;
+    top: -12px;
+}
+.moduleEntryTopicType + .moduleEntryContentType .moduleEntryAddNewTopicType{
+    display: none;
+}
+.moduleEntry:hover .moduleEntryAddNotation{
+    visibility: visible;
+}
+.moduleEntryMoveNotation {
+    background: url("/public/images/module/move.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    cursor: move;
+    display: inline-block;
+    height: 62px;
+    left: 3px;
+    position: absolute;
+    top: -13px;
+    visibility: hidden;
+    width: 10px;
+}
+.moduleEntryTopicType .moduleEntryMoveNotation{
+    top: -21px;
+}
+.moduleEntry:hover .moduleEntryMoveNotation{
+    visibility: visible;
+}
+.moduleEntryDeleteNotation{
+    background: url("/public/images/module/delete.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+    display: inline-block;
+    height: 22px;
+    margin: 0 15px 5px;
+    visibility: hidden;
+    width: 17px;
+}
+.moduleEntry:hover .moduleEntryDeleteNotation{
+    visibility: visible;
+}
+.moduleEntryTopicTitleCount {
+    background-color: #999999;
+    border-radius: 25px;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    height: 20px;
+    line-height: 18px;
+    text-align: center;
+    vertical-align: text-top;
+    width: 20px;
+}
+.moduleEntryFinalised .moduleEntryTopicTitleCount {
+    background-color: #666666;
+}
+.moduleEntryLeftSec .resourceIconASSIGNMENT{
+    margin-right: 8px;
+}
+.moduleContentNo {
+    font-weight: bold;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+.moduleEntryContentTypeMainSec .cmdsaPush{
+    color: #333333;
+    font-size: 16px;
+}
+.moduleEntryContentTypeMainSec .cmdsaPush .singleLineText{
+    display: inline-block;
+    max-width: 350px;
+}    
+.moduleEntryLeftSec .incompleteStateTag{
+    font-size: 10px;
+    position: relative;
+    top: -1px;
+}
+.moduleContentStat {
+    color: #999999;
+    font-size: 13px;
+    margin-left: 26px;
+    margin-top: 4px;
+}
+.moduleEntry .vChoose{
+    width: 190px;
+}
+.moduleEntry .vChooseHead{
+    color: #333333;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+.moduleEntryTopicType{
+    padding: 20px 0;
+}
+.moduleEntryContentType {
+    margin: 5px 0 0 20px;
+    padding: 0 0 0 30px;
+    position: relative;
+}
+.moduleEntryContentTypeMainSec {
+    padding: 10px 0;
+}
+.moduleEntryContentType .moduleEntryLeftSec {
+    padding-left: 18px;
+}
+.moduleEntryTopicTypeAddBoxDiv:hover{
+    background-color: #FFFFFF;
+}
+.moduleEntryTopicTypeWithInput {
+    border-bottom: 5px solid rgba(0, 0, 0, 0);
+    margin-bottom: 5px;
+    padding: 10px 0;
+}
+.moduleEntryTopicTypeWithInput .moduleEntryDeleteNotation{
+    margin-top: 10px;
+}
+.moduleEntryTopicInputDiv {
+    background-color: #FFFFFF;
+    display: inline-block;
+    padding-left: 0;
+    width: 460px;
+}
+.moduleEntryTopicInputDivGrayed , .moduleEntryTopicInputDivGrayed .moduleEntryTopicInput{
+    background-color: #F7F7F7 !important;
+    color: #666666;
+    font-weight: normal;
+    text-indent: 5px;
+}
+.moduleEntryTopicInput {
+    background-color: #FFFFFF !important;
+    font-size: 18px !important;
+    font-weight: bold;
+}
+.moduleAddContentButtonDiv {
+    margin: 20px 0 50px 65px;
+    padding-left: 50px;
+}
+.moduleEntryAddContentButtonDiv{
+    margin: 20px 0 10px 5px;
+}
+#popupResources td:first-child{
+    padding-top: 10px;
+}
+.addContentToTopic {
+    display: inline-block;
+    margin-top: 13px;
+    vertical-align: top;
+    visibility: hidden;
+}
+.moduleEntryFinalised:hover .addContentToTopic{
+    visibility: visible;
+}
+#topicDotsLiner{
+    background-color: #EEEEEE;
+    height: 100px;
+    position: absolute;
+    width: 1px    
+}
+.addContentToModule span {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 0;
+    margin-right: 7px;
+    vertical-align: sub;
+}
+.moduleSaveDiv{
+    border-top: 1px solid #CCCCCC;
+    margin: 60px 50px 0;
+    padding: 10px 55px 50px 0;
+    text-align: right;    
+}
+.moduleRunInfo{
+    margin-left: 45px;
+}
+.moduleEntryMoveDisplayer{
+    background-color: #EEEEEE;
+    height: 5px;
+    margin-left: 18px;
+    margin-right: 50px;
+    visibility: hidden;
+}
+.moduleEntryTopicType .moduleEntryMoveDisplayer{
+    margin-left: 55px;
+}
+/*payment info table*/
+.paymentInfoTable {
+    border-collapse: collapse;
+}
+.paymentInfoTable td {
+    border: 1px solid #CCCCCC;
+    padding: 10px 5px !important;
+}
+.addPlaceHolderInSignup,
+.inputRegexpForSignup{
+	padding: 2px 5px;
+	font-size:13px;
+	border: 1px solid #CCC;
+}
+.vChooseSDCardPage .vChooseActive,
+.vChooseSDCardPage .vChooseHead{
+	background-color:#63bbe8;
+	padding: 4px 25px 4px 10px;
+	color:#FFF;
+}
+.vChooseSDCardPage .vChooseDropDown{
+	background-color:#4aa0cc;
+	color:#FFF;
+	border:0;
+	box-shadow:none;
+}
+.vChooseSDCardPage .vChooseOptTicked,
+.vChooseSDCardPage .vChooseOpt{
+	color:#FFF;
+	border:0;
+}
+.vChooseSDCardPage .vChooseOptActive,
+.vChooseSDCardPage .vChooseOptTicked{
+	background-color:#63bbe8;
+}
+.vChooseSDCardPage .vChooseDownIcon{
+    background: url("/public/images/downArrowWhite.png") no-repeat scroll 0 center transparent;
+    width: 10px;    
+}
+.vChooseSDCardPage .sdCardImage{
+	height:20px;
+	display:inline-block;
+	margin-right:5px;
+}
+.sectionContentEntity.disable{
+	opacity:0.5;
+}
+/* SD-CARD Exports */
+#sdCardCreatePopup{
+	min-width:440px;
+	min-height:300px;
+}
+.sdCardCreateTopBar{
+	padding:17px 20px 15px;
+	background-color:#EEE;
+	text-align:center;
+}
+.sdCardCreateBody{
+	padding:26px 40px 34px;
+}
+.sdCardCreateBody .topMargin{
+	margin-top:30px;
+}
+.sdCardCreateBody .title{
+	color:#333;
+	font-size:14px;
+	font-weight:bold;
+	padding-bottom:5px;
+}
+.eachSDCardSize{
+	padding-top:7px;
+	height:40px;
+	text-align:center;
+	width:26px;
+}
+.eachSDCardSize.selected div{
+	color:#50A4CE;
+}
+.eachSDCardSize.selected .selectSdCardSize{
+	background-color:#50A4CE;
+}
+.eachSDCardSize.disabled{
+	opacity:0.3;
+}
+.eachSDCardSize.disabled .selectSdCardSize{
+	cursor:default;
+}
+.selectSdCardSize{
+	display:inline-block;
+	width:16px;
+	height:16px;
+	border-radius:8px;
+	background-color:#DDD;
+	cursor:pointer;
+}
+.sdCardSize{
+	font-size:30px;
+	font-weight:bold;
+	line-height:32px;
+	color:#333;
+}
+.sdCardSizeUnit{
+	font-size:13px;
+	color:#999;	
+}
+.sdCardCreateBody .blueButton{
+	padding:10px 45px;
+	font-size:16px;
+}
+.sgCreateProgressBar{
+	width:96%;
+	margin:6px 0;
+}
+#sdCardGroupsPage,
+#sdCardGroupPage{
+	background-color: #F2F2F2;
+	min-height:100%;
+}
+#sdCardGroupsPage .pageHolderM,
+#sdCardGroupPage .pageHolderM{
+	background-color:#FFF;
+	border:1px solid #DDD;
+	border-top:0px;
+	padding:30px 50px;
+	min-height:500px;
+}
+.sdgSaveBtn{
+	padding:6px 40px 6px;
+	font-size:16px;
+	color:#FFF;
+	min-width:0px;
+}
+.sdgCancel{
+	color:#d14444;
+	padding-left:18px;
+	text-decoration:underline;
+	font-size:14px;
+}
+.sdgCardsHolder{
+	margin:16px 0;
+	border-bottom:1px solid #333;
+}
+.sdgCardsHolder.moveContent{
+	position:relative;
+	z-index:200;
+}
+.sdgEachCard{
+	display:inline-block;
+	width:195px;
+	padding:20px 27px 17px;
+	height:50px;
+	background-color:#EEE;
+	margin-right:-1px;
+	cursor:pointer;
+}
+.sdCardSprite{
+	background-image:url('/public/images/sdCardSprite.png');
+	font-size:1px;
+	display:inline-block;
+}
+.sdgCardIcon{
+	width:45px;
+	height:48px;
+	background-position:-75px -25px;
+	position:relative;
+	z-index:2;
+}
+.sdgCardIconBgHolder{
+	background-color:#FFF;
+	height:48px;
+	width:45px;
+	position:relative;
+	z-index:1;
+	top:-52px;
+	overflow:hidden;
+}
+.sdgCardIconBg{
+	background-color:#8CC750;
+	bottom:4px;
+	width:100%;
+	height:50%;
+	position: absolute;
+}
+.sdgCardNm{
+	color:#0099CC;
+	font-size:16px;
+	font-weight:bold;
+}
+.sdgCardFree,
+.sdgCardCapacity{
+	color:#666;
+	font-size:12px;
+}
+.sdgCards{
+	height:87px;
+	overflow:hidden;
+}
+.sdgCardsScroll{
+	white-space: nowrap;
+	position: relative;
+	left: 0px;
+}
+.sdgEachCard.active{
+	background-color:#666;
+	cursor:default;
+}
+.sdgEachCard.active .blackTextColor,
+.sdgEachCard.active .sdgCardNm,
+.sdgEachCard.active .sdgCardFree,
+.sdgEachCard.active .sdgCardCapacity{
+	color:#FFF;
+}
+.sdgEachCard.active .sdgCardIcon{
+	background-position:-23px -25px;
+}
+.sdgPrevArrow,
+.sdgNextArrow{
+	width:27px;
+	height:27px;
+	cursor:pointer;
+}
+.sdgPrevArrow{
+	background-position:-24px -88px;
+	float:left;
+	margin-left:-30px;
+	margin-top:30px;
+	position:absolute;
+}
+.sdgNextArrow{
+	background-position:-57px -88px;
+	float:right;
+	margin-right:-30px;
+	margin-top:-55px;
+	position:relative;
+}
+.sdgPrevArrow.disable,
+.sdgNextArrow.disable{
+	opacity:0.3;
+	cursor:default;
+}
+.sdCardGroupIcon{
+	height:30px;
+	width:27px;
+	background-position:-94px -85px;
+}
+.sdgExistGroups{
+	padding:20px 0;
+}
+.sdgEachGroup{
+	padding:20px;
+	background-color:#EEE;
+	margin:0 25px 13px 0;
+	width:432px;
+	display:inline-block;
+	border:1px solid #EEE;
+}
+.sdgEachGroup:hover{
+	border:1px solid #333;
+}
+.moveSdCardContent{
+	padding: 2px 8px;
+	font-size: 14px;
+}
+#sdgContentBlackout{
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+	z-index:100;
+	background-color:rgba(0,0,0,0.85);
+	display:none;
+	opacity:0;
+}
+.sdgContentMoveHelp{
+	text-align:center;
+	font-size:20px;
+	line-height:22px;
+	color:rgba(255,255,255,0.85);
+	font-weight:bold;
+	max-width:800px;
+	margin:30px auto 0;
+}
+#moveSdContentInfo{
+	padding:10px 0;
+	background-color:#99d6eb;
+	width:800px;
+	margin:140px auto 0;
+	position:relative;
+}
+#sdgContentBlackout .closeContentMove{
+	float:right;
+	right:0px;
+	padding:20px;
+	font-size:24px;
+	font-weight:bold;
+	color:#FFF;
+	cursor:pointer;
+}
+#moveSdContentInfo .closeContentMove{
+	font-size: 15px;
+	vertical-align: middle;
+	padding: 0px 10px;
+	color: #333;
+}
+#moveSdContentInfo .entityNameDiv{
+	display:inline-block;
+	padding-left:10px;
+}
+/* SD-CARD Exports END */
+/* INVENTORY */
+#qrOrgSellerDashboard{
+	background-color: #F2F2F2;
+	min-height: 100%;
+}
+#qrOrgSellerDashboard .pageHeadGrayDiv{
+	height:22px;
+	padding:10px 50px 10px 30px;
+}
+#qrOrgSellerDashboard #leftSection{
+	width:150px;
+}
+#qrOrgSellerDashboard .bigLoader{
+	margin-top:0px;
+	padding-top:50px;
+}
+#qrOrgSellerDashboard #mainSection{
+	min-height:700px;
+	margin-left: 180px;
+}
+#qrShipmentsPage,
+#qrInventoryPage{
+	min-height:100%;
+	padding:20px 25px;
+}
+.qrInventoryTable{
+	width:100%;
+	border-color:#CCC;
+	border-spacing:0px;
+}
+.qrInventoryTable th{
+	color:#666;
+	font-size:15px;
+	padding:10px 5px;
+}
+.qrInventoryTable td{
+	padding:8px 10px;
+	font-size:13px;
+}
+.qrInventoryTable select{
+	padding:5px 10px;
+	background-color:#F1F1F1;
+	min-width:50px;
+	font-size:14px;
+	cursor:pointer;
+	outline:none;
+}
+.qrInventoryTable select:focus{
+	border:1px solid #333;
+}
+.invShipmentState.stateNOT_DISPATCHED{
+	background-color:#F35656;
+	color:#FFF;
+} 
+.invShipmentState.stateDISPATCHED{
+	background-color:#6CF377;
+} 
+.invShipmentState.stateRECEIVED{
+	background-color:#46AC4E;
+	color:#FFF;
+} 
+.newInventoryPopup{
+	padding:10px;
+}
+.newInventoryEntryTable{
+	padding:15px;
+	width:600px;
+	background-color:#F4F4F4;
+}
+.newInventoryEntryTable th{
+	font-size:14px;
+	color:#555;
+	padding:5px 7px;
+	width:120px;
+}
+.newInventoryEntryTable td{
+	padding:5px;
+}
+.searchInventoryInput,
+.newInventoryEntryTable textarea,
+.newInventoryEntryTable input{
+	padding:4px 8px;
+	font-size:14px;
+	color:#333;
+	height:16px;
+	width:200px;
+	margin-bottom:5px;
+}
+.newInventoryEntryTable textarea{
+	height:40px;
+}
+.newInventoryEntryTable input[type="checkbox"]{
+	width:15px;
+	height:15px;
+}
+.newInventoryEntryTable .invSellPoint{
+	width:250px;
+	margin-right:10px;
+}
+.searchInventoryInput:focus,
+.newInventoryEntryTable textarea:focus,
+.newInventoryEntryTable select:focus,
+.newInventoryEntryTable input:focus{
+	border:1px solid #333;
+	outline:none;
+}
+.searchInventoryInput::-webkit-input-placeholder,
+.newInventoryEntryTable textarea::-webkit-input-placeholder,
+.newInventoryEntryTable input::-webkit-input-placeholder{
+	font-style: italic;
+	font-size:12px;
+	color:#999;
+}
+.searchInventoryInput:-moz-placeholder,
+.newInventoryEntryTable input:-moz-placeholder{
+	font-style: italic;
+	font-size:12px;
+	color:#999;
+}
+.newInventoryEntryTable select{
+	font-size:13px;
+	padding:4px 6px;
+	height:26px;
+	color:#444;
+	margin:0px;
+}
+#qrOrgSellerDashboard .cmdsTableOptsAndSortDiv{
+	margin:0px;
+	position:absolute;
+	width: 91%;
+}
+#qrOrgSellerDashboard #tableSection{
+	padding-top:65px;
+}
+#qrOrgSellerDashboard .headSecTableDiv,
+#qrOrgSellerDashboard #fixedSec {
+	padding: 0;
+}
+.shipmentAddressValue{
+	padding:12px 20px;
+	min-width:500px;
+	max-width:800px;
+}
+.shipmentAddressTable{
+	margin-right:10px;
+	padding:15px 10px;
+	background-color:#EEE;
+}
+.shipmentAddressTable th{
+	color:#666;
+	font-size:14px;
+	vertical-align:top;
+}
+.shipmentAddressTable td{
+	color:#333;
+	font-size:13px;
+	padding-bottom:12px;
+}
+input.chooseSellableEntityId{
+	width:234px;
+	margin-bottom: 1px;
+}
+.cmdsEntityList{
+	position:absolute;
+	right:46px;
+	min-height:5px;
+	width:250px;
+	padding-top: 2px;
+	background-color:#CCC;
+	border:1px solid #999;
+	z-index:100;
+}
+.cmdsEntityListItem{
+	padding:4px 6px;
+	background-color:#EEE;
+	color:#666;
+	font-size:13px;
+	cursor:pointer;
+	margin-bottom:2px;
+}
+.cmdsEntityListItem:hover,
+.cmdsEntityListItem.selected{
+	color:#333;
+	background-color:#FFF;
+}
+.qrInvItemList{
+	vertical-align: middle;
+	margin-left: 15px;
+	list-style-type: disc;
+}
+.searchInventoryInput{
+	border:1px solid #CCC;
+	width:130px;
+	font-size:12px;
+}
+select.invSellPoint{
+	padding: 4px 8px;
+	font-size: 12px;
+	margin-bottom: 5px;
+}
+.addNewInvItem{
+	vertical-align: sub;
+}
+.allowedDevicesPopup{
+	width:300px;
+	padding:10px;
+}
+.eachDeviceId{
+	padding:3px 8px;
+	background-color:#EEE;
+	color:#666;
+	font-size:13px;
+	margin-bottom:3px;
+	border-radius:5px;
+}
+.addDeviceIdInput{
+	padding:1px 5px;
+	font-size:13px;
+	height:13px;
+}
+.addDeviceIdInput:focus{
+	border:1px solid #333;
+}
+/* INVENTORY END */
+/* NOTIFICATION GCM */
+#qrOrgNotification{
+    background-color: #F2F2F2;
+    min-width: 1200px;
+}
+#qrOrgNotification .pageHeadGrayDiv{
+    padding:10px 0 20px;
+    height:20px;
+    color:#666;
+}
+/* NOTIFICATION GCM END */
+div#vMessagePopup{
+	z-index:4000;
+}
+.condenseText,
+.entityEditableDesc{
+	max-width:550px;
+}
+#qrOrgSellerDashboard .cmdsTable td, .headSecTable td{
+	padding: 9px 0 7px 10px;
+}
+/* COUPONS DASHBOARD */
+#qrOrgCouponsDashboard{
+    background-color: #F2F2F2;
+    min-height: 100%;
+}
+#qrOrgCouponsDashboard .pageHeadGrayDiv{
+    height:22px;
+    padding:10px 50px 10px 30px;
+}
+#qrOrgCouponsDashboard #leftSection{
+    width:150px;
+}
+#qrOrgCouponsDashboard .bigLoader{
+    margin-top:0px;
+    padding-top:50px;
+}
+#qrOrgCouponsDashboard #mainSection{
+    min-height:700px;
+    margin-left: 180px;
+}
+
+#qrCouponsPage{
+    min-height:100%;
+    padding:20px 25px;
+}
+.qrCouponsTable{
+    width:100%;
+    border-color:#CCC;
+    border-spacing:0px;
+}
+.qrCouponsTable th{
+    color:#666;
+    font-size:15px;
+    padding:10px 5px;
+}
+.qrCouponsTable td{
+    padding:8px 10px;
+    font-size:13px;
+}
+.qrCouponsTable select{
+    padding:5px 10px;
+    background-color:#F1F1F1;
+    min-width:50px;
+    font-size:14px;
+    cursor:pointer;
+    outline:none;
+}
+.qrCouponsTable select:focus{
+    border:1px solid #333;
+}
+.newCouponPopup{
+    padding:10px;
+}
+.newCouponEntryTable{
+    padding:15px;
+    width:600px;
+    background-color:#F4F4F4;
+}
+.newCouponEntryTable tr.nonner{
+    display: none;
+}
+.newCouponEntryTable th{
+    font-size:14px;
+    color:#555;
+    padding:5px 7px;
+    width:300px;
+}
+.newCouponEntryTable td{
+    padding:5px;
+}
+.newCouponEntryTable textarea,
+.newCouponEntryTable input{
+    padding:4px 8px;
+    font-size:14px;
+    color:#333;
+    height:16px;
+    width:250px;
+    margin-bottom:5px;
+}
+.newCouponEntryTable textarea{
+    height:40px;
+}
+.newCouponEntryTable input[type="checkbox"]{
+    width:15px;
+    height:15px;
+}
+.newCouponEntryTable textarea:focus,
+.newCouponEntryTable select:focus,
+.newCouponEntryTable input:focus{
+    border:1px solid #333;
+    outline:none;
+}
+
+.newCouponEntryTable textarea::-webkit-input-placeholder,
+.newCouponEntryTable input::-webkit-input-placeholder{
+    font-style: italic;
+    font-size:12px;
+    color:#999;
+}
+
+.newCouponEntryTable input:-moz-placeholder{
+    font-style: italic;
+    font-size:12px;
+    color:#999;
+}
+.newCouponEntryTable select{
+    font-size:13px;
+    padding:4px 6px;
+    height:26px;
+    color:#444;
+    margin:0px;
+}
+.disabledCouponInput {
+    background-color: #CCC;
+}
+.couponActionBtn {
+    font-size:16px;
+    cursor:pointer;
+    border:1px solid #50B0DD;
+    padding: 5px 10px;
+}
+.editCouponBtn{
+    background-color:#50B0DD;
+    color:#EFFBFB;
+}
+.deleteCouponBtn{
+    background-color:#CC3333;
+    color:#EFFBFB;
+}
+/* COUPONS END */
+
+.packageInfoPopup{
+    padding:10px;
+}
+.packageInfoPopup input{
+    padding:4px 8px;
+    font-size:14px;
+    color:#333;
+    height:16px;
+    width:125px;
+    margin-top: 10px;
+    margin-bottom:10px;
+    margin-left:8px;
+}
+.packageInfoTable{
+    padding:15px;
+    width:500px;
+    background-color:#F4F4F4;
+}
+.packageInfoTable input{
+    padding:4px 8px;
+    font-size:14px;
+    color:#333;
+    height:16px;
+    width:100px;
+    margin-top: 0px;
+    margin-bottom:5px;
+    margin-left: 0px;
+}
+.packageInfoTable td{
+    padding:5px;
+}
+.packageInfoTable input:focus{
+    border:1px solid #333;
+    outline:none;
+}
+.packageInfoTable th{
+    font-size:14px;
+    color:#555;
+    padding:5px 7px;
+    width:300px;
+}
+.packageInfoHeading{
+    font-size:14px;
+    color:#555;
+    padding:5px 7px;
+    width:300px;
+    margin:auto;
+}
+.noPackagesText{
+    padding:15px;
+    width:400px;
+}
+.packageActionBtn {
+    font-size:13px;
+    cursor:pointer;
+    border:1px solid #50B0DD;
+    padding: 2px 10px;
+}
+.editPackageBtn {
+    background-color:#50B0DD;
+    color:#EFFBFB;
+}
+.deletePackageBtn {
+    background-color:#CC3333;
+    color:#EFFBFB;
+}
+
+/* Customize Digital Library */
+.manageDigLibraryBtn{
+    left:45px;
+}
+#cmdsSingupMGMTPage{
+    min-width: 1200px;
+}
+.cmdsDigitalLibrarySec{
+    background-color:#EEE;
+    padding:20px 0;
+    min-height:470px;
+}
+.cmdsCustDigitalLibraryTable{
+    background-color:#FFF;
+    margin:0 auto;
+    width:auto !important;
+    min-width:700px;
+}
+.cmdsCustDigitalLibraryTable th{
+    background-color:#E2E2E4;
+}
+.cmdsCustDigitalLibraryTable input[type="checkbox"]{
+    width:20px;
+    height:20px;
+}
+.cmdsCustDigitalLibraryTable td{
+    color:#666;
+}
+/* Customize Digital Library END */
+/*Send Email's Popup*/
+.sendEmailPopup{
+    padding:10px;
+}
+.sendingEmailTable{
+    padding:15px;
+    width:600px;
+    background-color:#F4F4F4;
+    margin-top: 2%;
+}
+.sendingEmailTable tr.nonner{
+    display: none;
+}
+.sendingEmailTable th{
+    font-size:14px;
+    color:#555;
+    padding:5px 7px;
+    width:30%;
+}
+.sendingEmailTable td{
+    padding:5px;
+}
+.sendingEmailTable textarea,
+.sendingEmailTable input{
+    padding:4px 8px;
+    font-size:14px;
+    color:#333;
+    height:16px;
+    width:95%;
+    margin-bottom:5px;
+}
+.sendingEmailTable textarea{
+    height:100%;
+}
+.sendingEmailTable input[type="checkbox"]{
+    width:15px;
+    height:15px;
+}
+.sendingEmailTable textarea:focus,
+.sendingEmailTable select:focus,
+.sendingEmailTable input:focus{
+    border:1px solid #333;
+    outline:none;
+}
+
+.sendingEmailTable textarea::-webkit-input-placeholder,
+.sendingEmailTable input::-webkit-input-placeholder{
+    font-style: italic;
+    font-size:12px;
+    color:#999;
+}
+
+.sendingEmailTable input:-moz-placeholder{
+    font-style: italic;
+    font-size:12px;
+    color:#999;
+}
+.sendingEmailTable select{
+    font-size:13px;
+    padding:4px 6px;
+    height:26px;
+    color:#444;
+    margin:0px;
+}
+.paymentEntryDeleteNotation{
+    background: url("/public/images/module/delete.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+    display: inline-block;
+    height: 16px;
+    margin: 0 5px 5px;
+    width: 20px;
+}
+.paymentEntryDeleteTd{
+    width: 25px;
+    max-width: 25px;
+    float: right;
+}
+/* SALE DETAILS DASHBOARD */
+#qrOrgSaleDetailsDashboard{
+    background-color: #F2F2F2;
+    min-height: 100%;
+}
+#qrOrgSaleDetailsDashboard .pageHeadGrayDiv{
+    height:22px;
+    padding:10px 50px 10px 30px;
+}
+#qrOrgSaleDetailsDashboard #leftSection{
+    width:150px;
+}
+#qrOrgSaleDetailsDashboard .bigLoader{
+    margin-top:0px;
+    padding-top:50px;
+}
+#qrOrgSaleDetailsDashboard #mainSection{
+    min-height:700px;
+    margin-left: 180px;
+}
+
+#qrSaleDetailsPage{
+    min-height:100%;
+    padding:20px 25px;
+}
+.qrSaleDetailsTable{
+    width:100%;
+    border-color:#CCC;
+    border-spacing:0px;
+}
+.qrSaleDetailsTable th{
+    color:#666;
+    font-size:15px;
+    padding:10px 5px;
+}
+.qrSaleDetailsTable td{
+    padding:8px 10px;
+    font-size:13px;
+}
+.qrSaleDetailsTable select{
+    padding:5px 10px;
+    background-color:#F1F1F1;
+    min-width:50px;
+    font-size:14px;
+    cursor:pointer;
+    outline:none;
+}
+.qrSaleDetailsTable select:focus{
+    border:1px solid #333;
+}
+
+/* SALE DETAILS END */
+/*Set Test password popup*/
+.testPasswordPopup{
+    padding:10px;
+}
+.settingPasswordTable{
+    padding:15px;
+    /*width:600px;*/
+    background-color:#F4F4F4;
+    margin-top: 2%;
+}
+.settingPasswordTable tr.nonner{
+    display: none;
+}
+.settingPasswordTable th{
+    font-size:14px;
+    color:#555;
+    padding:5px 7px;
+    width:30%;
+}
+.settingPasswordTable td{
+    padding:5px;
+}
+.settingPasswordTable textarea,
+.settingPasswordTable input{
+    padding:4px 8px;
+    font-size:14px;
+    color:#333;
+    height:16px;
+    width:95%;
+    margin-bottom:5px;
+}
+.settingPasswordTable textarea{
+    height:100%;
+}
+.settingPasswordTable input[type="checkbox"]{
+    width:15px;
+    height:15px;
+}
+.settingPasswordTable textarea:focus,
+.settingPasswordTable select:focus,
+.settingPasswordTable input:focus{
+    border:1px solid #333;
+    outline:none;
+}
+
+.settingPasswordTable textarea::-webkit-input-placeholder,
+.settingPasswordTable input::-webkit-input-placeholder{
+    font-style: italic;
+    font-size:12px;
+    color:#999;
+}
+
+.settingPasswordTable input:-moz-placeholder{
+    font-style: italic;
+    font-size:12px;
+    color:#999;
+}
+.settingPasswordTable select{
+    font-size:13px;
+    padding:4px 6px;
+    height:26px;
+    color:#444;
+    margin:0px;
+}
+.paymentEntryDeleteNotation{
+    background: url("/public/images/module/delete.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+    display: inline-block;
+    height: 16px;
+    margin: 0 5px 5px;
+    width: 20px;
+}
+.paymentEntryDeleteTd{
+    width: 25px;
+    max-width: 25px;
+    float: right;
+}
+.simplifySubjectNames{
+    margin-left: 45px;
+}
+.radioEnableText{
+    font-size: 12px;
+}
+.partialMarksRadioDiv{
+    /*margin-right: 15px;*/
+}
+.hiddenOption{
+    top: 25px;
+    position: absolute;
+    right: 25px;
+}
+#previewTestPage .ASSIGNMENT .viewTestStats{
+    top:70px;
+    position: relative;
+}
+.btnGroup{
+    top:65px;
+}
+.testPageDetails .instItemStgs {
+    width: 20px;
+    height: 20px;
+    margin-top: -11px;
+    background-color: #eee;
+    /*visibility: hidden;*/
+}
+.testPageDetails .instItemStgs .instImgs {
+    padding: 7px;
+    background-position: -460px -3px;
+    cursor: pointer;
+    overflow: hidden;
+    float: left;
+    margin: 4px 3px;
+}
+.testPageDetails .instImgs {
+    background-image: url(/public/images/LMS/inst-sprite.png);
+    background-repeat: no-repeat;
+    font-size: 1px;
+}
+.testPageDetails .instItemStgsDropped {
+    position: absolute;
+    min-width: 200px;
+    border: 1px solid #ccc;
+    margin-left: -47px;
+    background-color: #fff;
+    margin-top: -1px;
+    right: 10px;
+    /*visibility: hidden;*/
+}
+.testPageDetails .instItemStgsDropped div {
+    padding: 5px 15px;
+    min-width: 175px;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+}
+.testPageDetails:hover .instItemStgs,
+.testPageDetails:hover .instItemStgsDropped{
+    visibility: visible;
+}
+.btnHolderText{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.exportBtnHolder .studentsSignupData,.exportBtnHolder .offlineStudentsData{
+    max-width: 100px;
+}
+.exportBtnHolder{
+    bottom: 15px;
+    position: relative;
+}
+.testSettings{
+    position: absolute;
+    bottom:10px;
+    right: 25px;
+}
+.tableCellTitle{
+    width: 175px;
+}
+.checkBoxTestOptions{
+    position: relative;
+    top: 10px;
+    padding: 5px 10px;
+    left: 2px;
+    border: none;
+}
+.testState{
+    left: 10px;
+    position: relative;
+}

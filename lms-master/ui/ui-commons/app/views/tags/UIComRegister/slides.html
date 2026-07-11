@@ -1,0 +1,69 @@
+%{
+	noOfSlides = 4;
+}%
+<div class="loginSlidesMainHold visible-lg">
+	<div class="loginSlidesContainer">
+	   <table class="loginSlidesHolder" cellpadding=0 cellspacing=0 style="left:0px;">
+	      <tr>
+		#{list items:0..noOfSlides-1,as:'index'}
+			<td class="loginSlides">
+				<div class="loginSlidesImgCont">
+					<img class="loginSlidesImg img-responsive" alt="&{'IMG_NA'}" src="/public/images/loginSlides/${index+1}.jpg"/>
+				</div>
+				<div class="loginSlidesTxt">
+					&{'login.SLIDES_TEXT_'+(index+1)}
+				</div>
+			</td>
+		#{/list}
+	      </tr>
+	   </table>
+	</div>
+	<div class="loginSlidesIndicator">
+		<span class="loginSlidesInd current"></span>
+		#{list items:1..noOfSlides-1,as:'index'}
+			<span class="loginSlidesInd"></span>
+		#{/list}
+	</div>
+</div>
+<script type="text/javascript">
+	var slidesIntervalDur = 5000;
+	var noOfSlides = ${noOfSlides};
+	var curSlide = 0;
+	var slidesIntervalObj;
+	$(function(){
+		var holder = $(".loginSlidesHolder");
+		var loginSlides = holder.find(".loginSlides");
+		var navHolder = $(".loginSlidesIndicator");
+		function startInterval(){
+			if(slidesIntervalObj){ clearInterval(slidesIntervalObj); }
+			slidesIntervalObj = setInterval(function(){
+				if($(".loginSlidesContainer").is(":hover")){ return; }
+				slideTo(curSlide+1);
+			},slidesIntervalDur);
+		};
+		function slideTo(toSlide){
+			var left = holder.position()["left"];
+			var curr = $(loginSlides.get(curSlide));
+			var width = curr.width();
+			curSlide = toSlide;
+			if(curSlide == noOfSlides){
+				left = 0;curSlide = 0;
+			}else{
+				left = curSlide * width * -1;
+			}
+			//$(loginSlides.get(curSlide)).fadeTo(0,1);
+			$(navHolder.find(".loginSlidesInd").get(curSlide)).addClass("current").siblings().removeClass("current");	
+			holder.animate({"left":left+"px"},400,function(){
+				curr.fadeTo(0,0);
+				$(loginSlides.get(curSlide)).fadeTo(200,1);
+			});
+		}
+		$(loginSlides.get(curSlide)).fadeTo(200,1);
+		$(".loginSlidesInd").on("click",function(){
+			var index = $(".loginSlidesIndicator .loginSlidesInd").index($(this));
+			slideTo(index);
+			startInterval();
+		});
+		startInterval();
+	});
+</script>

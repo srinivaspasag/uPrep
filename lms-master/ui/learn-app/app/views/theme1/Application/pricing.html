@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learnpedia-Pricing</title>
+  <meta name="google-site-verification" content="6DhL-KLdd2mI5o_YprF32lNPpE56x8ig7Yc1SKtlQ-4" />
+  <meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+  <meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+  <meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+  <meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+  <link rel="manifest" href="/public/images/favicons/manifest.json">
+  <link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+  <meta name="theme-color" content="#ffffff">
+  <link href="@{'/public/outerAssets/assets/css/bootstrap.min.css'}" rel="stylesheet"/>
+  <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+  <link href="/public/assets/theme1/vendors/bower_components/nouislider/distribute/nouislider.min.css" rel="stylesheet"/>
+  <link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet"/>
+  <link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet"/>
+  <link href="@{'/public/stylesheets/material_style.css'}" rel="stylesheet"/>
+  <link href="@{'/public/outerAssets/assets/css/index.css'}" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Condensed&display=swap" rel="stylesheet">
+  <link href="@{'/public/outerAssets/assets/css/pricing.css'}" rel="stylesheet"/>
+</head>
+<body>
+    #{include 'theme1/Application/header.html' /}
+    <section id="main">
+      #{include 'theme1/Application/sidebar.html' /}
+        <section id="pricing">
+            <div class="pricingTitle container text-center" style="background: #0a1a29;color:white;padding: 20px 0px;">
+                <div class="heading">PRICING</div>
+                <p class="" style="font-size: 18px;margin: 10px 0px;">Unlimited Bandwidth | No Transaction Fees with any of our plans. Keep 100% of your revenue.</p>
+            </div>
+            <div class="card card-no-padding" style="max-width: 100%;">
+                <div role="tabpanel" style="box-shadow: inset 0 -2px 0 0 #eee">
+                    <ul class="tab-nav w-80 m-auto" role="tablist" data-tab-color="green" style="box-shadow: none;">
+                      <li class="active tab"><a href="#TECH" aria-controls="TECH" role="tab" data-toggle="tab">Tech Pack</a>
+                          </li>
+                        <li class="tab">
+                            <a href="#COURSE" aria-controls="COURSE" role="tab" class="COURSE" 
+                          data-toggle="tab">JEE & NEET Course Pack</a>
+                        </li>
+                          <li class="tab"><a href="#TEST" class="TEST" aria-controls="TEST" role="tab" data-toggle="tab">JEE & NEET Test Pack</a>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+              <div class="container-fluid">
+              <div class="pricingCard max-container m-auto">
+                <div class="tab-content">
+                  <div class="row text-center packHead">
+                      <h2></h2>
+                      <p style="font-size: 16px;margin: 10px 0px;">Get upto <span class="primary-color">25%</span> off on your annual plan </p>
+                  </div>
+                    <div class="row packOptions m-r-10 m-l-10">
+                        <div class="col-sm-6 col-md-5 radio-options-container">
+                            <span>How would you like to subscribe?</span>
+                            <div class="radioHolder m-t-20">
+                                <label class="radio radio-inline m-r-20">
+                                    <input type="radio" name="pricingBasis" value="monthly" checked="" class="pricingBasis">
+                                    <i class="input-helper"></i>
+                                    Monthly
+                                </label>
+
+                                <label class="radio radio-inline m-r-20">
+                                    <input type="radio" name="pricingBasis" value="yearly" class="pricingBasis">
+                                    <i class="input-helper"></i>
+                                    Yearly
+                                </label>
+                                <span class="discount-message"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-offset-2 col-md-5 select-container">
+                            <span>Select No of Users.</span>
+                            <select class="userSelect w-100 m-t-10 bgm-green c-white">
+                                <option value="200">50-200</option>
+                                <option value="500">201-500</option>
+                                <option value="1000">501-1000</option>
+                                <option value="2000">1000+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="active tab-pane" id="TECH">
+                        #{pricing.individualPackPricing packName : "TECH",packType:"TECH"/}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="COURSE">
+                        #{pricing.individualPackPricing packName : "JEE & NEET Course",packType:"COURSE"/}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="TEST">
+                        #{pricing.individualPackPricing packName : "JEE & NEET Test",packType:"TEST"/}
+                    </div>
+                </div>
+            </div>
+            <div id="comparePlanTable" class="nonner" style="padding-bottom: 40px;">
+                <div class="text-center">
+                    <h3>Compare Plans</h3>
+                    <p class="f-18">Compare between plans & choose which is right for you.</p>
+                </div>
+                <div class="comparePlans max-container m-auto">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Features</th>
+                                <th class='text-center'>Lite</th>
+                                <th class='text-center'>Standard</th>
+                                <th class='text-center'>Enterprise</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pricing-disclaimer max-container m-auto nonner">
+                <p>* Excluding 18% GST, as per government regulations.</p>
+                <p>* Student Overage will be charged on pro-rata basis. For ex. If total number of active students in a monthly billing cycle with standard 1 - 200 plan is 210 then you will be charged additional INR 1000/- plus tax in your next billing cycle. [Calculation: (210-200)*100]</p>
+            </div>
+          </div>
+
+        </section>
+        #{include 'theme1/Application/footer.html' /}
+    </section>
+</body>
+<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js">
+</script> 
+<script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/nouislider/distribute/nouislider.min.js"></script>
+<script src="/public/assets/theme1/js/app.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.js"></script>
+<script type="text/javascript" src="/public/javascripts/dropdown-on-hover.js"></script>
+<script type="text/javascript" src="/public/javascripts/pricing.js"></script>
+<script type="text/javascript">
+    pricing.init();
+</script>
+</html>

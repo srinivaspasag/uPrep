@@ -1,0 +1,21 @@
+@(emailDetails:com.vedantu.eventbus.email.details.AddSolutionEmailNotificationDetails)
+@import emails._
+@appDomain( emailDetails) { host =>  
+@defining(emailDetails.details.getJSONObject("src").getJSONObject("contentSrc").getString("id")) { orgId =>
+
+	@defining(emailDetails.details.getJSONObject("src")) { src =>
+			
+		@defining(emailDetails.details.getJSONObject("actor")) { actor =>
+
+				@userNewsDetails(host)(orgId)(actor)
+				<span>added Solution to </span>
+				@contentNewsDetails(host)(orgId)(src)
+				<span> that </span>
+				@ownerOrFollower(src)(emailDetails.details)
+			}
+		<div style="font-size: 14px; padding: 6px 2px;">
+			View @getContentLink(host)(orgId)(src)(null)
+		</div>	
+	}
+ }
+}

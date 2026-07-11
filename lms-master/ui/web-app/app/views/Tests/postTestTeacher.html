@@ -1,0 +1,208 @@
+#{stylesheet media:'screen', src:'test/o.postTest.css' /}
+<link href="/public/stylesheets/loadingIo/loading-bar.css" rel="stylesheet" />
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    $(function(){
+        showNoTabSec("TEST");
+    });
+</script>
+#{/if}
+    %{
+        alphabets=['(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'];
+    }%
+<input type="hidden" class="incommingTestId nonner" value='${testIdStr}'/>
+#{if play.mode.name()=='PROD'}
+	<script src="@{'/public/javascripts/test/o.postTest.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/if}
+#{else}
+	<script src="@{'/public/javascripts/test/postTest.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	<script src="@{'/public/javascripts/test/marksheet.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/else}
+<script type="text/javascript" src="/public/javascripts/loadingIo/loading-bar.js"></script>
+#{if data!=null && data.has('name') && toppersData!=null && toppersData.errorCode.isEmpty() && data.errorCode.isEmpty()}
+<div class="instBasicBg" style="min-height:800px">
+<div id="postTest" class="pageHolderNM">
+	#{test.testViewLeftBar data : data , testAnalytics : testAnalytics , toppersData : toppersData , testId : testIdStr /}
+	<div class="left centerBody bodyWhiteBg">
+		<div class="centerText postTestMainTabs CSWidget" data-widget="POST_TEST_MAIN_TAB_HOLDER"
+			data-default-tab="overallPerformance">
+			<span class="depthTab doCStream" data-cs-name="TEST_DETAILS_TAB" data-tab-id="testDetails">Test Details</span>
+			<span class="depthTab doCStream activeDepthTab" data-cs-name="Your_Performance_tab_teacher" 
+				data-tab-id="overallPerformance">Overall Performance</span>
+			<span class="depthTab doCStream testResultSheetTab" data-cs-name="RESULT_SHEET_TAB" 
+				data-test-id="${testIdStr}" data-tab-id="resultSheet">&{'TXT_RESULT_SHEET'}</span>
+			<span class="depthTab doCStream detailedAnalyticsTab nonner" data-cs-name="DETAILED_ANALYTICS_TAB" data-tab-id="detailedAnalytics" data-test-id="${testIdStr}">Detailed Analytics</span>
+			#{if params.userRole == "MANAGER" || params.userRole == "TEACHER"}
+				#{if params.targetId != null && params.targetType!= null}
+					<span class="depthTab doCStream markSheetsTab" data-cs-name="MARK_SHEETS_TAB" data-tab-id="markSheets" data-test-id="${testIdStr}">Upload Marksheets</span>
+				#{/if}
+			<span class="depthTab doCStream handleTestTab" data-cs-name="HANDLE_TEST_TAB" data-tab-id="handleTest" data-test-id="${testIdStr}">Reset/End Test</span>
+				#{if data.subjectiveTest != null && data.has('subjectiveTest') && data.subjectiveTest}
+					<span class="depthTab doCStream gradeSubjectiveQuesTab" data-cs-name="GRADE_SUBJECTIVE_QUES_TAB" data-tab-id="gradeSubjectiveQuesTab"  data-test-id="${testIdStr}"> 
+						Grading
+					</span>
+				#{/if}
+			#{/if}
+				<a href="/Tests/printableAnalytics?test.id=${testIdStr}&orgId=${params.orgId}" target="_blank" class="invisibleButton printResultSheet">
+					<span class="right bigBlueButton printAnalyticsButton" style="position: relative;bottom: 10px;right: 5px;"> Print </span>
+				</a>
+		</div>
+		<div class="relative postTestDetails nonner">
+			#{include 'tags/test/viewTestDetails.html'/}
+		</div>
+		#{if data.attempts > 0}
+		<div class="teacherTestDetails">
+		#{test.performanceView data : data , toppersData : toppersData , marksDistribution : marksDistribution /}
+		<div class="testOvrlQuesAnalytics">
+			<div class="testOvrlQuesAnalyticsTitle">
+				<span class="big18">Question Analytics</span>
+				%{
+					papers = toppersData.result.info.children;
+				}%
+				#{if !papers.equals(null) && papers.length()>0}
+				%{
+					paper1 = papers.get(0);
+				}%
+				<div class="testQuesAnalyticsSelectPaper">
+					#{institute.widgets.dropDowns.singleList list : papers , selectedVal : paper1.get('id') , selectedText : paper1.get('name') , listType : "Papers" , showSelectAll : false /}
+				</div>
+				#{/if}
+				#{else}
+					<div class="testQuesAnalyticsSelectPaper nonner">
+						<span class="nDropDown" data-value="${testIdStr}"></span>
+					</div>
+				#{/else}
+			</div>
+			<div class="testOvrlQuesAnalyticsFilters">
+				<span class="relative" style="top:-10px;">Filter By</span>
+				<div class="testQuesAnalyticsDrops testQuesAnalyticsSelectSubject">
+					#{institute.widgets.dropDowns.singleList list : data.metadata , selectedText : "All Subjects" , listType : "Subjects" , showSelectAll : true /}
+				</div>
+				<div class="testQuesAnalyticsDrops testQuesAnalyticsSelectSort">
+					%{
+						resultType0 = resultTypeList.get('list').get(0);
+					}%
+					#{institute.widgets.dropDowns.singleList list : resultTypeList.get('list') , selectedVal : resultType0.get('id') , selectedText : resultType0.get('name') , listType : "Questions" , showSelectAll : false /}
+				</div>
+			</div>
+			<table class="testOvrlAnalyticsQuesList" cellpadding=0>
+				<!--Questions list-->
+			</table>
+		</div>
+		</div>
+		#{/if}
+		#{else}
+		<div class="teacherTestDetails">
+			<div class="boldy big14 centerText" style="padding:30px 0;">
+				#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+				<div>Test not attempted by any students yet</div>
+				<div>Please re-visit later</div>
+			</div>
+		</div>
+		#{/else}
+		<div class="postTestResultSheet nonner">
+		</div>
+		<div class="handleTest nonner">
+		</div>
+		<div class="gradeSubjectiveQues nonner">
+		</div>
+		#{if params.targetId != null && params.targetType!= null}
+		<div class="relative offlineMarkSheetsHolder nonner">
+			<div class="offlineMarkSheets margLeft10 margRight10 centerText" data-target-id="${params.targetId}" data-target-type="${params.targetType}">
+				<div class="big20 color3 blocky padTop10 margLeft10">Upload Mark Sheets.</div>
+				<div class="imageHolder">
+					<img src="/public/images/file.png">
+				</div>
+				<div class="redColor big12 margTop5 margBot5">
+					* Please upload files only in .xlsx and .xls formats. 
+				</div>
+				<div class="uploadDiv uploadOfflineMarkSheets margTop10 margLeft10">
+					Choose File
+				</div>
+				<div class="uploadTestsProgressDiv">
+				</div>
+			</div>
+		</div>
+		#{/if}
+		<div class="detailedAnalytics nonner">
+			<table class="scoreHolder">
+				<tbody>
+					<tr>
+						<td>
+							<div class="inputDiv">
+								<input type="text" class="formInput minNumber" name="min" placeholder="Enter Minimum number"/>
+							</div>
+						</td>
+						<td>
+							<div class="inputDiv">
+								<input type="text" class="formInput maxNumber" name="max" placeholder="Enter Maximum number"/>
+							</div>
+						</td>
+						<td>
+							<input type="button" class="submitRange" value="Submit">
+						</td>
+					</tr>
+					#{if data.has('totalMarks')}
+						<tr>
+							<td>
+							</td>
+							<td>
+								<span class="examTotalMarks">Max Marks: ${data.totalMarks}</span>
+							</td>
+						</tr>
+					#{/if}
+					<tr>
+						<td>
+							<span class="minError nonner"></span>
+						</td>
+						<td>
+							<span class="maxError nonner"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			#{if data.has('totalMarks')}
+				<input type="hidden" name="" value="${data.totalMarks}" id="examTotalMarks">
+			#{/if}
+			<br>
+			<center><span class="marksOverflowError nonner"></span></center>
+			<br><br>
+			<div class="fullMarksSheetPage"></div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		try{ 
+			initPostTest();
+		}catch(err){
+			putConsoleError(err);
+		}
+	});
+</script>
+</div>
+#{include 'tags/test/leaderBoard.html'/}
+#{include 'tags/test/testDetailsPopup.html'/}
+#{/if}
+#{elseif data!=null && !data.errorCode.isEmpty()}
+	#{common.messagePage msgTextColor : "redTextColor" , msg : data.errorMessage /}
+#{/elseif}
+#{else}
+	<div class="bodyWhiteBg">
+	<div class="pageHolderNM" style="height:700px;">
+		#{institute.zeroLevel alt : noFeedMsg , src : "/public/images/zeroLevel/general-no-content.jpg" /}
+		<div class="boldy big14 centerText" style="padding:30px 0;">Test data not available, please try later</div>
+	</div>
+	</div>
+#{/else}
+<script type="text/javascript">
+	$(document).ready(function(){
+	#{if params.orgId != null}
+	    try{
+		if(institute){
+			institute.init();
+		}
+	    }catch(err){}
+	#{/if}
+	});
+</script>

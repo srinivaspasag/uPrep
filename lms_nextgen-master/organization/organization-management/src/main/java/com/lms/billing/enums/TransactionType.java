@@ -1,0 +1,5 @@
+package com.lms.billing.enums;
+
+public enum TransactionType {
+    CREDIT, THIRD_PARTY_CREDIT, DEBIT
+}

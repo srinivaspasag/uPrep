@@ -1,0 +1,211 @@
+%{
+    test = testInfo.result;
+}%
+#{if testInfo!=null && test.has('name') && testInfo.errorCode.isEmpty()}
+<style>
+    .bootstrap-select.btn-group .dropdown-toggle .filter-option {
+        color: black;
+    }
+</style>
+    <input type="hidden" class="incommingTestName hidden" value='${test.name}'/>
+    <input type="hidden" class="incommingTestId hidden" value='${test.id}'/>
+    <input type="hidden" class="serverPreTestLoadTime hidden" value='${new Date().getTime()}'/>
+    #{if test.pdfId!=null && test.has('pdfId') && testInfo.errorCode.isEmpty()}
+        <input type="hidden" class="incommingPdfId hidden" value='${test.pdfId}'/>
+    #{/if}
+    #{if test.password!=null && test.has('password') && testInfo.errorCode.isEmpty()}
+        <input type="hidden" class="incommingPasswordForTest hidden" value='${test.password}'/>
+    #{/if}
+    <div id="digitalLibrary">
+        <div id="preTest">
+            <div class="card" style="margin-top: -20px;">
+                #{if !test.attempted}
+                <div class="card-header #{if targetUserRole== 'MANAGER'} hidden #{/if}" style="background-color: ghostwhite;">
+                    <div class="container hidden-xs">
+                        <div class="row f-20 f-500">
+                            <img src="/public/assets/theme1/img/testIcon.png"
+                            style="height: 30px;margin-right: 5px;">
+                            ${test.name}
+                            <div class="pull-right">
+                                <div id="takeTest">
+                                <input  type="button" class="btn bgm-bluegray waves-effect "
+                                    value="Take Test" data-test-id="${test.id}" data-test-type="TEST" />
+                                </div>
+                            </div>
+                            <div class="hidden" id="preTestTakeTestBtnHold">
+                                #{if test.duration>0}
+                                    %{
+                                            timeObj=util.Utilities.getTimeFromMiliSec(test.duration);
+                                            totalTimeHrs = timeObj.hrs;
+                                            totalTimeMins = timeObj.mins;
+                                            totalTime = totalTimeHrs + ":" + totalTimeMins;
+
+                                    }%
+                                #{/if}
+                                       %{
+                                       testName = test.name;
+                                       firstName = myOrgInfo.get('firstName');
+                                       profilePic = myOrgInfo.get('profilePic');
+                                   }%
+                                #{library.testGuidelines showGuidlinesInsideTest:false, btnId:'proceedToTakeTest',testName:testName,firstName:firstName,profilePic:profilePic,totalTime:totalTime/}
+                            </div>
+                            <div class="hidden" id="subjectDetailsHolder">
+                                #{library.testDetails data:test/}
+                            </div>
+                        </div>
+                        #{if test.has('desc') && !test.desc.isEmpty()}
+                        <div class="row m-t-20">
+
+                            <h2>Description :
+                                <small>${test.desc}</small>
+                            </h2>
+                        </div>
+                    #{/if}
+                    </div>
+
+                    <div class="container visible-xs">
+                        <div class="row f-20 f-500">
+                            <img src="/public/assets/theme1/img/testIcon.png"
+                            style="height: 30px;margin-right: 5px;">
+                            ${test.name}
+                        </div>
+                        #{if test.has('desc') && !test.desc.isEmpty()}
+                        <div class="row ">
+
+                            <h2 class="m-t-10">Description :
+                                <small>${test.desc}</small>
+                            </h2>
+                        </div>
+                        #{/if}
+                        <div class="row text-center m-t-20">
+                            <div id="takeTestSmall">
+                            <input  type="button" class="btn bgm-bluegray waves-effect"
+                                value="Take Test" data-test-id="${test.id}" data-test-type="TEST" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                #{/if}
+                <div class="card-body card-padding m-t-20">
+                    <div class="row f-500">
+                        <div class="col-sm-4 text-center">
+                            <div>
+                                <span >Total Marks : </span>
+                                <span class="c-green">${test.totalMarks}</span>
+                                <span> marks</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            <div>
+                                <span >Total Questions : </span>
+                                <span class="c-green">${test.qusCount}</span>
+                                <span >questions</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            <div>
+                                <span>Time Allotted : </span>
+                            #{if test.duration>0}
+                                %{
+                                        timeObj=util.Utilities.getTimeFromMiliSec(test.duration);
+                                }%
+                                <span class="c-green">${timeObj.hrs}:${timeObj.mins}</span>
+                            #{/if}
+                            #{else}
+                                <span class="c-green">Unlimited</span>
+                            #{/else}
+                                <span>hours</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                    #{if test.metadata.length()==1}
+                        <div class="col-sm-4">
+                        </div>
+                        <div class="col-sm-4">
+                            %{subData = test.metadata.get(0);}%
+                            #{library.testSubjectDetails subData:subData /}
+                        </div>
+                    #{/if}
+                    #{else}
+                        #{list items:0..test.metadata.length()-1, as:'sIndex'}
+                            %{
+                                subData = test.metadata.get(sIndex);
+                            }%
+                            <div class="col-sm-4">
+                        #{library.testSubjectDetails subData:subData /}
+                            </div>
+                    #{/list}
+                    #{/else}
+                    </div>
+                    <hr>
+                    <!-- For weightage in tests -->
+                    <div class="row subjectWeightage">
+                        #{if !test.has('mode') || (test.has('mode') && test.mode != "OFFLINE")}
+                        <h4 class="text-center p-t-15">Topic Level Marks Distribution</h4>
+                        #{/if}
+                        #{if test.metadata.length()>1}
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <select class="selectpicker" id="subjectInTest">
+                                #{list items:0..test.metadata.length()-1, as:'sIndex'}
+                                %{
+                                    subData = test.metadata.get(sIndex);
+                                }%
+                                <option value="${subData.id}" data-subject-id="${subData.id}">${subData.name}</option>
+                                #{/list}
+                            </select>
+                        </div>
+                        #{/if}
+                        #{else}
+                            <center>
+                                <div data-value="${test.metadata.get(0).id}" class="m-b-10 f-14">
+                                    ${test.metadata.get(0).name}
+                                </div>
+                            </center>
+                        #{/else}
+                        <div class="testTopicsWeightageHolder">
+                            <center>
+                                #{list items:0..test.metadata.length()-1, as:'sIndex'}
+                                %{
+                                    subData = test.metadata.get(sIndex);
+                                }%
+                                <table cellspacing=0 cellpadding=10 class="table table-bordered testTopicsWeightageTable cls-topicWeightage-${subData.id} #{if sIndex>0} hidden #{/if}">
+                                <thead>
+                                    <th>Topic Name</th>
+                                    <th>
+                                    </th>
+                                    <th>Weightage %</th>
+                                </thead>
+                                <tbody>
+                                #{if subData.has('children') && !subData.children.equals(null) && subData.children.length()>0}
+                                #{list items:0..subData.children.length()-1, as:'cIndex'}
+                                    %{
+                                        childData = subData.children.get(cIndex);
+                                            weightagePercent = (childData.qusCount/subData.qusCount)*100;
+                                    }%
+                                <tr>
+                                    <td>${childData.name}</td>
+                                    <td>${childData.qusCount}</td>
+                                    <td style="max-width:25px;overflow:hidden;">
+                                        ${util.Utilities.roundDecimals(weightagePercent)}%
+                                    </td>
+                                </tr>
+                                #{/list}
+                                </tbody>
+                                #{/if}
+                                </table>
+                                #{/list}
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+#{/if}
+#{script src:'o.pretest.js', charset:'utf-8' /}
+<script type="text/javascript">
+    pretest.init();
+</script>

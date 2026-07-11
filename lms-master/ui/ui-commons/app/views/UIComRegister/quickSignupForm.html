@@ -1,0 +1,421 @@
+#{if resp!=null}
+%{
+  directUser =resp.directUser;
+  if (directUser==false){
+    isVerifiedUser = resp.isVerifiedUser;
+    if(isVerifiedUser == true){
+      isNewPhone = resp.isNewPhone;
+    }
+  }
+  showCategoryFields=true;
+  if (resp.has("showCategoryFields")) {
+    showCategoryFields=resp.showCategoryFields;
+  }
+  campaignAddProgram="";
+  if (resp.has("campaignAddProgram")) {
+    campaignAddProgram=resp.campaignAddProgram;
+  }
+}%
+#{/if}
+#{stylesheet media:'screen', src:'jquery-libs/jquery-ui-1.10.4.custom.min.css' /}
+
+#{if directUser==true}
+<div class="otpPopup">
+    <center>
+        <img src="/public/images/vedantutm.png" class="img-responsive" style="bottom:20px;position: relative;">
+    </center>
+    <!-- <div class="orgSiteColor big20" style="font-size: 20px;position: relative; bottom:14px;">&{'microsite.ENTER_YOUR_DETAILS'}</div> -->
+    <div class="loginErrorMsg nonner"></div>
+    <div class="container-fluid">
+        <div id="quicksignup" style="bottom: -10px; position: relative;">
+            <form name="registration" method="POST" id="memberSignupForm"
+                style="margin-top: 0em; display: block;" class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="firstName" class="col-sm-4 control-label loginFieldTitle">&{'signup.FIRST_NAME'}
+                        <span class="redTextColor">*</span>
+                    </label>
+                    <!-- <span class="redTextColor">*</span> -->
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" required name="firstName" id="username" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactNumber" class="col-sm-4 control-label loginFieldTitle">&{'signup.CONTACT_NO'}
+                        <span class="redTextColor">*</span>
+                    </label>
+                    <!-- <span class="redTextColor">*</span> -->
+                    <div class="col-sm-8">
+                        <input type="tel" class="form-control" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" />
+                    </div>
+                </div>
+
+                <!-- Uncomment the following for showing campaign code -->
+                <!--
+                <div class="form-group">
+                <label for="campaignCode" class="control-label col-sm-4 loginFieldTitle">&{'signup.PROMO'}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="campaignCode" name="campaignCode" placeholder="Enter Promo Code" />
+                </div>
+                </div>
+                -->
+                #{if showCategoryFields == true }
+                <div class="form-group">
+                    <label for="programType" class="control-label col-sm-4 loginFieldTitle">&{'signup.COURSE'}
+                        <span class="redTextColor">*</span>
+                    </label>
+                    <div class="radio col-sm-8">
+                        <label> <input type="radio" name="programType" value="JEE" checked>
+                            <span style="top: 4px; position: relative;">JEE</span>
+                        </label> <label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio"
+                            name="programType" value="NEET"> <span
+                            style="top: 4px; position: relative;">NEET</span>
+                        </label>
+                    </div>
+                </div>
+                #{/if}
+                <!-- <table cellpadding="0" cellspacing="0" class="memberSignupTable"> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="text" class="loginInputField" required name="firstName" id="username" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="tel" class="loginInputField" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;" /> -->
+                <!-- </td> -->
+
+                <!-- </tr> -->
+
+                <!-- </table> -->
+                <div>
+                    <span class="right greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span>
+                    <span class="redTextColor text-center" id="contactlength"></span>
+                    <span class="redTextColor text-center" id="usernamelength"></span>
+                    <span class="redTextColor text-center" id="campaignErrorDiv"></span>
+                </div>
+                <!-- <div id="campaignErrorDiv" style="color: red;" class="text-center"></div> -->
+                %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+                <input type="hidden" value="${learnpediaOrgId  }" name="orgId" />
+                <input type="hidden" value="" name="sectionId" />
+                <input type="hidden" id="progType" name="progType" />
+                <div class="centerText" style="padding-top: 27px;">
+                    <input class="loginButton orgButton" id="clickToSignUp"
+                        value="&{'login.SIGNUP_CAPS'}" type="button" onclick="otpProcess.otpsend();"
+                        style="background: #62b23b" />
+                </div>
+            </form>
+            <br>
+            <div id='terms' style="bottom: 13px; position: relative;">
+                <center>
+                    By signing up you agree to our <a href="/terms" target="_blank">Terms and Conditions</a>
+                </center>
+            </div>
+            <div class="left" style="bottom: -15px; position: relative;">
+                <span class="big14 blueLoginButton loginPopupBtn"><a href="/signup">Signup with Full Details.</a></span>
+            </div>
+            <div class="right" style="bottom: -15px; position: relative;">
+                <span class="big12" style="color: #666;">&{'ALREADY_A_MEMBER'}</span> <span
+                    class="big14 blueLoginButton loginPopupBtn"><a href="/login">&{'login.SIGNIN'}</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+#{/if}
+#{elseif directUser==false && isVerifiedUser==false}
+<div class="container-fluid">
+    <div id="errordiv" style="height: 100%;width:60%;left:17%;top:30px;position: relative;">
+        <center>
+            <img src="/public/images/error-icon.png" width="100px" height="100px" class="img-responsive"></center>
+        <span style="font-size: 13px;color: #777;font-weight: 900;"> Your Contact Number is Not Verified, Please Login Through Your Email/InstituteID and Verify Your Contact Number</span>
+        <center>
+            <br>
+            <span class="big14 blueLoginButtons loginPopupBtn"><a href="/login" style="color: white;">&{'login.SIGNIN'}</a></span>
+        </center>
+    </div>
+</div>
+<!--Show Error Popup -->
+#{/elseif}
+#{elseif directUser==false && isVerifiedUser == true && isNewPhone==true}
+<div class="otpPopup">
+    <center>
+        <img src="/public/images/vedantutm.png" class="img-responsive" style="bottom:20px;position: relative;">
+    </center>
+    <!-- <div class="orgSiteColor big20" style="font-size: 20px;position: relative; bottom:14px;">&{'microsite.ENTER_YOUR_DETAILS'}</div> -->
+    <div class="loginErrorMsg nonner"></div>
+    <div class="container-fluid">
+        <div id="quicksignup" style="bottom: -70px;position: relative;">
+            <form action="@{Security.signup}" name="registration" method="POST" id="memberSignupForm" style="margin-top: 0em;display: block;" onsubmit="return otpProcess.otpcheck();" class="form-horizontal" role="form">
+                <!-- <table cellpadding="0" cellspacing="0" class="memberSignupTable"> -->
+                <div class="form-group">
+                    <label for="firstName" class="col-sm-4 control-label loginFieldTitle">&{'signup.FIRST_NAME'}
+            <span class="redTextColor">*</span>
+            </label>
+                    <!-- <span class="redTextColor">*</span> -->
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" required name="firstName" id="username" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactNumber" class="col-sm-4 control-label loginFieldTitle">&{'signup.CONTACT_NO'}
+            <span class="redTextColor">*</span>
+            </label>
+                    <!-- <span class="redTextColor">*</span> -->
+                    <div class="col-sm-8">
+                        <input type="tel" class="form-control" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" readonly="true" />
+                    </div>
+                </div>
+
+                <!-- Uncomment the following for showing campaign code -->
+                <!--
+                <div class="form-group">
+                <label for="campaignCode" class="control-label col-sm-4 loginFieldTitle">&{'signup.PROMO'}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="campaignCode" name="campaignCode" placeholder="Enter Promo Code" />
+                </div>
+                </div>
+                -->
+
+                <div class="form-group">
+                    <label for="userOTP" class="col-sm-4 control-label loginFieldTitle">&{'signup.OTP'}
+            <span class="redTextColor">*</span>
+            </label>
+                    <!-- <span class="redTextColor">*</span> -->
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" required name="userOTP" placeholder="Enter OTP" id="userOTP" />
+                    </div>
+                </div>
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="text" class="loginInputField" required name="firstName" id="username" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="tel" class="loginInputField" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;" readonly="true" /> -->
+                <!-- </td> -->
+
+                <!-- </tr> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.OTP'}<span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="text" class="loginInputField" required name="userOTP" placeholder="Enter OTP" id="userOTP" style="top:4px;position: relative;" /> -->
+                <!-- </td> -->
+
+                <!-- </tr> -->
+
+                <!-- </table> -->
+                <span id="otperror" class="redTextColor text-center"></span>
+                <div>
+                    <span class="right greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span>
+                    <span class="redTextColor text-center" id="contactlength"></span>
+                    <span class="redTextColor text-center" id="usernamelength"></span>
+                    <span class="redTextColor text-center" id="timeleft"></span>
+                    <br>
+                    <span class="redTextColor text-center" id="campaignErrorDiv">
+                </div>
+                %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+                <input type="hidden" value="${learnpediaOrgId  }" name="orgId" />
+                <input type="hidden" value="" name="sectionId" />
+                <input type="hidden" value=true name="isOTPsignup" />
+                <input type="hidden" id="countryCode" name="countryCode" />
+                <input type="hidden" id="progType" name="progType" />
+                <input type="hidden" id="campaignAddProgram" name="campaignAddProgram" value="${campaignAddProgram}" />
+
+                <div class="centerText" style="padding-top:27px;">
+                    <input class="loginButton orgButton" id="clickToSignUp" value="&{'login.SIGNUP_CAPS'}" type="submit" style="background: #62b23b" />
+                </div>
+                <span class="big14 blueLoginButton text-center loginPopupBtn" style="display:none;" id="resendOTP"><a href="javascript:window.location.reload();" >Resend OTP</a></span>
+            </form>
+            <br>
+            <div id='terms' style="bottom:13px;position: relative;">
+                <center>
+                    By signing up you agree to our <a href="/terms" target="_blank">Terms and Conditions</a>
+                </center>
+            </div>
+            <div class="left" style="bottom: -15px;position: relative;">
+                <span class="big14 blueLoginButton loginPopupBtn"><a href="/signup">Signup with Full Details.</a></span>
+            </div>
+            <div class="right" style="bottom: -15px;position: relative;">
+                <span class="big12" style="color:#666;">&{'ALREADY_A_MEMBER'}</span>
+                <span class="big14 blueLoginButton loginPopupBtn"><a href="/login">&{'login.SIGNIN'}</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Signup Form with OTP -->
+#{/elseif}
+#{elseif directUser==false && isVerifiedUser == true && isNewPhone==false}
+<div class="otpPopup">
+    <center>
+        <img src="/public/images/vedantutm.png" class="img-responsive" style="bottom:20px;position: relative;">
+    </center>
+    <!-- <div class="orgSiteColor big20" style="font-size: 20px;position: relative; bottom:14px;">&{'microsite.ENTER_YOUR_DETAILS'}</div> -->
+    <div class="loginErrorMsg nonner"></div>
+    <div class="container-fluid">
+        <div id="quicksignup" style="bottom: -70px;position: relative;">
+            <form action="@{Security.authentifyWithOTP}" name="registration" method="POST" id="memberSignupForm" style="margin-top: 0em;display: block;" onsubmit="return otpProcess.otpcheck();" class="form-horizontal" role="form">
+                <!-- <table cellpadding="0" cellspacing="0" class="memberSignupTable"> -->
+                <div class="form-group">
+                    <label for="firstName" class="col-sm-4 control-label loginFieldTitle">&{'signup.FIRST_NAME'}
+            <span class="redTextColor">*</span>
+            </label>
+                    <!-- <span class="redTextColor">*</span> -->
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" required name="firstName" id="username" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactNumber" class="col-sm-4 control-label loginFieldTitle">&{'signup.CONTACT_NO'}
+            <span class="redTextColor">*</span>
+            </label>
+                    <!-- <span class="redTextColor">*</span> -->
+                    <div class="col-sm-8">
+                        <input type="tel" class="form-control" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" readonly="true" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userOTP" class="col-sm-4 control-label loginFieldTitle">&{'signup.OTP'}
+            <span class="redTextColor">*</span>
+            </label>
+                    <!-- <span class="redTextColor">*</span> -->
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" required name="userOTP" placeholder="Enter OTP" id="userOTP" />
+                    </div>
+                </div>
+
+
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="text" class="loginInputField" required name="firstName" id="username" /> -->
+                <!-- </td> -->
+                <!-- </tr> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="tel" class="loginInputField" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;" readonly="true" /> -->
+                <!-- </td> -->
+
+                <!-- </tr> -->
+                <!-- <tr> -->
+                <!-- <td class="signupTitleTd"> -->
+                <!-- <span class="loginFieldTitle">&{'signup.OTP'}<span class="redTextColor">*</span></span> -->
+                <!-- </td> -->
+                <!-- <td> -->
+                <!-- <input type="text" class="loginInputField" required name="userOTP" placeholder="Enter OTP" id="userOTP" style="top:4px;position: relative;" /> -->
+                <!-- </td> -->
+
+                <!-- </tr> -->
+
+                <!-- </table> -->
+                <span id="otperror" class="redTextColor text-center"></span>
+                <div>
+                    <span class="right greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span>
+                    <span class="redTextColor text-center" id="contactlength"></span>
+                    <span class="redTextColor text-center" id="usernamelength"></span>
+                    <span class="redTextColor text-center" id="timeleft"></span>
+                </div>
+                %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+                <input type="hidden" value="${learnpediaOrgId  }" name="orgId" />
+                <input type="hidden" value="" name="sectionId" />
+                <input type="hidden" value=true name="isOTPlogin" />
+                <input type="hidden" value="" name="username" id="contactname" />
+                <input type="hidden" id="countryCode" name="countryCode" />
+                <input type="hidden" id="progType" name="progType" />
+                <input type="hidden" id="campaignAddProgram" name="campaignAddProgram" value="${campaignAddProgram}" />
+
+                <div class="centerText" style="padding-top:27px;">
+                    <input class="loginButton orgButton" id="clickToSignUp" value="&{'login.SIGNIN_CAPS'}" type="submit" style="background: #62b23b" />
+                </div>
+                <span class="big14 blueLoginButton loginPopupBtn text-center" id="resendOTP" style="display: none;"><a href="javascript:window.location.reload();" >Resend OTP</a></span>
+            </form>
+            <br>
+            <!-- <div id='terms' style="bottom:13px;position: relative;">
+            <center>
+                By signing up you agree to our <a href="/terms" target="_blank">Terms and Conditions</a>
+            </center>
+        </div> -->
+            <!-- <div class="left" style="bottom: -15px;position: relative;">
+            <span class="big14 blueLoginButton loginPopupBtn"><a href="/signup">Signup with Full Details.</a></span>
+        </div>
+        <div class="right" style="bottom: -15px;position: relative;">
+            <span class="big12" style="color:#666;">&{'ALREADY_A_MEMBER'}</span>
+            <span class="big14 blueLoginButton loginPopupBtn"><a href="/login">&{'login.SIGNIN'}</a></span>
+        </div> -->
+        </div>
+    </div>
+</div>
+<!-- Login form for OTP -->
+#{/elseif}
+#{else}
+<div class="container-fluid">
+    <div id="errordiv" style="height: 100%;width: 60%;left: 17%;top:30px;position: relative;">
+        <center>
+            <img src="/public/images/error-icon.png" width="100px" height="100px" class="img-responsive"></center>
+        <span style="font-size: 13px;color: #777;font-weight: 900;"> Something went wrong,Please try later</span>
+        <center>
+            <br>
+            <span class="big14 blueLoginButtons loginPopupBtn"><a href="http://www.learnpedia.in" style="color: white;">Home</a></span>
+        </center>
+    </div>
+</div>
+<!-- some thing went wrong -->
+#{/else}
+
+<script src="/public/javascripts/jquery-libs/jquery-ui-1.10.4.custom.min.js"></script>
+<script type="text/javascript">
+    otpProcess.init();
+</script>
+
+<script type="text/javascript">
+
+window.onload = function() //executes when the page finishes loading
+{
+    var timeLeft = 20;
+    if ($("#timeleft").length > 0) {
+        var elem = document.getElementById('timeleft');
+    }
+    var timerId = setInterval(countdown, 1000);
+
+    function countdown() {
+        if (timeLeft == 0) {
+            clearTimeout(timerId);
+            elem.innerHTML = "";
+            func1();
+        } else {
+            if ($("#timeleft").length > 0) {
+                elem.innerHTML = "Resend OTP in " + timeLeft + ' seconds';
+                timeLeft--;
+            }
+        }
+    } //sets a timer which calls function func1 after 2,000 milliseconds = 2 secs.
+}
+
+function func1() {
+    if ($("#resendOTP").length > 0) {
+        document.getElementById("resendOTP").style.display = 'block';
+    }
+}
+</script>

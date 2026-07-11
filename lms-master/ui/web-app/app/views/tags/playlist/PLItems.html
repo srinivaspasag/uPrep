@@ -1,0 +1,61 @@
+%{
+    playlists=_playlists;
+    loopStart=_loopStart;
+    if(loopStart==null)loopStart=0;
+    loopEnd=_loopEnd;
+    if(loopEnd==null)loopEnd=playlists.length()-1;
+    target=_target;
+    seeMore=_seeMore;
+}%
+#{if loopEnd>=loopStart}
+        #{list items:loopStart..loopEnd,as:'p'}
+            %{
+                playlist=playlists.get(p);
+                callback='';
+                if(target=="HOME_PAGE_RECOS")callback='POPULAR_PLAYLIST';
+                plUrl=controllers.Playlists.getPLUrl(playlist.title,playlist.playlistId);
+            }%
+        <div class='PLItem crossXPa widgetItem'>
+            <div class='widgetWhiteBox'>
+                #{if target=="HOME_PAGE_RECOS"}
+                <a class='crossX widgetItemCrossX popularPLCross doCStream' data-name="REMOVE_PLAYLIST"></a>
+                #{/if}
+                <a class='img60Wrapper floatLeft openPLView doCStream' data-name="PLAYLIST_IMAGE"
+                   data-title='${playlist.title}' data-pl-id="${playlist.playlistId}" href="${plUrl}">
+                    <img src='/public/images/playlist/plBack.png'  class='img60'/>
+                </a>
+                <div class='img60Lefter'>
+                    <span class="widgetItemFollow">
+                        #{widgets.followUnfollowEntity followType:playlist.followType,callback:callback,
+                        entityType:'PLAYLIST',entityId:playlist.playlistId/}
+                    </span>                    
+                    <a class='widgetItemName openPLView doCStream' data-name="PLAYLIST_TITLE" data-title='${playlist.title}' 
+                       data-pl-id="${playlist.playlistId}" href="${plUrl}">${playlist.title}</a>
+                    %{
+                        user=playlist.user;
+                        getUserClassAndUrl=controllers.Profile.getUserClassAndUrl(user);
+                    }%
+                    <span class='smally'>
+                        by <a data-user-id="${user._id}" class="${getUserClassAndUrl.className}"
+                              href="${getUserClassAndUrl.url}">${user.firstName+' '+user.lastName}</a>
+                    </span>
+                    <div class="ratingStars" style="width: ${uicom.util.Utilities.getStarsWidth(playlist.avgRating)}px"></div>
+                </div>
+                <div class='cleaner_with_divider'>&nbsp;</div>
+            </div>
+            <div class='widgetItemStats'>
+                <span class='boldy'>Views- </span>${playlist.views}
+            </div>
+        </div>
+        #{/list}
+        #{if seeMore==true&&playlists.length()==3}
+        <a class="smally liner">see more</a>
+        #{/if}
+#{/if}
+#{elseif target=="QUESTION_PAGE"||target=="BOARD_PAGE"}
+<div class="userMessage">No Playlists available</div>
+#{/elseif}
+
+
+
+

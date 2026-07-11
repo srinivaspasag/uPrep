@@ -1,0 +1,18 @@
+
+    %{
+        upVote=_upVote;
+        voted=_voted;
+        entityType=_entityType;
+        entityId=_entityId;
+    }%
+    <span class='upVoteDiv'>
+        #{if !voted}
+        <span class='upVoteItem doCStream' data-entity-id="${entityId}" data-entity-type="${entityType}" data-name="UPVOTE_${entityType}"></span>
+        #{/if}
+        #{else}
+        <span class='upVotedItem'></span>
+        #{/else}
+       <span class='upVoteItemCount'>
+           ${upVote}
+       </span>
+    </span>

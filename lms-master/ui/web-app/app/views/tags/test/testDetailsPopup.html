@@ -1,0 +1,63 @@
+#{if data!=null && data.has('metadata') && data.metadata.length()>0}
+<div class="absolute testDetailsPopupHolder nonner">
+#{list items:0..data.metadata.length()-1, as:'sIndex'}
+%{
+	subData = data.metadata.get(sIndex);
+}%
+<div class="left chooseQuesFormat nonner" id="_testDetailsPop-${subData.id}">
+	<span class="blueTextColor big12"><b>Format Details</b> - ${subData.name}</span>
+	<div class="left quesTypesFormat">
+		<table cellspacing="0" cellpadding="0" >
+			<tr>
+				<th class="tHeaderBorder cellWidthBig">Type of Question</th>
+				<th class="cellLeftBorder tHeaderBorder cellWidth">Number of Questions</th>
+				#{if data.isNTAPattern == true}
+				<th class="cellLeftBorder tHeaderBorder cellWidth">Max Questions To Be Attempted</th>
+				#{/if}
+				<th class="cellLeftBorder tHeaderBorder cellWidth">Marks per Question</th>
+				<th class="cellLeftBorder tHeaderBorder cellWidth">Negative Marks per Question</th>
+				
+				
+
+			</tr>
+			#{if subData.has('details') && subData.details.length()>0}
+			#{list items:0..subData.details.length()-1, as:'dIndex'}
+			<tr class="tableRow" q-type='${subData.details.get(dIndex).type}'>
+				#{if subData.details.get(dIndex).type == "SCQ"}
+					<td class="cellWidthBig big12"><b>SCQ</b>(single choice question)</td>
+				#{/if}
+				#{elseif subData.details.get(dIndex).type == "MCQ"}
+					<td class="cellWidthBig big12"><b>MCQ</b>(multiple choice question)</td>
+				#{/elseif}
+				#{else}
+					<td class="cellWidthBig big12"><b>${subData.details.get(dIndex).type}</b></td>
+				#{/else}
+				<td class="cellLeftBorder cellWidth"><span class="left centerText fullWidth boldy big16">${subData.details.get(dIndex).qusCount}</span></td>
+
+				#{if data.isNTAPattern == true}
+				<td class="cellLeftBorder cellWidth"><span class="left centerText fullWidth boldy big16">${subData.details.get(dIndex).maxQuestionsTobeAttempted}</span></td>
+				#{/if}
+				
+				<td class="cellLeftBorder cellWidth"><span class="left centerText fullWidth boldy big16">${subData.details.get(dIndex).marks.positive}</span></td>
+				<td class="cellLeftBorder cellWidth"><span class="left centerText fullWidth boldy big16 redColor">${subData.details.get(dIndex).marks.negative}</span></td>
+				
+				
+			</tr>
+			#{/list}
+			#{/if}
+			<tr class="tableRow" q-type='TOTAL'>
+				<td class="cellWidthBig borderTop big12 boldy blueTextColor">Total</td>
+				<td class="cellLeftBorder borderTop cellWidth"><span class="left centerText fullWidth boldy big16">${subData.qusCount}</span></td>
+				#{if data.isNTAPattern == true}
+				<td class="cellLeftBorder cellWidth"><span class="left centerText fullWidth boldy big16">${subData.maxQuestionsToBeAttemptedForBoard}</span></td>
+				#{/if}
+				<td class="cellLeftBorder borderTop cellWidth"><span class="left centerText fullWidth boldy big16">${subData.totalMarks}</span></td>
+				<td class="cellLeftBorder cellWidth borderTop"></td>
+			</tr>
+		</table>
+	</div>
+</div>
+#{/list}
+<span class="bgImageSprite closeTestDetailsPopup right absolute" style="padding:0px;"></span>
+</div>
+#{/if}

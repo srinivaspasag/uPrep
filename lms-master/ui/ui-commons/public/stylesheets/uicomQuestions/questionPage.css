@@ -1,0 +1,369 @@
+/*question page*/
+#QPContentSec{
+    border-right: 1px solid #CCCCCC;
+}
+#QPMiddleSec {
+    border-right: 1px solid #CCCCCC;
+    float: left;
+    padding-left: 40px;
+    padding-right: 20px;
+    width: 560px;
+}
+.QPQues{
+    border: 0;
+    background-color: transparent;
+    box-shadow: none;
+}
+.QPQues .quesLeftBlock {
+    background-color: #FFFFFF;
+    left: -40px;
+    position: absolute;
+    width: 40px;
+}
+.QPQues .quesLefter{
+    margin-left: 0;
+    padding: 10px 0 0 0;
+    background-color: #ffffff;
+    box-shadow: 1px 1px 1px #CCCCCC;
+}
+.QPQues .quesTextDiv{
+    cursor: default;
+    padding: 10px;
+}
+/*hover on ques in single ques page*/
+.QPQues.ques.quesAddAnsState .QPQuesAttemptsAndAnalytics,.QPQues.ques.quesAddAnsState .QPQuesAttemptOpt{
+    display: none;
+}
+.QPQues.ques.quesAddAnsState .quesAnsDiv{
+    display: block;
+}
+.QPChallengeStatsTable{
+    background-color: #feff99;
+    border-collapse: collapse;
+    width: 100%;
+}
+.QPChallengeStatsTable td{
+    border: 1px solid #d7d94c;
+    padding: 10px 20px;
+    width: 25%;
+    text-align: center;
+}
+.QPQuesShadowDivHolder {
+    margin: 30px 0 3px -35px;
+    position: relative;
+    width: 110%;
+}
+.QPQuesShadowDiv {
+    background: url("/public/images/playlist/PLShadow.png") no-repeat scroll 0 0 transparent;
+    border-top: 2px solid #cccccc;
+    bottom: -16px;
+    height: 16px;
+    position: absolute;
+    width: 100%;
+}
+.quesSolnsDiscsHolder{
+    padding: 15px 0 0 0;
+}
+
+.QPShowGraphBtn {
+    color: #3399CC;
+    float: right;
+}
+.QPShowGraphBtn .showQuesAnalytics,.showQuesAnalyticsWarn{
+    background: url("/public/images/questions/quesGraph.png") no-repeat scroll left center transparent;
+    font-weight: bold;
+    padding-left: 18px;
+}
+.QPUserAnsDiv {
+    background-color: #FFFFFF;
+    margin-top: 10px;
+    padding: 10px;
+}
+.QPUserAnsDiv .QPUserAnsDivAnsBlk{
+    display: inline-block;
+    margin-right: 30px;
+}
+.QPAnsCorrect,.QPAnsIncorrect{
+    background: url("/public/images/test/incorrect-answer.png") no-repeat scroll left center transparent;
+    color: #c36666;
+    font-weight: bold;
+    padding-left: 18px;
+}
+.QPAnsCorrect{
+    background: url("/public/images/test/correct-answer.png") no-repeat scroll left center transparent;
+    color: #339933;
+}
+.quesSoln {
+    margin-bottom: 20px;    
+    position: relative;
+}
+.quesSolnVoteDiv {
+    background-color: #FFFFFF;
+    left: -41px;
+    padding: 10px 0 0;
+    position: absolute;
+    text-align: center;
+    width: 40px;
+}
+.quesSolnVoteDiv .upVoteItemCount{
+    display: block;
+}
+.quesSolnText{
+    background-color: #FFFFFF;
+    border-top: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    padding: 10px 5px;
+    position: relative;
+}
+.quesSolnAttachments{
+	padding:10px 5px 0;
+    	border-bottom: 1px solid #CCCCCC;
+}
+.quesSolnAttachments .entityNameDiv{
+	padding-top:8px; 
+}
+.quesSolnContentBody{
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 1px #cccccc;
+    padding: 15px 30px;
+}
+.QSCommentsHolder{
+    background-color: #fcfcfc;
+    background-color: rgba(255, 255, 255, 0.7);
+    margin: 1px 30px 0;
+}
+.QSCommentsHolder .commWidget{
+    margin-top: 0;
+}
+.QSCommentsHolder .inputerHat{
+    display: none;
+}
+.QSCommentsHolder .commItem,.QSCommentsHolder .commInputer{
+    background-color: transparent;
+    box-shadow: none;
+    padding-bottom: 15px;
+    margin-bottom: 0;
+}
+.QSCommentsHolder .commItem{
+    padding-bottom: 10px;
+    padding-top: 0;
+}
+.QSCommentsHolder .commItem:last-child{
+    padding-bottom: 17px;
+}
+
+
+
+
+/*right sec*/
+#QPRightSec{
+    float: left;
+    width: 381px;
+}
+.QPTagsHolder{
+    background-color: #ffffff;
+    padding: 1px 0 0 10px;
+}
+.QPTagsHead{
+    background: url("/public/images/questions/quesTags.png") no-repeat scroll left center transparent;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 15px 0 10px;
+    padding-left: 22px;
+}
+.QPRightSecBorder{
+    border-bottom: 2px solid #CCCCCC;
+}
+#QPContentSec .showChallengeAnalytics.blueSubmitButton,
+#QPContentSec .showChallengeAnalyticsWarn.blueSubmitButton{
+    font-weight: bold;
+    margin: 20px 0 0;
+    padding: 10px 20px;
+}
+.QPChallengeLeaderBoard .CLBHolder{
+    background-color: #FFFFFF;
+    margin: 20px 10px 10px;    
+}
+.QPSQnsHead {
+    border-bottom: 1px solid #CCCCCC;
+    margin: 35px 0 10px;
+    padding: 10px 0 10px 10px;
+}
+.QPSQNextNaN,.QPSQNext,.QPSQPrevNaN,.QPSQPrev{
+    padding: 7px 14px;
+}
+.QPSQNextNaN{
+    background: url("/public/images/questions/INextQues.png") no-repeat scroll center center transparent;
+}
+.QPSQPrevNaN{
+    background: url("/public/images/questions/IPrevQues.png") no-repeat scroll center center transparent;
+    margin-right: 5px;
+}
+.QPSQNext{
+    background: url("/public/images/questions/ANextQues.png") no-repeat scroll center center transparent;
+    cursor: pointer;
+}
+.QPSQPrev{
+    background: url("/public/images/questions/APrevQues.png") no-repeat scroll center center transparent;
+    margin-right: 5px;
+    cursor: pointer;
+}
+.QPSimilarQuesns{
+    min-height: 200px;
+}
+.QPSimilarQuesns .ques {
+    font-size: 11px;
+    margin: 0 10px 20px;
+    padding: 10px 20px 10px 10px;
+}
+.QPSimilarQuesns .quesTextDiv img{
+    max-width: 350px;
+}
+.QPSimilarQuesns .quesTextDivHolder{
+    border-bottom: 0;
+}
+.QPRelatedContent{
+    margin: 0 10px;
+}
+
+
+
+
+
+/*question anlytics*/
+
+.QAPGraph{
+    float: left;
+    width: 375px;
+    position: relative;
+}
+.barGraphAreaHolder{
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 300px;    
+}
+.BGBarsHolder{
+    border-left: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    position: relative;
+    height: 210px;
+}
+.BGBarDiv,.BGXAxisItem{
+    position: absolute;
+    width: 45px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 11px;
+}
+.BGBarDiv{
+    bottom: 0;
+}
+.BGBar{
+    background-color: #8dcdec;
+}
+.BGYAxisName,.BGXAxisName{
+    font-size: 15px;
+    color: #acacac;
+    font-weight: bold;
+}
+.BGYAxisName{
+    -moz-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    left: -55px;
+    position: absolute;
+    top: 98px;
+}
+.BGYAxisDiv{
+    position: relative;
+}
+.BGXAxisDiv{
+    position: relative;
+    min-height: 22px;
+}
+.BGXAxisItem{
+    top: 3px;
+}
+.BGXAxisItemMyAns .BGXAxisItemOptText,.BGXAxisItemCorrect .BGXAxisItemOptText{
+    background-color: #f66972;
+    border-radius: 10px 10px 10px 10px;
+    padding: 2px 6px;
+}
+.BGXAxisItemCorrect .BGXAxisItemOptText{
+    background-color: #75D571;
+}
+.BGXAxisItemCorrect .BGXAxisItemStatus,.BGXAxisItemMyAns .BGXAxisItemStatus{
+    font-size: 10px;
+    font-weight: normal;
+    line-height: 10px;
+    margin-top: 3px;
+}
+.QAPTable{
+    width: 300px;
+}
+.QAPTable td:last-child{
+    width: 75px;
+}
+.QAPTable td{
+    padding: 5px 10px;
+}
+.QAPTableTdBottomBorder{
+    border-bottom: 1px solid #cccccc;
+}
+.QAPTable td.QAPTableCorrectTd{
+    padding: 0;
+}
+.QAPTableTdRightBorder{
+    border-right: 1px solid #cccccc;
+}
+.QAPTableCorrectAnsDiv,.QAPTableMyWrongAnsDiv{
+    background-color: #d9f3d8;
+    padding: 10px 10px 20px 15px;
+}
+.QAPTableMyWrongAnsDiv{
+    background-color: #f0dede;
+}
+.QAPTableCorrectAnsPercent {
+    color: #5AAC5A;
+    font-size: 30px;
+    line-height: 30px;
+}
+.QAPTableCorrectAnsText{
+    color: #5aac5a;
+    margin: 3px 0 10px 0;
+}
+
+.QAPStats{
+    font-size: 11px;
+    margin-left: 385px;
+}
+.QAPGraphWrongAns,.QAPGraphCorrectAns{
+    color: #cc3333;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 20px;
+}
+.QAPGraphCorrectAns{
+    color: #339900;
+}
+.QAPAttemptsDiv{
+    border-top: 1px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
+    padding: 20px 0;
+    margin: 30px 0 20px 0;
+}
+.QAPStatColor{
+    color: #339900;
+}
+.QAPStats .img20Wrapper{
+    margin: 2px;
+}
+.QPSimilarQuesns .quesCreator{
+    max-width:90px;
+}
+.smallVideoInfo .singleLineText{
+	max-width: 90%;
+	display: inline-block;
+}

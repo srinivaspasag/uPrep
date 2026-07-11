@@ -1,0 +1,78 @@
+%{
+sdCardGroups = item;
+}%
+<div class="eachDetailBill">
+    <div class="fs16 boldy">${sdCardGroups.name}</div>
+    <div class="fs13" style="color:#333;padding-top:4px;">${sdCardGroups.desc}</div>
+    <div style="color:#666;padding-top:8px;" class="fs16">
+        <span>Billed on : </span>
+       	<span class="updateClientTime" data-time="${sdCardGroups.details.period.from}" data-format="dd mmm, yyyy"></span>            
+    </div>
+    <table border=2 cellspacing=0 cellpadding=1 class="invoiceTable">
+        <tr>
+            <th>S. No.</th>
+            <th>Per SD-Cards Group Price</th>
+            <th>No Of Units</th>
+            <th>Amount</th>
+        </tr>
+        <tr>
+            <td>1.</td>
+            <td class="centerText">${currencyCode} ${sdCardGroups.rate.value/100}</td>
+            <td class="centerText">${sdCardGroups.count}</td>
+            <td>${currencyCode} ${sdCardGroups.costInfo.base/100}</td>
+        </tr>
+        <tr>
+            %{
+            costInfo = sdCardGroups.costInfo;
+            if(!costInfo.taxes.equals(null)){
+            taxes = costInfo.taxes;
+            taxesCount = taxes.length();                            
+            }else{                            
+            taxesCount=0;
+            }
+            }%
+            <td colspan=2 rowspan=${3+taxesCount} class="tableBorderTop">
+                <div></div>
+            </td>
+            <td class="tableBorderTop tableBorderRight height25">
+                <span class="boldy">Sub-Total</span>
+            </td>
+            <td class="tableBorderTop tableBorderRight">
+                <span class="">${currencyCode} ${uicom.util.Utilities.roundDecimals(costInfo.base/100)}</span>
+            </td>
+        </tr>
+        %{ 
+        totalTax = 0;
+        }%
+        #{if taxesCount>0}
+        #{list items:0..taxesCount-1,as:'taxIndex'}
+        %{ tax = taxes.get(taxIndex); totalTax += tax.calculatedTax; }%
+        <tr>
+            <td class="tableBorderTop tableBorderRight height25">
+                <span class="boldy">${tax.category}</span>
+                <span>(${tax.desc} @ ${currencyCode}${tax.percentage})</span>
+            </td>
+            <td class="tableBorderTop tableBorderRight">
+                <span class="">${currencyCode} ${uicom.util.Utilities.roundDecimals(tax.calculatedTax/100)}</span>
+            </td>
+        </tr>
+        #{/list}
+        #{/if}
+        <tr>
+            <td class="tableBorderTop tableBorderRight height25">
+                <span class="boldy">Total Tax</span>
+            </td>
+            <td class="tableBorderTop tableBorderRight">
+                <span class="">${currencyCode} ${uicom.util.Utilities.roundDecimals(totalTax/100)}</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="tableBorderTop tableBorderRight height25">
+                <span class="boldy">Total Amount</span>
+            </td>
+            <td class="tableBorderTop tableBorderRight">
+                <span class="">${currencyCode} ${uicom.util.Utilities.roundDecimals(costInfo.total/100)}</span>
+            </td>
+        </tr>	
+    </table>
+</div>

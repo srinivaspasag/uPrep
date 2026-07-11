@@ -1,0 +1,107 @@
+.boardActive{
+    background: #2C3E50;
+    font-weight: 600;
+    color:white;
+    border-radius: 5px;
+}
+.boardsHolder{
+    padding: 10px;
+    text-align: center;
+}
+.scheduleDayInfo{
+    min-width: 800px;
+    /*min-height: 300px;*/
+    height: 300px;
+    overflow: auto;
+    font-family: 'Ubuntu',sans-serif;
+}
+.boardData{
+    cursor: pointer;
+    padding: 10px;
+    display: inline-block;
+}
+.content{
+    padding: 5px 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 10px 0px;
+}
+.content img{
+    width: 20px;
+}
+.content a{
+    font-size: 14px;
+    vertical-align: text-bottom;
+    margin-left: 5px;
+}
+#todayDate{
+    background: #2C3E50;
+    padding: 10px;
+    color: white;
+    bottom: 15px;
+    position: relative;
+    z-index: -1;
+}
+.scheduleInfoPopup #todayDate{
+    z-index: 0;
+}
+.scheduleInfoPopup .vpopupBodyHolder{
+    padding: 0px;
+    margin: 0px;
+    box-shadow: none;
+}
+.scheduleInfoPopup .crossVPopup{
+    z-index: 1;
+    position: relative;
+    top: 10px;
+    right: 10px;
+}
+.scheduleInfoPopup .crossVPopup.stl{
+    background-image: url("/public/images/common/close_window.png");
+    background-position: center;
+}
+.boardName{
+    font-size: 14px;
+}
+.removeDaySchedule{
+    left: 50%;
+    position: relative;
+    transform: translateX(-50%);
+    border: 1px solid white;
+    margin: 10px 0px;
+}
+.contentInfo{
+    max-width: 600px;
+    margin: 10px auto;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+.contentLimit{
+    max-width: 400px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+}
+.removeEntityFromSchedule{
+    cursor: pointer;
+}
+.qrScheduleInfoPopup{
+    min-width: 800px;
+    padding: 0px!important;
+}
+.qrScheduleInfoPopup .closeCmdsPopupWIndow{
+    background-image: url("/public/images/common/close_window.png");
+    background-position: center;
+    width: 14px;
+    height: 14px;
+    bottom: 2px;
+    right: 5px;
+    position: relative;
+    float: right;
+    cursor: pointer;
+}
+.qrScheduleInfoPopup .getTestPage,.qrScheduleInfoPopup .getDocPage,.qrScheduleInfoPopup .getModulePage,.qrScheduleInfoPopup .getVideoPage{
+    color:#363636!important;
+}

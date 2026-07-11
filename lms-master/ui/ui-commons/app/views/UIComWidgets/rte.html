@@ -1,0 +1,32 @@
+	%{
+appName = play.Play.configuration.getProperty("application.name");
+}%    
+<!-- data-page value is set dynamically. -->
+<div class="RTEHolder" data-page="">
+    <div class="RTEToolBar">
+        <a class='RTEBold RTEOpt' data-format-type='bold' data-name="RTE_BTN"></a>
+        <a class='RTEItalic RTEOpt' data-format-type='italic' data-name="RTE_BTN"></a>
+        <a class='RTEUnderline RTEOpt' data-format-type='underline' data-name="RTE_BTN"></a>
+        <a class='RTEInsertUnorderedList RTEOpt' data-format-type='insertunorderedlist'  data-name="RTE_BTN"></a>
+        <a class='RTEInsertOrderedList RTEOpt' data-format-type='insertOrderedList' data-name="RTE_BTN"></a>                
+        <a class='RTESuperscript RTEOpt' data-format-type='superscript' data-name="RTE_BTN"></a>
+        <a class='RTESubscript RTEOpt' data-format-type='subscript' data-name="RTE_BTN"></a>
+<!--        <a class='RTEImage RTEOpt'>Image</a>
+        <a class='RTEVideo RTEOpt'>video</a>-->
+<!--                <a class='RTELink'></a>-->
+        <span class='blueSubmitButton RTEAddDiagram' data-name="ADD_DIAGRAM_BTN">&{'BTN_ADD_IMAGE'}</span>   
+        <span class='RTEFormulaEditor greenButton' data-name="RTE_OPEN_FORMULA_EDTR_BTN">
+		<span class='addFormulaImg'></span>
+		<span>&{'BTN_ADD_FORMULA'}</span>
+	</span> 
+<!--        <div class="greenButton RTEAddCode">Add Code</div>-->
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+    <div class="RTEUrlBox nonner">
+        Add Url here <input type="text" class="RTEUrlInput"/>
+        <span class="greenButton RTEUrlSubmit" data-name="SUBMIT_BTN">Submit</span>
+        <a class="RTEUrlCancel" data-name="CANCEL_BTN">Cancel</a>
+        <img class="nonner RTEUrlLoading"  src="/public/images/loading.gif"/>
+    </div>
+    <div class="RTEArea" contenteditable="true" style="background-color: #FFFFFF"></div>
+</div>

@@ -1,0 +1,240 @@
+#{if topicInfo==null||(topicInfo.has('errorCode')&& topicInfo.errorCode!='')||!topicInfo.has('errorCode')}
+    <script type="text/javascript">
+        showError(COMMON_ERROR_MESSAGE);
+    </script>
+#{/if}
+#{else}
+
+%{
+            topic=topicInfo.result;
+            topicId=topic._id;
+            PLId=topic.playlistId;
+            sections=topic.sections;
+            viewType=params.viewType;
+       }%
+       #{if viewType=='PL_EDIT'}
+           <div class='PLTopicHead' rel='${topicId}' lang='${PLId}'>
+                   <span class='PLTopicNo'>1</span>.<input class='PLTopicName PLInputChange doCStream' data-cs-name="EDIT_TOPIC_NAME" type='text' rel='${topic.heading}' value='${topic.heading}'/>
+<!--                   <div class='addPLSectionTop floatRight margHalfTop'>
+                       <span class='PLAddButton'>Add Content <span class='plusSign'>+</span></span>
+                   </div>-->
+                    <div class="PLShadow"></div>
+           </div>
+       #{/if}
+       #{elseif viewType=="PL_VIEW"}
+           <div class='PLTopicHead' rel='${topicId}' lang='${PLId}'>
+                   <span class='PLTopicNo'>1</span>. ${topic.heading}
+                   <div class="PLShadow"></div>
+           </div>
+       #{/elseif}
+    #{if sections.length()>0}
+        %{
+            if(viewType=='PL_EDIT'){
+                compoClass='PLCompo';
+                secHeadClass='PLSecHead';
+            }
+            else {
+                compoClass='PLCompo PLCompoOpened';
+                secHeadClass='PL_VIEW_SecHead';
+            }
+        }%
+        #{list items:0..sections.length()-1, as: 'i'}
+            %{
+                sec=sections.get(i);
+                if(sec.has('sources')&& sec.sources.length()>0)icon="PLSecHeadIcon"+sec.sources.get(0).type;
+                else icon="";
+            }%
+            #{if sec.has('sources')&& sec.sources.length()>0}
+                <div class="${compoClass} PLCompo${sec.secType} ${i_isFirst ? 'activePLCompo' : ''}" id='sec_${sec._id}' data-sec-type="${sec.secType}" data-sec-id="${sec._id}">
+                    <div class='${secHeadClass}'>
+                        <span class='PLSecHeadIcon ${icon}'></span>
+                        #{if viewType=='PL_EDIT'}
+                            <span class='editPLSection'>Edit</span>
+    <!--                        <div class='addPLSectionAfter'><img src='/public/images/playlist/addSection.png' alt='add'/></div>-->
+                        #{/if}
+                        <div class="PLSecHeadText">${sec.heading}</div>
+                    </div>
+                    <div class='PLSecBody'>
+                        #{list items:0..sec.sources.length()-1, as: 'k'}
+                            %{
+                                source=sec.sources.get(k);
+                            }%
+                            #{if source.type=='TEXT'&&source.has('content')}
+                                    <div class='PLSecContent'>${source.content.raw()}</div>
+                            #{/if}
+                            #{elseif source.type=='QUESTION'}
+                                %{
+                                    org.json.JSONArray quesns=new org.json.JSONArray();
+                                    if(source.has('info'))quesns.put(source.info);
+                                }%
+                                #{if source.has('info')}
+                                    #{questions.quesItems quesns:quesns,target:'PLAYLIST_VIEW'/}
+                                #{/if}
+                            #{/elseif}
+                            #{elseif source.type=='IMAGE' && source.has('image')}
+                                    #{if source.image!=''}
+                                        <img src='${source.image}' alt='' class='PLSecImg'>
+                                    #{/if}
+                            #{/elseif}
+                            #{elseif source.type=='WEB_PAGE'&&source.has('title')&&source.has('url')}
+                                %{
+                                    url=source.url;
+                                    l=url.indexOf('/',url.lastIndexOf('.'));
+                                    if(l!=-1)domain=url.substring(0,l);
+                                    else domain='';
+                                }%
+                                <div class='PLUrlBody PLLinkBody' rel="WEB_PAGE">
+                                    #{if source.has('thumbnail')&&source.thumbnail!=""}
+                                    <div class='PLUrlImgDiv'>
+                                        <img class='urlImg' rel='1' src='${source.thumbnail}'>
+                                    </div>
+                                    #{/if}
+                                    <div class='PLUrlContent'>
+                                        <a class='boldy PLUrlTitle' target='_blank' href='${source.url}'>${source.title}</a>
+                                        #{if domain!=''}
+                                        <a href='${domain}' target='_blank' class='PLUrlDomain blocky'>${domain}</a>
+                                        #{/if}
+                                        #{if source.has('content')&&source.content!=""}
+                                        <div class='PLUrlDescNoEdit'>${source.content}</div>
+                                        #{/if}
+                                    </div>
+                                    <div class='cleaner_with_divider'>&nbsp;</div>
+                                </div>
+                            #{/elseif}
+                            #{elseif source.type=='VIDEO'&& source.has('url')}
+                                %{
+                                    url=source.url;
+                                    domain=url.substring(0,url.indexOf('/',url.lastIndexOf('.')));
+                                }%
+                                <div class='PLUrlBody PLVideoBody' rel="VIDEO">
+                                    <div class='PLUrlImgDiv'>
+                                        <a rel='${source.url}' class='videoThumbWrapper playPLVideo'>
+                                            <img alt='Image not available' src='${source.thumbnail}'>
+                                            #{if source.has('duration')&&duration!='0'}
+                                            ${controllers.Doc.getVideoDuration(source.duration).raw()}
+                                            #{/if}
+                                        </a>
+                                    </div>
+                                    <div class='PLUrlContent'>
+                                        <a class='boldy PLUrlTitle playPLVideo' target='_blank' href='${source.url}'>${source.title}</a>
+                                        <a href='${domain}' target='_blank' class='PLUrlDomain blocky'>${domain}</a>
+                                        #{if source.has('content')&&source.content!=""}
+                                        <div class='PLUrlDescNoEdit'>${source.content}</div>
+                                        #{/if}
+                                    </div>
+                                    <div class='cleaner_with_divider'>&nbsp;</div>
+                                </div>
+                            #{/elseif}
+                            #{elseif source.type=='TEST'}
+                                %{
+                                    org.json.JSONArray tests=new org.json.JSONArray();
+                                    if(source.has('info'))tests.put(source.info);
+                                }%
+                                #{if source.has('info')}
+                                    #{test.testTileItems tests:tests,target:'PLAYLIST_VIEW'/}
+                                #{/if}
+                            #{/elseif}
+                            #{elseif source.type=='DOCUMENT'}
+                                <div class="">${source.entityId}</div>
+                            #{/elseif}
+                        #{/list}
+                       </div>
+                    #{if viewType=='PL_VIEW'}
+<!--                        <div class='PLSrcButton'></div>-->
+                        <div class='PLCommentButton'></div>
+                        <div class="PLSecCommWidgetHolder"></div>
+                        <div class="PLShadow"></div>
+                    #{/if}
+                </div>
+            #{/if}
+        #{/list}
+        #{if viewType=='PL_EDIT'}
+            <div class='PLAddBtnBtmDiv doCStream' data-cs-name="ADD_CONTENT_BUTTON">
+                <span class='addPLSectionBottom'>
+                    <span class='PLAddButton greenButton'>Add Content <span class='plusSign'>+</span></span>
+                </span>
+            </div>
+        #{/if}
+    #{/if}
+    #{elseif viewType=='PL_EDIT'}
+        <div class='PLCompo PLWrite PLWriteToolOnly' rel='${topicId}' lang='${PLId}' id=''>
+                <div class='PLWriteToolHead'>Choose type of content to add</div>
+                <div class='PLWriteOptions'>
+                    <div class='PLOpt addEssayPL doCStream' data-cs-name="ADD_TEXT" rel='TEXT'>Text</div>
+                    <div class='PLOpt addQuesPL doCStream' data-cs-name="ADD_QUESTIONS" rel='QUESTION'>Questions</div>
+                    <div class='PLOpt addImagePL doCStream' data-cs-name="ADD_IMAGES" rel='IMAGE'>Image</div>
+                    <div class='PLOpt addLinkVideoPL doCStream' data-cs-name="ADD_LINKS_VIDEOS" rel='LINK_VIDEO'>Links/Videos</div>
+                    <div class='PLOpt addTestPL doCStream' data-cs-name="ADD_TEST" rel='TEST'>Tests</div>
+<!--                    <div class='PLOpt addDocPL' rel='DOCUMENT'>Add Document</div>-->
+                    <div class="floatRight PLWriteSubmitOptions" style="margin-top: 25px;">
+                        <input type='submit' value='Delete' class='PLSecDelete blueSubmitButton doCStream' data-cs-name="DELETE_SECTION_BUTTON" />
+                        <input type='submit' value='Done' class='PLSecSubmit greenButton doCStream' data-cs-name="SUBMIT_SECTION_BUTTON" />
+                        <input type='submit' value='Preview' class='PLSecPreview yellowButton doCStream' data-cs-name="PREVIEW_SECTION_BUTTON" />
+                        <input type='submit' value='Cancel' class='PLSecCancel greyButton doCStream' data-cs-name="CANCEL_SECTION_BUTTON" />
+                    </div>
+                    <div class='cleaner_with_divider'>&nbsp;</div>
+                </div>
+                <div class='PLWriteHeadDiv'><span class='headDot'></span><input type='text' class='PLWriteHead' placeHolder='Add Heading' /></div>
+                <div class='PLWriteBody'>
+                    <div class='PLRTEDiv'>
+                        #{include 'UIComWidgets/rte.html' /}                      
+                    </div>                        
+                </div>
+        </div>
+        <div class='PLAddBtnBtmDiv centry margTop20 margBot20 nonner doCStream' data-cs-name="ADD_CONTENT_BUTTON">
+            <span class='addPLSectionBottom'>
+                <span class='PLAddButton greenButton'>Add Content <span class='plusSign'>+</span></span>
+            </span>
+        </div>
+        <script>
+            playlistCurationVar.initAddEditContentFns($("#DTDiv_PL_EDIT .DTPLMiddle .PLWrite"));
+        </script>
+    #{/elseif}
+    #{else}
+        <div class='userMessage'>There are no contents in this topic</div>
+    #{/else}
+
+
+
+
+
+
+
+
+
+
+
+    *{<div class='PLAddQuesnsTestsHolder'>
+        <div class='centry'>
+            <input type='text' class='PLSearchQTInput' />
+        </div>
+        <div class='PLAQTDropDownsDiv'>
+            <select class='PLAQTSelectExam'>
+                <option value='-1'>All Exams</option>
+                <option value='iit hes'>IIT asjhv</option>
+            </select>
+            <select class='PLAQTSelectSub'>
+                <option value='-1'>All Subjects</option>
+                <option value='Phycis'>Phuycs</option>
+            </select>
+            <select class='PLAQTSelectTopics'>
+                <option value='-1'>All Topics</option>
+                <option value='Phycis'>Phuycs</option>
+            </select>
+            <select class='PLAQTSelectSources'>
+                <option value='-1'>All Sources</option>
+                <option value='TMH arihant'>Psdhvj</option>
+            </select>
+            <a class='blueSubmitButton getPLAQT'>Load Questions</a>
+        </div>
+        <div class='centry PLAQSortQuesns'>
+            <a class='PLAQAllQuesns'>All</a>
+            <a class='PLAQTakenQuesns'>Taken by You</a>
+            <a class='PLAQMyQuesns'>Created by You</a>
+        </div>
+        <div class='LMHandlerDiv PLAddQuesnsList'>
+
+        </div>
+    </div>}*
+
+   #{/else}

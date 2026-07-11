@@ -1,0 +1,64 @@
+#{extends 'main.html' /}
+#{set title:'Tools' /}
+<!--<div class="blueButton editOrganization">Edit Organization</div>-->
+#{respStatus /}
+<h1>Members</h1>
+<div class=""> 
+	<select class="chooseMemberType">
+		<option value="MANAGER" selected>Managers</option>
+		<option value="EDITOR">Editors</option>
+		<option value="TEACHER">Teachers</option>
+		<option value="STUDENT">Student</option>
+	</select>
+	<input type="text" placeholder="Search" id="searchMember"/>
+</div>
+<div class="orgMembersContainer">
+	#{include 'Organizations/orgMembersTable.html'/}
+</div>
+<script type="text/javascript">
+        currentToolsOrgId="${params.orgId}";
+	$(function(){
+		$(document).on("change",".chooseMemberType",function(e){
+			$("#searchMember").val("");
+			fetchMembers(0);
+		});
+		$(document).on("change","#searchMember",function(e){
+			fetchMembers(0,$(this).val());
+		});
+		$(document).on("click",".moreMembers",function(e){
+			var query = $("#searchMember").val();
+			fetchMembers($(this).data("start"),query);
+		});
+		var fetchMembers = function(start,query){
+			var targetProfile = $(".chooseMemberType").val();
+			start = start ? start : 0;
+			query = query ? query : "";
+			var params = {start:start,size:10,targetProfile:targetProfile,orgId:"${params.orgId}","query":query};
+			var holder = $(".orgMembersContainer");
+			holder.html("<div class='centerText'>Loading...</div>")
+			$.get("/Organizations/orgMembersTable",params,function(data){
+				holder.html(data);
+			});
+		};
+		$(document).on("change",".canImpersonate",function(e){
+			var $this = $(this);
+			var checked = $this.is(":checked");
+			var params = {"updateList" : ["canImpersonate"],
+				"canImpersonate" : checked,
+				"targetOrgMemberId" : $this.data("memberId"),
+				"targetUserId" : $this.data("userId"),
+				"orgId" : "${params.orgId}"
+			};
+			$this.prop("disabled",true);
+			$.get("/Organizations/updateMember",params,function(data){
+				$this.prop("disabled",false);
+				if(data && data.errorCode==""){
+					alert("Success!");
+				}else{
+					showError(data.errorCode);
+					$this.prop("checked",false);
+				}
+			});
+		});
+	})
+</script>

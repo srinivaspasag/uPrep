@@ -1,0 +1,185 @@
+#{if resp!=null}
+%{
+    showCourseTab = resp.showCourseTab;
+}%
+#{/if}
+#{stylesheet media:'screen', src:'jquery-libs/jquery-ui-1.10.4.custom.min.css' /}
+<div class="signupPopup" style="top:-10px;position: relative;">
+    <center>
+        <img src="/public/images/vedantutm.png" class="img-responsive" style="bottom:20px;position: relative;">
+    </center>
+    <!-- <div class="orgSiteColor big20" style="font-size: 20px;position: relative; bottom:14px;">&{'microsite.ENTER_YOUR_DETAILS'}</div> -->
+    <div class="loginErrorMsg nonner"></div>
+    <div class="container-fluid">
+        <form action="@{Security.signup}" name="registration" id="memberSignupForm" method="POST" onsubmit="return  signupProcess.validate();" class="form-horizontal">
+
+            <!-- <table cellpadding="0" cellspacing="0" class="memberSignupTable"> -->
+            <!-- <tr> -->
+            <!-- <td class="signupTitleTd"> -->
+            <div class="form-group">
+                <label for="firstName" class="col-sm-4 control-label loginFieldTitle">&{'signup.FIRST_NAME'}
+    <span class="redTextColor">*</span></label>
+                <!-- <span class="redTextColor">*</span> -->
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" required name="firstName" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="control-label col-sm-4 loginFieldTitle">&{'signup.EMAIL_ID'}
+    <span class="redTextColor">*</span></label>
+                <div class="col-sm-8">
+                    <input type="email" class="form-control emailUserName" required name="email" id="email" placeholder="Enter your email" />
+                    <div class="signupErrorDiv"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="contactNumber" class="control-label col-sm-4 loginFieldTitle">&{'signup.CONTACT_NO'}
+    <span class="redTextColor">*</span></label>
+                <div class="col-sm-8">
+                    <input type="tel" class="form-control contactNumber" required name="contactNumber" placeholder="Enter Contact Number" id="contactNumber" />
+                    <div class="signupErrorDiv" id="contactNumbererrorDiv"></div>
+                </div>
+            </div>
+
+            #{if play.Play.configuration.getProperty("referral.state") == "ACTIVE"}
+            <div class="form-group">
+                <label for="referral" class="control-label col-sm-4 loginFieldTitle">&{'signup.REFERRAL'}
+    <!-- <span class="redTextColor">*</span> --></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="referral" name="referrerCode" placeholder="Enter Referral Code" />
+                </div>
+            </div>
+            #{/if}
+
+            <!-- <div class="form-group">
+                <label for="campaignCode" class="control-label col-sm-4 loginFieldTitle">&{'signup.PROMO'}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="campaignCode" name="campaignCode" placeholder="Enter Promo Code" />
+                </div>
+            </div> -->
+
+            <div class="form-group">
+                <label for="password" class="control-label col-sm-4 loginFieldTitle">&{'signup.PWD'}
+    <span class="redTextColor">*</span></label>
+                <div class="col-sm-8">
+                    <input type="password" class="form-control" required name="password" placeholder="&{'signup.PWD_REQUISITE'}" id="password" />
+                    <div id="passwordlength" style="color: red;padding-left: 15px;"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmpassword" class="control-label col-sm-4 loginFieldTitle">&{'signup.CONFIRM_PWD'}
+    <span class="redTextColor">*</span></label>
+                <div class="col-sm-8">
+                    <input type="password" class="form-control" required name="confirmpassword" placeholder="&{'signup.CONFIRM_PWD_REQUISITE'}" id="confirmpassword" />
+                </div>
+            </div>
+
+            #{if showCourseTab == true}
+            <div class="form-group">
+                <label for="programType" class="control-label col-sm-4 loginFieldTitle">&{'signup.COURSE'}
+    <span class="redTextColor">*</span></label>
+                <div class="radio col-sm-8">
+                    <label>
+      <input type="radio" name="programType" value="JEE" checked>
+      <span style="top: 4px;position: relative;">JEE</span>
+      </label>
+                    <label>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="radio" name="programType" value="NEET">
+      <span style="top:4px;position: relative;">NEET</span>
+      </label>
+                </div>
+            </div>
+            #{/if}
+            <!-- <span class="loginFieldTitle">&{'signup.FIRST_NAME'} <span class="redTextColor">*</span></span> -->
+            <!-- </td> -->
+            <!-- <td> -->
+
+            <!-- </td> -->
+            <!-- </tr> -->
+            <!-- <tr> -->
+            <!-- <td class="signupTitleTd"> -->
+            <!-- <span class="loginFieldTitle">&{'signup.EMAIL_ID'} <span class="redTextColor">*</span></span> -->
+            <!-- </td> -->
+            <!-- <td> -->
+            <!-- <input type="email" class="loginInputField emailUserName" required name="email" id="email"/> -->
+            <!-- <div class="signupErrorDiv"></div> -->
+            <!-- </td> -->
+            <!-- </tr> -->
+            <!-- <tr> -->
+            <!-- <td class="signupTitleTd"> -->
+            <!-- <span class="loginFieldTitle">&{'signup.CONTACT_NO'}<span class="redTextColor">*</span></span> -->
+            <!-- </td> -->
+            <!-- <td> -->
+            <!-- <input type="tel" class="loginInputField contactNumber" required name="contactNumber"
+    placeholder="Enter Contact Number" id="contactNumber" style="height: 40px;left:15px;width: 292px;top:-2px;position: relative;" />
+    <div class="signupErrorDiv" id="contactNumbererrorDiv"></div> -->
+            <!-- </td> -->
+
+            <!-- </tr> -->
+
+            <!-- <tr> -->
+            <!-- <td class="signupTitleTd"> -->
+            <!-- <span class="loginFieldTitle">&{'signup.REFERRAL'}</span> -->
+            <!-- </td> -->
+            <!-- <td> -->
+            <!-- <input type="text" class="loginInputField" id="referral" name="referrerCode"
+    placeholder="Enter Referral Code"/> -->
+            <!-- </td> -->
+            <!-- </tr> -->
+            <!-- <tr> -->
+            <!-- <td class="signupTitleTd"> -->
+            <!-- <span class="loginFieldTitle">&{'signup.PWD'} <span class="redTextColor">*</span></span> -->
+            <!-- </td> -->
+            <!-- </td> -->
+            <!-- <input type="password" class="loginInputField" required name="password"
+    placeholder="&{'signup.PWD_REQUISITE'}" id="password"/>
+    <div id="passwordlength" style="color: red;padding-left: 15px;"></div> -->
+            <!-- </td> -->
+            <!-- </tr> -->
+            <!-- <tr> -->
+            <!-- <td class="signupTitleTd"> -->
+            <!-- <span class="loginFieldTitle">&{'signup.CONFIRM_PWD'} <span class="redTextColor">*</span></span> -->
+            <!-- </td> -->
+            <!-- <td> -->
+            <!-- <input type="password" class="loginInputField" required name="confirmpassword"
+    placeholder="&{'signup.CONFIRM_PWD_REQUISITE'}" id="confirmpassword"/> -->
+            <br>
+            <div id="match" style="color: red;" class="text-center"></div>
+            <div id="numberlength" style="color: red;" class="text-center"></div>
+            <div id="referralErrorDiv" style="color: red;" class="text-center"></div>
+            <div id="campaignErrorDiv" style="color: red;" class="text-center"></div>
+            <!-- </td> -->
+            <!-- </tr> -->
+            <!-- </table> -->
+            %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+            <input type="hidden" value="${learnpediaOrgId  }" name="orgId" />
+            <input type="hidden" value="" name="sectionId" />
+            <input type="hidden" id="countryCode" name="countryCode" />
+            <input type="hidden" id="progType" name="progType" />
+            <div class="centerText">
+                <input class="loginButton orgButton submitButton" id="clickToSignUp" value="&{'login.SIGNUP_CAPS'}" type="submit" style="background: #62b23b" />
+            </div>
+        </form>
+        <br>
+        <div id='terms' style="bottom:13px;position: relative;">
+            <center>
+                By signing up you agree to our <a href="/terms" target="_blank">Terms and Conditions</a>
+            </center>
+        </div>
+        <div class="left" id="otpSignup" style="bottom: -15px;top:10px;position: relative;">
+            <span class="big14 blueLoginButton loginPopupBtn"><a href="/quicksignup">Signup with OTP</a></span>
+        </div>
+        <div class="right" id="loginLink" style="bottom: -15px;top:10px;position: relative;">
+            <span class="big12" style="color:#666;">&{'ALREADY_A_MEMBER'}</span>
+            <span class="big14 blueLoginButton loginPopupBtn"><a href="/login">&{'login.SIGNIN'}</a></span>
+        </div>
+    </div>
+</div>
+<script src="/public/javascripts/jquery-libs/jquery-ui-1.10.4.custom.min.js"></script>
+<script type="text/javascript">
+    signupProcess.init();
+</script>

@@ -1,0 +1,55 @@
+<script type="text/javascript">
+	var instHmPgOpenTimer;
+</script>
+<div class="instBasicBg" style="min-height:800px">
+    <div class="relative pageHolderNM">
+      <div id="instHomeMainContainer">
+	<!-- <div class="instLeftCol">
+		<div class="instHomeLinksHold">
+			<div class="instHomeTab instRATab">
+				<span class="instImgs"></span>
+				<span class="tabText">&{'TXT_RECENT_ACTIVITY'}</span>
+			</div>
+			<div class="instHomeTab instDbtTab">
+				<span class="instImgs"></span>
+				<span class="tabText">&{'TXT_DOUBTS'}</span>
+			</div> -->
+			<!-- DISABLED / NOT-IMPLEMENTED 
+			*{<div class="instHomeTab instSchTab">
+				<span class="instImgs"></span>
+				<span class="tabText">&{'TXT_SCHEDULE'}</span>
+			</div>}*-->
+			<!-- <div class="instHomeTab instPplTab">
+				<span class="instImgs"></span>
+				<span class="tabText">&{'TXT_PEOPLE'}</span>
+			</div>
+        		<div class="cleaner_with_divider">&nbsp;</div>
+		</div>
+		<div id="instHomeWidgetsContainer">
+			<div class="instSchedulePgWidget instHomeLftWidget"></div>
+			<div class="instUpcomingsWidget instHomeLftWidget"></div>
+		</div>
+	</div> -->
+	<div class="instMainCol" style="margin-left: 0px; border-left: 1px;">
+		#{if params.instHomePg!=null}
+			#{include params.instHomePg /}
+		#{/if}
+		#{else}
+			<script type="text/javascript">
+			$(function(){
+				if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+        			instHmPgOpenTimer = setInterval(function(){
+					if(institute && institute.openLibrary){
+						clearInterval(instHmPgOpenTimer);
+						$("#instPageNavigator").find(".clInstTab").removeClass("clInstTab");
+						$("#instPageNavigator").find(".instNavTab.instOpenLibraryPage").addClass("clInstTab");
+						institute.openLibrary();
+					}
+				},10);
+			});	
+			</script>
+		#{/else}
+	</div>
+      </div>
+    </div>
+</div>

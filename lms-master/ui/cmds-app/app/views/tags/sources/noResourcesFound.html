@@ -1,0 +1,13 @@
+%{
+    colspan=_colspan;
+    target=_target;
+    noMessage='No resources found.';
+    if(target=='LIBRARY_RESOURCES'){
+        noMessage='No content found.';    
+    }
+}%
+<tr class="noResultsTr">
+  <td colspan="${colspan}">
+      <div class="userMessage">${noMessage}</div>
+  </td>
+</tr>          

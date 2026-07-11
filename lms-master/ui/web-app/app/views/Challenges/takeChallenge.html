@@ -1,0 +1,95 @@
+%{
+    chal=challengeInfo.result;
+    if(!chal.isNull('hintsDeductionValues')){
+        hints=chal.hintsDeductionValues;
+    }else{
+        hints=null;
+    }
+}%
+<div id='takeChallengePage' style="background-color: #ffffff;" data-challenge-id="${chal.id}">    
+    <div id="TCPMainSecHolder">
+        <div id="TCPTitleHolder">
+            <a class="floatRight cancelChallenge blueColor liner big14 boldy" >Close Challenge</a>
+            <input id="challengeTitle" type="hidden" value="${chal.name}"/>
+            <div class="TCPChallengeTitle">${chal.name}</div>
+            <div class='cleaner_with_divider'>&nbsp;</div>
+        </div>
+        <div id="TCP1002">
+            <div id="TCPMainSec">                
+                <div class="challengeQues">
+                    <div class='loader' style="min-height: 75px;"></div>
+                </div>
+                #{if hints!=null&&hints.length()>0}
+                <div class="margTop20 CSWidget" data-widget="HINTS">
+                    #{list items:0..hints.length()-1,as:'i'}
+                        <span class="TCPHintDiv${i_isFirst?' TCPHintActive':''}">
+                            <span class="TCPHint${i_index} TCPHintBtn doCStream" data-name="HINT_BUTTON">Hint ${i_index}</span>
+                            <div class="TCPHintLossText"><span class="boldy">-${hints.get(i)}</span> points</div>
+                        </span>
+                    #{/list}
+                </div>
+                #{/if}
+            </div>
+            <div id="TCPRightSec">
+                <div class="TCPTimerDiv CPRightSecColor">
+                    <div class="TCPTimerCircle">
+                        #{include '/UIComTags/common/arc_drawing.html' /}
+                    </div>
+                    <span class="TCPTimerTextDiv">
+                        Time Left
+                        <div class="TCPTimerText">-</div>
+                    </span>
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </div>
+                <div class="TCPPointsDiv centry">
+                    #{if hints!=null&&hints.length()>0}
+                        <div class="TCPHintsStatusPage boldy">0 hints taken</div>
+                        <div class="TCPHats margTop">
+                            #{list items:0..hints.length()-1,as:'i'}
+                                <span class="TCPHat"></span>
+                            #{/list}
+                        </div>
+                    #{/if}
+                    <span class="TCPPointsText">
+                        Points to win
+                        <div class="TCPPointsCount">${chal.maxBid}</div>
+                    </span>
+                </div>
+            </div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>
+    </div>
+    <div id="TCPHintSec1002">
+        <div id="TCPHintSec">
+            #{if hints!=null&&hints.length()>0}
+                #{list items:0..hints.length()-1,as:'i'}
+                <div class="TCPHint nonner">
+                    <div class="floatLeft boldy big18">Hint ${i_index}</div><div class="TCPHintLine">&nbsp;</div>
+                    <div class="TCPHintContent"></div>
+                </div>
+                #{/list}
+            #{/if}
+        </div>
+        <div class="cleaner_with_divider">&nbsp;</div>
+    </div>
+</div>
+<div id="TAKE_CHALLENGE_JSDIV">
+    <script type="text/javascript">
+	playRunMode = "${play.mode.name()}";
+        $(function(){
+            var TCP=$("#takeChallengePage");
+            TCP.find(".TCPTimerDiv").data("timeLimit","${chal.duration*1000}")
+            .data("burstTime","${chal.timeCreated+(chal.lifeTime*1000)}");
+            TCP.find(".TCPPointsCount").data("points","${chal.maxBid}");
+            #{if hints!=null}
+            var hints=$.parseJSON('${hints.raw()}');
+            var hintBtns=TCP.find(".TCPHintBtn");            
+            for(var k=0;k<hints.length;k++){
+               hintBtns.eq(k).data("points",hints[k]);
+            }            
+            #{/if}
+            $("#TAKE_CHALLENGE_JSDIV").remove();
+        });
+    </script>
+</div>
+

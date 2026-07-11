@@ -1,0 +1,75 @@
+#{if dicussionsData.has('result') && dicussionsData.result.has('facet')}	
+%{ facets = dicussionsData.result.facet; }%
+#{if params.facet == "true" }
+#{if params.subFacetHolder!=null && !params.subFacetHolder.isEmpty()}
+	#{if facets.has('topics') && facets.topics.length()>0}
+		<div class="dbtFacetSubjTopics">
+		#{list items:0..facets.topics.length()-1, as:'tIndex'}
+		%{ topicFacet = facets.topics.get(tIndex); }%
+			<div class="dbtFacetTopic doCStream" data-name="${topicFacet.obj.name}" 
+			name="TRENDING_TOPIC_LINK" data-brd-id="${topicFacet.obj.id}">
+				<span class="instTrTopicText doubtBrd-${topicFacet.obj.id}" 
+					data-brd-id="${topicFacet.obj.id}">
+					${topicFacet.obj.name}</span> (${topicFacet.count})
+			</div>
+		#{/list}
+		</div>
+	#{/if}
+#{/if}
+#{else}
+#{if facets.has('courses') && facets.courses.length()>0}
+<div class="instDbtFacets">
+	<div class="titleTxt boldy">&{'POPULAR_SUBS'}</div>
+	<div class="dbtFacetsSubs">
+	     <div class="dbtFacetSubject">
+		<div class="dbtFacetSub selected dbtFacetAllSub">
+			<input class="dbtFacetSubChk" type="checkbox" value="" checked/>
+			<span class="facetSubTxt">&{'TXT_ALL'} (${totalCount})</span>
+		</div>
+	     </div>
+	     #{list items:0..facets.courses.length()-1, as:'cIndex'}
+	     %{ courseFacet = facets.courses.get(cIndex); }%
+	     <div class="dbtFacetSubject dbtFacetSubId_${courseFacet.obj.id}">
+		<div class="dbtFacetSub">
+			<input class="dbtFacetSubChk doCStream" type="checkbox" value="${courseFacet.obj.id}" 
+				data-name="SUB_${courseFacet.obj.code}_CHK_BOX"/>
+			<span class="facetSubTxt">${courseFacet.obj.name} (${courseFacet.count})</span>
+			<span class="right instImgs nonner"></span>
+		</div>
+		<div class="dbtFacetSubjTopicsHolder">
+		</div>
+	     </div>
+	     #{/list}
+	</div>
+</div>
+#{/if}
+<div class="instDbtPopularTags">
+	#{if facets.has('topics') && facets.topics.length()>0}
+	<div class="instTopicHead">&{'POPULAR_TOPICS'}</div>
+	<div class="left instTopicTree CSWidget" data-widget="FILTER_DISCUSSION_BY_TRENDING_TOPICS">
+		#{list items:0..facets.topics.length()-1, as:'tIndex'}
+		%{ topicFacet = facets.topics.get(tIndex); }%
+			<div class="instEachTrTopic doCStream" data-name="${topicFacet.obj.name}" name="TRENDING_TOPIC_LINK" 
+				data-brd-id="${topicFacet.obj.id}">
+				<span class="instTrTopicText doubtBrd-${topicFacet.obj.id}" 
+					data-brd-id="${topicFacet.obj.id}">
+					${topicFacet.obj.name}</span>
+				<span class="instTrTopicCount">(${topicFacet.count})</span>
+			</div>
+		#{/list}
+	</div>
+	#{/if}
+</div>
+#{/else}
+#{/if}
+#{else}
+<script type="text/javascript">
+	$(function(){
+		try{
+			institute.doubts.facetsData = ${facets.raw()}; 
+			institute.doubts.facetsData.total = ${totalCount}; 
+		}catch(err){}
+	});
+</script>
+#{/else}
+#{/if}

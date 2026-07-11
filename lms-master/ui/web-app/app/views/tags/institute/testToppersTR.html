@@ -1,0 +1,47 @@
+#{if toppersData!=null && toppersData.errorCode=="" &&toppersData.has('result') && toppersData.result.has('leaderboard') && toppersData.result.leaderboard.length()>0}
+	#{list items:0..toppersData.result.leaderboard.length()-1,as:'tIndex'}
+       %{
+               topper = toppersData.result.leaderboard.get(tIndex);
+       }%
+       <tr>
+               <td>${topper.rank}</td>
+               <td>
+                       <img class="icon" src="${topper.profilePic}" alt="${topper.firstName}"/>
+		       #{institute.memberName user : topper /}
+               </td>
+               #{if topper.has("questionDistribution") && topper.questionDistribution.length()>0}
+                       #{list items:0..topper.questionDistribution.length()-1,as:'sIndex'}
+                       <td><span class="leaderBoardShowMarks">${(int)topper.questionDistribution.get(sIndex).marks}</span><span class="nonner leaderBoardShowPercentage">${topper.questionDistribution.get(sIndex).percent} %</span></td>
+                       #{/list}
+               #{/if}
+               <td><span class="leaderBoardShowMarks">${(int)topper.scoredMarks}</span><span class="nonner leaderBoardShowPercentage">${topper.percent} %</span></td>
+               %{
+                       timeObj=uicom.util.Utilities.getTimeFromMiliSec(topper.avgTime);
+               }%
+               <td>${timeObj.hrs}:${timeObj.mins} hrs</td>
+               <td>
+		#{if params.orgId!=null && params.orgId!=""}
+                       <a class="openInstiTestPage doCStream" data-target-user-id="${topper.userId}" 
+                               name="INST_TEST_LINK" data-test-group="${params.testId}" 
+                               data-user-id="${topper.userId}" data-org-id="${params.orgId}" 
+			       href="/organization/${params.orgId}/test/${params.testId}">
+                       View Analytics</a>
+		#{/if}
+		#{else}
+                       <a class="openTestPage doCStream" data-target-user-id="${topper.userId}" 
+                               name="INST_TEST_LINK" data-test-id="${params.testId}" 
+                               data-user-id="${topper.userId}"
+			       href="/test/${params.testId}">
+                       View Analytics</a>
+		#{/else}
+               </td>
+       </tr>
+       #{/list}
+	#{if toppersData.result.has('totalHits') && toppersData.result.totalHits > (Integer.parseInt(params.start)+Integer.parseInt(params.size)) }
+        	<div class="loadMoreItems instTATestLeadersLoadMore doCStream" name="LOAD_MORE_LEADERS" 
+			data-start="${(Integer.parseInt(params.start)+Integer.parseInt(params.size))}">
+			Load More Students
+		</div>
+	#{/if}
+	<input type="hidden" class="nonner" id="instTestToppersCount" value="${toppersData.result.leaderboard.length()}"/>
+#{/if}

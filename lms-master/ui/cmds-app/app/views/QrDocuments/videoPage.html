@@ -1,0 +1,175 @@
+#{if docInfo != null && docInfo.errorCode.isEmpty()}
+    #{stylesheet media:'screen', src:'uicomDocuments/docView.css' /}
+    %{
+	video = docInfo.result;
+    }%
+<!--<div class='videoMenuHolder'>
+    <div class='videoMenu'>
+        
+    </div>
+</div>-->
+<style type="text/css">
+.getVideoFeedbackAndReview{
+    text-align: right;
+}
+</style>
+<div class='cleaner_with_divider'>&nbsp;</div>
+<div class='DTVideo1002'>
+    <div id="DTDocLeft"></div>
+    <div class='DTVideoMiddle'>
+    	<div class='videoStatsHolder'>
+    		<div class='videoTitleHolder'>
+                    	<div class='videoTitle'>
+                            <span class="entityEditableName">${video.name}</span>
+                            <a class="editEntityDetailsStyles editEntityDetails" 
+                                    title="Edit Details" data-entity-type="CMDSVIDEO" data-entity-id="${video.id}"
+                                    data-url-class="cmdsVideos"></a>
+                        </div>
+		    	<div>
+			#{if video.has("boardTree") && !video.boardTree.equals(null) && video.boardTree.length()>0}
+                                %{
+                                        boards = video.boardTree;
+                                }%
+                                #{list items:0..boards.length()-1,as:'bIndex'}
+                                %{
+                                        subject = boards.get(bIndex);
+                                }%
+                                <div class="left">
+                                        <span class="resourceSubTag">${subject.name}</span>
+                                        #{if subject.has("children") && !subject.children.equals(null) && subject.children.length()}
+                                                #{list items:0..subject.children.length()-1,as:'cIndex'}
+                                                %{
+                                                        topic = subject.children.get(cIndex);
+                                                }%
+                                                <span class="resourceTopicTag">${topic.name}</span>
+                                                #{/list}
+                                        #{/if}
+                                </div>
+                                #{/list}
+                       #{/if}
+                        	%{
+                            		user=video.user;
+                        	}%
+				<div class="right">
+					<span>by </span>
+                        		#{widgets.user20 user:user /}
+				</div>
+				<div class="cleaner_with_divider">&nbsp;</div>
+		    	</div>
+    		</div>
+    		<div class='cleaner_with_divider'>&nbsp;</div>
+    	</div>
+        <div id='videoWidget'>
+            #{if video.has('videoSrc')}
+            <div class='dummyVideoPlayer'>
+                Please wait, the video is initialising..
+            </div>            
+            #{/if}
+            #{elseif video.has('mediaType')&&video.mediaType=="ANIMATION"}
+                <object>
+                  <embed src="${video.videoUrl}" type="application/x-shockwave-flash"
+                         allowscriptaccess="always" allowFullScreen="true" style="width: 100%;height:100%">
+                  </embed>
+                </object>            
+            #{/elseif}            
+            #{else}
+                %{
+                        playUrl = video.s3url;
+			if(video.linkType.equals('ADDED') && video.has('linkInfo') && !video.linkInfo.equals(null) && video.linkInfo.has('id')){
+				playUrl = video.linkInfo.embedURL;
+				if(video.linkInfo.domainName != null && "YOUTUBE".equals(video.linkInfo.domainName.toUpperCase())){
+					playUrl = uicom.util.Utilities.putParamInUrl(playUrl,"rel","0");
+					playUrl = uicom.util.Utilities.putParamInUrl(playUrl,"showinfo","0");
+				}
+			}
+                }%
+		#{if !playUrl.equals(null) && !playUrl.isEmpty()}
+		   #{if "UPLOADED".equals(video.linkType)}
+			<link href="/public/stylesheets/videojs/videojs.min.css" rel="stylesheet">
+            <script src="/public/javascripts/videojs/videojs.min.js" type="text/javascript"></script>
+            <script src="/public/javascripts/videojs/videojs.hotkeys.min.js" type="text/javascript"></script>
+			%{
+				callingAppName = play.Play.configuration.getProperty("application.name");
+				playUrl = uicom.util.Utilities.putParamInUrl(playUrl,"callingApp",callingAppName);
+                playBackupVideoUrl = "";
+                if(video.has('backupVideoUrl') || video.backupVideoUrl != null ||  video.backUpVideoUrl !=""){
+                        playBackupVideoUrl = uicom.util.Utilities.putParamInUrl(video.s3HDurl,"callingApp",callingAppName);
+                }
+			}%
+                        <video width="100%" height="100%" controls data-setup='{"playbackRates": [0.5, 1, 1.5, 2, 2.5, 3]}'
+			   preload="auto" class="video-js" id="html5VideoTag">
+                                <!-- If video is not yet converted,play backupUrl-->
+                                #{if video.extension == "mp4" && playBackupVideoUrl != ""}
+                                <source src="${playBackupVideoUrl}" type="video/mp4" data-video-src="playBackupVideoUrl">
+                                #{/if}
+                                <!-- End if-->
+                                <source src="${playUrl}" type="video/${video.extension}">
+                        </video>
+                        <script type='text/javascript'>
+                            videojs('html5VideoTag').ready(function() {
+                                this.hotkeys({
+                                  volumeStep: 0.1,
+                                  seekStep: 5,
+                                  enableMute: true,
+                                  enableFullscreen: true
+                                });
+                            });
+                        </script>
+                    #{/if}
+                    #{elseif "ADDED".equals(video.linkType)}
+                         <iframe width="100%" height="100%" src="${playUrl}" frameborder="0" allowfullscreen></iframe>
+                    #{/elseif}
+		#{/if}
+		#{else}
+			<div class="centerText boldy big16">Video Not Available, Add Video Failed</div>
+		#{/else}
+            #{/else}
+	    #{if video.has('converted') && video.converted == false && video.has('operationJobIdMap') && !video.operationJobIdMap.equals(null)}
+			<div class="videoConversionMsg">
+				<span class="redTextColor big16 boldy">&{'VIDEO_UNDER_PROCESS'}</span>
+			</div>	
+	    #{/if}
+        </div>
+            #{widgets.CMDSRatings entityRatingCMDSInfo:entityRatingCMDSInfo, entityType:"CMDSVIDEO" ,entityId:video.id , entityName:video.name/}
+        <div class="videoCommentsAndDesc">    		
+            <div class="videoDescAndTags">
+                #{if video.has('duration')&&video.duration>0}
+                %{
+                    timeObj=uicom.util.Utilities.getTimeObjFromMilliSec(video.duration*1000);
+                    if(timeObj.hrs=="00")hrsTime='';
+                    else hrsTime=timeObj.hrs+':';
+                    videoTime= hrsTime+timeObj.mins+':'+timeObj.secs;                                             
+                }%
+                <div class="margBot5 grayHead big15">
+                    Duration:
+                    <span class="margLeft big12">
+                        ${videoTime}
+                    </span>
+                </div>
+                #{/if}
+                #{if video.has('description')&&video.description!=""}
+                <div class="margBot5 grayHead big15 entityEditableDescHead">Description</div>
+                <div class="entityEditableDesc">
+                    ${video.description.raw()}
+                </div>
+                #{/if}
+                #{else}
+                    <div class="margBot5 grayHead big15 nonner entityEditableDescHead">Description</div>
+                    <div class="entityEditableDesc"></div>
+                #{/else}
+            </div>                
+        </div>
+    </div>
+    <div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$(".videoTitle").elipsifyText();
+                condenseText($(".entityEditableDesc"),300);
+		$("#html5VideoTag").on("contextmenu",false);	
+	});
+</script>
+#{/if}
+#{else}
+    #{common.errorCodes resp:docInfo /}
+#{/else}

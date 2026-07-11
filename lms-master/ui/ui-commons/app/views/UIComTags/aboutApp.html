@@ -1,0 +1,60 @@
+%{
+	noOfCredits = 52;
+}%
+<style>
+.aboutAppPopup{
+	width:300px;
+	min-height:200px;
+}
+.instThumbnailLogo {
+	max-height: 70px;
+	max-width: 200px;
+}
+.buildVer{
+	padding-top:10px;
+	font-size:14px;
+}
+.aboutAppCredits{
+	padding-top:15px;
+}
+.aboutAppCreditsHolder{
+	padding-top:6px;
+	width:100%;
+	overflow-x:hidden;
+	overflow-y:auto;
+	max-height:190px;
+}
+.aboutAppCredit{
+	padding:5px 10px;
+	background-color:#363636;
+	color:#fff;
+	font-size:13px;
+	border-radius:5px;
+	margin-bottom:5px;
+	margin-right:8px;
+ .aboutAppCredit a{color:#fff;}
+</style>
+<div class="aboutAppPopup">
+	<div class="centerText">
+		<div><img class="instThumbnailLogo" src="${instLogo}" alt=""/></div>
+		<div class="">
+			<span class="smally greyTextColor">&{'TXT_POWERED_BY'}</span>
+			<span class="smally blueTextColor">Learnpedia</span>
+		</div>
+		<div class="buildVer">
+			<span>&{'settings.BUILD_VER'}</span>
+			<span class="boldy">${buildVer}</span>
+		</div>
+	</div>
+	<div class="aboutAppCredits">
+		<div class="boldy blackTextColor">Credits</div>
+		<div class="aboutAppCreditsHolder">
+			#{list items:1..noOfCredits,as:'index'}
+			<div class="aboutAppCredit">
+				<a class="" href="&{'webappcredits.ITEM_LINK_'+index}"
+					target="_blank" >&{'webappcredits.ITEM_'+index}</a>
+			</div>
+			#{/list}
+		</div>
+	</div>
+</div>

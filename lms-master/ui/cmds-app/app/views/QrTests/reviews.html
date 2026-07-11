@@ -1,0 +1,293 @@
+#{if reviews.errorCode !=''}
+    #{common.errorCodes resp:reviews /}
+#{/if}
+#{else}
+%{
+    reviewsRes=reviews.result;
+    totalHits = reviewsRes.totalBadHits + reviewsRes.totalGoodHits + reviewsRes.totalAvgHits;
+    ratingType = "ALL";
+    if(params.ratingType != null && params.ratingType != ""){
+        ratingType = params.ratingType
+    }
+    entityType = "";
+    if(params.entityType != null && params.entityType!= ""){
+        entityType = params.entityType;
+    }
+    firstTimeLoad = "false";
+    if(params.firstTimeLoad != null && params.firstTimeLoad!= ""){
+        firstTimeLoad = params.firstTimeLoad;
+    }
+}%
+#{if firstTimeLoad == "true"}
+<style type="text/css">
+    .width400{
+        width: 400px;
+    }
+    .width200{
+        width: 200px;
+    }
+    .entityReviewType{
+        display: inline-block;
+        /* box-sizing: border-box; */
+        display: inline-block;
+        width: 33%;
+        padding: 10px;
+        box-sizing: border-box;
+        text-align: center;
+        background: #a9aca9;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .reviewBox{
+        width: 75%;
+        margin: auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .reviewBox .active{
+        background: #4CAF50;
+        color:white;
+        cursor: pointer;
+    }
+    .entityTitle{
+        font-size: 16px;
+        margin-top: 15px;
+        text-align: center;
+    }
+    .entityImage{
+        top:2px;
+        position: relative;
+        width: 20px;
+    }
+    .hidden{
+        visibility: hidden;
+    }
+    .entityName{
+        bottom: 2px;
+        position: relative;
+    }
+    .headSecTable tr td:last-child {
+        padding-right: 0px;
+    }
+    .cmdsTable td{
+        padding:10px 0 10px 10px
+    }
+</style>
+#{/if}
+<div id="entityReviews" class="mcWidget" data-entity-id="${params.entityId}" data-entity-type = "${params.entityType}" data-start="${params.start}" data-size="${params.size}" data-org-id="${params.orgId}">
+    %{
+        entityImage = "";
+        if(params.entityType == "CMDSVIDEO"){
+            entityImage = "/public/images/icons/video.jpg";
+        }
+        else if(params.entityType == "CMDSDOCUMENT"){
+            entityImage = "/public/images/icons/document.png";
+        }
+        else if(params.entityType == "CMDSTEST"){
+            entityImage = "/public/images/icons/test.png";
+        }
+        else if(params.entityType == "CMDSASSIGNMENT"){
+            entityImage = "/public/images/icons/assignment.png";
+        }
+    }%
+    #{if firstTimeLoad == "true" && params.entityName != "" && params.entityName != null && params.entityName!= undefined}
+        <div class="entityTitle grayHead big14">
+            <img src= "${entityImage}" class="entityImage">
+            <span class="entityName">Reviews for ${params.entityName}</span>
+        </div>
+    #{/if}
+    #{if firstTimeLoad == "true"}
+    <div class="reviewBox">
+        <div class="bad entityReviewType active" data-review-type="BAD">
+        #{if entityType == "CMDSASSIGNMENT" || entityType=="CMDSTEST"}
+        TOUGH
+        #{/if}
+        #{else}BAD#{/else} 
+        </div>
+        <div class="average entityReviewType" data-review-type="AVERAGE">#{if entityType == "CMDSASSIGNMENT" || entityType=="CMDSTEST"}
+        MODERATE
+        #{/if}
+        #{else}AVERAGE#{/else} </div>
+        <div class="good entityReviewType" data-review-type="GOOD">#{if entityType == "CMDSASSIGNMENT" || entityType=="CMDSTEST"}
+        EASY
+        #{/if}
+        #{else}GOOD#{/else} </div>
+    </div>
+    #{/if}
+    <div class="reviewsHolder"> 
+        #{if reviewsRes.has('badReviews') && !reviewsRes.badReviews.equals(null) && (firstTimeLoad == "true" || ratingType =="BAD")}
+        <div class="badReview reviewDiv">
+            #{if reviewsRes.badReviews.length()>0}
+            <div class="pagin right hidden" style="right: 60px;padding:5px;position: relative;">
+                #{common.lmArrowsDiv /}
+            </div>
+            <input type="hidden" class="totalHitsHider" value="${reviewsRes.totalBadHits}" />
+            <div class="LMHandlerDiv">
+            <div class="headSecTableDiv">
+                <table class="headSecTable">
+                  <thead>
+                      <tr>
+                          <td class="tdPadLeft5">Name</td>
+                          <td class="width400">Feedback</td>
+                          <td class="width200">Review Posted On</td>
+                      </tr>          
+                  </thead>
+                </table>    
+            </div>
+            #{list items:0..reviewsRes.badReviews.length()-1,as:'review'}
+            %{
+                badReviews = reviewsRes.badReviews.get(review);
+            }%
+            
+            <div id="fixedSec">
+                <table class="cmdsTable">
+                  <tbody>
+                    <tr class="big13 memberTr">
+                        <td class="tdPadLeft5">
+                            <a class="img20Wrapper openMemberPage floatLeft cmdsaPush margRight5" data-user-id="${badReviews.userId}" href="/organization/${params.orgId}/member/${badReviews.userId}" >
+                                <img src="${badReviews.userProfilePic}" class="img20" />
+                            </a>
+                            <a data-user-id="${badReviews.userId}" class="cmdsaPush openMemberPage"
+                                href="/organization/${params.orgId}/member/${badReviews.userId}">
+                                ${badReviews.userName}
+                            </a>
+                        </td>
+                        <td class="width400">${badReviews.feedback}</td>
+                        %{
+                           timeObj=uicom.util.Utilities.getDateMonthYearTime(badReviews.lastUpdated);
+                        }%
+                        <td class="width200">${timeObj}</td>
+                    </tr>
+                </tbody>
+               </table>
+            </div>
+            #{/list}
+            </div>
+            #{/if}
+            #{else}
+                <div style="text-align: center;">No reviews here</div> 
+            #{/else}
+        </div>
+
+        #{/if}
+
+        #{if reviewsRes.has('averageReviews') && !reviewsRes.averageReviews.equals(null) && (firstTimeLoad == "true" || ratingType =="AVERAGE")}
+        <div class="averageReview reviewDiv #{if ratingType !='AVERAGE'}nonner#{/if}">
+            #{if reviewsRes.averageReviews.length()>0}
+            <div class="pagin right hidden" style="right: 60px;padding:5px;position: relative;">
+                #{common.lmArrowsDiv /}
+            </div>
+            <input type="hidden" class="totalHitsHider" value="${reviewsRes.totalAvgHits}" />
+            <div class="LMHandlerDiv">
+            <div class="headSecTableDiv">
+                <table class="headSecTable">
+                  <thead>
+                      <tr>
+                          <td class="tdPadLeft5">Name</td>
+                          <td class="width400">Feedback</td>
+                          <td class="width200">Review Posted On</td>
+                      </tr>          
+                  </thead>
+                </table>    
+            </div>
+            #{list items:0..reviewsRes.averageReviews.length()-1,as:'review'}
+            %{
+                averageReviews = reviewsRes.averageReviews.get(review);
+            }%
+            <div id="fixedSec">
+                <table class="cmdsTable">
+                  <tbody>
+                    <tr class="big13 memberTr">
+                        <td class="tdPadLeft5">
+                            <a class="img20Wrapper openMemberPage floatLeft cmdsaPush margRight5" data-user-id="${averageReviews.userId}" href="/organization/${params.orgId}/member/${averageReviews.userId}" >
+                                <img src="${averageReviews.userProfilePic}" class="img20" />
+                            </a>
+                            <a data-user-id="${averageReviews.userId}" class="cmdsaPush openMemberPage"
+                                href="/organization/${params.orgId}/member/${averageReviews.userId}">
+                                ${averageReviews.userName}
+                            </a>
+                        </td>
+                        <td class="width400">${averageReviews.feedback}</td>
+                        %{
+                           timeObj=uicom.util.Utilities.getDateMonthYearTime(averageReviews.lastUpdated);
+                        }%
+                        <td class="width200">${timeObj}</td>
+                    </tr>
+                </tbody>
+               </table>
+            </div>
+            #{/list}
+        </div>
+            #{/if}
+            #{else}
+                <div style="text-align: center;">No reviews here</div> 
+            #{/else}
+        </div>
+        #{/if}
+
+        #{if reviewsRes.has('goodReviews') && !reviewsRes.goodReviews.equals(null) && (firstTimeLoad == "true" || ratingType =="GOOD")}
+        <div class="goodReview reviewDiv #{if ratingType !='GOOD'}nonner#{/if}">
+            #{if reviewsRes.goodReviews.length()>0}
+            <div class="pagin right hidden" style="right: 60px;padding:5px;position: relative;">
+                #{common.lmArrowsDiv /}
+            </div>
+            <input type="hidden" class="totalHitsHider" value="${reviewsRes.totalGoodHits}" />
+            <div class="LMHandlerDiv">
+            <div class="headSecTableDiv">
+                <table class="headSecTable">
+                  <thead>
+                      <tr>
+                          <td class="tdPadLeft5">Name</td>
+                          <td class="width400">Feedback</td>
+                          <td class="width200">Review Posted On</td>
+                      </tr>          
+                  </thead>
+                </table>    
+            </div>
+            #{list items:0..reviewsRes.goodReviews.length()-1,as:'review'}
+            %{
+                goodReviews = reviewsRes.goodReviews.get(review);
+            }%
+            
+            <div id="fixedSec">
+                <table class="cmdsTable">
+                  <tbody>
+                    <tr class="big13 memberTr">
+                        <td class="tdPadLeft5">
+                            <a class="img20Wrapper openMemberPage floatLeft cmdsaPush margRight5" data-user-id="${goodReviews.userId}" href="/organization/${params.orgId}/member/${goodReviews.userId}" >
+                                <img src="${goodReviews.userProfilePic}" class="img20" />
+                            </a>
+                            <a data-user-id="${goodReviews.userId}" class="cmdsaPush openMemberPage"
+                                href="/organization/${params.orgId}/member/${goodReviews.userId}">
+                                ${goodReviews.userName}
+                            </a>
+                        </td>
+                        <td class="width400">${goodReviews.feedback}</td>
+                        %{
+                           timeObj=uicom.util.Utilities.getDateMonthYearTime(goodReviews.lastUpdated);
+                        }%
+                        <td class="width200">${timeObj}</td>
+                    </tr>
+                </tbody>
+               </table>
+            </div>
+            #{/list}
+        </div>
+            #{/if}
+            #{else}
+                <div style="text-align: center;">No reviews here</div> 
+            #{/else}
+        </div>
+        #{/if}
+    </div>
+</div>
+#{if firstTimeLoad == "true"}
+<script type="text/javascript" src="/public/javascripts/reviews.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        entityReview.init();
+    });
+</script>
+#{/if}
+#{/else}

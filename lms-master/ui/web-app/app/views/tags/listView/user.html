@@ -1,0 +1,38 @@
+#{if userData!=null && userData.has('userId')}
+<div class="left relative eachUserList eachListViewItem">
+	<img class="left relative icon" alt="no preview" src="${userData.profilePic}"/>
+	<div class="left relative listContentsDetails" style="top:5px;">
+		#{institute.memberName user : userData , classNames : "left relative big14 boldy listContentsText blackTextColor singleLineText" /}
+		*{#{if userData.has("educational") && userData.educational.length()>0 && userData.educational.get(0).has('orgName')}
+			<span class="left relative big12 listContentsText blackTextColor singleLineText">${userData.educational.get(0).orgName}</span>
+		#{/if}}*
+		#{if userData.has("basic") && userData.basic.has("homeTown") && userData.basic.homeTown!=""}
+			<span class="left relative big12 listContentsText blackTextColor singleLineText">Hometown : <b>${userData.basic.homeTown}</b></span>
+		#{/if}
+		%{ lastLoginUser = uicom.util.Utilities.getDiffFromPresent(userData.lastlogin);}%
+		<span class="left relative listContentsText greyTextColor singleLineText">Last Active ${lastLoginUser} ago</span>
+	</div>
+	<div class="left relative listContentsMiddle">
+		<span class="left relative greyTextColor boldy fullWidth">Points</span>
+		<span class="left relative blackTextColor boldy fullWidth big20 fontDigit" style="margin:2px 0 7px 0;">${userData.points}</span>
+		<span class="left relative fullWidth">Following <b>${userData.following}</b></span>
+		<span class="left relative ">Follower <b>${userData.follower}</b></span>
+		#{if userData.commonFollowing>0}
+			<span class="left relative blueTextColor textPadLeft">Common <b>${userData.commonFollowing}</b></span>
+		#{/if}
+	</div>
+	<div class="right relative listContentsRight">
+                <div class="listContentBtn">
+		#{widgets.followUnfollowEntity followType:userData.followType,callback:'USER',
+                    entityType:'USER',entityId:userData.userId,saveText:'Follow'/}
+		%{
+			getUser=(controllers.Profile.getUserClassAndUrl(userData));
+			getUserClass = getUser.get("className");
+			getUserUrl = getUser.get("url");
+			userId = getUser.get("url");
+		}%
+		</div>
+		<a class="vDropDown listContentBtn ${getUserClass} blackTextColor doCStream" data-user-id="${userId}" href="${getUserUrl}" style="padding:4px 12px;" data-cs-name="OPEN_USER">View Profile</a><br/>
+	</div>
+</div>
+#{/if}

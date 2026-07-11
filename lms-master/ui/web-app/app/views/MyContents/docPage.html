@@ -1,0 +1,15 @@
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript">
+    $(function(){
+        showNoTabSec("DOCUMENT");
+    });
+</script>
+#{/if}
+<script>
+	$(function(){
+		try{
+			institute.init();
+		}catch(err){}
+	});
+</script>
+#{include 'UIComDocuments/docPage.html'/}

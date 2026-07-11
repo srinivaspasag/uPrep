@@ -1,0 +1,21 @@
+#{extends 'main.html' /}
+#{set title:'Upload Boards' /}
+<div id="toolsResponse">
+    #{if resp!=null}
+        #{if resp.has('errorCode')}
+        #{if resp.get("errorCode")!=''}
+        <div class="toolsErrorCode">Sorry,there was some problem.</div>
+        <div class="toolsErrorMessage">${resp.get('errorMessage')}</div>
+        #{/if}
+        #{else}
+        <div class="toolsSuccessMessage">
+            Successfully Done.
+        </div>
+        #{/else}
+        #{/if}
+       #{/if}
+       #{else}
+       
+        <div class="toolsErrorCode">Sorry,there was some problem.<br> Please try again.</div>               
+       #{/else}
+    </div> 

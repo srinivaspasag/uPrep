@@ -1,0 +1,5 @@
+@(message: com.vedantu.comm.email.details.MessageEmailDetails)
+@appDomain( message) { host =>  
+<a href="@host/organization/@message.orgId/profile/@message.senderInfo.id">@message.senderInfo.getFullName()</a> sent a new message in conversation
+<a href="@host/organization/@message.orgId/messages/conversation/@message.userConversationId">@message.getSubject()</a>. 
+}

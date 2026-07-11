@@ -1,0 +1,22 @@
+%{
+    courses=courses.result.courses;
+}%
+#{if courses.length()>0}
+    #{if params.loadMore==null}
+        <div class="vRadioGrp" data-param-name="courseId" 
+               data-value="${courseId}" data-callback="onmcvRadioChange"
+               data-beforemccall="setGetTestTopicTree">            
+            #{list items:0..metadata.length()-1,as:'s'}
+            %{
+                sub=metadata.get(s);                
+            }%
+            <div class="vRadioItem">
+                <div class="vRadio${s_isFirst?' vRadioChecked':''}" data-value="${sub.id}">${sub.name}</div>
+            </div>            
+            #{/list}
+        </div>
+    #{/if}            
+    %{
+        courseId=firstSub.id;
+    }%
+#{/if}

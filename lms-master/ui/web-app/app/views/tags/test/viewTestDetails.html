@@ -1,0 +1,96 @@
+		<div class="centerTestDetailsView">
+			<span class="left big12 boldy padRight20">Total Marks <span class="big16 blueTextColor">${data.totalMarks}</span></span>
+			#{if data.duration>0}
+			%{
+					timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.duration);
+                        }%
+			<span class="left big12 boldy">Time Alloted <span class="big16 blueTextColor">${timeObj.hrs}:${timeObj.mins} hrs</span></span><br/>
+			#{/if}
+			#{else}
+			<span class="left big12 boldy">Time Alloted <span class="big16 blueTextColor">Unlimited</span></span><br/>
+			#{/else}
+			<div class="blueTextColor big14 boldy simpleTextPad">
+				<span class="blackTextColor big12">Total Questions</span> ${data.qusCount}
+			
+			#{if data.has('isNTAPattern') && !data.isNTAPattern.equals(null)}
+				#{if data.isNTAPattern==true}
+				<div>
+				<span class="blackTextColor big12">Maximum Questions To Be Attempted</span> ${data.maxQuestionsTobeAttempted}
+			    </div>
+				#{/if}
+
+			#{/if}
+			</div>
+			*{#{if data.has('user') && !data.user.equals(null)}
+			<span class="doCStream" name="USER_LINK">
+				<span>Source- </span>
+					#{institute.memberName user : data.user , classNames : "big14 boldy" /}
+			</span>
+			#{/if}}*
+			
+			<!--<span class="left big14 fullWidth"><b>36</b> MCQ's <b>80</b> Marks</span>-->
+		</div>
+		#{include 'tags/test/testDetailsBySubject.html'/}
+		#{if !data.has('mode') || (data.has('mode') && data.mode != "OFFLINE")} 
+		<div class="left relative testTopicsWeightage">
+			<span class="boldy big14 fullWidth textCenter left" style="padding-top:15px;">Topic Level Marks Distribution</span> 
+			#{if data.metadata.length()>1}
+			<div class="vselect vselectHide topicWeightageChooseSub left" onstatechange="topicWeightageSubjectChanged" data-value="${data.metadata.get(0).id}">
+				<span class="vSelectHead">
+					<input type="text" class="vSelectText blueTextColor boldy big16" value="${data.metadata.get(0).name}" readonly="readonly"/>
+					<span class="dropDownIcon noUserSelect" ></span>
+				</span>
+				<div class="vSelectListHolder">
+					<div class="vSelectList">
+					#{list items:0..data.metadata.length()-1, as:'sIndex'}
+					%{
+						subData = data.metadata.get(sIndex);
+					}%
+						<span class="vSelectEach" data-value="${subData.id}">${subData.name}</span>
+					#{/list}
+					</div>
+				</div>
+			</div>
+			#{/if}
+			#{else}
+				<div class="topicWeightageChooseSub left" data-value="${data.metadata.get(0).id}">
+					${data.metadata.get(0).name}
+				</div>
+			#{/else}
+			<div class="left testTopicsWeightageHolder">
+				<center>
+					#{list items:0..data.metadata.length()-1, as:'sIndex'}
+					%{
+						subData = data.metadata.get(sIndex);
+					}%
+					<table cellspacing=0 cellpadding=10 class="testTopicsWeightageTable cls-topicWeightage-${subData.id} #{if sIndex>0} nonner #{/if}">
+					<tr>
+						<th class="borderBottom borderRight">Topic Name</th>
+						<th class="borderBottom borderRight">
+							<span>Number of Questions</span>
+							<span class="questionMark toolTipTitle" data-title="&{'test.QUES_BELONG_TO_MULTI_TOPICS'}"></span>
+						</th>
+						<th class="borderBottom">Weightage %</th>
+					</tr>
+					#{if subData.has('children') && !subData.children.equals(null) && subData.children.length()>0}
+					#{list items:0..subData.children.length()-1, as:'cIndex'}
+						%{
+							childData = subData.children.get(cIndex);
+       							weightagePercent = (childData.qusCount/subData.qusCount)*100;
+						}%
+					<tr>
+						<td>${childData.name}</td>
+						<td>${childData.qusCount}</td>
+						<td style="max-width:25px;overflow:hidden;">                                                    
+                                                    ${uicom.util.Utilities.roundDecimals(weightagePercent)}%
+                                                </td>
+					</tr>
+					#{/list}
+					#{/if}
+					</table>
+					#{/list}
+				</center>
+			</div>
+		</div>
+		#{/if}
+		*{#{test.marksDistributionGraph marksDistribution : marksDistribution /}}*

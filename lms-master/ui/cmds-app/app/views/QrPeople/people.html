@@ -1,0 +1,133 @@
+#{if people.errorCode!=''}
+    #{common.errorCodes resp:people /}
+#{/if}
+#{else}
+    %{
+        targetProfile=params.targetProfile;
+        pageTarget=params.pageTarget;
+        if(targetProfile=="STUDENT"){
+            targetTemplate='QrPeople/studentsTable.html';
+        }else if(targetProfile=="OFFLINE_USER"){
+            targetTemplate='QrPeople/offlineUsersTable.html';
+        }
+        else if(targetProfile=="ORGANIZATION"){
+            targetTemplate='QrPeople/sharedOrgsTable.html';
+        }
+        else{
+            targetTemplate='QrPeople/membersTable.html';
+            placeHolder='Search Teachers';
+        }
+        orgUserProfile=currentOrgInfo.getOrgUserProfile();
+    }%
+<div id="peoplePage">
+    #{if pageTarget!='PROGRAM_PAGE'}
+    <div class="pageHeadGrayDiv">
+        <span class="big20 color6">People Management</span>      
+        #{people.peoplevChoose vChooseHead:'Teachers',vChooseValue:'TEACHER',pageTarget:pageTarget/}
+        #{if orgUserProfile=="MANAGER"}
+            <span class="sendEmails blueButton #{if targetProfile == 'STUDENT'}#{/if}#{else} nonner #{/else}">Send Emails</span>
+        #{/if}
+        <div class="inputDiv peopleSearch cmdsTableSearchBox hasSearchImg
+             floatRight whiteInputDiv">
+            <input type="text" class="mcSearchDivInput" data-param-name="query" value="${params.query}"
+                   placeholder="${placeHolder}" id="mcWidgetInput"/>
+            <span class="inputSearchImg mcSearchDivImg" data-param-name="query"></span>
+        </div>
+        #{if orgUserProfile=="MANAGER" && !"EXT_AUTH_ORG".equals(session.get("orgAuthType"))}
+        <div class="floatRight redButton boldy addOrgPeople margRight10"
+             data-target-profile='TEACHER'  id="addPeopleBtn">
+            + Add Teachers
+        </div>
+        #{/if}
+        <!-- Show this option only to specific orgId(In this case MIIT)-->
+        #{if orgUserProfile=="MANAGER"}
+            <!-- For MIIT(Future we will change to Lalit) Organization -->
+            #{if params.orgId == "55f6b821e4b06863a03b2fcc" }
+                <div class="exportBtnHolder floatRight">
+                    <span class="btnHolderText #{if targetProfile == 'STUDENT'}#{/if}#{else}nonner#{/else}">Export Students Data</span>
+                    <br>
+                    <span data-org-id="${params.orgId} data-target-profile='STUDENT" class="blueButton studentsSignupData margRight10 #{if targetProfile == 'STUDENT'}#{/if}#{else}nonner#{/else}">&#11015; Online</span>
+                    <span data-org-id="${params.orgId}" data-target-profile='STUDENT' class=" blueButton offlineStudentsData margRight10 #{if targetProfile == 'STUDENT' && params.orgId == '55f6b821e4b06863a03b2fcc'}#{/if}#{else}nonner#{/else}" title="Download Offline Test User Data" >&#11015; Offline </span>
+                </div>
+            #{/if}
+            #{else}
+                <span data-org-id="${params.orgId} data-target-profile='STUDENT" class="floatRight blueButton studentsSignupData margRight10 #{if targetProfile == 'STUDENT'} #{/if}#{else}nonner#{/else}">&#11015; Export Students Data</span>
+            #{/else}
+        #{/if} 
+    </div>     
+    #{/if}
+
+    #{if pageTarget!='PROGRAM_PAGE'}
+    <div class="cmdsTableOptsAndSortDiv centry">
+        #{common.filterProgCenterSecDiv /}
+        <div class="cmdsTableSortDiv">
+            #{common.lmArrowsDiv /}
+        </div>
+    </div>
+    #{/if}
+    #{else}
+    <div class="cmdsTableOptsAndSortDiv rightText">
+        %{
+        if(params.sectionId==null){
+        addClass=" nonner";
+        }else{
+        addClass='';
+        }
+        }%
+        <div class="smallRedButton floatLeft nonner uploadPeopleProfilePics${addClass}">Upload Profile Images</div>
+        <div class="cmdsTableSortDiv">
+            #{if orgUserProfile=="MANAGER" && !"EXT_AUTH_ORG".equals(session.get("orgAuthType"))}
+            <div class="vChoose formvChoose" 
+                 data-value="-1"
+                 data-onchange='moveOrAddStudentsChange' id="moveOrAddStudents">
+                <div class="vChooseHead">Choose an operation</div>
+                <div class="vChooseDownIcon"></div>
+                <div class="vChooseDropDown">
+                    <div class="vChooseOpt" data-value="-1">Choose an operation</div>
+                    <div class="vChooseOpt" data-value="MOVE">Move these students to another section</div>
+                    <div class="vChooseOpt" data-value="COPY">Add these students to another section</div>
+                </div>
+            </div>
+            <div class="redButton addOrgPeople boldy"
+                 data-target-profile='TEACHER' id="addPeopleBtn">
+                + Add Teachers
+            </div>
+             
+            #{/if}
+            #{if targetProfile=="ORGANIZATION"}
+                #{people.orgsvChoose vChooseHead:'Organizations',vChooseValue:people.result.orgsKeyValue,pageTarget:pageTarget/}
+            #{/if}
+            #{if targetProfile!="STUDENT" && targetProfile!="ORGANIZATION"}
+                #{people.peoplevChoose vChooseHead:'Teachers',vChooseValue:'TEACHER',pageTarget:pageTarget/}
+            #{/if}
+            #{common.lmArrowsDiv /}  
+        </div>
+    </div>
+    #{/else}   
+    <div id="tableSection" class="LMHandlerDiv">
+        #{include arg:targetTemplate /}
+    </div>       
+</div>
+%{
+programId=params.programId;
+centerId=params.centerId;
+sectionId=params.sectionId;
+}%
+<script type="text/javascript">
+    new function() {
+        var params = {};
+        if ("${programId}")
+            params.programId = "${programId}";
+        if ("${centerId}")
+            params.centerId = "${centerId}";
+        if ("${sectionId}")
+            params.sectionId = "${sectionId}";
+        params.targetProfile = "${params.targetProfile}";
+        params.pageTarget = "${params.pageTarget}";
+        var fn = function() {
+            qrPeople.init(params);
+        };
+        lazyLoad([{fname: "qrPeople.js", cb: fn}]);
+    }();
+</script>
+#{/else}

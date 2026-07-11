@@ -1,0 +1,24 @@
+<div class="sec1002 mcWidget">
+    <div class="grayHead big16 margBot20 margTop20">List of Study Packages</div>
+        <div class="cmdsTableOptsAndSortDiv">
+          <div class="cmdsTableCheckedOpts floatLeft"></div>  
+          <div class="cmdsTableSortDiv"> 
+              #{common.lmArrowsDiv /}              
+          </div>
+          <div class="cleaner_with_divider">&nbsp;</div>
+        </div>      
+    #{include 'QrProducts/allPackagesList.html' /}    
+</div>
+<script>
+    new(function(){
+        var fn=function(){
+            $(".cmdsAllgCBox").remove();
+            fixContentSec();
+            initmcWidgetforCMDS(cSecHolder.children(".mcWidget"),"/qrproducts/allPackagesList",
+            {orderBy:"lastUpdated"},false,true);              
+        }     
+        lazyFnCall(fn);        
+    })();        
+</script>
+    
+            

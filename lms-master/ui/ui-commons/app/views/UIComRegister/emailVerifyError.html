@@ -1,0 +1,11 @@
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Email Verification' /}
+<div class="centry">
+    <input type="hidden" id="emailForVerify" value="${session.get('username')}">
+    <div class="userMessage">You have not verified your email address, Please verify it or <a id="resendEmailVerificationLink">click here</a> to resend the verification email</div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $.post("/invite/invalidateSession",function(data){});
+    });
+</script>

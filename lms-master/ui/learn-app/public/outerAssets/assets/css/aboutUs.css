@@ -1,0 +1,292 @@
+body{
+  background: none;
+  font-family: 'Raleway', sans-serif;
+}
+
+.about{
+  padding: 40px;
+  margin-top: -60px;
+  background: #34A145;
+}
+
+.about .container{
+  max-width: 90%;
+}
+
+.about .container .about-heading{
+  font-size: 40px;
+  margin-top: 20px;
+  font-weight: 600;
+  color: white;
+}
+
+.about .container .about-description{
+  font-size: 16px;
+  margin-top: 30px;
+  line-height: 40px;
+  color: #f1f1f1;
+  text-align: justify;
+}
+
+
+.vision{
+  padding: 40px;
+  background: white;
+  height: 300px;
+}
+.vision .container{
+  max-width: 90%;
+}
+.vision .heading{
+ font-size: 40px;
+ font-weight: 600;
+ color: black;
+}
+
+.vision .description{
+  font-size: 24px;
+  margin-top: 30px;
+  line-height: 30px;
+  color: #333;
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+}
+
+
+/* Portfolio Section*/
+#portfolio{
+  background-color: #34A145;
+}
+
+#portfolio .container{
+  max-width: 90%;
+}
+#portfolio .heading{
+  margin:20px 0 0 0;
+  font-size: 40px;
+  font-weight: 600;
+  text-align: center;
+}
+#portfolio .description{
+ font-size: 16px;
+ margin-bottom: 30px;
+ line-height: 40px;
+ text-align: center;
+ color: #f1f1f1;
+}
+
+#portfolio .portfolio-item {
+ margin: 0 0 15px;
+ right: 0;
+}
+#portfolio .portfolio-item .portfolio-link {
+ display: block;
+ position: relative;
+ max-width: 400px;
+ margin: 0 auto;
+}
+#portfolio .portfolio-item .portfolio-link .portfolio-hover {
+ background: rgba(62, 75, 92, 0.85);
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ opacity: 0;
+ transition: all ease 0.5s;
+ -webkit-transition: all ease 0.5s;
+ -moz-transition: all ease 0.5s;
+}
+#portfolio .portfolio-item .portfolio-link .portfolio-hover:hover {
+ opacity: 1;
+}
+#portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content {
+ position: absolute;
+ width: 100%;
+ height: 20px;
+ font-size: 18px;
+ text-align: center;
+ top: 30%;
+ margin-top: -12px;
+ color: white;
+}
+#portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content i {
+ margin-top: -12px;
+}
+#portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content h3, #portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content h4 {
+ margin: 0;
+}
+#portfolio .portfolio-item .portfolio-caption {
+ max-width: 400px;
+ margin: 0 auto;
+ background-color: rgba(62, 75, 92, 0.85);
+ text-align: center;
+ padding: 15px;
+}
+#portfolio .portfolio-item .portfolio-caption h4 {
+ text-transform: none;
+ margin: 0;
+ font-size: 24px;
+}
+#portfolio .portfolio-item .portfolio-caption p {
+ font-style: italic;
+ font-size: 18px;
+ margin: 0;
+}
+#portfolio * {
+ z-index: 2;
+}
+@media (min-width: 767px) {
+ #portfolio .portfolio-item {
+  margin: 0 0 30px;
+}
+}
+/* End */
+.advisors{
+ padding: 40px;
+}
+.advisors .container{
+  max-width: 90%;
+}
+.advisors .heading{
+  font-size: 40px;
+  font-weight: 600;
+  color: black;
+  margin-top: 40px;
+}
+.advisors .container .advisors-description{
+  font-size: 16px;
+  line-height: 40px;
+  text-align: center;
+}
+.advisors .card{
+  max-width: 80%;
+  box-shadow: 7px 10px 20px 0 rgba(46,61,73,.15);
+  border-radius: 8px;
+  border: 1px solid #f1f1f1;
+}
+.advisors .img-advisor{
+  width: 280px; 
+  margin: 40px auto;
+}
+
+.advisors .advisor-name{
+  margin-top: 40px;
+  font-size: 23px;
+  text-transform: capitalize;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+.advisors .advisor-content{
+  font-style: italic;
+  margin-top: 30px;
+  font-size: 16px;
+}
+
+.advisors .advisor-block{
+  margin-top: 40px;
+  margin-bottom: 40px;
+
+}
+
+@media(max-width: 780px){
+  .about{
+    padding: 20px;
+    margin-top: -60px;
+  }
+
+  .about .container{
+    max-width: 100%;
+  }
+
+  .about .container .about-heading{
+    font-size: 30px;
+  }
+
+  .about .container .about-description{
+    font-size: 14px;
+    margin-top: 30px;
+    line-height: 30px;
+  }
+  #portfolio .container{
+    max-width: 100%;
+  }
+  #portfolio .heading{
+    margin:40px 0 0 0;
+    font-size: 30px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-align: center;
+  }
+  #portfolio .description{
+   font-size: 14px;
+   margin-top: 20px;
+   margin-bottom: 30px;
+   line-height: 40px;
+   text-align: center;
+   color: #f1f1f1;
+ }
+
+ .advisors{
+  padding: 20px;
+}
+.advisors .container{
+  max-width: 100%;
+}
+.advisors .heading{
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  color: black;
+  margin-top: 40px;
+}
+.advisors .container .advisors-description{
+  font-size: 14px;
+  line-height: 40px;
+  text-align: center;
+}
+.advisors .card{
+  max-width: 100%;
+  box-shadow: 7px 10px 20px 0 rgba(46,61,73,.15);
+  border-radius: 8px;
+  border: 1px solid #f1f1f1;
+}
+.advisors .img-advisor{
+  width: 100px; 
+  margin: 40px auto;
+}
+
+.advisors .advisor-name{
+  margin-top: 0px;
+  font-size: 18px;
+  text-align: center;
+  text-transform: capitalize;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+.advisors .advisor-content{
+  font-style: italic;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.advisors .advisor-block{
+  margin-top: 40px;
+  margin-bottom: 40px;
+
+}
+
+.vision{
+  padding: 20px;
+  height: inherit;
+}
+.vision .container{
+  max-width: 100%;
+}
+.vision .heading{
+ font-size: 30px;
+}
+
+.vision .description{
+  font-size: 18px;
+  line-height: 20px;
+}
+}

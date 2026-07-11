@@ -1,0 +1,86 @@
+<div class="newInventoryPopup">
+    <table class="newInventoryEntryTable" cellspacing=0 cellpadding=0>
+      <tr>
+	<th>&{'TXT_EMAIL'}</th>
+	<td>
+	   <input type="email" class="invEmailInput" placeholder="someone@somewhere.com"/>
+	</td>
+      </tr>
+      <tr>
+	<th class="alignTop">&{'INVENTORY_PRODUCT_ITEM'}</th>
+	<td>
+	    <div class="relative chooseSellableItem">
+		%{
+			sellableEntities = util.TemplateHelper._getSellableEntities();
+		}%
+		<select class="chooseSellableEntityType alignTop" data-shipable="sellableEntities.get(0).shipable">
+		#{list items:0..sellableEntities.length()-1,as:'index'}
+			%{ entity = sellableEntities.get(index); }%
+			<option data-shipable="${entity.shipable}" value="${entity.value}">${entity.text}</option>
+		#{/list}
+		</select>
+		<input class="chooseSellableEntityId" placeholder="type to search sellable items"/>
+		<div class="cmdsEntityList nonner">
+		</div>
+		<div class="addIcon addNewInvItem toolTipTitle" data-title="Add new item"></div>
+	     </div>
+	</td>
+      </tr>
+      <tr>
+	<th class="alignTop">&{'INVENTORY_SELLING_POINT'}</th>
+	<td>
+	   <select type="text" class="invSellPoint">
+		<option value="">From where you sold your product</option>
+		#{if pointsOfSale!=null && pointsOfSale.errorCode.isEmpty() 
+			&& pointsOfSale.result.pointsOfSale.length()>0}
+		#{list items:0..pointsOfSale.result.pointsOfSale.length()-1,as:'index'}
+			%{ value = pointsOfSale.result.pointsOfSale.get(index);}%
+			<option value="${value}">${value}</option>
+		#{/list}
+		#{/if}
+	   </select>
+	   <input type="text" class="invSellRefNo" placeholder='&{'REF_NO'}' style="width:100px;"/>
+	</td>
+      </tr>
+      <tr class="inventoryStateTR">
+	<th>&{'INVENTORY_STATE'}</th>
+	<td>
+		%{
+			statusList = util.TemplateHelper.SHIPMENT_STATUS;
+		}%
+		<select class="invShipmentState">
+			#{list items:0..statusList.length-1,as:'index'}
+			%{ status = statusList[index]; }%
+			<option value="${status}">&{'SHIPMENT_STATUS_'+status}</option>
+			#{/list}
+		</select>
+	</td>
+      </tr>
+      <tr>
+	<th class="alignTop">&{'INVOICE_BILL_TO'}</th>
+	<td class="inventoryBillTo">
+		<input type="text" class="billToName" placeholder="Name"/>
+		<input type="text" class="billToPhone contactNumberTextBox" placeholder="Contact Number"/>
+		<input type="text" class="billToEmail emailTextBox" placeholder="Email"/>
+		<textarea class="billToAddress" placeholder="Address"></textarea>
+		<input type="text" class="billToCity" placeholder="City"/>
+		<input type="text" class="billToCountry" placeholder="Country"/>
+		<input type="text" class="billToPinCode numberTextBox" placeholder="Pin Code"/>
+	</td>
+      </tr>
+      <tr>
+	<th class="alignTop">&{'INVOICE_SHIP_TO'}</th>
+	<td>
+		<input type="checkbox" class="shipToSameChkBox" checked/>
+		<span class="smally italics greyTextColor">&{'SHIP_TO_SAME_BILL_TO'}</span>
+		<div class="inventoryShipTo" style="padding-top:6px;">
+		</div>
+	</td>
+      </tr>
+      <tr>
+	<td colspan=2 class="rightText">
+		<span class="blueButton submitNewInventory">&{'TXT_SUBMIT'}</span>
+	</td>
+      </tr>
+    </table>
+</div>

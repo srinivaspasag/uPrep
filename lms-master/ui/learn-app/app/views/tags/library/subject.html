@@ -1,0 +1,58 @@
+%{
+subjectName=_subjectName;
+documentCount=_documentCount;
+testCount=_testCount;
+moduleCount=_moduleCount;
+subjectId=_subjectId;
+programId = _programId;
+subjectFirstName = controllers.MyContents.getSubjectName(subjectName);
+src = '/public/images/'+subjectFirstName+'.png';
+}%
+
+<div class="individualSubject" data-subject-id="${subjectId}" data-program-id="${programId}">
+    <div class="col-sm-6 col-lg-4">
+        <div class="card libraryHover border8px" id="${subjectFirstName}">
+            <div class="card-header miscellaneous ${subjectFirstName}" style="padding: 10px 30px;">
+                <h4 id="subjectName " class="c-white" >${subjectName}</h4>
+            </div>
+            <div class="card-body row">
+                <div class="col-xs-4">
+                    <img id="subjectImage" class="img-responsive m-t-10" style="max-width: 140px;margin-left: -10px;"  src="${src}" onError="this.src='/public/images/defaultSubject.png'">
+                </div>
+                <div class="col-xs-8">
+                
+                    <table class="table" id="smallScreenTable">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    Chapters
+                                </td>
+                                <td>
+                                    ${moduleCount}
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    E-Books
+                                </td>
+                                <td>
+                                    ${documentCount}
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td>
+                                    Tests
+                                </td>
+                                <td>
+                                    ${testCount}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

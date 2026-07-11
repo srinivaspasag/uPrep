@@ -1,0 +1,596 @@
+#{if orgInfo.errorCode!=''}
+    #{common.errorCodes resp:orgInfo /}
+#{/if}
+#{else}
+%{
+    org=orgInfo.result;
+}%
+<style type="text/css">
+.instituteInfoTable td:first-child, #editInstituteInfoPage td:first-child {
+    min-width: 160px;
+}
+.instituteInfoTable td:last-child, #editInstituteInfoPage td:last-child {
+    padding-left: 20px;
+}
+.toggle {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transform: translate3d(0, 0, 0);
+  margin: auto;
+}
+.toggle:before {
+  content: "";
+  position: relative;
+  top: 1px;
+  left: 1px;
+  width: 40px;
+  height: 22px;
+  display: block;
+  background: #c8ccd4;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+.toggle span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  display: block;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(154,153,153,0.75);
+  transition: all 0.2s ease;
+}
+.visibleCheck:checked + .toggle:before {
+  background: #8CC750;
+}
+.visibleCheck:checked + .toggle span {
+  transform: translateX(18px);
+}
+</style>
+<div id="instituteInfoPage">
+    <div class="memberPageHead centry">
+        %{
+            thumbnail='/public/images/instDefault.jpg';
+            if(org.has('orgThumbnail')){
+                thumbnail=org.orgThumbnail;
+            }
+            orgUserProfile=currentOrgInfo.getOrgUserProfile();
+        }%
+        <div class="img50Wrapper">
+            <img class="img50" src="${thumbnail}">
+        </div>
+        <div class="linBlk margBot20">
+            <span class="big24 color3 margLeft10 alignMiddle linBlk">${org.fullName}</span>
+            #{if orgUserProfile=="MANAGER"}
+            <div class="grayButton margLeft10 editInstituteInfo">
+                Edit Organization Info
+            </div>
+	    <a class="grayButton margLeft10 cmdsaPush"
+		id="cmdsOrgPlans" href='/organization/${params.orgId}/orgplans'>
+        	&{'MY_ORG_PLAN'}</a>
+	    <a class="grayButton margLeft10 cmdsaPush"
+		id="cmdsOrgInvoices" href='/organization/${params.orgId}/invoices'>
+        	&{'MY_ORG_INVOICE'}</a>
+            #{/if}
+        </div>
+    </div>
+    <table class="instituteInfoTable">
+        <tr>
+            <td>
+                Name
+                <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                ${org.name}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Full Name
+                <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${org.fullName}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Website
+                <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${org.website}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Slug Id
+                (Org Url Id)
+                <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${org.slug}
+                </div>
+            </td>
+        </tr>
+        *{<!--<tr>
+            <td>
+                Email Domain
+            </td>
+            <td>
+                ${org.emailDomain}
+            </td>
+        </tr>-->}*
+        <tr>
+            <td>
+                Contact Number
+                <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${org.contactNumber}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Type
+                <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${org.type}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Content Encryption
+                <span class="right">:</span>
+            </td>
+            <td>
+                #{if org.encLevel != "NA"}
+                <span class="big14 boldy greenTextColor">ON</span>
+                #{/if}
+                #{else}
+                <span class="big14 boldy redTextColor">OFF</span>
+                #{/else}
+                <span class="big14" style="padding-left:20px;">(LEVEL - "${org.encLevel}")</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Locations
+                <span class="right">:</span>
+            </td>
+            <td class="locationsTd">
+                %{
+                    locations=org.locations;
+                }%
+                #{list items:0..locations.length()-1,as:'l'}
+                %{
+                    loc=locations.get(l);
+                }%
+                <div class="inputDiv">${loc.city+', '+loc.state+', '+loc.country}</div>
+                #{/list}
+            </td>
+        </tr>
+        <tr>
+            <td>
+              Address
+              <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${org.address}
+                </div>
+            </td>
+        </tr>
+        %{
+            desc=org.description;
+        }%
+        #{if desc!=null && !desc.equals(null) && !desc.isEmpty()}
+        <tr>
+            <td>
+              Description
+              <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${desc}
+                </div>
+            </td>
+        </tr>
+        #{/if}
+        #{if orgUserProfile=="MANAGER" && "EXT_AUTH_ORG".equals(org.authType)
+		&& org.has("endPoint") && !org.endPoint.equals(null)}
+    	%{
+    		endPoint = org.endPoint;
+    	}%
+        <tr>
+            <td>
+              <span>User Authentication Url</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <span>${endPoint.authEndpoint}</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span>Register New User Url</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+    		#{if org.apache.commons.lang.StringUtils.isEmpty(endPoint.registerEndpoint)}
+            	<span class="italics greyTextColor">Not Provided</span>
+    		#{/if}
+    		#{else}
+            	<span>${endPoint.registerEndpoint}</span>
+    		#{/else}
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span>Enroll User to class Url</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+        		#{if org.apache.commons.lang.StringUtils.isEmpty(endPoint.enrollmentEndPoint)}
+            	   <span class="italics greyTextColor">Not Provided</span>
+        		#{/if}
+        		#{else}
+                	<span>${endPoint.enrollmentEndPoint}</span>
+        		#{/else}
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span>Test Data upload url</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+        		#{if org.apache.commons.lang.StringUtils.isEmpty(endPoint.testAttemptDataUploadEndpoint)}
+                	<span class="italics greyTextColor">Not Provided</span>
+        		#{/if}
+        		#{else}
+                	<span>${endPoint.testAttemptDataUploadEndpoint}</span>
+        		#{/else}
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span>Allow Offline login on Mobile</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <span>${endPoint.allowOfflineLoginOnMobile}</span>
+            </td>
+        </tr>
+        #{/if}
+        #{if org.has("socialMedia") && !org.socialMedia.equals(null)}
+    	%{
+    		socialMedia = org.socialMedia;
+    	}%
+        #{if socialMedia.facebook!=null && !socialMedia.facebook.equals(null) && !socialMedia.facebook.isEmpty()}
+        <tr>
+            <td>
+              <span>Facebook page</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <a href="${socialMedia.facebook}" target="_blank">${socialMedia.facebook}</a>
+            </td>
+        </tr>
+        #{/if}
+        #{if socialMedia.twitter!=null && !socialMedia.twitter.equals(null) && !socialMedia.twitter.isEmpty()}
+        <tr>
+            <td>
+              <span>twitter page</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <a href="${socialMedia.twitter}" target="_blank">${socialMedia.twitter}</a>
+            </td>
+        </tr>
+        #{/if}
+        #{if socialMedia.linkedin!=null && !socialMedia.linkedin.equals(null) && !socialMedia.linkedin.isEmpty()}
+        <tr>
+            <td>
+              <span>Linkedin page</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <a href="${socialMedia.linkedin}" target="_blank">${socialMedia.linkedin}</a>
+            </td>
+        </tr>
+        #{/if}
+        #{if socialMedia.blogger!=null && !socialMedia.blogger.equals(null) && !socialMedia.blogger.isEmpty()}
+        <tr>
+            <td>
+              <span>Primary Blogger page</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <a href="${socialMedia.blogger}" target="_blank">${socialMedia.blogger}</a>
+            </td>
+        </tr>
+        #{/if}
+        #{if socialMedia.youtube!=null && !socialMedia.youtube.equals(null) && !socialMedia.youtube.isEmpty()}
+        <tr>
+            <td>
+              <span>YouTube Channel Page</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <a href="${socialMedia.youtube}" target="_blank">${socialMedia.youtube}</a>
+            </td>
+        </tr>
+        #{/if}
+	#{/if}
+        #{if org.has("appInfos") && !org.appInfos.equals(null)}
+        	%{
+        		appInfos = org.appInfos;
+        		androidLink = appInfos.get(0).url;
+        	}%
+        <tr>
+            <td>
+              <span>&{'ANDROID_APP_LINK'}</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    <a href="${androidLink}" target="_blank">${androidLink}</a>
+                </div>
+            </td>
+        </tr>
+	#{/if}
+    #{if org.has("versionCode") && !org.versionCode.equals(null) && org.versionCode > 0}
+            %{
+                versionCode = org.versionCode;
+            }%
+        <tr>
+            <td>
+              <span>Android app version code</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    <div>${versionCode}</div>
+                </div>
+            </td>
+        </tr>
+    #{/if}
+    #{if org.has('communicationMail') && !org.communicationMail.equals(null) && !org.communicationMail.isEmpty()}
+    %{
+        communicationMail = org.communicationMail;
+    }%
+        <tr>
+            <td>
+              <span>Communication Mail</span>
+              <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    <div>${communicationMail}</div>
+                </div>
+            </td>
+        </tr>
+    #{/if}
+        *{<!--<tr>
+            <td>
+                Scope
+            </td>
+            <td>
+                ${org.scope}
+            </td>
+        </tr>-->}*
+        <tr>
+            <td>
+                Admin Details
+                <span class="right">:</span>
+            </td>
+            <td class="adminDetailsTd">
+                %{
+                    admin=org.representative;
+                }%
+                <div class="inputDiv">
+                    <div>${admin.firstName+' '+admin.lastName}</div>
+                    <div>${admin.email}</div>
+                </div>
+            </td>
+        </tr>
+        #{if orgUserProfile=="MANAGER"}
+        <tr>
+            <td>
+               Points of Sale
+               <span class="right">:</span>
+            </td>
+            <td>
+                %{
+                    if(org.has('pointsOfSale')&&!org.pointsOfSale.equals(null)){
+                        pointsOfSale=org.pointsOfSale;
+                    }
+                }%
+                #{if pointsOfSale!=null&& pointsOfSale.length()>0}
+                <div class="inputDiv">
+                    #{list items:0..pointsOfSale.length()-1,as:'p'}
+                    ${pointsOfSale.get(p)}${p_isLast?'':','}
+                    #{/list}
+                </div>
+                #{/if}
+            </td>
+        </tr>
+        <tr>
+            <td>
+               Doubts Forum Mode
+               <span class="right">:</span>
+            </td>
+            <td>
+                %{
+                    if(org.has('doubtsForumMode')&&!org.doubtsForumMode.equals(null)){
+                        doubtsForumMode=org.doubtsForumMode;
+                    }
+                }%
+                #{if doubtsForumMode!=null}
+                <div class="inputDiv">
+                    ${doubtsForumMode}
+                </div>
+                #{/if}
+            </td>
+        </tr>
+        #{/if}
+        %{
+            smtpHost=org.smtpHost;
+        }%
+        #{if smtpHost!=null && !smtpHost.equals(null) && !smtpHost.isEmpty()}
+        <tr>
+            <td>
+              SMTP Host
+              <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${smtpHost}
+                </div>
+            </td>
+        </tr>
+        #{/if}
+        %{
+            smtpUser=org.smtpUser;
+        }%
+        #{if smtpUser!=null && !smtpUser.equals(null) && !smtpUser.isEmpty()}
+        <tr>
+            <td>
+              SMTP User
+              <span class="right">:</span>
+            </td>
+            <td>
+                <div class="inputDiv">
+                    ${smtpUser}
+                </div>
+            </td>
+        </tr>
+        #{/if}
+        %{
+            smtpPassword=org.smtpPassword;
+        }%
+        #{if smtpPassword!=null && !smtpPassword.equals(null) && !smtpPassword.isEmpty()}
+        <tr>
+            <td>
+              SMTP Password
+              <span class="right">:</span>
+            </td>
+            <td>
+               We recieved your password
+            </td>
+        </tr>
+        #{/if}
+
+        %{
+            instaMojoClientId=org.instaMojoClientId;
+            instaMojoClientSecret=org.instaMojoClientSecret;
+            instaMojoApiKey=org.instaMojoApiKey;
+            instaMojoAuthToken=org.instaMojoAuthToken;
+        }%
+        #{if instaMojoClientId!=null && !instaMojoClientId.equals(null) && !instaMojoClientId.isEmpty() &&
+        instaMojoClientSecret!=null && !instaMojoClientSecret.equals(null) && !instaMojoClientSecret.isEmpty() &&
+        instaMojoApiKey!=null && !instaMojoApiKey.equals(null) && !instaMojoApiKey.isEmpty() &&
+        instaMojoAuthToken!=null && !instaMojoAuthToken.equals(null) && !instaMojoAuthToken.isEmpty()
+        }
+        <tr>
+            <td>
+              InstaMojo Client Details
+              <span class="right">:</span>
+            </td>
+            <td style="word-break: break-all;">
+                We recieved your InstaMojo Client details
+            </td>
+        </tr>
+        #{/if}
+        %{
+            sharedQuestionsState=org.sharedQuestionsState;
+        }%
+        #{if sharedQuestionsState!=null && !sharedQuestionsState.equals(null) && !sharedQuestionsState.isEmpty()}
+        <tr>
+            <td>
+              Shared Questions State
+              <span class="right">:</span>
+            </td>
+            <td>
+                #{if sharedQuestionsState == "N.A"}
+                    <span class="big14 boldy">${sharedQuestionsState}</span>
+                #{/if}
+                #{else}
+                    <input
+                        #{if sharedQuestionsState == "ENABLED"} checked="true" #{/if}
+                     type="checkbox" class="visibleCheck visibleCheckbox" data-shared-to-org-id = "${params.orgId}"  id="${params.orgId}" style="display:none"/>
+                    <label for="${params.orgId}" class="toggle">
+                        <span>
+
+                        </span>
+                    </label>
+                #{/else}
+            </td>
+        </tr>
+        #{/if}
+        #{if org.enableOTP}
+        <tr>
+            <td>
+                Enable OTP
+                <span class="right">:</span>
+            </td>
+            <td>
+                <span class="big14 boldy #{if org.enableOTP} greenTextColor #{/if} #{else} redTextColor #{/else}">#{if org.enableOTP} ON #{/if}#{else} OFF #{/else}</span>
+            </td>
+        </tr>
+        #{/if}
+    </table>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".visibleCheckbox").on("change",function(){
+            var parentOrgId = "N.A";
+            var sharedToOrgId = $(this).data('sharedToOrgId');
+            var params = {
+                "parentOrgId" : parentOrgId,
+                "sharedToOrgId" : sharedToOrgId,
+                "isSelfVisible": true
+            }
+            params.visible = $(this)[0].checked;
+            vReq.post("/QrBoards/visibleMapping",params,function(data){
+                if(data.errorCode != ""){
+                    return;
+                }
+                if(data.result.saved){
+                    var message = "";
+                    if(params.visible){
+                        message = "Successfully Published";
+                    }
+                    else{
+                        message = "Successfully Unpublished";
+                    }
+                    showMessage(message);
+                }
+            },function(err){
+                if(params.visible){
+                    $(".visibleCheckbox"). prop("checked", false);
+                }else{
+                    $(".visibleCheckbox"). prop("checked", true);
+                }
+            });
+        });
+    });
+</script>
+#{/else}

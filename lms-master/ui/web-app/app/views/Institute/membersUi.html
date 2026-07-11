@@ -1,0 +1,64 @@
+<div class="instMembersInfo CSWidget" data-widget="INSTITUTE_MEMBERS_SEARCH">
+	<div class="chooseMembersTabs" data-role="STUDENT" data-name="Students">
+		<span class="instMembersType" data-type="STUDENT" data-name="Students">
+			<span class="left">&{'TXT_STUDENTS'}</span>
+			<span class="instImgs"></span>
+		</span>
+		<span class="instMembersType" data-type="TEACHER" data-name="Teachers">
+			<span class="left">&{'TXT_TEACHERS'}</span>
+			<span class="instImgs"></span>
+		</span>
+		<div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+	<div class="instMembersFilterHold">	
+	   <div class="instMemberSearch searchInputDiv">
+		<span class="instImgs"></span>
+		<input type="text" class="searchInputBox relative doCStream" data-param-name="query" 
+			placeholder="&{'SEARCH_BY_NAME'}"/>	
+	   </div>
+	#{if memberInfo != null}
+	%{
+		progs = memberInfo.programs;
+		selectedText = "";
+		selectedVal = "";
+		if(progs.length()>0){
+			prog1 = progs.get(0);
+			selectedText = prog1.name;
+			selectedVal = prog1.id;
+		}
+	}%
+	<div class="instSelMyBatch instMembersByDept" title="Select Programme">
+		#{institute.widgets.dropDowns.mapping memberInfo : memberInfo , showCenters : false , showSections : false , selectedVal : selectedVal , selectedText : selectedText /}
+	</div>
+	#{/if}
+	   #{if courses.errorCode=="" && courses.result.list.length()>0 }
+	   <div class="instSelMyBatch instMembersBySub nonner" title="Search Teachers By a subject">
+		#{institute.widgets.dropDowns.singleList list : courses.result.list , listType : "Subjects" , showSelectAll : true /}
+	   </div>
+	   #{/if}
+	   <div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+	<div class="relative">
+	   <div class="instMembersCount">
+		<span class="instMembersCurCount">0</span>
+		<span class="greyTextColor">&{'TXT_OF'}</span>
+		<span class="instMembersTotalCount greyTextColor">0</span>
+	   </div>
+	</div>
+	<div class="instMembersHolder CSWidget" data-widget="INSTITUTE_MEMBERS_SEARCHED_MEMBERS">
+		*{#{include 'tags/institute/members.html'/}}*
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+</div>
+<script type="text/javascript">
+	var instHmPgOpenTimer;
+	$(function(){
+		if(instHmPgOpenTimer){clearInterval(instHmPgOpenTimer);}
+        	instHmPgOpenTimer = setInterval(function(){
+			if(institute && institute.activities.open){
+				clearInterval(instHmPgOpenTimer);
+				institute.people.init();
+			}
+		},10);
+	});
+</script>

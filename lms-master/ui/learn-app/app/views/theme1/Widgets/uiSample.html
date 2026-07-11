@@ -1,0 +1,118 @@
+%{
+    myProfileLink = "/myprofile";
+    myProfileClass = "openMyProfile";
+    myUserId = session.get('userId');
+    if(params.orgId!=null && !params.orgId.isEmpty()){
+        myProfileLink = "/organization/"+params.orgId+"/profile/"+session.get('userId');
+        myProfileClass = "openInstProfile";
+    }
+}%
+<head>
+    <link href="/public/stylesheets/o.activity.css" rel="stylesheet"/>
+    <style type="text/css">
+        .instCommentPreview{
+            padding: 50px 30px!important;
+        }
+    </style>
+</head>
+<div id="uiSamplesDiv" class="nonner">
+    <div id="commItemSample" class="nonner">
+        <div class='commItem CSWidget' data-widget="COMMENT">
+            <div class="commItemBody">
+                <div class='commItemLeftSec'>
+                    <div class="img30Holder floatLeft"></div>
+                    <div class='margHalfTop smally commReviewVoteDiv centry'>
+                        *{#{widgets.upVoteBar entityType:"COMMENT",entityId:'',upVote:0,voted:false /}}*                    
+                    </div>
+                </div>
+                <div class='itemContent40'>
+                    <div class='commItemWhity'>
+                        <div class="itemHorn"></div>
+                        <div class='margBot10'>
+                            <a  class="${myProfileClass} myCurrentName" href="${myProfileLink}" data-user-id="${myUserId}">${session.fullname}</a> says
+                            <span class='floatRight time'>few moments ago</span>
+                        </div>
+                        <div class="commItemText rteTextDiv"></div>
+                    </div>
+                    <div class="commItemRepliesSec">
+                        <div>
+                            <a class='commRepliesNum ptrTagInline doCStream' data-cs-name="POST_REPLY_BUTTON"><label>0</label> replies</a>
+                            <a class='replyToCommItem ptrTagHovered doCStream' data-cs-name="POST_REPLY_BUTTON">Reply</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="replyWidgetHolder"></div>
+        </div>
+    </div>
+    <div id="instCommItemSample" class="nonner">
+        <div class='commItem card w-item'>
+            <div class="commItemBody">
+            <div class="card-header">
+                <div class='commItemLeftSec media'>
+                    <div class="img30Holder floatLeft pull-left">
+                        <a class="img30Wrapper img30Round ${myProfileClass}" data-user-id="${myUserId}">
+                        <img src="${session.profilePic}" class="img30 img30Round myCurrentPic avatar-img img-circle" alt="${session.fullname}"/></a>
+                    </div>
+                    <div class="media-body">
+                        <h2 class="titleTable">${session.fullname}
+                        <small class='time'>few moments ago</small></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="instCommentPreview card-body card-padding " style="padding-top: 0px!important;"">
+            <div class=""><p class="commItemText"></p></div>
+                        #{institute.widgets.dbtComReply entityType:"COMMENT",entityId:'',upVote:0,voted:false,replies:0 /}
+        </div>
+        <div class="replyWidgetHolder wi-comments"></div>
+        </div>
+    </div>
+    <div id="replyItemSample" class="nonner">
+        <div class='replyItem list-group-item media'>
+            <div class="img20Holder floatLeft pull-left">
+                <a class="img30Wrapper img30Round ${myProfileClass}" data-user-id="${myUserId}">
+                        <img src="${session.profilePic}" class="img30 lgi-img" alt="${session.fullname}"/></a>
+            </div>
+            <div class='margBot10 media-body'>
+                <a  class="${myProfileClass} myCurrentName lgi-heading"  data-user-id="${myUserId}">${session.fullname} 
+                <small class='floatRight time c-gray m-l-10'>few moments ago</small></a>
+            </div>
+            <div class="replyItemText"></div>
+            </div>
+    </div>
+    <div id="replyWidgetSample" class="nonner">
+        <div class="replyWidget">
+            <div class="replyInputer inputer CSWidget inputerRTE" data-widget="POST_REPLY">
+                <div class="img20Holder floatLeft"></div>
+                <div class="inputerContent30">
+                    <div class="inputerRTEDiv reply-editor"></div>
+                    <div class="inputerBtns margTop submitReplyInput">
+                        <button class="btn btn-primary waves-effect doCStream" data-cs-name="SUBMIT_REPLY_BUTTON">Submit</button>
+                        <!-- <a class="liner smally margLeft5 cancelInputerRTE">Cancel</a> -->
+                    </div>
+                    <!-- <div class="cleaner_with_divider">&nbsp;</div> -->
+                </div>
+            </div>
+            <div class="LMHandlerDiv list-group" data-widget="REPLIES_HOLDER"></div>
+        </div>
+    </div>
+    <div id="commWidgetSample" class="nonner">
+       <div class="commWidget">
+            <div class="inputerHat"></div>
+            <div class="commInputer inputer CSWidget inputerRTE" data-widget="POST_COMMENT">
+                <div class="commentorImgHolder img30Holder floatLeft"></div>
+                <div class="inputerContent40">
+                    <div class="inputerRTEDiv rte-editor"></div>
+                    <div class="inputerBtns margTop submitCommInput">
+                        <button class="blueSubmitButton btn btn-primary waves-effect  doCStream" data-cs-name="SUBMIT_COMMENT_BUTTON">Submit</button>
+                        <!-- <a class="liner smally margLeft5 cancelInputerRTE">Cancel</a> -->
+                    </div>
+                    <div class="cleaner_with_divider">&nbsp;</div>
+                </div>
+            </div>
+            <div class="LMHandlerDiv"  data-widget="COMMENTS_HOLDER"></div>
+       </div>
+    </div>
+</div>
+

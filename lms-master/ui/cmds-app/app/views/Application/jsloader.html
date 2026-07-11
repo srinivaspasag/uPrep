@@ -1,0 +1,48 @@
+      
+<!--    jQuery loading -->
+    #{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /} 
+    
+<!--    First set loading
+    utils,main-->
+
+    #{script src:'uicomUtils.js', charset:'utf-8' /}    
+    #{script src:'uicomCommon/utils.js', charset:'utf-8' /}
+    #{script src:'uicomWidgets/tabModel.js', charset:'utf-8' /}    
+    #{script src:'main.js', charset:'utf-8' /}  
+     
+    
+
+
+<!--    last set loading
+    entrySugg,clickStream,vChoose,questions.js-->
+    #{script src:'uicomCommon/utilsUi.js', charset:'utf-8' /}
+    #{script src:'uicomWidgets/entrySugg.js', charset:'utf-8' /}
+    #{script src:'uicomWidgets/vChoose.js', charset:'utf-8' /}
+    #{script src:'uicomCommon/scrollbar.js', charset:'utf-8' /}    
+    #{script src:'uicomWidgets/comment.js', charset:'utf-8' /}
+    #{script src:'uicomWidgets/share.js', charset:'utf-8' /}
+    #{script src:'uicomQuestions/questions.js', charset:'utf-8' /}
+    #{script src:'history.js', charset:'utf-8' /}
+    #{script src:'utilsUi.js', charset:'utf-8' /}
+    #{script src:'uicomHistory/jquery.history.js', charset:'utf-8' /}  
+<!--    First set loading
+    utils,main-->
+    <script type="text/javascript">
+        var asyncFnsStore=[];
+        var jsFileLogger=[];
+        var filesUpFront=[];
+        var cbfnUpFront;
+    </script>   
+    <script>
+        var fn2=function(){
+            console.log("executing f2");
+            qrProgram.init({});
+        }
+        var fn3=function(){
+            console.log("executing f3");
+            qrProgramContent.init({});
+        }        
+        fetchScripts([
+        {fname:"qrProgram.js",cb:fn2},
+    {fname:"qrProgramContent.js",cb:fn3}]);
+    </script>

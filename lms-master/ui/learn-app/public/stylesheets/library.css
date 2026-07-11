@@ -1,0 +1,291 @@
+.className{
+	color: #479938;	
+}
+.border8px{
+	border-radius: 8px!important;
+}
+.RTELatex{
+    display: inline-block;
+    padding: 0 5px;
+}
+
+.RTEImageDiv img{
+    max-width: 80%;
+}
+
+
+
+/*TEST SOLUTION */
+.solutioncorrect{
+color:#4CAF50;
+background-color:transparent;border-width:0px;
+padding-left: 20px;
+background-repeat: no-repeat;
+}
+.solutioninCorrect{
+color:#F44336;
+background-color:transparent;border-width:0px;
+padding-left: 20px;
+background-repeat: no-repeat;
+}
+.solutionnotAttempted{
+background-color:transparent;border-width:0px;
+}
+/*END TEST SOLUTION */
+
+
+
+
+/* TEST PERFORMANCE CSS */
+
+.c-testBlue{
+	color: #047286
+}
+.bgm-correct{
+	height: 30px; 
+	float: left; 
+	background-color: #047286;
+}
+.bgm-incorrect{
+	height: 30px; 
+	float: left; 
+	background-color: #047286;
+	opacity: 0.6; 
+	margin-left: -2px;
+}
+.bgm-left{
+	height: 30px; 
+	float: left; 
+	background-color: #047286;
+	opacity: 0.3; 
+	margin-left: -2px;
+}
+
+.legend { 
+	list-style: none; 
+	display:table; 
+	margin:0 auto;
+}
+.legend li { 
+	float: left; 
+	margin-right: 10px; 
+	font-size: 12px;
+	display:table-cell;
+}
+.legend span { 
+	border: 1px solid #ccc; 
+	float: left; 
+	width: 12px; 
+	height: 12px; 
+	margin: 2px; 
+}
+.f-24{
+	font-size: 24px;
+}
+
+/* END OF TEST PERFORMANCE CSS */
+
+
+/*GENERAL CSS*/
+
+.libraryHover{
+    box-shadow: 7px 10px 20px 0 rgba(46,61,73,.15);
+    border: solid #eee;
+    border-width: 1px; 
+    cursor: pointer;
+}
+.libraryHover:hover{
+    box-shadow: 0 4px 8px 0 rgba(46,61,73,.12);
+    transition: all .3s ease;
+    cursor: pointer;
+    background-color: #607D8B;
+    color: white !important;
+}
+
+.libraryShadow{
+	box-shadow: 7px 10px 20px 0 rgba(46,61,73,.15);
+    border: solid #eee;
+    border-width: 1px;
+    border-radius: 8px!important;
+}
+
+.hoverWithoutBg{
+	box-shadow: 7px 10px 20px 0 rgba(46,61,73,.15);
+    border: solid #eee;
+    border-width: 1px;
+    border-radius: 8px!important;
+}
+
+.hoverWithoutBg:hover{
+    box-shadow: 0 4px 8px 0 rgba(46,61,73,.12);
+    transition: all .3s ease;
+    cursor: pointer;
+}
+
+.attemptedHover{
+	color: gray; 
+    opacity: 0.7; 
+    background-color: #eee!important;
+    border: solid #ccc;
+    border-width: 1px;
+}
+.attemptedHover:hover{
+    color: black!important;
+    cursor: pointer;
+}
+
+.libraryCombo .bootstrap-select.btn-group .dropdown-menu li a:hover {
+    color: whitesmoke !important;
+    background: green !important;
+}
+.libraryCombo .bootstrap-select.btn-group .dropdown-toggle .filter-option {
+	color: white;
+}
+.libraryCombo .bootstrap-select.btn-group .dropdown-menu li a span.text {
+    color: black;
+}
+.margin10{
+	margin: 10px;
+}
+.padding10{
+	padding: 10px!important;
+}
+
+/*END OF GENERAL CSS*/
+
+
+
+/*MODULE TIMELINE CSS*/
+.pt-line:before {
+        height: calc(100% + 30px)!important;
+    }
+.p-timeline{
+    margin-top: -30px!important;
+}
+/* END OF MODULE TIMELINE CSS*/
+
+
+/*SUBJECT COLOR CSS*/
+
+#Maths:hover{
+        background: #4CAF50;
+        transition: background 0.3s ease-in-out;
+        color: white;
+}
+#Mathematics:hover{
+    background: #4CAF50;
+    transition: background 0.3s ease-in-out;
+    color: white;
+}
+#Physics:hover{
+    background: #F44336;
+    transition: background 0.3s ease-in-out;
+    color: white;
+}
+#Zoology:hover{
+    background: #009688;
+    transition: background 0.3s ease-in-out;
+    color: white;
+}
+#Botany:hover{
+    background: #CDDC39;
+    transition: background 0.3s ease-in-out;
+    color: white;
+}
+#Biology:hover{
+    background: #FF5722;
+    transition: background 0.3s ease-in-out;
+    color: white;
+}
+#Chemistry:hover{
+    background: #FF9800;
+    transition: background 0.3s ease-in-out;
+    color: white;
+}
+#miscellaneous:hover{
+    background: pink;
+    transition: background 0.3s ease-in-out;
+    color: white;
+}
+.Maths{
+    background: #4CAF50!important;
+}
+.Mathematics{
+    background: #4CAF50!important;
+}
+.Physics{
+    background: #F44336!important;
+}
+.Zoology{
+    background: #009688!important;
+}
+.Botany{
+    background: #CDDC39!important;
+}
+.Biology{
+    background: #FF5722!important;
+}
+.Chemistry{
+    background: #FF9800!important;
+}
+.miscellaneous{
+    background: pink;
+    color: black;
+}
+
+
+
+/*END OF SUBJECT COLOR CSS*/
+
+
+@media(max-width: 768px){
+	#subjectImage{
+        height: 100px!important; 
+        width: 100px!important;
+        margin-top: 20px!important;
+    }
+    #smallScreenTable{
+        font-size: 10px!important;
+    }
+    #moduleHolder.card{
+        margin-left: -30px!important;
+    }
+    .smallScreenFontSize{
+        font-size: 10px!important;
+    }
+    .pt-line:before {
+        height: calc(100% + 25px)!important;
+    }
+    .p-timeline{
+        margin-top: -45px!important;
+    }
+    #moduleHolder.cardPadding{
+        padding: 4px 5px!important;
+    }
+    #moduleHolder .col-xs-7{
+        width: 83.333333333%;
+        position: relative;
+    }
+    .ptb-title{
+        margin-left: -20px;
+    }
+    .smallScreenMargin{
+        margin-left: 22px;
+    }
+    .iconAllign{
+        display:inline-block!important;
+        line-height: 50px!important;
+        text-align: center!important;
+        vertical-align: bottom!important;
+    }
+    .imageStyle{
+        margin-top: 1px!important;
+        width: 15px!important;
+    }
+    .smallScreenFont{
+		font-size: 11px!important;
+    }
+    .documentClass .col-xs-9, .testClass .col-xs-9{
+		width: 100%;
+    }
+}

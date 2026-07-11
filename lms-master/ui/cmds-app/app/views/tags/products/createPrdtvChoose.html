@@ -1,0 +1,41 @@
+%{
+    if(_targetPage=="PRODUCTS"){
+        vChooseClasses="createPrdtvChoose";
+        vChooseHeadClasses="gRedButton createProduct";
+    }else{
+        vChooseClasses='addCDPContentvChoose';
+        vChooseHeadClasses='gButton';
+    }
+}%
+
+    <div class="vChoose mcvChoose ${vChooseClasses}"  data-value="-1"
+         data-onchange="onCreatecmdsPrdt">                
+        <div class="vChooseHead ${vChooseHeadClasses}">
+            + Create Product
+        </div>
+        <div class="vChooseDownIcon"></div>
+        <div class="vChooseDropDown">                    
+            <div class="vChooseOpt" data-value="TEST">
+                <span class="prdtIcon prdtIconTEST"></span>
+                Test
+            </div>
+            <div class="vChooseOpt" data-value="ASSIGNMENT">
+                <span class="prdtIcon prdtIconASSIGNMENT"></span>
+                Assignment
+            </div>
+            <div class="vChooseOpt" data-value="PACKAGE">
+                <span class="packageIcon"></span>
+                Study Package
+            </div>
+            <div class="vChooseOpt" data-value="CDP">
+                <span class="prdtIcon prdtCDP"></span>
+                Sequential Learning Program
+            </div>            
+            #{if session.userRole=='SUPER_USER'||session.userRole=='ADMIN'}
+            <div class="vChooseOpt" data-value="TESTSERIES">
+                <span class="prdtIcon prdtIconTESTSERIES"></span>
+                Test Series
+            </div>
+            #{/if}
+        </div>
+    </div> 

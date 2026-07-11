@@ -1,0 +1,72 @@
+<div class="card">
+<div class="card-header" style="background-color: ghostwhite;">
+    <h2 class="text-capitalize">
+        <img src="/public/assets/theme1/img/testIcon.png"
+            style="height: 30px;margin-right: 5px;">
+        ${testInfo.result.name}
+    </h2>
+    #{if toppersData.result.list.length()>0}
+    <div class="c-black m-t-20">
+        <h2>
+            Topper  :
+
+                %{
+                    topper = toppersData.result.list.get(0);
+                    info = topper.info;
+                    analytics = info.measures;
+                    percentageCorrect = util.Utilities.calcPercentage(analytics.correct,info.qusCount);
+                }%
+            <span class="m-l-10 m-t-20">
+
+                <img style="width: 60px; height: 60px;" src="${topper.user.thumbnail}"></img> <span class="f-14">${topper.user.firstName}</span>
+
+                    <span class="f-12 c-gray m-t-5">Score : <span>${percentageCorrect}</span>,</span>
+
+
+            </span>
+        </h2>
+    </div>
+    #{/if}
+
+    <ul class="tab-nav tn-justified tn-icon test-tabs" role="tablist">
+        <li class="active" role="presentation">
+            <a  aria-controls="performance" class="col-xs-6" data-toggle="tab" data-tab-history="true"
+        data-tab-history-changer="replace" href="#performance" role="tab" aria-expanded="false">
+                <span class="hidden-xs">Test Details</span>
+                <i class="zmdi zmdi-puzzle-piece visible-xs"></i>
+            </a>
+        </li>
+        <li role="presentation">
+            <a  aria-controls="questionAnalytics" class="col-xs-6" data-toggle="tab" data-tab-history="true"
+        data-tab-history-changer="replace" href="#questionAnalytics" role="tab" aria-expanded="false">
+                <span class="hidden-xs">Question Analytics</span>
+                <i class="zmdi zmdi-equalizer visible-xs"></i>
+            </a>
+        </li>
+        <li role="presentation">
+            <a aria-controls="result" class="col-xs-6" data-toggle="tab" data-tab-history="true"
+        data-tab-history-changer="replace" href="#result" role="tab" aria-expanded="false">
+                <span class="hidden-xs">Result Sheet</span>
+                <i class="zmdi zmdi-account-calendar visible-xs"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+    <div class="card-body">
+        <div class="tab-content p-20">
+            <div class="tab-pane animated fadeIn in active" role="tabpanel" id="performance">
+                #{include 'theme1/Library/preTestPage.html', testInfo: testInfo /}
+            </div>
+            <div class="tab-pane animated fadeIn in" role="tabpanel" id="questionAnalytics">
+                #{include 'theme1/Library/testSolutionTeacher.html', questionsData:questionsData, testInfo: testInfo /}
+            </div>
+            <div class="tab-pane animated fadeIn in" role="tabpanel" id="result">
+                #{include 'theme1/Library/testResultSheet.html', resultSheet:resultSheet, testInfo: testInfo /}
+            </div>
+        </div>
+    </div>
+</div>
+#{script src:'test/o.postTest.js', charset:'utf-8' /}
+<script type="text/javascript">
+    postTest.init();
+</script>

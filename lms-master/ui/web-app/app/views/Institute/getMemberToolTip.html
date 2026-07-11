@@ -1,0 +1,57 @@
+#{if data!=null && data.errorCode.isEmpty()}
+%{
+	member = data.result.info;
+}%
+<div class="orgMemberTooltip">
+	<table class="fullWidth" cellspacing=0 cellpadding=0>
+	   <tr>
+		<td rowspan="3" class="alignTop">
+			<div class="instProfilePicContainer">
+				<img class="instProfilePic" src="${member.thumbnail}" alt="">
+		    	</div>
+		</td>
+		<td>
+			<div class="big16 boldy blueTextColor singleLineText">${member.firstName} ${member.lastName}</div>
+		</td>
+	   </tr>
+	   <tr>
+		<td class="greenTextColor big13 boldy" style="padding:4px 0;">
+			<span>&{'ROLE_'+member.profile}</span>
+		</td>
+	   </tr>
+	   <tr>
+		<td>
+			<div class="greyTextColor">
+				 #{if member.has('mappings')}
+					%{ orgInfo = member.mappings;}%
+				 #{if orgInfo.has("programs") && orgInfo.programs.length()>0}
+				%{ progs = orgInfo.programs;}%
+				   #{list items:0..progs.length()-1,as:'pIndex'}
+					<div class="singleLineText" style="max-width:300px;">
+					%{ prog = progs.get(pIndex);}%
+					<span class="boldy big13 blackTextColor">${ prog.name}</span>
+				 	#{if prog.has('centers') && prog.centers.length()>0}
+					  #{list items:0..prog.centers.length()-1,as:'cIndex'}
+					  %{ center = prog.centers.get(cIndex); }%
+				 	    #{if center.has("sections") && center.sections.length()>1}
+					      #{list items:0..center.sections.length()-2,as:'sIndex'}
+						<span class="italica">${center.sections.get(sIndex).name}</span>,
+					      #{/list}
+				 	    #{/if}
+					    <span class="italica">${center.sections.get(center.sections.length()-1).name}</span>
+					   <span class="boldy big13"> - ${center.name}</span>
+					  #{/list}
+				 	#{/if}
+					</div>
+				   #{/list}
+				#{/if}
+				#{/if}
+			</div>	
+		</td>
+	   </tr>
+	</table>
+</div>
+#{/if}
+#{else}
+	<div class="redTextColor">Not Available</div>
+#{/else}

@@ -1,0 +1,211 @@
+#{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /} 
+#{script src:'uicomUtils.js', charset:'utf-8' /} 
+#{script src:'uicomWidgets/vGraphs.js', charset:'utf-8' /}
+#{stylesheet media:'screen', src:'uicomMain.css' /}
+<div id="someg" style="margin: 50px 100px">
+    
+</div>
+<div  style="margin: 20px 100px">
+<div class="vGraphYAxis" style="width: 25px; height: 210px;">
+    
+</div>
+<div style="margin-left: 25px;width: 280px;">               
+    <div class="vGraphArea" style="height: 210px;">
+    <svg id="svg" style='overflow: hidden' xmlns='http://www.w3.org/2000/svg' width='280' version='1.1' height='210'>   
+    <rect x="0" y="0" width="280" height="210" stroke="none" stroke-width="0" fill="#ffffff"/>
+    </svg>
+    </div>
+    <div class="vGraphXAxis">
+        
+    </div>
+</div>
+<script>
+    var  dataObj={
+        xAxis:{title:"People",items:["20/09/09","30/03/03","30/03/03"],width:280,rotateTextBy:-90,textWidth:50,titlePosition:"SIDE"},
+        yAxis:{title:"Marks obtained",yAxisMax:200,yAxisMin:20,yItemsCount:10,width:25,height:210},
+        plotData:[{name:"Marks",isStrokeNeeded:false,circleColor:"#CC9900",lineColor:"green",areaColor:"#FFFF8D",items:[{val:200,info:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b></div>",callback:"default"},{val:0,info:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b></div>",callback:"default"},
+                    {val:70,infi:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b>Thewrasjhfdg ajhs gfhasgdjfhgasdfg</div>",callback:"default"}
+                    //{val:27,infi:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b></div>",callback:"default"},
+                    //{val:87,infi:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b></div>",callback:"default"}
+                ]},
+//    {name:"Marks",items:[{val:23,infi:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b></div>",callback:"default"},
+//                    {val:88,infi:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b></div>",callback:"default"},{val:37,infi:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b></div>",callback:"default"},
+//                    {val:56,infi:{},infoHTML:"<a>this ai salidm</a><div><b>ajith</b></div>",callback:"default"}]}    
+    ]
+    };        
+</script>    
+</div>
+<div id="vgInfoDiv" class="floaterDiv nonner">
+    <div class="vgInfo"></div>
+    <div class="vgInfoPtr"></div>
+</div>
+<div id="vgMarker" class="nonner"></div>
+<script type="text/javascript">
+    $("#someg").createAreaGraph(dataObj);
+</script>
+<div id="testGraph" style="background-color: rgb(255,255,255); width: 700px; height: 450px;margin: 50px;"></div>
+*{<div class='mainChartArea'>
+    <svg id='svgEl' style='overflow: hidden' xmlns='http://www.w3.org/2000/svg' width='500' version='1.1' height='350'>
+        <rect stroke='none' fill='#ffffff'  width='500' height='350' y='0' x='0'/>
+        <g style='font-size: 15px;font-weight: bold;fill:#33bad7;stroke:none;text-anchor:middle' x='0' y='0' class='CAHeader'>
+            <text y='15' x='250'>
+                <tspan dy='15'>Test Break up</tspan>
+            </text>
+        </g>
+        <g transform='translate(25, 50)'>
+            <rect stroke='none' fill='#EFEFEF' height='250' width='340' y='0' x='0'/>
+        </g>
+        <g transform='translate(195, 175)' class="pieChartGroup">
+            <g class="pieDetails" transform='translate(0, 0)'>
+                <text stroke='none' y='0' x='10'>
+                    <tspan dy='9'>Social Studies</tspan>
+                </text>
+                <text stroke='none' y='30' x='10'>
+                    <tspan dy='9'>20%</tspan>
+                </text>
+            </g>
+        </g>
+        <g transform='translate(375, 100)' class='CALedger' style='font-size: 12px;fill:#373737;'>
+            <g class='CALedgerItem' transform='translate(0,0)'>
+                <rect stroke-width='1' stroke='#00cc00' fill='#00cc00' height='10' width='22' y='0' x='0'/>
+                <text stroke='none' y='0' x='25'>
+                    <tspan dy='9'>West</tspan>
+                </text>
+            </g>
+            <g class='CALedgerItem' transform='translate(0,20)'>
+                <rect stroke-width='1' stroke='#00cccc' fill='#00cccc' height='10' width='22' y='0' x='0'/>
+                <text stroke='none' y='0' x='25'>
+                    <tspan dy='9'>East</tspan>
+                </text>
+            </g>
+        </g>
+    </svg>
+    <svg id='svgEl' style='overflow: hidden' xmlns='http://www.w3.org/2000/svg' width='700' version='1.1' height='450'>
+        <rect stroke='none' fill='#ffffff' height='450' width='700' y='0' x='0'/>
+        <g style='font-size: 15px;font-weight: bold;fill:#33bad7;stroke:none;text-anchor:middle' x='0' y='0' class='CAHeader'>
+            <text y='15' x='350'>
+                <tspan dy='15'>10th Results Class </tspan>
+            </text>
+        </g>
+        <g transform='translate(40, 50)'>
+            <rect stroke='none' fill='#EFEFEF' height='350' width='525' y='0' x='0'/>
+            <path d='M 35,300 v-300' stroke-width='2' stroke='#373737'/>
+            <path d='M 35,300 h490' stroke-width='2' stroke='#373737'/>
+            <g transform='translate(35,320)' class='CAX-axisItems' text-anchor='middle' stroke='none'>
+                <text y='0' x='98'>
+                    <tspan>A</tspan>
+                </text>
+                <text y='0' x='196' >
+                    <tspan>B</tspan>
+                </text>
+                <text y='0' x='294'>
+                    <tspan>C</tspan>
+                </text>
+                <text y='0' x='392'>
+                    <tspan>D</tspan>
+                </text>
+            </g>
+            <g transform='translate(30,300)' class='CAY-axisItems' text-anchor='end' stroke='none'>
+                <text y='-60' x='0'>
+                    <tspan dy='10'>20</tspan>
+                </text>
+                <text y='-120' x='0' >
+                    <tspan dy='10'>40</tspan>
+                </text>
+                <text y='-180' x='0'>
+                    <tspan dy='10'>60</tspan>
+                </text>
+                <text y='-240' x='0'>
+                    <tspan dy='10'>80</tspan>
+                </text>
+                <text y='-300' x='0'>
+                    <tspan dy='10'>100</tspan>
+                </text>
+            </g>
+            <g transform='translate(35,300)' class='CABars' >
+                <rect stroke-width='0' stroke='#00cc00' fill='red' height='149' width='49' y='-150' x='74' />
+                <rect stroke-width='0' stroke='#00cc00' fill='red' height='99' width='49' y='-100' x='172' />
+                <rect stroke-width='0' stroke='#00cc00' fill='red' height='29' width='49' y='-30' x='270' />
+                <rect stroke-width='0' stroke='#00cc00' fill='red' height='239' width='49' y='-240' x='368' />
+            </g>
+        </g>
+        <g transform='translate(575, 110)' class='CALedger' style='font-size: 12px;fill:#373737;'>
+            <g class='CALedgerItem' transform='translate(0,0)'>
+                <rect stroke-width='1' stroke='#00cc00' fill='#00cc00' height='10' width='22' y='0' x='0'/>
+                <text stroke='none' y='0' x='25'>
+                    <tspan dy='9'>West</tspan>
+                </text>
+            </g>
+            <g class='CALedgerItem' transform='translate(0,20)'>
+                <rect stroke-width='1' stroke='#00cccc' fill='#00cccc' height='10' width='22' y='0' x='0'/>
+                <text stroke='none' y='0' x='25'>
+                    <tspan dy='9'>East</tspan>
+                </text>
+            </g>
+        </g>
+    </svg>
+</div>}*
+
+<script>
+            var pieData=[{itemName:"physics",itemValue:15},{itemName:"chemostry",itemValue:5},{itemName:"MatheMatics",itemValue:3}
+                ,{itemName:"economics",itemValue:13},{itemName:"History & Civics",itemValue:9},{itemName:"Social Studies",itemValue:5}];
+     // $("#testGraph").createGraph("PIE",{title:"",putLedger:false},{width:200,height:150},pieData);
+var df={'Pranav kumar':[{itemName:"Binomial Test check", itemValue:100, listData:["Rank:1/1", "Marks:40/40"]}, {itemName:"Solid State", itemValue:0, listData:["Rank:1/1", "Marks:0/0"]}, {itemName:"Check Test 3", itemValue:0, listData:["Rank:1/1", "Marks:0/40"]}, {itemName:"Test for review check", itemValue:150, listData:["Rank:1/1", "Marks:15/10"]}, {itemName:"Simriti", itemValue:0, listData:["Rank:1/1", "Marks:0/5"]}, {itemName:"Test 9", itemValue:100, listData:["Rank:1/1", "Marks:200/200"]}, {itemName:"Test 9", itemValue:0, listData:["Rank:1/1", "Marks:0/10"]}, {itemName:"Check for number of tests", itemValue:0, listData:["Rank:1/1", "Marks:0/100"]}, {itemName:"Test 5", itemValue:0, listData:["Rank:1/1", "Marks:0/100"]}, {itemName:"Test Again", itemValue:0, listData:["Rank:1/1", "Marks:0/30"]}]};
+
+// $("#testGraph").createGraph("BAR",{title:"",putLedger:false,xAxisTitle:"Tests",yAxisTitle:"Marks %"},{width:700,height:450,xAxisPad:75,yAxisPad:35
+// ,graphAreaGy:50,xAxisTextRotateBy:-90,breakTextNum:10,spaceFromYAxis:15,
+// fixedSpacingOfXAxisItems:30},
+//  {ajith:[{itemName:'i am a very good boy. this is true',itemValue:'70',listData:["Rank:20/320","Marks:30/90"],listLink:{"class":"openTestPage","href":"/test/testId"}},
+//  {itemName:'bsldkhvs',itemValue:'20',listData:["Rank:20/320","Marks:30/90"],listLink:{"class":"openTestPage","href":"/test/testId"}},
+//  {itemName:'csdkjbskd',itemValue:'60',listData:["Rank:20/320","Marks:30/90"],listLink:{"class":"openTestPage","href":"/test/testId"}},
+//  {itemName:'dsdkjbvsdk',itemValue:'10',listData:["Rank:20/320","Marks:30/90"],listLink:{"class":"openTestPage","href":"/test/testId"}}]});
+//
+
+    //req data fromat for bar graph and line graph
+    //
+//    var userStats= new Object(),graphData=new Object();
+//    $.get("/application/respcheck",function(data){
+//        var stats=data.result.optionDistributions,totalCount=data.result.totalAttempts;
+//        for(var i=0;i<stats.length;i++){
+//            userStats[stats[i].option[0]]=(stats[i].count*100)/totalCount;
+//        }
+//        graphData["ajith"]=userStats;
+//       $("#testGraph").createGraph("BAR",{title:"DSU vcj"},{width:700,height:450,xAxisPad:50,yAxisPad:35,yAxisMax:100,yAxisItemsNum:5,yAxisItemsList:[20,40,60,80,100]},{ajith:{a:40,b:50,c:5,d:5},anil:{a:40,b:50,c:5,d:5}});
+//    });
+//try
+//  {
+//    if(homeJ)console.log("alraedy there");
+//  }
+//catch(err)
+//  {
+//      console.log(err)
+//     $.getScript("/public/javascripts/home.js",function(){
+//
+//    });
+//  }
+//var height = document.getElementById("myGroup").getBBox().height;
+
+//or
+
+//var el = document.getElementById('myelem');
+//var mywidth = el.getBoundingClientRect().width;
+
+
+    function createTe(){
+//    var svgNS = "http://www.w3.org/2000/svg";
+//    var xlinkNS = "http://www.w3.org/1999/xlink";
+        var kk=document.getElementById("svgEl");
+//        var tt=document.createElementNS(svgNS,"text");
+//        tt.appendChild(document.createTextNode("ajith scvb"));
+//        tt.setAttribute("font-size","13px");
+//        tt.setAttribute("fill","green");
+//        tt.setAttribute("y","100");
+//        kk.appendChild(tt);
+
+       var sv=$(kk);
+        var circle= makeSVG('circle', {cx: 100, cy: 50, r:40, stroke: 'black', 'stroke-width': 2, fill: 'red'});
+        sv.append(circle);
+    }
+
+
+</script>

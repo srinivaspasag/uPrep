@@ -1,0 +1,63 @@
+%{
+    data = _data;
+}%
+<tr class="eachCouponInfo" data-id="${data.code}">
+    <td class="width 100 maxWidth100">
+        <div class="boldy big14 centerText">${data.code}</div>
+    </td>
+    <td class="width75 maxWidth75">
+        <div class="centerText">${data.couponType}</div>
+    </td>
+    <td class="width75 maxWidth75">
+        #{if data.couponType.equals("FLAT")}
+            <div class="centerText">${data.discountValue / 100} Rs.</div>
+        #{/if}
+        #{elseif data.couponType.equals("PERCENTAGE")}
+            <div class="centerText italics">${data.discountPercentage}%</div>
+        #{/elseif}
+        #{else}
+            <div class="centerText">&{'TXT_UNAVAILABLE'}</div>
+        #{/else}
+    </td>
+    <td>
+        <div class="width75 maxWidth75">
+            #{if !data.maxDiscount.equals(null) && !data.maxDiscount.equals(0)}
+                <div class="centerText">${data.maxDiscount / 100} Rs.</div>
+            #{/if}
+            #{else}
+                <div class="centerText">&{'TXT_UNAVAILABLE'}</div>
+            #{/else}
+        </div>
+    </td>
+    <td>
+        <div class="width75 maxWidth75">
+            #{if !data.minPurchaseValue.equals(null) && !data.minPurchaseValue.equals(0)}
+                <div class="centerText">${data.minPurchaseValue / 100} Rs.</div>
+            #{/if}
+            #{else}
+                <div class="centerText">&{'TXT_UNAVAILABLE'}</div>
+            #{/else}
+        </div>
+    </td>
+
+    <td class="width40 maxWidth40">
+        <div class="centerText">${data.usageCount}</div>
+    </td>
+    <td class="width40 maxWidth40">
+        <div class="centerText">${data.maxUsageCount}</div>
+    </td>
+    <td class="width75 maxWidth75">
+        #{if !data.expiryTime.equals(null) && data.expiryTime > 0}
+            <div class="centerText">
+            <span class="updateClientTime" data-time="${data.expiryTime}" data-format="dd/mm/yyyy"></span>
+            </div>
+        #{/if}
+        #{else}
+            <div class="centerText">&{'TXT_UNAVAILABLE'}</div>
+        #{/else}
+    </td>
+    <td class="width100 maxWidth100">
+        <span class="editCouponBtn couponActionBtn left" data-code="${data.code}">Edit</span>
+        <span class="deleteCouponBtn couponActionBtn right" data-code="${data.code}">Delete</span>
+    </td>
+</tr>

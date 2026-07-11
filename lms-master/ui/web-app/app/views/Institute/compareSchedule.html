@@ -1,0 +1,80 @@
+#{extends 'header.html' /}
+<script>
+	$(function() {
+		$( "#firstCalendar" ).datepicker();
+		var date = new Date();
+		date.setMonth(date.getMonth()-1, 1)
+		$('#secondCalendar').datepicker({defaultDate:date});
+	});
+</script>
+<div class="scheduleCompareWrapper clearfix">
+	<div class="scheduleCompareHeader">
+			<div class="wrapClassUpdate clearfix">
+			<h3>Class Update</h3>
+			<div class="batchSelect">
+				<span class="CUBatch">Batch</span> 
+				
+				<select id="batches">
+					<!-- <option value="1">S-1</option>
+					<option value="2">S-2</option>
+					<option value ="3">S-3</option> -->
+				</select>
+				<span class="CUCourse">Course</span>
+				<select id="CUcourses">
+
+				</select>
+			</div>
+			<div class="masterPlanBtn">
+				<a href="/institute/classUpdate">Back to class update</a>
+			</div>
+		</div>
+	</div>
+	<div id="scheduleCompareWrapper">
+		<div class = "topicStatus clearfix">
+			<span id="topicLabel"></span>
+			<span id="lecStatus"></span><span id="byDays"></span><span id="byLec"></span>
+			<div id = "initialMessage">Click on topics to see status</div>
+		</div>
+		<div class="compareWrapper clearfix">
+			<div class = "compareHeader clearfix">
+				<span class="planHeader">Plan</span>
+				<span class="statusHeader">Status</span>
+			</div>
+			<div class = "compareContents clearfix">
+				<!-- <div class="topicCompare">
+					<div class="topicPlan">
+						<span class="topicName">Electrostatics</span>
+						<div class="planDetails">
+							<div class="dateDetails">
+								<span class="SDate">Start Date : <span class="planSD">2/10/2012</span></span>
+								<span class="EDate">End Date : <span class="planED">6/10/2012</span></span>
+							</div>
+							<span class="lectNum">Lectures 5</span>
+						</div>
+					</div>
+					<div class="topicState">
+						<span class="topicName">Electrostatics</span>
+						<div class="stateDetails">
+							<div class="dateDetails">
+								<span class="SDate">Start Date : <span class="stateSD">2/10/2012</span></span>
+								<span class="EDate">End Date : <span class="stateED">8/10/2012</span></span>
+							</div>
+							<span class="lectNum">Lectures 5</span>
+						</div>
+					</div>
+				</div> -->
+			</div>
+		</div>
+		<div class="calendarsWrapper">
+				<div id ="firstCalendar">
+				</div>
+				<div id="secondCalendar">
+				</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	compareSchedule.init();
+});
+</script>

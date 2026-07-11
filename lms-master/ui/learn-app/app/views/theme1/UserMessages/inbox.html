@@ -1,0 +1,26 @@
+<div id="msgsInbox">
+    <div class="block-header">
+        <h2>&{'MY_MSG'}</h2>
+    </div>
+    <div class="card">
+        <div class="list-group lg-odd-black">
+        </div>
+        <div class="list-group-item media msgInboxContainer">
+        </div>
+    </div>
+</div>
+
+#{script src:'userMessages.js', charset:'utf-8' /}
+<script type="text/javascript">
+    var msgHmPgOpenTimer;
+    $(function(){
+        if(msgHmPgOpenTimer){clearInterval(msgHmPgOpenTimer);}
+                msgHmPgOpenTimer = setInterval(function(){
+                        if(userMessages && userMessages.inbox.init){
+                                clearInterval(msgHmPgOpenTimer);
+                                userMessages.inbox.init();
+                        }
+                },10);
+        $(".instPageNavigator").find(".active").removeClass("active");
+    });
+</script>

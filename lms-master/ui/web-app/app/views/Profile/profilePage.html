@@ -1,0 +1,202 @@
+%{ 
+profileResponse=profileResponse.get("result");
+}%
+<div class="profileContent">
+<script type="text/javascript">
+    $(function() {
+         loadingImg("#profileToDo");
+         $.get("/profile/profilePercent",function(data) {
+            profileCompletion(data.result);
+         });
+        var userId="${profileResponse.id}";
+        $.get("/Widgets/followers",{size:10,targetUserId:userId},function(data){
+            renderFollow(userId,"Followers",data,"profileFollowers");            
+            $("#profilePointsCount .PCDFollowers").html(data.result.total);
+        });
+        $.get("/Widgets/followings",{size:10,targetUserId:userId},function(data){
+            renderFollow(userId,"Following",data,"profileFollowing");
+            $("#profilePointsCount .PCDFollowings").html(data.result.total);
+        });
+        $.get("/Widgets/newUserReco",{size:3},function(data){
+            var recosHTML='';
+            if(data.result.length>0){
+                $.each(data.result,function(i,user){
+                    recosHTML=recosHTML+"<tr rel='"+user.id+"' class='deletexPaNew'>"+getUsrRcDetails(user)+"</tr>";
+                });
+            }
+            else recosHTML="<div class='userMessage'>No recommendations available</div>";
+            $("#profileUserRecosTable tbody").append(recosHTML);
+            $("#profileUserRecosTable tr").each(function(){
+                fillUsrRcComm($(this));
+            });
+        });
+});
+</script>
+	<div class="profileDetailsDiv">
+                <div id="profilePicUpload" class="profileImgHolder">
+			<img class="profileImg" src="${profileResponse.profilePic}"
+				alt="${profileResponse.firstName} ${profileResponse.lastName}" /> 
+		</div>
+		<div class="profileDetails">
+			<span class="username">${profileResponse.firstName} ${profileResponse.lastName} </span>
+                        *{<span id="userPointsTitleMine"> Title- <b></b></span>}*
+                        %{eduProfile=profileResponse.profile.educational;}%
+                        #{if eduProfile.length()>0 && eduProfile.get(0).organizationName!=''}
+			<div class="userCollege">${eduProfile.get(0).organizationName}</div>
+			#{/if}
+                        <div class="userPts" id="myProfilePts">
+				<div style="height: 6px;"></div>
+				Uploaded <b class="userUploadedPointsProfile"></b>
+				<div style="height: 2px;"></div>
+				Points <b class="userTotalPointsProfile"></b>
+				<div style="height: 6px;"></div>
+			</div>
+			<div class="profileLastActive">Last Active ${new Date(profileResponse.lastlogin).since()}</div>
+                        <div class="margTop"><a class="liner" id="profilePicChange">Change Pic</a></div>
+			<div id="file-uploadProfilePic" style="opacity: 0; position: absolute;width: 75px;" rel="profile">
+                            <script type="text/javascript">
+                                $(function(){
+                                    var uploader = new qq.FileUploader({
+                                        element: document.getElementById('file-uploadProfilePic'),
+                                        action: "/profile/upload",
+                                        debug: true,
+                                        multiple: false,
+                                        sizeLimit : 5*1024*1024,
+                                        allowedExtensions : ["jpg","gif","png" ]
+                                    });
+                                    $("#file-uploadProfilePic").css("top",$("#profilePicChange").position().top).css("left",$("#profilePicChange").position().left);
+                                });
+                            </script>
+			</div>
+                </div>
+		<div class="cleaner_with_divider">&nbsp;</div>
+		<div id="profileStatus">
+                    #{if profileResponse.profile.statusMessage!=''}
+                        <span>${profileResponse.profile.statusMessage}</span><a class="addStatus hasStatus"> Edit </a>
+                    #{/if}
+                    #{else}
+                    <span></span>
+                        <a class="addStatus">Add status Message</a>
+                    #{/else}
+                    <div id="profileStatusPopup">
+                        <textarea id="statusMessageInput"></textarea>
+                        <input type="submit" class="libOptionsButton" id="profileStatusSubmit" value="Submit" />
+                        <input type="submit" class="libOptionsButton" id="removeProfilePopup" value="Cancel" />
+                    </div>
+		</div>
+	</div>
+	<div id="profileCompletion">
+		<b>Profile Completion <span></span></b>
+		<div id="profileCompDummy"></div>
+		<div id="profileCompColor"></div>
+		<ul id="profileToDo"></ul>
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+        <span class="blueSubmitButton" id="editprofile">
+            <img src="/public/images/profile/editProfile.png" alt="">
+            edit Settings
+        </span>
+	<div id="profileInfoAndStats">
+		<div class="heading">
+			<span id="profileInfoSpan" class="activeTab">Info</span>
+                        <span id="profileStatsSpan">Stats</span>
+		</div>
+		<div class="cleaner_with_divider activeTabBorder">&nbsp;</div>
+		<div class="bodi" style="position: relative;">
+                    <div id="profileInfoTable">#{profile/info profile:profileResponse.profile,username:profileResponse.username,profileId:profileResponse.id, as:'myProfile'/}</div>
+                    <table id="profileStatsTable" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            <tr>
+                                <td id="profilePointsPic">
+                                    #{include 'Widgets/userpoints.html' /}
+                                    <div class="profilePointsNote">
+                                        <div id="defaultPointNote" class="pointNotes">
+                                            <div class="pointsNoteHead">Points</div>
+                                            <div class="boldy padRight10">
+                                                You get points for every activity you do.
+                                            </div>
+                                            <div class="margHalfTop padRight10">
+                                                Points are the way to quantify the quality and variety of work you do on vedantu. It also helps others to see which areas you are more active  in.
+                                            </div>
+                                        </div>
+                                        <div id="TantuNote" class="pointNotes">
+                                            <div class="pointsNoteHead">Tantu Points</div>
+                                            <div class="boldy padRight10">
+                                                Tantu Points measure the reach of your knowledge connections.                                                 
+                                            </div>
+                                            <div class="margHalfTop padRight10">
+                                                Find and follow relevant people and gain knowledge reputation to get more followers - with each increasing Tantu Point you are spreading knowledge!
+                                            </div>
+                                        </div>
+                                        <div id="VedaNote" class="pointNotes">
+                                            <div class="pointsNoteHead">Veda Points</div>
+                                            <div class="boldy padRight10">
+                                                Veda Points measures the knowledge value you create on Vedantu.
+                                            </div>
+                                            <div class="margHalfTop padRight10">
+                                                Create, upload and share more content - with each increasing Veda Point you are actually democratizing knowledge - point by point!
+                                            </div>
+                                        </div>
+                                        <div id="KarmaNote" class="pointNotes">
+                                            <div class="pointsNoteHead">Karma Points</div>
+                                            <div class="boldy padRight10">
+                                                Karma Points measure the good intent of your deeds.
+                                            </div>
+                                            <div class="margHalfTop padRight10">
+                                                All your actions to enhance your own knowledge and encourage others to create and share more add to your Karma Points - and Good Karma always comes back ten fold!! 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td id="profilePointsCount">
+                                    <h5>Your Count</h5>
+                                    <div class="profileCountDiv">
+                                        <div class="PCD">Uploads</div><div class="PCDUploads">0</div>
+                                        <div class="PCD">Playlists</div><div class="PCDPlaylists">0</div>
+                                        <div class="PCD">Library</div><div class="PCDLibrary">0</div>
+                                        <div class="cleaner_with_divider">&nbsp;</div>
+                                    </div>
+                                    <div class="profileCountDiv">
+                                        <div class="PCD">Followers</div><div class="PCDFollowers">0</div>
+                                        <div class="PCD">Followings</div><div class="PCDFollowings">0</div>
+                                        <div class="cleaner_with_divider">&nbsp;</div>
+                                    </div>
+                                    <div class="profileCountDiv">
+                                        <div class="PCD">Comments</div><div class="PCDComments">0</div>
+                                        <div class="PCD">Upvotes</div><div class="PCDUpvotes">0</div>
+                                        <div class="PCD">Reviews</div><div class="PCDReviews">0</div>
+                                        <div class="cleaner_with_divider">&nbsp;</div>
+                                    </div>
+                                    <div class="profileCountDiv">
+                                        <div class="PCD">Tags</div><div class="PCDTags">0</div>
+                                        <div class="cleaner_with_divider">&nbsp;</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+	<div id="profileRecos">
+                <div class="boldy">Recommendations</div>
+		<div class="cleaner_with_divider activeTabBorder" style="margin-bottom: 5px;">&nbsp;</div>
+		<div class="heading">
+                    <span class="activeTab profUserRecosSpan">People</span><span class="profDocRecosSpan">Content</span>
+		</div>
+                <div class="bodi">
+                    <table id="profileUserRecosTable" cellpadding="0" cellspacing="0"><tbody></tbody></table>
+                    <div id="profileDocRecos"></div>
+                </div>
+	</div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        if("${profileInfoType}"=="stats"){
+        $("#profileInfoAndStats .heading span").removeClass("activeTab");
+	$("#profileStatsSpan").addClass("activeTab");
+		$("#profileStatsTable").css("display", "block");
+		$("#profileInfoTable").css("display", "none");
+        }
+    });
+</script>

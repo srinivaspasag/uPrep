@@ -1,0 +1,106 @@
+%{
+    if(play.Play.configuration.getProperty("application.name")=="web-app"){
+        domain='WEB_APP';
+    }else{
+        domain='CMDS_APP';
+    }
+}%
+#{if docInfo.errorCode!=''||docInfo.result.pages.length()==0}
+<!--    <script type="text/javascript">
+        showError("Please wait the doc conversion process is under progress. You can add the TOCs after a few minutes.");
+    </script>-->
+    <div class="userMessage" style="margin-top: 90px;">
+        Unable to Preview ?<br>File Conversion might be in progress!
+    </div>
+    #{if domain=="WEB_APP"}
+    <div class="centry margTop20">
+        <a class="blueSubmitButton skipTocPage" href="/mycontent">Go to MyContent</a>
+    </div>    
+    #{/if}
+    #{else}
+    <a class="gBlueButton goToResources cmdsaPush" href="/sources">Go To Sources</a>
+    #{/else}
+#{/if}
+#{else}
+    %{
+        doc=docInfo.result;
+        docId=params.docId;
+    }%
+    <div class="fillingTOCSection" data-doc-id="${docId}">
+                <div class="big14 boldy margTop20">Add Table of Contents (TOC)</div>
+                <div class="tocExplain">
+                    <div>Use <img class="hlneImg" src="/public/images/uicomDocuments/hlneActive.png" alt=""/> for indenting</div>
+                    <div>Press <span style="color: #000000;">enter </span>to add next TOC item</div>
+                </div>
+                <div class="tocDiv">
+                    <h2></h2>
+                    <table class="tocTable" width="275px" cellpadding="0" cellspacing="0">
+                      %{tocs=docTocs.result}%
+                     #{if tocs.length()>0}
+                        #{list items:0..tocs.length()-1,as:'i'}
+                            %{
+                                toc=tocs.get(i);
+                                tocEl=toc.tocElement;
+                            }%
+                                %{
+                                    if(tocEl.headingLevel==1)className='boldy deletexPa';
+                                    else className='deletexPa';
+                                    maxHL=1;
+                                    if(tocEl.headingLevel>=maxHL)maxHL=tocEl.headingLevel+1;
+                                }%
+                            <tr class="${className}">
+                                <td class='deletex'><img class='removeToc' src='/public/images/rem.png' alt='x'/></td>
+                                <td class='tocText' rel='${tocEl.headingLevel}' style="padding-left:${10*(tocEl.headingLevel-1)}px">${tocEl.tocText}</td>
+                                <td class='pageNum' rel='${tocEl.pageIdAssociatedTO}'>${toc.pageNo}</td>
+                                <td class='addEditToc'><a>add next item</a></td>
+                            </tr>
+                        #{/list}
+                       #{/if}
+                    </table>
+                    <input type="text" class="inputToc noNullInput" />
+                    <img class="hlpr" src="/public/images/uicomDocuments/hlprInactive.png" alt=""/>
+                    <label class="headingLevel smally">Indent: 1</label>
+                    <img class="hlne" src="/public/images/uicomDocuments/hlneActive.png" alt=""/>
+                    <span class="uploadPageNo floatRight boldy margTop15">Pg1</span>
+                    <div style="color:greenyellow" class="tocInputSuccessResult"></div>
+                    %{
+                        if(maxHL==""||maxHL==null)maxHL=1;
+                    }%
+                    <input type="hidden" value="${maxHL}" class="maxHl">
+                </div>
+                <div class="centry">
+                    #{if domain=="WEB_APP"}
+                    <a class="blueSubmitButton skipTocPage" href="/mycontent">Done</a>
+                    <a class="blueSubmitButton skipTocPage" href="/mycontent">Skip</a>
+                    #{/if}
+                    #{else}
+                    <a class="gBlueButton goToResources cmdsaPush" href="/sources">Done</a>
+                    #{if actionType!="EDIT_TOCS_ONLY"}
+                    <a class="gBlueButton goToResources cmdsaPush" href="/sources">Skip</a>                    
+                    #{/if}
+                    #{/else}
+                </div>
+
+    </div>
+    <div class="UPTOCPreview" data-doc-id="${docId}">
+        #{if  doc.pages.length()>0}
+            <div class="margBot10">
+                Pg<input type="text" class="docPageNumInputUP" class="noNullInput" value="1" /> / <label class="docTotalPagesUP">${doc.pageCount}</label>
+            </div>
+        %{
+            firstPage=doc.pages.get(0);
+            if(firstPage.has('pageId'))firstPageId=firstPage.pageId;
+            else firstPageId=firstPage._id;
+        }%
+            <div class="filePagesView">
+                <img id="UPPage1" rel="${firstPageId}"
+                     class="currentPageView UPPage" src="${firstPage.image}" alt=""/>
+                <img class="filePreviewNext" src="/public/images/uicomDocuments/fileNext.png" alt=""/>
+                <img class="filePreviewPrevious nonner" src="/public/images/uicomDocuments/filePrevious.png" alt=""/>
+            </div>
+        #{/if}
+    </div>
+#{/else}
+
+
+

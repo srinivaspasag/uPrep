@@ -1,0 +1,51 @@
+package com.lms.models;
+
+
+import com.lms.common.vedantu.mongo.VedantuBaseMongoModel;
+import com.lms.enums.QuestionType;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+@Document(value = "answers")
+public class Answer extends VedantuBaseMongoModel
+{
+
+    @Indexed(unique = true)
+    public String qId;
+    public String userId;
+    public List<String> answer;
+    public Map<Integer, List<String>> optionalCorrectAnswers;// not applicable
+    // for matrix
+    // type question
+    public Map<String, List<String>> matrixAnswer;
+    public QuestionType qType;
+
+    public Answer() {
+        super();
+    }
+
+    public Answer(String qId, String userId, QuestionType qType) {
+        super();
+        this.qId = qId;
+        this.userId = userId;
+        this.qType = qType;
+        this.answer = new ArrayList<String>();
+        this.matrixAnswer = new HashMap<String, List<String>>();
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Answer [qId:").append(qId).append(", userId:")
+                .append(userId).append(", answer:").append(answer)
+                .append(", matrixAnswer:").append(matrixAnswer).append("]");
+        return builder.toString();
+    }
+}

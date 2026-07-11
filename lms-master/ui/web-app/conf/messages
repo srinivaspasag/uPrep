@@ -1,0 +1,180 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+
+clientName=The client name is %s and %s
+
+#playlist
+UPLOAD_ERROR = Error in uploading the file.Refresh the Page and try again.
+
+#Common Texts
+TXT_NOTIFICATIONS = Notifications
+TXT_SEE_ALL = See All
+
+#ERROR_CODES
+ANALYTICS_NOT_FOUND = No attempts found yet.
+MODULE_NOT_FOUND = Module not found.
+
+#STATUS FEED SERVICE ERROR
+FORMAT_NOT_ALLOWED = Format Not allowed
+INVALID_STATUS_FEED = Status feed not valid.
+UPLOAD_ERROR = Upload failed.
+FILE_NOT_FOUND = File not found.
+INVALID_URL = Entered url is not valid.
+INVALID_SIZE = Invalid number of content access.
+ACTIVITY_NOT_AVAILABLE = Activity not found.
+
+#DISCUSSION / DOUBT ERROR
+DISCUSSION_NOT_FOUND = Doubt not found.
+COMMENT_NOT_FOUND = Comment not found.
+COMMENTING_NOT_ALLOWED = Commenting not allowed here.
+QUESTION_OPTION_UNSPECIFIED = Question options not specified.
+NO_SIMILAR_QUESTIONS = No Similar Questions
+
+# ~~~ Messages ~~~
+INVALID_USER_ID = Unable to deliver message to the selected user.
+INVALID_MESSAGE_ID = Invalid message access.
+INVALID_CONVERSATION_ID = Invalid conversation access.
+CAN_NOT_BE_DELIVERED = Unable to deliver message
+INVALID_ENTITY_TYPE = Invalid Entity type.
+NOT_ALLOWED = Operation not allowed.
+
+# ~~~ Remarks ~~~
+VIEWING_NOT_ALLOWED = Remark viewing not allowed.
+POSTING_NOT_ALLOWED = Remark posting not allowed. 
+
+#test series subscription
+ALREADY_SUBSCRIBED=Already subscribed.
+
+#Mapping for question types
+MCQ=<span class='boldy'>MCQ</span> <label style='color:#666666;margin-right:10px'>(Multiple Choice Question)</label>
+SCQ=<span class='boldy'>SCQ</span> <label style='color:#666666;margin-right:10px'>(Single Choice Question)</label>
+NUMERIC=NUMERIC
+TEXT=TEXT
+PARA=PARAGRAPH
+
+#TEST
+TEST_CREATOR_OVERALL_ANALYTICS = View Overall test analytics, of all members attended the test.
+TEST_BTN_OVERALL_ANALYTICS = Overall Test Analytics.
+
+#MY_CONTENT
+NO_TEST = No Tests Found
+NO_TEST_ATTEMPTED = No Test Attempted
+NO_DOCS = No Documents Found
+NO_PLAYLIST = No Playlist Found
+NO_VIDS = No Videos Found
+NO_MODULES = No Modules Found
+
+MANAGE_CONTENT_TOOL_TIP = <div class=centry>Learnpedia's Content Management</br>and Delivery System </br><b>(CMDS)</b></div>
+
+#library
+NO_SUBS_FOUND = No Subjects Found
+INST_LIB_TOPIC_SUB_HEAD = Select a sub-topic to view more precise contents
+NO_SUB_TOPICS_FOUND = No Sub-Topics Found
+NO_TOPICS_FOUND = No Topics Found
+SEL_TO_VIEW_CONTENT_TOPIC = Select a topic to view contents
+SEL_TO_VIEW_CONTENT_SUBJECT = Select a subject to view contents
+
+#CHALLENGES
+TXT_CHALLENGES = Challenges
+TXT_CHALLENGES_ARENA = Challenges Arena
+TXT_CHALLENGES_ARENA_CAPS = CHALLENGES
+TXT_LEADERBOARD = Leaderboard
+THIS_WEEK = This Week
+THIS_MONTH = This Month
+TXT_OVERALL = Overall
+NO_LEADERS = No Leaders
+TXT_UPVOTED = Upvoted
+TXT_UPVOTE = Upvote
+
+#DOUBT
+ASK_DOUBT = Ask a Doubt
+
+#INSTITUTE
+NOT_VALID_VIDEO_URL = Not a valid video url
+NOT_VALID_EXT_URL = Might not be a valid url
+VALID_VIDEO_URL_DOMAIN = We support youtube,vimeo video links.
+VIDEO_EMBED_PERMISSION_NA = Video embed and play permissions not available from owner. Try posting it as a link.
+NO_DOUBT = No Doubts found
+NO_DOUBT_FOLLOWED = You are not following any doubts
+HAVE_DOUBT = Have a doubt
+ASK_DOUBT_CAPTION = Resolve your doubts by asking them to your peers and teachers. The more specific the question, the better.
+ASK_HERE = ask here
+SUB = Subject
+POPULAR_TOPICS = Popular Topics
+POPULAR_SUBS = Popular Subjects
+ENTITY_AGE = %s ago
+INST_DOUBT_ANSWERS = Answers
+INST_DOUBT_UPVOTES = Upvote
+INST_DOUBT_REPLIES = Replies
+INST_DOUBT_REPLY = Reply
+INST_DOUBT_FOLLOWERS = <span class='count'>%s</span> Followers
+INST.ASK_DOUBT = Ask a Doubt
+ASK_DOUBT_TITLE_PLACEHOLDER = What's your doubt about? Be precise 
+SIM_DOUBTS = Similar Doubts
+SIM_TOPICS = Similar Topics
+VIEW_MORE = View more...
+IMG_NOT_UPLOADED = Image not uploaded, please try later
+IMG_NOT_SUPPORTED = Image type not supported by our system. Try jpeg,jpg,png,bmp images only.
+NO_RECENT_ACTIVITY = No recent activity available
+ACTIVITY_UNAVAILABLE = Activity feed requested is un-available currently.
+UNABLE_TO_SHARE_ACTIVITY = Unable to share activity, please try later.
+SHARED_SUCCESSFULLY = Sharing was successful
+WRITE_COMMENT = Write a comment...
+LOAD_MORE_FEEDS = Load More Feeds
+NO_MORE_FEEDS = No more recent activity available
+CHOOSE_YOUR_INSTITUTE = Choose your Institute
+CREATE_SHR_PLACEHOLDER = Start a discussion or share an update, thought, video ...
+PASTE_WEB_LINK = copy & paste web-page link here
+PASTE_VIDEO_LINK = copy and paste video link here
+TEST_RESULT_GRAPH = Test Result Graph
+AVG_TEST_SCORE = Average Test Score
+RESULT_ANALYTICS = Result Analytics
+WATCH_VIDEO_IN_site = Watch the video in %s
+NEW_ENTITY_PUBLISHED = New %s added to your library. Have a look!!
+
+#MESSAGES
+NEW_MSG = New Message
+MY_MSG = My Messages
+CREATE_MSG_TITLE_PLACEHOLDER = Type name/s
+CREATE_MSG_SUB_PLACEHOLDER = Type Subject
+YOUR_INBOX = Message Inbox
+YOUR_SENT = Sent by you
+NO_RECENT_MSGS = No Recent Messages.
+TXT_CONV_MEMBERS = In this conversation
+CONV_MSG_REPLY = Add a reply
+TXT_UNREAD_MSGS = unread messages
+TXT_SEND_MSG = Send message
+
+#PROFILE
+ROLE_STUDENT = Student
+ROLE_TEACHER = Teacher
+ROLE_MANAGER = Manager
+ROLE_PARENT = Parent
+ROLE_EDITOR = Editor
+POST_REMARK_FOR_USER = Post a remark for your student
+PROFILE_DATA_NOT_PROVIDED = Not Provided
+PROFILE_REGISTER_CONTACT_NUMBER = Register
+PROFILE_VERIFY_CONTACT_NUMBER = Verify
+PROFILE_REGISTER_EMAIL = Register
+PROFILE_EMAIL_NOT_VERIFIED = Verify
+member_MEMBER_INFO = %s's Organization Member info
+QUESTION_ATTEMPTED_INFO = The count shows questions attempted in all the tests.
+
+#TEST 
+test.NO_CORRECT = %s correct
+test.NO_INCORRECT = %s Incorrect
+test.NO_PARTIAL = %s Partial
+test.TYPE_OFFLINE = Offline
+test.TYPE_ONLINE = Online
+test.TYPE_ASSIGNMENT = Assignment
+test.TYPE_TEST = Test
+test.QUES_BELONG_TO_MULTI_TOPICS = Note: Some of the questions might belong to more than 1 topics.
+btn.VIEW_ATTEMPTS = View Attempts
+TXT_PROGRAMS = Programs
+TXT_MY_ORDERS = My Orders
+TXT_VISIT_LIBRARY = Go to Library
+
+USED_STATUS = Consumtion Status
+USED_STATUS_CONSUMED = Consumed
+USED_STATUS_UNUSED = Not Consumed

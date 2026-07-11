@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript"
+        src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+</head>
+<body bgcolor="white">
+
+	<div
+		style="text-align: center; margin-top: 100px; color: red; font-size: 22px; border-bottom: 1px solid rgb(204, 204, 204); padding: 20px 100px;">
+		Error: <span id="errorCode"></span>, <span id="errorMessage">There
+			was some error in making the payment</span>
+	</div>
+	<div id="button_ok"
+		style="text-align: right; margin-right: 100px; background-color: green; color: white; font-size: 15px; display: inline-block; float: right; margin-top: 18px; padding: 20px 60px; cursor: pointer;">OK</div>
+
+
+	<script type="text/javascript">
+		var fetchUrlParams = function() {
+			var parseStr = window.location.search.substr(1)
+					+ window.location.hash;
+			return decodeURIComponent(parseStr).split('&').reduce(
+					function _reduce(/*Object*/a, /*String*/b) {
+
+						b = b.split('=');
+						var key = b[0];
+						if (key) {
+							if (key.charAt(key.length - 2) == "["
+									&& key.charAt(key.length - 1) == "]") {
+								if (a[key] == undefined) {
+
+									a[key] = [];
+								}
+								a[key].push(b[1]);
+							} else {
+								a[b[0]] = b[1];
+							}
+						}
+						return a;
+					}, {});
+		};
+
+		$(function() {
+			var transactionStatus = "";
+			$(document).on("click", "#button_ok", function() {
+				console.log("closing the window");
+				paymentJSInterface.closeWindow(transactionStatus);
+			});
+
+			var params = fetchUrlParams();
+			if (params) {
+				if (params.transactionStatus) {
+					transactionStatus = params.transactionStatus;
+				}
+				if (params.errorMessage) {
+					//$("#errorCode").text(params.errorCode);
+					$("#errorMessage").text(params.errorMessage);
+				} else if (params.transactionStatus == "FAILED") {
+					$("#errorMessage").text("Transaction was not completed");
+				} else if (params.transactionStatus == "CANCELLED") {
+					$("#button_ok").data("transactionStatus", "CANCELLED");
+					$("#errorMessage").text("Transaction was cancelled");
+				} else if (params.transactionStatus == "SUCCESS") {
+					console.log("transaction was successful");
+					paymentJSInterface.onPaymentSuccessful(
+							params.transactionId, params.transactionStatus,
+							params.item_sku);
+				}
+			}
+
+		});
+	</script>
+</body>
+</html>

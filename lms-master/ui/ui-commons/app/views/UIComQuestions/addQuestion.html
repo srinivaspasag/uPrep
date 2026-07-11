@@ -1,0 +1,206 @@
+%{    if(play.Play.configuration.getProperty("application.name")=="web-app"){
+        domain='WEB_APP';
+    }else{
+        domain='CMDS_APP';
+    } 
+    isEditQuestion=false;
+    qType="SCQ";
+    publishText="Add";
+    publishTextIng="Adding";
+    if(target=='EDIT_QUESTION'){
+        isEditQuestion=true;
+        qType=ques.type;
+        publishText="Save";
+        publishTextIng="Saving";
+    }
+}%    
+#{if flash.get('ENTRY')=='DIRECT'&&domain=="WEB_APP"}
+<script type="text/javascript" id="vAddQuestionStyles">
+    showNoTabSec("ADD_QUESTION");    
+</script>
+#{/if}    
+#{stylesheet media:'screen', src:'uicomQuestions/addQuestion.css' /}
+<div id="quesAddContentSec" class="CSWidget" data-widget="MAIN_HOLDER">
+    <div class="quesAddTopBarWrapper">
+        <div class="quesAddTopBar">
+            <label class="QATBHead">*Question Type</label>
+            <div class="vChoose QAQTypeSelect alignMiddle" data-value="${qType}" data-onchange="onQAQTypeChange">
+              <div class="vChooseHead">${qType}</div>
+              <div class="vChooseDownIcon"></div>
+              <div class="vChooseDropDown">
+                  <div class="vChooseOpt" data-value="SCQ">SCQ</div>
+                  <div class="vChooseOpt" data-value="MCQ">MCQ</div>
+                  <div class="vChooseOpt" data-value="NUMERIC">Numeric</div>
+                  <!--<div class="vChooseOpt" data-value="PARA">Paragraph</div>-->
+              </div>
+            </div>             
+        </div>        
+    </div>
+    <div class="cleaner_with_divider quesAddShadowBorder">&nbsp;</div>
+    <div class="quesAddMainDivWrapper">
+        <div class="quesAddMainDiv">
+            <div class="QAQuesTextRTEDiv margTop20 CSWidget QARTEDiv" data-widget="QA_BODY_RTE"></div>
+            <div class="quesAddOptsDiv margTop CSWidget" data-widget="QUESTIONS_OPTIONS_HOLDER">
+                <span class="smally" style="color:#cc6666;">
+                    *Mark<br> Correct
+                </span>
+                <table class="quesAddOptsTable">
+                    <tbody>
+                        %{
+                            inputType='radio';
+                            if(qType=="MCQ"){
+                                inputType='checkbox';
+                            }
+                        }%
+                        #{list items:0..4,as:'i'}
+                        <tr class="crossXPa CSWidget" data-widget="QUESTIONS_OPTIONS_EACH_ROW">
+                            <td class="quesAddOptChoose">
+                                <input type="${inputType}" name="quesAddOpt" class="quesAddOpt"/>
+                            </td>
+                            <td class="quesAddOptHead">Option ${i_index}</td>
+                            <td style="width: 620px;">
+                                <div class="quesAddOptRTEDiv QARTEDiv"></div>
+                            </td>
+                            <td>
+<!--                                <span class="quesAddOptCross crossX doCStream" 
+				data-cs-name="CROSS_A_OPTION" data-index="${i}"></span>-->
+                            </td>
+                        </tr>
+                        #{/list}
+                    </tbody>
+                </table>                
+<!--                <span class="quesAddOptAdd ptr doCStream" data-cs-name="ADD_NEW_OPTION">
+                    <span class="quesAddOptDot">+</span>
+                    <a class="ptrTagHovered smally">Add Option</a>
+                </span>                -->
+            </div>
+            <div class="QASolnDiv margTop20">                
+                <div class="QASolnHead margBot5 margTop20 boldy">Add solution here</div>
+                <span class='QAGiveSoln'>
+			<span style="margin: 0pt 0 20px 5px;" class="color8 smally floatRight">(optional)</span>
+				<a class="floatRight smally doCStream" data-cs-name="ADD_SOLUTION">Add Solution</a>
+			</span>
+                <div class="QASolnRTEDiv margTop20 CSWidget QARTEDiv" data-widget="QA_SOLUTION_RTE"></div>
+		<div class="QASolnAttachDiv">
+		   <div class="QASolnAttachBtn centerText">
+			<span class="attachmentIcon" style="margin-right:4px;"></span>
+			<span class="italics alignTop">&{'ATTACH_VIDEO_SOL'}</span>
+		   </div>
+		   <div class="QASolnAttachHolder nonner">
+			<div class="greyTextColor big14 boldy" style="padding-bottom:6px;">&{'VIDEO_SOL'}</div>
+		   </div>
+		</div>
+                <a class="floatRight cancelQASoln margHalfTop margBot20 liner">Cancel</a>
+            </div>
+            #{if domain=="CMDS_APP"}
+            <div class="cleaner_with_divider">&nbsp;</div>
+            <div class="QAHintsDiv"> 
+                <div class="QAHintCloneDiv nonner QAHintDiv clearFloat">
+                    <div class="QAHintRTEDiv margTop20 CSWidget" data-widget="QA_HINT_RTE"></div> 
+                    <a class="floatRight removeQAHint margHalfTop margBot20 liner">Remove hint</a>                
+                </div>
+                <a class="QAAddHint blocky floatRight smally clearFloat" style="margin: 10px 0 5px 0;">
+                    Add hints
+                </a>
+            </div>                
+            #{/if}
+        </div>        
+    </div>
+    <div class="cleaner_with_divider quesAddShadowBorder margTop20" style="z-index: 1;">&nbsp;</div>
+    <div class="QATagsAndLevelDivWrapper">
+        <div class="QATagsAndLevelDiv">
+            <div class="QATagsDiv CSWidget" data-widget="QA_TAGGING">
+               <div class="big14 margBot10">
+                   <span class='boldy'>Add Tags</span>
+                   <label class="acacac smally italica">(*Add atleast one subject and topic)</label>
+               </div>
+                %{
+                    if(isEditQuestion){
+                        boards=ques.boardTree;
+                    }                    
+                }%
+                #{UIComWidgets.tagging addTagsId:'addTagsForAddQuestion',
+                target:'ADD_QUESTION',subjects:boards,tags:ques?.tags/}
+            </div>
+            <div class="QALevelDiv">
+                <label class="boldy margRight10"><span class='redColor'>*</span>Question Level</label>
+                %{
+                    diffName='Choose';
+                    diffValue='-1';
+                    if(ques!=null&&!ques.isNull('difficulty')){
+                        diffValue=ques.difficulty;
+                        diffName=diffValue;
+                    }                      
+                }%
+                <div class="vChoose QALevelSelect alignMiddle" data-value="${diffValue}">
+                  <div class="vChooseHead">${diffName}</div>
+                  <div class="vChooseDownIcon"></div>
+                  <div class="vChooseDropDown">
+                      <div class="vChooseOpt" data-value="EASY">Easy</div>
+                      <div class="vChooseOpt" data-value="MODERATE">Moderate</div>
+                      <div class="vChooseOpt" data-value="TOUGH">Tough</div>
+                  </div>
+                </div>       
+                *{<!-- Disabled Not in use #953
+		<table width="95%" class="margTop20">
+                    <tbody>
+                        <tr>
+                            <td class="boldy">
+                                Orig Ref. no.
+                            </td>
+                            <td>
+                                <div class="inputDiv whiteInputDiv">
+                                    %{                                          
+                                        if(ques!=null&&!ques.isNull('origRefNo')){
+                                            origRefNo=ques.origRefNo;
+                                        }
+                                    }%
+                                    <input type="text" name="origRefNo" 
+                                           class="formInput origRefNo" value="${origRefNo}">
+                                </div>                            
+                            </td>
+                        </tr>                    
+                    </tbody>
+                </table>-->}*
+            </div>
+            <div class="cleaner_with_divider">&nbsp;</div>
+        </div>        
+    </div>    
+    <div class="QASubmitDiv CSWidget" data-widget="QA_BUTTONS">
+        <span class="redColor">*Mandatory Fields</span> 
+        <div class="centry">
+            <span class="QASubmit  QASubmitPreview bigBlueButton doCStream" 
+                  data-cs-name="PREVIEW_BTN" data-normal-text="Preview"
+                  data-ing-text="Previewing">Preview</span>
+            <span class="QASubmit  QASubmitConfirm bigGreenButton doCStream" 
+                  data-cs-name="PUBLISH_BTN" data-normal-text="${publishText}"
+                  data-ing-text="${publishTextIng}">${publishText}</span>
+            <input type="hidden" name="" class="addQuestion" value="addQuestion">
+        </div>               
+    </div>
+</div>
+<script type="text/javascript">
+   var orgId = "";
+   var orgName = "";
+    #{if params.orgId !=null }
+	orgId = "${params.orgId}";
+	orgName = "${flash.get('instFullName')}";
+    	$(function(){
+		try{
+			if(institute){
+				institute.init();
+			}
+		}catch(err){}
+    	});
+    #{/if}
+    new function(){
+        var fn=function(){vAddQuestion.init({domain:"${domain}",
+                isEditQuestion:${isEditQuestion},
+            qid:"${qid}",ques:${ques ? ques.raw() : 'null'},
+            tags:${tags ? tags.raw() : 'null'},boards:${boards ? boards.raw() : 'null'}
+        });}
+        fetchScripts([{fname:"uicomQuestions/addQuestion.js",cb:fn}]);   
+    }();
+</script> 
+
+

@@ -1,0 +1,8 @@
+@(emailDetails: com.vedantu.user.event.details.EmailVerificationDetails)
+<div style="font-weight:bold;">Welcome to @emailDetails.orgInfo.name! </div>
+
+<div style="padding: 20px 0px;color:#666;">You have specified this email-id for communication with us. Please click on the following link to verify:</div>
+
+<a href="@emailDetails.verificationLink" target="_blank" style="font-size:15px;font-weight:bold;color:#006699;">Verification Link</a>
+
+<div style="padding: 20px 0px;color:#666;">Once you complete the verification, you will start receiving updates on the content you add or consume on @emailDetails.orgInfo.name (on Web and Android App), and notifications on the activities going on in your classes at @emailDetails.orgInfo.name.</div>

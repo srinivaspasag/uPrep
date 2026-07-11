@@ -1,0 +1,54 @@
+#{if resp != null && resp.errorCode.isEmpty()}
+%{
+    memberInfo = resp.result.memberInfo;
+}%
+#{if memberInfo.programs.length()>0}
+<div id="digitalLibrary">
+<div class="card container" style="margin-top: -20px;">
+        <div class="library-header card-header row libraryCombo bgm-teal">
+            <div class="col-sm-4">
+                <select class="selectpicker" id="program">
+                <optgroup label="Programs">
+                    #{list items:0..memberInfo.programs.length()-1,as:'index'}
+                    %{
+                        programName = memberInfo.programs.get(index).name;
+                        programIdData = memberInfo.programs.get(index).id;
+                    }%
+                    <option class="c-white" value="${programIdData}" data-program-id="${programIdData}">${programName}</option>
+                    #{/list}
+                </select>
+            </div>
+        </div>
+    <div class="card-body subject-header" data-program-id="${programId}">
+    #{if resp.result.programInfo.list.length()>0}
+        #{include arg:includeLibraryFile, resp:resp /}
+    #{/if}
+    #{else}
+    <div class="block-header text-center m-t-25">
+        <h2>This program doesn't have any subjects.</h2>
+    </div>
+    #{/else}
+    </div>
+</div>
+</div>
+#{/if}
+#{else}
+<div class="block-header card">
+    <span class="card-header f-20">You don't have any programs.<span class="openInstAvailPrograms pull-right btn btn-success waves-effect">UPGRADE</span></span>
+</div>
+#{/else}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".instPageNavigator").find(".active").removeClass("active");
+        $(".instPageNavigator").find(".instNavTab.instOpenLibraryPage").closest("li").addClass("active");
+        var programId = $('.subject-header').data("program-id");
+        $('select[id=program]').val(programId);
+    });
+</script>
+#{/if}
+#{else}
+<div>There is some problem</div>
+#{/else}
+<script type="text/javascript">
+    library.init();
+</script>

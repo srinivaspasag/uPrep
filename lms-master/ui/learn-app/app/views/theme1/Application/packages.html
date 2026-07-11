@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learnpedia-Packages</title>
+  <meta name="google-site-verification" content="6DhL-KLdd2mI5o_YprF32lNPpE56x8ig7Yc1SKtlQ-4" />
+  <meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+  <meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+  <meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+  <meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+  <link rel="manifest" href="/public/images/favicons/manifest.json">
+  <link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+  <meta name="theme-color" content="#ffffff">
+  <link href="@{'/public/outerAssets/assets/css/bootstrap.min.css'}" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/public/outerAssets/assets/css/packages.css"/>
+  <link href="@{'/public/stylesheets/material_style.css'}" rel="stylesheet">
+  <style type="text/css">
+  body{
+    background: none;
+  }
+</style>
+</head>
+
+<body>
+  #{include 'theme1/Application/header.html' /}
+  <section id="main">
+
+    #{include 'theme1/Application/sidebar.html' /}
+    #{if categoriesResponse.result.list.length() != 0}
+    <section id="categories-section">
+      <div class="categories">
+        <div class="container">
+          <div class="row text-center c-black"> 
+            <h2 class="c-black m-b-20" style="text-transform: uppercase;">What are you Preparing?</h2>
+          </div>
+          %{
+            count = 0;
+          }%
+           #{list items:0..categoriesResponse.result.list.length()-1,as:'index'}
+           %{
+             catergoryName = categoriesResponse.result.list.get(index).name;
+             description="";
+             shortDescription="";
+             priority="3"
+             thumbnail="";
+           }%
+           #{if categoriesResponse.result.list.get(index).has("description") && !categoriesResponse.result.list.get(index).description.equals(null)}
+           %{description = categoriesResponse.result.list.get(index).description.trim() }%
+           #{/if}
+
+           #{if categoriesResponse.result.list.get(index).has("shortDescription") && !categoriesResponse.result.list.get(index).shortDescription.equals(null)}
+           %{shortDescription = categoriesResponse.result.list.get(index).shortDescription.trim() }%
+           #{/if}
+
+           #{if categoriesResponse.result.list.get(index).has("priority") && !categoriesResponse.result.list.get(index).priority.equals(null)}
+           %{priority = categoriesResponse.result.list.get(index).priority }%
+           #{/if}
+
+           #{if categoriesResponse.result.list.get(index).has("thumbnail") && !categoriesResponse.result.list.get(index).thumbnail.equals(null)}
+           %{thumbnail = categoriesResponse.result.list.get(index).thumbnail }%
+           #{/if}
+          #{if count%3 == 0}
+            <div class="row m-t-20">
+          #{/if}  
+           <div class="col-xs-12 col-sm-4 text-center f-18">
+            %{count=count+1;}%
+            #{include 'theme1/Application/categoryHolder.html', catergoryName:catergoryName, description:description, shortDescription:shortDescription, priority:priority, thumbnail:thumbnail/}
+          </div>
+          #{if count%3 == 0}
+            </div>
+          #{/if} 
+          #{/list}
+      </div>
+    </div>
+  </div>
+</section>
+#{/if}
+#{else}
+<h1 style="text-align: center;margin-bottom: 300px;">No Packages found</h1>
+#{/else}
+<!-- Footer Section    -->
+#{include 'theme1/Application/footer.html' /}
+</section>
+</body>
+<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js">
+</script>
+<script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js">
+</script> 
+<script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js">
+</script>
+<script src="/public/assets/theme1/js/app.min.js">
+</script>
+<script type="text/javascript" src="/public/javascripts/dropdown-on-hover.js"></script>
+<script type="text/javascript">
+  $("#categories-section")
+  .on("click",".category-holder",openCategory);
+
+  function openCategory(){
+    $this = $(this);
+    window.location.href="/packages/"+$this.data("name");
+  }
+  $('.category-holder .description').text(function(_, txt) {
+  if(txt.length > 100){
+    txt = txt.substr(0, 100) + "...";
+  }
+  $(this).html(txt)
+});
+</script>
+<script type="text/javascript" src="https://web.mxradon.com/t/Tracker.js"></script>
+<script type="text/javascript">
+  pidTracker('17140');
+</script>
+</html>

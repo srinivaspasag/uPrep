@@ -1,0 +1,274 @@
+.gButton,.gBlueButton,.gRedButton,.gGreenButton,.gButtonInactive,
+.whiteButton,.grayButton,.darkGrayButton,.redButton,.blueButton,
+.biggerRedButton,.bigRedButton,.smallRedButton,.greenButton,.biggerGreenButton,.bigGreenButton,
+.smallGreenButton,.biggerBlueButton,.bigBlueButton,.smallBlueButton,
+.biggerWhiteButton,.bigWhiteButton,.smallWhiteButton,.biggerGrayButton,
+.bigGrayButton,.smallGrayButton,.biggerDarkGrayButton,.bigDarkGrayButton,.smallDarkGrayButton{    
+    cursor: pointer;
+    display: inline-block;    
+    min-width: 75px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.btnDisabled{
+	opacity:0.65;
+	filter:alpha(opacity=65);
+	cursor:default;
+}
+
+.redButton,.gRedButton,.biggerRedButton,.bigRedButton,.smallRedButton{
+    background-color: #FF6666;
+    color: #FFFFFF;              
+}
+.biggerRedButton{
+    font-size: 15px;
+    font-weight: bold;
+    min-width: 90px;  
+    padding: 12px 25px;
+}
+.bigRedButton{
+    font-size: 14px;
+    font-weight: bold;
+    min-width: 85px;  
+    padding: 10px 25px;  
+}
+.redButton,.gRedButton{
+    font-size: 13px;
+    min-width: 75px;  
+    padding: 7px 25px;
+}
+.smallRedButton{
+    min-width: 75px; 
+    padding: 5px 25px;
+}
+.redButton:hover,.gRedButton:hover,.biggerRedButton:hover,.bigRedButton:hover,.smallRedButton:hover{
+    background-color: #FF3333;
+}
+.redButton:active,.gRedButton:active,.redButtonActive,.gRedButtonActive,
+.biggerRedButton:active,.bigRedButton:active,.smallRedButton:active,
+.biggerRedButtonActive,.bigRedButtonActive,.smallRedButtonActive{
+    background-color: #CC0000;
+}
+
+
+
+
+.greenButton,.gGreenButton,.biggerGreenButton,.bigGreenButton,.smallGreenButton{
+    background-color: #8CC750;
+    color: #FFFFFF;           
+}
+.biggerGreenButton{    
+    font-size: 15px;
+    font-weight: bold;
+    padding: 12px 25px;
+    min-width: 90px; 
+}
+.bigGreenButton{
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 25px;
+    min-width: 85px; 
+}
+.greenButton,.gGreenButton{
+    font-size: 13px;
+    padding: 7px 25px;
+    min-width: 75px; 
+}
+.smallGreenButton{
+    min-width: 75px; 
+    padding: 5px 25px;    
+}
+.greenButton:hover,.gGreenButton:hover,.biggerGreenButton:hover,.bigGreenButton:hover,.smallGreenButton:hover{
+    background-color: #66CC00; 
+}
+.greenButton:active,.gGreenButton:active,.greenButtonActive,.gGreenButtonActive,
+.biggerGreenButton:active,.bigGreenButton:active,.smallGreenButton:active,
+.biggerGreenButtonActive,.bigGreenButtonActive,.smallGreenButtonActive{
+    background-color: #339900; 
+}
+
+
+
+.blueButton,.gBlueButton,.biggerBlueButton,.bigBlueButton,.smallBlueButton{
+    background-color: #27BCEC;
+    color: #FFFFFF;            
+}
+.biggerBlueButton{    
+    font-size: 15px;
+    font-weight: bold;
+    min-width: 90px;
+    padding: 12px 25px;
+}
+.bigBlueButton{
+    font-size: 14px;
+    font-weight: bold;    
+    min-width: 85px; 
+    padding: 10px 25px;
+}
+.blueButton,.gBlueButton{
+    font-size: 13px;    
+    min-width: 75px;
+    padding: 7px 25px;   
+}
+.smallBlueButton{
+    padding: 5px 25px;
+    min-width: 75px; 
+}
+.blueButton:hover,.gBlueButton:hover,.biggerBlueButton:hover,.bigBlueButton:hover,.smallBlueButton:hover{
+    background-color: #0099CC;
+}
+.blueButton:active,.gBlueButton:active,.blueButtonActive,.gBlueButtonActive,
+.biggerBlueButton:active,.bigBlueButton:active,.smallBlueButton:active,
+.biggerBlueButtonActive,.bigBlueButtonActive,.smallBlueButtonActive{
+    background-color: #006699;
+}
+
+
+
+.whiteButton,.biggerWhiteButton,.bigWhiteButton,.smallWhiteButton{
+    background-color: #FFFFFF;
+    color: #333333;            
+}
+.biggerWhiteButton{
+    font-size: 15px;
+    font-weight: bold;
+    min-width: 90px;  
+    padding: 12px 25px;
+}
+.bigWhiteButton{
+    font-size: 14px;
+    font-weight: bold;
+    min-width: 85px;  
+    padding: 10px 25px;  
+}
+.whiteButton{
+    font-size: 13px;
+    min-width: 75px;  
+    padding: 7px 25px;     
+}
+.smallWhiteButton{
+    min-width: 75px; 
+    padding: 5px 25px;
+}
+.whiteButton:hover,.biggerWhiteButton:hover,.bigWhiteButton:hover,.smallWhiteButton:hover{
+    background-color: #EEEEEE;    
+}
+.whiteButton:active,.whiteButtonActive,.biggerWhiteButton:active,.bigWhiteButton:active,
+.smallWhiteButton:active,.biggerWhiteButtonActive,.bigWhiteButtonActive,
+.smallWhiteButtonActive{
+    background-color: #DDDDDD;
+}
+
+
+
+.grayButton,.gButton,.gButtonInactive,.biggerGrayButton,.bigGrayButton,.smallGrayButton{
+    background-color: #EEEEEE;
+    color: #333333;         
+}
+.biggerGrayButton{    
+    font-size: 15px;
+    font-weight: bold;    
+    min-width: 90px; 
+    padding: 12px 25px;
+}
+.bigGrayButton{
+    font-size: 14px;
+    font-weight: bold;   
+    min-width: 85px; 
+    padding: 10px 25px;
+}
+.grayButton,.gButton,.gButtonInactive{
+    font-size: 13px;    
+    min-width: 75px;
+    padding: 7px 25px;   
+}
+.smallGrayButton{
+    padding: 5px 25px;
+    min-width: 75px; 
+}
+.grayButton:hover,.gButton:hover,.biggerGrayButton:hover,.bigGrayButton:hover,.smallGrayButton:hover{
+    background-color: #DDDDDD;
+}
+.grayButton:active,.gButton:active,.grayButtonActive,.gButtonActive,
+.biggerGrayButton:active,.bigGrayButton:active,.smallGrayButton:active,
+.biggerGrayButtonActive,.bigGrayButtonActive,.smallGrayButtonActive{
+    background-color: #CCCCCC; 
+}
+
+
+
+
+.darkGrayButton,.biggerDarkGrayButton,.bigDarkGrayButton,.smallDarkGrayButton{
+    background-color: #CCCCCC;
+    color: #FFFFFF;         
+}
+.biggerDarkGrayButton{    
+    font-size: 15px;
+    font-weight: bold;
+    padding: 12px 25px;
+    min-width: 90px; 
+}
+.bigDarkGrayButton{
+    font-size: 14px;
+    font-weight: bold;    
+    min-width: 85px; 
+    padding: 10px 25px;
+}
+.darkGrayButton{
+    font-size: 13px;    
+    min-width: 75px;
+    padding: 7px 25px;   
+}
+.smallDarkGrayButton{
+    padding: 5px 25px;
+    min-width: 75px; 
+}
+.darkGrayButton:hover,.biggerDarkGrayButton:hover,.bigDarkGrayButton:hover,.smallDarkGrayButton:hover{
+    background-color: #BBBBBB;
+}
+.darkGrayButton:active,.darkGrayButtonActive,.biggerDarkGrayButton:active,
+.bigDarkGrayButton:active,.smallDarkGrayButton:active,.biggerDarkGrayButtonActive,
+.bigDarkGrayButtonActive,.smallDarkGrayButtonActive{
+    background-color: #AAAAAA;
+}
+
+
+
+
+
+.gButtonInactive{
+    opacity: 0.45;
+    cursor: default !important;
+}
+
+.blueTabNew{    
+    background-color: #F7F7F7;
+    border: 1px solid #CCCCCC;
+    color: #999999;
+    display: inline-block;
+    font-size: 16px;
+    margin-left: -4px;
+    min-width: 75px;
+    cursor: pointer;
+    padding: 12px 18px;
+}
+.blueTabNew:hover{
+    background-color: #FFFFFF;
+    color: #666666;
+}
+.blueTabNew:active{
+    background-color: #E4F4FB;
+    color: #666666;
+}
+.blueTabActiveNew{
+    background-color: #BAE3F5;
+    color: #333333;
+}
+.blueTabActiveNew:hover{
+    background-color: #BAE3F5;
+    color: #333333;
+}

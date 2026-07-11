@@ -1,0 +1,52 @@
+<div id="msgsInbox">
+   <div class="pageHolderM relative">
+	<div class="bodyWhiteBg">
+		<div class="msgInboxTop">
+		    <div>
+			<div class="right greenButton instCreateMsg">&{'NEW_MSG'}</div>
+			<span class="instImgs msgBlueIcon"></span>
+			<span class="big16 relative" style="padding:0 6px;top:4px;">&{'MY_MSG'}</span>
+			
+			<!-- Disabled, due to back-end not supporting
+	   		*{<div class="msgInboxSrchBox searchInputDiv">
+				<span class="instImgs"></span>
+				<input type="text" class="searchInputBox relative doCStream" data-param-name="query" 
+					placeholder="" data-cs-name="MSG_INBOX_SEARCH"/>	
+	   		</div>}* -->
+		     </div>
+		     <div class="msgInboxNavig">
+			<div class="left">
+				<span class="msgConvDeleteButton">Delete</span>
+			</div>
+			<div class="right msgInboxCountDiv">
+			   <div class="left" style="margin:6px 10px 0 0;">
+				<span class="msgInboxCount">0-0</span>
+				<span>of</span>
+				<span class="msgInboxTotal">0</span>
+			   </div>
+			   <div class="right">
+				<span class="relative msgInboxLeftArrow leftArrowDisabled" data-future=true></span>	
+				<span class="relative msgInboxRightArrow rightArrowDisabled"></span>
+			   </div>
+			</div>
+			<div class='cleaner_with_divider'>&nbsp;</div>
+		     </div>
+		</div>
+		<div class="msgInboxContainer">
+			*{#{messages.msg/}}*
+		</div>	
+	</div>
+   </div>
+</div>
+<script type="text/javascript">
+	var msgHmPgOpenTimer;
+	$(function(){
+		if(msgHmPgOpenTimer){clearInterval(msgHmPgOpenTimer);}
+                msgHmPgOpenTimer = setInterval(function(){
+                        if(userMessages && userMessages.inbox.init){
+                                clearInterval(msgHmPgOpenTimer);
+                                userMessages.inbox.init();
+                        }
+                },10);
+	});
+</script>

@@ -1,0 +1,14 @@
+     if (request.start < 0 || request.start >= questionSet.questionIds.size()) {
+            throw new VedantuException(VedantuErrorCode.INVALID_START_SPECIFIED);
+        }
+        // TODO change using slice in mongodb
+        int toIndex = ((request.start + request.size) <= questionSet.questionIds.size()) ? (request.start + request.size)
+                : questionSet.questionIds.size();
+
+/usr/lib/libreoffice/program/soffice.bin --headless --nofirststartwizard --nologo --accept='socket,host=localhost,port=8100;urp;StartOffice.Service'
+
+
+ilibreoffice to 4.0.4.2
+install libreoffice-writer
+/usr/lib/libreoffice/program/soffice.bin --headless --nofirststartwizard --nologo --accept='socket,host=localhost,port=8100;urp;StartOffice.Service'
+

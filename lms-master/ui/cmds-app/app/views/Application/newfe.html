@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Formula Editor</title>
+        #{stylesheet media:'screen', src:'uicomWidgets/fe.css' /}
+        <script type="text/javascript"
+        src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    </head>
+    <body style="background-color: #ffffff">
+        <!--        <input type="button" value="getCopyEls" class="copyEls" />
+                <input type="button" value="getCutEls" class="cutEls" />        -->
+        <div id="FEWrapper" >
+            <div id="FEHead">
+                <span class="color6">Vedantu</span>
+                <span class="color3">Formula Editor</span>
+            </div>
+            <div id="FEToolBar"></div>
+            <div id="FEFamilyClonable"  style="display: none">
+                <div class="FEFamily">
+                    <div class="FEFamilyHead">
+                        <div class="FEFamilyHeadTop"></div>
+                        <div class="FEFamilyHeadContent"></div>                        
+                    </div>
+                    <div class="FEFamilySubFamilyContent"></div>
+                </div>                
+            </div>
+            <div id="FEComposerAreaHolder">
+                <div id="FEComposerArea">
+                    <div id="feBlock" class="feBlockClass">
+                        <div contenteditable='true'  class='fePHTrans fePHTransInitial'></div>
+                    </div>                 
+                </div>
+                <div id="FEPreview" class="nonner"></div>
+            </div>
+            <div>                
+                <div style="font-size: 11px; color: rgb(136, 136, 136); text-align: left;">
+                    Note: To write latex equation, write the equation in the editor area without \ [ and \ ]
+                </div>
+                <div class="feButton getPlayEqn"><div class="feButtonTop"></div>Submit</div>
+                <div class="feButton feClose"><div class="feButtonTop"></div>Close</div>                
+            </div>
+            <div id="feVerticalCursor"></div>
+            <div id="feHorizontalCursor"></div>
+            <div id="feSelectionMarker"></div>
+            <div id="feTestDivForStringWidth"></div>
+            <div id="feTestDivForExtenderHeight" style="display: none;"></div>
+        </div>            
+        <div style="font-size: 26px;line-height: 100%;background-color: rgb(228, 228, 228); width: 500px; margin: 30px auto 0px; padding: 50px;">
+            <div id="fePlayground" style="background-color: rgb(255, 255, 255); min-height: 125px; padding-bottom: 20px;">
+
+
+            </div>            
+        </div>
+        #{script src:'uicomWidgets/fe.js', charset:'utf-8' /} 
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+            extensions : [ "tex2jax.js" ],
+            jax : [ "input/TeX", "output/HTML-CSS" ],
+            tex2jax : {
+            inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+            },
+            TeX: {
+            extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+            }
+            });
+        </script>
+        <script type="text/javascript"
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>	
+    </body>
+</html>

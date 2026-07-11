@@ -1,0 +1,91 @@
+#These messages are for use in javascript files. 
+
+NO_RECENT_NOTIFICATION = No Recent Notifications.
+ADD_ANSWER = Add an answer
+TYPE_AND_ENTER_TO_SEARCH = Type & press 'Enter' to search
+
+#DOUBT
+DOUBT_NEED_A_TITLE = Doubt need a title!
+DOUBT_EXPLAIN_FURTHER = Please explain further your doubt!
+DOUBT_CLICK_TO_OPEN = Click to open this doubt
+
+#FEEDS
+NO_FEEDS_AVAILABLE = No feeds available!
+
+#REMARKS
+POST_REMARK_FAILED = Post Remark Failed!
+
+#CHALLENGES
+FEW_SECONDS_LEFT = Few seconds left!
+ERROR_BR_REFRESH_PAGE = Error!!<br> Refresh page
+HRS_LEFT = Hours left
+RESULTS_PENDING = Results Pending
+VIEW_CHALLENGE = View Challenge
+ANSWER_SUBMITTED_SUCCESSFULLY = Your answer is successfully submitted.
+CHAL_TIME_ELAPSED = Sorry, The time alloted for the challenge has expired before you submitted your answer!
+CHAL_ANS_SUBMIT_FAILED = Sorry, Your answer could not be submitted due to unknown reasons!
+CHAL_FORFEIT_ASK = Are you sure you want to forfeit the challenge?
+CHAL_RESULT_TIME = You will be able to view the answer in 
+
+#NEWS-FEEDS
+TXT_YOUR = Your
+TXT_A_MEMBER = A Member
+ATTEMPTED_BY = attempted by
+ADDED_BY = added by
+SHARED_BY = shared by
+COMMENTED_BY = commented by
+FOLLOWED_BY = followed by
+SOLUTION_ADDED_BY = solution added by
+NEWS_FEED_UPVOTED = upvoted
+NEWS_FEED_ADDED_BY = added by
+NEWS_FEED_ON = on
+NEWS_FEED_FOLLOWING = following
+NEWS_FEED_FOLLOWED = followed
+NEWS_FEED_ADDED = added
+NEWS_FEED_NEW = new
+NEWS_FEED_ADDED_A_NEW = added a new
+NEWS_FEED_NEW_SOLUTION_TO = new solution to
+NEWS_FEED_ADDED_TO_YOUR_LIB = to your library
+NEWS_FEED_CREATED_BY = created by
+NEWS_FEED_SHARED = shared
+NEWS_FEED_ATTEMPTED = attempted
+NEWS_FEED_COMMENTED_ON = commented on
+NEWS_FEED_COMMENTED = commented
+NEWS_FEED_ASKED = asked
+NEWS_FEED_ANSWERED = answered
+NEWS_FEED_RESULT_OF = The result of the 
+NEWS_FEED_RESULTS_OUT_CHECK_OUT = is out. Check it out!
+NEWS_FEED_PROVIDED_SOULTION = provided a solution to
+NEWS_FEED_NEW_STATUS_FEED = new status feed
+NEWS_FEED_IMAGE_IN_FEED = Image in status feed
+NEWS_FEED_VIDEO_IN_FEED = Video in status feed
+NEWS_FEED_WEB_PAGE_IN_FEED = Web Page Link in status feed
+TXT_SOLUTION = solution
+TXT_ANSWER = answer
+TXT_ON = on
+TXT_COMMENT = comment
+TXT_YOU = You
+TXT_YOUR = Your
+
+#ENTITY
+ENTITY_ASSIGNMENT = Assignment
+ENTITY_TEST = Test
+ENTITY_DOCUMENT = Document
+ENTITY_VIDEO = Video
+ENTITY_FILE = File
+ENTITY_MODULE = Module
+ENTITY_QUES = Question
+ENTITY_REMARK = Remark
+ENTITY_CHALLENGE = Challenge
+ENTITY_DOUBT = Doubt
+ENTITY_FEED = Feed
+
+TEST_BROWSER_SPECIFIC_SUPPORT_DEPENDENCY = Taking Test Not Supported In Your Browser. Try, Firefox,Chrome,Safari.
+TEST_END_PROBLEM = Problem With End Test , Please contact admin.
+RESULTS_NOT_OUT_YET = Results not available yet. Will update them soon.
+
+#MESSAGES
+USER_MSGS_PROVIDE_MEMBER = Please provide with the members from suggested list only , to whom the message will be delivered.
+USER_MSGS_PROVIDE_SUBJECT_BODY = Please specify a subject and a body for your conversation
+USER_MSGS_SENT_SUCCESSFULLY = Message sent successfully
+USER_MSGS_REPLY_CONTENT_MISSING = You might have forgot to add a reply content!

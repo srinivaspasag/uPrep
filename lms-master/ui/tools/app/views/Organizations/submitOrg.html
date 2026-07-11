@@ -1,0 +1,54 @@
+#{extends 'main.html' /}
+#{set title:'Vedantu' /}
+<style>
+body{
+	background-color:#EEE;
+}
+#mainContainHolder{
+	padding:30px 0;
+}
+.respTable{
+	width:300px;
+}
+.respTable td{
+	padding-bottom:20px;
+}
+.respTable .fieldName{
+	color:#999;
+}
+.responseBlock{
+	width:570px;
+	margin:0 auto;
+	background-color:#FFF;
+}
+.block1,
+.block2{
+	padding:20px 50px;
+	color:#666;
+}
+.block1{
+	background-color:#F7F7F7;
+}
+</style>
+<div id="mainContainHolder" class="">
+   <div class="responseBlock">
+	<div class="block1">
+		<div class="fontRobotoLight fs18 greenTextColor">&{'ORG_CREATED_MSG_1'}</div>
+	</div>
+	<div class="block2">
+	    <table class="respTable" cellspacing=0 cellpadding=0>
+		<tr>
+			<td class="fs18 fontRobotoLight fieldName">Your Plan</td>
+			<td class="fs20 fontRoboto">${planName}</td>
+		</tr>	
+		<tr>
+			<td class="fs18 fontRobotoLight fieldName">Your Organization</td>
+			<td class="fs20 fontRoboto">${fullName}</td>
+		</tr>	
+	    </table>
+	    <div class="fontRoboto fs14">&{'ORG_CREATED_MSG_2'}</div>
+	    <div class="fontRoboto fs14">&{'ORG_CREATED_MSG_3'}</div>
+	    <div style="text-align:right;padding:20px 0;"><a class="fs14 fontRoboto" href="/">Back to website</a></div>
+	</div>
+   </div>
+</div>

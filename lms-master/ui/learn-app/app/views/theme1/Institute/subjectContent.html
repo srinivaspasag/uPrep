@@ -1,0 +1,82 @@
+%{
+    programInfo = resp.result.programInfo;
+    memberInfo = resp.result.memberInfo;
+    boardResponse = resp.result.boardResponse;
+    programId = resp.result.programId;
+}%
+<div id="digitalLibrary">
+    <div class="card container"  style="margin-top: -20px;">
+        <div id="subjectContent">
+            <div class="card-header subjectContent-header row libraryCombo"  style="background-color: #00c7b4;">
+                <div class="col-sm-4 hidden-xs">
+                    <select class="selectpicker" id="program">
+                    <optgroup label="Programs">
+                        #{list items:0..memberInfo.programs.length()-1,as:'index'}
+                        %{
+                            programName = memberInfo.programs.get(index).name;
+                            programIdData = memberInfo.programs.get(index).id;
+                        }%
+                        <option value="${programIdData}" data-program-id="${programIdData}">${programName}</option>
+                        #{/list}
+                    </optgroup>
+                    </select>
+                </div>
+                <div class="col-sm-4 hidden-xs">
+                    <select class="selectpicker" id="subject">
+                    <optgroup label="Subjects">
+                        #{list items:0..programInfo.list.length()-1,as:'index'}
+                        %{
+                            subjectName = programInfo.list.get(index).name;
+                            subjectIdData = programInfo.list.get(index).id;
+                        }%
+                        <option value="${subjectIdData}" data-subject-id="${subjectIdData}" data-program-id="${programId}">${subjectName}</option>
+                        #{/list}
+                    </optgroup>
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select class="selectpicker" id="chapter">
+                    <optgroup label="Chapters">
+                        #{list items:0..boardResponse.list.length()-1,as:'index'}
+                        %{
+                            chapterName = boardResponse.list.get(index).name;
+                            chapterIdData = boardResponse.list.get(index).id;
+                        }%
+                        <option value="${chapterIdData}" data-chapter-id="${chapterIdData}" data-program-id="${programId}" data-subject-id="${parentId}">${chapterName}</option>
+                        #{/list}
+                    </optgroup>
+                    </select>
+                </div>
+            </div>
+        <div class="card-body contentTable" data-chapter-id="${chapterId}" data-parent-id="${parentId}" data-program-id="${programId}">
+            #{include arg:includeContentFile, resp:resp, parentId:parentId, programId:programId, chapterId:chapterId /}
+        </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".instPageNavigator").find(".active").removeClass("active");
+        $(".instPageNavigator").find(".instNavTab.instOpenLibraryPage").closest("li").addClass("active");
+        var chapterId = $('.contentTable').data("chapter-id");
+        $('select[id=chapter]').val(chapterId);
+        var chapterName = $('#chapter').find(':selected').text();
+        $(".chapterName").text(chapterName);
+        var parentId = $('.contentTable').data("parent-id");
+        $('select[id=subject]').val(parentId);
+        var programId = $('.contentTable').data("program-id");
+        $('select[id=program]').val(programId);
+        var subjectName = $('select[id=subject]').find(':selected').text();
+        var subjectSplit = subjectName.split(" ");
+        const colors = {
+            "Botany" : "#CDDC39",
+            "Physics" : "#F44336",
+            "Maths" : "#4CAF50",
+            "Chemistry" : "#FF9800",
+            "Zoology" : "#009688",
+            "Mathematics" : "#4CAF50"
+        }
+        $(".subjectContent-header").css('background-color', colors[subjectSplit[0]]);
+    });
+    library.init();
+</script>

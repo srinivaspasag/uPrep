@@ -1,0 +1,17 @@
+<div class="timeDiv">
+    <select class="timeSelectHrs">
+        #{list items:0..23,as:'hrs'}
+        <option value="${hrs}">${hrs}</option>
+        #{/list}
+    </select><span class="margRight10">Hrs</span>
+    <select class="timeSelectMins">
+        #{list items:0..59,as:'mins'}
+        <option value="${mins}">${mins}</option>
+        #{/list}
+    </select><span class="margRight10">Mins</span>
+    <select class="timeSelectSecs">
+        #{list items:0..59,as:'secs'}
+        <option value="${secs}">${secs}</option>
+        #{/list}
+    </select><span class="margRight10">Secs</span>                            
+</div>   

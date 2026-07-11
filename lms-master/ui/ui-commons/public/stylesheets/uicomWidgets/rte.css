@@ -1,0 +1,273 @@
+.nonner{
+    display: none;
+}
+.RTEHolder{
+    border: 1px solid #cccccc;
+    margin: 0 auto;
+    position: relative;
+}
+.RTEActive{
+    border: 1px solid #666666;
+}
+.RTEToolBar{
+    background-color: #F7F7F4;
+    box-shadow: 0 2px 3px #CCCCCC;
+    position: relative;
+    text-align: center;
+    padding: 0 10px;
+}
+.RTEOpt{
+    background: url("") no-repeat scroll center center transparent;
+    display: inline-block;
+    float: left;
+    height: 32px;
+    width: 30px;
+}
+.RTEOpt:hover,.RTEOpt.activeRTEOption{
+    background-color: #CCCCCC;
+}
+.RTEBold{
+    background-image: url("/public/images/uicomRte/bold.png");
+}
+.RTEItalic{
+    background-image: url("/public/images/uicomRte/italic.png");
+}
+.RTEUnderline{
+    background-image: url("/public/images/uicomRte/underline.png");
+}
+.RTESuperscript{
+    background-image: url("/public/images/uicomRte/superscript.png");
+}
+.RTESubscript{
+    background-image: url("/public/images/uicomRte/subscript.png");
+}
+.RTEInsertOrderedList{
+    background-image: url("/public/images/uicomRte/orderedList.png");
+}
+.RTEInsertUnorderedList{
+    background-image: url("/public/images/uicomRte/unorderedList.png");
+}
+.RTEAddDiagram{
+    float: right;
+    margin: 6px 0 2px;
+    padding: 2px 10px 2px 6px;  
+}
+.RTEFormulaEditor{
+    color: #FFFFFF;
+    float: right;
+    margin: 6px 10px 2px 0;
+    padding: 2px 10px 2px 6px;
+}
+.addFormulaImg{
+    background: url("/public/images/uicomRte/fe.png") no-repeat scroll center center transparent;
+    display: inline-block;
+    height: 15px;
+    margin-right: 5px;
+    vertical-align: middle;
+    width: 10px;
+}
+
+/*rte area*/
+.RTEArea{
+    background-color: #FFFFFF;
+    min-height: 200px;
+    outline: 0 none;
+    padding: 7px 5px;
+    overflow:auto;
+}
+.RTEArea.RTEHasPH{
+    font-style: italic;
+    color: #888888;
+}
+.RTEArea ul{
+    list-style: disc outside none;
+    margin: 12px 0;
+    padding-left: 40px;    
+}
+.RTETempDiv{
+    display: none;
+}
+.RTELatexHolder{
+    display: inline-block;
+    vertical-align: middle;
+}
+.RTELatex{
+    display: inline-block;
+    padding: 0 5px;
+}
+.FEHolderMask{
+    background-color: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    color: #888888;
+    font-family: serif;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 250px;
+    margin: 0 auto;
+    text-align: center;
+    width: 750px;   
+}
+/*.RTEArea br[type='_moz']{
+    display: none;
+}*/
+.removeRTELatex{
+    color: #33BAD7;
+    cursor: pointer;
+    font-weight: bold;
+    position: relative;
+    right: -4px;
+    top: -13px;
+    opacity: 0;
+}
+.RTELatex:hover .removeRTELatex{
+    opacity: 1;
+}
+.RTEEqn,.RTEImageDiv{
+    display: inline-block;
+    padding: 0 3px;
+}
+.RTEImageDiv{
+    padding: 12px 3px;
+}
+.RTEVideoDiv{
+    margin: 10px 0;
+}
+/*images addding*/
+.RTEArea img{
+    max-width: 90%;   
+}
+.RTEArea .videoThumbWrapper img{
+    max-width: none;
+}
+
+
+
+
+/*upload images to repository*/
+.addDiagramHolder{
+    /*height: 475px;
+    overflow: auto;*/
+}
+.addDiagramMainTabs{
+    padding-left:200px;
+}
+.QAADChooseDiv,.QAADUploadDiv{
+    margin: 15px;
+}
+.searchQADiagram{
+    width:98%;
+    height:29px;
+    padding-left:4px;
+    background-color:#faf9b6;
+    -webkit-box-shadow: inset 0 1px 2px #8a8a62;
+    -moz-box-shadow: inset 0 1px 2px #8a8a62;
+    box-shadow: inset 0 1px 2px #8a8a62;
+    background-image: url('/public/images/search-content/search-icon.png');
+    background-position:99% 9px;
+    background-repeat: no-repeat;
+    outline:none;
+    border:0px;
+}
+.QAADImgPreview img{
+	max-width:100%;
+}
+.QAADChooseDivTabs{
+    border-bottom: 2px solid #EEEEEE;
+    margin: 20px 10px 10px;
+    padding-bottom: 8px;
+    text-align: center;    
+}
+.diagImgHolder{
+    display: inline-block;
+    height: 146px;
+    margin: 10px 6px;
+    width: 146px;
+    z-index: 50;
+}
+.diagImgHoverBtn{
+    opacity: 0;
+    position: absolute;
+    right: -5px;
+    top: -7px;
+    z-index: 50;
+}
+.diagImgHoverTxt{
+    background-color: #EEEEEE;
+    box-shadow: 1px 1px 2px 0 #CCCCCC;
+    left: -8px;
+    max-height: 30px;
+    min-height: 10px;
+    opacity: 0;
+    overflow: hidden;
+    padding: 160px 5px 5px;
+    position: absolute;
+    text-align: center;
+    top: -7px;
+    width: 155px;
+    z-index: 10;
+}
+.diagImgHolder:hover{
+    z-index:100;
+}
+.diagImgHolder:hover .diagImgHoverBtn,
+.diagImgHolder:hover .diagImgHoverTxt{
+    opacity:1;
+    filter:alpha(opacity=100);
+}
+.diagImg{
+    width:100%;
+    height:100%;
+    border:3px solid #858585;
+    z-index:20;
+    text-align:center;
+}
+.addDiagPreview,
+.addDiagAdd{
+    padding:2px 5px;
+    margin:3px 2px 0 5px;
+    border-radius:1px;
+}
+#diagramPreview{
+    top:100px;
+    border:4px solid #858585;
+    z-index:10000;
+    background:#fff;
+    padding:15px;
+    position:fixed;
+    min-height:200px;
+    overflow: auto;
+}
+.diagramPreviewImg{
+    border:1px solid #ccc;
+    min-width:140px;
+}
+.quesAddUploadImgDiv{
+    margin:30px;
+}
+#addDiagUploadTextBox{
+    width:300px;
+    height:25px;
+    background-color:#eeeeee;
+    margin-left:15px;
+    font-size:12px;
+    color:#666666;
+}
+#file-uploadImageQues .qq-upload-list{
+    display: none;
+}
+.QAADStartUpload{
+    font-size: 13px;
+    opacity: 0.35;
+    padding: 7px 30px;    
+}
+.QAADUploadNow{
+    opacity: 1;
+}
+.QAADContentDiv .loadMoreItems{
+    margin-top: 50px;
+}
+
+
+.deleteRTELatexEqn{
+    background-color: #D9F2FF;
+}

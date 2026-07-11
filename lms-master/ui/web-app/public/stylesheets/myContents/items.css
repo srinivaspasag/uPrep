@@ -1,0 +1,282 @@
+.eachMyContentsDocuments,
+.eachMyContentsTests,
+.eachMyContentsVideos,
+.eachMyContentsPlaylist{
+	width:220px;
+	height:65px;
+}
+.eachMyContentsPlaylist .playListIcon{
+width:60px;
+height:60px;
+margin:1px;
+}
+.myContentsEachIconItems:hover .contentUnavailable,
+.myContentsEachIconItems:hover .onHoverMyContentsItems{
+opacity:1;
+filter:alpha(opacity=100);
+}
+.myContentsEachIconItems .contentUnavailable{
+	z-index:200;
+	background-color:rgba(255,255,255,0.85);
+	display:table;
+	width: 100%;
+	height: 100%;
+	top:10px;
+	left:10px;
+	opacity:0;
+	filter:alpha(opacity=0);
+}
+.eachMyContentsTests .contentUnavailable,
+.eachMyContentsFile .contentUnavailable,
+.eachMyContentsModule .contentUnavailable{
+	height:85px;
+}
+.contentUnavailable .contentUnavailableMsg{
+	vertical-align:middle;
+	font-size:16px;
+	font-weight:bold;
+	color:#EC4646;
+	text-align:center;
+	display:table-cell;
+}
+.myContentsEachIconItems{
+border:1px solid transparent;
+margin:10px 0 20px 10px;
+padding:24px 0 10px 10px;
+}
+.myContentsEachIconItems:nth-of-type(4n-7) {
+    clear: both;
+}
+.myContentsEachIconItems .onHoverMyContentsItems{
+width:105%;
+height:130%;
+z-index:20;
+left:-5%;top:-5%;
+opacity:0;
+filter:alpha(opacity=0);
+}
+.onHoverMyContentsItems .myContentsCrossItem{
+top:2px;left:8px;cursor:pointer;
+width:15px;height:15px;
+background:url('/public/images/my-content/cross.png') no-repeat;
+display:none;
+}
+.onHoverMyContentsItems .myContentsButtonItem{
+margin-right:3px;
+top:8px;
+padding:1px 7px;
+font-size:11px;
+font-weight:bold;
+}
+.onHoverMyContentsItems .myContentsItemInfo{
+bottom:5px;
+padding-left:12px;
+color:#666666;
+font-size:11px;
+}
+.onHoverMyContentsItems .myContentsShareIt{
+bottom:6px;
+height:17px;
+right:2px;
+padding-left:21px;cursor:pointer;
+background:url('/public/images/my-content/share.png') no-repeat;
+/*display:none;*/
+}
+.myContentsEachIconItems:hover{
+background-color:#fff;
+border:1px solid #ccc;
+border-radius:4px;
+}
+.eachMyContentsPlaylist .myContentsPltext{
+padding:10px 0 0 10px;
+width:96%;
+}
+.eachMyContentsTests .assignmentIcon,
+.eachMyContentsTests .testIcon{
+	width:25px;
+	height:25px;
+	margin:2px;
+	background-image:url('/public/images/LMS/inst-sprite.png');
+	background-repeat:no-repeat;
+	font-size:1px;
+	background-position:-626px 0px;
+}
+.eachMyContentsTests .assignmentIcon{
+	background-position:-737px 0px;
+}
+.eachMyContentsTests .testIcon.attempted{
+	background-position:-653px 0px;
+}
+.myContentsPlaylistDetails{
+width:167px;
+min-height:62px;
+z-index:20;
+}
+.myContentsDocumentsDetails{
+width:170px;
+max-height:70px;
+overflow:hidden;
+z-index:20;
+}
+.eachMyContentsTests .myContentsTestDetails{
+width:190px;
+max-height:72px;
+overflow:hidden;
+z-index:20;
+}
+.eachMyContentsTests .myContentsTestText{
+white-space:nowrap;
+padding:2px 10px 0 4px;
+text-overflow:ellipsis;
+}
+.myContentsRankingHolder{
+width:56px;
+height:13px;
+margin:5px 2px 2px 5px;
+overflow:hidden;
+}
+.myContentsRankingStars{
+width:100%;height:100%;
+background:url('/public/images/my-content/ratingStar.png') repeat-x;
+}
+.eachMyContentsDocuments{
+height:75px;
+}
+.eachMyContentsDocuments .documentsIcon{
+	background:url('/public/images/questions/docBack.png') no-repeat;
+	width:45px;
+	height:58px;
+	margin:2px;
+}
+.eachMyContentsDocuments .documentsIcon img{
+	height:54px;
+	width:36px;
+	margin:0 5px;
+}
+.eachMyContentsFile .fileThumbnail{
+	background:url('/public/images/LMS/file-small-thumbnail.png') no-repeat;
+	width:25px;
+	height:25px;
+	margin-right:6px;
+}
+.eachMyContentsModule .moduleThumbnail {
+    background: url("/public/images/LMS/module-small-thumbnail.jpg") no-repeat;
+    height: 25px;
+    margin-top: 3px;
+    width: 26px;
+}
+.eachMyContentsDocuments .documentsType{
+padding:2px 5px 2px 5px;
+background-color:#f1f584;
+border-radius:2px;
+margin-left:10px;
+}
+.myContentsDocumentsText{
+white-space:nowrap;
+padding-top:1px;
+text-overflow:ellipsis;
+overflow:hidden;
+max-width:165px;
+min-width:50%;
+}
+.myContentsVideosIconsHolder{
+max-height:210px;
+}
+.myContentsVideoslist .myContentsListsHolderPagination{
+max-height:890px;
+}
+.eachMyContentsVideos{
+padding-top:18px;
+height:150px;
+}
+.eachMyContentsVideos .onHoverMyContentsItems{
+height:117%;
+}
+.eachMyContentsVideos .myContentsVideoText{
+white-space:nowrap;
+padding:1px 0 0 10px;
+text-overflow:ellipsis;
+overflow:hidden;
+max-width:200px;
+z-index:20;
+}
+.eachMyContentsVideos .myContentsVideoIcon{
+	width:150px;
+	height:87px;
+	border:4px solid #D8D8D8;
+	margin:5px 0 0 10px;
+	background-color:#2E2E2E;
+	color:#fff;
+	cursor:pointer;
+}
+.eachMyContentsVideos .myContentsVideoDur{
+right:62px;
+top:128px;
+z-index:200;
+color:#D8D8D8;
+font-size:13px;
+}
+
+/* LIST VIEW CSS */
+.myContentsActiveListView .myContentsListsHolder{
+	max-height:160px;
+}
+.myContentsActiveListView .myContentsListsHolderPagination{
+	max-height:630px;
+}
+.myContentsEachListItems{
+	height:40px;
+	border:1px solid #ccc;
+	margin:8px;
+	border-radius:2px;
+}
+.myContentsListLeft{
+	width:60%;
+	padding:10px 20px;
+}
+.myContentsListMiddle{
+	width:14%;
+	padding:5px;
+	height:30px;
+	border:1px solid #ccc;
+	border-top-width:0px;
+	border-bottom-width:0px;
+	text-align:center;
+}
+.myContentsEachListItems .myContentsRankingHolder{
+	width:56px;
+}
+.myContentsEachListItems .myContentsRankingHolder,
+.myContentsEachListItems .myContentsItemInfo{
+	margin:0 10px;
+	height:100%;
+}
+.myContentsEachListItems .myContentsListRight{
+	width:17%;
+	padding:10px 13px;
+	height:20px;
+}
+.myContentsEachListItems .myContentsButtonItem{
+	margin:0px;
+	padding:0px 7px;
+	font-size:11px;
+	font-weight:bold;
+}
+.verticalItemDivider{
+	height:30px;
+	width:1px;
+	background-color:#ccc;
+}
+.myContentsButtonItem .blueSubmitButton{
+border:1px solid #95a8b1;
+border-radius:2px;
+color:#EFFBFB;font-size:12px;
+background-image:url('/public/images/test_creation_button_bg/small_blue.jpg');
+background-repeat:repeat-x;
+cursor:pointer;
+padding:1px 4px;
+margin-top:-1px;
+}
+.disabled > *{
+    cursor: not-allowed!important;
+}

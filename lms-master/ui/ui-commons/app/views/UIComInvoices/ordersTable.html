@@ -1,0 +1,147 @@
+#{if ordersResp.errorCode!=''}
+    #{common.errorCodes resp:ordersResp/}
+#{/if}
+#{else}
+%{
+  ordersResult=ordersResp.result;
+  totalHits=ordersResult.totalHits;
+  orders=ordersResult.list;
+    ordersType='STUDENT_BUY_ORDERS';
+    if(params.ordersType!=null){
+        ordersType=params.ordersType;
+    }  
+}%
+<input type="hidden" class="totalHitsHider" value="${totalHits}" />
+<div class="headSecTableDiv">
+    <table class="headSecTable">
+      <thead>
+          <tr>
+              <td class="width60 maxWidth60">Order Id</td>
+              <td class="tdPadLeft5 itemTitleTH">&{'INVENTORY_PRODUCT_ITEM'}</td>
+              #{if ordersType=='INSTITUTE_SELL_ORDERS'}
+                <td class="width130 maxWidth130">Student</td>
+              #{/if}
+              <td class="width60 maxWidth60">Device Type</td>
+              <td class="width100 maxWidth100">Date</td>
+              <td class="width100 maxWidth100">Order State</td>
+              <td class="width100 maxWidth100">Amount Paid</td>
+          </tr>	  
+      </thead>
+    </table>                    
+</div>                
+<div id="fixedSec" style="overflow-y: scroll;">
+    <table class="cmdsTable">
+      <tbody>
+          #{if orders.length()>0}
+          #{list items:0..orders.length()-1,as:'i'}
+          %{
+                order=orders.get(i);
+                start=0;
+                if(params.start!=null){
+                    start=Integer.parseInt(params.start);
+                }
+                amtPaid='-';
+                
+                studentName='<span class="smallThinGray">Not available</span>';
+                if(order.has("invoiceInfo") && !order.invoiceInfo.equals(null)){
+                    currencyCode = java.util.Currency.getInstance(order.invoiceInfo.currencyCode).getSymbol();
+                    amtPaid=currencyCode+' '+uicom.util.Utilities.roundDecimals(order.invoiceInfo.total/100);
+                    studentName=order.invoiceInfo.billTo.name;
+                }                                                
+          }%
+          <tr>
+            <td class="width60 maxWidth60 centerText">${order.orderId}</td>
+            <td class="tdPadLeft5 color0">
+		#{if !order.isNull('items')&&order.items.length()>0}
+		   #{list items:0..order.items.length()-1,as:'index'}
+			%{ item = order.items.get(index); }%
+                	<div style="background-color:#F9F9F8;padding:3px;margin-bottom:5px;">
+				<span class="boldy">&{'ENTITY_NAME_'+item.item.type}</span>
+				#{if uicom.util.Validation.isEmpty(item.name)}
+                			<span class="smallThinGray">&{'TXT_NAV'}</span>
+				#{/if}
+				#{else}
+					<span>${item.name.raw()}</span>
+				#{/else}
+			</div>
+		   #{/list}
+		#{/if}
+		#{else}
+                	<span class="smallThinGray">&{'TXT_NAV'}</span>
+		#{/else}
+            </td>
+            #{if ordersType=='INSTITUTE_SELL_ORDERS'}
+            <td class="width130 maxWidth130">
+				#{if order.has('customer') && order.customer.has('info') && !order.customer.info.equals(null)}
+					#{widgets.userName user : order.customer.info /}
+				#{/if}
+				#{else}
+					${studentName.raw()}
+				#{/else}
+				</td>
+            #{/if}            
+            <td class="width60 maxWidth60">${order.deviceType}</td>
+            <td class="width100 maxWidth100 color6">
+                ${new Date(order.orderTime).format('dd/MM/yyyy')}
+            </td>
+            <td class="width100 maxWidth100">
+		#{if order.orderState=="FINALIZED" && order.consumed == false}
+			<span class="redTextColor">UNDER PROCESS</span>
+		#{/if}
+		#{else}
+			<span>&{order.orderState}</span>
+		#{/else}
+            </td>
+            <td class="width100 maxWidth100 centerText" style="padding:10px 0;">
+            	<div class="boldy" style="padding-bottom:5px;">${amtPaid}</div>
+               #{if order.orderState=="FINALIZED"}
+		#{if order.consumed == false && order.customer.id == session.userId}
+                	<a class="smallRedButton" style="padding:5px 15px;"
+				href="/retryOrderProcess/${order.orderId}?orgId=${params.orgId}&targetProfile=STUDENT">&{'RETRY_PROCESS'}</a> 
+		#{/if}
+		#{else}
+                	<a class="greenButton" href="/organization/${params.orgId}/order/${order.orderId}" target="_blank">&{'VIEW_INVOICE'}</a> 
+		#{/else}
+               #{/if}
+            </td>                
+          </tr>   
+          #{/list}
+          #{/if}
+          #{else}
+            <tr class="noResultsTr">
+              <td colspan="10">
+                  <div class="userMessage">No orders found.</div>
+              </td>
+            </tr>       
+          #{/else}          
+      </tbody>
+    </table>
+    <div class="smally color6">
+        <div class="margTop boldy small10 liner big12">Order States</div>
+        <div>
+            <label class="boldy small10">FINALIZED-</label>
+            <span>Payment is successful and the purchased item is now accessible. Invoice has been generated for reference.</span>
+        </div>
+        <div>
+            <label class="boldy small10">UNDER PROCESS-</label>
+            <span>Payment is successful but access to the purchased item is not given yet. Click 'Retry Process' to get access.</span>
+        </div>
+        <div>
+            <label class="boldy small10">WAITING-</label>
+            <span>Payment has been initiated but waiting for response from payment gateway. If money has been deducted from account, email us at  <a target="_blank" href="mailto:info@learnpedia.in">info@learnpedia.in</a> with your Order ID and details of the issue faced.</span>
+        </div>
+        <div>
+            <label class="boldy small10">CONFIRMED-</label>
+            <span>Payment is successful and the purchased item is now accessible but invoice has not been generated. Email us at <a target="_blank" href="mailto:info@learnpedia.in">info@learnpedia.in</a> with your Order ID and details of the issue faced.</span>
+        </div>        
+        <div>
+            <label class="boldy small10">CANCELLED-</label>
+            <span>Order has been cancelled.</span>
+        </div>        
+        <div>
+            <label class="boldy small10">DRAFT-</label>
+            <span>Order is initiated.</span>
+        </div>        
+    </div>
+</div>        
+#{/else}

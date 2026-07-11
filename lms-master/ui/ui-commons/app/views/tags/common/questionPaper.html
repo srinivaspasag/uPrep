@@ -1,0 +1,135 @@
+%{
+	data = _data;	
+}%
+<style type="text/css">
+.vpopupBodyHolder{
+	margin:0 0;
+}
+.crossVPopup.stl{
+	position: relative;
+	top: -11px;
+	right: -5px;
+}
+.questionPaperHolder{
+    max-height: 70vh;
+    width: 70vw;
+    box-sizing: border-box;
+    overflow: scroll;
+}
+.qp{
+    padding: 5px 20px;
+    background: #2d6fb6;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+}
+.qptestHeading{
+    padding: 20px;
+    font-size: 23px;
+    text-align: left;
+    font-weight: 700;
+    color: #2d6fb6;
+    text-transform: uppercase;
+}
+.boardHeading{
+	text-align: center;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+}
+.questionBody{
+	margin: 20px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.questionType{
+	font-size: 15px;
+	text-align:center;
+	font-weight: bold;
+	margin: 10px;
+}
+
+.questionBody .questionText{
+	margin: 40px 20px 0 20px;
+    font-size: 20px;
+    line-height: 1.6;
+    color: black;
+    text-align: left;
+}
+.questionBody .questionText img{
+	max-width:630px;
+	margin:auto;
+	display: flex;
+}
+.questionNumber{
+	font-weight: bold;
+	font-size: 16px;
+	text-align: left;
+	color: #fff;
+}
+.questionBody .choices{
+	margin: 20px;
+	overflow: hidden;
+}
+</style>
+<div class="questionPaperHolder">
+	<div class="qp">
+		Question Paper
+	</div>
+	<div class="qptestHeading">
+		${data.name}
+	</div>
+	%{
+		openBoardIndex = 0;
+	}%
+	
+	#{list items:0..data.boards.length()-1, as:'index'}
+		%{
+			board = data.boards.get(index);
+		}%
+		<div class="boardHeading">
+			${board.name}
+		</div>
+		#{list items:0..board.questions.length()-1, as:'boardIndex'}
+			%{
+				boardQuestion = board.questions.get(boardIndex).questions;
+				boardQuestionType = board.questions.get(boardIndex).type;
+			}%
+			#{if !boardQuestion.equals(null) && !boardQuestion.equals("null") && boardQuestion != "null" &&  boardQuestion != null}
+			<div class="questionType">${board.name} - ${boardQuestionType}</div>
+				#{list items:0..boardQuestion.length()-1, as:'boardQuestionIndex'}
+				<div class="questionBody">
+					<div style="background: #2e6fb6;padding: 5px;">
+						<span class="questionNumber">Question ${boardQuestionIndex+1} : </span>
+					</div>
+					<div class="questionText">
+						%{
+							question = boardQuestion.get(boardQuestionIndex);
+						}%
+					${question.content.raw()}
+					</div>
+					<div class="choices">
+						%{
+							alphabet = "abcdefghijklmnopqrstwxyz";
+							question = question;
+						}%
+						#{if question.has('options') && !question.options.equals(null) && question.options.length()>0}
+					   		#{list items:0..question.options.length()-1, as:'index'}
+								<table class="eachOptHolder">
+								   <tr>
+									<td class="optAlphaCount">(${alphabet.charAt(index)})</td>
+									<td>
+										<div class="eachOpt">${question.options.get(index).raw()}</div>
+									</td>
+								   </tr>
+								</table>
+						   #{/list}
+						#{/if}
+					</div>
+				</div>
+				#{/list}
+			#{/if}	
+		#{/list}
+	#{/list}
+</div>

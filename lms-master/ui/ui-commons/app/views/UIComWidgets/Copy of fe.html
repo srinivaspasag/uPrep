@@ -1,0 +1,415 @@
+  <div id="FEHolder" class="nonner">        
+        <div class="FEHead">
+            Formula Editor
+        </div>
+        <a class="floatRight closeFE">x close</a>
+          <div id="FETopBarHolder">
+              <div id="FETopBar">
+              <table id="FETopBarTable" cellPadding="0" cellSpacing="0">
+                  <tbody>
+                    <tr>
+                        <td class="FETBItem FETBCommFamily" data-family="FRACTION">
+                          <div class="FETBItemName boldy italica big16">
+                              x
+                              <div style="border-top: 1px solid rgb(255, 255, 255); width: 15px; margin: 4px auto 0px;"></div>
+                              y
+                          </div>                              
+                        </td> 
+                        <td class="FETBItem FETBCommFamily" data-family="ROOT">
+                          <div style="font-family: Verdana; font-size: 20px;" class="FETBItemName">
+                              √<div style="position: relative; display: inline-block; 
+                                    vertical-align: top; font-weight: normal;
+                                    border-top: 1px solid rgb(255, 255, 255); width: 14px; top: -3px;">                                  
+                              </div>
+                          </div>                       
+                        </td>   
+                        <td class="FETBItem FETBCommFamily" data-family="EX">
+                            <div class="FETBItemName">
+                              <span style="font-size: 25px;">e</span><span style="position: relative; font-style: italic; top: -10px; font-size: 13px;">x</span>
+                            </div>                            
+                        </td> 
+                        <td class="FETBItem FETBCommFamily" data-family="INTEGRAL">
+                          <div class="FETBItemName">
+                              <span style="font-size: 25px;" class="boldy">∫</span>
+                          </div>                              
+                        </td>                       
+                        <td class="FETBItem FETBCommFamily" data-family="SIGMA">
+                          <div class="FETBItemName">
+                              <span style="font-size: 25px;">Σ</span>
+                          </div>                              
+                        </td>   
+                        <td class="FETBItem FETBCommFamily" data-family="BRACES">
+                          <div class="FETBItemName">
+                              <span style="font-size: 25px;">{ }</span>
+                          </div>                              
+                        </td>     
+                        <td class="FETBItem FETBSineCosine" data-family="SINECOSINE">
+                          <div class="FETBItemName italica" style="font-family: Georgia;">
+                              <span style="font-size: 19px;">f(x)</span>
+                          </div>                              
+                        </td>  
+                        <td class="FETBItem FETBLogLimit" data-family="LOGLIMIT">
+                          <div class="FETBItemName italica boldy">
+                              <span style="font-size: 16px;">log x</span>
+                          </div>                              
+                        </td> 
+                        <td class="FETBItem FETBMatrix" data-family="MATRIX">
+                          <div class="FETBItemName" style="margin-top: -4px;">
+                              <div class="floatLeft" style="margin-left: 5px; font-size: 25px;">(</div>
+                              <div class="floatLeft smally" style="margin-top: -3px;">
+                                  <div>0 1</div>
+                                  <div>1 0</div>
+                              </div>
+                              <div class="floatLeft" style="font-size: 25px;">)</div>
+                          </div>                              
+                        </td>  
+                        <td class="FETBItem FETBSymbol" data-family="SYMBOL">
+                            <div class="FETBItemName">
+                              <span style="font-size: 30px; position: relative; top: 4px;" class="boldy">+</span>
+                            </div>                            
+                        </td>
+                        <td class="FETBItem FETBGreek" data-family="GREEK">
+                            <div class="FETBItemName">
+                              <span style="font-size: 30px;">α</span>
+                            </div>                            
+                        </td> 
+                        <td class="FETBItem FETBArrow" data-family="ARROW">
+                            <div class="FETBItemName">
+                              <span class="" style="font-size: 30px; position: relative;">&#8593;</span>
+                            </div>                            
+                        </td>
+                    </tr>
+                  </tbody>
+              </table>
+              <div id="FETBItemTableHolder" class="nonner"></div>
+             </div>
+          </div>
+          <div id="FEComposerAreaHolder">
+              <div id="FEComposerArea">
+                <div id="feBlock" class="feBlockClass">
+                    <div contenteditable='true'  class='fePHTrans fePHTransInitial'></div>
+                </div>                 
+              </div>
+              <div id="FEPreview" class="nonner"></div>
+          </div>
+          <div class="margTop boldy margRight10 margLeft">
+              <span class="greyButton floatLeft clearFEComposerArea">Clear all</span>
+              <span class="greenButton submitFEEqn floatRight">Insert</span>
+              <span class="blueSubmitButton showFEPreview floatRight margRight10">Preview</span>              
+          </div>
+          <div class="cleaner_with_divider">&nbsp;</div>
+          <div id="FETBMatrixCountSample">
+              <div class="FETBMatrixCountItem" style="width: 250px;">
+                  Rows#{select 'FETBMatrixRows',class:'FETBMatrixRowSelect margLeft5 margRight10'}
+                    #{list items:1..10,as:'i'}
+                        #{option i}${i}#{/option}
+                    #{/list}
+                  #{/select}
+                  Columns#{select 'FETBMatrixColumns',class:'FETBMatrixColumnSelect margLeft5 margRight10'}
+                    #{list items:1..10,as:'i'}
+                        #{option i}${i}#{/option}
+                    #{/list}
+                  #{/select}
+                  <span class="boldy greyButton submitFETBMatrixOrder" style="line-height: 15px;">Insert</span>                      
+              </div>            
+          </div>          
+      </div>
+    <script type="text/javascript">
+    new function(){
+        var fn=function(){vfe.init();}
+        fetchScripts([{fname:"uicomWidgets/fe.js",cb:fn}]);   
+    }();            
+    </script>     
+
+      
+      
+      
+      
+      
+      
+      
+*{      <a class="ac">click</a>
+      <a class="makeEqn">make eqn</a>
+      <div id="latex">ehw</div>
+
+      <div id="feBlockHolder">
+          <div style="margin: 60px auto 0;" id="feBlock">    
+<div class='feEqnParent feLogLimit'>
+    <table cellspacing="0" cellpadding="0" class="feExtendersPa">
+          <tr>
+              <td class="centry">
+                <div class='feUL feSmallPHDiv feExtenders feTopExtender'>
+                    <div contenteditable='true'  class='feSmallPH'></div>
+                </div>
+              </td>
+              <td></td>
+          </tr>
+          <tr>
+              <td class="centry">
+                <div class='feIcon'>log</div>
+              </td>
+              <td></td>
+          </tr>
+          <tr>
+              <td class="centry"></td>
+              <td>
+                <div class='feLL feSmallPHDiv feExtenders feBotExtender'>
+                    <div contenteditable='true'  class='feSmallPH'></div>
+                </div>                  
+              </td>
+          </tr>
+       </table>   
+        <div class='feCore fePHDiv'>
+            <div contenteditable='true'  class='fePH'></div>
+        </div>    
+</div>
+<div class='feEqnParent feRoot feExtendersPa'>
+    <div class="feRootTypeDiv">
+        <div class='feRootType feSmallPHDiv feExtenders feTopExtender'>
+            <div contenteditable='true'  class='feSmallPH'></div>
+        </div>
+        <div class="feIcon">&#8730;</div>
+    </div>
+    <div class='feRootCore fePHDiv'>
+        <div contenteditable='true'  class='fePH'></div>
+    </div>
+</div>              
+          </div>
+      </div>
+
+<!--      <div class="fir">
+          <div class="fi" rel="2" >
+                <div class="fi" rel="3" ></div>
+          </div>          
+          <div class="fi" rel="4" >
+                <div class="fi" rel="5" ></div>
+          </div>          
+          <div class="fi" rel="6" >
+              <div class="fi" rel="7" ></div>
+              <div class="fi" rel="8" ></div>
+              <div class="fi" rel="9" ></div>
+          </div>
+      </div>-->
+  </body>
+</html>
+
+
+
+
+integral
+<div class='feEqnParent feIntegral'>
+    <table cellspacing='0' cellpadding='0' class="feExtendersPa">
+      <tr>         
+          <td></td>
+          <td>
+            <div class='feUL feSmallPHDiv feExtenders feTopExtender'>
+                <div contenteditable='true'  class='feSmallPH'></div>
+            </div>
+          </td>
+      </tr>
+      <tr>
+          <td>
+            <div class='feIcon'>&#8747;</div>
+          </td>
+          <td></td>
+      </tr>
+      <tr>
+          <td></td>
+          <td>
+            <div class='feLL feSmallPHDiv feExtenders feBotExtender'>
+                <div contenteditable='true'  class='feSmallPH'></div>
+            </div>
+          </td>
+      </tr>
+   </table>
+    <div class='feCore fePHDiv'>
+        <div contenteditable='true'  class='fePH'></div>
+    </div>     
+</div>
+
+
+
+sigma
+<div class='feEqnParent feSigma'>
+    <table cellspacing="0" cellpadding="0" class="feExtendersPa">
+          <tr>
+              <td class="centry">
+                <div class='feUL feSmallPHDiv feExtenders feTopExtender'>
+                    <div contenteditable='true'  class='feSmallPH'></div>
+                </div>
+              </td>
+          </tr>
+          <tr>
+              <td class="centry">
+                <div class='feIcon'>&#931;</div>
+              </td>
+          </tr>
+          <tr>
+              <td class="centry">
+                <div class='feLL feSmallPHDiv feExtenders feBotExtender'>
+                    <div contenteditable='true'  class='feSmallPH'></div>
+                </div>
+              </td>
+          </tr>
+       </table>   
+        <div class='feCore fePHDiv'>
+            <div contenteditable='true'  class='fePH'></div>
+        </div>    
+</div>
+
+epowerx
+<div class='feEqnParent feex'>
+      <table cellspacing="0" cellpadding="0">
+          <tr>
+              <td></td>
+              <td>
+                <div class='feUL feSmallPHDiv feExtenders feTopExtender'>
+                    <div contenteditable='true'  class='feSmallPH'></div>
+                </div>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                <div class='feCore fePHDiv'>
+                    <div contenteditable='true'  class='fePH'></div>
+                </div>
+              </td>
+              <td></td>
+          </tr>
+          <tr>
+              <td></td>
+              <td>
+                <div class='feLL feSmallPHDiv feExtenders feBotExtender'>
+                    <div contenteditable='true'  class='feSmallPH'></div>
+                </div>
+              </td>
+          </tr>
+       </table>
+</div>
+      
+
+roots
+<div class='feEqnParent feRoot feExtendersPa'>
+    <div class="feRootTypeDiv">
+        <div class='feRootType feSmallPHDiv feExtenders feTopExtender'>
+            <div contenteditable='true'  class='feSmallPH'></div>
+        </div>
+        <div class="feIcon">&#8730;</div>
+    </div>
+    <div class='feRootCore fePHDiv'>
+        <div contenteditable='true'  class='fePH'></div>
+    </div>
+</div>
+    
+
+
+fraction
+<div class='feEqnParent feFrac'>
+    <table cellspacing='0' cellpadding='0'>
+          <tr>
+              <td class='centry'>
+                <div class='feFracUVal fePHDiv feExtenders feTopExtender'>
+                    <div contenteditable='true'  class='fePH'></div>
+                </div>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                <div class='feIcon'></div>
+              </td>
+          </tr>
+          <tr>
+              <td class='centry'>
+                <div class='feFracLVal fePHDiv feBotExtender feExtenders'>
+                    <div contenteditable='true'  class='fePH'></div>
+                </div>
+              </td>
+          </tr>
+     </table>
+</div>
+
+
+
+
+braces
+<div class='feEqnParent feBrace'>
+    <table cellspacing="0" cellpadding="0">
+      <tr>
+          <td>
+            <div class='feIcon'>&#90;</div>
+          </td>
+          <td>
+            <div class='feCore fePHDiv'>
+                <div contenteditable='true'  class='fePH'></div>
+            </div>
+          </td>
+          <td>
+                <div class='feIcon'>&#124;</div>
+          </td>
+      </tr>
+   </table>
+</div>
+
+sinecosine
+similar to log limit
+
+logLimit
+<div class='feEqnParent feLogLimit'>
+    <table cellspacing="0" cellpadding="0" class="feExtendersPa">
+          <tr>
+              <td class="centry">
+                <div class='feUL feSmallPHDiv feExtenders feTopExtender'>
+                    <div contenteditable='true'  class='feSmallPH'></div>
+                </div>
+              </td>
+          </tr>
+          <tr>
+              <td class="centry">
+                <div class='feIcon'>lim</div>
+              </td>
+          </tr>
+          <tr>
+              <td class="centry">
+                <div class='feLL feSmallPHDiv feExtenders feBotExtender'>
+                    <div contenteditable='true'  class='feSmallPH'></div>
+                </div>
+              </td>
+          </tr>
+       </table>   
+        <div class='feCore fePHDiv'>
+            <div contenteditable='true'  class='fePH'></div>
+        </div>    
+</div>
+
+   matrices
+<div class='feEqnParent feMatrix'>
+      <div class="feIcon"></div>
+      <table cellspacing='0' cellpadding='0' class='centry'>
+          <tr>
+              <td>
+                <div class='feMatrixCore fePHDiv'>
+                    <div contenteditable='true'  class='fePH'></div>
+                </div>                
+              </td>
+              <td>
+                <div class='feMatrixCore fePHDiv'>
+                    <div contenteditable='true'  class='fePH'></div>
+                </div>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                <div class='feMatrixCore fePHDiv'>
+                    <div contenteditable='true'  class='fePH'></div>
+                </div>
+              </td>
+              <td>
+                <div class='feMatrixCore fePHDiv'>
+                    <div contenteditable='true'  class='fePH'></div>
+                </div>
+              </td>
+          </tr>
+       </table>
+      <div class="feIcon"></div>
+</div>
+}*

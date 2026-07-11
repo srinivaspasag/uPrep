@@ -1,0 +1,6 @@
+%{
+    diagrams=diagrams.result.results;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+#{questions.diagItems diagrams:diagrams,loadMoreSize:loadMoreSize /}

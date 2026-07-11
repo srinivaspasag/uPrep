@@ -1,0 +1,35 @@
+%{
+	orgId = _orgId;
+	programText = _programText;
+	categoryName = _categoryName;
+}%
+#{stylesheet media:'screen', src:'uicomMicrosite/o.category.css' /}
+<div class="categoryProgramsHolder" id="categoryProgramsSection" data-org-id="${orgId}" data-category-name="${categoryName}">
+	<div>
+		#{if programText == null}
+     			<span class="big28">&{'TXT_PROGRAMS_CAPS'}</span>
+		#{/if}
+		#{else}
+     			<span class="big28 catProgramText">${programText}</span>
+		#{/else}
+     		<select class="chooseCategory right">
+        		<option value="" selected>All</option>
+     		</select>
+     		<span class="big16 greyTextColor right siteCategoryText">&{'TXT_CATEGORY_CAPS'}</span>
+	</div>
+	*{<!--<div class="typeOfProgSec">
+     		<span class="progTypeTab active" data-type="PUBLIC">&{'TXT_PUBLIC_CAPS'}</span>
+     		<span class="progTypeTab" data-type="PRIVATE">&{'TXT_PRIVATE_CAPS'}</span>
+	</div>
+	#{if session != null && session.userId != null}
+	<div class="typeOfProgSec">
+     		<span class="progTypeTab active" data-type="CATEGORY">&{'category.AVAILABLE_PROGRAMS'}</span>
+     		<span class="progTypeTab" data-type="MY_PROGRAMS">&{'category.MY_PROGRAMS'}</span>
+	</div>
+	#{/if}-->}*
+	<div class="categoryProgramsContainer">
+	</div>
+	<div class="loadMoreSections nonner">&{'LOAD_MORE_item',"Programs"}</div>
+</div>
+#{script src:'uicomMicrosite/jquery.wookmark.min.js', charset:'utf-8' /}
+#{script src:'uicomMicrosite/o.category.js', charset:'utf-8' /}

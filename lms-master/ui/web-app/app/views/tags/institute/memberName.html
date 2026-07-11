@@ -1,0 +1,34 @@
+%{
+	user = _user;
+	classNames = _classNames;
+	getUser = _getUser;
+	noLink = _noLink == true ? true : false;
+	profileName = "";
+	linkClassName = "";
+}%
+	#{if !user.equals(null)}
+%{
+	if(getUser == null && noLink == false){
+        	getUser = controllers.Profile.getUserClassAndUrl(user);
+	}
+	if(user.has("profile") && !user.profile.equals("null")){
+		profile = user.profile;
+		if(!"STUDENT".equals(profile) && !profile.equals(null)){
+			profileName = "(" + play.i18n.Messages.get("MEMBER_PROFILE_"+profile) + ")"; 
+			linkClassName = "greenLink";
+		}
+	}
+}%
+#{if noLink == false}
+<a class="${classNames} ${getUser.className} ${linkClassName}" data-user-id="${getUser.id}" href="${getUser.url}">
+	<span class="memberName">${user.firstName.raw()} ${user.lastName.raw()} ${profileName}</span>
+</a>
+#{/if}
+#{else}
+	<span class="memberName  ${linkClassName} ${classNames}" 
+		data-user-id="${user.id}">${user.firstName.raw()} ${user.lastName.raw()} ${profileName}</span>
+#{/else}
+#{/if}
+#{else}
+	<span class="memberName">Unknown User</span>
+#{/else}

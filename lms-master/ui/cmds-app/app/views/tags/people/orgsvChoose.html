@@ -1,0 +1,26 @@
+    %{
+        vChooseValue=_vChooseValue;
+        vChooseHead=_vChooseHead;
+        pageTarget=_pageTarget;
+        
+    }%
+    <div class="width100 vChoose mcvChoose margLeft10 alignMiddle peopleProfilevChoose" data-value="${vChooseValue}" 
+         data-onchange="changeAddPeopleEls"  data-param-name="targetProfile"
+         >
+        #{if pageTarget=="PROGRAM_PAGE"}
+        <div class="vChooseHead">${vChooseHead}</div>
+        #{/if}
+        #{else}
+        <div class="vChooseHead" style="background-color:#FFFFFF">${vChooseHead}</div>
+        #{/else}
+        <div class="vChooseDownIcon"></div>
+        <div class="vChooseDropDown">
+          
+            #{list items:vChooseValue.keys(),as:'key'}
+            
+           
+            <div class="vChooseOpt" data-value="${key}|ORGANIZATION" data-text=${vChooseValue.get(key)}>${vChooseValue.get(key)}</div>    
+           #{/list}
+           
+        </div>
+    </div>  

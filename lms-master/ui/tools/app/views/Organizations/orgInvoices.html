@@ -1,0 +1,96 @@
+#{extends 'main.html' /}
+#{set title:'Tools:Organization Invoices' /}
+#{stylesheet media:'screen', src:'uicomMain.css' /}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<style type="text/css">
+.generateInvoiceInput{
+	position:absolute;
+	width:200px;
+	height:100px;
+	background-color:#EEE;
+	border:1px solid #999;
+	padding:12px 20px;
+	margin-top:-50px;
+	right:14.5%;
+}
+.datePickCalendar{
+	margin:0px;
+	width:90%;
+	height:20px;
+	padding:3px 6px;
+}
+</style>
+<div>
+   <div class="right">
+	<span class="blueButton showGenerateButton">Generate Monthly Invoices</span>
+   </div>
+   <div class="cleaner_with_divider">&nbsp;</div>
+   <div class="generateInvoiceInput nonner">
+	<div class="redTextColor smally">Submit the end date upto which you want to generate Invoices</div>
+	<div class="padTop5">
+		<input type="text" class="datePickCalendar" id="invoiceUntilDateInput">
+	</div>
+	<div class="padTop5">
+		<span class="greenButton submitGenerate">&{'TXT_SUBMIT'}</span>
+		<a class="cancelGenerate padLeft10">&{'TXT_CANCEL'}</a>
+	</div>
+   </div>
+</div>
+#{include includeFile/}
+<script src="/public/javascripts/jquery-libs/jquery-ui-1.10.4.custom.min.js"></script>
+<script src="/public/javascripts/uicomCommon/utils.js"></script>
+<script type="text/javascript">
+	var generateInvoice = new function(){
+		var orgId = "${params.orgId}";
+		this.init = function(){
+			setUpDatePicker();
+			$(".showGenerateButton").on("click",function(){
+				$(".generateInvoiceInput").removeClass("nonner");
+			});
+			$(".submitGenerate").on("click",submitGenerate);
+			$(".cancelGenerate").on("click",cancelGenerate);
+		};
+		function setUpDatePicker(){
+			var today = new Date();
+			today.setDate(today.getDate()-1);
+			$(".datePickCalendar").datepicker({ maxDate: today, minDate: new Date(2012, 1, 1) });
+		};
+		function submitGenerate(){
+			var val = $("#invoiceUntilDateInput").datepicker('getDate');
+			var params = {
+				"customer.type" : "ORGANIZATION",
+				"customer.id" : orgId,
+				till : val.getTime(),
+				orgId : orgId
+			};
+			$.post("/UIComInvoices/generateMonthlyInvoices",params,function(data,statusText,xhr){
+				if(data){
+					if(data.errorCode && data.errorMessage){
+						showError(data.errorMessage);
+					}else{
+						var contentType = xhr.getResponseHeader("Content-Type");
+						var isHTML = contentType.indexOf("html")>=0?true:false;
+						if(isHTML){
+							var holder = $("#orgInvoices").find(".invoicesList");
+							var firstItem = holder.find(".eachOrder:first");
+							if(firstItem.get(0)){
+								firstItem.before(html);
+							}else{
+								holder.html(data);
+							}
+							holder.updateClientTime();
+						}
+						cancelGenerate();
+					}
+				}
+			});
+		};
+		function cancelGenerate(){
+			$(".generateInvoiceInput").addClass("nonner");
+			$("#invoiceUntilDateInput").val("");
+		};
+	};
+	$(function(){
+		generateInvoice.init();
+	});
+</script>

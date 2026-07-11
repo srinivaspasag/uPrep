@@ -1,0 +1,58 @@
+.nonner{
+    display: none;
+}
+.redTextColor{
+    color: red;
+}
+.greenTextColor{
+    color: green;
+}
+[contentEditable=true]:empty:not(:focus):before{
+    content:attr(data-placeholder);
+}
+.wp-text{
+    padding: 20px 60px!important;
+}
+.shrWithBtn{
+    width: 20%;
+}
+/*.swal2-modal{
+    width: 300px;
+}*/
+.activityPopup{
+    width: 300px;
+}
+.upvoteHolder{
+    border-top:1px solid #e5e5e5;
+    padding-top: 8px;
+}
+.comcontainer{
+    top:8px;
+    position: relative;
+}
+.like{
+    cursor: pointer;color: #4b4f56;font-weight: bold;font-size: 12px;font-family: Helvetica, Arial, sans-serif;    
+}
+.liked{
+    color:rgb(88,144,255);font-weight: bold;font-size: 12px;font-family: Helvetica, Arial, sans-serif;
+}
+.ics{
+    font-size: 18px;
+}
+a:hover{
+    color: #4b4f56;
+}
+.instFeedPreview{
+    padding: 13px 30px!important;
+}
+.delInstFeed{
+    cursor: pointer;
+}
+.loadMoreItems{
+    font-size: 14px!important;
+    font-weight: 500;
+    cursor: pointer;
+}
+.avatar-img{
+    height: 42px;
+}

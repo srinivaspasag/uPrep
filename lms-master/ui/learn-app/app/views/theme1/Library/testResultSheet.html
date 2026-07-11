@@ -1,0 +1,185 @@
+#{if resultSheet!=null && resultSheet.errorCode.isEmpty()}
+%{
+    testFullDetailsResult=resultSheet.result;
+    testInfo=testFullDetailsResult.info;
+    utilities=util.Utilities;
+}%
+<style type="text/css">
+.table .table {
+    background-color: #ffffff;
+}
+</style>
+
+        <div class="f-18 f-500 text-center text-capitalize m-t-25 m-b-25 c-white" style="background: #71c171;
+    padding: 20px;">${testInfo.name}</div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-inner table-vmiddle text-center">
+            <thead >
+                <th class="text-center">
+                    Rank
+                </th>
+                <th class="text-center">
+                    Student Details
+                </th>
+                #{if testHasPapers}
+                    %{
+                        children=testInfo.children;
+                    }%
+                    #{list items:0..children.length()-1,as:'i'}
+                    %{
+                        paper=testInfo.children.get(i);
+                        if(i>1){
+                            nonnerClass=' nonnerForPapers';
+                        }else{
+                            nonnerClass="";
+                        }
+
+                        colSpan=paper.metadata.length()+1;
+                        if(colSpan>4){
+                            colSpan=4;
+                        }
+                    }%
+                <th colspan="${colSpan}" class="text-center">
+                    ${paper.name} score out of ${paper.totalMarks}
+                </th>
+                #{/list}
+                    #{/if}
+                    #{else}
+                    <th colspan="${testInfo.metadata.length()+1}" class="text-center">
+                        ${testInfo.name} Subject Wise Scores
+                    </th>
+                    #{/else}
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    #{if testHasPapers}
+                    %{
+                        children=testInfo.children;
+                    }%
+                        #{list items:0..children.length()-1,as:'i'}
+                        %{
+                            paper=testInfo.children.get(i);
+                        }%
+                        #{if utilities.isJSONArrayNotEmpty(paper,'metadata')}
+                        %{
+                            subjects=paper.metadata;
+                        }%
+                        #{list items:0..subjects.length()-1,as:'s'}
+                        %{
+                            nonnerClass="";
+                            if(s>2){
+                                nonnerClass=' nonnerForSubs';
+                            }
+                            if(i>1){
+                                nonnerClass+=' nonnerForPapers';
+                            }
+                        }%
+                    <td class="f-400 c-black">
+                        ${subjects.get(s).name}
+                    </td>
+                    #{/list}
+                        #{/if}
+                        %{
+                            if(i>1){
+                                nonnerClass=' nonnerForPapers';
+                            }else{
+                                nonnerClass="";
+                            }
+                        }%
+                        <td class="f-400 c-black">Total</td>
+                        #{/list}
+                    #{/if}
+                    #{else}
+                        %{
+                            //testMetadata=new org.json.JSONArray();
+                            //used in case of test with single paper.
+                        }%
+                        #{if utilities.isJSONArrayNotEmpty(testInfo,'metadata')}
+                        %{
+                            subjects=testInfo.metadata;
+                            //testMetadata=subjects;
+                        }%
+                        #{list items:0..subjects.length()-1,as:'s'}
+                        %{
+                            if(s>2){
+                                nonnerClass=' nonnerForSubs';
+                            }else{
+                                nonnerClass="";
+                            }
+                        }%
+                        <td>${subjects.get(s).name}</td>
+                        #{/list}
+                        #{/if}
+                        <td>Total</td>
+                        #{/else}
+                </tr>
+                %{
+                    students=testFullDetailsResult.list;
+                    applicationUtils=controllers.Tests;
+                    testHasPapers=false;
+                    if(utilities.isJSONArrayNotEmpty(testInfo,'children')){
+                        testHasPapers=true;
+                    }
+                }%
+                #{if students.length()>0}
+                #{list items:0..students.length()-1,as:'u'}
+                %{
+                    student=students.get(u);
+                    studentTestInfo=student.info;
+                    timeObj=util.Utilities.getTimeFromMiliSec(studentTestInfo.measures.timeTaken);
+                }%
+                <tr>
+                    <td>${student.rank}</td>
+                    <td class="text-left f-500 text-capitalize">
+                    #{if !student.user.equals(null)}
+                        ${student.user.firstName}
+                    #{/if}
+                    #{else}
+                        Unknown User
+                    #{/else}
+                    <div class="m-t-5 c-gray f-400"> ${timeObj.hrs} Hr : ${timeObj.mins} Mins : ${timeObj.secs} Secs</div></td>
+                    #{if testHasPapers}
+                    %{
+                        studentTestPapers=new org.json.JSONArray();
+                        if(utilities.isJSONArrayNotEmpty(studentTestInfo,'children')){
+                            studentTestPapers=studentTestInfo.children;
+                        }
+                        testsPapers=testInfo.children;
+                    }%
+                    #{/if}
+                    #{else}
+                        %{
+
+                            testMetadata=new org.json.JSONArray();
+                            if(utilities.isJSONArrayNotEmpty(testInfo,'metadata')){
+                                subjects=testInfo.metadata;
+                                testMetadata=subjects;
+                            }
+                            boards=new org.json.JSONArray();
+                            if(utilities.isJSONArrayNotEmpty(studentTestInfo,'boards')){
+                                boards=studentTestInfo.boards;
+                            }
+                        }%
+                        ${applicationUtils.getStudentsMarksHTML(testMetadata,boards,"subject",0).raw()}
+                    <td class="f-500 f-19">${studentTestInfo.measures.score}</td>
+                    #{/else}
+                </tr>
+                #{/list}
+                %{
+                    start=0;
+                    size=10;
+                    totalHits=testFullDetailsResult.totalHits;
+                }%
+                #{/if}
+                #{else}
+                <tr>
+                    <td colspan='10'>No Students have taken this test.</td>
+                </tr>
+                #{/else}
+            </tbody>
+        </table>
+    </div>
+#{/if}

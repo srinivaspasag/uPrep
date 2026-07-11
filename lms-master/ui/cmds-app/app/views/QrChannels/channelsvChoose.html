@@ -1,0 +1,28 @@
+%{
+    channels=channels.result.list;
+}%
+
+<div class="vChoose formvChoose" data-value="-1" data-param-name="channelId" data-req="true">
+  <div class="vChooseHead">Choose Channel</div>
+  <div class="vChooseDownIcon"></div>
+  <div class="vChooseDropDown">
+      #{if channels.length()>0}
+        #{list items:0..channels.length()-1,as:'c'}
+            %{
+                channel=channels.get(c);
+            }%
+            <div class="vChooseOpt" data-value="${channel.id}">${channel.name}</div>
+        #{/list}
+      #{/if}
+      #{else}
+        <div class="vChooseOpt invalidvChooseOpt">
+            <div class="smallThinGray">No channel found</div>
+        </div>
+      #{/else}
+  </div>
+</div>                         
+#{if channels.length()==0}
+<div class="smallThinGray">No channels found.
+    <a class="goToChannelsPage cmdsaPush" href="organization/${params.orgId}/channels">Click here</a> to create a channel.
+</div>
+#{/if}

@@ -1,0 +1,130 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+#GET     /org/{orgSlugId}/?                        UIComRegister.indexSlug
+#GET     /microsite/?                              UIComRegister.microsite
+GET     /org/{orgSlugId}/?                        UIComRegister.microsite
+GET     /login/organization/{orgId}/?             UIComRegister.micrositeByOrgId
+GET     /login/?                                  UIComRegister.index
+GET     /showuserblockmsg/{orgId}/?               UIComRegister.showUserBlockMsg
+GET     /termsandconditions                       TNC.termsAndConditions
+GET     /terms                                    TNC.terms
+GET     /uprepterms                               TNC.uprepterms
+GET     /business-agreement/?                     TNC.businessAgreement
+GET 	/directaccess				  Security.directaccess
+GET 	/iframe/?                                 UIComRegister.getiframe
+GET 	/microsite/?                              UIComRegister.micrositeByReferer
+GET     /signup                                  UIComRegister.referralSignupForm
+GET     /quicksignup                          UIComRegister.quickSignup
+GET 	/signupsection/{sectionId}/?    	  UIComSecurity.signupSection
+
+GET     /downloadapp/{orgId}/{entityType}/{entityId}/? UIComRegister.downloadApp
+
+#url mapping
+GET     /                                         UIComRegister.getiframe
+GET     /home                                     Security.vedantuLoading
+GET     /help                                     UIComHelpCenter.home
+GET     /helptopics                               UIComHelpCenter.topicsDirect
+GET     /testCors                                 Application.testCors
+GET     /ping                                     UIComHelpCenter.ping
+
+#institute
+GET     /organization/{orgId}/?                   Institute.directHome
+GET     /organization/{orgId}/resultanalytics/?   Institute.resultAnalyticsDirect
+GET     /organization/{orgId}/discussions/?       Institute.directDoubts
+GET     /organization/{orgId}/activities/?        Institute.directActivities
+GET     /organization/{orgId}/library/?           Institute.libraryDirect
+GET     /organization/{orgId}/library/{tabId}/?   Institute.libraryDirect
+GET     /organization/{orgId}/test/{id}/?         Tests.orgTestDirect
+GET     /organization/{orgId}/pretest/{id}/?      Tests.orgPreTestDirect
+
+GET     /organization/{orgId}/feed/{feedId}/?     Institute.feedUiDirect
+GET     /organization/{orgId}/discussion/{id}/?   Institute.directDoubt
+GET     /organization/{orgId}/schedule/?          Institute.myClassroomConnectDirect
+GET     /organization/{orgId}/myschedule/?        Institute.myScheduleDirect
+GET     /organization/{orgId}/notifications/?     Institute.allNotificationsDirect
+GET     /organization/{orgId}/referralTerms       Institute.referralTermsDirect
+GET     /organization/{orgId}/people/?            Institute.membersDirect
+GET     /organization/{orgId}/challenges/?        Institute.challengesDirect
+GET     /organization/{orgId}/profile/{targetUserId}/?  Institute.profileDirect
+GET     /organization/{orgId}/addquestion         Institute.addQuestionDirect
+GET     /organization/{orgId}/question/{id}       Institute.questionDirect
+GET     /organization/{orgId}/test/{testId}/subjectivequestion/{id}         Tests.subjectiveQuestionDirect
+GET     /organization/{orgId}/myorders/?          Profile.myOrdersDirect
+
+GET    /organization/{orgId}/order/{orderId}/?     UIComInvoices.invoicePage
+GET    /retryOrderProcess/{orderId}/?             Institute.retryOrderProcess
+
+
+GET     /organization/{orgId}/myprograms          Institute.myProgramsPageDirect
+GET     /organization/{orgId}/postPaymentAddSection  Institute.payAndAddMemberToSection
+
+#Message
+GET     /organization/{orgId}/messages/inbox/?    UserMessages.inboxDirect
+GET     /organization/{orgId}/messages/?          UserMessages.inboxDirect
+GET     /organization/{orgId}/messages/conversation/{userConversationId}/?           UserMessages.conversationDirect
+
+#Assignments
+GET     /organization/{orgId}/assignment/student/{id}         Assignments.studentPageDirect
+GET     /organization/{orgId}/assignment/teacher/{id}         Assignments.teacherPageDirect
+GET     /organization/{orgId}/assignment/{id}                 Assignments.direct
+
+#Contents
+GET     /organization/{orgId}/video/{id}          MyContents.videoPageDirect
+GET     /organization/{orgId}/document/{id}       MyContents.docPageDirect
+GET     /organization/{orgId}/file/{id}           MyContents.filePageDirect
+GET     /organization/{orgId}/module/{id}         MyContents.modulePageDirect
+GET     /pdfviewer                                UIComDocuments.pdfViewer
+
+#screening post requests for register
+GET	/register/register                        Register.index
+POST 	/register/register			  Register.register
+
+
+#utilities  like reset password,verify email error
+GET     /resetpassword                            Register.resetpassword
+GET     /verifyEmail                              Register.verifyEmail
+GET     /emailVerified/{userId}                   Institute.emailVerifiedPage
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# TEST CONTROLLER
+GET 	/temp/ccavenuePaymentNotification         TestController.ccavenuePaymentNotification
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+GET     /pdfjs/                                 staticDir:pdfjs
+
+# Catch all
+*    /{controller}/{action}                     {controller}.{action}
+
+
+#GET     /                                         Questions.home
+#GET     /home/?                                   Questions.home
+#GET     /myprofile/?                              Profile.myProfileDirect
+#GET     /mycontent/{tabId}/?                      MyContents.myContentDirect
+#GET     /explorecontent/{tabId}/?                 MyContents.exploreContentDirect
+#GET     /mycontent/?                              MyContents.myContentDirect
+#GET     /explorecontent/?                         MyContents.exploreContentDirect
+#GET     /challenges/?                             Challenges.challengesDirect
+#GET     /upload/?                                 Doc.uploadDirect
+#GET     /user/{targetUserId}/?                    Profile.profileOthersDirect
+
+#GET     /addquestion/?                            Questions.addQuestionDirect
+#GET     /question/{qid}/?                         Questions.questionDirect
+#GET     /playlist/{playlistId}/?                  Playlists.playlistDirect
+#GET     /document/{docId}/?                       Doc.docVideoDirect
+#GET     /video/{docId}/?                          Doc.docVideoDirect
+#GET     /test/{testId}/?                          Tests.testDirect
+#GET     /curateplaylist/?                         Playlists.curatePlaylistDirect
+#GET     /editdoc/?                                MyContents.editDocDirect
+#GET     /createtest/?                             Tests.createTestDirect
+#GET     /testseries/{testSeriesId}/?              Subscription.testSeriesDirect
+#GET     /frontdesk/{orgId}                   	  Subscription.signUp
+#GET     /frontdesk/members/{orgId}/?           	  Subscription.signedMembers
+#GET     /exam/{brdId}/?                           Boards.examDirect
+#GET     /subject/{brdId}/?                        Boards.subjectDirect
+#GET     /topic/{brdId}/?                          Boards.topicDirect
+#GET     /subtopic/{brdId}/?                       Boards.subtopicDirect
+#GET     /search/?                                 SearchContent.searchDirect

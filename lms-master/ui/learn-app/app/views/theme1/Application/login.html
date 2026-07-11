@@ -1,0 +1,300 @@
+{%
+  loginError = flash.get('loginError');
+  emailVerified = flash.get('emailVerified');
+  email = flash.get('email');
+}%
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Latest compiled and minified CSS -->
+  <meta charset="UTF-8">
+  <title>Learnpedia-Online JEE NEET TEST PREP</title>
+  <meta content="6evuu1E6HXaGGEKmjsHl4HPRYSgxIV724cov3mGdsnY" name="google-site-verification">
+  <!-- <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}"> -->
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"><!-- Mobile Specific Meta -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+  <meta content="b4da237bf31a63b6e672cbcccc131040" name="p:domain_verify">
+  <meta content="IIT Jee online videos, IIT JEE cources, IIT JEE online, IIT Jee Institue in Hyderabad" name="keywords">
+  <meta content="Learnpedia is a leading online portal for all IIT JEE online courses, it makes an easy approach for all the aspirants of IIT Jee to choose from the online classes and tutorials" name="description"><!-- Latest compiled JavaScript -->
+  <link href="@{'/public/outerAssets/assets/css/bootstrap.min.css'}" rel="stylesheet"><!-- Material Jquery Template Css Files-->
+  <!-- <link href="/public/innerAssets/theme1/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet"> -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/images/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicons/favicon-16x16.png">
+  <link rel="manifest" href="/public/images/favicons/manifest.json">
+  <link rel="mask-icon" href="/public/images/favicons/safari-pinned-tab.svg" color="#348c26">
+  <meta name="theme-color" content="#ffffff">
+  <link href="/public/assets/theme1/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+  <link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+  <link href="/public/stylesheets/o.intlTelInput.css" rel="stylesheet">
+  <link href="/public/stylesheets/material_style.css" rel="stylesheet">
+  #{gaTrackingCode /}
+</head>
+<body>
+  #{include 'theme1/Application/header.html' /}
+  <section id="main">
+    #{include 'theme1/Application/sidebar.html' /}
+    <!-- <div class="container">
+      <div class="row"> -->
+        <!-- <div class="col-md-5 col-md-offset-1 hidden-xs hidden-sm" style="top:100px;">
+          <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" style="top:20%;position: relative;" >
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+            </ol>
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <p>&{'login.SLIDES_TEXT_1'}</p>
+                </div>
+                <div class="item">
+                    <p>&{'login.SLIDES_TEXT_2'}</p>
+                </div>
+                <div class="item">
+                    <p>&{'login.SLIDES_TEXT_3'}</p>
+                </div>
+                <div class="item">
+                    <p>&{'login.SLIDES_TEXT_4'}</p>
+                </div>
+            </div>
+          </div>
+      </div> -->
+      <div class="col-md-6 col-md-offset-3" id="loginBox">
+            <!-- Login -->
+      <!-- <div class="lc-block toggled" id="l-login"> -->
+    <!-- <div class="col-md-6 col-md-offset-3"> -->
+      <div class="card">
+        <div class="card-header">
+          <!-- <h2>Praesent vitae justo purus
+                                    <small>In hendrerit lorem nislac lacinia</small>
+                                </h2> -->
+          <center>
+            <img class="img-responsive" id="lpimage" src="/public/outerAssets/images/vedantutm.png">
+          </center>
+        </div>
+        <div class="card-body">
+          <ul class="tab-nav tn-justified tn-icon" role="tablist">
+            <li class="active" role="presentation">
+              <a aria-controls="tab-1" class="col-sx-6" data-toggle="tab" href="#tab-1" role="tab">
+              <span class="hidden-xs">Login with Email</span>
+              <i class="zmdi zmdi-email visible-xs"></i>
+              </a>
+            </li>
+            <li role="presentation">
+              <a aria-controls="tab-2" class="col-xs-6" data-toggle="tab" href="#tab-2" role="tab">
+              <span class="hidden-xs">Login with Phone</span>
+              <i class="zmdi zmdi-smartphone-iphone visible-xs"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="tab-content p-20">
+            <div class="tab-pane animated fadeIn in active" id="tab-1" role="tabpanel">
+              <form id="memberLoginForm" method="post" name="emailLogin" action="@{Security.authentifyMember}" onsubmit="return loginProcess.validate();">
+                <div class="input-group m-b-20" id="usernamegroup">
+                  <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
+                  <div class="emailValidation">
+                    <div class="fg-line">
+                      <input type="text" id="userLoginId" class="form-control" name="memberId" placeholder="Email Address/InstituteID" value="${email}">
+                    </div>
+                    <span class="zmdi zmdi-alert-triangle form-control-feedback nonner"></span>
+                  </div>
+                </div>
+                <div class="input-group m-b-20" id="passwordgroup">
+                  <span class="input-group-addon"><i class="zmdi zmdi-lock"></i></span>
+                  <div class="passwordValidation">
+                    <div class="fg-line">
+                      <input type="password" id="userPasswordEMAIL_LOGIN" class="form-control" name='password' placeholder="Password" data-shown="password" autocomplete="off">
+                      <input type="text" id="userPasswordTextEMAIL_LOGIN" class="form-control nonner" placeholder="Password" autocomplete="off" name="password">
+                    </div>
+                    <span class="zmdi zmdi-alert-triangle form-control-feedback nonner"></span>
+                  </div>
+                </div>
+
+                <div class="checkbox" style="left:14px;position: relative;">
+                  <label>
+                  <input type="checkbox" value="" class="showPasswordCheckbox">
+                  <i class="input-helper"></i>
+                  <span style="font-size: 12px;">Show Password</span>
+                  </label>
+                </div>
+                <br>
+                <center>
+                  <span class="redTextColor" id="checkemail"></span>
+                  <span class="redTextColor" id="checkpassword"></span>
+                </center>
+                <center>
+                <button type="submit" id="loginEmailButton" class="btn btn-block btn-success waves-effect">Login</button>
+                <a href="" data-ma-action="login-switch" data-ma-block="#l-forget-password" class="forgetPassword" style="top:10px;position: relative;"><span>Forgot Password</span></a>
+                </center>
+                %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+                <input type="hidden" value="${learnpediaOrgId  }" name="orgId" class="orgId" />
+              </form>
+
+            </div>
+            <div class="tab-pane animated fadeIn" id="tab-2" role="tabpanel">
+            <!-- <form style="display: hidden;" id="hiddenSignupForm" method="post" name="registration" action=""> -->
+              <form  method="post" name="registration" id="form">
+                <div class="input-group m-b-20" id="telgroup">
+                  <span class="input-group-addon"><i class="zmdi zmdi-phone"></i></span>
+                  <div class="fg-line">
+                    <input type="tel" class="form-control" id="contactNumber" name="contactNumber" placeholder="Enter Contact Number" >
+                  </div>
+                </div>
+                <div class="input-group m-b-20" id="usernamegroup">
+                  <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                  <div class="fg-line">
+                    <input type="text" class="form-control" required name="firstName" id="loginusername" placeholder="Enter your name" >
+                  </div>
+                </div>
+                <div class="input-group m-b-20" id="otpformgroup" style="display: none;">
+                  <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                  <div class="fg-line">
+                    <input type="text" class="form-control" name="userOTP" id="userotp" placeholder="Enter OTP">
+                  </div>
+                </div>
+
+                <div class="input-group m-b-20" id="radiogroup" style="display: none;">
+                <span class="input-group-addon">Course</span>
+                <label class="radio radio-inline m-r-20" style="vertical-align: -webkit-baseline-middle;"><input checked name="programType" type="radio" value="JEE"> <i class="input-helper"></i> JEE</label> <label class="radio radio-inline m-r-20" style="vertical-align: -webkit-baseline-middle;"><input name="programType" type="radio" value="NEET"> <i class="input-helper"></i> NEET</label>
+                </div>
+                <center>
+                <span id="otpcodeerror" class="redTextColor text-center"></span>
+                <div>
+                    <!-- <span class="right greyTextColor smally"><span class="redTextColor">*</span> Required Fields</span> -->
+                    <span class="redTextColor text-center" id="numberlength"></span>
+                    <span class="redTextColor text-center" id="unamelength"></span>
+                    <span class="redTextColor text-center" id="timeleft"></span>
+                </div>
+                </center>
+
+                <center>
+                <button type="button" id="otpButton" class="btn btn-block btn-success waves-effect" onclick="otpProcess.sendOTP();">Login</button>
+                <button type="submit" id="loginButton" class="btn btn-block btn-success waves-effect" style="display: none;">Login</button>
+                <button type="button" id="validateButton" class="btn btn-block btn-success waves-effect" style="display: none;">Login</button>
+                </center>
+                %{ learnpediaOrgId=play.Play.configuration.getProperty("learnpedia.id"); }%
+                <input type="hidden" value="${learnpediaOrgId  }" name="orgId" />
+                <input type="hidden" value="" name="sectionId" />
+                <input type="hidden" value=true name="isOTPlogin" id="isOTPlogin" />
+                <input type="hidden" name="isOTPsignup" id="isOTPsignup"/>
+                <input type="hidden" value="" name="username" id="uname" />
+                <input type="hidden" id="countryCode" name="countryCode" />
+                <input type="hidden" id="type" name="progType" />
+                <span class="loginPopupBtn text-center resendOTP" id="resendOTP" style="display: none;"><a onclick="otpProcess.resendOTP();">Resend OTP</a></span>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- </div> -->
+    </div>
+
+    <br>
+    <center>
+    <div class="lc-block" id="l-forget-password">
+      <div class="lcb-form">
+          <h4 class="text-left" style="bottom:10px;position: relative;">Forgot Password</h4>
+          <div class="input-group m-b-20">
+              <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
+              <div class="fg-line">
+                  <input type="email" class="form-control" placeholder="Email Address" id="passwordForget">
+              </div>
+          </div>
+          <a class="btn btn-login btn-success btn-float forgot-password"><i class="zmdi zmdi-mail-send" style="left: 3px;position: relative;"></i></a>
+          <span id="forgetError" class="redTextColor"></span>
+      </div>
+      <div class="lcb-navigation">
+          <a href="" data-ma-action="login-switch" data-ma-block="#l-login" class="loginShow"><i class="zmdi zmdi-long-arrow-right"></i> <span>Sign in</span></a>
+      </div>
+    </div>
+    </center>
+    <!-- </div>
+    </div> -->
+  </section><!-- Menu for Web App -->
+
+  <div class="modal fade" id="otpErrorModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" type="button"></button> <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+           <!--  Preparing For! -->
+        </div>
+        <div class="modal-body">
+          <center>
+            <img class="img-responsive" height="100px" src="/public/outerAssets/images/error-icon.png" width="100px">
+          </center><span style="font-size: 14px;color: #777;font-weight: 600;">Your Contact Number is Not Verified, Please Login Through Your Email/InstituteID and Verify Your Contact Number</span>
+          <center>
+            <br>
+            <span class="btn btn-primary"><a href="/login" style="color: white;">&{'login.SIGNIN'}</a></span>
+          </center>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <span id="result" style="font-size: 14px;color: #777;font-weight: 600;" data-error="&{'login.'+loginError}"></span>
+<!-- Footer Section    -->
+    #{include 'theme1/Application/footer.html' /}
+  <script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js">
+  </script>
+  <script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js">
+  </script><!-- <script src="/public/assets/theme1/vendors/bower_components/flot/jquery.flot.js"></script>
+        <script src="/public/assets/theme1/vendors/bower_components/flot/jquery.flot.resize.js"></script>
+        <script src="/public/assets/theme1/vendors/bower_components/flot.curvedlines/curvedLines.js"></script>
+        <script src="/public/assets/theme1/vendors/sparklines/jquery.sparkline.min.js"></script>
+        <script src="/public/assets/theme1/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js"></script> -->
+   <!-- <script src="/public/assets/theme1/vendors/bower_components/moment/min/moment.min.js"></script>
+        <script src="/public/assets/theme1/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js "></script>
+        <script src="/public/assets/theme1/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js"></script> -->
+  <script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js">
+  </script><!-- <script src="/public/assets/theme1/vendors/bootstrap-growl/bootstrap-growl.min.js"></script> -->
+  <script src="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.js">
+  </script>
+  <script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js">
+  </script> <!-- Placeholder for IE9 -->
+   <!--[if IE 9 ]>
+            <script src="vendors/bower_components/jquery-placeholder/jquery.placeholder.min.js"></script>
+        <![endif]-->
+  <script src="/public/assets/theme1/js/app.min.js">
+  </script>
+  <script src="/public/javascripts/o.application.js">
+  </script>
+  #{script src:'o.intlTelInput.js', charset:'utf-8' /}
+  <script type="text/javascript">
+         // motpProcess.init();
+         signupProcess.init();
+         loginProcess.init();
+  </script>
+
+  #{if loginError!=null}
+      <script type="text/javascript">
+      (function(){
+        var data = $("#result").data('error');
+        swal({
+          type: "warning",
+          title: ""+data,
+          timer: 5000
+        });
+      })();
+      </script>
+  #{/if}
+
+  #{if emailVerified=='done'}
+      <script type="text/javascript">
+      (function(){
+        swal({
+          type: "success",
+          title: "Email verified successfully",
+          timer: 2000
+        });
+      })();
+      </script>
+  #{/if}
+  <script type="text/javascript" src="/public/javascripts/dropdown-on-hover.js"></script>
+</body>
+</html>

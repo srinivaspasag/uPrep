@@ -1,0 +1,87 @@
+%{
+    chapterName=_chapterName;
+documentCount=_documentCount;
+testCount=_testCount;
+moduleCount=_moduleCount;
+chapterId=_chapterId;
+programId=_programId;
+parentId= _parentId;
+}%
+
+
+<div class="individualChapter" data-chapter-id="${chapterId}" data-program-id="${programId}" data-subject-id="${parentId}" style="margin-top: -25px;">
+    <div class="card libraryHover border8px hidden-xs p-t-15 p-b-15 p-l-20 p-r-20">
+    <div class="card-body" >
+        <div class="row">
+            <div class="col-xs-4 f-15">
+                ${chapterName}
+            </div>
+             <div class="col-xs-3 f-16 text-center">
+                ${moduleCount}
+                #{if moduleCount <= 1}
+                <span class="f-13 text-center">Lecture</span>
+                #{/if}
+                #{else}
+                <span class="f-13 text-center">Lectures</span>
+                #{/else}
+            </div>
+            <div class="col-xs-3 f-16 text-center">
+                ${documentCount}
+                #{if documentCount <= 1}
+                <span class="f-13 text-center">E-Book</span>
+                #{/if}
+                #{else}
+                <span class="f-13 text-center">E-Books</span>
+                #{/else}
+            </div>
+            <div class="col-xs-2 f-16 text-center">
+                ${testCount}
+                #{if testCount <= 1}
+                <span class="f-13 text-center">Test</span>
+                #{/if}
+                #{else}
+                <span class="f-13 text-center">Tests</span>
+                #{/else}
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="card libraryHover border8px visible-xs">
+    <div class="card-body card-padding">
+        <div class="row">
+            <div class="f-14 f-500">
+                ${chapterName}
+            </div>
+             <div class="m-t-10">
+                 <div class="col-xs-4 f-14 text-center">
+                    ${moduleCount} 
+                   #{if moduleCount <= 1}
+                    <span class="f-10 text-center">Lecture</span>
+                    #{/if}
+                    #{else}
+                    <span class="f-10 text-center">Lectures</span>
+                    #{/else}
+                             </div>
+                             <div class="col-xs-4 f-14 text-center">
+                    ${documentCount} 
+                    #{if documentCount <= 1}
+                    <span class="f-10 text-center">E-Book</span>
+                    #{/if}
+                    #{else}
+                    <span class="f-10 text-center">E-Books</span>
+                    #{/else}
+                             </div>
+                             <div class="col-xs-4 f-14 text-center">
+                    ${testCount} 
+                    #{if testCount <= 1}
+                    <span class="f-10 text-center">Test</span>
+                    #{/if}
+                    #{else}
+                    <span class="f-10 text-center">Tests</span>
+                    #{/else}
+                             </div>
+             </div>
+        </div>
+        </div>
+    </div>
+</div>

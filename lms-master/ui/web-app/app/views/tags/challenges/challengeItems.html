@@ -1,0 +1,215 @@
+%{
+    challenges=_challenges;
+    target=_target;
+    loadMoreSize=_loadMoreSize;
+    subTarget=_subTarget;
+    if(target=='CLOSED_CHALLENGES')extraClass=' challengeClosed';
+    else if(target=='ATTEMPTED_CHALLENGES'){
+        if(subTarget=='ACTIVE_CHALLENGES')extraClass=' challengeAttempted challengeAttemptedActive';
+        else extraClass=' challengeAttempted challengeAttemptedClosed';
+    }
+    else extraClass=' challengeActive';
+    
+    utilities=uicom.util.Utilities;
+}%
+    #{if challenges.length()>0}
+        #{list items:0..challenges.length()-1,as:'i'}
+            %{
+                chal=challenges.get(i);
+                challengeResultClass='';
+                if(target=='ATTEMPTED_CHALLENGES'&&subTarget=='CLOSED_CHALLENGES'
+                &&!chal.isNull('info')){
+                    if(chal.info.success)challengeResultClass=' crackedChallenge';
+                    else challengeResultClass=' lostChallenge';
+                }
+            }%
+        <div class="challenge${extraClass}${challengeResultClass}" data-challenge-id="${chal.id}"
+             data-dated="${new Date(webUtils.TemplateHelper._getClientTimeOffsetCalc(chal.timeCreated,params.clientServerTimeDelta)).format('dd-MM-yy')}">
+            <div class="challengeMain">
+                <div class="challengeTimerAndContentsDiv">
+                    <div class="challengePin"></div>
+                    #{if target=='ACTIVE_CHALLENGES'||(target=='ATTEMPTED_CHALLENGES'&&subTarget=='ACTIVE_CHALLENGES')}
+                    <div class="challengeTimer challengeStatusSec" data-burst-time="${chal.timeCreated+(chal.lifeTime*1000)}">
+                        #{include '/UIComTags/common/arc_drawing.html' /}
+                        <div class="challengeTimerTime"></div>
+                    </div>
+                    #{/if}
+                    #{elseif target=='CLOSED_CHALLENGES'}
+                    <div class='challengeStatusSec'>
+                        <div class='challengeClosedText'>Closed</div>
+                        <div class='challengeClosedSince'>${new Date(chal.timeCreated+(chal.lifeTime*1000)).since()}</div>
+                    </div>
+                    #{/elseif}
+                    #{elseif target=='ATTEMPTED_CHALLENGES'&&subTarget=='CLOSED_CHALLENGES'}
+                    <div class="challengeStatusSec">
+                        <div class="challengeStatusImg"></div>
+                        <div class="challengeStatusLostText challengeStatusText">Lost</div>
+                        <div class="challengeStatusWonText challengeStatusText">Cracked</div>
+                    </div>
+                    #{/elseif}
+                    <div class="challengeContents">
+                        <div class="challengeTitle">
+                           ${chal.name}
+                        </div>
+                        <div class="smally margTop">
+                            #{if chal.targets.length()>0}
+                            <span class="margRight10">
+                                Target:
+                                #{list items:0..chal.targets.length()-1,as:'t'}
+                                    %{
+                                        exam=chal.targets.get(t);
+                                    }%
+                                <a class="ptrTagHovered boardExam doCStream" data-brd-id="${exam.id}"
+                                   /*href="${controllers.Boards.getBoardUrl('exam',exam.id)}"*/ data-cs-name="BOARD_EXAM">
+                                    ${exam.code}
+                                </a>
+                                ${t_isLast?'':','}
+                                #{/list}
+                            </span>
+                            #{/if}
+                            #{if chal.difficulty!='UNKNOWN'}
+                            <span class="margRight10">Level: ${chal.difficulty.toLowerCase().capitalizeWords()}</span>
+                            #{/if}                            
+                            <span class="challengeAttemptCountDiv"> Attempts ${chal.attempts}</span>
+                        </div>
+                        <div class="smally">
+                            %{
+                                sub=null;
+                                chalTopic=null;
+                            }%
+                            #{if chal.boards.length()>0}
+                            #{list items:0..chal.boards.length()-1,as:'cb'}
+                                %{
+                                    chalBoard=chal.boards.get(cb);
+                                    if(chalBoard.type=='COURSE')sub=chalBoard;
+                                    else if(chalBoard.type=='TOPIC')chalTopic=chalBoard;
+                                }%
+                            #{/list}
+                            #{/if}                            
+                            #{if sub!=null&&sub.type=="COURSE"}
+                                Subject: 
+                                    <span class='blackColor doCStream' data-brd-id="${sub.id}"
+                                        data-name="BOARD_SUBJECT">
+                                        ${sub.name}
+                                    </span>
+                            #{/if}   
+                            #{if chalTopic!=null&&chalTopic.type=="TOPIC"}
+                                    <span class="margLeft5">Topic:</span> 
+                                    <span class='blackColor doCStream' data-brd-id="${chalTopic.id}"
+                                        data-name="BOARD_TOPIC">
+                                        ${chalTopic.name}
+                                    </span>
+                            #{/if}  
+                        </div>
+                        #{if chal.followers>0}
+                        <div class="rightText">
+                            ${chal.followers} mutual
+                        </div>
+                        #{/if}
+                        <div class="challengeShadow"></div>
+                    </div>
+                    #{if target=='CLOSED_CHALLENGES'}
+                    <div class="challengeTopperDiv">
+                        #{if utilities.isJSONArrayNotEmpty(chal,'toppers')}
+                        %{
+                            user=chal.toppers.get(0);
+                        }%
+                        <div style="margin-top: 25px;">Topper</div>
+                        <div class="leftText">
+                            #{widgets.img30 user:user /}
+		            #{institute.memberName user : user , classNames : "blocky img30Lefter" /}
+                        </div>
+<!--                        <div class="margTop">39743 Points</div>-->
+                        #{/if}
+                        #{else}
+                        <div style="margin-top: 50px;">No Toppers</div>
+                        #{/else}
+                    </div>
+                    #{/if}
+                    #{elseif target=='ATTEMPTED_CHALLENGES'&& subTarget=='CLOSED_CHALLENGES'}
+                    <div class="challengeResultDiv centry">
+                        #{if !chal.isNull('info')}
+                            <div class="margBot10">
+                                #{if chal.info.success && chal.info.hint<3}
+                                    #{list items:2..chal.info.hint}
+                                        <span class="challengeHat"></span>
+                                    #{/list}
+                                #{/if}
+                            </div>
+                                %{
+                                    if(chal.info.totalPoint>0)strip='+';
+                                    else strip='';
+                                }%
+                            <div class="challengePointsGained">${strip}${chal.info.totalPoint}</div>
+                            Points Earned
+                        #{/if}
+                        #{else}
+                            <div class="margTop20">No Data available</div>
+                        #{/else}
+                    </div>
+                    #{/elseif}
+                </div>
+                <div class="startChallengeDiv">
+                    %{
+                        if(chal.entities.length()>0)qid=chal.entities.get(0).id;
+                        else qid='';
+                    }%
+                    #{if target=='ACTIVE_CHALLENGES'&& !chal.attempted}
+                        #{if "STUDENT".equals(params.userRole)}
+                        <a class="takeChallenge takeChallengeBtn ptrTagInline doCStream"
+                           data-challenge-id="${chal.id}" data-qid="${qid}" data-name="TAKE_CHALLENGE">
+                            Take this Challenge
+                        </a>                    
+                        #{/if}                    
+                        #{else}
+                            <div class="smallThinGray">Only Students can take challenges</div>
+                        #{/else}
+                    #{/if}
+                    #{elseif target=='CLOSED_CHALLENGES'||(target=='ATTEMPTED_CHALLENGES'&&subTarget=='CLOSED_CHALLENGES')}
+                    <a class="openQuesPage takeChallengeBtn ptrTagInline doCStream"
+                       data-qid="${qid}" data-source="CHALLENGES_PAGE" 
+                       href="/organization/${params.orgId}/question/${qid}" data-org-id="${params.orgId}"
+                       data-name="OPEN_QUESTION">
+                        View Challenge
+                    </a> 
+                    #{/elseif}
+                    #{elseif target=='ATTEMPTED_CHALLENGES'&&subTarget=='ACTIVE_CHALLENGES'}
+                    <a class="openQuesPage takeChallengeBtn ptrTagInline nonner doCStream"
+                       data-qid="${qid}" data-source="CHALLENGES_PAGE" data-name="OPEN_QUESTION"
+                       href="/organization/${params.orgId}/question/${qid}" data-org-id="${params.orgId}">
+                        View Challenge
+                    </a>
+                    #{/elseif}
+                            %{
+                                timeObj=uicom.util.Utilities.getTimeObjFromMilliSec((chal.duration*1000));
+                                timeText= timeObj.mins+':'+timeObj.secs+' mins';                    
+                            }%                    
+                    <span class="margLeft">Challenge Time: ${timeText}</span>
+                </div>
+            </div>
+            #{if target=='ACTIVE_CHALLENGES'||(target=='ATTEMPTED_CHALLENGES'&&subTarget=='ACTIVE_CHALLENGES')}
+            <div class="challengeSlip">
+                <div class="challengeSlipShade"></div>
+                <div class="challengeSlipText">
+                    Win upto
+                    <div class="challengeSlipPoints">${chal.maxBid}</div>
+                    points
+                </div>
+            </div>
+            #{/if}
+            <div class='cleaner_with_divider'>&nbsp;</div>
+        </div>
+        #{/list}
+        #{if loadMoreSize !=0 && challenges.length()==loadMoreSize}
+        <div class="loadMoreItems LMHandlerDivLoadMore" data-name="LOAD_MORE_CHALLENGES">Load More</div>
+        #{/if}
+    #{/if}
+    #{else}
+    %{
+        if(target=='ACTIVE_CHALLENGES')noText='No Active Challenges';
+        else if(target=='CLOSED_CHALLENGES'||subTarget=='CLOSED_CHALLENGES')noText='No Closed Challenges';
+        else if(subTarget=='ACTIVE_CHALLENGES')noText='None';
+        else noText='No Challenges to show';
+    }%
+    <div class="userMessage big15" style="margin-top: 50px;">${noText}</div>
+    #{/else}

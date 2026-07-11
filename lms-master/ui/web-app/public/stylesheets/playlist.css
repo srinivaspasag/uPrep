@@ -1,0 +1,671 @@
+/*playlist*/
+.PLTopBarHolder{
+    height: 70px;
+    background: -moz-linear-gradient(center top , #EEF6F7, #DFF0F2) repeat scroll 0 0 transparent;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#EEF6F7', endColorstr='#DFF0F2');
+    background: -webkit-gradient(linear, left top, left bottom, from(#EEF6F7), to(#DFF0F2));
+    width: 100%;
+    z-index: 100;
+    position: static;
+}
+.PLTopBar{
+    width: 1002px;
+    margin: 0 auto;
+    color: #373737;
+    position: relative;
+}
+.PLTopicName{
+    margin-right: 7px;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 0 5px;
+}
+.DTPL1002{
+    margin: 0 auto;
+    width: 1002px;
+    word-wrap: break-word;
+}
+.DTPLMiddle{
+    float: left;
+    margin-left: 37px;
+    position: relative;
+    width: 705px;
+    top: 57px;
+}
+.DTPLLeft{
+    float: left;
+    min-height: 1px;
+    position: relative;
+    width: 260px;
+}
+.PLTOC{
+    background-color: #ffffff;
+}
+.PLTOCHeading{
+    border-bottom: 1px solid #BDBDBD;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 0 5px;
+    text-align: center;
+}
+.PLTOCTopic{
+    padding: 10px 0;
+}
+.topicBordered{
+    border-bottom: 4px solid #ADCBA6;
+    padding-bottom: 7px;
+}
+.PLTTNameDiv,.PLTTNameDivDummy{
+    border: 1px solid transparent;
+    color: #666666;
+    font-size: 14px;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+.PLTOCSec{
+    border: 1px solid transparent;
+    color: #666666;
+    padding: 3px 10px 7px 35px;
+    position: relative;
+}
+.secBordered{
+    border-bottom: 4px solid #ADCBA6;
+}
+#PLViewPage .PLCompo.activePLCompo,.activeTOCTopic,.PLTTNameDiv.activeTOCTopic .PLTOCSec:first-child{
+    border-color: #3399CC;
+}
+#PLViewPage .PLCompo:last-child{
+    margin-bottom: 200px;
+}
+.PLTTNameDiv.activeTOCTopic{
+    border-color: transparent;
+}
+.addNewTopicDiv{
+    margin: 40px 0 10px 0;
+    padding: 3px 10px;
+    text-align: center;
+}
+.PLTOCSec,.PLTTNameDiv{
+    cursor: move;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;      
+}
+#PLViewPage .PLTTNameDiv,#PLViewPage .PLTOCSec{
+    cursor: pointer;
+}
+.newTopicInput{
+    background-color: #CDE4C8;
+    border: 1px solid #ABC6A5;
+    font-weight: bold;
+}
+.PLNameAndTags{
+    float: left;
+    width: 755px;
+}
+.PLWriteToolHead{
+    font-weight: bold;
+    text-align: center;
+    font-size: 13px;
+    display: none;
+    margin-bottom: 20px;
+}
+.PLWriteOptions{
+    border-bottom: 3px dotted #D0D0D0;
+    margin-bottom: 10px;
+}
+.PLWriteEDIT_MODE .PLWriteOptions{
+    padding-bottom: 10px;
+}
+.PLRTEToolBar{
+    background-color: #eef6f8;
+    text-align: center;
+}
+.PLOpt{
+    background: none repeat scroll 0 0 transparent;
+    cursor: pointer;
+    float: left;
+    font-size: 11px;
+    padding: 35px 0 15px;
+    text-align: center;
+    width: 75px;
+}
+.addEssayPL{
+    background: url("/public/images/playlist/text.png") no-repeat scroll center 20px transparent;
+}
+.addQuesPL{
+    background: url("/public/images/playlist/question.png") no-repeat scroll center 20px transparent;
+}
+.addImagePL{
+    background: url("/public/images/playlist/image.png") no-repeat scroll center 20px transparent;
+}
+.addLinkVideoPL{
+    background: url("/public/images/playlist/url.png") no-repeat scroll center 20px transparent;
+}
+.addTestPL{
+    background: url("/public/images/playlist/test.png") no-repeat scroll center 20px transparent;
+}
+.addDocPL{
+    background: url("/public/images/playlist/doc.png") no-repeat scroll center 20px transparent;
+}
+.PLOpt:hover,.PLOpt.activePLOpt{
+    background-color: #c8e4ee;
+}
+.PLWriteToolOnly .PLWriteHeadDiv,.PLWriteToolOnly .PLWriteBody,.PLWriteToolOnly .PLWriteSubmitOptions{
+    display: none;
+}
+.PLUrlInputDiv{
+    font-size: 12px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.PLUrlInput{
+    background-color: #F9F9F9;
+    border: medium none;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    box-shadow: 1px 1px 1px #D5D5D5 inset;
+    -moz-box-shadow: 1px 1px 1px #D5D5D5 inset;
+    -webkit-box-shadow: 1px 1px 1px #D5D5D5 inset;
+    margin-left: 10px;
+    padding: 3px 5px;
+    width: 310px;
+}
+.PLWriteHeadDiv .headDot{
+    margin: 0 8px;
+    background-image: url('../images/playlist/headDotRed.png');
+    vertical-align: middle;
+}
+.PLWriteHeadDiv{
+    background-color: #F1F2AE;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    margin-top: 25px;
+    padding: 3px;
+    bpx-shadow: 2px 2px 1px #D5D5D5 inset;
+    box-shadow: 2px 2px 1px #D5D5D5 inset;
+    -moz-box-shadow: 2px 2px 1px #D5D5D5 inset;
+    -webkit-box-shadow: 2px 2px 1px #D5D5D5 inset;
+}
+.PLWriteHead{
+    background-color: #F1F2AE;
+    border: medium none;
+    font-size: 12px;
+    font-weight: bold;
+    padding-left: 7px;
+    width: 550px;
+}
+.PLRTEDiv{
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+.PLCompo{
+    background-color: #FFFFFF;
+    border: 1px solid transparent;    
+    padding: 5px 30px;
+    position: relative;
+}
+#DTDiv_PL_EDIT .PLCompo:first-child{
+    padding-top: 20px;
+}
+/*.PLCompo:nth-child(2){
+    border: none;
+}*/
+.PLTopicHead{
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-bottom: 1px solid #CCCCCC;
+    cursor: pointer;
+    margin-bottom: 20px;
+    padding: 10px;
+    position: relative;
+    z-index: 2;
+}
+.PLInputChange{
+    border: 1px solid #FFFFFF;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 3px;
+    width: 90%;
+}
+.PLNameChange{
+    background-color: transparent;
+    border: 1px solid transparent;
+    font-size: 30px;
+}
+.PLInputChange:hover,.PLInputChange:focus{
+    border-color: #e0e0e0;
+}
+.PLTopicNo{
+    font-size: 16px;
+    font-weight: bold;
+}
+.PLSecHead,.PLViewMode .PLCompoOpened .PLSecHead {
+    background-color: #DBEAF1;
+    border: 1px solid #C4D5DB;
+    border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    font-family: georgia;
+    font-size: 15px;
+    padding: 5px;
+    position: relative;
+}
+.PLSecHead:hover,.PLCompoOpened .PLSecHead{
+    background-color: #ffffff;
+}
+.PLSecHeadIcon{
+    left: 9px;
+    padding: 8px;
+    position: absolute;
+    top: 3px;
+}
+#PLPreviewPopup .PLSecHeadIcon{
+    left: -24px;
+    top: 6px;
+}
+.DTPLMiddle .PLSecHeadIcon{
+    left: -25px;
+    top: 5px;
+}
+.PL_VIEW_SecHead .PLSecHeadIcon{
+    left: 7px;
+    top: 6px;
+}
+.PLSecHeadIconTEXT{
+    background: url("/public/images/playlist/textIcon.png") no-repeat scroll 0 0 transparent;
+}
+.PLSecHeadIconQUESTION{
+    background: url("/public/images/playlist/questionIcon.png") no-repeat scroll 0 0 transparent;
+}
+.PLSecHeadIconIMAGE{
+    background: url("/public/images/playlist/imageIcon.png") no-repeat scroll 0 0 transparent;
+}
+.PLSecHeadIconVIDEO,.PLSecHeadIconWEB_PAGE,.PLSecHeadIconLINK_VIDEO{
+    background: url("/public/images/playlist/urlIcon.png") no-repeat scroll 0 0 transparent;
+}
+.PLSecHeadIconTEST{
+    background: url("/public/images/playlist/testIcon.png") no-repeat scroll 0 0 transparent;
+}
+.editPLSection{
+    background: url("/public/images/playlist/edit.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+    display: none;
+    font-size: 10px;
+    padding-left: 11px;
+    position: absolute;
+    right: 10px;
+}
+.PLSecHead:hover .editPLSection,.PLCompoOpened .PLSecHead .editPLSection{
+    display: block;
+}
+.PLSecBody{
+    margin: 10px 0;
+    min-height: 100px;
+    display: none;
+}
+.PLCompoOpened .PLSecBody,#PLPreviewPopup .PLSecBody{
+    display: block;
+}
+.PLSecBody .ques:last-child{
+    border-bottom: none;
+}
+.addPLSectionAfter{
+    bottom: -14px;
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    z-index: 1;
+}
+.addPLSectionAfter img{
+    width: 19px;
+}
+.PLCompo:nth-last-child(2) .addPLSectionAfter{
+    display: none;
+}
+.PLContentTable{
+    margin: 15px 0;
+}
+.PLContentTopicName{
+    cursor: pointer;
+    font-weight: bold;
+    padding: 3px 5px 3px 15px;
+    width: 185px;
+}
+.PLContentTopicList{
+    cursor: pointer;
+    padding: 3px 10px;
+    opacity: 0;
+}
+.PLContentTable tr:hover .PLContentTopicName,.PLContentTable tr:hover .PLContentTopicList{
+    opacity: 1;
+    background-color: #EFEFEF;
+}
+.PLContentTopicDelete{
+    padding-left: 10px;
+}
+.createNewPLTopic{
+    margin-left: 15px;
+}
+.PLAddButton{
+    font-weight: bold;
+    padding: 8px 20px;
+}
+.PLAddButton .plusSign{
+    color: #FFFFFF;
+    font-size: 22px;
+    margin-left: 3px;
+    vertical-align: text-bottom;
+}
+.PLSearchQTInputDiv{
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 20px 20px 20px 20px;
+    box-shadow: 1px 1px 1px #B6B6B6 inset;
+    display: inline-block;
+    margin: 20px 0 10px;
+    padding: 0 10px 3px 3px;
+}
+.PLSearchQTInput{
+    border: medium none;
+    border-radius: 20px 20px 20px 20px;
+    padding: 0 4px;
+    width: 275px;
+}
+.PLSearchQTInputImg{
+    background: url("/public/images/search.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+    display: inline-block;
+    height: 18px;
+    position: relative;
+    top: 6px;
+    width: 17px;
+}
+.PLAQTDropDownsDiv .vselect{
+    text-align: left;
+}
+.PLAQTSelectTopic .vSelectListHolder,.PLAQTSelectSubTopic .vSelectListHolder{
+    width: 300px;
+}
+.PLUploadTable tr td:first-child{
+    padding: 8px 0;
+    vertical-align: middle;
+    width: 215px;
+}
+.PLUploadTable td .PLSecImgTd{
+    height: 50px;
+    overflow: hidden;
+}
+.PLUploadTable td img{
+    width: 50px;
+    vertical-align: middle;
+}
+.PLUploadCloud{
+    background-color: #363636;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    bottom: 20px;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: bold;
+    left: 30px;
+    opacity: 0.9;
+    padding-top: 40px;
+    position: absolute;
+    text-align: center;
+    top: 20px;
+    width: 603px;
+}
+.PLImgCaptionInput{
+    width: 250px;
+}
+.PLSecImg{
+    display: block;
+    margin: 10px auto;
+    max-width: 600px;
+}
+.removePLUrl{
+    cursor: pointer;
+    float: right;
+    font-weight: bold;
+}
+.PLUrlContent{
+    margin-left: 145px;
+    line-height: 13px;
+}
+.PLUrlBody{
+    border-bottom: 1px solid #CCCCCC;
+    padding: 20px 0 30px;
+}
+.PLLinkBody .PLUrlImgDiv{
+    height: 150px;
+    overflow: hidden;
+    float: left;
+    vertical-align: middle;
+    line-height: 75px;
+}
+.PLLinkBody .PLUrlImgDiv img{
+    width: 135px;
+    vertical-align: middle;
+}
+.PLUrlDesc{
+    background-color: transparent;
+    border: 1px solid transparent;
+    font-size: 11px;
+    margin-bottom: 5px;
+    min-height: 75px;
+}
+.PLUrlDesc:focus{
+    border: 1px solid #e0e0e0;
+    background-color: #f7f7f7;
+}
+.PLUrlDescNoEdit{
+    margin-top: 10px;
+    color: #acacac;
+}
+.prevUrlImgNaN,.nextUrlImgNaN{
+    padding: 2px 9px;
+    margin-right: 5px;
+}
+.prevUrlImgNaN{
+    background: url("/public/images/playlist/prevUrlImgNaN.png") no-repeat scroll 0 0 transparent;
+}
+.nextUrlImgNaN{
+    background: url("/public/images/playlist/nextUrlImgNaN.png") no-repeat scroll 0 0 transparent;
+}
+.prevUrlImg{
+    background: url("/public/images/playlist/prevUrlImg.png") no-repeat scroll 0 0 transparent;
+}
+.nextUrlImg{
+    background: url("/public/images/playlist/nextUrlImg.png") no-repeat scroll 0 0 transparent;
+}
+.PLVideoBody .videoThumbWrapper{
+    height: 120px;
+    line-height: 60px;
+    width: 200px;
+}
+.PLVideoBody .videoThumbWrapper img{
+    width: 200px;
+}
+.PLVideoBody .videoDuration{
+    top: 98px;
+}
+.PLVideoBody .PLUrlContent{
+    margin-left: 215px;
+}
+.PLAddQuesnsTestsHolder .ques{
+    border: 1px solid #CCCCCC;
+}
+.PLAQTDropDownsDiv{
+    background-color: #DAEBEF;
+    margin-left: -30px;
+    padding: 15px 0;
+    text-align: center;
+    width: 108%;
+}
+.testTile{
+    border-bottom: 1px solid #CCCCCC;
+    margin: 0 15px;
+    padding: 20px 15px 10px;
+}
+.PLCompo .eachListViewItem {
+    min-width: inherit;
+    padding: 20px 0 10px;
+}
+.PLAddBtnBtmDiv{
+    background-color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+}
+#PLPreviewPopup{
+    overflow: auto;
+    max-height: 400px;
+}
+
+/*plviewing*/
+.DTPLLeftBody{
+    position: fixed;
+    top: 45px;
+    width: 260px;    
+}
+/*middle section*/
+#PLViewPage .PLTopicHead{
+    color: #505050;
+    cursor: default;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 0;
+    width: inherit;
+    position: fixed;
+    top: 45px;
+}
+.PL_VIEW_SecHead{
+    color: #3399CC;
+    font-family: georgia;
+    font-size: 16px;
+    margin-bottom: 17px;
+}
+#PLViewPage .PLCompo{
+    margin-bottom: 30px;
+    border-bottom: 1px solid #cccccc;
+}
+#PLViewPage .PLTopicNo{
+    padding-left: 10px;
+}
+.PLSrcButton,.PLCommentButton{
+    background: url("/public/images/playlist/PLSrcInactive.png") no-repeat scroll 0 0 transparent;
+    height: 27px;
+    left: 25px;
+    position: absolute;
+    top: 50px;
+    width: 27px;
+    cursor: pointer;
+}
+.PLCommentButton{
+    background: url("/public/images/playlist/PLCommentInactive.png") no-repeat scroll 0 0 transparent;
+    left: 6px;
+    top: 36px;
+}
+.PLSecCommWidgetHolder{
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 2px 2px 2px 2px;
+    display: none;
+    left: 30px;
+    padding: 10px 15px 10px 10px;
+    position: absolute;
+    top: 45px;
+    width: 500px;
+    z-index: 100;
+}
+.PLSecCommWidgetHolder.openToggler{
+    display: block;
+}
+.PLSrcButton:hover,.PLSrcButton.addToggler{
+    background: url("/public/images/playlist/PLSrcActive.png") no-repeat scroll 0 0 transparent;
+}
+.PLCommentButton:hover,.PLCommentButton.addToggler{
+    background: url("/public/images/playlist/PLCommentActive.png") no-repeat scroll 0 0 transparent;
+}
+.PLShadow{
+    background: url("/public/images/playlist/PLShadow.png") no-repeat scroll 0 0 transparent;
+    bottom: -16px;
+    height: 16px;
+    position: absolute;
+    width: 100%;
+}
+
+
+/*full screen playlist*/
+.fullScreen_PL_VIEW{
+    background-color: #363636;
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 2030;
+}
+.fullScreen_PL_VIEW .fullScreen_PL_VIEW_TopBar{
+    background-color: #EEF6F8;
+    display: block;
+    height: 66px;
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+}
+.fullScreen_PL_VIEW .DTPL1002{
+    border: 0 none;
+    position: relative;
+}
+.fullScreen_PL_VIEW .DTPLMiddle{
+    border: 0 none;
+    float: none;
+    margin: 0 auto;
+    top: 66px;
+    width: 900px;
+}
+.fullScreen_PL_VIEW .PLNavPrevText,.fullScreen_PL_VIEW .PLNavNextText{
+    display: none;
+}
+.fullScreen_PL_VIEW .DTPLLeft{
+    position: fixed;
+    top: 66px;
+    width: 230px;
+    z-index: 1;
+}
+.fullScreen_PL_VIEW .fullScreen_PL_VIEW_TOCHead{
+    background-color: #F7F7F7;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 1px 1px 2px #CCCCCC inset;
+    color: #363636;
+    display: block;
+    font-weight: bold;
+    margin: 0 auto;
+    padding: 3px 0;
+    text-align: center;
+    width: 130px;
+}
+.fullScreen_PL_VIEW .PLTOC{
+    display: none;
+    top: 66px;
+}
+.DTPLLeft.fullScreen_PL_VIEW_ShowTOCs .fullScreen_PL_VIEW_TOCHead,.fullScreen_PL_VIEW_TOCHead{
+    display: none;
+}
+.DTPLLeft.fullScreen_PL_VIEW_ShowTOCs .PLTOC{
+    display: block;
+}
+
+
+.PLEssay{
+    background-color: #FAFAFA;
+    margin-top: 5px;
+    min-height: 100px;
+    width: 99%;
+}

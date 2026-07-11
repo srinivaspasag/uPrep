@@ -1,0 +1,7 @@
+%{
+    comments=comments.result.comments;
+    if(params.size!=null)loadMoreSize=Integer.parseInt(params.size);
+    else loadMoreSize=0;
+}%
+
+#{doc.commItems comments:comments,loadMoreSize:loadMoreSize /}

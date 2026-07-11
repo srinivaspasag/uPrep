@@ -1,0 +1,49 @@
+%{
+    info=info.result;
+}%
+<div id="testSeriesPage" class="sec1002" data-ts-id="${info.testId}">
+        <div class="tsDetails">
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td class="grayHead width100">Title</td>
+                        <td>
+                            <div>
+                                ${info.name}
+                            </div>
+                        </td>                     
+                    </tr>
+                    #{if info.has('desc')}
+                    <tr>
+                        <td class="grayHead width100">Description</td>
+                        <td class="" data-type="">
+                            ${info.desc}
+                        </td>                     
+                    </tr>                 
+                    #{/if}
+                </tbody>
+            </table>
+        </div>
+        <div class="tsPageBtns">
+<!--            <div class="gRedButton addTestsToTS">Add Test</div>-->
+<!--            <div class="gButton editTSDetails">Edit Details</div>            -->
+            #{if info.isPublished}
+            <div class="boldy linBlk">Published</div>
+            #{/if}
+            #{elseif session.userRole=='SUPER_USER'||session.userRole=='ADMIN'}
+            <div class="gRedButton publishTestSeries" data-ts-id="${info.testId}">Publish</div>
+            #{/elseif}
+        </div>  
+    <div id="tsPageContent" class="mcWidget">       
+        %{
+            products=tests;        
+            hasTests=false;
+            if(products.result.products.length()>0)hasTests=true;
+        }%        
+        <div id="leftSection">
+        </div>    
+        <div id="tableSection"> 
+          #{include 'QrProducts/productsTable.html' /}         
+        </div>         
+    </div>         
+</div>

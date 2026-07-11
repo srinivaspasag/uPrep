@@ -1,0 +1,37 @@
+%{
+    md=_md;
+}%
+                                #{if md.has('organizationName')}
+                                ${md.get('organizationName')}/
+                                #{/if}
+                                #{if md.has('centers')&&md.centers.length()>0}
+                                #{list items:0..md.centers.length()-1,as:'center'}
+                                ${md.centers.get(center).name}${center_isLast?'':'-'}
+                                #{/list}/
+                                #{/if}
+                                #{if md.has('programmes')&&md.programmes.length()>0}
+                                #{list items:0..md.programmes.length()-1,as:'batch'}
+                                ${md.programmes.get(batch).name}${batch_isLast?'':'-'}
+                                #{/list}/
+                                #{/if}
+                                #{if md.has('section')}
+                                ${md.section}/
+                                #{/if}
+                                
+                                #{if md.has('courses')&&md.courses.length()>0}
+                                %{
+                                    subs=md.courses;
+                                }%
+                                #{list items:0..subs.length()-1,as:'sub'}
+                                    ${subs.get(sub).name}
+                                    #{if subs.get(sub).topics&&subs.get(sub).topics.length()>0}
+                                    -
+                                    %{
+                                        topics=subs.get(sub).topics;
+                                    }%
+                                    #{list items:0..topics.length()-1,as:'topic'}
+                                    ${topics.get(topic).name}${topic_isLast?'':','}
+                                    #{/list}
+                                    #{/if}/
+                                #{/list}
+                                #{/if}

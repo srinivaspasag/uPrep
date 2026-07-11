@@ -1,0 +1,12 @@
+%{
+	user = _user;
+	callerProfile = _orgUserProfile;
+}%
+#{if "MANAGER".equals(callerProfile)}
+	#{if user.has("userState") && !"ACTIVE".equals(user.userState)}
+		<span class="besideEntityTag deactiveTag">&{'STATUS_DEACTIVATED'}</span>
+	#{/if}
+	#{else}
+		<span class="besideEntityTag deactiveTag nonner">&{'STATUS_DEACTIVATED'}</span>
+	#{/else}
+#{/if}

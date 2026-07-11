@@ -1,0 +1,67 @@
+%{
+	userRole = _userRole;
+	data = _data;
+	asn = data.result;
+}%
+<div class="asnInfoBar">
+	<div class="big20 boldy name">${asn.name}</div>
+	<div class="">
+		<span class="instImgs"></span>
+		<span class="smally">&{'TXT_ASSIGNMENT'}</span>
+	</div>
+	<div class="asnLeftInfoSec big16" style="margin-top:10px;">
+		<div>
+			<span>&{'TXT_SUBJECTS'}:</span>
+			#{if !asn.boardTree.equals(null) && asn.boardTree.length()>0}
+				%{
+					brdIndex = 0;
+				}%
+				#{if asn.boardTree.length()>1}
+				#{list items:0..asn.boardTree.length()-2,as:'bIndex'}
+					%{ 
+						board = asn.boardTree.get(bIndex); 
+						brdIndex++;
+					}%
+					<span class="blueTextColor">${board.name}</span>
+					<span class="blackTextColor">, </span>
+				#{/list}
+				#{/if}
+				<span class="blueTextColor">${asn.boardTree.get(brdIndex).name}</span>
+			#{/if}
+		</div>
+		<div>
+			<span>&{'TXT_QUES'}:</span>
+			<span class="blueTextColor">${asn.qusCount}</span>
+		</div>
+	</div>
+	<div class="asnLeftInfoSec big13">
+		<div>
+			<span>&{'TXT_CREATED_BY'}:</span>
+			%{
+				user = asn.user;
+			}%
+			#{institute.memberName user : user , classNames : "blueTextColor" /}
+		</div>
+		<div>
+			<span>&{'TXT_DT_CREATED'}:</span>
+			<span class="blueTextColor">${uicom.util.Utilities.getDateMonthYear(asn.lastUpdated)}</span>
+		</div>
+		<div>
+			<span>&{'TXT_ATTEMPTS'}:</span>
+			<span class="blueTextColor big14">${asn.attempts}</span>
+		</div>
+	</div>
+</div>
+#{if !"STUDENT".equals(userRole)}
+<div class="asnToogleTabs">
+	<div class="asnLeftTab selected" data-type="QUESTIONS">&{'QUES_LIST'}</div>	
+	<div class="asnLeftTab" data-type="PERFORMANCE">&{'TXT_STUDENT'} &{'TXT_PERFORMANCE'}</div>	
+	<div class="asnLeftTab asnLeftTab-ST nonner" data-type="ST_PERFORMANCE">
+		<span class="stFirstName"></span>
+		<span> &{'TXT_PERFORMANCE'}</span>	
+	</div>	
+</div>
+<div class="cleaner_with_divider">&nbsp;</div>
+#{/if}
+<div class="asnStudentMiniAna">
+</div>

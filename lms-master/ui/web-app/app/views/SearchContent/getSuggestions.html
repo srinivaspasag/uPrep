@@ -1,0 +1,36 @@
+#{if suggestions.has('result') && suggestions.result.length()>0}
+<span class="searchContentSuggestionSummary big13 relative left">Search <b>"${queryStr}"</b> in <b>${entityName}</b></span>
+#{if params.eType!="USER"}
+#{list items:0..suggestions.result.length()-1, as:'sIndex'}
+%{ eachSugg = suggestions.result.get(sIndex);}%
+<span class="left relative eachSearchContentSuggestions doCStream" data-brd-id="${eachSugg.brdId}" data-cs-name="each_suggestion_${entityName}" data-send="brdId = ${eachSugg.brdId}">
+        %{
+            type=eachSugg.type
+        }%
+	<span class="left searchSuggResultType big13" style="color:#3399cc">${type.toLowerCase().capitalizeWords()}</span>
+	<span class="left searchSuggestionText big14" style="color:#666">${eachSugg.name.raw()}</span><br/>
+	#{if eachSugg.has('parent') && eachSugg.parent!=null}
+		<span class="left searchSuggResultParent big12" style="padding:5px 0 10px 130px;">${eachSugg.parent.type.raw()} - ${eachSugg.parent.name.raw()}</span>
+	#{/if}
+<!--	
+		<span class="right searchSuggResultParent" style="padding-top:5px;">
+			#{if eachSugg.has('totalHits')}${eachSugg.totalHits}#{/if} 
+			#{else}0#{/else}
+		results</span>
+-->
+</span>
+#{/list}
+#{/if}
+#{else}
+	#{list items:0..suggestions.result.length()-1, as:'sIndex'}
+	%{ user = suggestions.result.get(sIndex);}%
+	<span class="left relative eachSearchContentSuggestions doCStream" data-user-id="${user.userId}" data-cs-name="each_suggestion_${entityName}" data-send="userId = ${user.userId}">
+		<img class="left icon" alt="" src="${user.profilePic}" style="margin:5px 10px"/>
+		<span class="left searchSuggestionText big14 fullWidth" style="color:#666;padding:10px 0 0 10px;">${user.firstName.raw()} ${user.lastName.raw()}</span>
+	</span>
+#{/list}
+#{/else}
+#{/if}
+#{else}
+	<span class="searchContentSuggestionSummary big13 relative left">Search <b>"${queryStr}"</b> in <b>${entityName}</b></span>
+#{/else}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Institute Learning Environment</title>
+    <meta charset="utf-8" />
+    <meta content="Learnpedia Web-App" name="application-name" />
+    <meta content="http://www.Learnpedia.in" name="application-url" />
+    <meta content="Knowledge Democratized" name="description" />
+    <meta content="Knowledge Democratized,knowledge,democratized,Learnpedia,books,library,course,playlist" name="keywords" />
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}">
+    #{i18nJS /}
+    #{gaTrackingCode /}
+     <script type="text/javascript">
+        var baseUrl = "${play.Play.configuration.getProperty('mydomain.url')}";
+        var LEARNPEDIA_ID = "${play.Play.configuration.getProperty('learnpedia.id')}";
+        var redirect="${play.configuration.getProperty('google.redirect.url')}";
+        var USERID="${session.get('userId')}",USERNAME="${session.get('username')}",PROFILEPIC="${session.get('profilePic')}",FULLNAME="${session.get('fullname')}";
+        var CHAT_WEB_SERVICE_URL="${play.configuration.getProperty('CHAT_WEB_SERVICE_URL')}";
+        var vedantuHub="${play.configuration.getProperty('application.name')}";
+	      var playRunMode = "${play.mode.name()}";
+     </script>  
+     #{stylesheet media:'screen', src:'jquery-libs/jquery-ui-1.10.4.custom.min.css' /}
+     #{stylesheet media:'screen', src:'uicomCommon/inputAndTextareas.css' /}
+     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+     <script src="/public/javascripts/jquery-libs/jquery-ui-1.10.4.custom.min.js"></script>
+     *{#{script src:"uicomJquery-1.8.1.min.js", charset:'utf-8' /}}*
+     *{#{script src:'uicomJquery-1.8.1.min.js', charset:'utf-8' /}}*
+     <script type="text/javascript">
+        var asyncFnsStore=[];
+        var jsFileLogger=[];
+        var filesUpFront=[];
+        var lazyLoad=function(fileList){
+            try{
+                fetchScripts(fileList);
+            }catch(err){
+                filesUpFront=fileList;
+            }
+        };      
+        var serverSystemTimeDelta = parseInt("${new Date().getTime()}")-(new Date().getTime());
+        var clientServerTimeDelta = ((new Date().getTime())+new Date().getTimezoneOffset()*60000) - parseInt("${new Date().getTime()+new Date().getTimezoneOffset()*60000}");
+	
+	      new function($){
+        	$.fn.live = function(eventType,cbFn){
+                	if(cbFn){
+                        	$(document).on(eventType,this.selector,cbFn);
+                	}
+			    return $(this);
+        	};
+	      }(jQuery);
+     </script>
+     #{if play.mode.name()=='PROD'}
+        #{stylesheet media:'screen', src:'o.allinone.css' /}
+        #{script src:'o.allinone.js', charset:'utf-8' /}
+        #{script src:'o.home.js', charset:'utf-8' /}
+        #{script src:'o.widgets.js', charset:'utf-8' /}
+     #{/if}
+     #{else}
+        #{stylesheet media:'screen', src:'uicomCommon/arc_drawing.css' /}
+        #{stylesheet media:'screen', src:'uicomCommon/vSelect.css' /}
+        #{stylesheet src:'uicomCommon/buttonsAndTabs.css', charset:'utf-8' /}
+        #{stylesheet media:'screen', src:'uicomWidgets/fe.css' /}
+        #{stylesheet media:'screen', src:'challenges.css' /}
+        #{stylesheet media:'screen', src:'contentListView.css' /}
+        #{stylesheet media:'screen', src:'searchContent/index.css' /} 
+        #{stylesheet media:'screen', src:'test/creation.css' /} 
+        #{stylesheet src:'uicomWidgets/rte.css', charset:'utf-8' /}
+        #{stylesheet src:'uicomWidgets/share.css', charset:'utf-8' /}
+        #{stylesheet src:'uicomWidgets/vChoose.css', charset:'utf-8' /}
+        #{stylesheet src:'uicomCommon/utilsUi.css', charset:'utf-8' /}
+        #{stylesheet media:'screen', src:'uicomMain.css' /}
+        
+        *{o.home.js files}*
+        #{script src:'uicomUtils.js', charset:'utf-8' /}
+        #{script src:'utilsUi.js', charset:'utf-8' /}
+        #{script src:'history.js', charset:'utf-8' /}
+        #{script src:'uicomCommon/utilsUi.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/clickstream.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/comment.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/tabModel.js', charset:'utf-8' /}
+        #{script src:'uicomPayments/home.js', charset:'utf-8' /}
+        #{script src:'home.js', charset:'utf-8' /}
+        
+        *{#{script src:'uicomSocket.io/socket.io.js', charset:'utf-8' /}}*
+        #{script src:'uicomHistory/jquery.history.js', charset:'utf-8' /}
+        #{script src:'uicomCommon/scrollbar.js', charset:'utf-8' /}
+        #{script src:'uicomCommon/vSelect.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/vChoose.js', charset:'utf-8' /}
+        #{script src:'uicomCommon/utils.js', charset:'utf-8' /}        
+        #{script src:'uicomWidgets/manageContent.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/tagging.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/rte.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/timeago.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/fileuploader.js', charset:'utf-8' /}
+        #{script src:'uicomQuestions/questions.js', charset:'utf-8' /}
+        #{script src:'newsfeeds.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/vGraphs.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/share.js', charset:'utf-8' /}
+        #{script src:'uicomWidgets/entrySugg.js', charset:'utf-8' /}
+        #{script src:'profile/profile.js', charset:'utf-8' /}
+        #{script src:'searchContent.js', charset:'utf-8' /}      
+        #{script src:'test/onlineTest.js', charset:'utf-8' /}          
+        #{script src:'uicomTakeTest/common.js', charset:'utf-8' /}  
+     #{/else}
+
+
+     <script type="text/x-mathjax-config">
+	   MathJax.Hub.Config({
+    		extensions : [ "tex2jax.js" ],
+    		jax : [ "input/TeX", "output/HTML-CSS" ],
+    		tex2jax : {
+    			inlineMath : [ [ "$", "$" ], [ "\\(", "\\)" ] ]
+    		},
+    		"HTML-CSS": { linebreaks: { automatic: true } },
+             	SVG: { linebreaks: { automatic: true } },
+    		TeX: {
+        		extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+      			}
+    	});
+     </script>
+     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '1656748771289533',
+          xfbml      : true,
+          version    : 'v2.8'
+        });
+        FB.AppEvents.logPageView();
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+        <!--loading commin ui-->
+    #{include '/UIComTags/common/commonUi.html' /}
+    <div id='errorPopupBlackOut'></div>
+    #{common.popup/}
+    #{common.vPopup/}
+    #{widgets.popupUsersHolder/}
+    <div id="FEWrapperHolder" class="nonner"></div>
+    <!-- ADD EMAIL NOTIFICATION POPUP -->
+    <div id="userPushNotifyPopup">
+    </div>
+
+    <div id="userPromoPopup" style="position: fixed;z-index: 2000;text-align: center;display: table;left: 35%;top: 0;margin: auto;bottom: 0">
+    </div>
+
+    <div id='footBar'></div>
+    <input type="hidden" id="serverTime" value="${new Date().getTime()}"/>
+    #{if session.userId!=session.callingUserId}
+    <div class="otherUserUseTopBar">
+            <span>&{'USER_U_R_BROWSING',myOrgInfo.get("fullName")}</span>
+            <a class="removeBrowseAsOtherUser liner">&{'BACK_TO_MY_ACCOUNT'}</a>
+    </div>
+    #{/if}
+     <div id="topBarHolder" class="CSWidget pageFullWidth" data-widget="HEADER_SECTION" style="box-shadow: 0 0px 10px rgba(0,0,0,.2);">
+	%{
+		brPblCls = "";
+		brInstCls = "nonner";
+		if(params.orgId!=null && !params.orgId.isEmpty()){
+			brPblCls = "nonner";
+		}
+	}%
+	#{header.topBarPublic classNm : brPblCls , myOrgInfo : myOrgInfo /}
+	#{header.topBarInst classNm:brInstCls , myOrgInfo : myOrgInfo /}
+      </div>
+    <div id="topLoader" class="nonner">
+        <span class="loadingSpanTop"></span>
+    </div>
+    <div id="topMessage" class="nonner">        
+            <span class="globalMessages">Share Done with the institute named lakshya</span>
+    </div>    
+	<!--SEARCH DISABLED
+	*{
+		 #{include 'SearchContent/index.html'/} 
+	}*-->
+      <div class="cleaner_with_divider">&nbsp;</div>
+    <!--loading comments,addto playlist ui-->
+      #{include 'Widgets/uiSample.html' /}
+      <script type="text/javascript">
+          firstLoadFns();
+          firstLoadFnsFired=true;          
+      </script>  
+      #{doLayout /}
+      <div id="dragID"></div>
+      
+
+      <div id="repliesBoxContainer" data-callback="removeactcompost">
+          <img id="repliesBoxPtr" src="/public/images/uicomDocuments/repliesBoxPtr.png" alt="" />
+          <div id="repliesBox">
+          </div>
+      </div>
+    <div id="vgInfoDiv" class="floaterDiv nonner">
+        <div class="vgInfo"></div>
+        <div class="vgInfoPtr"></div>
+    </div>
+      <div id="vgMarker" class="nonner"></div>
+      <div id="hidden"></div>
+<!--      <div id="feedBackButHolder" class="fixedLeftButton" style="top:530px;">
+         <span id="feedBackButton">Feedback</span>
+      </div>-->
+      <div id="guideButHolder" class="fixedLeftButton" style="left:-44px;top:400px;">
+         <!--<span id="openGuideButton">Guide</span>-->
+         <a id="openGuideButton" href="/help" target="_blank">&{'help.GUIDE_BTN'}</a>
+      </div>
+      <ul id="writeSuggs"></ul>
+      <div id="globalNameFloater" class="nonner">
+          <div id="globalName"></div>
+          <img src="/public/images/selectImg.png" alt=""/>
+      </div>           
+      <div id="PLPreviewPopupHolder"></div>
+      <div id="takeChallengeHolder"></div>
+      <div id="detectClientMsg"></div>      
+      
+      <!--*{Chat Disabled
+		#{include 'Application/chat.html' /}
+	}*-->
+    <script type="text/javascript">
+            var scrollBarOptions = {
+                    width:5,
+                    imgThumb:"/public/images/common/test-scroll.png",
+                    cssTrack:"",//{"background-color":"#D8EEFD"},
+                    cssThumb:"",//{"background-color":"#003D5D","border":"2px solid #BDBDBD","border-radius":"10px"},
+                    disableAlphaValue:0,
+                    noKeyNav:true
+            };
+            try{ vSelectFns.scrollBarOptions = scrollBarOptions;}catch(err){}
+	    $(function(){
+                vedantuClient.verifyClient($("#detectClientMsg"));
+                $("#detectClientMsg").append("<p>"+vedantuClient.detectedClientMsg()+"</p>");
+            });
+    </script>
+    #{common.noscript/}
+    <div id="tempRenderDiv"></div>
+    </body>
+</html>
+

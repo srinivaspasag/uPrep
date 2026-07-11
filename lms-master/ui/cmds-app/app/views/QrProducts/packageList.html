@@ -1,0 +1,47 @@
+        #{if packages.length()>0}  
+        #{list items:0..packages.length()-1, as:'so'}          
+            %{
+                pkg=packages.get(so);
+                user=pkg.user;
+            }%           
+          <tr class="cmdsTr" data-pkg-id="${pkg.packageId}">
+              <td class="CTCBoxTd grayHead">${so_index}</td>
+              <td class="CTInfoTd"></td>
+              <td title="${pkg.name}" class="CTTitleTd">
+                  <span class="packageIcon"></span>
+                  <a class="getPkgPage cmdsaPush" data-pkg-id="${pkg.packageId}"
+                     data-folder-id="${pkg.folderIds.get(0)}" href="/package/${pkg.packageId}">
+                      ${pkg.name}
+                  </a>
+              </td>
+              <td class="CTAddedByTd">
+                  #{widgets.user20 user:user /}
+              </td>
+              <td class="CTDateAddedTd">
+                  ${new Date(pkg.timeCreated).format('dd/MM/yyyy')}
+              </td>
+              <td class="CTStatusTd">
+                #{if pkg.status=="EXPORTED"}
+                    Exported
+                #{/if}
+                #{elseif pkg.status=="NO_EXPORT_FOUND"}
+                    Not Yet Exported
+                #{/elseif}
+                #{elseif pkg.status=="EXPORT_IN_PROGRESS"}
+                    Exporting in progress
+                #{/elseif}
+                
+                #{if pkg.has('exportInfo')}
+                    #{products.packageHistory exportInfo:pkg.exportInfo,packageName:pkg.name/}
+                #{/if}                  
+              </td>                 
+          </tr>           
+          #{/list}
+          #{/if}
+          #{else}
+          <tr>
+            <td colspan="5">
+                <div class="userMessage">No packages found.</div>
+            </td>
+          <tr>
+          #{/else}          

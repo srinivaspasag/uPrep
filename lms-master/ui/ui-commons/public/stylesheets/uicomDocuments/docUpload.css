@@ -1,0 +1,256 @@
+/*for uploading files*/
+#uploadPageWrapper,.editDocTocsSec{
+    width: 750px;
+    margin: 0 auto;
+}
+#UPStartInfo{
+    background-color: #FFFFFF;
+    margin: 10px auto 0;
+    padding-top: 20px;
+    text-align: center;
+    width: 425px;
+}
+.selectedFilesBody{
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    margin-top: 30px;
+    padding: 20px 30px 15px;
+}
+.ppDoc{
+    display: inline-block;
+    margin: 10px 10px 10px 15px;
+}
+.ppDoc input,.UPFileType{
+    vertical-align: sub;
+}
+.uploadFillEnder{
+    font-size: 11px;
+    color: #acacac;
+    margin: 30px 0 0 -30px;
+    text-align: right;
+    padding: 0 5px 5px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+.UPFileName{
+    color: #2CCAE7;
+}
+.UPFileSize{
+    color: #a2a2a2;
+    float: right;
+}
+.UPFileList .uploadCompleted .UPFileSize{
+    color: green;
+}
+.UPFileList div{
+    padding: 5px;
+}
+.UPFileList,.UPFileListDummy{
+    border: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    min-height: 75px;
+    position: relative;
+}
+.UPFileListDummy{
+    background-color: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    bottom: -4px;
+    left: 2px;
+    position: absolute;
+    top: 3px;
+    width: 100%;
+}
+.minimizePic{
+    background: url("/public/images/uicomDocuments/minimize.png") no-repeat scroll 0 0 transparent;
+    padding: 7px 15px 8px;
+}
+.minimizePic:hover{
+    background: url("/public/images/uicomDocuments/minimizeHover.png") no-repeat scroll 0 0 transparent;
+}
+.UPProgressDiv {
+    margin: 25px auto;
+}
+.UPProgressBar{
+    background-color: #8cbc32;
+    height: 7px;
+    width: 0;
+    margin: 20px 0 0 10px;
+}
+.UPProgressPercent{
+    font-weight: bold;
+    padding: 10px 0 0 10px;
+}
+.UPTagFillDiv{
+    padding: 0 0 50px;
+    position: relative;
+}
+.uploadDetailsTable{
+    width: 100%;
+}
+.uploadDetailsTable td:first-child{
+    font-size: 14px;
+    font-weight: bold;
+    padding: 13px 0;
+    vertical-align: top;
+    width: 100px;
+}
+.uploadDetailsTable td:last-child{
+    padding: 13px 0;
+}
+.UPTitleContentTypeDiv{
+    border-bottom: 1px solid #E6E6E6;
+    padding-bottom: 30px;
+}
+.UPTitleDiv{
+    background-color: #D4EFF4;
+    box-shadow: 1px 1px 1px #CCCCCC inset;
+    padding: 7px;
+}
+.UPFileTitle,.UPFileDesc,.UPFilePP{
+    background-color: transparent;
+    border: medium none;
+    width: 100%;
+}
+.UPFileDesc{
+    height: 65px;
+}
+.UPContentTypeDiv{
+    display: inline-block;
+    min-width: 60px;
+}
+.activeContentTypeDiv{
+    color: #33bad7;
+    font-weight: bold;
+}
+.UPContentType{
+    margin: 0;
+    vertical-align: sub;
+}
+.UPTaggingArea{
+    padding: 10px;
+}
+#startUploadingFiles.greenButton,#startEditingDoc.greenButton{
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 33px;
+}
+.UPUploadDonePopup{
+    background-color: #FFFFFF;
+    border: 5px solid #363636;
+    height: 300px;
+    left: 0;
+    margin-left: 30px;
+    padding: 10px 25px;
+    position: absolute;
+    top: 50px;
+}
+
+
+.inputToc,.newTempName{
+    display: block;
+    margin-top: 3px;
+    padding: 3px;
+    width: 130px;
+}
+.tocExplain{
+    border-bottom: 1px solid #E0E0E0;
+    color: #888888;
+    margin: 10px 20px 20px 0;
+    padding-bottom: 5px;
+}
+.tocText{
+    padding: 2px;
+    border: 1px solid #ffffff;
+}
+.tocText input{
+    padding: 2px;
+    width: 100%;
+}
+.tocRepair{
+    border: 0;
+    padding-bottom: 0;
+    padding-right: 0;
+    padding-top: 0;
+}
+.addEditToc{
+    opacity: 0;
+    width: 100px;
+    font-weight: normal;
+}
+.HLTocText{
+    background-color: #ffffff;
+    border-color: #e0e0e0;
+}
+.UPFilePreview{
+    background: url("../images/bookCover.png") repeat-y scroll 0 0 #C1E0E5;
+    float: left;
+    margin: 120px 0 0 15px;
+    position: relative;
+}
+.UPOverPopClass .UPFilePreview{
+    margin: 0;
+    float: none;
+}
+.fileCoverPage{
+    background-color: #D4EFF4;
+    height: 415px;
+    margin-left: 31px;
+    position: relative;
+    width: 305px;
+}
+.filePreviewPrevious{
+    left: 10px;
+}
+.filePreviewNext{
+    right: 10px;
+}
+.filePreviewNext,.filePreviewPrevious{
+    position: absolute;
+    top: 50px;
+    cursor: pointer;
+}
+.fillingTOCSection{
+    float: left;
+    margin: 10px 0;
+    width: 375px;
+}
+.UPTOCPreview{
+    position: relative;
+    float: left;
+}
+.filePagesView img.currentPageView,.filePagesView{
+    width: 340px;
+    height: 550px;
+    overflow: hidden;
+}
+.tocDiv{
+    padding: 20px 45px 50px 20px;
+    max-width: 276px;
+}
+.tocDiv h2{
+    font-size: 13px;
+    color: #2CCAE7;
+}
+.tocTable tr td:first-child{
+    width: 16px;
+}
+.tocTable tr td.tocText{
+    width: 180px;
+}
+.tocTable tr td.pageNum{
+    padding-left: 10px;
+}
+.inputToc{
+    display: inline;
+    margin: 10px 0px 0 0;
+}
+#uploadNo{
+    left: 35px;
+    position: absolute;
+    top: 10px;
+    font-size: 11px;
+    color: #ffffff;
+}
+.hlne,.hlpr,.hlneImg{
+    margin: 0 5px;
+}

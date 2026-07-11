@@ -1,0 +1,224 @@
+<html>
+<head>
+	<title>Learnpedia-Invoice-${params.orderId}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}">
+	<link href="/public/assets/theme1/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link href="/public/assets/theme1/css/app_1.min.css" rel="stylesheet">
+    <link href="/public/assets/theme1/css/app_2.min.css" rel="stylesheet">
+
+<style>
+#instThumbnail{
+	max-width: 200px;
+	max-height: 46px;
+	color: dimgrey;
+	}
+@media (max-width: 411px) {
+	#instThumbnail{
+		max-width: 120px;
+		max-height: 40px;
+	}
+}
+.btn-float{
+	line-height: 46px!important;
+}
+.highlight {
+    background-color: #eee;
+    border-bottom: 1px solid #e6e6e6;
+}
+</style>
+</head>
+#{if resp!=null && resp.errorCode.isEmpty() && resp.result.has("id") &&
+resp.result.has("invoiceInfo") && !resp.result.invoiceInfo.equals(null) }
+<body>
+%{
+	order = resp.result;
+	invoice = order.invoiceInfo;
+	currencyCode = java.util.Currency.getInstance(invoice.currencyCode).getSymbol();
+	items = order.items;
+}%
+	%{ instLogo = util.Utilities.getInstLogo(myOrgInfo.getString('instLogo'));}%
+<div id="Invoice">
+	<div class="card">
+		<div class="card-header ch-alt text-center">
+			<img src="${instLogo}" alt="${myOrgInfo.getString('instFullName')} Logo" id="instThumbnail" style="color: dimgrey;" />
+		</div>
+		<div class="card-body card-padding">
+			<div class="row m-b-25">
+				<div class="col-xs-6">
+					<div class="text-right">
+					<p class="c-gray">&{'INVOICE_BILL_TO'}:</p>
+					#{if invoice.has('billTo')}
+						#{address address : invoice.billTo /}
+					#{/if}
+						#{else}
+						<h4>Not Provided</h4>
+						#{/else}
+					</div>
+				</div>
+				<div class="col-xs-6">
+					<div class="i-to">
+						<p class="c-gray">&{'INVOICE_SHIP_TO'}:</p>
+						#{if invoice.has('shipTo')}
+							#{address address : invoice.shipTo /}
+						#{/if}
+						#{else}
+						<h4>Not Provided</h4>
+						#{/else}
+					</div>
+				</div>
+		</div>
+		<div class="clearfix"></div>
+	   <!-- <div class="pull-right"> -->
+			<h3 class="text-center"><u>Invoice Summary</u></h3>
+			<div class="table-responsive">
+				<table class="table table-bordered">
+				   <tr>
+					<th>Order Id</th>
+					<th>Invoice No.</th>
+					<th>Invoice Date</th>
+					<th>Customer No.</th>
+					<th>PO No.</th>
+					<th>TIN No.</th>
+					<th>PAN No.</th>
+					#{if order.has("pointOfSale") && !util.Validation.isEmpty(order.pointOfSale)}
+						<th>&{'INVENTORY_SELLING_POINT'}</th>
+					#{/if}
+				   </tr>
+		            <tr>
+		            <td>${order.orderId}</td>
+					<td>${invoice.invoiceNo}</td>	
+					<td><span class="updateClientTime" data-time="${invoice.issueTime}" data-format="dd mmm, yyyy"></span></td>
+					<td>${invoice.customer.id}</td>
+					<td></td>
+					<td>${invoice.tin}</td>
+					<td>${invoice.pan}</td>
+					#{if order.has("pointOfSale") && !util.Validation.isEmpty(order.pointOfSale)}
+						<td>
+							<span class="boldy">${order.pointOfSale}</span> 
+							#{if order.has("sellerReferenceNo") && !util.Validation.isEmpty(order.sellerReferenceNo)}
+							<span>(<span class="smally italics">&{'INVENTORY_SELLING_REF'}:</span>
+								<span class="fs13">${order.sellerReferenceNo}</span>)</span>
+							#{/if}
+						</td>
+					#{/if}
+				   </tr>
+				</table>
+			</div>
+	    <!-- </div> -->
+	    <div class="clearFix"></div>
+	    <h3 class="text-center"><u>Summary</u></h3>
+	    <div class="table-responsive">
+			<table class="table table-bordered">
+			    <tr>
+					<th>S. No.</th>
+					<th>Product</th>
+					<th style="width:300px;">Description</th>
+					<th>Unit Price</th>
+					<th>Quantity</th>
+					<th class="highlight">Amount</th>
+			    </tr>
+			    #{list items:0..items.length()-1,as:'tIndex'}
+				%{
+	                        item = items.get(tIndex);
+	                        itemRateUnit='';
+	                            if(!item.rate.unit.equals(null)){
+	                                itemRateUnit=item.rate.unit;
+	                            }
+	                        }%
+			    <tr>
+				<td>${tIndex+1}</td>
+	                        #{if item.category=="SECTION"}
+	                        <td>${item.name}</td>
+	                        #{/if}
+	                        #{else}
+	                        <td>&{'INVOICE_ITEM_'+item.category} (<span class="boldy">${item.name}</span>)</td>
+	                        #{/else}
+				<td>${item.desc}</td>
+				<td>${currencyCode} ${item.rate.value/100} ${itemRateUnit}</td>
+				<td class="centerText">${item.count}</td>
+				<td class="highlight">${currencyCode} ${item.costInfo.base/100}</td>
+			    </tr>
+			    #{/list}
+			    <tr>
+				<td colspan=4 rowspan=3 class="tableBorderTop">
+					<div>
+						*{<!--<span class="boldy">Total Amount in words:</span>
+						<span class="underlineText">Five thousands and three hundred only</span>-->}*
+					</div>
+				</td>
+				<td class="tableBorderTop tableBorderRight height25">
+					<span class="boldy">Sub-Total</span>
+				</td>
+				<td class="tableBorderTop tableBorderRight highlight">
+					<span class="">${currencyCode} ${util.Utilities.roundDecimals(invoice.subTotal/100)}</span>
+				</td>
+			    </tr>
+			    <tr>
+				<td class="tableBorderTop tableBorderRight height25">
+					<span class="boldy" style="text-align: left;">Total Tax</span>
+				</td>
+				<td class="tableBorderTop tableBorderRight highlight">
+					<span class="">${currencyCode} ${util.Utilities.roundDecimals(invoice.tax/100)}</span>
+				</td>
+			    </tr>
+			    <tr>
+				<td class="tableBorderTop tableBorderRight height25">
+					<span class="boldy" style="text-align: left;">Total Amount</span>
+				</td>
+				<td class="tableBorderTop tableBorderRight highlight">
+					<span class="">${currencyCode} ${util.Utilities.roundDecimals(invoice.total/100)}</span>
+				</td>
+			    </tr>
+			</table>
+	    </div>
+	    <div id="detailedBillingSec">
+		<h3 class="text-center"><u>Detailed Billing</u></h3>
+			#{list items:0..items.length()-1,as:'iIndex'}
+			%{ item = items.get(tIndex); }%
+			#{include 'tags/items/'+item.category.toLowerCase()+'.html' /}
+			#{/list}
+	    </div>
+	</div>
+	</div>
+	<div class="text-center">
+			<h4>Learnpedia Edutech Pvt Ltd, 2nd Floor, Naveen Nagar, Khairtabad,</h4>
+			<p>Hyderabad - 500034, Telangana, India
+			Email: <a href="mailto:info@learnpedia.in">info@learnpedia.in</a>  |  Phone: +91-8099777711</p>
+		<h4>Thank You</h4>
+	</div>
+</div>
+	<a class="btn btn-float bgm-red m-btn" data-ma-action="print" href=""><i class="zmdi zmdi-print" style="top:7px;position: relative;"></i></a>
+   <!-- Javascript Libraries -->
+	<script src="/public/assets/theme1/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="/public/assets/theme1/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	<script src="/public/assets/theme1/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+	<script src="/public/assets/theme1/vendors/bower_components/Waves/dist/waves.min.js"></script>
+	<script src="/public/assets/theme1/vendors/bower_components/sweetalert2/dist/sweetalert2.min.js"></script>
+
+	<!-- Placeholder for IE9 -->
+	<!--[if IE 9 ]>
+	    <script src="vendors/bower_components/jquery-placeholder/jquery.placeholder.min.js"></script>
+	<![endif]-->
+
+	<script src="/public/assets/theme1/js/app.min.js"></script>
+	<script type="text/javascript" src="/public/javascripts/Invoice.js"></script>
+   <script type="text/javascript">
+	$(function(){
+		$(document).updateClientTime();
+	});
+   </script>
+</body>
+</html>
+#{/if}
+#{else}
+		<div class="container">
+			<p class="text-align:center;" style="font-size:16px ;color:#333;text-align:center;margin-top:30px;">Invoice not found! contact info@learnpedia.in</p>
+		</div>
+#{/else}

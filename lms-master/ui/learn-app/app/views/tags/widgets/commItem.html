@@ -1,0 +1,25 @@
+%{
+    data = _data;
+}%
+#{if data.has("content") && data.content!=null && !data.content.isEmpty()}
+<div class="instEachFeedCom list-group-item media" data-comment-id="${data.id}">
+    #{if data.has('user') && data.user!=null}
+    %{
+        getUser=(controllers.Profile.getUserClassAndUrl(data.user));
+                userClass = getUser.get("className");
+                userUrl = getUser.get("url");
+                userId = getUser.get("id");
+    }%
+    <!-- <div class="left instProfilePicContainer"> -->
+        <a class="${userClass} displayInBlock pull-left" data-user-id="${userId}">
+            <img class="instFeedCommentPic lgi-img" src="${data.user.thumbnail}" alt=""/>
+        </a>
+    <!-- </div> -->
+    <div class="media-body">
+        #{commentMemberName user : data.user , classNames : "instFeedProfileName boldy" , getUser : getUser , timeCreated : data.timeCreated /}
+        <span class="instFeedCommentBody lgi-text">${data.content.raw()}</span>
+    </div>
+    <!-- <div class="cleaner_with_divider">&nbsp;</div> -->
+    #{/if}
+</div>
+#{/if}

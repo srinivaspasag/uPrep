@@ -1,0 +1,20 @@
+
+<div class="left relative eachMyContentsDocuments myContentsEachListItems" data-document-id="${documentsData.docId}" title="${documentsData.title}">
+	<div class="absolute onHoverMyContentsItems">
+		<span class="left absolute myContentsCrossItem"></span>
+		<input class="right absolute smallBlueButton myContentsButtonItem" type="button" value="Open" />
+		<span class="left absolute myContentsItemInfo"><b>Views - </b>${documentsData.views}</span>
+		<span class="right absolute myContentsShareIt big14">Share</span>
+	</div>
+	<img class="left relative documentsIcon" alt="no preview" src="${documentsData.thumbnail}"/>
+	<div class="left relative myContentsDocumentsDetails">
+		<span class="left relative documentsType">${documentsData.type}</span><br/>
+		<span class="left relative big12 boldy myContentsDocumentsText blackTextColor">${documentsData.title}</span><br/>
+		#{if documentsData.has('authorName')}
+			<span class="left relative myContentsDocumentsText blueTextColor">by ${documentsData.authorName}</span><br/>
+		#{/if}
+		<span class="left relative myContentsRankingHolder" style="margin-left:10px;">
+			<span class="left relative myContentsRankingStars" style="width:${documentsData.avgRating*20}%"></span> 
+		</span>
+	</div>
+</div>	

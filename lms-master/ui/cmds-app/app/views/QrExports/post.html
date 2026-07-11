@@ -1,0 +1,10 @@
+#{if resp!=null && resp.errorCode.isEmpty()}
+	#{exports.item data : resp.result /}	
+#{/if}
+#{else}
+<div class="exportItem">
+	<div class="boldy big16 redTextColor centerText">
+		&{'FAILED_TO_EXPORT'} : ${resp.errorMessage}
+	</div>
+</div>
+#{/else}

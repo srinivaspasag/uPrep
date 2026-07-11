@@ -1,0 +1,17 @@
+#{stylesheet media:'screen', src:'institute/o.testAnalytics.css' /}
+<div id="instAnalyticsGraphExt">
+	#{institute.analytics.graph userRole : _userRole /}
+</div>
+#{script src:'institute/o.testAnalytics.js', charset:'utf-8' /}
+<script type="text/javascript">
+	var instTATestData;
+        $(function(){
+        	instAnalytics.initExtUse("#instAnalyticsGraphExt","${_userRole}","${_progId}","${_targetUserId}",function(data){
+			if(!data || data.list.length<=0){
+				instAnalytics.hidePage();
+			}else{
+				instAnalytics.showPage();
+			}
+		});
+        });
+</script>

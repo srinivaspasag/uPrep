@@ -1,0 +1,6 @@
+#{if params.target=='TEST_PREVIEW'}
+    #{include "QrTests/previewTest.html" /}
+#{/if}
+#{else}
+    #{include "QrTests/testPage.html" /}
+#{/else}

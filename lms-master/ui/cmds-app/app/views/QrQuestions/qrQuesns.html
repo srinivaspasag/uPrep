@@ -1,0 +1,139 @@
+%{
+    needCBox=false;
+    if(params.needCBox=="true")needCBox=true;
+    if(params.target!=null)target=params.target;
+    totalQuestions=questions.result.totalHits;
+    otherHits = 0;
+    if(questions.result.has("otherHits") && !questions.result.isNull('otherHits')){
+        otherHits = questions.result.otherHits;
+    }
+    paraHits = 0;
+    if(questions.result.has("paraHits") && !questions.result.isNull('paraHits')){
+        paraHits = questions.result.paraHits;
+    }
+    nonParaHits = 0;
+    if(questions.result.has("nonParaHits") && !questions.result.isNull('nonParaHits')){
+        nonParaHits  = questions.result.nonParaHits;
+    }
+    otherQuesType = "PARA";
+    if(questions.result.has("otherType") && !questions.result.isNull('otherType')){
+        otherQuesType = questions.result.otherType;
+    }
+    //To distinguish between para and paraquestion
+    if(paraHits > 0 && nonParaHits > 0){
+        otherQuesType = "ALL"
+    }
+    if(target == "TEST_CREATION"){
+        quesClass = "getTestQuesnsContent";
+    }
+    else{
+        quesClass = "getQuesnsContent";
+    }
+    if(target=="LIBRARY_RESOURCES"&&params.sectionId==null){
+        needCBox=false;
+        params.put("needCBox","false");        
+    }else if(target=="LIBRARY_RESOURCES"&&params.sectionId!=null){
+        params.put('forLibrarySections','true');
+    }
+}%
+<input type="hidden" class="otherQuesType" data-other-ques-type="${otherQuesType}">
+#{if needCBox&&totalQuestions>0} 
+    #{if otherQuesType == "PARA" && otherHits >0}
+        <div class="headSecTableDiv">
+            <table class="headSecTable">
+                <tr class="questionsLinkTr">
+                    <td>
+                        <a class="getQuesnsContent" data-question-type="${otherQuesType}">${otherHits} Paragraphs </a>
+                        <span class="big12">(Click to open all the paragraphs available in this folder)</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="selectAllQuesnsCBox">
+            <div data-callback="cmdsTableAllCheck" class="gCBox cmdsAllgCBox margRight10">
+                <div class="gCBoxTicker"></div>
+            </div>
+            Select All Questions
+        </div>
+    #{/if}
+    #{elseif otherQuesType == "NOT_PARA" && otherHits > 0}
+        <div class="headSecTableDiv">
+            <table class="headSecTable">
+                <tr class="questionsLinkTr">
+                    <td>
+                        <a class="getQuesnsContent" data-question-type="${otherQuesType}">${otherHits} Questions </a>
+                        <span class="big12">(Click to open all the questions available in this folder)</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="selectAllQuesnsCBox">
+        </div>
+    #{/elseif}
+
+    #{elseif paraHits >0 || nonParaHits > 0}
+        <div class="headSecTableDiv">
+            <table class="headSecTable">
+                <tr class="questionsLinkTr">
+                    <td>
+                        #{if nonParaHits > 0}
+                            <a class="${quesClass}" data-question-type="NOT_PARA">${nonParaHits} Questions</a>
+                        #{/if}
+                        #{if paraHits > 0}
+                            <a class="${quesClass}" data-question-type="PARA">
+                                ${paraHits} Paragraphs
+                            </a>
+                        #{/if}<span class="big12">(Click to open all the questions available in this folder)</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="selectAllQuesnsCBox">
+        </div>
+        <div class="showParagraphContent">
+        </div>
+    #{/elseif}
+#{/if}
+#{elseif paraHits >0 || nonParaHits > 0}
+    <div class="headSecTableDiv">
+        <table class="headSecTable">
+            <tr class="questionsLinkTr">
+                <td>
+                    #{if nonParaHits > 0}
+                        <a class="${quesClass}" data-question-type="NOT_PARA">${nonParaHits} Questions</a>
+                    #{/if}
+                    #{if paraHits > 0}
+                        <a class="${quesClass}" data-question-type="PARA">
+                            ${paraHits} Paragraphs
+                        </a>
+                    #{/if}<span class="big12">(Click to open all the questions available in this folder)</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="selectAllQuesnsCBox">
+    </div>
+#{/elseif}
+
+<div class="cmdsQuesnsDiv" id="fixedSec">
+    #{include 'QrQuestions/qrQuesnsList.html' /}
+</div>
+#{if target == "CHECK_DUPLICATES"}
+<script type="text/javascript">
+    //Do not show total questionsList when checkDuplicates is called.
+    $(".questionsLinkTr").addClass("nonner");
+</script>
+#{/if}
+<script type="text/javascript">
+    new function(){
+        var fn=function(){
+            var params={};
+            #{if extraParamsStrForJS!=null}        
+                params=$.parseJSON('${extraParamsStrForJS.raw()}');
+            #{/if}            
+            qrQuestions.init(params);
+            loadMJEqns();
+        };
+        lazyLoad([{fname:"qrQuestions.js",cb:fn}]);
+    }();       
+</script>

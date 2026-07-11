@@ -1,0 +1,28 @@
+%{
+    folders=folders.result.list;
+    multiplier=0;
+    if(params.multiplier!=null)multiplier=Integer.parseInt(params.multiplier);
+    paddingLeft=20*multiplier;
+}%
+#{if folders.length()>0}
+#{list items:0..folders.length()-1,as:'s'}
+%{
+    folder=folders.get(s);
+    folderName=folder.name;
+    if(folderName=='/'){
+        folderName='Institute Resources';
+    }
+}%
+<div class="moveItem" data-entity-id="${folder.id}">
+    <div class="moveItemHead" style="padding-left: ${paddingLeft}px;">
+        <span class="moveItemOpen"></span>
+        <span class="moveItemChecker"></span>
+        <span class="moveItemName">${folderName}</span>
+    </div>
+    <div class="moveItemChildren nonner"></div>
+</div>
+#{/list}
+#{/if}
+#{else}
+<div class="time" style="padding-left: ${paddingLeft}px;">No folders found</div>
+#{/else}

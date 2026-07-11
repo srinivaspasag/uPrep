@@ -1,0 +1,415 @@
+#{extends 'main.html' /}
+#{set title:'Tools' /}
+%{
+    org=org.result;
+}%
+<!--<div class="blueButton editOrganization">Edit Organization</div>-->
+#{respStatus /}
+<div class="floatRight"> 
+	<span class="blueButton uploadOrgBoards">Upload Boards</span>
+	<a href="/orgboards/${params.orgId}" class="viewBoards blueButton">View Boards</a>
+	<a href="/orgManagers/${params.orgId}" class="viewOrgManagers blueButton">View Members</a>
+	<a href="/orgInvoices/${params.orgId}" class="viewOrgInvoices blueButton">View Invoices</a>
+</div>
+<div class="uploadDiv nonner uploadOrgBoardsDiv">
+    <div class="normalHeading">
+        Upload Organization Tree
+    </div>
+    <form action="@{Boards.uploadOrgTree}" method="post" enctype="multipart/form-data">
+        <input type="text" placeholder="Enter the corresponding consumer tree name"
+               required size="30" name="treeName">
+        <input type="hidden" name="uploadFileParamName" value="inputFile">
+        <input type="hidden" name="orgId" value="${params.orgId}">
+        <div class="checkBoxesDiv" data-error="Select atleast one grade" data-min-select="1">
+            <input type="checkbox" name="grades" value="K12"/>K12
+            <input type="checkbox" name="grades" value="UND_GRAD"/>Under Graduate
+            <input type="checkbox" name="grades" value="GRAD"/>Graduate
+            <input type="checkbox" name="grades" value="POST_GRAD"/>Post Graduate
+        </div>
+        <input type="file" name="boardFile" max-size="5120" required>
+        <input type="submit" value="Upload" class="blueButton"/>
+    </form>            
+</div> 
+<table class="orgTable">
+        <tr>
+            <td>Name</td>
+            <td>
+                ${org.name}
+            </td>
+        </tr>
+	#{if org.has('planInfo') && !org.planInfo.equals(null)}
+	<tr>
+	    <td>Plan Details</td>
+	    <td>
+		#{common.plan plan : org.planInfo /}		
+	    </td>
+	</tr>
+	#{/if}
+        <tr>
+            <td>
+                Full Name
+            </td>
+            <td>
+                ${org.fullName}              
+            </td>
+        </tr> 
+        <tr>
+            <td>
+               Slug Id 
+            </td>
+            <td>
+                <div class="orgSlugId">
+                        #{if !org.isNull('slug')}
+                        <span class="slugText">${org.slug}</span>
+                        <span class="showUpdateOrgSlug smallBlueButton" style="margin-left:12px;">Change</span>
+                        #{/if}
+                        #{else}
+                            <span class="smallThinGray">Not specified</span>
+                            <span class="showUpdateOrgSlug smallBlueButton" style="margin-left:12px;">Add</span>
+                        #{/else}
+		</div>
+                <div class="checkSlugAvailability nonner">
+                    <input type="text" required name="slug" placeholder="eg. your organization name, must be unique with us"/>
+		    <span class="slugCheckStatus nonner"></span>
+		    <div style="padding-top:10px;">
+		    	<span class="updateOrgSlug greenButton" data-org-id="${org.id}">Submit</span>
+		    </div>
+                </div> 
+            </td>
+        </tr> 
+        <tr>
+            <td>
+               Microsite URL 
+            </td>
+            <td>
+                <div class="orgRefererId">
+                        #{if !org.isNull('referer')}
+			<div class="orgRefererAdded">
+                        	<span class="refererText">${org.referer}</span>
+                        	<span class="showUpdateOrgReferer smallBlueButton" style="margin-left:12px;">Change</span>
+                        	<span class="removeOrgReferer smallBlueButton" data-org-id="${org.id}"
+					style="margin-left:12px;">Remove</span>
+			</div>
+                        #{/if}
+                        #{else}
+			<div class="orgRefererAdd">
+                            <span class="smallThinGray">Not specified</span>
+                            <span class="showUpdateOrgReferer smallBlueButton" style="margin-left:12px;">Add</span>
+			</div>
+			<div class="nonner orgRefererAdded">
+                        	<span class="refererText">${org.referer}</span>
+                        	<span class="showUpdateOrgReferer smallBlueButton" style="margin-left:12px;">Change</span>
+                        	<span class="removeOrgReferer smallBlueButton" data-org-id="${org.id}"
+					style="margin-left:12px;">Remove</span>
+			</div>
+                        #{/else}
+		</div>
+                <div class="checkRefererAvailability nonner">
+                    <input type="text" required name="referer" placeholder="eg. 'www.vedantu.com' do not provide protocol(http/https), must be unique with us"/>
+		    <span class="refererCheckStatus nonner"></span>
+		    <div style="padding-top:10px;">
+		    	<span class="updateOrgReferer greenButton" data-org-id="${org.id}">Submit</span>
+		    </div>
+                </div> 
+            </td>
+        </tr> 
+        <tr>
+            <td>
+               Website 
+            </td>
+            <td>
+                ${org.website}
+            </td>
+        </tr> 
+        <tr>
+            <td>
+                Email Domain
+            </td>
+            <td>
+                ${org.emailDomain}               
+            </td>
+        </tr>   
+        <tr>
+            <td>
+                Contact Number
+            </td>
+            <td>
+                ${org.contactNumber}               
+            </td>
+        </tr>      
+        <tr>
+            <td>
+                Type 
+            </td>
+            <td>    
+                ${org.type}
+            </td>
+        </tr>              
+        <tr>
+            <td>
+                Content Encryption 
+            </td>
+            <td>    
+                ${org.encLevel}
+            </td>
+        </tr>              
+        <tr>
+            <td>Locations</td>
+            <td class="locationsTd">
+                %{
+                    locations=org.locations;
+                }%
+                #{list items:0..locations.length()-1,as:'l'}
+                %{
+                    loc=locations.get(l);
+                }%
+                <div>${loc.city+', '+loc.state+', '+loc.country}</div> 
+                #{/list}
+            </td>
+        </tr>
+        <tr>
+            <td>
+              Address  
+            </td>
+            <td>
+                ${org.address}
+            </td>
+        </tr>    
+        #{if org.description!=''}
+        <tr>
+            <td>
+              Description  
+            </td>
+            <td>
+                ${org.description}         
+            </td>
+        </tr>            
+        #{/if}
+        <tr>
+            <td>
+                Scope 
+            </td>
+            <td>    
+                ${org.scope}
+            </td>
+        </tr>   
+        <tr>
+            <td>
+                Admin Details
+            </td>
+            <td class="adminDetailsTd">
+                %{
+                    admin=org.representative;
+                }%                           
+                <div>${admin.firstName+' '+admin.lastName}</div>
+                <div>${admin.email}</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Is New UI
+            </td>
+            <td class="uiDetailsTd">
+                %{
+                    isNewUI=org.isNewUI;
+                }%
+                <div>${isNewUI}</div>
+            </td>
+        </tr>
+        #{if org.isNewUI}
+        <tr>
+            <td>
+                Theme
+            </td>
+            <td class="themeDetailsTd">
+                %{
+                    theme=org.theme;
+                }%
+                <div>Theme ${theme}</div>
+            </td>
+        </tr>
+        #{/if}
+        <tr>
+            <td>
+                Show Shared Subjects
+            </td>
+            <td class="uiDetailsTd">
+                %{
+                    showSharedSubjects=org.showSharedSubjects;
+                }%
+                <div>
+                    ${showSharedSubjects}
+                    <div class="editImg editSharedSubjectStatus" data-status="${showSharedSubjects}" 
+                                data-org-id="${org.id}" style="top:3px;position: relative;"></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Show Classroom Connect
+            </td>
+            <td class="uiDetailsTd">
+                %{
+                    showClassroomConnect=org.showClassroomConnect;
+                }%
+                <div>
+                    ${showClassroomConnect}
+                    <div class="editImg editClassroomConnectStatus" data-status="${showClassroomConnect}" 
+                                data-org-id="${org.id}" style="top:3px;position: relative;"></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Disable Download
+            </td>
+            <td class="uiDetailsTd">
+                %{
+                    disableDownload=org.disableDownload;
+                }%
+                <div>
+                    ${disableDownload}
+                    <div class="editImg editDownloadStatus" data-status="${disableDownload}" 
+                                data-org-id="${org.id}" style="top:3px;position: relative;"></div>
+                </div>
+            </td>
+        </tr>
+        %{
+            String[] titles = ["Organization Status","Organization Student Status"];
+            if(!org.isNull('status')){
+                status = org.status;
+            }else{
+                status = 'N.A'
+            }
+            if(!org.isNull('studentPageStatus')){
+                studentPageStatus = org.studentPageStatus;
+            }
+            else{
+                studentPageStatus = 'N.A'
+            }
+            Object[] fields = [status,studentPageStatus];
+            String[] type = ["ORGANIZATION","STUDENT"];
+        }%
+        #{list items:0..fields.length-1, as:'index'}
+        <tr>
+            <td>
+                ${titles[index]}
+            </td>
+            <td class="StatusTd">
+                <div class="orgStatus">
+                    <div>${fields[index]}
+                        #{if fields[index] != "REQUESTED" && fields[index] != "UNKNOWN" && fields[index] != "UNAPPROVED" }
+                            <div class="editImg editStatus" data-status="${fields[index]}" 
+                            data-org-id="${org.id}" style="top:3px;position: relative;" data-type="${type[index]}"></div>
+                        #{/if}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        #{/list}
+        <input type="hidden" value="" name="status" class="orgProfileStatus">
+    </table>
+    <div class="changeStatus nonner">
+        <div style="font-size: 16px;text-align: center;font-weight: bold;margin-bottom: 20px;">
+            Set Status
+        </div>
+        <div class="changeStatus">
+         <div class="checkOrgStatus">
+            <div class="radioStatusDiv">
+                <label>
+                    <input id="APPROVED" type="radio" value="APPROVED" name="status" />
+                    <span class="radioLabel">APPROVED</span>
+                </label>
+                <label>
+                    <input id="BLOCKED" type="radio" value="BLOCKED" name="status" />
+                    <span class="radioLabel">BLOCKED</span>
+                </label>
+                <label>
+                    <input id="REMOVED" type="radio" value="REMOVED" name="status"/>
+                    <span class="radioLabel">REMOVED</span>
+                </label>
+            </div> 
+            <div style="margin-top: 20px;text-align: center;">
+                <span class="updateOrgStatus greenButton" data-org-id="${org.id}">Submit</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="changeSharedSubjectsStatus nonner">
+    <div style="text-align: center;min-width: 200px;">
+        <div style="font-size: 16px;text-align: center;font-weight: bold;margin-bottom: 20px;">
+            Show Shared Subjects
+        </div>
+        <div class="updateStatusDiv">
+            <label>
+                <input type="radio" name="showSharedSubjects" value="YES" #{if org.showSharedSubjects == true }checked#{/if}>
+                <span class="radioLabel">YES</span>
+            </label>
+            <label>
+                <input type="radio" name="showSharedSubjects" value="NO" #{if org.showSharedSubjects == false }checked#{/if}>
+                <span class="radioLabel">NO</span>
+            </label>
+        </div>
+        <div style="margin-top: 20px;text-align: center;">
+            <span class="updateSharedSubjectsStatus greenButton" data-org-id="${org.id}">Submit</span>
+        </div>
+    </div>
+</div>
+<div class="changeClassroomConnectStatus nonner">
+    <div style="text-align: center;min-width: 200px;">
+        <div style="font-size: 16px;text-align: center;font-weight: bold;margin-bottom: 20px;">
+            Show Classroom Connect
+        </div>
+        <div class="updateStatusDiv">
+            <label>
+                <input type="radio" name="showClassroomConnect" value="YES" #{if org.showClassroomConnect == true }checked#{/if}>
+                <span class="radioLabel">YES</span>
+            </label>
+            <label>
+                <input type="radio" name="showClassroomConnect" value="NO" #{if org.showClassroomConnect == false }checked#{/if}>
+                <span class="radioLabel">NO</span>
+            </label>
+        </div>
+        <div style="margin-top: 20px;text-align: center;">
+            <span class="updateClassroomConnectStatus greenButton" data-org-id="${org.id}">Submit</span>
+        </div>
+    </div>
+</div>
+<div class="changeDownloadStatus nonner">
+    <div style="text-align: center;min-width: 200px;">
+        <div style="font-size: 16px;text-align: center;font-weight: bold;margin-bottom: 20px;">
+            Disable Download
+        </div>
+        <div class="updateStatusDiv">
+            <label>
+                <input type="radio" name="disableDownload" value="YES" #{if org.disableDownload == true }checked#{/if}>
+                <span class="radioLabel">YES</span>
+            </label>
+            <label>
+                <input type="radio" name="disableDownload" value="NO" #{if org.disableDownload == false }checked#{/if}>
+                <span class="radioLabel">NO</span>
+            </label>
+        </div>
+        <div style="margin-top: 20px;text-align: center;">
+            <span class="updateDownloadStatus greenButton" data-org-id="${org.id}">Submit</span>
+        </div>
+    </div>
+</div>
+    <style type="text/css">
+    .editImg {
+        background: url(/public/images/edit.png) no-repeat scroll 0 0 transparent;
+        cursor: pointer;
+        display: inline-block;
+        height: 16px;
+        width: 11px;
+        margin-left: 10px;
+    }
+    .radioLabel{
+        position: relative;
+        top: -5px;
+    }
+
+    body{
+        overflow-x:hidden; 
+    }
+</style>

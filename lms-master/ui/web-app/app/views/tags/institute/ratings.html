@@ -1,0 +1,60 @@
+%{
+    entity = _entity;
+    entityType = _entityType;
+    ratings = _ratings;
+}%
+<link rel="stylesheet" type="text/css" href="/public/stylesheets/ratings.css">
+<div class="entityRating">
+    <span class="grayHead big15 heading">Rate This ${entityType.toLowerCase().capitalize()} :</span>
+    <div class="ratingsPopup nonner">
+        <div class="entityHeading">
+            ${entityType.toLowerCase().capitalize()} Feedback
+        </div>
+        %{
+        entityImage = "";
+        if(entityType == "VIDEO"){
+            entityImage = "/public/images/icons/video.jpg";
+        }
+        else if(entityType == "DOCUMENT"){
+            entityImage = "/public/images/icons/document.png";
+        }
+        else if(entityType == "TEST"){
+            entityImage = "/public/images/icons/test.png";
+        }
+        else if(entityType == "ASSIGNMENT"){
+            entityImage = "/public/images/icons/assignment.png";
+        }
+    }%
+        <div class="entityTitle grayHead big14">
+            <img src= "${entityImage}" class="entityImage">
+            <span class="entityName">${entity.name}</span>
+        </div>
+        <div class="popupEmojiHolder">
+        </div>
+        <div class="textareaDiv">
+            <textarea class="formTextarea" placeholder="Please enter your feedback"></textarea>
+        </div>
+        <div class="submitButton">
+            <span class="gBlueButton submitFeedback">Submit Feedback</span>
+        </div>
+    </div>
+    <span class="ratingsDiv" data-entity-ratings= "${ratings}">
+        <span class="ratingIcons" data-entity-id="${entity.id}" data-entity-type="${entityType}">
+            <span class="badRating">
+                <img src="/public/images/ratings/badRating.png" data-rating='BAD' class="emoji" title="#{if entityType == 'TEST' || entityType =='ASSIGNMENT'}TOUGH#{/if}#{else}BAD#{/else}">
+            </span>
+            <span class="averageRating">
+                <img src="/public/images/ratings/avgRating.png" data-rating='AVERAGE' class="emoji" title="#{if entityType == 'TEST' || entityType =='ASSIGNMENT'}MODERATE#{/if}#{else}AVERAGE#{/else}">
+            </span>
+            <span class="goodRating">
+                <img src="/public/images/ratings/goodRating.png" data-rating='GOOD' class="emoji" title="#{if entityType == 'TEST' || entityType =='ASSIGNMENT'}EASY#{/if}#{else}GOOD#{/else}">
+            </span>
+        </span>
+    </span>
+    <span class="margTop20 feedback">
+    </span>
+</div>
+<script type="text/javascript" src="/public/javascripts/ratings.js"></script>
+<script type="text/javascript">
+    ratings.init();
+</script>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript"
+	src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<style type="text/css">
+body {
+	margin: 0;
+	font-family: sans-serif;
+}
+
+#quesBody {
+	color: #333333;
+	font-size: 25px;
+	padding: 10px 20px;
+}
+
+#quesOpts {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#quesOpts td {
+	vertical-align: middle;
+	border-top: 1px solid #EEEEEE;
+	border-bottom: 1px solid #EEEEEE;
+	color: #333333;
+}
+
+#quesOpts td:first-child {
+	background-color: #CCCCCC;
+	font-size: 28px;
+	font-weight: bold;
+	width: 75px;
+	padding: 25px 14px;
+	text-align: center;
+}
+
+.quesOptNum {
+	display: inline-block;
+	background-color: #FFFFFF;
+	padding: 7px 13px;
+	border-radius: 3px;
+}
+
+#quesOpts td:last-child {
+	font-size: 25px;
+	padding: 0 14px;
+	background-color: #EEEEEE;
+}
+
+#quesOpts .quesOptActive td:first-child {
+	background-color: rgb(153, 204, 0);
+}
+
+#quesOpts .quesOptActive td:last-child {
+	background-color: rgba(153, 204, 0, 0.3);
+}
+
+#numericAnsBlock {
+	background-color: #EEEEEE;
+	padding: 20px;
+}
+
+#numericAnsTextBox,#numericDummyAnsBox {
+	border: 1px solid #CCCCCC;
+	padding: 8px 3px;
+	width: 400px;
+}
+
+#numericDummyAnsBox {
+	background-color: #FFFFFF;
+}
+.MathJax {
+    margin-right: 10px !important;
+    vertical-align: bottom;
+}
+.vidThumbHold{
+    text-align: center;
+    position: relative;
+}
+.vidThumbImg img{
+    width: 100%;
+	    height: auto;
+	    min-height: 180px;
+}
+
+.vidPlayIcon{
+    background: url("/public/images/vedantu.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    bottom: 0;
+    display: inline-block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.vidThumbDuration{
+    background-color: #000000;
+    bottom: 5px;
+    color: #FFFFFF;
+    padding: 2px 6px;
+    position: absolute;
+    right: 0;    
+}
+</style>
+</head>
+<body>
+    <div style="width: 250px">
+        <div class="vidThumbHold">
+            <div class="vidThumbImg">
+                    <img src="https://imgqa.vedantu.com/viewer/view/video/img/528332b3e4b0f2b604ccb271.vid.img.conv.small.jpg" alt="Image not available">
+            </div>
+            <div class="vidPlayIcon"></div>
+            <div class="vidThumbDuration">
+                00:54
+            </div>
+        </div>
+        <div class="videoTitle">Video 13th nov</div>
+    </div>
+	*{<div id="ques" style="width: 250px">
+		<div id="quesBody">This is a questions \[\sum_{i=0}^n i^2 =
+			\frac{(n^2+n)(2n+1)}{2} + \sum_{i=0}^n i^2 + \sum_{i=0}^n i^2\] is a
+			formula. Please look at it</div>
+            <div>
+                %{
+                    str="\\[f\\left( n \\right)\\,\\, = \\,\\,\\left\\{ {\\begin{array}{*{20}{c}}{\\frac{{n\\,-\\,1}}{2},}&{when\\,\\,\\operatorname{n} \\,\\,is\\,\\,odd} \\\\{-\\,\\frac{n}{2},}&{when\\,\\,\\operatorname{n} \\,\\,is\\,\\,even}\\end{array}} \\right.\\]";
+                }%
+                Question: A function f from the set of natural numbers to integers defined by
+
+ ${str}
+
+is
+            </div>
+		<div id="numericAnsBlock">
+			<input type="text" id="numericAnsTextBox" style="display: none;" />
+			<div id="numericDummyAnsBox" style="display: none;"></div>
+		</div>
+		<!-- <table id="quesOpts" cell-spacing="0">
+			<tr class="quesOpt">
+				<td>
+					<div class="quesOptNum">A</div>
+				</td>
+				<td>$\left[ {\frac{1}{2},\;2} \right]$</td>
+			</tr>
+			<tr class="quesOpt">
+				<td>
+					<div class="quesOptNum">B</div>
+				</td>
+				<td>$\left[ {\frac{1}{2},\;2} \right]$</td>
+			</tr>
+			<tr class="quesOpt">
+				<td>
+					<div class="quesOptNum">C</div>
+				</td>
+				<td>$\left[ {\frac{1}{2},\;2} \right]$</td>
+			</tr>
+			<tr class="quesOpt">
+				<td>
+					<div class="quesOptNum">D</div>
+				</td>
+				<td>$\left[ {\frac{1}{2},\;2} \right]$</td>
+			</tr>
+		</table> -->
+
+
+	</div>}*
+	<script type="text/javascript">
+		var qType = "MCQ";
+		var activeOptClass = "quesOptActive";
+		$(document).on(
+				"click",
+				".quesOpt",
+				function() {
+					var $this = $(this);
+					var ans = "";
+					if (qType === "MCQ") {
+						$this.toggleClass(activeOptClass);
+						var opts = $(".quesOptActive");
+						var l = opts.length;
+						for ( var k = 0; k < l; k++) {
+							var opt = opts.eq(k);
+							ans += opt.find(".quesOptNum").text()
+									+ ((k === (l - 1)) ? "" : "#");
+						}
+						console.log(ans)
+					} else if (qType === "SCQ") {
+						$(".quesOpt").removeClass(activeOptClass);
+						$this.addClass(activeOptClass);
+						ans = $this.find(".quesOptNum").text();
+					}
+					//TakeTestJSInterface.onOptionClick(ans);
+				});
+		$(document).on("keyup", "#numericAnsTextBox", function() {
+			TakeTestJSInterface.onNumericAnsEnter($(this).val());
+		});
+	</script>
+
+	<script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+            extensions : [ "tex2jax.js" ],
+            jax : [ "input/TeX", "output/HTML-CSS" ],
+            tex2jax : {
+            displayMath: [  ],
+            inlineMath: [ ['$$','$$'], ["\\[","\\]"],['$','$'],["\\(","\\)"] ],
+            processEscapes: true
+
+            },
+            TeX: {
+            extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+            },
+            "HTML-CSS": { linebreaks: { automatic: true },scale: 85 }
+            });
+        </script>
+	<script type="text/javascript"
+		src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

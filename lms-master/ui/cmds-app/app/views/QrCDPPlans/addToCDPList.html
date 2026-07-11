@@ -1,0 +1,35 @@
+%{
+    multiplier=0;
+    if(params.multiplier!=null)multiplier=Integer.parseInt(params.multiplier);
+    paddingLeft=20*multiplier;
+}%
+#{if multiplier==1}
+<div class="moveItem moveItemLibNode" data-entity-id="${params.cdpId}" data-level='LIBRARY'>
+    <div class="moveItemHead" style="padding-left: ${paddingLeft}px;">        
+        <span class="moveItemChecker"></span>
+        <span class="moveItemName">Reference Content</span>
+    </div>
+    <div class="moveItemChildren nonner"></div>
+</div>
+#{/if}
+#{if cdps.length()>0}
+#{list items:0..cdps.length()-1,as:'s'}
+%{
+    cdp=cdps.get(s);
+}%
+<div class="moveItem moveItemLevel${multiplier+1}" data-entity-id="${cdp._id}" data-level='${multiplier+1}'>
+    <div class="moveItemHead" style="padding-left: ${paddingLeft}px;">
+        <span class="moveItemOpen moveItem${multiplier+1}Opener"></span>
+        <span class="moveItemChecker moveItem${multiplier+1}Checker"></span>
+        <span class="moveItemName">${cdp.name}</span>
+    </div>
+    <div class="moveItemChildren nonner"></div>
+</div>
+#{/list}
+#{/if}
+#{elseif multiplier==1}
+<div class="time" style="padding-left: ${paddingLeft}px;">No courses added to the SLP yet.</div>
+#{/elseif}
+#{else}
+<div class="time" style="padding-left: ${paddingLeft}px;">No results.</div>
+#{/else}

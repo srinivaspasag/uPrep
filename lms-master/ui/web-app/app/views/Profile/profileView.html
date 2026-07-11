@@ -1,0 +1,526 @@
+#{if profileResponse==null||(profileResponse.has('errorCode')&& profileResponse.errorCode!='')||!profileResponse.has('errorCode')}
+    <script type="text/javascript">
+        showError(COMMON_ERROR_MESSAGE);
+    </script>
+%{
+    if (profileResponse==null)errorCode='NULL_RESPONSE';
+    else errorCode=profileResponse.errorCode;
+}%
+   <input id="csErrorCode" value="${errorCode}" type="hidden"/>
+#{/if}
+#{else}
+%{
+profileResponse=profileResponse.get("result");
+profile=profileResponse.get("GENERAL");
+}%
+#{if flash.get('ENTRY')=='DIRECT'}
+<script type="text/javascript" id="vProfileStyles">
+    showNoTabSec("MY_PROFILE");
+</script>
+#{/if}
+#{stylesheet media:'screen', src:'profile.css' /}
+<div class="profile-wrapper">
+<div class="profile-area">
+    <div class="profile-details">
+         <div class="profile-widget clearfix">
+          <div class="profile-picture"><img src="${profileResponse.profilePic}"></div>
+          <div class="pro-pic-info CSWidget" data-widget="CHANGE_IMG_PASS">
+            <h4>${profileResponse.firstName+' '+profileResponse.lastName}</h4>
+            <p class="college-from nonner"></p>
+            <p class="location-from #{if profile.basic.homeTown==""} nonner #{/if}">From <b>${profile.basic.homeTown}</b></p>
+            <a class="edit-pic">Edit Picture</a>
+            <div id="file-uploadProfilePic" rel="profile">
+                            <script type="text/javascript">
+                                $(function(){
+                                    var uploader = new qq.FileUploader({
+                                        element: document.getElementById('file-uploadProfilePic'),
+                                        action: "/profile/upload",
+                                        debug: true,
+                                        multiple: false,
+                                        sizeLimit : 5*1024*1024,
+                                        allowedExtensions : ["jpg","gif","png" ]
+                                    });
+                                    $("#file-uploadProfilePic").find(".qq-uploader").data("tabType","MY_PROFILE")
+					.addClass("doCStream").data("csName","CHANGE_PIC");
+                                });
+                            </script>
+            </div>
+            <span class="changePasswordBtn doCStream" data-cs-name="CHNG_PSWD">Change Password</span>
+          </div>
+          <div class="pro-stats">
+	      <ul class="pro-stats-points fullWidth">
+	      #{if myPointsInfo!=null && myPointsInfo.has('result') && myPointsInfo.result!=""}
+		<li>
+			<span class="greyTextColor boldy">Your Points</span>
+		</li>
+		<li style="padding-top:4px;">
+			<span class="fontDigit" style="font-size:35px;">${myPointsInfo.result}</span>
+		</li>
+	      #{/if}
+	      </ul>
+              <ul class="ques-stat clearfix">
+                  <li>
+                      <h5>Following</h5>
+                      <span>${profileResponse.following}</span>
+                  </li>
+                  <li>
+                      <h5>Followers</h5>
+                      <span>${profileResponse.follower}</span>
+                  </li>
+              </ul>
+              <ul class="test-stat clearfix">
+                  <li>
+                      <h5>Questions Added</h5>
+                      <span>${profileResponse.qusAdded}</span>
+                  </li>
+                  <li>
+                      <h5>Questions Attempted</h5>
+                      <span>${profileResponse.qusAttempted}</span>
+                  </li>
+                  <li>
+                      <h5>Tests Taken</h5>
+                      <span>${profileResponse.testTaken}</span>
+                  </li>
+                  <li>
+                      <h5>Content Saved</h5>
+                      <span>${profileResponse.docs}</span>
+                  </li>
+                  <li>
+                      <h5>Playlists Created</h5>
+                      <span>${profileResponse.plCreated}</span>
+                  </li>
+              </ul>
+          </div>
+        </div>
+
+    </div>
+    <div class="more-profile-details">
+        <nav class="detail-links">
+           <!--  <span>Analytics</span> -->
+            <ul class="link-navigation">
+
+                <li><a class="analytics active" >Analytics</a></li>
+
+            </ul>
+            <div class="viewDummyWrapper">
+                <!-- <a class="viewDummyAn" href="#dialog" name="modal">View Dummy Analytics</a> -->
+            </div>
+        </nav>
+        <section>
+            <!-- <div id="mask"></div> -->
+            <div id="boxes">
+                <div id="dialog" class="window dummyWrapper">
+                       <div class="dummy-stats-details clearfix">
+                        <span id="dummyMsg">This is how your analytics will look like</span>
+                        <span id="dummyArrow"></span>
+                        <a class="dummyCloseIcon"></a>
+                        <div class="questions-stats clearfix">
+                            <h3>Objective Questions</h3>
+
+                            <ul class="top-stats">
+                                <li>
+                                    <h5>Added</h5>
+                                    <span id="dummy-q-added"></span>
+                                </li>
+                                <li>
+                                    <h5>Attempted</h5>
+                                    <span id="dummy-q-solved"></span>
+                                </li>
+                                <li>
+                                    <h5>Correct</h5>
+                                    <span id="dummy-a-correct"></span>
+                                </li>
+                            </ul>
+                            <h4 id="dmostAttTopic">Most attempted topics</h4>
+                            <div class="dummy-graph">
+
+                            </div>
+
+                            <div class="dummycolorIndicator">
+
+                            </div>
+                            <div class="most-attempted clearfix">
+                            <!-- <h5 id="most-level">Most attempted level-<span></span></h5> -->
+                                <h5 id="dummy-most-topic"></h5>
+                            </div>
+                            <div class="stats-error">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="tests-stats clearfix CSWidget" data-widget="TEST_GRAPH">
+				<div style="margin-bottom:41px;">
+                            		<h3>Tests</h3>
+                            		<ul class="top-stats">
+                                	   <li>
+                                    		<h5>Taken</h5>
+                                    		<span id="dummy-tests-taken"></span>
+                                	   </li>
+                                	   <li>
+                                    		<h5>Avg. % Score</h5>
+                                    		<span id="dummy-avg-score"></span>
+                                	   </li>
+                            		</ul>
+				</div>
+                            <div class="dummyTgraph test-graph">
+
+                            </div>
+
+                        </div>
+                        <div class="aShadow"></div>
+                    </div>
+                </div>
+            </div>
+                    <div id="allAnalyticsWrapper" class="stats-details clearfix">
+                        <div class="questions-stats clearfix">
+                            <h3>Objective Questions</h3>
+                            <ul class="top-stats">
+                                <li>
+                                    <h5>Added</h5>
+                                    <span id="q-added"></span>
+                                </li>
+                                <li>
+                                    <h5>Attempted</h5>
+                                    <span id="q-solved"></span>
+                                </li>
+                                <li>
+                                    <h5>Correct</h5>
+                                    <span id="a-correct"></span>
+                                </li>
+                            </ul>
+                            <h4 id="mostAttTopic">Most attempted topics</h4>
+                            <div class="ques-graph">
+
+                            </div>
+
+                            <div class="colorIndicator">
+
+                            </div>
+                            <div class="most-attempted clearfix">
+                            <!-- <h5 id="most-level">Most attempted level-<span></span></h5> -->
+                                <h5 id="most-topic"></h5>
+                            </div>
+                            <div class="stats-error">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="tests-stats clearfix CSWidget" data-widget="TEST_GRAPH">
+                             <div class="TAPage clearfix">
+                            	<h3>Tests</h3>
+				<span class="TANextPrev">
+                                	<span id="prevTA" class="inactive doCStream" data-cs-name="NEXT"></span>
+                                	<span id="nextTA" class="active doCStream" data-cs-name="PREV"></span>
+				</span>
+                            	<ul class="top-stats">
+                                	<li>
+                                    		<h5>Taken</h5>
+                                    		<span id="tests-taken"></span>
+                                	</li>
+                                	<li>
+                                    		<h5>Avg. % Score</h5>
+                                    		<span id="avg-score"></span>
+                                	</li>
+                            	</ul>
+                            </div>
+                            <div class="test-graph"></div>
+                        </div>
+                        <div class="aShadow"></div>
+                    </div>
+
+        </section>
+        <div class="profile-info-wrapper clearfix">
+            <div class="profileLeftSec">
+                <h3>Your Recent Activities</h3>
+                <div class="recent-activies" id='activityFeedsDiv'></div>
+                <div class="profileDocRecos"></div>
+            </div>
+            <div class="info-section">
+                <div class="educational-info">
+
+                    <div class="stripEdu"></div>
+                    <div class="edu-header">
+                        <span><img src="/public/images/profile/edu-icon.jpg" alt="Educational Info" title="Educational Info"/></span>
+                        <h5>Educational Info</h5>
+                        <span class="right-line"></span>
+                    </div>
+                     #{if profile.length()>0}
+                    %{eduProfile=profile.educational;}%
+                    #{if eduProfile.length()>0}
+                     #{list items:0..eduProfile.length()-1,as:'i'}
+                     #{if eduProfile.get(i).has('orgName')&& eduProfile.get(i).orgName!=''}
+                     <div class="college-info CSWidget" id="institution-${i}" data-widget="ORG_INFO_SEC">
+                         <a class="delete-college-info doCStream" data-cs-name="DELETE" data-org-name="${eduProfile.get(i).orgName}">Delete</a>
+                         <a class="edit-college-info doCStream" data-cs-name="EDIT" data-org-name="${eduProfile.get(i).orgName}">Edit</a>
+                         <h3>${eduProfile.get(i).orgName}</h3>
+                         <h5 class="dep-branch">${eduProfile.get(i).has('branch') ? eduProfile.get(i).branch : " " }</h5>
+                         #{if eduProfile.get(i).startDate>1900}
+			 <h5>
+                             <span class="start-year">${eduProfile.get(i).startDate}</span> -
+                             <span class="end-year">${eduProfile.get(i).endDate}</span>
+                         </h5>
+			 #{/if}
+                         <div class="new-section clearfix">
+                             <p>
+                                 <label for="school-coll">School/college</label>
+                                 <input class="required coll" id="school-coll" type="text" size="30" value="${eduProfile.get(i).orgName}" />
+                             </p>
+                            <p>
+                              <label for="subj-course">Subjects/Course</label>
+                              <input class="required name" id="subj-course" type="text" size="30" value="${eduProfile.get(i).has('branch') ? eduProfile.get(i).branch : '' }"/>
+                            </p>
+
+                            <label for="date-attend">Dates attended</label>
+                            <div class="date-wrapper clearfix">
+                                #{select 'startyearpicker', value:eduProfile.get(i).startDate, class:'date-from doCStream'}
+                                    #{list items:2012..1950,as:'k'}
+                                        #{option k}${k}#{/option}
+                                    #{/list}
+                                #{/select}
+                                <span class="center-to">to</span>
+                                #{select 'endyearpicker', value:eduProfile.get(i).endDate, class:'date-to doCStream'}
+                                    #{list items:2012..1950,as:'k'}
+                                        #{option k}${k}#{/option}
+                                    #{/list}
+                                #{/select}
+                            </div>
+
+                            <button type="button" class="save-coll doCStream" data-cs-name="SAVE">Save</button>
+                            <button type="button" class="cancel-coll doCStream" data-cs-name="CANCEL">Cancel</button>
+                        </div>
+                     </div>
+                     #{/if}
+                     #{/list}
+                     #{/if}
+                     #{/if}
+
+                     #{if profileResponse.has('ORG')}
+                     %{ orgProfile=profileResponse.get("ORG");%}
+                     #{if orgProfile.length()>0}
+                     %{orgEduProfile=orgProfile.educational;%}
+                     #{if orgEduProfile.length()>0 && orgEduProfile.get(0).orgName!=''}
+                     #{list items:0..orgEduProfile.length()-1,as:'i'}
+                     <div class="org-info" id="org-${i}">
+
+                         <h3>${orgEduProfile.get(i).orgName}</h3>
+                         <h5 class="dep-branch">${orgEduProfile.get(i).has('branch') ? orgEduProfile.get(i).branch : " " }</h5>
+                         #{if orgEduProfile.get(i).startDate>1900}
+                         <h5>
+                             <span class="start-year">${orgEduProfile.get(i).startDate}</span> - <span class="end-year">${orgEduProfile.get(i).endDate}</span></h5>
+			#{/if}
+                         <div class="new-section clearfix">
+                             <p>
+                                 <label for="school-coll">School/college</label>
+                                 <input class="required name" id="school-coll" type="text" size="30" value="${orgEduProfile.get(i).orgName}" />
+                             </p>
+                             <p>
+                                 <label for="subj-course">Subjects/Course</label>
+                                 <input class="required name" id="subj-course" type="text" size="30" value="${orgEduProfile.get(i).has('branch') ? orgEduProfile.get(i).branch : '' }"/>
+                             </p>
+
+                            <label for="date-attend">Dates attended</label>
+                            <div class="date-wrapper clearfix">
+                                #{select 'startyearpicker', value:orgEduProfile.get(i).startDate, class:'date-from doCStream'}
+                                    #{list items:2012..1950,as:'k'}
+                                        #{option k}${k}#{/option}
+                                    #{/list}
+                                #{/select}
+                                <span class="center-to">to</span>
+                                #{select 'endyearpicker', value:orgEduProfile.get(i).endDate, class:'date-to doCStream',id:'edu'+i+'EndYear'}
+                                    #{list items:2012..1950,as:'k'}
+                                        #{option k}${k}#{/option}
+                                    #{/list}
+                                #{/select}
+                            </div>
+
+                            <button type="button" class="save-coll doCStream" data-cs-name="Save">Save</button>
+                            <button type="button" class="cancel-coll doCStream" data-cs-name="Cancel">Cancel</button>
+                        </div>
+                     </div>
+                     #{/list}
+                     #{/if}
+                     #{/if}
+                     #{/if}
+
+                     <div class="add-new-section clearfix CSWidget" data-widget="ADD_NEW_SECTION">
+                         <p>
+                             <label for="school-coll">School/college</label>
+                             <input id="school-coll" class="required name doCStream" data-cs-name="SCHOOL/COLLEGE_INPUTBOX" type="text" size="30" required="required" />
+                         </p>
+                         <p>
+                             <label for="subj-course">Subjects/Course</label>
+                             <input id="subj-course" class="required name doCStream" data-cs-name="Subjects/Course_INPUTBOX" type="text" size="30" required="required"/>
+                         </p>
+                         <label for="date-attend">Dates attended</label>
+                         <div class="date-wrapper clearfix">
+                                #{select 'startyearpicker',  class:'date-from doCStream'}
+                                    #{list items:2012..1950,as:'k'}
+                                        #{option k}${k}#{/option}
+                                    #{/list}
+                                #{/select}
+                                <span class="center-to">to</span>
+                                #{select 'endyearpicker', class:'date-to doCStream'}
+                                    #{list items:2012..1950,as:'k'}
+                                        #{option k}${k}#{/option}
+                                    #{/list}
+                                #{/select}
+                         </div>
+                     </div>
+                     <button type="button" class="add-section doCStream" data-cs-name="ADD_NEW_SECTION_BTN">add new section</button>
+                     <button type="button" class="save-section doCStream" data-cs-name="SAVE">Save</button>
+                     <button type="button" class="cancel-section doCStream" data-cs-name="CANCEL">Cancel</button>
+
+
+                </div>
+                <div class="personal-info CSWidget" data-widget="PERSONAL_INFO_SECTION">
+                    <div class="stripEdu"></div>
+                    <div class="personal-header">
+                        <span><img src="/public/images/profile/prof-icon.jpg" alt="Personal Info" title="Personal Info"/></span>
+                        <h5>Personal Info</h5>
+                        <span class="right-line"></span>
+                    </div>
+
+                    <a class="edit-personal-info doCStream" data-cs-name="EDIT">Edit</a>
+                    <dl class="personal-data-list">
+                        <dt>Email</dt>
+                       <dd id="prof-email">${profileResponse.username}</dd>
+                       <!--<dd class="edit-personal" id="edit-prof-email"><input type="text" data-name="email" size="22" class="edit-email profile-edit" value="${profileResponse.username}"></dd>-->
+
+                        <dt>Social</dt>
+                        <dd class="show-personal" id="social-pro">
+                                <ul class="social-profiles clearfix">
+                                    %{social = profile.social; %}
+                                        <li>
+                                            #{if social.facebookLink == null || social.facebookLink == ''}
+                                                <a target="_blank" id="fb-link" class="disable"><img src="/public/images/profile/fbInactive.png" alt="fb"></a>
+                                            #{/if}
+                                            #{else}
+                                                <a target="_blank" id="fb-link" class="doCStream" data-cs-name="FB_LINK" href="${social.facebookLink}"><img src="/public/images/profile/fbActive.png" alt="fb"></a>
+                                            #{/else}
+                                        </li>
+                                        <li>
+                                            #{if social.linkedinLink == null || social.linkedinLink == ''}
+                                                <a target="_blank" id="ln-link" class="disable"><img src="/public/images/profile/lnInactive.png" alt="linkedin"></a>
+                                            #{/if}
+                                            #{else}
+                                                <a target="_blank" id="ln-link" class="doCStream" data-cs-name="LINKDIN_LINK" href="${social.linkedinLink}"><img src="/public/images/profile/lnActive.png" alt="linkedin"></a>
+                                            #{/else}
+                                        </li>
+                                        <li>
+                                            #{if social.twitterLink == null || social.twitterLink == ''}
+                                                <a target="_blank" id="tw-link" class="disable"><img src="/public/images/profile/twInactive.png" alt="twitter"></a>
+                                            #{/if}
+                                            #{else}
+                                                <a id="tw-link" target="_blank" class="doCStream" data-cs-name="TWITTER_LINK" href="${social.twitterLink}"><img src="/public/images/profile/twActive.png" alt="twitter"></a>
+                                            #{/else}
+
+                                        </li>
+                                </ul>
+                        </dd>
+		<div id="personal-info-holder" class="CSWidget" data-widget="EDIT_PERSONAL_INFO">
+                        <dd class="edit-personal clearfix" id="edit-social-prof">
+                                <ul class="social-profiles clearfix to-edit">
+                                        <li class="clearfix">
+                                                <!-- <a href="#"><img src="profile/fbInactive.png" alt="fb"></a> -->
+                                    <span class="pro-title">Facebook URL:</span><p><input class="url doCStream" data-cs-name="FB_URL_INPUTBOX" type="text" size="22" value="${profile.social.facebookLink}" data-name="fb URL" id="edit-fb"></p>
+                                        </li>
+                                        <li class="clearfix">
+                                                <!-- <a href="#"><img src="profile/LnInactive.png" alt="linkedin"></a> -->
+                                    <span class="pro-title">LinkedIn URL:</span><p><input class="url doCStream" data-cs-name="LINKDIN_TEXTBOX" type="text" size="22" value="${profile.social.linkedinLink}" data-name="ln URL" id="edit-ln"></p>
+                                        </li>
+                                        <li class="clearfix">
+                                                <!-- <a href="#"><img src="profile/twInactive.png" alt="twitter"></a> -->
+                                    <span class="pro-title">Twitter URL:</span><p><input class="url doCStream" data-cs-name="TWITTER_TEXTBOX" type="text" size="22" value="${profile.social.twitterLink}" data-name="tw URL" id="edit-tw"></p>
+                                        </li>
+                                </ul>
+                        </dd>
+                        %{personal=profile.personal}%
+                        #{if personal!=null && personal.contactInfo!=null && personal.contactInfo.has('mobileNo')}
+			<div id="personal-info-contact" #{if personal.contactInfo.mobileNo==null||personal.contactInfo.mobileNo==""}class="nonner"#{/if} data-val="${personal.contactInfo.mobileNo}">
+                        	<dt> Contact  </dt>
+                        	<dd class="show-personal" id="personal-no">
+                            		${personal.contactInfo.mobileNo}
+                        	</dd>
+                        	<dd class="edit-personal clearfix" id="edit-personal-no"><p><input class="phone doCStream" data-cs-name="CONTACT_NO_TEXTBOX" type="text" size="22" data-name="contact" id="edit-contact" value="${personal.contactInfo.mobileNo}"></p></dd>
+			</div>
+                        #{/if}
+                         <div id="personal-info-hometown" #{if profile.basic.homeTown==""}class="nonner"#{/if} data-val="${profile.basic.homeTown}">
+                         	<dt>Hometown</dt>
+                         	<dd class="show-personal" id="per-hometown">${profile.basic.homeTown}</dd>
+                         	<dd class="edit-personal clearfix" id="edit-personal-hometown"><p><input class="name doCStream" data-cs-name="HOMETOWN_INPUTBOX" type="text" size="22" data-name="hometown" id="edit-hometown" value="${profile.basic.homeTown}"></p></dd>
+			</div>
+                        <div id="personal-info-ambi" #{if personal.ambition==""}class="nonner"#{/if} data-val="${personal.ambition}">
+				<dt>Ambition</dt>
+                        	<dd class="show-personal" id="personal-ambi">
+                            		${personal.ambition}
+                        	</dd>
+                        	<dd class="edit-personal clearfix" id="edit-personal-ambi"><p><input class="name doCStream" data-cs-name="AMBITION_TEXTBOX" type="text" size="22" data-name="ambition" id="edit-ambition" value="${personal.ambition}"></p></dd>
+			</div>
+	     </div>
+                    </dl>
+                    <button type="button" class="save-personal-info doCStream" data-cs-name="SAVE">Save</button>
+                    <button type="button" class="cancel-personal-info doCStream" data-cs-name="CANCEL">Cancel</button>
+                </div>
+            </div>
+            <div class="profileRightSec">
+                <div class="follow-details CSWidget" data-widget="FOLLOW_DETAILS"></div>
+                <div class="profileFrndSuggs"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+	var userQAData=null;
+    new function(){
+        var fn=function(){vValidate.init();}
+        fetchScripts([{fname:"profile/validate.js",cb:fn}]);   
+    }();          
+    $.get("/profile/getUserOverallTestAnalytics", {start:0, size: 20},function(data){
+
+        if(data.result.taken == 0){
+            noTest = true;
+        }
+        //console.log("noTest is "+noTest);
+        if(data.result.taken < 8){
+            $('.TANextPrev').addClass("nonner");
+        }else{
+            $('.TANextPrev').removeClass("nonner");
+	}
+        generateTAGraph.init(data, "real");
+    });
+
+    $.get("/profile/getUserOverallQuestionAnalytics", {start:0, size: 3},function(data){
+        if(data.result.questionDistribution.length == 0){
+            noQues = true;
+        }
+        if(noTest && noQues){
+
+            $('.viewDummyAn').trigger('click');
+        }
+        //console.log("noQUes is " +noTest);
+	userQAData = data;
+        var $finalhtml = generateQAGraph(data, "real");
+        $('.ques-graph').html($($finalhtml));
+    });
+    $(".viewMoreQATopics").live("click",function(){
+	var subIndex = $(this).data("subIndex");
+	var subData = userQAData.result.questionDistribution[subIndex];
+	var data = cloneObject(userQAData);
+	data.result.questionDistribution = [];
+	data.result.questionDistribution.push(subData);
+        var $finalhtml = generateQAGraph(data, "real",-1);
+	var holder = document.createElement("div");
+	$(holder).attr("class","ques-graph-popup").html($($finalhtml)).append('<div class="colorIndicator"><span class="corIcon"></span><span class="crt">Correct</span><span class="incorIcon"></span><span class="incrt">Incorrect</span></div>');
+	var popup=getCommonPopupBody();
+        popup.html($(holder));
+    });
+
+    $.get("/widgets/connections",{start:0,size:10},function(data){
+        $(".follow-details").html(data);
+    });
+    $.get("/widgets/frndSuggs",{start:0,size:6},function(data){
+        $(".profileFrndSuggs").html(data);
+    });
+    getActivityFeeds("${session.userId}");
+</script>
+#{/else}

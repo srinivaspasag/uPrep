@@ -1,0 +1,25 @@
+#{if topics.length()>0}
+<div class="big15 boldy margTop20 margBot5">
+  Topics
+</div>
+<div class="mcMultipleVSelect multipleVSelect" data-param-name="topicNames" 
+     data-onchange="onmcMVSChange">
+    <div class="mvsAllItems">
+        <div class="gCBox gCBoxChecked">
+            <div class="gCBoxTicker"></div>
+        </div>
+        <span>All Topics</span>
+    </div>   
+    #{list items:0..topics.length()-1,as:'i'}
+        %{
+            topic=topics.get(i);
+        }%
+    <div class='mvsItem' title='${topic.name}'>
+        <div class='gCBox' data-value='${topic.name}'>
+            <div class='gCBoxTicker'></div>
+        </div>
+        <span class='mvsItemText gCBoxText'>${topic.name}</span>
+    </div>
+    #{/list}
+</div>
+#{/if}

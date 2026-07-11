@@ -1,0 +1,57 @@
+#{extends 'uicomRegisterHead.html'/}
+#{set title:'Create Password' /}
+<style>
+body{
+	color:#666;
+}
+.userInfo{
+	padding-top:20px;
+}
+.welcome{
+	font-size:18px;
+	text-align:center;
+}
+.profileIcon{
+	height:50px;
+	margin-right:10px;
+}
+.userInfo table{
+	padding-top:12px;
+	margin:0 auto;
+}
+</style>
+<div class="loginPageWrapper">
+	<div class="userInfo">
+		<div class="welcome">Welcome <b>Anirban Dutta</b></div>
+		<table cellspacing=0 cellpadding=0>
+			<tr>
+				<td rowspan=3>
+					<img class="profileIcon" alt="" src="/public/images/profileIcon.jpg"/>
+				</td>
+				<td style="padding-bottom:2px;">Student, Lakshya Institute</td>
+			</tr>
+			<tr>
+				<td>
+					<b>Program:</b><span>Sankalp non-medical</span>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<b>Section:</b><span>s1</span>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="enterEmailContent">
+            	<div class="regFormTxt">
+			<div>&{'login.ENTER_EMAIL'}</div>
+			<div style="font-size:11px;color:#ccc;">(will be used as your login ID)</div>
+		</div>
+	    	<div class="regInputBoxHolder">
+			<input type="email" id="createPassword" placeholder="Email-id" name="cPassword"/>
+		</div>
+	    	<div class="regSubmitHolder">
+			<span class="greenButton submitUserEmail">Submit</span>
+		</div>
+	</div>
+</div>

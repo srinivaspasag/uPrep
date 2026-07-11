@@ -1,0 +1,21 @@
+#{if leaders.errorCode == "" && leaders.result.has('list') && leaders.result.list.length()>0}
+%{
+	users = leaders.result.list;
+}%
+#{list items:0..users.length()-1,as:'uIndex'}
+%{ userChlg = users.get(uIndex);}%
+   #{if userChlg.user!=null && !userChlg.user.equals(null)}
+   	#{if userChlg.user.id!=session.userId}
+		#{institute.previews.challenge data:userChlg /}
+   	#{/if}
+   	#{else}
+		<div class="instYourChlgBrd nonner">
+			#{institute.previews.challenge data:userChlg /}
+		</div>
+   	#{/else}
+   #{/if}
+#{/list}
+#{/if}
+#{else}
+	<div class="boldy centerText greyTextColor">No Leaders</div>
+#{/else}

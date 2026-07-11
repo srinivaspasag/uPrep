@@ -1,0 +1,234 @@
+#{if data!=null && data.has('name')}
+#{if play.mode.name()=='PROD'}
+	<LINK href="/public/stylesheets/takeTest/o.oldTake.css" rel="stylesheet" type="text/css">
+	<script src="@{'/public/javascripts/takeTest/o.oldTake.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/if}
+#{else}
+	<LINK href="/public/stylesheets/uicomTakeTest/oldTake.css" rel="stylesheet" type="text/css">
+	<LINK href="/public/stylesheets/uicomTakeTest/oldQuestion.css" rel="stylesheet" type="text/css">
+	<script src="@{'/public/javascripts/uicomTakeTest/oldTake.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/else}
+<div class="test_head" data-test-data="${data}">
+	<input type="hidden" value="${targetId}" id="targetId">
+	<input type="hidden" value="${targetType}" id="targetType">
+   <div>
+	<span class="test_name">${data.name}</span><a href="" class="read_instr nonner">Read Instructions</a>
+   	<div class="right">
+		<span class="onlineIcon">ONLINE</span>
+		<span class="offlineIcon nonner">OFFLINE</span>
+   	</div>
+   </div>
+   <div class="testOfflineMsg redTextColor nonner big18" style="padding:10px 0;">
+	&{'TEST_OFFLINE_ERROR'}		
+   </div>
+</div>
+%{
+	openBoardIndex = 0;
+}%
+<div class="test_subjects CSWidget" data-widget="TEST_ATTEMPT_TOP_BAR">
+	<div class="test_subjects_tabs">
+	#{list items:0..data.boards.length()-1, as:'index'}
+		#{if index == openBoardIndex }
+			<span class="selected doCStream" data-cs-name="SUBJECT_TAB" 
+				data-subject-id=${data.boards.get(index).id}>${data.boards.get(index).name}</span>
+		#{/if}
+		#{else}
+			<span>${data.boards.get(index).name}</span>
+		#{/else}
+	#{/list}
+		<div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+</div>
+<div class="test_subjects CSWidget test_endexam_timer" data-widget="TEST_ATTEMPT_TOP_BAR">
+	<div class="endtest_time">
+		<span class="test_end_btn doCStream" data-cs-name="END_TEST_BTN">End Exam</span>
+		#{if data.has('duration') && data.duration > 0}
+		<span class="test_timer">
+			<span class="test_timer_graph">#{include '/UIComTags/common/arc_drawing.html' /}</span>
+			<span class="time_left">Time Left</span>
+		%{
+			timeObj=uicom.util.Utilities.getTimeFromMiliSec(data.duration);
+		}%
+			<span class="total_time_left">${timeObj.hrs}:${timeObj.mins}:${timeObj.secs}</span>
+		</span>
+		#{/if}
+	</div>
+</div>
+
+	<div class="cleaner_with_divider">&nbsp;</div>
+<div class="takeTestFilterQTypes fullWidth nonner left">
+	<span class="boldy left" style="margin-top:3px;">Show</span> 
+	<div class="vselect vselectHide selectTestFilterQType vDropDown left" onstatechange="testFilterQType" data-value="">
+		<span class="vSelectHead">
+			<input type="text" class="vSelectText" value="All Types" readonly="readonly"/>
+			<span class="dropDownIcon noUserSelect" ></span>
+		</span>
+		<div class="vSelectListHolder">
+			<div class="vSelectList">
+				<span class="vSelectEach" data-value="">All Types</span>
+				<!--<span class="vSelectEach" data-value="SCQ">Only SCQ's</span>
+				<span class="vSelectEach" data-value="MCQ">Only MCQ's</span>-->
+			</div>
+		</div>
+	</div>
+</div>
+%{
+	alphabet = "abcdefghijklmnopqrstwxyz";
+	testQuestions = data.boards.get(openBoardIndex).questions;
+	question = testQuestions;
+}%
+#{list items:0..testQuestions.length()-1,as:'qTypeIndex'}
+	%{ eachType = testQuestions.get(qTypeIndex);}%
+	#{if !eachType.equals(null) && eachType.has('questions') && !eachType.questions.equals(null) && eachType.questions.length()>0}
+	%{
+		question = eachType.questions.get(0);
+		break;
+	}%
+	#{/if}	
+#{/list}
+<div class="test_questions CSWidget left" data-widget="QUES_BODY_HOLDER">
+	<div style="text-align: center;">
+            <span style="font-size: 11px;">
+                Question Type : 
+            </span>
+            <span class="questionType" style="font-weight: bold;font-size: 13px;">
+                ${question.type}
+            </span>
+        </div>
+	<span class="questionNumber">Q1</span>
+	<div class="questionBody" data-q-type="${question.type}">
+		<div class="rightText">
+                	<span class="instImgs refreshQues" data-closest=".questionBody" data-type="TEST"></span>
+                </div>
+        #{if question.type == "PARA"}
+			<div class="paraText">
+				${question.paraContent.raw()}
+			</div>
+		#{/if}        
+		<div class="questionText">${question.content.raw()}</div>
+		<div class="choices #{if question.type=="NUMERIC"}nonner#{/if}">
+		%{ 
+			inputType="radio";
+		if(question.type == "MCQ" || question.type == "PARA" || question.type == "MATRIX"){
+				inputType = "checkbox";
+			}
+		}%
+		#{if question.has('options') && !question.options.equals(null) && question.options.length()>0}
+		   #{list items:0..question.options.length()-1, as:'index'}
+			<table class="eachOptHolder">
+			   <tr>
+				<td style="width:20px;">
+					<input type="${inputType}" data-cs-name="QUES_OPTION_${inputType}" name="takeTestOptInput" 
+						value="${index}" class="doCStream"/>
+				</td>
+				<td class="optAlphaCount">(${alphabet.charAt(index)})</td>
+				<td>
+					<div class="eachOpt">${question.options.get(index).raw()}</div>
+				</td>
+			   </tr>
+			</table>
+		   #{/list}
+		   #{list items:(question.options.length()-1)..5, as:'index'}
+			<table class="eachOptHolder nonner">
+				<td style="width:20px;">
+					<input type="${inputType}" data-cs-name="QUES_OPTION_${inputType}" value="${index}" 
+					name="takeTestOptInput" class="doCStream"/>
+				</td>
+				<td class="optAlphaCount"></td>
+				<td>
+					<div class="eachOpt"></div>
+				</td>
+			</table>
+		   #{/list}
+		#{/if}
+		#{else}
+		   #{list items:0..5, as:'index'}
+			<table class="eachOptHolder nonner">
+				<td style="width:20px;">
+					<input type="${inputType}" data-cs-name="QUES_OPTION_${inputType}" value="${index}" 
+					name="takeTestOptInput" class="doCStream"/>
+				</td>
+				<td class="optAlphaCount"></td>
+				<td>
+					<div class="eachOpt"></div>
+				</td>
+			</table>
+		   #{/list}
+		#{/else}
+		</div>
+		<div class="testNumAns #{if question.type!="NUMERIC"}nonner#{/if}">
+			<span class="">Answer : </span>
+			<input class="numberTextBox numericAnsInputBox" 
+				placeholder="Use below keyboard for input" type="text"/>
+			#{common.virtualNumKeypad inputClassName:".numericAnsInputBox"/}
+		</div>
+		<div class="message nonner">Attempt <b>next subject</b> or <b>end exam</b></div>
+		<div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+	<div class="test_btns">
+		<input type="button" class="left mark_review_btn btns doCStream" data-cs-name="MARK_REVIEW_BTN" 
+			value="Mark For Review"/>
+		<input type="reset" class="left reset_btn btns doCStream" data-cs-name="RESET_BTN" value="Reset"/>
+	</div>
+	<div class="test_btns" style="float: left;">
+		<input type="button" class="right save_next_btn btns doCStream" data-cs-name="SAVE_BTN" value="Save & Next"/>
+		<input type="button" class="right skip_btn btns doCStream" data-cs-name="SKIP" value="Skip"/>
+		<div class="cleaner_with_divider">&nbsp;</div>
+	</div>
+	<div class="cleaner_with_divider">&nbsp;</div>
+</div>
+
+<div class="test_question_summary CSWidget" data-widget="ATTEMPT_TEST_QUES_SUMMARY_HOLDER">
+	<div class="sub_name">${data.boards.get(openBoardIndex).name}</div>
+	<div class="q_list">
+	%{ qIndex = 1;}%
+	#{if data.boards.get(openBoardIndex).questions.length()>0}
+	#{list items:0..data.boards.get(openBoardIndex).questions.length()-1, as:'qTypeIndex'}
+		%{ qTypeQuestions = data.boards.get(openBoardIndex).questions.get(qTypeIndex).questions;}%
+		#{if !qTypeQuestions.equals(null) && qTypeQuestions.length()>0}
+			#{list items:0..qTypeQuestions.length()-1, as:'index'}
+				<span class="each_question doCStream" data-cs-name="SHOW_QUES_LINK" 
+					data-qIndex="Q${qIndex}">Q${qIndex}</span>
+				%{qIndex++;}%
+			#{/list}
+		#{/if}
+	#{/list}
+	<div class="cleaner_with_divider">&nbsp;</div>
+	#{/if}
+	</div>
+	<div class="show_only_marked">
+		<input type="checkbox" class="doCStream" data-cs-name="SHOW_ONLY_QUES_MARKED_REVIEW" value="" /> <span>Show only marked for review questions</span>
+	</div>
+</div>
+<div class="cleaner_with_divider">&nbsp;</div>
+<div class="redTextColor italics" style="position:absolute;right:12%">
+	<div>Note : </div>
+	<ul>
+		<li> - Dont Press any keys while test is in progress.</li> 
+		<li> - Use mouse left key to answer all the question</li> 
+		<li class="greenTextColor"> All the best for the test</li> 
+	</ul>
+</div>
+<script type="text/javascript">
+	loadTestMJEqns($(".test_questions .question_body").get(0));
+	$($(".test_question_summary").find(".q_list .each_question").get(0)).addClass("current");
+	//takeTest.init();
+</script>
+	#{if play.mode.name()=='PROD'}
+	<script type="text/javascript">
+        	$(function(){
+                try{
+                        //$(window).bind("blur",windowOutFocused);//ALT+TAB SCENARIO
+                }catch(err){}
+        	});
+	</script>
+	#{/if}
+#{/if}
+#{else}
+	<script type="text/javascript">
+	$(function(){
+		alert("&{'TEST_TRY_AGAIN'}");
+		endCurrentExam("${testIdStr}","${targetType}","${targetId}");	
+	});	
+	</script>	
+#{/else}

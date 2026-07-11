@@ -1,0 +1,60 @@
+@(emailDetails: com.vedantu.eventbus.email.details.MailTemplateEmailDetails)(emailContent: Html)(user : com.vedantu.user.pojos.UserEmailInfo)
+@import org.apache.commons.lang3.StringUtils
+@appDomain( emailDetails ) { host =>  
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+
+
+<div style="margin:0px">
+<div style="background-color:#F7F7F7;width:620px;height:100%;margin:0 auto">
+     <div style="margin:0 auto;width:520px;font-family:lucida grande,tahoma,sans-serif;padding-top:45px;">
+	<div style="border:1px solid #DDD;background-color:#ffffff;">
+	    <img style="vertical-align:middle;color:#33bad7;font-size:25px;font-weight:bold;width:100%;background-color:#EEE;border-bottom:1px solid #DDD;text-align:center;max-height:115px;min-height:100px;" 
+		src="@host/public/images/email-template-topImage.png" alt="Learnpedia"/> <!-- alt="Vedantu"   -->
+	    <div style="padding:50px 8% 25px;color:#333333;font-size:14px;min-height:300px">
+		<div style="">Hi @user.getFullName(), </div>
+		<div style="padding:23px 0 50px;">
+                     @emailContent
+		</div>
+		<div style="font-weight:bold;">Happy Learning!</div>
+		<!--div style="">Team Vedantu</div-->
+	    </div>
+	</div>
+	<div style="padding-top:10px;text-align:center;font-size:12px;color:#999;">
+	<!--	<span>Powered by <a href="https://www.vedantu.com" style="color:#006699;">Vedantu<sup>&reg;</sup></a></span> -->
+	<span>Powered by <a href="https://www.learnpedia.in" style="color:#006699;">Learnpedia<sup>&reg;</sup></a></span>
+	</div>
+	<div style="padding:13px 10px 15px;font-size:12px;color:#999;text-align:center">
+		<!--  <div>For further queries, drop us a mail at <a style="color:#4699CF" href="mailto:contact@@vedantu.com" target="_blank">contact@@vedantu.com</a></div> -->
+		<div>For further queries, <strong>Reply Back</strong> to this email <!-- <a style="color:#4699CF" href="mailto:contact@@learnpedia.in" target="_blank">contact@@learnpedia.in</a> -->
+        </div>
+		<!-- <div style="padding:6px 0;color:#4699CF;font-size:11px;">
+			<a href="http://www.facebook.com/learnpediaIN" target="_blank">facebook</a>
+			<span> | </span>
+			<a href="https://twitter.com/learnpediaIN" target="_blank">Twitter</a>
+			<span> | </span>
+			<a href="https://www.linkedin.com/company/learnpedia" target="_blank">LinkedIn</a>
+			<span> | </span>
+			<a href="https://www.youtube.com/channel/UCpSlhIcpbaEaUYBhw2D0YQA" target="_blank">YouTube</a>
+		</div> -->
+	</div>
+	@defining(user.getGeneratedCode()){ code =>
+	@if( StringUtils.isNotEmpty(  code )){
+	
+	  <div style="font-size:11px;color:#abacad;padding:5px 20px 12px;text-align:center;">
+	        <div>You recieved this mail because you have subscribed to get email noifications from our organization</div>
+        	<div>
+                	<a href="@host/register/unsubscribeEmail?user=@user.id&mailCategory=@code"
+                        	style="color:#666;">
+                        	<span style="font-size:11px;">Unsubscribe</span>        
+                	</a>
+                <span> if you do not wish to recieve such mails further.</span>
+        	</div>
+	   </div>
+	}
+	}
+     </div>
+</div>
+</div>
+
+</body></html>
+}

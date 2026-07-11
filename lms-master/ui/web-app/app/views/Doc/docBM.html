@@ -1,0 +1,21 @@
+            #{if bms.result.length()>0}
+              %{
+                bms=bms.result;
+              }%
+          <table width="100%" class="tableBM">
+              <tbody>
+                    #{list items:0..bms.length()-1,as:'i'}
+                            %{
+                                   bm=bms.get(i);
+                            }%
+                          <tr data-page-id='${bm.pageId}' data-bm-id="${bm.bookmarkId}" class='deletexPa'>
+                              <td class='deletex deleteBM' style="width: 20px;"><img src='/public/images/rem.png' alt='remove'/></td>
+                              <td class='clickBM'>${bm.title}</td><td style="width: 30px;">${bm.pageNumber+1}</td>
+                          </tr>
+                    #{/list}
+               </tbody>
+            </table>
+            #{/if}
+            #{else}
+                <div class="userMessage"> No bookmarks listed</div>
+            #{/else}
