@@ -16,6 +16,8 @@ instance.env
 # ===== Dependencies / vendored runtimes =====
 node_modules/
 .m2repo/
+.mvnrepo/
+**/.mvnrepo/
 .pnp
 .pnp.js
 lms-local/play-1.2.4/
