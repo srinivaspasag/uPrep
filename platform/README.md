@@ -40,6 +40,74 @@ npm run dev                 # http://localhost:3000
 
 Mobile build steps: `mobile/android/README.md` and `mobile/ios/README.md`.
 
+## Build & deploy
+
+The live deployment details (host, containers, source↔host mapping) are in
+[`deploy/DEPLOYMENT.md`](deploy/DEPLOYMENT.md). Run these from the repo root.
+
+### A) Redeploy the web app (most common — what's live)
+
+The `ui` container builds itself from mounted source on start, so you ship
+source and recreate it (no image build):
+
+```bash
+# 1. optional local sanity check
+cd platform/web && npm install && npm run build && cd ../..
+
+# 2. ship source to the box (no --delete; skips deps/uploads)
+rsync -az --exclude node_modules --exclude .next --exclude 'public/uploads' \
+  -e "ssh -i platform/deploy/uprep-key.pem" \
+  platform/web/ ubuntu@<EIP>:~/uprep/uprep-ui/
+
+# 3. recreate the container (re-runs npm install + next build + start)
+ssh -i platform/deploy/uprep-key.pem ubuntu@<EIP> \
+  'cd ~/uprep && docker compose up -d --force-recreate ui && docker compose logs -f ui'
+```
+
+`<EIP>` is the host IP in `platform/deploy/instance.env` (git-ignored).
+
+### B) Build a Docker image + save/load onto the server
+
+No registry needed — `docker save` locally, `docker load` on the box:
+
+```bash
+cd platform
+
+# 1. build (nextgen backend -> uprep-lms:latest)
+docker compose build            # or: docker build -t uprep-lms:latest ./backend
+
+# 2. save -> copy -> load -> run
+docker save uprep-lms:latest | gzip > uprep-lms.tar.gz
+scp -i deploy/uprep-key.pem uprep-lms.tar.gz ubuntu@<EIP>:~/uprep/
+ssh -i deploy/uprep-key.pem ubuntu@<EIP> \
+  'cd ~/uprep && gunzip -c uprep-lms.tar.gz | docker load && docker compose up -d'
+```
+
+Bundle all images at once (like the existing `images.tar.gz` on the box):
+
+```bash
+docker save uprep-lmsbe:aws mongo:3.4 caddy:2 node:20-bullseye alpine/socat \
+  | gzip > images.tar.gz            # on box: gunzip -c images.tar.gz | docker load
+```
+
+### C) Full stack locally (dev)
+
+```bash
+cd platform
+cp .env.example .env
+docker compose up -d --build                       # backend + mongo + website
+# lite subset: docker compose -f docker-compose.lite.yml up -d --build
+cd web && npm install && npm run dev               # http://localhost:3000
+```
+
+### Verify after any deploy
+
+```bash
+BASE=https://<EIP>.sslip.io
+curl -sL -o /dev/null -w "%{http_code}\n" $BASE/    # expect 200
+bash platform/deploy/qa-chain.sh                     # CMDS pipeline end-to-end
+```
+
 ## Notes
 
 - Secrets (`.env`, keystores, `*.pem`) are git-ignored — never commit them.
