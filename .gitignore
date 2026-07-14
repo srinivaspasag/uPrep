@@ -69,7 +69,7 @@ demo-slot-booking-master/
 
 # ===== Runtime data / scratch (not source) =====
 .tmp_boards/
-uprep-ui/public/uploads/
+platform/web/public/uploads/
 
 # ===== Stray root binaries / docs =====
 /*.pdf

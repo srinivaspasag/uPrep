@@ -1,52 +1,36 @@
 # UPrep
 
 Learning-management platform (LMS + CMDS) — a modern Next.js UI on top of the
-UPrep/Learnpedia backend services, with native mobile wrappers.
+UPrep backend services, with native mobile wrappers.
+
+The **actively maintained stack lives in [`platform/`](platform/)**
+(backend, web, website, mobile, observability, deploy, docs). Start there.
 
 For the full architecture and the legacy-to-cloud migration story, see
-[`docs/UPREP_ARCHITECTURE_AND_MIGRATION.md`](docs/UPREP_ARCHITECTURE_AND_MIGRATION.md).
+[`platform/docs/UPREP_ARCHITECTURE_AND_MIGRATION.md`](platform/docs/UPREP_ARCHITECTURE_AND_MIGRATION.md).
 
 ## Repository layout
 
 | Path | What it is |
 |------|------------|
-| `uprep-ui/` | **Main app** — Next.js + React + TypeScript. Student LMS (`/learn/*`) and admin CMDS (`/cmds/*`), with ~47 API routes talking to MongoDB. |
-| `uprep-android/` | Native Android wrapper (Kotlin WebView) around the deployed web app. |
-| `uprep-ios/` | Native iOS wrapper (Swift `WKWebView`). Generated with XcodeGen. |
-| `lms_nextgen-master/` | Next-gen backend — Spring Boot API services (the long-term backend). Built into one image; each service selected via `SERVICE` env var. |
-| `lms-master/` | Legacy Play Framework system (Play 2.1 backend services + Play 1.2.4 UI). Still containerized for the current deploy. |
-| `virtual-classroom-service-main/` | Virtual classroom service. |
-| `uprep-website-master/` | Public marketing site (PHP). |
-| `lms-local/` | Dockerfiles + seed scripts for running the legacy stack locally. |
-| `mongo-scripts-master/`, `scripts-master/` | Database and ops scripts. |
-| `proxy-server-master/`, `secure-api-master/`, `logs-server-master/`, `sdcard-server-master/`, `organisation-logos-master/` | Supporting legacy microservices. |
-| `deploy/` | Deployment scripts, Caddyfile, compose for the host. |
-| `docs/` | Architecture and migration documentation. |
+| `platform/` | **The modern platform** — everything currently maintained. See [`platform/README.md`](platform/README.md). |
+| `legacy/` | **Everything old**, kept for reference only: the Play Framework system (`lms-master`), local seed scripts (`lms-local`), and supporting legacy microservices (`proxy-server-master`, `secure-api-master`, `sdcard-server-master`, `organisation-logos-master`, `scripts-master`). Not required to build or run the platform. |
 
-## Quick start (local)
+The repo is a clean two-way split: **`platform/` = new/maintained**, **`legacy/`
+= old/reference**. Everything under `platform/` is self-contained.
 
-Prerequisites: Docker + Docker Compose, Node.js 18+.
+## Quick start
 
 ```bash
-cp .env.example .env        # fill in values
-
-# Backend services + Mongo (full stack)
+cd platform
+cp .env.example .env        # fill in values (never commit .env)
 docker compose up -d --build
-# ...or the lite subset for a small box:
-# docker compose -f docker-compose.lite.yml up -d --build
-
-# The web app
-cd uprep-ui
-npm install
-npm run dev                 # http://localhost:3000
 ```
 
-Mobile apps have their own build instructions in `uprep-android/README.md` and
-`uprep-ios/README.md`.
+Full instructions are in [`platform/README.md`](platform/README.md).
 
 ## Notes
 
 - Secrets (`.env`, keystores, `*.pem`) are git-ignored — never commit them.
-- Large legacy/peripheral projects (the old Windows "Score" desktop app, the
-  offline-assessment PHP app, and the legacy Android apps) are intentionally not
-  in this repo; they live in the separate archive backups.
+- Large legacy/peripheral projects are kept for reference; they are not part of
+  the maintained platform.

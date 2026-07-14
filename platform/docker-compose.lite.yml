@@ -1,0 +1,65 @@
+# Uprep LMS — LITE profile for a strict-$0 small box (~1 GB RAM free tier:
+# Oracle AMD VM.Standard.E2.1.Micro, or Google Cloud e2-micro).
+#
+# Runs only the demo-critical subset:
+#   mongo + user-services (auth) + content-services (courses/tests).
+#
+#   docker compose -f docker-compose.lite.yml up -d --build
+#
+# IMPORTANT: a 1 GB box MUST have swap. On the VM, first run:
+#   sudo fallocate -l 3G /swapfile && sudo chmod 600 /swapfile \
+#     && sudo mkswap /swapfile && sudo swapon /swapfile \
+#     && echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+#
+# The image is the same uprep-lms:latest built from lms_nextgen-master; we just
+# run fewer containers and cap heaps hard.
+
+x-lms-lite: &lms-lite
+  image: uprep-lms-lite:latest
+  build:
+    context: ./backend
+    dockerfile: Dockerfile.lite
+  restart: unless-stopped
+  depends_on:
+    mongo:
+      condition: service_healthy
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    # Cap WiredTiger cache so Mongo doesn't eat the whole box.
+    command: ["mongod", "--wiredTigerCacheSizeGB", "0.25"]
+    volumes:
+      - mongo-data:/data/db
+    mem_limit: 420m
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  user-services:
+    <<: *lms-lite
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVICE: user-services
+      SERVER_PORT: "8081"
+      SPRING_DATA_MONGODB_HOST: mongo
+      JAVA_OPTS: "-Xms64m -Xmx170m -XX:MaxMetaspaceSize=110m -XX:+UseSerialGC -XX:TieredStopAtLevel=1"
+    mem_limit: 360m
+    ports: ["8081:8081"]
+
+  content-services:
+    <<: *lms-lite
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVICE: content-services
+      SERVER_PORT: "8083"
+      SPRING_DATA_MONGODB_HOST: mongo
+      JAVA_OPTS: "-Xms64m -Xmx200m -XX:MaxMetaspaceSize=120m -XX:+UseSerialGC -XX:TieredStopAtLevel=1"
+    mem_limit: 400m
+    ports: ["8083:8083"]
+
+volumes:
+  mongo-data:
