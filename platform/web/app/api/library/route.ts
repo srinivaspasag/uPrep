@@ -33,6 +33,9 @@ type LibraryItem = {
   totalMarks: number;
   difficulty: string | null;
   url?: string | null;
+  embedUrl?: string | null;
+  provider?: string | null;
+  linkType?: string | null;
 };
 
 // Lists browsable content (tests + modules) for an org directly from MongoDB.
@@ -74,6 +77,9 @@ export async function GET(req: NextRequest) {
           totalMarks: d.totalMarks ?? 0,
           difficulty: d.difficulty ?? null,
           url: d.url ?? null,
+          embedUrl: d.embedUrl ?? null,
+          provider: d.provider ?? null,
+          linkType: d.linkType ?? null,
         });
       }
     }

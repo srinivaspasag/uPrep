@@ -7,6 +7,8 @@ export type UprepSession = {
   memberId?: string | null;
   thumbnail?: string;
   authType?: string;
+  profile?: string;
+  isSuperAdmin?: boolean;
 };
 
 const KEY = "uprep_session";
@@ -30,5 +32,9 @@ export function setSession(s: unknown) {
 export function clearSession() {
   try {
     sessionStorage.removeItem(KEY);
+  } catch {}
+  // Also drop the server-trusted session cookie so CMDS access is revoked.
+  try {
+    fetch("/api/auth/logout", { method: "POST", keepalive: true });
   } catch {}
 }

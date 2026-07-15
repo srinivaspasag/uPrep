@@ -14,6 +14,8 @@ type LibraryItem = {
   totalMarks: number;
   difficulty: string | null;
   url?: string | null;
+  embedUrl?: string | null;
+  provider?: string | null;
 };
 type Program = { id: string; name: string; code: string | null };
 
@@ -235,7 +237,18 @@ function ContentCard({
         </div>
       )}
       {item.type === "MODULE" && <div className="mt-2 text-xs text-slate-500">Module</div>}
-      {item.type === "VIDEO" && item.url && (
+      {item.type === "VIDEO" && item.embedUrl && (
+        <div className="mt-2 aspect-video w-full overflow-hidden rounded">
+          <iframe
+            src={item.embedUrl}
+            className="h-full w-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={item.name}
+          />
+        </div>
+      )}
+      {item.type === "VIDEO" && !item.embedUrl && item.url && (
         <video src={item.url} controls className="mt-2 w-full rounded" />
       )}
       {item.type === "DOCUMENT" && (

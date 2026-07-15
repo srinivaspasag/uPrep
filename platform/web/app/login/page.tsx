@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { isStaff } from "@/lib/roles";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,10 +28,19 @@ export default function LoginPage() {
         return;
       }
       // Persist the returned session/member and continue into the app.
+      const result = data.result ?? data;
       try {
-        sessionStorage.setItem("uprep_session", JSON.stringify(data.result ?? data));
+        sessionStorage.setItem("uprep_session", JSON.stringify(result));
       } catch {}
-      router.push("/learn/library");
+      // Staff land in the CMDS console (honoring a ?next=/cmds/... redirect);
+      // students go to the learn app. Mirrors the legacy app split.
+      const staff = isStaff(result?.profile);
+      const next = new URLSearchParams(window.location.search).get("next");
+      if (staff) {
+        router.push(next && next.startsWith("/cmds") ? next : "/cmds");
+      } else {
+        router.push("/learn/library");
+      }
     } catch {
       setError("Network error — please try again");
     } finally {
