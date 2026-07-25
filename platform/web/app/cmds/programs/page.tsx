@@ -14,9 +14,14 @@ type Program = {
   sectionCount: number;
 };
 
+type SharedPack = { id: string; name: string; courseCount: number };
+type SharedCourse = { id: string; name: string; granted?: boolean };
+
 export default function CmdsProgramsPage() {
   const [session, setSession] = useState<UprepSession | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [sharedPacks, setSharedPacks] = useState<SharedPack[]>([]);
+  const [sharedCourses, setSharedCourses] = useState<SharedCourse[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -30,9 +35,19 @@ export default function CmdsProgramsPage() {
 
   async function load() {
     setLoading(true);
+    const safe = (url: string) =>
+      fetch(url)
+        .then((r) => (r.ok ? r.json() : {}))
+        .catch(() => ({}));
     try {
-      const d = await (await fetch("/api/cmds/programs")).json();
-      setPrograms(d.programs || []);
+      const [prog, pks, crs] = await Promise.all([
+        safe("/api/cmds/programs"),
+        safe("/api/cmds/enroll/pack"),
+        safe("/api/cmds/enroll?courses=1"),
+      ]);
+      setPrograms(prog.programs || []);
+      setSharedPacks(pks.packs || []);
+      setSharedCourses((crs.courses || []).filter((c: SharedCourse) => c.granted));
     } finally {
       setLoading(false);
     }
@@ -77,6 +92,61 @@ export default function CmdsProgramsPage() {
             + Create Program
           </button>
         </div>
+
+        {!loading && (sharedPacks.length > 0 || sharedCourses.length > 0) && (
+          <div className="mt-6 rounded-lg border border-indigo-100 bg-indigo-50/50 p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-indigo-700">
+                  Shared with your institute
+                </h2>
+                <p className="mt-1 text-xs text-slate-500">
+                  Content a super admin granted to you. Assign it to a student to make it visible in
+                  their library.
+                </p>
+              </div>
+              <Link
+                href="/cmds/tools/enroll"
+                className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+              >
+                Assign to students →
+              </Link>
+            </div>
+
+            {sharedPacks.length > 0 && (
+              <div className="mt-4">
+                <div className="text-xs font-medium text-slate-400">Course packs</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {sharedPacks.map((p) => (
+                    <span
+                      key={p.id}
+                      className="rounded-full border border-indigo-200 bg-white px-3 py-1 text-sm font-medium text-indigo-700"
+                    >
+                      {p.name}{" "}
+                      <span className="text-indigo-400">({p.courseCount} courses)</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {sharedCourses.length > 0 && (
+              <div className="mt-4">
+                <div className="text-xs font-medium text-slate-400">Courses</div>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {sharedCourses.map((c) => (
+                    <div
+                      key={c.id}
+                      className="rounded border border-slate-100 bg-white px-3 py-2 text-sm text-slate-700"
+                    >
+                      {c.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="mt-6">
           {loading ? (

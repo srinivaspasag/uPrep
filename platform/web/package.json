@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed:superuser": "node scripts/seed-superuser.js"
   },
   "dependencies": {
     "katex": "^0.16.11",

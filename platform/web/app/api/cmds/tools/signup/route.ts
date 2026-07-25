@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ const DEFAULTS = {
 };
 
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const doc: any = await db.collection("signupconfigs").findOne({ orgId });
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as any;
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   try {
     const db = await getDb();
     const set = {

@@ -3,20 +3,31 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getSession, clearSession, type UprepSession } from "@/lib/session";
+import { getSession, clearSession, setSession as persistSession, type UprepSession } from "@/lib/session";
+import { isSuperAdmin } from "@/lib/roles";
+import ImpersonationBanner from "@/components/ImpersonationBanner";
 // Native CMDS Tools screens (rebuilt from the legacy cmds-app, wired to the same
-// backend/Mongo data).
-type ToolLink = { label: string; href: string };
+// backend/Mongo data). `superAdminOnly` links are hidden from regular org admins
+// (the pages themselves also enforce super-admin access server-side).
+type ToolLink = { label: string; href: string; superAdminOnly?: boolean };
 const TOOL_LINKS: ToolLink[] = [
   { label: "Organization Info", href: "/cmds/tools/organization" },
+  { label: "Organizations (Super Admin)", href: "/cmds/tools/organizations", superAdminOnly: true },
+  { label: "Course Packs (Super Admin)", href: "/cmds/tools/course-packs", superAdminOnly: true },
   { label: "Edit Academic Structure", href: "/cmds/tools/academic" },
   { label: "People Management", href: "/cmds/tools/people" },
+  { label: "Assign Courses", href: "/cmds/tools/enroll" },
+  { label: "Sections & Batches", href: "/cmds/tools/sections" },
+  { label: "Schedule a Test", href: "/cmds/tests/schedule" },
+  { label: "Test Analytics", href: "/cmds/tests/analytics" },
+  { label: "Subjective Grading", href: "/cmds/tests/grading" },
   { label: "Boards & Courses", href: "/cmds/tools/boards" },
   { label: "Schedule / Classroom", href: "/cmds/tools/schedule" },
   { label: "Device Management", href: "/cmds/tools/devices" },
   { label: "Challenge Channels", href: "/cmds/tools/channels" },
   { label: "Send Notification", href: "/cmds/tools/notifications" },
   { label: "News Feed", href: "/cmds/tools/news" },
+  { label: "Payments & Coupons", href: "/cmds/tools/commerce" },
   { label: "Referrals", href: "/cmds/tools/referrals" },
   { label: "External Signup", href: "/cmds/tools/signup" },
   { label: "Exports / SD Cards", href: "/cmds/tools/exports" },
@@ -39,12 +50,24 @@ export default function CmdsShell({
   const toolsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const s = getSession();
-    if (!s) {
-      router.replace("/login");
-      return;
-    }
-    setSession(s);
+    // Show the cached snapshot immediately, then rehydrate from the
+    // server-trusted session so profile/isSuperAdmin are always accurate (a
+    // stale cache could otherwise hide the super-admin-only tools).
+    const cached = getSession();
+    if (cached) setSession(cached);
+    fetch("/api/auth/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.result) {
+          setSession(d.result);
+          persistSession(d.result);
+        } else if (!cached) {
+          router.replace("/login");
+        }
+      })
+      .catch(() => {
+        if (!cached) router.replace("/login");
+      });
   }, [router]);
 
   useEffect(() => {
@@ -62,6 +85,7 @@ export default function CmdsShell({
 
   return (
     <div className="min-h-screen bg-white text-[#333]">
+      <ImpersonationBanner />
       {/* Black title bar */}
       <div className="flex h-9 items-center justify-center bg-[#1a1a1a] px-4 text-white">
         <div className="text-sm">
@@ -133,7 +157,9 @@ export default function CmdsShell({
             </button>
             {toolsOpen && (
               <div className="absolute right-0 z-40 mt-2 w-56 rounded-md border border-slate-200 bg-white py-1 text-sm shadow-lg">
-                {TOOL_LINKS.map((t) => (
+                {TOOL_LINKS.filter(
+                  (t) => !t.superAdminOnly || isSuperAdmin(session?.profile, session?.isSuperAdmin)
+                ).map((t) => (
                   <Link
                     key={t.href}
                     href={t.href}

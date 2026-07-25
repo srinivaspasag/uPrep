@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
 // Challenge Channels — mirrors content-service :19013 /channels. The legacy
 // stack has no `channels` collection seeded, so we manage it here directly.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const docs = await db
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as { name?: string; orgId?: string; userId?: string };
   const name = (b.name || "").trim();
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   if (!name) return NextResponse.json({ error: "Title is required" }, { status: 400 });
 
   try {

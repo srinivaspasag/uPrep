@@ -129,12 +129,30 @@ export default function ProgramDetailPage() {
 function ContentTab({ query }: { query: string }) {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<string | null>(null);
+  const isAdmin = (getSession()?.profile || "").trim().toUpperCase() === "MANAGER";
+
+  async function load() {
+    const d = await (await fetch("/api/cmds/content")).json();
+    setRows(d.resources || []);
+    setLoading(false);
+  }
   useEffect(() => {
-    fetch("/api/cmds/content")
-      .then((r) => r.json())
-      .then((d) => setRows(d.resources || []))
-      .finally(() => setLoading(false));
+    load();
   }, []);
+
+  async function toggle(r: any) {
+    if (r.type === "FOLDER") return; // visibility applies to content items, not folders
+    setBusy(r.id);
+    await fetch("/api/cmds/content", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: r.id, type: r.type, action: "visibility", hidden: !r.hidden }),
+    });
+    setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, hidden: !x.hidden } : x)));
+    setBusy(null);
+  }
+
   const visible = useMemo(
     () =>
       rows.filter((r) => (r.title || "").toLowerCase().includes(query.toLowerCase())),
@@ -152,6 +170,9 @@ function ContentTab({ query }: { query: string }) {
           + Add Content
         </Link>
       </div>
+      <p className="mt-1 text-xs text-slate-400">
+        Toggle a row to make it visible or invisible on learn / device for students.
+      </p>
       <div className="mt-3 overflow-hidden rounded border border-slate-200">
         <table className="w-full text-sm">
           <thead>
@@ -159,18 +180,19 @@ function ContentTab({ query }: { query: string }) {
               <th className="px-4 py-2 font-medium">Title</th>
               <th className="px-4 py-2 font-medium">Type</th>
               <th className="px-4 py-2 font-medium">Visibility Status</th>
+              <th className="w-32 px-4 py-2 font-medium" />
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={3} className="px-4 py-10 text-center text-slate-400">
+                <td colSpan={4} className="px-4 py-10 text-center text-slate-400">
                   Loading…
                 </td>
               </tr>
             ) : visible.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-4 py-10 text-center text-slate-400">
+                <td colSpan={4} className="px-4 py-10 text-center text-slate-400">
                   No content
                 </td>
               </tr>
@@ -180,7 +202,28 @@ function ContentTab({ query }: { query: string }) {
                   <td className="px-4 py-3 text-slate-700">{r.title}</td>
                   <td className="px-4 py-3 text-slate-500">{r.type}</td>
                   <td className="px-4 py-3">
-                    <span className="text-emerald-600">● Published</span>
+                    {r.type === "FOLDER" ? (
+                      <span className="text-slate-300">—</span>
+                    ) : r.hidden ? (
+                      <span className="text-amber-600">● Invisible</span>
+                    ) : (
+                      <span className="text-emerald-600">● Visible</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {r.type !== "FOLDER" && isAdmin && (
+                      <button
+                        disabled={busy === r.id}
+                        onClick={() => toggle(r)}
+                        className="rounded border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+                      >
+                        {busy === r.id
+                          ? "…"
+                          : r.hidden
+                          ? "Make visible"
+                          : "Make invisible"}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

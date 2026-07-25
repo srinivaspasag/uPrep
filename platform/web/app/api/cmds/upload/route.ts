@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { saveUpload } from "@/lib/storage";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
   const name = String(form.get("name") || "").trim();
   const subject = String(form.get("subject") || "").trim();
   const userId = String(form.get("userId") || "");
-  const orgId = String(form.get("orgId") || DEFAULT_ORG_ID);
+  const orgId = await resolveOrgId(req, String(form.get("orgId") || ""));
   const folderId = String(form.get("folderId") || "").trim() || null;
   const file = form.get("file");
 

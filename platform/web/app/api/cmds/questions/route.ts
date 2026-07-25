@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ type AddQuestionBody = {
 export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as AddQuestionBody;
   const userId = b.userId || "";
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   const type = (b.type || "SCQ") as QType;
   const content = (b.content || "").trim();
   const options = (b.options || []).map((o) => o.trim());

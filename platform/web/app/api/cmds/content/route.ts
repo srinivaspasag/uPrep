@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -14,13 +16,14 @@ type ResourceRow = {
   addedAt: number;
   url?: string | null;
   count?: number;
+  hidden?: boolean; // true = invisible on learn/device (students can't see it)
 };
 
 // GET: aggregate all Institute Resources across content collections. When
 // `parentId` is supplied, only content inside that folder is returned (folders
 // via `parentId`, other content via `folderId`); at root, only unfiled content.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   const subject = req.nextUrl.searchParams.get("subject"); // optional filter
   const typeFilter = req.nextUrl.searchParams.get("type"); // optional: FOLDER etc.
   const parentId = req.nextUrl.searchParams.get("parentId"); // folder id or null=root
@@ -58,16 +61,17 @@ export async function GET(req: NextRequest) {
         .limit(200)
         .toArray();
       for (const d of docs as any[]) {
-        rows.push({
-          id: String(d._id),
-          title: d.name || d.title || "(untitled)",
-          type,
-          subject: d.subject ?? null,
-          addedBy: d.userId ?? null,
-          addedAt: Number(d.timeCreated) || Number(d.lastUpdated) || 0,
-          url: d.url ?? null,
-          ...map(d),
-        });
+      rows.push({
+        id: String(d._id),
+        title: d.name || d.title || "(untitled)",
+        type,
+        subject: d.subject ?? null,
+        addedBy: d.userId ?? null,
+        addedAt: Number(d.timeCreated) || Number(d.lastUpdated) || 0,
+        url: d.url ?? null,
+        hidden: !!d.hidden,
+        ...map(d),
+      });
       }
     };
 
@@ -115,12 +119,14 @@ const COLL_FOR_TYPE: Record<string, string> = {
 type MutateBody = {
   id?: string;
   type?: string;
-  action?: "rename" | "move";
+  action?: "rename" | "move" | "visibility";
   name?: string;
   folderId?: string | null;
+  hidden?: boolean;
 };
 
-// PATCH: rename a resource, or move it into a folder (folderId null = root).
+// PATCH: rename a resource, move it into a folder (folderId null = root), or
+// toggle its student visibility (Make Visible / Invisible on learn/device).
 export async function PATCH(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as MutateBody;
   const coll = COLL_FOR_TYPE[String(b.type || "").toUpperCase()];
@@ -136,6 +142,13 @@ export async function PATCH(req: NextRequest) {
     // Folders track parentId; other content tracks folderId.
     const field = String(b.type).toUpperCase() === "FOLDER" ? "parentId" : "folderId";
     set[field] = b.folderId || null;
+  } else if (b.action === "visibility") {
+    // Visibility is an admin-only control (Institute/Super Admin), not teachers.
+    const session = await sessionFromReq(req);
+    if ((session?.profile || "").trim().toUpperCase() !== "MANAGER")
+      return NextResponse.json({ error: "Only institute admins can change visibility." }, { status: 403 });
+    // hidden=true removes it from student library/course browse; staff still see it.
+    set.hidden = !!b.hidden;
   } else {
     return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
   }
@@ -184,7 +197,7 @@ export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => ({}))) as CreateBody;
   const kind = (body.kind || "").toLowerCase();
   const name = (body.name || "").trim();
-  const orgId = body.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, body.orgId);
   const userId = body.userId || "";
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
 

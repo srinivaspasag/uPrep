@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
 // Schedule / Classroom Connect — a `schedules` collection ({title, startAt,
 // durationMin, teacher, center, joinUrl}).
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const docs = await db
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
     const _id = new ObjectId();
     await db.collection("schedules").insertOne({
       _id,
-      orgId: b.orgId || DEFAULT_ORG_ID,
+      orgId: await resolveOrgId(req, b.orgId),
       title,
       startAt: b.startAt || null,
       durationMin: Math.max(15, Math.round(Number(b.durationMin) || 60)),

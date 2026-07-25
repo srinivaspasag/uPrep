@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId, Long } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ function stripHtml(s: unknown): string {
 
 // GET: list published library questions available to compose into a test.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const docs = await db
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
   const durationMin = Math.max(1, Math.round(Number(body.durationMin) || 30));
   const positive = Math.max(1, Math.round(Number(body.positive) || 4));
   const negative = Math.max(0, Math.round(Number(body.negative) || 1));
-  const orgId = body.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, body.orgId);
   const actorId = body.userId || "";
   const questionIds = Array.isArray(body.questionIds) ? body.questionIds : [];
 

@@ -15,6 +15,7 @@ type Resource = {
   addedAt: number;
   url?: string | null;
   count?: number;
+  hidden?: boolean;
 };
 
 type Crumb = { id: string; name: string };
@@ -56,6 +57,7 @@ export default function CmdsResourcesPage() {
   const addRef = useRef<HTMLDivElement>(null);
 
   const currentFolderId = path.length ? path[path.length - 1].id : null;
+  const isAdmin = (session?.profile || "").trim().toUpperCase() === "MANAGER";
 
   useEffect(() => {
     setSession(getSession());
@@ -161,6 +163,15 @@ export default function CmdsResourcesPage() {
     if (!window.confirm(`Delete "${r.title}"? This can't be undone from the UI.`)) return;
     await fetch(`/api/cmds/content?id=${encodeURIComponent(r.id)}&type=${encodeURIComponent(r.type)}`, {
       method: "DELETE",
+    });
+    load();
+  }
+
+  async function toggleVisibility(r: Resource) {
+    await fetch("/api/cmds/content", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: r.id, type: r.type, action: "visibility", hidden: !r.hidden }),
     });
     load();
   }
@@ -276,6 +287,11 @@ export default function CmdsResourcesPage() {
                         <div className="flex items-center gap-2">
                           <span>{TYPE_ICON[r.type] || "📄"}</span>
                           <RowTitle r={r} onOpenFolder={openFolder} />
+                          {r.hidden && (
+                            <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-600">
+                              Hidden
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-slate-500">{r.addedBy || "—"}</td>
@@ -285,8 +301,12 @@ export default function CmdsResourcesPage() {
                       <td className="px-4 py-3 text-slate-400">{label(r.type)}</td>
                       <td className="px-4 py-3">
                         <RowActions
+                          hidden={!!r.hidden}
+                          isFolder={r.type === "FOLDER"}
+                          canToggleVisibility={isAdmin}
                           onRename={() => renameResource(r)}
                           onMove={() => setMoveTarget(r)}
+                          onToggleVisibility={() => toggleVisibility(r)}
                           onDelete={() => deleteResource(r)}
                         />
                       </td>
@@ -370,12 +390,20 @@ function RowTitle({ r, onOpenFolder }: { r: Resource; onOpenFolder: (r: Resource
 }
 
 function RowActions({
+  hidden,
+  isFolder,
+  canToggleVisibility,
   onRename,
   onMove,
+  onToggleVisibility,
   onDelete,
 }: {
+  hidden: boolean;
+  isFolder: boolean;
+  canToggleVisibility: boolean;
   onRename: () => void;
   onMove: () => void;
+  onToggleVisibility: () => void;
   onDelete: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -415,6 +443,17 @@ function RowActions({
           >
             Move to folder
           </button>
+          {!isFolder && canToggleVisibility && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                onToggleVisibility();
+              }}
+              className="block w-full px-4 py-2 text-left text-slate-600 hover:bg-slate-50"
+            >
+              {hidden ? "Make visible to students" : "Hide from students"}
+            </button>
+          )}
           <button
             onClick={() => {
               setOpen(false);

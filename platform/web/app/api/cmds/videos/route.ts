@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 import { parseVideoUrl } from "@/lib/video";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
   const name = String(body?.name || "").trim();
   const subject = String(body?.subject || "").trim();
   const userId = String(body?.userId || "");
-  const orgId = String(body?.orgId || DEFAULT_ORG_ID);
+  const orgId = await resolveOrgId(req, body?.orgId);
   const folderId = String(body?.folderId || "").trim() || null;
   const rawUrl = String(body?.url || "").trim();
 

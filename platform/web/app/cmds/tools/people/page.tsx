@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import CmdsShell from "@/components/CmdsShell";
-import { getSession, type UprepSession } from "@/lib/session";
+import { getSession, setSession, setImpersonating, type UprepSession } from "@/lib/session";
+import { isStaff } from "@/lib/roles";
 
 type Member = {
   id: string;
@@ -18,7 +20,8 @@ type Member = {
 const PROFILES = ["STUDENT", "OFFLINE_USER", "TEACHER", "MANAGER", "EDITOR", "SALESPERSON"];
 
 export default function PeoplePage() {
-  const [session, setSession] = useState<UprepSession | null>(null);
+  const router = useRouter();
+  const [session, setSessionState] = useState<UprepSession | null>(null);
   const [profile, setProfile] = useState("STUDENT");
   const [query, setQuery] = useState("");
   const [members, setMembers] = useState<Member[]>([]);
@@ -26,6 +29,7 @@ export default function PeoplePage() {
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [editing, setEditing] = useState<Member | null>(null);
+  const [resetting, setResetting] = useState<Member | null>(null);
 
   async function deactivate(m: Member) {
     if (!confirm(`Deactivate ${m.firstName} ${m.lastName}?`)) return;
@@ -34,8 +38,27 @@ export default function PeoplePage() {
   }
 
   useEffect(() => {
-    setSession(getSession());
+    setSessionState(getSession());
   }, []);
+
+  async function impersonate(m: Member) {
+    if (!confirm(`Sign in as ${m.firstName} ${m.lastName}? You can return to your admin account anytime.`))
+      return;
+    const res = await fetch("/api/auth/impersonate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ memberId: m.id }),
+    });
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(d.error || "Could not start impersonation");
+      return;
+    }
+    const result = d.result;
+    setSession(result);
+    setImpersonating(`${m.firstName} ${m.lastName}`.trim() || m.memberId || "user");
+    router.push(isStaff(result?.profile) ? "/cmds" : "/learn/library");
+  }
 
   async function load() {
     setLoading(true);
@@ -162,6 +185,18 @@ export default function PeoplePage() {
                           Edit
                         </button>
                         <button
+                          onClick={() => setResetting(m)}
+                          className="text-amber-600 hover:underline"
+                        >
+                          Reset password
+                        </button>
+                        <button
+                          onClick={() => impersonate(m)}
+                          className="text-purple-600 hover:underline"
+                        >
+                          Login as
+                        </button>
+                        <button
                           onClick={() => deactivate(m)}
                           className="text-red-500 hover:underline"
                         >
@@ -200,7 +235,112 @@ export default function PeoplePage() {
           }}
         />
       )}
+
+      {resetting && (
+        <ResetPasswordModal member={resetting} onClose={() => setResetting(null)} />
+      )}
     </CmdsShell>
+  );
+}
+
+function ResetPasswordModal({ member, onClose }: { member: Member; onClose: () => void }) {
+  const [newPassword, setNewPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState<{ loginId: string; password: string } | null>(null);
+  // `loginId` here holds the bare member id (org auto-resolved at login).
+
+  async function submit() {
+    setError("");
+    if (newPassword && newPassword.length < 6) return setError("Password must be at least 6 characters.");
+    setSaving(true);
+    try {
+      const res = await fetch("/api/cmds/tools/people/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: member.id, newPassword }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(d.error || "Reset failed");
+        return;
+      }
+      setDone({ loginId: d.memberId || d.loginId, password: d.password });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="w-[440px] rounded-lg bg-white p-6 shadow-xl">
+        <h3 className="text-lg font-semibold text-slate-800">
+          Reset password — {member.firstName} {member.lastName}
+        </h3>
+        {done ? (
+          <>
+            <p className="mt-2 text-sm text-slate-500">
+              Password updated. Share the new login below.
+            </p>
+            <div className="mt-4 space-y-2 rounded border border-slate-200 bg-slate-50 p-3 text-sm">
+              <div>
+                <span className="text-slate-500">Login ID:</span>{" "}
+                <span className="font-mono font-medium text-slate-800">{done.loginId}</span>
+              </div>
+              <div>
+                <span className="text-slate-500">Password:</span>{" "}
+                <span className="font-mono font-medium text-slate-800">{done.password}</span>
+              </div>
+            </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={() =>
+                  navigator.clipboard?.writeText(`Login ID: ${done.loginId}\nPassword: ${done.password}`)
+                }
+                className="rounded border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50"
+              >
+                Copy
+              </button>
+              <button
+                onClick={onClose}
+                className="rounded bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+              >
+                Done
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="mt-2 text-sm text-slate-500">
+              Leave blank to auto-generate a temporary password.
+            </p>
+            <div className="mt-4">
+              <Field
+                label="New password (optional)"
+                value={newPassword}
+                onChange={setNewPassword}
+              />
+            </div>
+            {error && <div className="mt-3 text-sm text-red-600">{error}</div>}
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={onClose}
+                className="rounded px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submit}
+                disabled={saving}
+                className="rounded bg-amber-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50"
+              >
+                {saving ? "Resetting…" : "Reset password"}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -330,8 +470,9 @@ function AddMemberModal({
         return;
       }
       // Show the login credentials once so the admin can share them. No email
-      // verification is needed — the account can log in immediately.
-      setCreated({ loginId: d.loginId, password: d.password });
+      // verification is needed — the account can log in immediately. We show the
+      // bare member id (the org is auto-resolved at login).
+      setCreated({ loginId: d.memberId || d.loginId, password: d.password });
     } finally {
       setSaving(false);
     }
@@ -388,7 +529,7 @@ function AddMemberModal({
         <div className="mt-4 grid grid-cols-2 gap-3">
           <Field label="First name*" value={firstName} onChange={setFirstName} />
           <Field label="Last name" value={lastName} onChange={setLastName} />
-          <Field label="Institute ID" value={memberId} onChange={setMemberId} />
+          <Field label="Institute ID (auto from name if blank)" value={memberId} onChange={setMemberId} />
           <Field label="Contact" value={contactNumber} onChange={setContactNumber} />
           <div className="col-span-2">
             <Field label="Email" value={email} onChange={setEmail} />

@@ -5,9 +5,14 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getSession, clearSession, type UprepSession } from "@/lib/session";
+import ImpersonationBanner from "@/components/ImpersonationBanner";
 
 export type LmsNavKey =
   | "library"
+  | "courses"
+  | "store"
+  | "live"
+  | "scheduled"
   | "programs"
   | "assignments"
   | "doubts"
@@ -21,6 +26,10 @@ export type LmsNavKey =
 
 const NAV: { key: LmsNavKey; label: string; href: string }[] = [
   { key: "library", label: "DIGITAL LIBRARY", href: "/learn/library" },
+  { key: "courses", label: "MY COURSES", href: "/learn/courses" },
+  { key: "store", label: "STORE", href: "/learn/store" },
+  { key: "live", label: "LIVE CLASSES", href: "/learn/live" },
+  { key: "scheduled", label: "SCHEDULED TESTS", href: "/learn/tests" },
   { key: "programs", label: "PROGRAMS", href: "/learn/programs" },
   { key: "assignments", label: "ASSIGNMENTS", href: "/learn/assignments" },
   { key: "doubts", label: "DOUBTS FORUM", href: "/learn/doubts" },
@@ -78,6 +87,7 @@ export default function LmsShell({
 
   return (
     <div className="min-h-screen bg-white text-[#333]">
+      <ImpersonationBanner />
       {/* Top header */}
       <header className="sticky top-0 z-30 flex h-[52px] items-center justify-between border-b border-slate-200 bg-white px-5 shadow-sm">
         <Link href="/learn/library" className="flex items-center gap-2">

@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
 // List programs (with per-program section counts) and create new ones.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const docs = await db
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
     orgId?: string;
   };
   const name = (b.name || "").trim();
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   if (!name) return NextResponse.json({ error: "Program name is required" }, { status: 400 });
 
   try {

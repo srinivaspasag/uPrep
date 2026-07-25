@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { API, DEFAULT_ORG_ID } from "@/lib/config";
 import { getDb } from "@/lib/mongo";
 import { verifyPassword } from "@/lib/password";
+import { recordLogin } from "@/lib/login-log";
 import {
   SESSION_COOKIE,
   createSessionToken,
@@ -61,17 +62,48 @@ export async function POST(req: NextRequest) {
   // Accounts created via CMDS / self-signup with a local passwordHash log in
   // directly against Mongo, with no dependency on the legacy user-services and
   // no email-verification step. Legacy accounts fall through to the service.
+  const explicitOrg = identifier.includes(":");
   const [orgId, ...rest] = username.split(":");
-  const memberOrEmail = rest.join(":") || identifier;
-  const lookup = memberOrEmail.trim().toLowerCase();
+  const memberOrEmail = (explicitOrg ? rest.join(":") : identifier).trim();
+  const lookup = memberOrEmail.toLowerCase();
   try {
     const db = await getDb();
-    const member: any = await db.collection("orgmembers").findOne({
-      orgId,
-      recordState: "ACTIVE",
-      passwordHash: { $exists: true, $ne: null },
-      $or: [{ memberId: memberOrEmail.trim() }, { email: lookup }],
-    });
+
+    // Resolve the account. With an explicit "orgId:memberId" we scope to that
+    // org. Otherwise the Institute ID / email is resolved across ALL orgs so
+    // users don't need to know their org's internal id. If the same Institute
+    // ID exists in more than one org it's ambiguous, and we ask for the prefix.
+    let member: any = null;
+    if (explicitOrg) {
+      member = await db.collection("orgmembers").findOne({
+        orgId,
+        recordState: "ACTIVE",
+        passwordHash: { $exists: true, $ne: null },
+        $or: [{ memberId: memberOrEmail }, { email: lookup }],
+      });
+    } else {
+      const matches = await db
+        .collection("orgmembers")
+        .find({
+          recordState: "ACTIVE",
+          passwordHash: { $exists: true, $ne: null },
+          $or: [{ memberId: memberOrEmail }, { email: lookup }],
+        })
+        .limit(5)
+        .toArray();
+      if (matches.length > 1) {
+        return NextResponse.json(
+          {
+            errorCode: "AMBIGUOUS_LOGIN",
+            errorMessage:
+              "This ID exists in more than one institute. Sign in with <Institute ID>:<your ID>.",
+          },
+          { status: 409 }
+        );
+      }
+      member = matches[0] || null;
+    }
+
     if (member?.passwordHash) {
       if (!verifyPassword(password, member.passwordHash)) {
         return NextResponse.json(
@@ -79,8 +111,15 @@ export async function POST(req: NextRequest) {
           { status: 401 }
         );
       }
+      const sessionOrgId = member.orgId || orgId;
       const profile = (member.profile || "STUDENT").toUpperCase();
       const isSuperAdmin = readSuperAdmin(member);
+      await recordLogin(req, {
+        orgId: sessionOrgId,
+        userId: String(member._id),
+        memberId: member.memberId || null,
+        method: "PASSWORD",
+      });
       return await withSession(
         {
           id: String(member._id),
@@ -93,7 +132,7 @@ export async function POST(req: NextRequest) {
         },
         {
           id: String(member._id),
-          orgId,
+          orgId: sessionOrgId,
           memberId: member.memberId || null,
           firstName: member.firstName || "",
           lastName: member.lastName || "",
@@ -149,6 +188,7 @@ export async function POST(req: NextRequest) {
           data.result.isSuperAdmin = isSuperAdmin;
         }
 
+        await recordLogin(req, { orgId, userId: id, memberId, method: "LEGACY" });
         const res = NextResponse.json(data, { status: resp.status });
         const token = await createSessionToken({
           id,

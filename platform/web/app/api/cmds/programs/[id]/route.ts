@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
 // Program detail — program doc + its centers/sections + tab counts. Mirrors the
 // legacy program dashboard (org-services :19012 getPrograms/getProgramCenters).
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   const id = params.id;
 
   try {

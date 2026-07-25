@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
 // Referrals — a `referrals` collection ({code, description, reward, uses}).
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const docs = await db
@@ -34,7 +35,7 @@ type Body = { orgId?: string; code?: string; description?: string; reward?: stri
 
 export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as Body;
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   const code = (b.code || "").trim().toUpperCase() || `REF${Date.now().toString().slice(-6)}`;
   try {
     const db = await getDb();

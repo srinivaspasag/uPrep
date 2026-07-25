@@ -79,6 +79,11 @@ platform/web/public/uploads/
 /*.jpg
 /*.png
 
+# ===== Python bytecode / caches =====
+__pycache__/
+*.pyc
+.venv/
+
 # ===== Logs / OS cruft =====
 *.log
 logs/

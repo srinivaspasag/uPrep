@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
 // Lists members with their web/mobile availability, derived from activity
 // records where present (legacy stack has little seeded activity).
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   const profile = (req.nextUrl.searchParams.get("profile") || "STUDENT").toUpperCase();
   const query = (req.nextUrl.searchParams.get("query") || "").trim().toLowerCase();
 
@@ -19,29 +20,40 @@ export async function GET(req: NextRequest) {
       .find({ orgId, recordState: "ACTIVE", ...(profile !== "ALL" ? { profile } : {}) })
       .toArray();
 
-    // Build a set of userIds seen in activityrecords (treated as "logged in on web").
-    let activeUserIds = new Set<string>();
+    // Most-recent real login per user (from the `logins` audit written on auth).
+    const lastLoginByUser = new Map<string, any>();
     try {
-      const acts = await db
-        .collection("activityrecords")
+      const logins = await db
+        .collection("logins")
         .find({ orgId })
-        .project({ userId: 1 })
-        .limit(1000)
+        .sort({ at: -1 })
+        .limit(5000)
         .toArray();
-      activeUserIds = new Set((acts as any[]).map((a) => String(a.userId)));
+      for (const l of logins as any[]) {
+        const key = String(l.userId);
+        if (!lastLoginByUser.has(key)) lastLoginByUser.set(key, l);
+      }
     } catch {
-      /* activity collection may be absent — treat all as offline */
+      /* logins collection may be absent — treat all as never-seen */
     }
 
+    // A login within the last 30 minutes counts as "currently active".
+    const ACTIVE_WINDOW = 30 * 60 * 1000;
+    const now = Date.now();
+
     let rows = (members as any[]).map((m) => {
-      const web = activeUserIds.has(String(m.userId));
+      const last = lastLoginByUser.get(String(m._id)) || lastLoginByUser.get(String(m.userId));
+      const recent = last && now - (last.at || 0) < ACTIVE_WINDOW;
+      const onMobile = last && (last.device === "ANDROID" || last.device === "IOS");
       return {
         id: String(m._id),
         memberId: m.memberId || "",
         name: `${m.firstName || ""} ${m.lastName || ""}`.trim(),
         profile: m.profile || "",
-        web: web ? "LOGGED_IN" : "LOGGED_OUT",
-        mobile: "LOGGED_OUT",
+        web: recent && !onMobile ? "LOGGED_IN" : "LOGGED_OUT",
+        mobile: recent && onMobile ? "LOGGED_IN" : "LOGGED_OUT",
+        lastSeen: last?.at || null,
+        lastDevice: last?.device || null,
       };
     });
 

@@ -3,13 +3,52 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { hashPassword, generatePassword } from "@/lib/password";
+import { sessionFromReq } from "@/lib/server-session";
+import { isSuperAdmin } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+// Resolves which org a staff request operates on: an org admin is pinned to
+// their session org; only a super admin may target another org via an explicit
+// override (?orgId / body.orgId).
+async function resolveOrgId(req: NextRequest, override?: string | null): Promise<string> {
+  const session = await sessionFromReq(req);
+  if (session && isSuperAdmin(session.profile, session.isSuperAdmin) && override) return override;
+  return session?.orgId || override || DEFAULT_ORG_ID;
+}
+
+// Build a friendly, human-readable login id from the member's name, e.g.
+// "Ravi Kumar" -> "ravi.kumar" (then ravi.kumar2, ravi.kumar3, … on collision).
+// Falls back to a profile prefix when the name has no usable characters.
+async function generateMemberId(
+  db: any,
+  orgId: string,
+  firstName: string,
+  lastName: string,
+  profile: string
+): Promise<string> {
+  let base = `${firstName} ${lastName}`
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ".")
+    .replace(/^\.+|\.+$/g, "");
+  if (!base) base = (profile.slice(0, 3).toLowerCase() || "user");
+
+  let candidate = base;
+  let n = 1;
+  // Check every record (not just ACTIVE) so we never reuse a deactivated id.
+  while (await db.collection("orgmembers").findOne({ orgId, memberId: candidate })) {
+    n += 1;
+    candidate = `${base}${n}`;
+  }
+  return candidate;
+}
 
 // People Management — reads org members directly from Mongo (orgmembers), the
 // same collection org-services :19012 /members/getMembers serves.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   const profile = (req.nextUrl.searchParams.get("profile") || "").toUpperCase();
   const query = (req.nextUrl.searchParams.get("query") || "").trim().toLowerCase();
 
@@ -71,18 +110,45 @@ export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as AddBody;
   const firstName = (b.firstName || "").trim();
   const profile = (b.profile || "STUDENT").toUpperCase();
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   if (!firstName) return NextResponse.json({ error: "First name is required" }, { status: 400 });
 
   try {
     const db = await getDb();
+
+    // Enforce the org's licensing seat limit for students.
+    if (profile === "STUDENT") {
+      const org: any = await db
+        .collection("organizations")
+        .findOne({ _id: ObjectId.isValid(orgId) ? new ObjectId(orgId) : (orgId as any) });
+      const maxStudents = org?.plan?.maxStudents;
+      if (maxStudents != null) {
+        const current = await db
+          .collection("orgmembers")
+          .countDocuments({ orgId, profile: "STUDENT", recordState: "ACTIVE" });
+        if (current >= maxStudents)
+          return NextResponse.json(
+            { error: `Seat limit reached (${maxStudents} students). Upgrade the plan to add more.` },
+            { status: 403 }
+          );
+      }
+    }
+
     const now = Date.now();
     const _id = new ObjectId();
-    const memberId = (b.memberId || "").trim() || `${profile.slice(0, 3)}_${now.toString().slice(-5)}`;
 
-    // memberId is the login username (orgId:memberId) — must be unique per org.
-    const clash = await db.collection("orgmembers").findOne({ orgId, memberId, recordState: "ACTIVE" });
-    if (clash) return NextResponse.json({ error: `Institute ID "${memberId}" is already in use.` }, { status: 409 });
+    // memberId is the login username (unique per org). If the admin typed one,
+    // honour it (and reject clashes); otherwise auto-generate a friendly, name-
+    // based id.
+    const customId = (b.memberId || "").trim();
+    let memberId: string;
+    if (customId) {
+      memberId = customId;
+      const clash = await db.collection("orgmembers").findOne({ orgId, memberId, recordState: "ACTIVE" });
+      if (clash) return NextResponse.json({ error: `Institute ID "${memberId}" is already in use.` }, { status: 409 });
+    } else {
+      memberId = await generateMemberId(db, orgId, firstName, (b.lastName || "").trim(), profile);
+    }
 
     const plainPassword = (b.password || "").trim() || generatePassword();
 
@@ -127,6 +193,17 @@ type EditBody = {
   contactNumber?: string;
 };
 
+// Confirms the member is inside the caller's org (super admin may reach any org).
+async function assertSameOrg(req: NextRequest, db: any, id: string): Promise<string | null> {
+  const member: any = await db.collection("orgmembers").findOne({ _id: new ObjectId(id) });
+  if (!member) return "Member not found";
+  const session = await sessionFromReq(req);
+  const superAdmin = !!session && isSuperAdmin(session.profile, session.isSuperAdmin);
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
+  if (!superAdmin && member.orgId !== orgId) return "That member belongs to another institute";
+  return null;
+}
+
 // Edit a member's details.
 export async function PATCH(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as EditBody;
@@ -134,6 +211,8 @@ export async function PATCH(req: NextRequest) {
   if (!(b.firstName || "").trim()) return NextResponse.json({ error: "First name is required" }, { status: 400 });
   try {
     const db = await getDb();
+    const denied = await assertSameOrg(req, db, b.id);
+    if (denied) return NextResponse.json({ error: denied }, { status: denied === "Member not found" ? 404 : 403 });
     const set: Record<string, unknown> = {
       firstName: (b.firstName || "").trim(),
       lastName: (b.lastName || "").trim(),
@@ -155,6 +234,8 @@ export async function DELETE(req: NextRequest) {
   if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   try {
     const db = await getDb();
+    const denied = await assertSameOrg(req, db, id);
+    if (denied) return NextResponse.json({ error: denied }, { status: denied === "Member not found" ? 404 : 403 });
     await db
       .collection("orgmembers")
       .updateOne({ _id: new ObjectId(id) }, { $set: { recordState: "INACTIVE", lastUpdated: Date.now() } });

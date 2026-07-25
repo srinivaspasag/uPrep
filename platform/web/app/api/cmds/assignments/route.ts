@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
 // Assignments — a lightweight `assignments` collection ({name, description,
 // dueDate, maxMarks}). Students submit text/file against these.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const docs = await db
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
       description: (b.description || "").trim(),
       dueDate: b.dueDate || null,
       maxMarks: Math.max(0, Math.round(Number(b.maxMarks) || 0)),
-      orgId: b.orgId || DEFAULT_ORG_ID,
+      orgId: await resolveOrgId(req, b.orgId),
       createdBy: b.userId || null,
       recordState: "ACTIVE",
       timeCreated: now,

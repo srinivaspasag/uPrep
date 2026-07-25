@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ function toObjId(id: string) {
 }
 
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const o: any =
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as any;
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   const name = (b.name || "").trim();
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
 

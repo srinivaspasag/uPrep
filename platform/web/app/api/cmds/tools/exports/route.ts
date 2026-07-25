@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { saveBuffer } from "@/lib/storage";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 // an `exports` collection. In AWS this would enqueue an SD-card burn job; here
 // it produces a downloadable file immediately.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const docs = await db
@@ -47,7 +48,7 @@ type Body = { type?: string; orgId?: string };
 export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as Body;
   const type = (b.type || "members").toLowerCase();
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   try {
     const db = await getDb();
     let headers: string[] = [];
@@ -65,6 +66,19 @@ export async function POST(req: NextRequest) {
       const docs = await db.collection("tests").find({ "contentSrc.id": orgId, recordState: "ACTIVE" }).toArray();
       headers = ["ID", "Name", "Questions", "Total marks", "Code"];
       rows = (docs as any[]).map((t) => [String(t._id), t.name, t.qusCount, t.totalMarks, t.code]);
+    } else if (type === "invoices") {
+      const docs = await db.collection("invoices").find({ orgId }).sort({ timeCreated: -1 }).toArray();
+      headers = ["Invoice", "Buyer", "Course", "Amount (cents)", "Currency", "Coupon", "Status", "Created"];
+      rows = (docs as any[]).map((i) => [
+        i.number,
+        i.buyerName,
+        i.courseName,
+        i.amountCents,
+        i.currency,
+        i.couponCode || "",
+        i.status,
+        new Date(i.timeCreated || 0).toISOString(),
+      ]);
     } else {
       return NextResponse.json({ error: "Unknown export type" }, { status: 400 });
     }

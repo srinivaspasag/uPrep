@@ -2,15 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
+import { sendEmail, sendSms, type Channel } from "@/lib/messaging";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 // Send Notification — the legacy screen fires Google FCM (prod only). Here we
 // record the notification to Mongo (orgnotifications) and return success, so the
 // full authoring flow works in the demo without external push infra. Wire a real
 // FCM/APNs/web-push provider here when going live.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
     const docs = await db
@@ -43,13 +46,14 @@ type SendBody = {
   resourceId?: string;
   orgId?: string;
   userId?: string;
+  channels?: Channel[]; // optional: also deliver via ["email","sms"]
 };
 
 export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as SendBody;
   const title = (b.title || "").trim();
   const message = (b.message || "").trim();
-  const orgId = b.orgId || DEFAULT_ORG_ID;
+  const orgId = await resolveOrgId(req, b.orgId);
   if (!title) return NextResponse.json({ error: "Notification title is required" }, { status: 400 });
   if (!message) return NextResponse.json({ error: "Notification message is required" }, { status: 400 });
 
@@ -71,7 +75,38 @@ export async function POST(req: NextRequest) {
       status: "SENT",
       timeCreated: now,
     });
-    return NextResponse.json({ id: _id.toHexString(), status: "SENT" });
+
+    // Optional email/SMS fan-out via the pluggable messaging layer. In-app push
+    // is always recorded above; email/SMS only run when the admin opts in.
+    const channels = Array.isArray(b.channels) ? b.channels : [];
+    let delivery: { email: number; sms: number } | null = null;
+    if (channels.length) {
+      const memberFilter: any = { orgId, recordState: "ACTIVE" };
+      if (b.sectionId) memberFilter["mappings.sectionId"] = b.sectionId;
+      const members = await db
+        .collection("orgmembers")
+        .find(memberFilter)
+        .limit(2000)
+        .toArray();
+      let emailed = 0;
+      let texted = 0;
+      for (const m of members as any[]) {
+        if (channels.includes("email") && m.email) {
+          const r = await sendEmail(m.email, title, message, { orgId, notificationId: _id.toHexString() });
+          if (r.ok) emailed++;
+        }
+        if (channels.includes("sms") && m.contactNumber) {
+          const r = await sendSms(m.contactNumber, `${title}: ${message}`, {
+            orgId,
+            notificationId: _id.toHexString(),
+          });
+          if (r.ok) texted++;
+        }
+      }
+      delivery = { email: emailed, sms: texted };
+    }
+
+    return NextResponse.json({ id: _id.toHexString(), status: "SENT", delivery });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Send failed" }, { status: 500 });
   }

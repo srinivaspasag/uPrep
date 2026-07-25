@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { saveUpload } from "@/lib/storage";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   const file = form.get("file");
   const userId = String(form.get("userId") || "");
-  const orgId = String(form.get("orgId") || DEFAULT_ORG_ID);
+  const orgId = await resolveOrgId(req, String(form.get("orgId") || ""));
   if (!(file instanceof File) || file.size === 0)
     return NextResponse.json({ error: "A .xls/.xlsx file is required" }, { status: 400 });
 

@@ -43,6 +43,8 @@ export default function TestPage({ params }: { params: { id: string } }) {
   const [remaining, setRemaining] = useState(0); // seconds
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
+  const [resumed, setResumed] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const s = getSession();
@@ -51,19 +53,56 @@ export default function TestPage({ params }: { params: { id: string } }) {
       return;
     }
     setSession(s);
-    fetch(`/api/tests/${params.id}?userId=${encodeURIComponent(s.id)}`)
-      .then((r) => r.json())
-      .then((d) => {
+    Promise.all([
+      fetch(`/api/tests/${params.id}?userId=${encodeURIComponent(s.id)}`).then((r) => r.json()),
+      fetch(`/api/tests/${params.id}/progress`).then((r) => r.json()).catch(() => ({ progress: null })),
+    ])
+      .then(([d, p]) => {
         if (d.error) {
           setError(d.error);
           return;
         }
         setTest(d.test);
         setQuestions(d.questions || []);
+        // Resume a paused attempt if one was saved.
+        const prog = p?.progress;
+        if (prog && prog.answers && Object.keys(prog.answers).length >= 0 && prog.remaining > 0) {
+          setAnswers(prog.answers || {});
+          setRemaining(prog.remaining);
+          setResumed(true);
+          setPhase("attempt");
+        }
       })
       .catch(() => setError("Failed to load test"))
       .finally(() => setLoading(false));
   }, [params.id, router]);
+
+  async function saveProgress(showBusy = false) {
+    if (!session || phase !== "attempt") return;
+    if (showBusy) setSaving(true);
+    try {
+      await fetch(`/api/tests/${params.id}/progress`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers, remaining }),
+      });
+    } finally {
+      if (showBusy) setSaving(false);
+    }
+  }
+
+  // Autosave progress periodically while attempting.
+  useEffect(() => {
+    if (phase !== "attempt") return;
+    const t = setInterval(() => saveProgress(false), 15000);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, answers, remaining]);
+
+  async function pauseAndExit() {
+    await saveProgress(true);
+    router.push("/learn/library");
+  }
 
   useEffect(() => {
     if (phase !== "attempt" || remaining <= 0) return;
@@ -103,6 +142,8 @@ export default function TestPage({ params }: { params: { id: string } }) {
       });
       const d = await r.json();
       setResult(d);
+      // Attempt finished — discard any saved pause state.
+      fetch(`/api/tests/${params.id}/progress`, { method: "DELETE" }).catch(() => {});
     } catch {
       setResult({
         graded: false,
@@ -193,11 +234,25 @@ export default function TestPage({ params }: { params: { id: string } }) {
 
         {phase === "attempt" && (
           <div className="space-y-5">
+            {resumed && (
+              <div className="rounded-md bg-blue-50 px-3 py-2 text-sm text-blue-700 ring-1 ring-blue-100">
+                Resumed your paused attempt — answers and time were restored.
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <h1 className="text-lg font-semibold text-slate-800">{test.name}</h1>
-              <span className="text-sm text-slate-500">
-                {answeredCount}/{questions.length} answered
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-slate-500">
+                  {answeredCount}/{questions.length} answered
+                </span>
+                <button
+                  onClick={pauseAndExit}
+                  disabled={saving}
+                  className="rounded-md border border-slate-300 px-3 py-1 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-60"
+                >
+                  {saving ? "Saving…" : "Pause & exit"}
+                </button>
+              </div>
             </div>
             {questions.map((q, idx) => (
               <div
