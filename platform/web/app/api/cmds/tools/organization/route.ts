@@ -1,33 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/mongo";
-import { DEFAULT_ORG_ID } from "@/lib/config";
 import { resolveOrgId } from "@/lib/org-scope";
+import { sessionFromReq } from "@/lib/server-session";
+import { callOrgService } from "@/lib/legacyOrg";
 
 export const dynamic = "force-dynamic";
 
-// Organization Info — read/update the single `organizations` doc (same data
-// org-services :19012 /organizations/getOrganization|updateOrganization uses).
-function toObjId(id: string) {
-  const { ObjectId } = require("mongodb");
-  try {
-    return new ObjectId(id);
-  } catch {
-    return id;
-  }
+// Organization Info — backed by the live legacy org-services API
+// (Organizations.getOrganization / updateOrganization), not Mongo directly.
+// See legacy/lms-master/organization/organization-services/app/controllers/
+// Organizations.java:172-193,599-622.
+
+async function actingUserId(req: NextRequest): Promise<string> {
+  const session = await sessionFromReq(req);
+  return session?.id || "admin";
 }
 
 export async function GET(req: NextRequest) {
   const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
+  const userId = await actingUserId(req);
   try {
-    const db = await getDb();
-    const o: any =
-      (await db.collection("organizations").findOne({ _id: toObjId(orgId) })) ||
-      (await db.collection("organizations").findOne({}));
-    if (!o) return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    const o = await callOrgService<any>("getOrganization", { orgId, userId });
+    if (!o?.id) return NextResponse.json({ error: "Organization not found" }, { status: 404 });
 
     return NextResponse.json({
       org: {
-        id: String(o._id),
+        id: o.id,
         name: o.name || "",
         fullName: o.fullName || "",
         website: o.website || "",
@@ -42,33 +39,39 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message }, { status: 500 });
+    return NextResponse.json({ error: e?.message || "Failed to load organization" }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as any;
   const orgId = await resolveOrgId(req, b.orgId);
+  const userId = await actingUserId(req);
   const name = (b.name || "").trim();
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
 
+  // Legacy's updateOrganization only writes fields named in `updateList`.
+  const fields: Record<string, unknown> = {
+    name,
+    fullName: (b.fullName || "").trim(),
+    website: (b.website || "").trim(),
+    contactNumber: (b.contactNumber || "").trim(),
+    type: b.type || "COLLEGE",
+    address: (b.address || "").trim(),
+    description: (b.description || "").trim(),
+  };
+  const updateList = Object.keys(fields);
+
   try {
-    const db = await getDb();
-    const set: Record<string, unknown> = {
-      name,
-      fullName: (b.fullName || "").trim(),
-      website: (b.website || "").trim(),
-      contactNumber: (b.contactNumber || "").trim(),
-      type: b.type || "COLLEGE",
-      address: (b.address || "").trim(),
-      description: (b.description || "").trim(),
+    await callOrgService("updateOrganization", {
+      ...fields,
+      orgId,
+      userId,
+      callingUserId: userId,
       authType: b.authType || "VEDANTU",
       doubtsForumMode: b.doubtsForumMode || "public",
-      lastUpdated: Date.now(),
-    };
-    if (b.socialMedia && typeof b.socialMedia === "object") set.socialMedia = b.socialMedia;
-
-    await db.collection("organizations").updateOne({ _id: toObjId(orgId) }, { $set: set });
+      updateList,
+    });
     return NextResponse.json({ ok: true });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Update failed" }, { status: 500 });
