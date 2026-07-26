@@ -110,7 +110,7 @@ export default function ProgramDetailPage() {
 
         {/* Main */}
         <main className="flex-1 px-8 py-6">
-          {tab === "content" && <ContentTab query={query} />}
+          {tab === "content" && <ContentTab query={query} programId={id} />}
           {tab === "members" && <PeopleTab profile="TEACHER" query={query} label="teachers" />}
           {tab === "students" && <PeopleTab profile="STUDENT" query={query} label="students" />}
           {tab === "organizations" && (
@@ -126,7 +126,7 @@ export default function ProgramDetailPage() {
   );
 }
 
-function ContentTab({ query }: { query: string }) {
+function ContentTab({ query, programId }: { query: string; programId: string }) {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
@@ -141,15 +141,28 @@ function ContentTab({ query }: { query: string }) {
     load();
   }, []);
 
+  // Hidden FOR THIS PROGRAM specifically: either globally hidden (org-wide,
+  // set from the general Resources page), or visibleProgramIds is a non-empty
+  // allow-list that doesn't include this program.
+  function hiddenHere(r: any) {
+    if (r.hidden) return true;
+    const allow: string[] = Array.isArray(r.visibleProgramIds) ? r.visibleProgramIds : [];
+    return allow.length > 0 && !allow.includes(programId);
+  }
+
   async function toggle(r: any) {
-    if (r.type === "FOLDER") return; // visibility applies to content items, not folders
+    if (r.type === "FOLDER" || r.hidden) return; // org-wide hidden is controlled elsewhere
     setBusy(r.id);
+    const allow: string[] = Array.isArray(r.visibleProgramIds) ? r.visibleProgramIds : [];
+    const nextAllow = allow.includes(programId)
+      ? allow.filter((id) => id !== programId)
+      : [...allow, programId];
     await fetch("/api/cmds/content", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: r.id, type: r.type, action: "visibility", hidden: !r.hidden }),
+      body: JSON.stringify({ id: r.id, type: r.type, action: "visibility", visibleProgramIds: nextAllow }),
     });
-    setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, hidden: !x.hidden } : x)));
+    setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, visibleProgramIds: nextAllow } : x)));
     setBusy(null);
   }
 
@@ -171,7 +184,8 @@ function ContentTab({ query }: { query: string }) {
         </Link>
       </div>
       <p className="mt-1 text-xs text-slate-400">
-        Toggle a row to make it visible or invisible on learn / device for students.
+        Toggle a row to make it visible or invisible to THIS program&apos;s students specifically.
+        (Org-wide hide/show is set from Resources.)
       </p>
       <div className="mt-3 overflow-hidden rounded border border-slate-200">
         <table className="w-full text-sm">
@@ -205,13 +219,15 @@ function ContentTab({ query }: { query: string }) {
                     {r.type === "FOLDER" ? (
                       <span className="text-slate-300">—</span>
                     ) : r.hidden ? (
-                      <span className="text-amber-600">● Invisible</span>
+                      <span className="text-amber-600">● Hidden org-wide</span>
+                    ) : hiddenHere(r) ? (
+                      <span className="text-amber-600">● Invisible for this program</span>
                     ) : (
                       <span className="text-emerald-600">● Visible</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    {r.type !== "FOLDER" && isAdmin && (
+                    {r.type !== "FOLDER" && isAdmin && !r.hidden && (
                       <button
                         disabled={busy === r.id}
                         onClick={() => toggle(r)}
@@ -219,7 +235,7 @@ function ContentTab({ query }: { query: string }) {
                       >
                         {busy === r.id
                           ? "…"
-                          : r.hidden
+                          : hiddenHere(r)
                           ? "Make visible"
                           : "Make invisible"}
                       </button>

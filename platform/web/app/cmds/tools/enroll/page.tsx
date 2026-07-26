@@ -6,6 +6,8 @@ import CmdsShell from "@/components/CmdsShell";
 type Student = { id: string; memberId: string; firstName: string; lastName: string; email: string };
 type Course = { id: string; name: string; chapterCount: number; granted?: boolean };
 type Pack = { id: string; name: string; granted: boolean; courseIds: string[]; courseCount: number };
+type Entity = { id: string; name: string; departmentId?: string | null; programId?: string | null; centerId?: string | null; centerIds?: string[] };
+type Membership = { programId: string; centerId: string; sectionId: string; assignedAt: number };
 
 export default function AssignCoursesPage() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -18,6 +20,16 @@ export default function AssignCoursesPage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
 
+  // Program+Center+Section assignment (the primary path).
+  const [programs, setPrograms] = useState<Entity[]>([]);
+  const [centers, setCenters] = useState<Entity[]>([]);
+  const [sections, setSections] = useState<Entity[]>([]);
+  const [memberships, setMemberships] = useState<Membership[]>([]);
+  const [pickProgram, setPickProgram] = useState("");
+  const [pickCenter, setPickCenter] = useState("");
+  const [pickSection, setPickSection] = useState("");
+  const [assigningProgram, setAssigningProgram] = useState(false);
+
   useEffect(() => {
     // Load each source independently so one failing/stale request can't blank
     // the whole page (e.g. an expired session on one endpoint).
@@ -29,14 +41,18 @@ export default function AssignCoursesPage() {
       safe("/api/cmds/tools/people?profile=STUDENT"),
       safe("/api/cmds/enroll?courses=1"),
       safe("/api/cmds/enroll/pack"),
+      safe("/api/cmds/tools/academic"),
     ])
       .then((results) => {
-        const [ppl, crs, pks] = results.map((r) =>
+        const [ppl, crs, pks, acad] = results.map((r) =>
           r.status === "fulfilled" ? (r.value as any) : {}
         );
         setStudents(ppl.members || []);
         setCourses(crs.courses || []);
         setPacks(pks.packs || []);
+        setPrograms(acad.programs || []);
+        setCenters(acad.centers || []);
+        setSections(acad.sections || []);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -44,13 +60,70 @@ export default function AssignCoursesPage() {
   useEffect(() => {
     if (!studentId) {
       setSelected(new Set());
+      setMemberships([]);
       return;
     }
     setMsg("");
+    setPickProgram("");
+    setPickCenter("");
+    setPickSection("");
     fetch(`/api/cmds/enroll?memberId=${encodeURIComponent(studentId)}`)
       .then((r) => r.json())
       .then((d) => setSelected(new Set<string>(d.enrolledCourseIds || [])));
+    fetch(`/api/cmds/enroll/program?memberId=${encodeURIComponent(studentId)}`)
+      .then((r) => r.json())
+      .then((d) => setMemberships(d.memberships || []));
   }, [studentId]);
+
+  const centersForPickProgram = useMemo(() => {
+    const prog = programs.find((p) => p.id === pickProgram);
+    const ids = new Set(prog?.centerIds || []);
+    return centers.filter((c) => ids.has(c.id));
+  }, [programs, centers, pickProgram]);
+  const sectionsForPick = useMemo(
+    () => sections.filter((s) => s.programId === pickProgram && s.centerId === pickCenter),
+    [sections, pickProgram, pickCenter]
+  );
+
+  async function assignProgram() {
+    if (!studentId || !pickProgram || !pickCenter || !pickSection) return;
+    setAssigningProgram(true);
+    setMsg("");
+    try {
+      const res = await fetch("/api/cmds/enroll/program", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          memberId: studentId,
+          programId: pickProgram,
+          centerId: pickCenter,
+          sectionId: pickSection,
+        }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setMemberships(d.memberships || []);
+        setPickProgram("");
+        setPickCenter("");
+        setPickSection("");
+        setMsg("Program assigned. The student will see it in their Learning Network.");
+      } else {
+        setMsg(d.error || "Assign failed");
+      }
+    } finally {
+      setAssigningProgram(false);
+    }
+  }
+
+  async function removeMembership(programId: string) {
+    if (!studentId) return;
+    const res = await fetch(
+      `/api/cmds/enroll/program?memberId=${encodeURIComponent(studentId)}&programId=${encodeURIComponent(programId)}`,
+      { method: "DELETE" }
+    );
+    const d = await res.json().catch(() => ({}));
+    if (res.ok) setMemberships(d.memberships || []);
+  }
 
   const filteredStudents = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -115,8 +188,9 @@ export default function AssignCoursesPage() {
       <div className="mx-auto max-w-[1000px] px-8 py-6">
         <h1 className="text-2xl font-light text-slate-700">Assign Courses</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Give a student access to specific courses. They&apos;ll only see the courses assigned here
-          in their Digital Library and “My Courses”.
+          Assign a student to a Program, Center and Section — they&apos;ll automatically see that
+          program&apos;s courses in their Learning Network. Assigning individual courses directly
+          (below) is a manual override for one-off cases.
         </p>
 
         {loading ? (
@@ -207,9 +281,101 @@ export default function AssignCoursesPage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex items-center justify-between">
+                  {/* Assign Program — the primary assignment path. */}
+                  <div className="rounded-lg border border-emerald-100 bg-emerald-50/40 p-4">
                     <h2 className="font-semibold text-slate-700">
-                      Courses for {selectedStudent?.firstName} {selectedStudent?.lastName}
+                      Assign Program — {selectedStudent?.firstName} {selectedStudent?.lastName}
+                    </h2>
+
+                    {memberships.length > 0 && (
+                      <div className="mt-3 space-y-1.5">
+                        {memberships.map((m) => {
+                          const prog = programs.find((p) => p.id === m.programId);
+                          const ctr = centers.find((c) => c.id === m.centerId);
+                          const sec = sections.find((s) => s.id === m.sectionId);
+                          return (
+                            <div
+                              key={m.programId}
+                              className="flex items-center justify-between rounded border border-slate-200 bg-white px-3 py-1.5 text-sm"
+                            >
+                              <span>
+                                <span className="font-medium text-slate-700">{prog?.name || "(program)"}</span>
+                                <span className="text-slate-400"> @ {ctr?.name || "?"} — {sec?.name || "?"}</span>
+                              </span>
+                              <button
+                                onClick={() => removeMembership(m.programId)}
+                                className="text-xs text-red-500 hover:underline"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    <div className="mt-3 flex flex-wrap items-end gap-2">
+                      <label className="block">
+                        <span className="text-xs text-slate-500">Program</span>
+                        <select
+                          value={pickProgram}
+                          onChange={(e) => {
+                            setPickProgram(e.target.value);
+                            setPickCenter("");
+                            setPickSection("");
+                          }}
+                          className="mt-1 block w-44 rounded border border-slate-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-slate-500"
+                        >
+                          <option value="">Select…</option>
+                          {programs.map((p) => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="block">
+                        <span className="text-xs text-slate-500">Center</span>
+                        <select
+                          value={pickCenter}
+                          onChange={(e) => {
+                            setPickCenter(e.target.value);
+                            setPickSection("");
+                          }}
+                          disabled={!pickProgram}
+                          className="mt-1 block w-40 rounded border border-slate-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-slate-500 disabled:bg-slate-50 disabled:text-slate-400"
+                        >
+                          <option value="">Select…</option>
+                          {centersForPickProgram.map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="block">
+                        <span className="text-xs text-slate-500">Section</span>
+                        <select
+                          value={pickSection}
+                          onChange={(e) => setPickSection(e.target.value)}
+                          disabled={!pickCenter}
+                          className="mt-1 block w-40 rounded border border-slate-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-slate-500 disabled:bg-slate-50 disabled:text-slate-400"
+                        >
+                          <option value="">Select…</option>
+                          {sectionsForPick.map((s) => (
+                            <option key={s.id} value={s.id}>{s.name}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <button
+                        onClick={assignProgram}
+                        disabled={assigningProgram || !pickProgram || !pickCenter || !pickSection}
+                        className="rounded bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                      >
+                        {assigningProgram ? "Assigning…" : "Assign"}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+                    <h2 className="font-semibold text-slate-700">
+                      Or assign individual courses directly (manual override)
                     </h2>
                     <span className="text-xs text-slate-400">{selected.size} selected</span>
                   </div>

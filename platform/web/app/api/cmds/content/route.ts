@@ -16,7 +16,8 @@ type ResourceRow = {
   addedAt: number;
   url?: string | null;
   count?: number;
-  hidden?: boolean; // true = invisible on learn/device (students can't see it)
+  hidden?: boolean; // true = invisible on learn/device (students can't see it), org-wide
+  visibleProgramIds?: string[]; // non-empty = visible ONLY to these programs' students
 };
 
 // GET: aggregate all Institute Resources across content collections. When
@@ -70,6 +71,7 @@ export async function GET(req: NextRequest) {
         addedAt: Number(d.timeCreated) || Number(d.lastUpdated) || 0,
         url: d.url ?? null,
         hidden: !!d.hidden,
+        visibleProgramIds: Array.isArray(d.visibleProgramIds) ? d.visibleProgramIds : [],
         ...map(d),
       });
       }
@@ -123,6 +125,7 @@ type MutateBody = {
   name?: string;
   folderId?: string | null;
   hidden?: boolean;
+  visibleProgramIds?: string[];
 };
 
 // PATCH: rename a resource, move it into a folder (folderId null = root), or
@@ -147,8 +150,13 @@ export async function PATCH(req: NextRequest) {
     const session = await sessionFromReq(req);
     if ((session?.profile || "").trim().toUpperCase() !== "MANAGER")
       return NextResponse.json({ error: "Only institute admins can change visibility." }, { status: 403 });
-    // hidden=true removes it from student library/course browse; staff still see it.
-    set.hidden = !!b.hidden;
+    // hidden=true removes it from student library/course browse (org-wide); staff still see it.
+    if (b.hidden !== undefined) set.hidden = !!b.hidden;
+    // visibleProgramIds: non-empty = visible ONLY to those programs' students
+    // (set from a Program's Content tab); empty/omitted = visible to any
+    // program with course access, i.e. today's default behavior.
+    if (b.visibleProgramIds !== undefined)
+      set.visibleProgramIds = Array.from(new Set((b.visibleProgramIds || []).map(String)));
   } else {
     return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
   }

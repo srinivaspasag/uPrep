@@ -37,15 +37,35 @@ export async function GET(req: NextRequest) {
     const folders = await loadFoldersForOrgs(db, catalogOwnerOrgs(orgId, catalog));
     const allCourseRoots = catalog.map((c) => c.id);
 
-    // Enrolled course roots (staff preview everything).
+    // Enrolled course roots (staff preview everything). A student's access is
+    // the union of direct course assignment (enrolledCourseIds — the manual
+    // "Assign Courses" override) and courses assigned to any Program they're
+    // a member of (programMemberships -> orgprograms.courseIds) — the primary
+    // path per the Program+Center+Section assignment model.
     let enrolledRoots: string[];
+    let studentProgramIds: string[] = []; // used below to scope content visibility too
     if (staff) {
       enrolledRoots = allCourseRoots;
     } else {
       const m: any = ObjectId.isValid(session.id)
         ? await db.collection("orgmembers").findOne({ _id: new ObjectId(session.id) }).catch(() => null)
         : null;
-      const ids: string[] = Array.isArray(m?.enrolledCourseIds) ? m.enrolledCourseIds : [];
+      const directIds: string[] = Array.isArray(m?.enrolledCourseIds) ? m.enrolledCourseIds : [];
+      const memberships: Array<{ programId: string }> = Array.isArray(m?.programMemberships)
+        ? m.programMemberships
+        : [];
+      studentProgramIds = memberships.map((mm) => mm.programId).filter(ObjectId.isValid);
+      const programCourseIds =
+        studentProgramIds.length > 0
+          ? await db
+              .collection("orgprograms")
+              .find({ _id: { $in: studentProgramIds.map((id) => new ObjectId(id)) } })
+              .toArray()
+              .then((docs) =>
+                (docs as any[]).flatMap((d) => (Array.isArray(d.courseIds) ? d.courseIds : []))
+              )
+          : [];
+      const ids = Array.from(new Set([...directIds, ...programCourseIds]));
       // Only keep ids that are still valid top-level courses.
       enrolledRoots = ids.filter((id) => allCourseRoots.includes(id));
     }
@@ -61,8 +81,19 @@ export async function GET(req: NextRequest) {
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((f) => ({ id: f.id, name: f.name, type: "FOLDER" as const }));
 
-      // Students only see content marked visible (hidden !== true). Staff see all.
-      const visClause = staff ? {} : { hidden: { $ne: true } };
+      // Students only see content marked visible (hidden !== true), and if an
+      // item has a program allow-list (visibleProgramIds), only students in
+      // one of those programs see it. Staff see all.
+      const visClause = staff
+        ? {}
+        : {
+            hidden: { $ne: true },
+            $or: [
+              { visibleProgramIds: { $exists: false } },
+              { visibleProgramIds: { $size: 0 } },
+              { visibleProgramIds: { $in: studentProgramIds } },
+            ],
+          };
       const contentItems: any[] = [];
       for (const coll of ["videos", "documents", "tests"]) {
         const docs = await db
