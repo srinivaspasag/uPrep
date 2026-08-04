@@ -38,7 +38,10 @@ export default function ProgramsPage() {
   return (
     <LmsShell active="programs">
       <div className="border-b-2 border-[#16233D] pb-3">
-        <h1 className="font-serif text-2xl font-semibold text-[#16233D]">My Programs</h1>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EDEEE9] px-3 py-1 text-xs font-medium uppercase tracking-wide text-[#8890A1]">
+          🎯 My Programs
+        </span>
+        <h1 className="mt-2 font-serif text-2xl font-semibold text-[#16233D]">Where you're enrolled</h1>
       </div>
 
       <div className="mt-6">
@@ -71,8 +74,9 @@ function ProgramCard({ group, courses }: { group: ProgramGroup; courses: Course[
   return (
     <Link
       href="/learn/courses"
-      className="block rounded-lg border border-[#D9D6C9] bg-white p-5 transition hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md"
+      className="group relative block overflow-hidden rounded-2xl border border-[#D9D6C9] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-transparent hover:shadow-xl"
     >
+      <span className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue-500 via-violet-500 to-orange-500" />
       <div className="font-serif text-lg font-semibold text-[#16233D]">{group.name}</div>
       {(group.centerName || group.sectionName) && (
         <div className="mt-1 text-xs text-[#8890A1]">
@@ -100,7 +104,10 @@ function ProgramCard({ group, courses }: { group: ProgramGroup; courses: Course[
         <span className="text-xs text-[#8890A1]">
           {groupCourses.length} subject{groupCourses.length === 1 ? "" : "s"} · {totalChapters} chapters
         </span>
-        <span className="text-xs font-semibold text-amber-700">View courses →</span>
+        <span className="flex items-center gap-1 text-xs font-semibold text-amber-700">
+          View courses
+          <span className="transition group-hover:translate-x-0.5">→</span>
+        </span>
       </div>
     </Link>
   );

@@ -110,13 +110,31 @@ export default function MyCoursesPage() {
 
   return (
     <LmsShell active="courses">
-      <div className="flex items-end justify-between border-b-2 border-[#16233D] pb-3">
-        <h1 className="font-serif text-2xl font-semibold text-[#16233D]">Digital Library</h1>
-        {staff && (
-          <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs text-indigo-600">
-            Staff preview — showing all courses
-          </span>
-        )}
+      {/* Hero — a warm, multi-hue moment (small dots echoing the subject
+          palette below) instead of a plain ruled header, so the page feels
+          like the start of something rather than a document title. */}
+      <div className="relative overflow-hidden rounded-2xl border border-[#D9D6C9] bg-white p-6 sm:p-8">
+        <div className="pointer-events-none absolute -right-10 -top-16 h-52 w-52 rounded-full bg-gradient-to-br from-blue-100 to-violet-100 opacity-70" />
+        <div className="pointer-events-none absolute right-16 bottom-0 h-16 w-16 rounded-full bg-emerald-50" />
+        <div className="pointer-events-none absolute right-0 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full bg-orange-50" />
+        <div className="relative flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EDEEE9] px-3 py-1 text-xs font-medium uppercase tracking-wide text-[#8890A1]">
+              📚 Digital Library
+            </span>
+            <h1 className="mt-3 font-serif text-2xl font-semibold text-[#16233D] sm:text-3xl">
+              Your subjects, ready to explore
+            </h1>
+            <p className="mt-1.5 max-w-md text-sm text-[#3E4A63]">
+              Pick a subject to dive into chapters, videos, e-books and tests.
+            </p>
+          </div>
+          {staff && (
+            <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs text-indigo-600">
+              Staff preview — showing all courses
+            </span>
+          )}
+        </div>
       </div>
 
       {atRoot && !staff && (
@@ -183,6 +201,7 @@ export default function MyCoursesPage() {
                     return (
                       <div key={g.id}>
                         <div className="mb-4 flex items-baseline gap-2.5">
+                          <span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-blue-500 to-violet-500" />
                           <h2 className="font-serif text-lg font-semibold text-[#16233D]">{g.name}</h2>
                           {(g.centerName || g.sectionName) && (
                             <span className="text-xs text-[#8890A1]">
@@ -201,7 +220,10 @@ export default function MyCoursesPage() {
                   {ungrouped.length > 0 && (
                     <div>
                       {programGroups.length > 0 && (
-                        <h2 className="mb-4 font-serif text-lg font-semibold text-[#16233D]">Other Courses</h2>
+                        <div className="mb-4 flex items-baseline gap-2.5">
+                          <span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-amber-500 to-rose-500" />
+                          <h2 className="font-serif text-lg font-semibold text-[#16233D]">Other Courses</h2>
+                        </div>
                       )}
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {ungrouped.map((c) => (
@@ -281,44 +303,53 @@ export default function MyCoursesPage() {
   );
 }
 
-// Mirrors legacy's real subject card (ui/learn-app .../tags/library/subject.html):
-// a solid-color header bar with the subject name, a subject icon, and a small
-// Chapters / E-Books / Tests stat table — legacy has no chapter-progress bar
-// or item-count blob here, just that triple.
+// Legacy's real subject card (ui/learn-app .../tags/library/subject.html) is
+// a flat solid-color bar + a dry Chapters/E-Books/Tests table. Rebuilt with
+// more visual energy for students — a gradient header (not flat), an icon
+// medallion that overlaps the header/body seam like a badge, and the stats
+// as small pill-chips instead of a table row — while keeping the exact same
+// four numbers legacy shows, no fabricated progress bars.
 function CourseCard({ course, onOpen }: { course: Course; onOpen: (crumbs: Crumb[]) => void }) {
   const accent = subjectAccent(course.name);
+  const stats: { label: string; value: number; icon: string }[] = [
+    { label: "Chapters", value: course.chapterCount, icon: "📖" },
+    { label: "Videos", value: course.videoCount, icon: "▶️" },
+    { label: "E-Books", value: course.documentCount, icon: "📄" },
+    { label: "Tests", value: course.testCount, icon: "📝" },
+  ];
   return (
     <button
       onClick={() => onOpen([{ id: course.id, name: course.name }])}
-      className="overflow-hidden rounded-lg border border-[#D9D6C9] bg-white text-left transition hover:-translate-y-0.5 hover:shadow-md"
+      className={`group overflow-hidden rounded-2xl border border-[#D9D6C9] bg-white text-left shadow-sm transition hover:-translate-y-1 hover:border-transparent hover:shadow-xl`}
     >
-      <div className={`${accent.header} px-4 py-2.5`}>
-        <span className="font-serif text-[15px] font-semibold text-white">{course.name}</span>
+      <div className={`relative ${accent.gradient} px-4 pb-8 pt-3.5`}>
+        <span className="font-serif text-[15px] font-semibold text-white drop-shadow-sm">{course.name}</span>
       </div>
-      <div className="flex items-center gap-3 p-4">
-        <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-xl ${accent.chip}`}>
-          {subjectEmoji(course.name)}
+      <div className="relative px-4 pb-4">
+        <span
+          className={`absolute -top-7 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl shadow-md ring-4 ring-white transition group-hover:-translate-y-0.5 group-hover:rotate-3`}
+        >
+          <span className={`flex h-full w-full items-center justify-center rounded-2xl ${accent.chip}`}>
+            {subjectEmoji(course.name)}
+          </span>
         </span>
-        <table className="w-full text-xs text-[#3E4A63]">
-          <tbody>
-            <tr>
-              <td className="py-0.5 text-[#8890A1]">Chapters</td>
-              <td className="py-0.5 text-right font-medium text-[#16233D]">{course.chapterCount}</td>
-            </tr>
-            <tr>
-              <td className="py-0.5 text-[#8890A1]">Videos</td>
-              <td className="py-0.5 text-right font-medium text-[#16233D]">{course.videoCount}</td>
-            </tr>
-            <tr>
-              <td className="py-0.5 text-[#8890A1]">E-Books</td>
-              <td className="py-0.5 text-right font-medium text-[#16233D]">{course.documentCount}</td>
-            </tr>
-            <tr>
-              <td className="py-0.5 text-[#8890A1]">Tests</td>
-              <td className="py-0.5 text-right font-medium text-[#16233D]">{course.testCount}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="grid grid-cols-2 gap-2 pt-9">
+          {stats.map((s) => (
+            <div key={s.label} className="flex items-center justify-between rounded-lg bg-[#F8F7F3] px-2.5 py-1.5">
+              <span className="flex items-center gap-1.5 text-[11px] text-[#8890A1]">
+                <span className="text-xs">{s.icon}</span>
+                {s.label}
+              </span>
+              <span className="font-serif text-sm font-semibold text-[#16233D]">{s.value}</span>
+            </div>
+          ))}
+        </div>
+        <div
+          className={`mt-3 flex items-center gap-1 text-xs font-semibold ${accent.text} opacity-0 transition group-hover:opacity-100`}
+        >
+          Explore subject
+          <span className="transition group-hover:translate-x-0.5">→</span>
+        </div>
       </div>
     </button>
   );
