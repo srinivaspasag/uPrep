@@ -12,14 +12,26 @@ import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import `in`.uprep.app.data.net.NetworkConfig
 
@@ -32,9 +44,10 @@ import `in`.uprep.app.data.net.NetworkConfig
 //   path == null            -> loads the site root (staff land on /cmds via
 //                               the server's own post-login redirect logic)
 //   path == "/test/123"      -> deep-links straight to a specific page
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewFallbackScreen(path: String?, cookieValue: String?) {
+fun WebViewFallbackScreen(path: String?, cookieValue: String?, onLogout: () -> Unit) {
     val context = LocalContext.current
     var filePathCallback by remember { mutableStateOf<ValueCallback<Array<Uri>>?>(null) }
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
@@ -52,6 +65,7 @@ fun WebViewFallbackScreen(path: String?, cookieValue: String?) {
         if (wv != null && wv.canGoBack()) wv.goBack()
     }
 
+    Box(modifier = Modifier.fillMaxSize()) {
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { ctx ->
@@ -125,4 +139,19 @@ fun WebViewFallbackScreen(path: String?, cookieValue: String?) {
             }
         }
     )
+
+    // Small overlay so there's always a way back to the native login/account
+    // switcher — this screen has no app bar of its own (full-bleed WebView).
+    IconButton(
+        onClick = onLogout,
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .statusBarsPadding()
+            .padding(8.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
+    ) {
+        Text("⎋")
+    }
+    }
 }

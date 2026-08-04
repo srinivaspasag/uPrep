@@ -10,7 +10,28 @@ import { API, CALLING_APP, CALLING_APP_ID } from "./config";
 //
 // List<String> fields (e.g. centerIds) must be form-encoded as indexed keys
 // (`centerIds[0]=..&centerIds[1]=..`) to bind to Play's classic form binder —
-// NOT as a JSON string.
+// NOT as a JSON string. Nested beans (e.g. socialMedia: SocialInfo) and
+// lists of beans (e.g. appInfos: List<AppInfo>) follow the same binder's
+// dot-notation convention: `socialMedia.facebook=..`, `appInfos[0].type=..`.
+function setFormField(form: URLSearchParams, key: string, value: unknown) {
+  if (value === undefined || value === null || value === "") return;
+  if (Array.isArray(value)) {
+    value.forEach((item, i) => {
+      if (item !== null && typeof item === "object") {
+        for (const [k, v] of Object.entries(item)) setFormField(form, `${key}[${i}].${k}`, v);
+      } else {
+        form.set(`${key}[${i}]`, String(item));
+      }
+    });
+  } else if (typeof value === "object") {
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      setFormField(form, `${key}.${k}`, v);
+    }
+  } else {
+    form.set(key, String(value));
+  }
+}
+
 async function callLegacy<T = any>(
   base: string,
   path: string,
@@ -22,12 +43,7 @@ async function callLegacy<T = any>(
     callingAppId: CALLING_APP_ID,
   });
   for (const [key, value] of Object.entries(params)) {
-    if (value === undefined || value === null || value === "") continue;
-    if (Array.isArray(value)) {
-      value.forEach((item, i) => form.set(`${key}[${i}]`, String(item)));
-    } else {
-      form.set(key, String(value));
-    }
+    setFormField(form, key, value);
   }
   const resp = await fetch(`${base}${path}/${action}`, {
     method: "POST",

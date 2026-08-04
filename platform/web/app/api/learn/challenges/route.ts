@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -44,15 +45,20 @@ type Body = {
 };
 
 export async function POST(req: NextRequest) {
+  // "join" adds the caller to the participant list — must be the caller's
+  // own id from the verified session, not a client-supplied userId (was
+  // previously trusted as-is, so any request could add an arbitrary user).
+  const session = await sessionFromReq(req);
   const b = (await req.json().catch(() => ({}))) as Body;
   try {
     const db = await getDb();
     if (b.action === "join") {
-      if (!b.id || !ObjectId.isValid(b.id) || !b.userId)
+      if (!session?.id) return NextResponse.json({ error: "Sign in to join" }, { status: 401 });
+      if (!b.id || !ObjectId.isValid(b.id))
         return NextResponse.json({ error: "Missing fields" }, { status: 400 });
       await db
         .collection("challenges")
-        .updateOne({ _id: new ObjectId(b.id) }, { $addToSet: { participants: b.userId } });
+        .updateOne({ _id: new ObjectId(b.id) }, { $addToSet: { participants: session.id } });
       return NextResponse.json({ ok: true });
     }
     // create

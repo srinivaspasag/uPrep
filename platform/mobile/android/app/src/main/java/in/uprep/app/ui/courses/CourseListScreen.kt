@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -28,12 +29,20 @@ import `in`.uprep.app.data.api.CourseSummary
 @Composable
 fun CourseListScreen(
     viewModel: CoursesViewModel = viewModel(),
-    onOpenCourse: (CourseSummary) -> Unit
+    onOpenCourse: (CourseSummary) -> Unit,
+    onOpenDownloads: () -> Unit,
+    onLogout: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        TopAppBar(title = { Text("My Courses") })
+        TopAppBar(
+            title = { Text("My Courses") },
+            actions = {
+                IconButton(onClick = onOpenDownloads) { Text("⬇") }
+                IconButton(onClick = onLogout) { Text("⎋") }
+            }
+        )
 
         when {
             state.loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -45,26 +54,61 @@ fun CourseListScreen(
             state.courses.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("No courses assigned yet")
             }
-            else -> LazyColumn(
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(state.courses) { course ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onOpenCourse(course) }
-                    ) {
-                        Column(Modifier.padding(16.dp)) {
-                            Text(course.name, style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                "${course.chapterCount} chapters",
-                                style = MaterialTheme.typography.bodySmall
-                            )
+            else -> {
+                // Group courses under the Program that granted them (e.g.
+                // "JEE XI") — previously this screen showed Physics/Chem/Math
+                // as a flat list with no indication of which program they
+                // belonged to, even though CMDS clearly assigns by program.
+                val groupedIds = state.programGroups.flatMap { it.courseIds }.toSet()
+                val ungrouped = state.courses.filter { it.id !in groupedIds }
+                LazyColumn(
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    state.programGroups.forEach { group ->
+                        val groupCourses = state.courses.filter { it.id in group.courseIds }
+                        if (groupCourses.isNotEmpty()) {
+                            item(key = "header_${group.id}") {
+                                Text(
+                                    group.name,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            items(groupCourses, key = { "${group.id}_${it.id}" }) { course ->
+                                CourseCard(course, onOpenCourse)
+                            }
+                        }
+                    }
+                    if (ungrouped.isNotEmpty()) {
+                        if (state.programGroups.isNotEmpty()) {
+                            item(key = "header_ungrouped") {
+                                Text("Other Courses", style = MaterialTheme.typography.titleSmall)
+                            }
+                        }
+                        items(ungrouped, key = { "ungrouped_${it.id}" }) { course ->
+                            CourseCard(course, onOpenCourse)
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun CourseCard(course: CourseSummary, onOpenCourse: (CourseSummary) -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onOpenCourse(course) }
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(course.name, style = MaterialTheme.typography.titleMedium)
+            Text(
+                "${course.chapterCount} chapters",
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

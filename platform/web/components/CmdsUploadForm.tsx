@@ -6,6 +6,7 @@ import Link from "next/link";
 import CmdsShell from "@/components/CmdsShell";
 import { getSession, type UprepSession } from "@/lib/session";
 import { parseVideoUrl } from "@/lib/video";
+import BoardPicker from "@/components/BoardPicker";
 
 export default function CmdsUploadForm({
   kind,
@@ -32,9 +33,7 @@ export default function CmdsUploadForm({
   const [progress, setProgress] = useState(0);
   const [folderId, setFolderId] = useState<string | null>(null);
   const [folderName, setFolderName] = useState<string>("");
-  // Subjects from the curriculum (Boards) tree — auto-populates the Subject
-  // field like the legacy CMDS tagging widget did.
-  const [subjects, setSubjects] = useState<string[]>([]);
+  const [boardIds, setBoardIds] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -44,18 +43,6 @@ export default function CmdsUploadForm({
     const sp = new URLSearchParams(window.location.search);
     setFolderId(sp.get("folder"));
     setFolderName(sp.get("folderName") || "");
-
-    // Top-level nodes (no parent) are the subjects.
-    fetch("/api/cmds/tools/boards")
-      .then((r) => r.json())
-      .then((d) => {
-        const roots = (d.nodes || [])
-          .filter((n: { parentId: string | null }) => !n.parentId)
-          .map((n: { name: string }) => n.name)
-          .filter(Boolean);
-        setSubjects(Array.from(new Set<string>(roots)).sort());
-      })
-      .catch(() => setSubjects([]));
   }, []);
 
   // Where to return after upload/cancel — back into the folder if we came from one.
@@ -91,6 +78,7 @@ export default function CmdsUploadForm({
           userId: session?.id || "",
           folderId: folderId || undefined,
           url: videoUrl.trim(),
+          boardIds,
         }),
       });
       if (res.ok) {
@@ -120,6 +108,7 @@ export default function CmdsUploadForm({
     form.append("subject", subject.trim());
     form.append("userId", session?.id || "");
     if (folderId) form.append("folderId", folderId);
+    form.append("boardIds", JSON.stringify(boardIds));
     form.append("file", file);
 
     // XHR for upload progress (fetch has no progress event).
@@ -169,21 +158,13 @@ export default function CmdsUploadForm({
             />
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-600">Subject</label>
-            <input
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              list="cmds-subjects"
-              className="w-full rounded border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
-              placeholder={subjects.length ? "Select or type a subject" : "e.g. Physics (optional)"}
-            />
-            <datalist id="cmds-subjects">
-              {subjects.map((s) => (
-                <option key={s} value={s} />
-              ))}
-            </datalist>
-          </div>
+          <BoardPicker selected={boardIds} onChange={setBoardIds} onSubjectChange={setSubject} />
+          {subject && (
+            <p className="text-xs text-slate-400">
+              Subject: <span className="font-medium text-slate-600">{subject}</span> — derived from the chapter(s)
+              tagged above, so it can't get out of sync with the Board Tree.
+            </p>
+          )}
 
           {kind === "video" && (
             <div className="flex gap-1 rounded-md bg-slate-100 p-1 text-sm">
@@ -199,6 +180,10 @@ export default function CmdsUploadForm({
                   onClick={() => {
                     setMode(m);
                     setError("");
+                    // Clicking "Upload file" should go straight to the OS file
+                    // picker, not just reveal a drop-zone that needs a second
+                    // click — the drop-zone still exists below as a drag-target.
+                    if (m === "file") requestAnimationFrame(() => inputRef.current?.click());
                   }}
                   className={`flex-1 rounded px-3 py-1.5 font-medium transition ${
                     mode === m

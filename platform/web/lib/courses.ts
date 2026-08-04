@@ -12,6 +12,7 @@ export type FolderNode = {
   name: string;
   parentId: string | null;
   ownerOrgId: string | null;
+  order: number | null;
 };
 
 function mapFolder(f: any): FolderNode {
@@ -20,7 +21,44 @@ function mapFolder(f: any): FolderNode {
     name: f.name || "Folder",
     parentId: f.parentId || null,
     ownerOrgId: f?.contentSrc?.id || null,
+    order: typeof f.order === "number" ? f.order : null,
   };
+}
+
+// Plain alphabetical sort breaks on real chapter/session names — e.g.
+// "SESSION 10 11 & 12" sorts before "SESSION 2" because "1" < "2" as the
+// first character. Compares run-of-digits chunks numerically and the rest
+// alphabetically, so "SESSION 2" < "SESSION 3 4 & 5" < "SESSION 10 11 & 12".
+export function naturalCompare(a: string, b: string): number {
+  const chunks = /(\d+)|(\D+)/g;
+  const aParts = a.match(chunks) || [];
+  const bParts = b.match(chunks) || [];
+  const len = Math.max(aParts.length, bParts.length);
+  for (let i = 0; i < len; i++) {
+    const ap = aParts[i] ?? "";
+    const bp = bParts[i] ?? "";
+    if (ap === bp) continue;
+    const an = Number(ap);
+    const bn = Number(bp);
+    if (ap !== "" && bp !== "" && !isNaN(an) && !isNaN(bn) && an !== bn) return an - bn;
+    return ap.localeCompare(bp);
+  }
+  return 0;
+}
+
+// Explicit manual `order` wins when set (lets an admin fix chapters that have
+// no numbering at all, e.g. "Essential Mathematics for Physics" vs
+// "Kinematics") — unordered items fall back to natural sort and always sort
+// after any explicitly-ordered ones.
+export function orderThenNatural<T extends { name: string; order?: number | null }>(items: T[]): T[] {
+  return [...items].sort((a, b) => {
+    const ao = typeof a.order === "number" ? a.order : null;
+    const bo = typeof b.order === "number" ? b.order : null;
+    if (ao !== null && bo !== null) return ao - bo;
+    if (ao !== null) return -1;
+    if (bo !== null) return 1;
+    return naturalCompare(a.name, b.name);
+  });
 }
 
 // Loads every ACTIVE folder for an org in one query so callers can walk the
@@ -54,9 +92,7 @@ export async function loadFoldersForOrgs(
 
 // Top-level folders = the course catalog.
 export function topLevelCourses(folders: FolderNode[]): FolderNode[] {
-  return folders
-    .filter((f) => !f.parentId)
-    .sort((a, b) => a.name.localeCompare(b.name));
+  return orderThenNatural(folders.filter((f) => !f.parentId));
 }
 
 // All folder ids in the subtree(s) rooted at `rootIds` (roots included).

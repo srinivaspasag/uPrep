@@ -101,7 +101,7 @@ function LoginForm() {
     if (staff) {
       router.push(next && next.startsWith("/cmds") ? next : "/cmds");
     } else {
-      router.push("/learn/library");
+      router.push("/learn/courses");
     }
   }
 

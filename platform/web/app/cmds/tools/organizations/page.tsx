@@ -170,32 +170,24 @@ export default function OrganizationsPage() {
 
 type GrantCourse = { id: string; name: string };
 
-type GrantPack = { id: string; name: string; courseCount: number };
-
 function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) {
   const [courses, setCourses] = useState<GrantCourse[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [packs, setPacks] = useState<GrantPack[]>([]);
-  const [selectedPacks, setSelectedPacks] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.all([
-      fetch(`/api/cmds/tools/org-grants?subscriberOrgId=${encodeURIComponent(org.id)}`).then((r) => r.json()),
-      fetch(`/api/cmds/tools/org-pack-grants?subscriberOrgId=${encodeURIComponent(org.id)}`).then((r) => r.json()),
-    ])
-      .then(([g, p]) => {
+    fetch(`/api/cmds/tools/org-grants?subscriberOrgId=${encodeURIComponent(org.id)}`)
+      .then((r) => r.json())
+      .then((g) => {
         if (g.error) {
           setError(g.error);
           return;
         }
         setCourses(g.courses || []);
         setSelected(new Set<string>(g.grantedCourseIds || []));
-        setPacks(p.packs || []);
-        setSelectedPacks(new Set<string>(p.grantedPackIds || []));
       })
       .finally(() => setLoading(false));
   }, [org.id]);
@@ -208,40 +200,22 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
     });
   }
 
-  function togglePack(id: string) {
-    setSelectedPacks((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  }
-
   async function save() {
     setSaving(true);
     setMsg("");
     setError("");
     try {
-      const [gRes, pRes] = await Promise.all([
-        fetch("/api/cmds/tools/org-grants", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subscriberOrgId: org.id, courseIds: Array.from(selected) }),
-        }),
-        fetch("/api/cmds/tools/org-pack-grants", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subscriberOrgId: org.id, packIds: Array.from(selectedPacks) }),
-        }),
-      ]);
+      const gRes = await fetch("/api/cmds/tools/org-grants", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subscriberOrgId: org.id, courseIds: Array.from(selected) }),
+      });
       const gd = await gRes.json().catch(() => ({}));
-      const pd = await pRes.json().catch(() => ({}));
-      if (!gRes.ok || !pRes.ok) {
-        setError(gd.error || pd.error || "Save failed");
+      if (!gRes.ok) {
+        setError(gd.error || "Save failed");
         return;
       }
-      setMsg(
-        `Granted ${gd.grantedCourseIds?.length ?? 0} course(s) and ${pd.grantedPackIds?.length ?? 0} pack(s).`
-      );
+      setMsg(`Granted ${gd.grantedCourseIds?.length ?? 0} course(s).`);
     } finally {
       setSaving(false);
     }
@@ -251,8 +225,8 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
     <Modal>
       <h3 className="text-lg font-semibold text-slate-800">Grant content to {org.name}</h3>
       <p className="mt-1 text-sm text-slate-500">
-        Grant whole <span className="font-medium">packs</span> and/or individual courses. The org
-        admin then assigns them to students.
+        Grant individual courses. The org admin then assigns them to students via Academic
+        Structure.
       </p>
 
       {loading ? (
@@ -263,35 +237,6 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
         </div>
       ) : (
         <div className="mt-4 max-h-[340px] space-y-4 overflow-auto rounded border border-slate-100 p-2">
-          <div>
-            <div className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Course Packs
-            </div>
-            {packs.length === 0 ? (
-              <div className="px-2 py-1 text-sm text-slate-400">
-                No packs yet — create them under Course Packs.
-              </div>
-            ) : (
-              packs.map((p) => (
-                <label
-                  key={p.id}
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm hover:bg-slate-50"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedPacks.has(p.id)}
-                    onChange={() => togglePack(p.id)}
-                    className="accent-emerald-600"
-                  />
-                  <span className="font-medium text-slate-700">{p.name}</span>
-                  <span className="text-xs text-slate-400">
-                    ({p.courseCount} course{p.courseCount === 1 ? "" : "s"})
-                  </span>
-                </label>
-              ))
-            )}
-          </div>
-
           <div>
             <div className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
               Individual Courses

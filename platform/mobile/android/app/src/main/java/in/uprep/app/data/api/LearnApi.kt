@@ -8,6 +8,11 @@ data class CourseSummary(val id: String, val name: String, val chapterCount: Int
 data class FolderInfo(val id: String, val name: String, val parentId: String?)
 data class SubfolderInfo(val id: String, val name: String, val type: String)
 
+// Which Program (e.g. "JEE XI") granted a set of courses — bug found live:
+// a student assigned to a Program saw its courses (Physics, Chem, Math)
+// with no indication of the Program itself anywhere in the app.
+data class ProgramGroup(val id: String, val name: String, val courseIds: List<String>)
+
 // type: VIDEO | DOCUMENT | TEST. url/embedUrl are relative paths for uploaded
 // files (e.g. "/uploads/xxx.mp4") — must be prefixed with NetworkConfig.BASE_URL
 // before use. embedUrl+provider are only set for YouTube/Vimeo videos added by
@@ -28,6 +33,7 @@ data class ContentItem(
 data class LearnCoursesResponse(
     val courses: List<CourseSummary>?,
     val staff: Boolean?,
+    val programGroups: List<ProgramGroup>?,
     val folder: FolderInfo?,
     val courseRootId: String?,
     val subfolders: List<SubfolderInfo>?,

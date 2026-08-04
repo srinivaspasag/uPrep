@@ -5,19 +5,26 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import CmdsShell from "@/components/CmdsShell";
 import { getSession } from "@/lib/session";
+import { canManageContent } from "@/lib/roles";
 
 type Program = { id: string; name: string; code: string | null; description: string; isOffline: boolean };
 type Center = { id: string; name: string };
-type Section = { id: string; name: string; centerId: string | null };
+type Section = {
+  id: string;
+  name: string;
+  centerId: string | null;
+  courses?: { id: string; name: string }[];
+};
 type Counts = { teachers: number; students: number; content: number };
 
-type TabKey = "content" | "members" | "students" | "organizations" | "marksheets";
+type TabKey = "content" | "members" | "students" | "organizations" | "marksheets" | "analytics";
 const TABS: { key: TabKey; label: string }[] = [
   { key: "content", label: "Content" },
   { key: "members", label: "Members" },
   { key: "students", label: "Students" },
   { key: "organizations", label: "Organizations" },
   { key: "marksheets", label: "Upload Mark Sheets" },
+  { key: "analytics", label: "Analytics" },
 ];
 
 export default function ProgramDetailPage() {
@@ -110,15 +117,18 @@ export default function ProgramDetailPage() {
 
         {/* Main */}
         <main className="flex-1 px-8 py-6">
-          {tab === "content" && <ContentTab query={query} programId={id} />}
-          {tab === "members" && <PeopleTab profile="TEACHER" query={query} label="teachers" />}
-          {tab === "students" && <PeopleTab profile="STUDENT" query={query} label="students" />}
+          {tab === "content" && (
+            <ContentTab query={query} programId={id} centers={centers} sections={sections} />
+          )}
+          {tab === "members" && <PeopleTab profile="TEACHER" query={query} label="teachers" programId={id} />}
+          {tab === "students" && <PeopleTab profile="STUDENT" query={query} label="students" programId={id} />}
           {tab === "organizations" && (
             <EmptyPanel
               title="Organizations"
               text="No organizations are sharing this program yet."
             />
           )}
+          {tab === "analytics" && <ProgramAnalyticsTab programId={id} />}
           {tab === "marksheets" && <MarkSheetsTab programId={id} />}
         </main>
       </div>
@@ -126,140 +136,447 @@ export default function ProgramDetailPage() {
   );
 }
 
-function ContentTab({ query, programId }: { query: string; programId: string }) {
+// Content is published per Section (Program+Center+Section), matching legacy:
+// an admin picks a Center then a Section, adds items to it (not yet visible
+// to students), then bulk-selects rows and runs "Choose Operation" to
+// actually publish (Make Visible), toggle download, or remove from section.
+function ContentTab({
+  query,
+  programId,
+  centers,
+  sections,
+}: {
+  query: string;
+  programId: string;
+  centers: { id: string; name: string }[];
+  sections: {
+    id: string;
+    name: string;
+    centerId: string | null;
+    programId?: string | null;
+    courses?: { id: string; name: string }[];
+  }[];
+}) {
+  const isAdmin = (getSession()?.profile || "").trim().toUpperCase() === "MANAGER";
+  // Salesperson is excluded from content, matching legacy — Members/Students/
+  // Marksheets tabs on this same page stay open to them, only Content doesn't.
+  const canAccess = canManageContent(getSession()?.profile);
+
+  const programSections = useMemo(
+    () => sections.filter((s) => !s.programId || s.programId === programId),
+    [sections, programId]
+  );
+  const [centerId, setCenterId] = useState("");
+  const [sectionId, setSectionId] = useState("");
+
+  useEffect(() => {
+    if (!centerId && centers[0]) setCenterId(centers[0].id);
+  }, [centers, centerId]);
+
+  const centerSections = useMemo(
+    () => programSections.filter((s) => !centerId || s.centerId === centerId),
+    [programSections, centerId]
+  );
+
+  useEffect(() => {
+    if (centerSections.length && !centerSections.some((s) => s.id === sectionId)) {
+      setSectionId(centerSections[0].id);
+    } else if (!centerSections.length && sectionId) {
+      setSectionId("");
+    }
+  }, [centerSections, sectionId]);
+
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState<string | null>(null);
-  const isAdmin = (getSession()?.profile || "").trim().toUpperCase() === "MANAGER";
+  const [busy, setBusy] = useState(false);
+  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [op, setOp] = useState("");
+  const [showPicker, setShowPicker] = useState(false);
 
   async function load() {
-    const d = await (await fetch("/api/cmds/content")).json();
+    if (!sectionId) {
+      setRows([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const d = await (await fetch(`/api/cmds/content?sectionId=${sectionId}`)).json();
     setRows(d.resources || []);
+    setChecked(new Set());
     setLoading(false);
   }
   useEffect(() => {
     load();
-  }, []);
-
-  // Hidden FOR THIS PROGRAM specifically: either globally hidden (org-wide,
-  // set from the general Resources page), or visibleProgramIds is a non-empty
-  // allow-list that doesn't include this program.
-  function hiddenHere(r: any) {
-    if (r.hidden) return true;
-    const allow: string[] = Array.isArray(r.visibleProgramIds) ? r.visibleProgramIds : [];
-    return allow.length > 0 && !allow.includes(programId);
-  }
-
-  async function toggle(r: any) {
-    if (r.type === "FOLDER" || r.hidden) return; // org-wide hidden is controlled elsewhere
-    setBusy(r.id);
-    const allow: string[] = Array.isArray(r.visibleProgramIds) ? r.visibleProgramIds : [];
-    const nextAllow = allow.includes(programId)
-      ? allow.filter((id) => id !== programId)
-      : [...allow, programId];
-    await fetch("/api/cmds/content", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: r.id, type: r.type, action: "visibility", visibleProgramIds: nextAllow }),
-    });
-    setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, visibleProgramIds: nextAllow } : x)));
-    setBusy(null);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionId]);
 
   const visible = useMemo(
-    () =>
-      rows.filter((r) => (r.title || "").toLowerCase().includes(query.toLowerCase())),
+    () => rows.filter((r) => (r.title || "").toLowerCase().includes(query.toLowerCase())),
     [rows, query]
   );
 
+  function toggleChecked(id: string) {
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    setChecked((prev) => (prev.size === visible.length ? new Set() : new Set(visible.map((r) => r.id))));
+  }
+
+  async function applyOp() {
+    if (!op || checked.size === 0 || !sectionId) return;
+    setBusy(true);
+    const items = visible.filter((r) => checked.has(r.id)).map((r) => ({ id: r.id, type: r.type }));
+    await fetch("/api/cmds/content/bulk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items, action: op, sectionId }),
+    });
+    setOp("");
+    setBusy(false);
+    load();
+  }
+
+  if (!canAccess) {
+    return <div className="py-16 text-center text-slate-400">You don&apos;t have access to Content.</div>;
+  }
+
+  const currentSection = centerSections.find((s) => s.id === sectionId);
+  const grantedCourses = currentSection?.courses || [];
+
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-600">Content</h2>
-        <Link
-          href="/cmds"
-          className="rounded bg-[#e8443b] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#d13a32]"
+      {sectionId && (
+        <div className="mb-4 rounded-md bg-blue-50 px-4 py-3 text-sm ring-1 ring-blue-100">
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-blue-900">
+              Course subjects this section's students see in "My Courses"
+            </span>
+            <Link href="/cmds/tools/academic" className="text-xs text-blue-700 hover:underline">
+              Manage in Academic Structure →
+            </Link>
+          </div>
+          {grantedCourses.length === 0 ? (
+            <p className="mt-1 text-blue-700">
+              None assigned — this section grants no whole subjects yet, only the loose files listed below (if any).
+            </p>
+          ) : (
+            <p className="mt-1 text-blue-700">
+              {grantedCourses.map((c) => c.name).join(", ")}
+            </p>
+          )}
+          <p className="mt-1 text-xs text-blue-500">
+            This is separate from the table below — that's individual files added directly to this section; this is
+            the whole-subject grant that drives the student's course list.
+          </p>
+        </div>
+      )}
+      <div className="flex flex-wrap items-center gap-3">
+        <select
+          value={centerId}
+          onChange={(e) => setCenterId(e.target.value)}
+          className="rounded border border-slate-300 px-2 py-1.5 text-xs"
         >
-          + Add Content
-        </Link>
+          {centers.length === 0 && <option value="">No centers</option>}
+          {centers.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+        <select
+          value={sectionId}
+          onChange={(e) => setSectionId(e.target.value)}
+          className="rounded border border-slate-300 px-2 py-1.5 text-xs"
+        >
+          {centerSections.length === 0 && <option value="">No sections</option>}
+          {centerSections.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+        </select>
+
+        <div className="ml-auto flex items-center gap-2">
+          {isAdmin && checked.size > 0 && (
+            <>
+              <select
+                value={op}
+                onChange={(e) => setOp(e.target.value)}
+                className="rounded border border-slate-300 px-2 py-1.5 text-xs"
+              >
+                <option value="">Choose Operation ({checked.size})</option>
+                <option value="visible">Make Visible</option>
+                <option value="invisible">Make Invisible</option>
+                <option value="enableDownload">Enable Download</option>
+                <option value="disableDownload">Disable Download</option>
+                <option value="removeFromSection">Remove From Section</option>
+              </select>
+              <button
+                disabled={!op || busy}
+                onClick={applyOp}
+                className="rounded bg-slate-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+              >
+                Go
+              </button>
+            </>
+          )}
+          {isAdmin && sectionId && (
+            <button
+              onClick={() => setShowPicker(true)}
+              className="rounded bg-[#e8443b] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#d13a32]"
+            >
+              + Add Content
+            </button>
+          )}
+        </div>
       </div>
-      <p className="mt-1 text-xs text-slate-400">
-        Toggle a row to make it visible or invisible to THIS program&apos;s students specifically.
-        (Org-wide hide/show is set from Resources.)
+
+      <p className="mt-2 text-xs text-slate-400">
+        Content added to a section is not shown to students until it&apos;s explicitly made
+        Visible. (Org-wide hide/show is still set from Resources.)
       </p>
+
       <div className="mt-3 overflow-hidden rounded border border-slate-200">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+              <th className="w-8 px-4 py-2">
+                {isAdmin && visible.length > 0 && (
+                  <input type="checkbox" checked={checked.size === visible.length} onChange={toggleAll} />
+                )}
+              </th>
               <th className="px-4 py-2 font-medium">Title</th>
               <th className="px-4 py-2 font-medium">Type</th>
-              <th className="px-4 py-2 font-medium">Visibility Status</th>
-              <th className="w-32 px-4 py-2 font-medium" />
+              <th className="px-4 py-2 font-medium">Visibility</th>
+              <th className="px-4 py-2 font-medium">Download</th>
             </tr>
           </thead>
           <tbody>
-            {loading ? (
+            {!sectionId ? (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
+                  {centers.length === 0
+                    ? "No centers set up for this program yet."
+                    : "No sections in this center yet — create one from Academic Structure."}
+                </td>
+              </tr>
+            ) : loading ? (
+              <tr>
+                <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
                   Loading…
                 </td>
               </tr>
             ) : visible.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-slate-400">
-                  No content
+                <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
+                  No content added to this section yet
                 </td>
               </tr>
             ) : (
-              visible.map((r) => (
-                <tr key={r.id} className="border-b border-slate-100 hover:bg-slate-50">
-                  <td className="px-4 py-3 text-slate-700">{r.title}</td>
-                  <td className="px-4 py-3 text-slate-500">{r.type}</td>
-                  <td className="px-4 py-3">
-                    {r.type === "FOLDER" ? (
-                      <span className="text-slate-300">—</span>
-                    ) : r.hidden ? (
-                      <span className="text-amber-600">● Hidden org-wide</span>
-                    ) : hiddenHere(r) ? (
-                      <span className="text-amber-600">● Invisible for this program</span>
-                    ) : (
-                      <span className="text-emerald-600">● Visible</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    {r.type !== "FOLDER" && isAdmin && !r.hidden && (
-                      <button
-                        disabled={busy === r.id}
-                        onClick={() => toggle(r)}
-                        className="rounded border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50"
-                      >
-                        {busy === r.id
-                          ? "…"
-                          : hiddenHere(r)
-                          ? "Make visible"
-                          : "Make invisible"}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))
+              visible.map((r) => {
+                const isVisible = Array.isArray(r.visibleSectionIds) && r.visibleSectionIds.includes(sectionId);
+                return (
+                  <tr key={r.id} className="border-b border-slate-100 hover:bg-slate-50">
+                    <td className="px-4 py-3">
+                      {isAdmin && (
+                        <input
+                          type="checkbox"
+                          checked={checked.has(r.id)}
+                          onChange={() => toggleChecked(r.id)}
+                        />
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-slate-700">{r.title}</td>
+                    <td className="px-4 py-3 text-slate-500">{r.type}</td>
+                    <td className="px-4 py-3">
+                      {r.hidden ? (
+                        <span className="text-amber-600">● Hidden org-wide</span>
+                      ) : isVisible ? (
+                        <span className="text-emerald-600">● Visible</span>
+                      ) : (
+                        <span className="text-amber-600">● Not Visible</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-slate-500">
+                      {r.downloadEnabled === false ? "Disabled" : "Enabled"}
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
+      </div>
+
+      {showPicker && sectionId && (
+        <AddContentModal
+          sectionId={sectionId}
+          onClose={() => setShowPicker(false)}
+          onAdded={() => {
+            setShowPicker(false);
+            load();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// Browse the general Resources tree and multi-select items to add to a
+// section — the "select ebook/video from content" step of the legacy flow.
+function AddContentModal({
+  sectionId,
+  onClose,
+  onAdded,
+}: {
+  sectionId: string;
+  onClose: () => void;
+  onAdded: () => void;
+}) {
+  const [parentId, setParentId] = useState<string | null>(null);
+  const [breadcrumb, setBreadcrumb] = useState<{ id: string | null; name: string }[]>([
+    { id: null, name: "Resources" },
+  ]);
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [picked, setPicked] = useState<Map<string, string>>(new Map());
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const url = parentId ? `/api/cmds/content?parentId=${parentId}` : "/api/cmds/content";
+    fetch(url)
+      .then((r) => r.json())
+      .then((d) => setRows(d.resources || []))
+      .finally(() => setLoading(false));
+  }, [parentId]);
+
+  function enterFolder(f: any) {
+    setBreadcrumb((prev) => [...prev, { id: f.id, name: f.title }]);
+    setParentId(f.id);
+  }
+  function goTo(index: number) {
+    setBreadcrumb((prev) => prev.slice(0, index + 1));
+    setParentId(breadcrumb[index].id);
+  }
+
+  function togglePick(r: any) {
+    setPicked((prev) => {
+      const next = new Map(prev);
+      if (next.has(r.id)) next.delete(r.id);
+      else next.set(r.id, r.type);
+      return next;
+    });
+  }
+
+  async function confirm() {
+    if (picked.size === 0) return;
+    setSaving(true);
+    const items = Array.from(picked.entries()).map(([id, type]) => ({ id, type }));
+    await fetch("/api/cmds/content/bulk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items, action: "addToSection", sectionId }),
+    });
+    setSaving(false);
+    onAdded();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="flex max-h-[80vh] w-full max-w-2xl flex-col rounded-lg bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3">
+          <h3 className="text-sm font-semibold text-slate-700">Add Content to Section</h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+            ✕
+          </button>
+        </div>
+        <div className="flex flex-wrap items-center gap-1 border-b border-slate-100 px-5 py-2 text-xs text-slate-500">
+          {breadcrumb.map((b, i) => (
+            <span key={i}>
+              {i > 0 && <span className="mx-1 text-slate-300">/</span>}
+              <button onClick={() => goTo(i)} className="hover:text-blue-600 hover:underline">
+                {b.name}
+              </button>
+            </span>
+          ))}
+        </div>
+        <div className="flex-1 overflow-y-auto px-5 py-3">
+          {loading ? (
+            <div className="py-10 text-center text-sm text-slate-400">Loading…</div>
+          ) : rows.length === 0 ? (
+            <div className="py-10 text-center text-sm text-slate-400">Empty folder</div>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {rows.map((r) => (
+                <li key={r.id} className="flex items-center gap-3 py-2">
+                  {r.type === "FOLDER" ? (
+                    <button
+                      onClick={() => enterFolder(r)}
+                      className="flex-1 text-left text-sm text-slate-700 hover:text-blue-600"
+                    >
+                      📁 {r.title}
+                    </button>
+                  ) : (
+                    <>
+                      <input type="checkbox" checked={picked.has(r.id)} onChange={() => togglePick(r)} />
+                      <span className="flex-1 text-sm text-slate-700">{r.title}</span>
+                      <span className="text-xs text-slate-400">{r.type}</span>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+          <span className="text-xs text-slate-500">{picked.size} selected</span>
+          <div className="flex gap-2">
+            <button
+              onClick={onClose}
+              className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={picked.size === 0 || saving}
+              onClick={confirm}
+              className="rounded bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {saving ? "Adding…" : `Add ${picked.size || ""} item${picked.size === 1 ? "" : "s"}`}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function PeopleTab({ profile, query, label }: { profile: string; query: string; label: string }) {
+function PeopleTab({
+  profile,
+  query,
+  label,
+  programId,
+}: {
+  profile: string;
+  query: string;
+  label: string;
+  programId: string;
+}) {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetch(`/api/cmds/tools/people?profile=${profile}`)
+    fetch(`/api/cmds/tools/people?profile=${profile}&programId=${programId}`)
       .then((r) => r.json())
       .then((d) => setRows(d.members || []))
       .finally(() => setLoading(false));
-  }, [profile]);
+  }, [profile, programId]);
   const visible = useMemo(
     () =>
       rows.filter((m) =>
@@ -273,7 +590,7 @@ function PeopleTab({ profile, query, label }: { profile: string; query: string; 
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold capitalize text-slate-600">{label}</h2>
         <Link
-          href="/cmds/tools/people"
+          href={`/cmds/tools/people?programId=${encodeURIComponent(programId)}&profile=${profile}`}
           className="rounded bg-[#e8443b] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#d13a32]"
         >
           + Add {profile === "TEACHER" ? "Teachers" : "Students"}
@@ -434,6 +751,149 @@ function MarkSheetsTab({ programId }: { programId: string }) {
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+type ProgramTest = {
+  id: string;
+  name: string;
+  date: number;
+  attempts: number;
+  students: number;
+  avgPercent: number;
+  topperName: string | null;
+  topperPercent: number | null;
+};
+
+// Legacy's program-level Analytics screen (Institute.java:1070 testAnalytics)
+// — select a program, see a tests-over-time performance graph plus every
+// test with its topper. Scoped here to tests attempted by this program's
+// enrolled students (the join key programMemberships already uses
+// everywhere else), since there's no direct test<->program link.
+function ProgramAnalyticsTab({ programId }: { programId: string }) {
+  const [tests, setTests] = useState<ProgramTest[]>([]);
+  const [studentCount, setStudentCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/cmds/programs/${programId}/analytics`)
+      .then((r) => r.json())
+      .then((d) => {
+        setTests(d.tests || []);
+        setStudentCount(d.studentCount || 0);
+      })
+      .finally(() => setLoading(false));
+  }, [programId]);
+
+  if (loading) return <div className="py-16 text-center text-sm text-slate-400">Loading analytics…</div>;
+
+  if (tests.length === 0) {
+    return (
+      <EmptyPanel
+        title="Analytics"
+        text={
+          studentCount === 0
+            ? "No students enrolled in this program yet."
+            : "No completed test attempts from this program's students yet."
+        }
+      />
+    );
+  }
+
+  const maxPercent = Math.max(100, ...tests.map((t) => t.avgPercent));
+  const chartHeight = 160;
+  const barWidth = Math.max(24, Math.min(56, Math.floor(640 / tests.length) - 8));
+
+  return (
+    <div>
+      <h2 className="text-sm font-semibold text-slate-600">Analytics</h2>
+      <p className="mt-1 text-xs text-slate-400">
+        {tests.length} test{tests.length === 1 ? "" : "s"} attempted by {studentCount} enrolled student
+        {studentCount === 1 ? "" : "s"}.
+      </p>
+
+      {/* Tests-over-time graph — average score % per test, in date order. */}
+      <div className="mt-4 overflow-x-auto rounded-lg border border-slate-200 p-4">
+        <svg width={Math.max(640, tests.length * (barWidth + 8))} height={chartHeight + 40}>
+          {tests.map((t, i) => {
+            const h = (t.avgPercent / maxPercent) * chartHeight;
+            const x = i * (barWidth + 8);
+            return (
+              <g key={t.id}>
+                <title>
+                  {t.name} — {t.avgPercent}% avg, {new Date(t.date).toLocaleDateString()}
+                </title>
+                <rect
+                  x={x}
+                  y={chartHeight - h}
+                  width={barWidth}
+                  height={h}
+                  rx={3}
+                  className="fill-indigo-400 hover:fill-indigo-500"
+                />
+                <text x={x + barWidth / 2} y={chartHeight - h - 6} textAnchor="middle" className="fill-slate-600 text-[11px]">
+                  {t.avgPercent}%
+                </text>
+                <text
+                  x={x + barWidth / 2}
+                  y={chartHeight + 16}
+                  textAnchor="middle"
+                  className="fill-slate-400 text-[10px]"
+                >
+                  {new Date(t.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Every test with its topper. */}
+      <div className="mt-6 overflow-hidden rounded border border-slate-200">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+              <th className="px-4 py-2 font-medium">Test</th>
+              <th className="px-4 py-2 font-medium">Date</th>
+              <th className="px-4 py-2 font-medium">Attempts</th>
+              <th className="px-4 py-2 font-medium">Avg %</th>
+              <th className="px-4 py-2 font-medium">Topper</th>
+              <th className="px-4 py-2 font-medium" />
+            </tr>
+          </thead>
+          <tbody>
+            {[...tests].reverse().map((t) => (
+              <tr key={t.id} className="border-b border-slate-100">
+                <td className="px-4 py-2 font-medium text-slate-700">{t.name}</td>
+                <td className="px-4 py-2 text-slate-400">{new Date(t.date).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-slate-500">
+                  {t.attempts} ({t.students} student{t.students === 1 ? "" : "s"})
+                </td>
+                <td className="px-4 py-2 text-slate-700">{t.avgPercent}%</td>
+                <td className="px-4 py-2 text-slate-600">
+                  {t.topperName ? (
+                    <>
+                      {t.topperName} <span className="text-slate-400">({t.topperPercent}%)</span>
+                    </>
+                  ) : (
+                    "—"
+                  )}
+                </td>
+                <td className="px-4 py-2">
+                  <Link
+                    href={`/cmds/tests/analytics?testId=${t.id}`}
+                    className="text-xs font-medium text-blue-600 hover:underline"
+                  >
+                    Open →
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -44,7 +44,14 @@ export async function GET(req: NextRequest) {
       isOffline: !!d.isOffline,
     }));
 
-    return NextResponse.json({ programs, orgId });
+    // This response depends on the caller's auth cookie (a student and staff
+    // hitting this with the same URL get different results) — without an
+    // explicit no-store, a shared/browser cache has no signal that it must
+    // not reuse one caller's response for another.
+    return NextResponse.json(
+      { programs, orgId },
+      { headers: { "Cache-Control": "no-store, private", Vary: "Cookie" } }
+    );
   } catch (e: any) {
     return NextResponse.json(
       { programs: [], error: e?.message || "Failed to load programs" },

@@ -88,7 +88,10 @@ export async function POST(req: NextRequest) {
       contactNumber: (b.contactNumber || "").trim(),
       address: (b.address || "").trim(),
       authType: "VEDANTU",
-      doubtsForumMode: "public",
+      // Legacy's DoubtsForumMode is a Java enum (PUBLIC/PRIVATE/HIDDEN) —
+      // Morphia throws IllegalArgumentException deserializing any other
+      // casing, breaking every subsequent getOrganization call for this org.
+      doubtsForumMode: "PUBLIC",
       recordState: "ACTIVE",
       timeCreated: now,
       lastUpdated: now,

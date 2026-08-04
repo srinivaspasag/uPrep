@@ -6,9 +6,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSession, clearSession, type UprepSession } from "@/lib/session";
 import ImpersonationBanner from "@/components/ImpersonationBanner";
+import { isStaff } from "@/lib/roles";
 
 export type LmsNavKey =
-  | "library"
   | "courses"
   | "store"
   | "live"
@@ -24,22 +24,21 @@ export type LmsNavKey =
   | "playlists"
   | "certificates";
 
+// Matches legacy's real sidebar exactly (ui/learn-app header.html's
+// `<aside id="sidebar">` main-menu list + conf/messages TXT_* labels) — five
+// items, no more: Library, Programs (student only), Doubts Forum (unless the
+// org hides it), Analytics, Recent Activity. This rebuild had accumulated 14
+// nav entries (Store, Live Classes, Scheduled Tests, Assignments,
+// Leaderboard, Challenges, Messages, Playlists, Certificates) that don't
+// exist in legacy's nav at all — their pages still exist and work, they're
+// just not real top-level destinations, so they're removed from here rather
+// than deleted outright.
 const NAV: { key: LmsNavKey; label: string; href: string }[] = [
-  { key: "library", label: "DIGITAL LIBRARY", href: "/learn/library" },
-  { key: "courses", label: "MY COURSES", href: "/learn/courses" },
-  { key: "store", label: "STORE", href: "/learn/store" },
-  { key: "live", label: "LIVE CLASSES", href: "/learn/live" },
-  { key: "scheduled", label: "SCHEDULED TESTS", href: "/learn/tests" },
+  { key: "courses", label: "DIGITAL LIBRARY", href: "/learn/courses" },
   { key: "programs", label: "PROGRAMS", href: "/learn/programs" },
-  { key: "assignments", label: "ASSIGNMENTS", href: "/learn/assignments" },
   { key: "doubts", label: "DOUBTS FORUM", href: "/learn/doubts" },
   { key: "analytics", label: "ANALYTICS", href: "/learn/analytics" },
   { key: "activity", label: "RECENT ACTIVITY", href: "/learn/activity" },
-  { key: "leaderboard", label: "LEADERBOARD", href: "/learn/leaderboard" },
-  { key: "challenges", label: "CHALLENGES", href: "/learn/challenges" },
-  { key: "messages", label: "MESSAGES", href: "/learn/messages" },
-  { key: "playlists", label: "PLAYLISTS", href: "/learn/playlists" },
-  { key: "certificates", label: "CERTIFICATES", href: "/learn/certificates" },
 ];
 
 export default function LmsShell({
@@ -86,11 +85,11 @@ export default function LmsShell({
   }
 
   return (
-    <div className="min-h-screen bg-white text-[#333]">
+    <div className="min-h-screen bg-[#EDEEE9] text-[#16233D]">
       <ImpersonationBanner />
       {/* Top header */}
-      <header className="sticky top-0 z-30 flex h-[52px] items-center justify-between border-b border-slate-200 bg-white px-5 shadow-sm">
-        <Link href="/learn/library" className="flex items-center gap-2">
+      <header className="sticky top-0 z-30 flex h-[52px] items-center justify-between border-b border-[#D9D6C9] bg-white px-5 shadow-sm">
+        <Link href="/learn/courses" className="flex items-center gap-2">
           <Image
             src="/legacy/logo.png"
             alt="UPrep Learning"
@@ -113,7 +112,7 @@ export default function LmsShell({
             <input
               name="q"
               placeholder="Search…"
-              className="w-40 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 outline-none focus:w-56 focus:border-emerald-400 focus:bg-white"
+              className="w-40 rounded-full border border-[#D9D6C9] bg-[#EDEEE9] px-3 py-1.5 text-xs text-[#3E4A63] outline-none focus:w-56 focus:border-amber-500 focus:bg-white"
             />
           </form>
 
@@ -125,13 +124,15 @@ export default function LmsShell({
             <span className="text-base">☆</span>
           </Link>
 
-          <Link
-            href="/cmds"
-            className="flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-emerald-400 hover:text-emerald-700"
-            title="Content Management & Distribution System"
-          >
-            <span className="text-[13px]">🛠</span> CMDS Console
-          </Link>
+          {isStaff(session?.profile) && (
+            <Link
+              href="/cmds"
+              className="flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-emerald-400 hover:text-emerald-700"
+              title="Content Management & Distribution System"
+            >
+              <span className="text-[13px]">🛠</span> CMDS Console
+            </Link>
+          )}
 
           <Link
             href="/learn/notifications"
@@ -140,16 +141,16 @@ export default function LmsShell({
           >
             <span className="text-base">🔔</span>
             {hasUnread && (
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-amber-500 ring-2 ring-white" />
             )}
           </Link>
 
         <div className="relative">
           <button
             onClick={() => setMenuOpen((o) => !o)}
-            className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900"
+            className="flex items-center gap-2 text-sm text-[#3E4A63] hover:text-[#16233D]"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-600">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#6B4E9E] text-xs font-semibold text-white">
               {(session?.firstName || "U").charAt(0).toUpperCase()}
             </span>
             <span className="hidden sm:inline">
@@ -165,12 +166,14 @@ export default function LmsShell({
               >
                 Profile & Settings
               </Link>
-              <Link
-                href="/cmds"
-                className="block px-4 py-2 text-slate-600 hover:bg-slate-50"
-              >
-                CMDS Console
-              </Link>
+              {isStaff(session?.profile) && (
+                <Link
+                  href="/cmds"
+                  className="block px-4 py-2 text-slate-600 hover:bg-slate-50"
+                >
+                  CMDS Console
+                </Link>
+              )}
               <Link
                 href="/learn/news"
                 className="block px-4 py-2 text-slate-600 hover:bg-slate-50"
@@ -197,7 +200,7 @@ export default function LmsShell({
 
       <div className="mx-auto flex max-w-[1100px]">
         {/* Left sidebar nav */}
-        <aside className="w-[210px] shrink-0 border-r border-slate-100 py-6">
+        <aside className="w-[210px] shrink-0 border-r border-[#D9D6C9] bg-white py-6">
           <nav className="flex flex-col">
             {NAV.map((item) => {
               const isActive = item.key === active;
@@ -207,8 +210,8 @@ export default function LmsShell({
                   href={item.href}
                   className={`border-l-[3px] px-5 py-3 text-[13px] tracking-wide transition ${
                     isActive
-                      ? "border-emerald-500 font-semibold text-slate-900"
-                      : "border-transparent text-slate-400 hover:text-slate-700"
+                      ? "border-amber-600 bg-[#EDEEE9] font-semibold text-[#16233D]"
+                      : "border-transparent text-[#8890A1] hover:bg-[#F8F7F3] hover:text-[#16233D]"
                   }`}
                 >
                   {item.label}

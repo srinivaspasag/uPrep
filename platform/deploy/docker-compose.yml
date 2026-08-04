@@ -46,6 +46,12 @@ services:
       NEXT_PUBLIC_DEFAULT_ORG_ID: 5874a52bc92ed65e3defc7e5
       NODE_OPTIONS: "--max-old-space-size=1536"
       PORT: "3000"
+      # Optional: enables AI vision transcription for equation-heavy PDF
+      # uploads in Bulk Import Questions (falls back to plain text-layer
+      # extraction when unset). Set via a ~/uprep/.env file — never commit
+      # the real key here; docker compose auto-loads .env from this directory.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5}
     command: bash -lc "npm install --no-audit --no-fund && npm run build && npm start -- -p 3000 -H 0.0.0.0"
     depends_on:
       - mongo

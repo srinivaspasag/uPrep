@@ -62,6 +62,7 @@ type CreateBody = {
   userId?: string;
   userName?: string;
   orgId?: string;
+  boardIds?: string[];
 };
 
 export async function POST(req: NextRequest) {
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
       views: 0,
       followers: [],
       comments: 0,
-      boardIds: [],
+      boardIds: Array.isArray(b.boardIds) ? b.boardIds.filter(Boolean).map(String) : [],
       targetIds: [],
       tags: [],
       subject: (b.subject || "").trim() || null,

@@ -12,6 +12,17 @@ export function isStaff(profile: string | null | undefined): boolean {
   return !!profile && STAFF_SET.has(profile.trim().toUpperCase());
 }
 
+// Content/resources management — legacy explicitly excludes SALESPERSON
+// from content views (orgUserProfile != "SALESPERSON" checks in
+// QrResources/QrPrograms templates); the other three staff profiles are
+// not otherwise differentiated for content access in legacy.
+const CONTENT_MANAGER_PROFILES = ["MANAGER", "TEACHER", "EDITOR"] as const;
+const CONTENT_MANAGER_SET = new Set<string>(CONTENT_MANAGER_PROFILES);
+
+export function canManageContent(profile: string | null | undefined): boolean {
+  return !!profile && CONTENT_MANAGER_SET.has(profile.trim().toUpperCase());
+}
+
 // Super admin = MANAGER + isSuperAdmin flag (legacy Widgets._amISuperAdmin).
 export function isSuperAdmin(profile: string | null | undefined, superFlag: boolean | undefined): boolean {
   return !!superFlag && (profile || "").trim().toUpperCase() === "MANAGER";

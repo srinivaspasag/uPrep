@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
 import { API, DEFAULT_ORG_ID, CALLING_APP, CALLING_APP_ID } from "@/lib/config";
+import { getDb } from "@/lib/mongo";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +67,38 @@ export async function GET(
       }
     }
 
+    // resultVisibility isn't exposed by the real content-service's
+    // getTestInfo response, so it's read straight from the same Mongo the
+    // backend itself writes to — same established pattern as the submit
+    // route reading userquestionattempts directly. Defaults to VISIBLE,
+    // matching the create route's own default.
+    let resultVisibility = "VISIBLE";
+    // Legacy allows exactly ONE attempt per test, ever — confirmed in the
+    // real backend source (AnalyticsManager.isMultiAttemptAllowed() is
+    // hardcoded `return false`). Retaking an already-finished test makes
+    // the real startAttempt call throw MULTI_ATTEMPTS_NOT_ALLOWED; legacy's
+    // UI never lets a student reach that error because it checks attempt
+    // status up front and routes straight to the existing result instead
+    // (Tests.java testPageDirect). Surfaced here so the client can do the
+    // same, instead of letting a student retake the whole test only to have
+    // the submission silently rejected at the very end.
+    let alreadyAttempted = false;
+    if (ObjectId.isValid(id)) {
+      try {
+        const db = await getDb();
+        const testDoc = await db.collection("tests").findOne({ _id: new ObjectId(id) }, { projection: { resultVisibility: 1 } });
+        if (testDoc?.resultVisibility) resultVisibility = String(testDoc.resultVisibility).toUpperCase();
+        if (userId) {
+          const finished = await db
+            .collection("userentityattempts")
+            .findOne({ userId, "entity.id": id, "entity.type": "TEST", finished: true });
+          alreadyAttempted = !!finished;
+        }
+      } catch {
+        /* fall back to VISIBLE / not-attempted if the direct read fails */
+      }
+    }
+
     return NextResponse.json({
       test: {
         id: ir.id || id,
@@ -74,8 +108,10 @@ export async function GET(
           : 0,
         totalMarks: ir.totalMarks ?? 0,
         code: qr.code || ir.code || null,
+        resultVisibility,
       },
       questions,
+      alreadyAttempted,
     });
   } catch (e: any) {
     return NextResponse.json(

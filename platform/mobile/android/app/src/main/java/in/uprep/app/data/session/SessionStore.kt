@@ -62,6 +62,29 @@ class SessionStore(private val context: Context) {
         context.dataStore.edit { it.clear() }
     }
 
+    // Offline login fallback: after every successful ONLINE login, cache a
+    // salted PBKDF2 hash of the credential (never the plaintext password) so
+    // a later login attempt with no connectivity can be verified locally
+    // against the same identifier+password, restoring the already-cached
+    // UserSession above without a network round-trip.
+    suspend fun saveOfflineCredential(identifier: String, password: String) {
+        val salt = OfflineAuth.randomSaltHex()
+        context.dataStore.edit { prefs ->
+            prefs[KEY_OFFLINE_IDENTIFIER] = identifier
+            prefs[KEY_OFFLINE_SALT] = salt
+            prefs[KEY_OFFLINE_HASH] = OfflineAuth.hash(password, salt)
+        }
+    }
+
+    suspend fun verifyOfflineCredential(identifier: String, password: String): Boolean {
+        val prefs = context.dataStore.data.first()
+        val savedIdentifier = prefs[KEY_OFFLINE_IDENTIFIER] ?: return false
+        val salt = prefs[KEY_OFFLINE_SALT] ?: return false
+        val hash = prefs[KEY_OFFLINE_HASH] ?: return false
+        if (savedIdentifier != identifier) return false
+        return OfflineAuth.hash(password, salt) == hash
+    }
+
     companion object {
         private val KEY_ID = stringPreferencesKey("id")
         private val KEY_ORG_ID = stringPreferencesKey("org_id")
@@ -70,5 +93,8 @@ class SessionStore(private val context: Context) {
         private val KEY_LAST_NAME = stringPreferencesKey("last_name")
         private val KEY_PROFILE = stringPreferencesKey("profile")
         private val KEY_IS_SUPER_ADMIN = booleanPreferencesKey("is_super_admin")
+        private val KEY_OFFLINE_IDENTIFIER = stringPreferencesKey("offline_identifier")
+        private val KEY_OFFLINE_SALT = stringPreferencesKey("offline_salt")
+        private val KEY_OFFLINE_HASH = stringPreferencesKey("offline_hash")
     }
 }

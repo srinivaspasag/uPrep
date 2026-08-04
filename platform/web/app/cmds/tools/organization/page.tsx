@@ -15,6 +15,8 @@ type Org = {
   authType: string;
   doubtsForumMode: string;
   socialMedia: Record<string, string>;
+  logoUrl: string;
+  playStoreLink: string;
 };
 
 const TYPES = ["COLLEGE", "SCHOOL", "UNIVERSITY", "INSTITUTE", "COMPANY", "OTHER"];
@@ -24,6 +26,7 @@ export default function OrganizationInfoPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
+  const [logoUploading, setLogoUploading] = useState(false);
 
   useEffect(() => {
     fetch("/api/cmds/tools/organization")
@@ -37,6 +40,22 @@ export default function OrganizationInfoPage() {
   }
   function setSocial(k: string, v: string) {
     setOrg((o) => (o ? { ...o, socialMedia: { ...o.socialMedia, [k]: v } } : o));
+  }
+
+  async function onLogoFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setLogoUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/cmds/tools/organization/logo", { method: "POST", body: fd });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok && d.url) set("logoUrl", d.url);
+    } finally {
+      setLogoUploading(false);
+    }
   }
 
   async function save() {
@@ -64,6 +83,31 @@ export default function OrganizationInfoPage() {
           <div className="py-16 text-center text-slate-400">Loading…</div>
         ) : (
           <div className="mt-6 space-y-4">
+            <Row label="Logo">
+              <div className="flex items-center gap-4">
+                {org.logoUrl ? (
+                  <img
+                    src={org.logoUrl}
+                    alt="Institute logo"
+                    className="h-16 w-16 rounded border border-slate-200 object-contain bg-white"
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 items-center justify-center rounded border border-dashed border-slate-300 text-[10px] text-slate-400">
+                    No logo
+                  </div>
+                )}
+                <label className="cursor-pointer rounded border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
+                  {logoUploading ? "Uploading…" : "Upload logo"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={onLogoFile}
+                    disabled={logoUploading}
+                  />
+                </label>
+              </div>
+            </Row>
             <Row label="Name*">
               <input className={inp} value={org.name} onChange={(e) => set("name", e.target.value)} />
             </Row>
@@ -126,7 +170,7 @@ export default function OrganizationInfoPage() {
             </Row>
             <Row label="Doubts Forum Mode">
               <div className="flex gap-4 text-sm text-slate-600">
-                {["public", "private", "hidden"].map((m) => (
+                {["PUBLIC", "PRIVATE", "HIDDEN"].map((m) => (
                   <label key={m} className="flex items-center gap-2">
                     <input
                       type="radio"
@@ -135,7 +179,7 @@ export default function OrganizationInfoPage() {
                       onChange={() => set("doubtsForumMode", m)}
                       className="accent-emerald-600"
                     />
-                    {m}
+                    {m.charAt(0) + m.slice(1).toLowerCase()}
                   </label>
                 ))}
               </div>
@@ -144,16 +188,32 @@ export default function OrganizationInfoPage() {
             <div className="pt-2">
               <div className="mb-2 text-sm font-semibold text-slate-600">Social Pages</div>
               <div className="grid grid-cols-2 gap-3">
-                {["facebook", "twitter", "linkedin", "youtube"].map((s) => (
+                {[
+                  { key: "facebook", label: "Facebook" },
+                  { key: "twitter", label: "Twitter" },
+                  { key: "linkedin", label: "LinkedIn" },
+                  { key: "blogger", label: "Blog" },
+                  { key: "youtube", label: "YouTube" },
+                ].map((s) => (
                   <input
-                    key={s}
+                    key={s.key}
                     className={inp}
-                    placeholder={s.charAt(0).toUpperCase() + s.slice(1)}
-                    value={org.socialMedia?.[s] || ""}
-                    onChange={(e) => setSocial(s, e.target.value)}
+                    placeholder={s.label}
+                    value={org.socialMedia?.[s.key] || ""}
+                    onChange={(e) => setSocial(s.key, e.target.value)}
                   />
                 ))}
               </div>
+            </div>
+
+            <div className="pt-2">
+              <div className="mb-2 text-sm font-semibold text-slate-600">App Store Links</div>
+              <input
+                className={inp}
+                placeholder="Android App Link (Play Store)"
+                value={org.playStoreLink}
+                onChange={(e) => set("playStoreLink", e.target.value)}
+              />
             </div>
 
             <div className="flex items-center gap-3 pt-3">

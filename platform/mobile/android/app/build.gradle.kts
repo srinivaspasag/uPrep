@@ -4,6 +4,7 @@ import java.io.FileInputStream
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 // Load signing secrets from keystore.properties (kept out of git). Release builds
@@ -101,4 +102,15 @@ dependencies {
 
     // Image loading (course/content thumbnails).
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Offline downloads: background work + local persistence + encrypted storage.
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    // Native YouTube playback (replaces the WebView iframe embed) — actively
+    // maintained IFrame-API wrapper with correct fullscreen/lifecycle handling.
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.2")
 }

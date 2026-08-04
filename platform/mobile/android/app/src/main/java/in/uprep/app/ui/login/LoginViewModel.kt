@@ -1,5 +1,6 @@
 package `in`.uprep.app.ui.login
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,6 +9,7 @@ import com.google.gson.Gson
 import `in`.uprep.app.data.api.ApiError
 import `in`.uprep.app.data.api.AuthApi
 import `in`.uprep.app.data.api.LoginRequest
+import `in`.uprep.app.data.net.NetworkUtils
 import `in`.uprep.app.data.session.SessionStore
 import `in`.uprep.app.data.session.UserSession
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,7 @@ data class LoginUiState(
 )
 
 class LoginViewModel(
+    private val appContext: Context,
     private val authApi: AuthApi,
     private val sessionStore: SessionStore
 ) : ViewModel() {
@@ -49,6 +52,31 @@ class LoginViewModel(
             return
         }
         _state.value = _state.value.copy(loading = true, error = null)
+
+        // Offline fallback: if there's no connectivity, don't even attempt the
+        // network call — verify against the locally cached credential hash
+        // from this device's last successful online login (see
+        // SessionStore.saveOfflineCredential), same intent as legacy's cached
+        // username/password check.
+        if (!NetworkUtils.isOnline(appContext)) {
+            viewModelScope.launch {
+                val ok = sessionStore.verifyOfflineCredential(identifier, password)
+                if (ok) {
+                    val cached = sessionStore.current()
+                    if (cached != null) {
+                        _state.value = _state.value.copy(loading = false, error = null)
+                        _loggedInSession.value = cached
+                        return@launch
+                    }
+                }
+                _state.value = _state.value.copy(
+                    loading = false,
+                    error = "No connection. " + if (ok) "" else "Sign in once online first, or check your ID and password."
+                )
+            }
+            return
+        }
+
         viewModelScope.launch {
             try {
                 val resp = authApi.login(LoginRequest(identifier, password))
@@ -68,6 +96,7 @@ class LoginViewModel(
                         isSuperAdmin = result.isSuperAdmin
                     )
                     sessionStore.save(session)
+                    sessionStore.saveOfflineCredential(identifier, password)
                     _state.value = _state.value.copy(loading = false, error = null)
                     _loggedInSession.value = session
                 } else {
@@ -90,11 +119,12 @@ class LoginViewModel(
     }
 
     class Factory(
+        private val appContext: Context,
         private val authApi: AuthApi,
         private val sessionStore: SessionStore
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            LoginViewModel(authApi, sessionStore) as T
+            LoginViewModel(appContext, authApi, sessionStore) as T
     }
 }

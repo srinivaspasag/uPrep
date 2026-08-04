@@ -3,9 +3,26 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import LmsShell, { ZeroState } from "@/components/LmsShell";
+import { subjectAccent } from "@/lib/subjectColors";
+import LibrarySection from "@/components/LibrarySection";
 
-type Course = { id: string; name: string; chapterCount: number; folderCount: number };
-type Sub = { id: string; name: string; type: "FOLDER" };
+type Course = {
+  id: string;
+  name: string;
+  chapterCount: number;
+  folderCount: number;
+  videoCount: number;
+  documentCount: number;
+  testCount: number;
+};
+type ProgramGroup = {
+  id: string;
+  name: string;
+  courseIds: string[];
+  centerName: string | null;
+  sectionName: string | null;
+};
+type Sub = { id: string; name: string; type: "FOLDER"; videoCount: number; documentCount: number; testCount: number };
 type Item = {
   id: string;
   name: string;
@@ -18,6 +35,7 @@ type Crumb = { id: string; name: string };
 
 export default function MyCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [programGroups, setProgramGroups] = useState<ProgramGroup[]>([]);
   const [staff, setStaff] = useState(false);
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState<Crumb[]>([]); // empty = course list
@@ -34,6 +52,7 @@ export default function MyCoursesPage() {
       .then((r) => r.json())
       .then((d) => {
         setCourses(d.courses || []);
+        setProgramGroups(d.programGroups || []);
         setStaff(!!d.staff);
       })
       .finally(() => setLoading(false));
@@ -91,8 +110,8 @@ export default function MyCoursesPage() {
 
   return (
     <LmsShell active="courses">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-800">My Courses</h1>
+      <div className="flex items-end justify-between border-b-2 border-[#16233D] pb-3">
+        <h1 className="font-serif text-2xl font-semibold text-[#16233D]">Digital Library</h1>
         {staff && (
           <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs text-indigo-600">
             Staff preview — showing all courses
@@ -101,14 +120,14 @@ export default function MyCoursesPage() {
       </div>
 
       {atRoot && !staff && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <span className="text-sm text-slate-600">Have an access code?</span>
+        <div className="mt-5 flex flex-wrap items-center gap-2 rounded-lg border border-dashed border-[#D9D6C9] bg-white p-3">
+          <span className="text-sm text-[#3E4A63]">Have an access code?</span>
           <input
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             onKeyDown={(e) => e.key === "Enter" && joinWithCode()}
             placeholder="ENTER CODE"
-            className="w-40 rounded border border-slate-300 px-3 py-1.5 font-mono text-sm tracking-widest outline-none focus:border-emerald-500"
+            className="w-40 rounded border border-[#D9D6C9] px-3 py-1.5 font-mono text-sm tracking-widest outline-none focus:border-amber-500"
           />
           <button
             onClick={joinWithCode}
@@ -117,22 +136,22 @@ export default function MyCoursesPage() {
           >
             {joining ? "Joining…" : "Join with code"}
           </button>
-          {joinMsg && <span className="text-xs text-slate-500">{joinMsg}</span>}
+          {joinMsg && <span className="text-xs text-[#3E4A63]">{joinMsg}</span>}
         </div>
       )}
 
       {/* Breadcrumbs */}
       {!atRoot && (
-        <div className="mt-3 flex flex-wrap items-center gap-1 text-sm text-slate-500">
-          <button onClick={() => openFolder([])} className="hover:text-emerald-700">
-            My Courses
+        <div className="mt-4 flex flex-wrap items-center gap-1 text-sm text-[#3E4A63]">
+          <button onClick={() => openFolder([])} className="hover:text-amber-700">
+            Digital Library
           </button>
           {path.map((c, i) => (
             <span key={c.id} className="flex items-center gap-1">
-              <span className="text-slate-300">/</span>
+              <span className="text-[#D9D6C9]">/</span>
               <button
                 onClick={() => openFolder(path.slice(0, i + 1))}
-                className={i === path.length - 1 ? "font-medium text-slate-700" : "hover:text-emerald-700"}
+                className={i === path.length - 1 ? "font-medium text-[#16233D]" : "hover:text-amber-700"}
               >
                 {c.name}
               </button>
@@ -143,45 +162,87 @@ export default function MyCoursesPage() {
 
       <div className="mt-6">
         {loading ? (
-          <div className="py-16 text-center text-slate-400">Loading…</div>
+          <div className="py-16 text-center text-[#8890A1]">Loading…</div>
         ) : atRoot ? (
           courses.length === 0 ? (
             <ZeroState img="/legacy/zero/general-no-content.jpg">
               You have no courses yet. Ask your institute to assign one.
             </ZeroState>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {courses.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => openFolder([{ id: c.id, name: c.name }])}
-                  className="rounded-lg border border-slate-200 bg-white p-5 text-left transition hover:border-emerald-300 hover:shadow-md"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-lg">
-                    📘
-                  </div>
-                  <div className="mt-3 font-semibold text-slate-800">{c.name}</div>
-                  <div className="mt-1 text-xs text-slate-400">{c.chapterCount} chapters</div>
-                </button>
-              ))}
-            </div>
+            (() => {
+              // Group courses under the Program that granted them — bug found
+              // live: a student assigned to "JEE XI" saw Physics/Chem/Math
+              // with no indication of which program they belonged to.
+              const groupedIds = new Set(programGroups.flatMap((g) => g.courseIds));
+              const ungrouped = courses.filter((c) => !groupedIds.has(c.id));
+              return (
+                <div className="space-y-10">
+                  {programGroups.map((g) => {
+                    const groupCourses = courses.filter((c) => g.courseIds.includes(c.id));
+                    if (groupCourses.length === 0) return null;
+                    return (
+                      <div key={g.id}>
+                        <div className="mb-4 flex items-baseline gap-2.5">
+                          <h2 className="font-serif text-lg font-semibold text-[#16233D]">{g.name}</h2>
+                          {(g.centerName || g.sectionName) && (
+                            <span className="text-xs text-[#8890A1]">
+                              {[g.centerName, g.sectionName].filter(Boolean).join(" · ")}
+                            </span>
+                          )}
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                          {groupCourses.map((c) => (
+                            <CourseCard key={c.id} course={c} onOpen={openFolder} />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {ungrouped.length > 0 && (
+                    <div>
+                      {programGroups.length > 0 && (
+                        <h2 className="mb-4 font-serif text-lg font-semibold text-[#16233D]">Other Courses</h2>
+                      )}
+                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {ungrouped.map((c) => (
+                          <CourseCard key={c.id} course={c} onOpen={openFolder} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()
           )
         ) : browsing ? (
-          <div className="py-16 text-center text-slate-400">Loading…</div>
+          <div className="py-16 text-center text-[#8890A1]">Loading…</div>
         ) : subfolders.length === 0 && items.length === 0 ? (
           <ZeroState img="/legacy/zero/general-no-content.jpg">This folder is empty.</ZeroState>
         ) : (
           <div className="space-y-6">
             {subfolders.length > 0 && (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2">
                 {subfolders.map((f) => (
                   <button
                     key={f.id}
                     onClick={() => openFolder([...path, { id: f.id, name: f.name }])}
-                    className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-4 text-left transition hover:border-emerald-300 hover:shadow-sm"
+                    className="flex w-full items-center justify-between gap-3 rounded-lg border border-[#D9D6C9] bg-white px-4 py-3 text-left transition hover:border-amber-400 hover:shadow-sm"
                   >
-                    <span className="text-xl">📁</span>
-                    <span className="font-medium text-slate-700">{f.name}</span>
+                    <span className="flex items-center gap-3">
+                      <span className="text-xl">📁</span>
+                      <span className="font-medium text-[#16233D]">{f.name}</span>
+                    </span>
+                    <span className="flex shrink-0 gap-4 text-xs text-[#8890A1]">
+                      <span>
+                        {f.videoCount} video{f.videoCount === 1 ? "" : "s"}
+                      </span>
+                      <span>
+                        {f.documentCount} e-book{f.documentCount === 1 ? "" : "s"}
+                      </span>
+                      <span>
+                        {f.testCount} test{f.testCount === 1 ? "" : "s"}
+                      </span>
+                    </span>
                   </button>
                 ))}
               </div>
@@ -197,13 +258,86 @@ export default function MyCoursesPage() {
           </div>
         )}
       </div>
+
+      {/* Correction: legacy's real "Digital Library" (TXT_LIBRARY) IS the
+          subject-card page above (Library/subjects.html) — this flat by-type
+          section is NOT a second copy of that; it's a rebuild-only fallback
+          for content that has no subject/chapter tag at all (e.g. added
+          straight to a section via Programs > Content > Make Visible), which
+          the subject/chapter tree above can never surface. Named and framed
+          distinctly so it doesn't read as a duplicate "Library". */}
+      {atRoot && !loading && (
+        <div className="mt-12">
+          <h2 className="font-serif text-lg font-semibold text-[#16233D]">Other Shared Content</h2>
+          <p className="mt-1 text-xs text-[#8890A1]">
+            Content shared directly with you or your section, not filed under any subject above.
+          </p>
+          <div className="mt-4">
+            <LibrarySection />
+          </div>
+        </div>
+      )}
     </LmsShell>
   );
 }
 
+// Mirrors legacy's real subject card (ui/learn-app .../tags/library/subject.html):
+// a solid-color header bar with the subject name, a subject icon, and a small
+// Chapters / E-Books / Tests stat table — legacy has no chapter-progress bar
+// or item-count blob here, just that triple.
+function CourseCard({ course, onOpen }: { course: Course; onOpen: (crumbs: Crumb[]) => void }) {
+  const accent = subjectAccent(course.name);
+  return (
+    <button
+      onClick={() => onOpen([{ id: course.id, name: course.name }])}
+      className="overflow-hidden rounded-lg border border-[#D9D6C9] bg-white text-left transition hover:-translate-y-0.5 hover:shadow-md"
+    >
+      <div className={`${accent.header} px-4 py-2.5`}>
+        <span className="font-serif text-[15px] font-semibold text-white">{course.name}</span>
+      </div>
+      <div className="flex items-center gap-3 p-4">
+        <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-xl ${accent.chip}`}>
+          {subjectEmoji(course.name)}
+        </span>
+        <table className="w-full text-xs text-[#3E4A63]">
+          <tbody>
+            <tr>
+              <td className="py-0.5 text-[#8890A1]">Chapters</td>
+              <td className="py-0.5 text-right font-medium text-[#16233D]">{course.chapterCount}</td>
+            </tr>
+            <tr>
+              <td className="py-0.5 text-[#8890A1]">Videos</td>
+              <td className="py-0.5 text-right font-medium text-[#16233D]">{course.videoCount}</td>
+            </tr>
+            <tr>
+              <td className="py-0.5 text-[#8890A1]">E-Books</td>
+              <td className="py-0.5 text-right font-medium text-[#16233D]">{course.documentCount}</td>
+            </tr>
+            <tr>
+              <td className="py-0.5 text-[#8890A1]">Tests</td>
+              <td className="py-0.5 text-right font-medium text-[#16233D]">{course.testCount}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </button>
+  );
+}
+
+function subjectEmoji(name: string): string {
+  const n = name.toLowerCase();
+  if (n.includes("physic")) return "⚛️";
+  if (n.includes("chem")) return "🧪";
+  if (n.includes("math")) return "📐";
+  if (n.includes("botany")) return "🌱";
+  if (n.includes("zoolog")) return "🐾";
+  if (n.includes("bio")) return "🧬";
+  return "📘";
+}
+
 function CourseItemCard({ item }: { item: Item }) {
   const inner = (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 transition hover:shadow-md">
+    <div className="rounded-lg border border-[#D9D6C9] bg-white p-4 transition hover:shadow-md">
       <span
         className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
           item.type === "VIDEO"
@@ -215,7 +349,7 @@ function CourseItemCard({ item }: { item: Item }) {
       >
         {item.type}
       </span>
-      <div className="mt-2 font-medium text-slate-800">{item.name}</div>
+      <div className="mt-2 font-medium text-[#16233D]">{item.name}</div>
       {item.type === "VIDEO" && item.embedUrl && (
         <div className="mt-2 aspect-video w-full overflow-hidden rounded">
           <iframe
@@ -228,7 +362,14 @@ function CourseItemCard({ item }: { item: Item }) {
         </div>
       )}
       {item.type === "VIDEO" && !item.embedUrl && item.url && (
-        <video src={item.url} controls className="mt-2 w-full rounded" />
+        <video
+          src={item.url}
+          controls
+          controlsList="nodownload"
+          disablePictureInPicture
+          onContextMenu={(e) => e.preventDefault()}
+          className="mt-2 w-full rounded"
+        />
       )}
       {item.type === "DOCUMENT" && <div className="mt-2 text-xs text-blue-600">Open document ↗</div>}
     </div>

@@ -24,16 +24,27 @@ function marksMap(test: any): Record<string, { positive: number; negative: numbe
 export async function GET(req: NextRequest) {
   const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   const testId = req.nextUrl.searchParams.get("testId");
+  const studentUserId = req.nextUrl.searchParams.get("userId");
 
   try {
     const db = await getDb();
 
     // ---- LIST MODE: tests that have attempts ----
     if (!testId) {
+      // Student-only, same reasoning as DETAIL mode below — a staff/QA
+      // attempt shouldn't count toward "N students" for a test either.
+      const studentIds = (
+        await db
+          .collection("orgmembers")
+          .find({ orgId, recordState: "ACTIVE", profile: "STUDENT" })
+          .project({ _id: 1 })
+          .toArray()
+      ).map((m: any) => String(m._id));
+
       const grouped = await db
         .collection("userentityattempts")
         .aggregate([
-          { $match: { orgId, "entity.type": "TEST", finished: true } },
+          { $match: { orgId, "entity.type": "TEST", finished: true, userId: { $in: studentIds } } },
           {
             $group: {
               _id: "$entity.id",
@@ -80,11 +91,33 @@ export async function GET(req: NextRequest) {
       testDoc?.totalMarks ??
       Object.values(marks).reduce((sum, mk: any) => sum + (mk.positive || 0), 0);
 
-    const attempts: any[] = await db
+    const rawAttempts: any[] = await db
       .collection("userentityattempts")
       .find({ orgId, "entity.type": "TEST", "entity.id": testId, finished: true })
       .sort({ endTime: -1 })
       .toArray();
+
+    // Student-only — a staff/admin account attempting a test for QA purposes
+    // (real example seen live: "Super Admin" showing up as a "Top performer"
+    // next to actual students) would otherwise pollute the average, high/low,
+    // and topper for an institute's own analytics. Every other student-facing
+    // count in this app (teachers/students/content) already scopes by
+    // profile; this route was the one surface that never did.
+    const rawUserIds = Array.from(new Set(rawAttempts.map((a) => String(a.userId))));
+    const rawUserOids = rawUserIds.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
+    const profileById = new Map(
+      (
+        await db
+          .collection("orgmembers")
+          .find({ _id: { $in: rawUserOids } })
+          .project({ profile: 1 })
+          .toArray()
+      ).map((m: any) => [String(m._id), (m.profile || "").toUpperCase()])
+    );
+    // Attempts from an id with no matching orgmember (e.g. an ad hoc QA
+    // string userId, not a real ObjectId) are dropped too — they're never a
+    // real enrolled student either.
+    const attempts = rawAttempts.filter((a) => profileById.get(String(a.userId)) === "STUDENT");
 
     if (attempts.length === 0) {
       return NextResponse.json({
@@ -121,21 +154,40 @@ export async function GET(req: NextRequest) {
     }
     const perQ: Record<
       string,
-      { attempts: number; correct: number; incorrect: number; partial: number; ungraded: number }
+      {
+        attempts: number;
+        correct: number;
+        incorrect: number;
+        partial: number;
+        ungraded: number;
+        wrongUserIds: Set<string>;
+      }
     > = {};
     for (const id of qOrder)
-      perQ[id] = { attempts: 0, correct: 0, incorrect: 0, partial: 0, ungraded: 0 };
+      perQ[id] = { attempts: 0, correct: 0, incorrect: 0, partial: 0, ungraded: 0, wrongUserIds: new Set() };
+    const labelByQId = new Map(qOrder.map((id, i) => [id, `Q${i + 1}`]));
 
     // Score each attempt + tally per-question outcomes.
     const scoreByUser = new Map<string, { best: number; attempts: number; lastAt: number }>();
+    // Question-by-question verdicts for each user's BEST-scoring attempt —
+    // powers the per-student drill-down (legacy's getUserEntityQuestionAttemptInfos,
+    // AnalyticsManager.java:1635). Only kept for the attempt matching that
+    // user's best score, same attempt the result sheet itself reports on.
+    const bestAttemptDetail = new Map<
+      string,
+      { qId: string; label: string; verdict: string; marks: { positive: number; negative: number } | null }[]
+    >();
     const scores: number[] = [];
 
     for (const at of attempts) {
       const qs = byAttempt.get(String(at._id)) || [];
+      const uid = String(at.userId);
       let score = 0;
+      const thisAttemptDetail: { qId: string; label: string; verdict: string; marks: { positive: number; negative: number } | null }[] = [];
       for (const q of qs) {
         const id = String(q.qId);
-        const bucket = perQ[id] || (perQ[id] = { attempts: 0, correct: 0, incorrect: 0, partial: 0, ungraded: 0 });
+        const bucket =
+          perQ[id] || (perQ[id] = { attempts: 0, correct: 0, incorrect: 0, partial: 0, ungraded: 0, wrongUserIds: new Set() });
         bucket.attempts++;
         const mk = marks[id] || { positive: 0, negative: 0 };
         if (!q.isJudgeable) {
@@ -148,24 +200,34 @@ export async function GET(req: NextRequest) {
           score += mk.positive || 0;
         } else if (verdict === "PARTIAL") {
           bucket.partial++;
+          bucket.wrongUserIds.add(uid);
         } else {
           bucket.incorrect++;
+          bucket.wrongUserIds.add(uid);
           score -= mk.negative || 0;
         }
+        thisAttemptDetail.push({
+          qId: id,
+          label: labelByQId.get(id) || id,
+          verdict: q.isJudgeable ? verdict : "UNGRADED",
+          marks: marks[id] || null,
+        });
       }
       if (score < 0) score = 0;
       scores.push(score);
 
-      const uid = String(at.userId);
       const endAt = Number(at.endTime) || Number(at.timeCreated) || 0;
       const prev = scoreByUser.get(uid);
-      if (!prev) scoreByUser.set(uid, { best: score, attempts: 1, lastAt: endAt });
-      else
-        scoreByUser.set(uid, {
-          best: Math.max(prev.best, score),
-          attempts: prev.attempts + 1,
-          lastAt: Math.max(prev.lastAt, endAt),
-        });
+      if (!prev) {
+        scoreByUser.set(uid, { best: score, attempts: 1, lastAt: endAt });
+        bestAttemptDetail.set(uid, thisAttemptDetail);
+      } else {
+        const newBest = Math.max(prev.best, score);
+        // Keep the detail from whichever attempt is actually reported as the
+        // best score — matches the result sheet, which also reports `best`.
+        if (score >= prev.best) bestAttemptDetail.set(uid, thisAttemptDetail);
+        scoreByUser.set(uid, { best: newBest, attempts: prev.attempts + 1, lastAt: Math.max(prev.lastAt, endAt) });
+      }
     }
 
     // Resolve student names.
@@ -192,6 +254,12 @@ export async function GET(req: NextRequest) {
 
     const pct = (s: number) => (totalMarks > 0 ? Math.round((s / totalMarks) * 1000) / 10 : 0);
 
+    // Rank — legacy's real "All India Rank" is a genuine cross-institute
+    // aggregation, only meaningful for tests distributed to multiple
+    // institutes via CMDS (CMDSTestDAO.java showAIR flag) — not something
+    // this single-institute rebuild can honestly compute. This is the
+    // institute-scoped rank instead: real, computed, just labeled for what
+    // it actually is (position among this institute's own test-takers).
     const resultSheet = userIds
       .map((uid) => {
         const rec = scoreByUser.get(uid)!;
@@ -206,7 +274,8 @@ export async function GET(req: NextRequest) {
           lastAt: rec.lastAt,
         };
       })
-      .sort((a, b) => b.score - a.score);
+      .sort((a, b) => b.score - a.score)
+      .map((r, i) => ({ ...r, rank: i + 1, totalStudents: userIds.length }));
 
     const perQuestion = qOrder.map((id, i) => {
       const b = perQ[id];
@@ -221,6 +290,13 @@ export async function GET(req: NextRequest) {
         ungraded: b.ungraded,
         correctPercent: graded > 0 ? Math.round((b.correct / graded) * 1000) / 10 : 0,
         marks: marks[id] || null,
+        // Who got it wrong (incorrect/partial) — drill-down for the admin.
+        // Real per-question timing isn't tracked anywhere in the pipeline
+        // today (deferred — see the plan), so no duration here.
+        wrongStudents: Array.from(b.wrongUserIds).map((uid) => {
+          const info = memberById.get(uid) || { name: "Student", memberId: "" };
+          return { userId: uid, name: info.name, memberId: info.memberId };
+        }),
       };
     });
 
@@ -258,6 +334,20 @@ export async function GET(req: NextRequest) {
         resultSheet.length > 0 ? Math.round((buckets[i] / resultSheet.length) * 1000) / 10 : 0,
     }));
 
+    // Per-student drill-down — legacy's getUserEntityQuestionAttemptInfos +
+    // getUserEntityAnalytics, single-test scoped (see the "All India Rank"
+    // note on resultSheet above for why rank here is institute-scoped).
+    let student: any = null;
+    if (studentUserId) {
+      const row = resultSheet.find((r) => r.userId === studentUserId);
+      if (row) {
+        student = {
+          ...row,
+          questions: bestAttemptDetail.get(studentUserId) || [],
+        };
+      }
+    }
+
     return NextResponse.json({
       test: { id: testId, name: testDoc?.name || testDoc?.title || "Test", totalMarks },
       overall,
@@ -265,6 +355,7 @@ export async function GET(req: NextRequest) {
       distribution,
       perQuestion,
       resultSheet,
+      student,
       orgId,
     });
   } catch (e: any) {

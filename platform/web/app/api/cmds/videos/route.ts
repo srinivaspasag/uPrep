@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
   const orgId = await resolveOrgId(req, body?.orgId);
   const folderId = String(body?.folderId || "").trim() || null;
   const rawUrl = String(body?.url || "").trim();
+  const boardIds = Array.isArray(body?.boardIds) ? body.boardIds.filter(Boolean).map(String) : [];
 
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
   if (!rawUrl) return NextResponse.json({ error: "A video URL is required" }, { status: 400 });
@@ -54,11 +55,14 @@ export async function POST(req: NextRequest) {
       // search, bookmarks, playlists) keep working.
       url: parsed.externalUrl,
       subject: subject || null,
+      boardIds,
       folderId,
       contentSrc: { type: "ORGANIZATION", id: orgId },
       scope: "ORG",
       userId,
       recordState: "ACTIVE",
+      // Videos are never downloadable — no toggle, no exception.
+      downloadEnabled: false,
       timeCreated: now,
       lastUpdated: now,
     });

@@ -3,6 +3,8 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { resolveOrgId } from "@/lib/org-scope";
+import { sessionFromReq } from "@/lib/server-session";
+import { canManageContent } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -99,5 +101,46 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ id: _id.toHexString(), ok: true, type });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed to add question" }, { status: 500 });
+  }
+}
+
+// DELETE: soft-delete an authored question (recordState = INACTIVE). If it
+// was already published, also retire it from the gradable library so it
+// stops surfacing in new tests/assignments — existing tests that already
+// reference it keep their stored qId/answer untouched (matches how the
+// content DELETE route treats other resource types).
+export async function DELETE(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!canManageContent(session?.profile))
+    return NextResponse.json({ error: "You don't have access to content management." }, { status: 403 });
+
+  const id = req.nextUrl.searchParams.get("id") || "";
+  if (!id || !ObjectId.isValid(id))
+    return NextResponse.json({ error: "Valid id required" }, { status: 400 });
+
+  try {
+    const db = await getDb();
+    const oid = new ObjectId(id);
+    const now = Date.now();
+    const cq = await db.collection("cmdsquestions").findOne({ _id: oid });
+    if (!cq) return NextResponse.json({ error: "Question not found" }, { status: 404 });
+
+    // A published question may already be live in a test students have
+    // attempted — deleting it would silently break that test's scoring and
+    // analytics with no way back. Unpublished (draft) questions are always
+    // safe to remove.
+    if ((cq as any).published) {
+      return NextResponse.json(
+        { error: "This question is published and may already be in use — it can't be deleted." },
+        { status: 409 }
+      );
+    }
+
+    await db
+      .collection("cmdsquestions")
+      .updateOne({ _id: oid }, { $set: { recordState: "INACTIVE", lastUpdated: now } });
+    return NextResponse.json({ ok: true });
+  } catch (e: any) {
+    return NextResponse.json({ error: e?.message || "Delete failed" }, { status: 500 });
   }
 }

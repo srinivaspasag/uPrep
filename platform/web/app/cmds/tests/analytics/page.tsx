@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CmdsShell from "@/components/CmdsShell";
 import { getSession } from "@/lib/session";
 
@@ -13,6 +13,7 @@ type Overall = {
   highScore: number;
   lowScore: number;
 };
+type WrongStudent = { userId: string; name: string; memberId: string };
 type PerQuestion = {
   qId: string;
   label: string;
@@ -22,6 +23,7 @@ type PerQuestion = {
   partial: number;
   ungraded: number;
   correctPercent: number;
+  wrongStudents: WrongStudent[];
 };
 type ResultRow = {
   userId: string;
@@ -31,9 +33,13 @@ type ResultRow = {
   percent: number;
   attempts: number;
   lastAt: number;
+  rank: number;
+  totalStudents: number;
 };
 type TopPerformer = { name: string; memberId: string; score: number; percent: number };
 type DistBucket = { label: string; count: number; percentOfStudents: number };
+type StudentQuestion = { qId: string; label: string; verdict: string; marks: { positive: number; negative: number } | null };
+type StudentDetail = ResultRow & { questions: StudentQuestion[] };
 type Detail = {
   test: { id: string; name: string; totalMarks: number };
   overall: Overall;
@@ -62,13 +68,60 @@ export default function TestAnalyticsPage() {
   const [minPct, setMinPct] = useState("");
   const [maxPct, setMaxPct] = useState("");
   const [busy, setBusy] = useState(false);
+  const [wrongFor, setWrongFor] = useState<PerQuestion | null>(null);
+  // Matches legacy's "Most/Least Attempted" and "Most/Least Correct" question
+  // sort (AnalyticsManager.getQuestionSetOrderQuery — sorts by attempts or
+  // correct count, asc/desc). We already compute both per question, so this
+  // is a pure client-side resort, no new data needed.
+  const [qSort, setQSort] = useState<"default" | "mostAttempted" | "leastAttempted" | "mostCorrect" | "leastCorrect">(
+    "default"
+  );
+  const [studentOpen, setStudentOpen] = useState(false);
+  const [studentDetail, setStudentDetail] = useState<StudentDetail | null>(null);
+  const [studentLoading, setStudentLoading] = useState(false);
   const isAdmin = (getSession()?.profile || "").trim().toUpperCase() === "MANAGER";
+
+  async function openStudent(userId: string) {
+    if (!selected) return;
+    setStudentOpen(true);
+    setStudentLoading(true);
+    setStudentDetail(null);
+    const d = await (
+      await fetch(`/api/cmds/tests/analytics?testId=${encodeURIComponent(selected)}&userId=${encodeURIComponent(userId)}`)
+    ).json();
+    setStudentDetail(d.student || null);
+    setStudentLoading(false);
+  }
+
+  const sortedQuestions = useMemo(() => {
+    if (!detail) return [];
+    const list = [...detail.perQuestion];
+    switch (qSort) {
+      case "mostAttempted":
+        return list.sort((a, b) => b.attempts - a.attempts);
+      case "leastAttempted":
+        return list.sort((a, b) => a.attempts - b.attempts);
+      case "mostCorrect":
+        return list.sort((a, b) => b.correct - a.correct);
+      case "leastCorrect":
+        return list.sort((a, b) => a.correct - b.correct);
+      default:
+        return list;
+    }
+  }, [detail, qSort]);
 
   useEffect(() => {
     fetch("/api/cmds/tests/analytics")
       .then((r) => r.json())
-      .then((d) => setTests(d.tests || []))
+      .then((d) => {
+        setTests(d.tests || []);
+        // Deep link from the Program Analytics tab's "Open →" link.
+        const sp = new URLSearchParams(window.location.search);
+        const deepLinkId = sp.get("testId");
+        if (deepLinkId) open(deepLinkId);
+      })
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function loadMonitor(testId: string) {
@@ -161,7 +214,16 @@ export default function TestAnalyticsPage() {
               <div className="py-20 text-center text-sm text-slate-400">Loading analytics…</div>
             ) : (
               <div>
-                <h2 className="text-lg font-semibold text-slate-800">{detail.test.name}</h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-slate-800">{detail.test.name}</h2>
+                  <button
+                    onClick={() => selected && open(selected)}
+                    title="Analytics here are computed fresh from attempt records on every load — this just re-fetches."
+                    className="rounded border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
+                  >
+                    ↻ Refresh
+                  </button>
+                </div>
                 <div className="mt-4 flex gap-6 border-b border-slate-200 text-sm">
                   {(["overview", "questions", "results", "monitor"] as const).map((k) => (
                     <button
@@ -262,7 +324,24 @@ export default function TestAnalyticsPage() {
                 )}
 
                 {tab === "questions" && (
-                  <div className="mt-5 overflow-hidden rounded border border-slate-200">
+                  <div className="mt-5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs text-slate-500">
+                        Sort by{" "}
+                        <select
+                          value={qSort}
+                          onChange={(e) => setQSort(e.target.value as typeof qSort)}
+                          className="ml-1 rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 outline-none focus:border-slate-500"
+                        >
+                          <option value="default">Question order</option>
+                          <option value="mostAttempted">Most attempted</option>
+                          <option value="leastAttempted">Least attempted</option>
+                          <option value="mostCorrect">Most correct</option>
+                          <option value="leastCorrect">Least correct</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div className="mt-2 overflow-hidden rounded border border-slate-200">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
@@ -273,17 +352,18 @@ export default function TestAnalyticsPage() {
                           <th className="px-4 py-2 font-medium">Partial</th>
                           <th className="px-4 py-2 font-medium">Ungraded</th>
                           <th className="px-4 py-2 font-medium">% Correct</th>
+                          <th className="px-4 py-2 font-medium" />
                         </tr>
                       </thead>
                       <tbody>
-                        {detail.perQuestion.length === 0 ? (
+                        {sortedQuestions.length === 0 ? (
                           <tr>
-                            <td colSpan={7} className="px-4 py-8 text-center text-slate-400">
+                            <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
                               No question data.
                             </td>
                           </tr>
                         ) : (
-                          detail.perQuestion.map((q) => (
+                          sortedQuestions.map((q) => (
                             <tr key={q.qId} className="border-b border-slate-100">
                               <td className="px-4 py-2 font-medium text-slate-700">{q.label}</td>
                               <td className="px-4 py-2 text-slate-500">{q.attempts}</td>
@@ -302,11 +382,22 @@ export default function TestAnalyticsPage() {
                                   <span className="text-xs text-slate-500">{q.correctPercent}%</span>
                                 </div>
                               </td>
+                              <td className="px-4 py-2">
+                                {q.wrongStudents.length > 0 && (
+                                  <button
+                                    onClick={() => setWrongFor(q)}
+                                    className="text-xs text-blue-600 hover:underline"
+                                  >
+                                    Who got it wrong?
+                                  </button>
+                                )}
+                              </td>
                             </tr>
                           ))
                         )}
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 )}
 
@@ -352,20 +443,36 @@ export default function TestAnalyticsPage() {
                       >
                         Download CSV
                       </a>
+                      <button
+                        onClick={() => window.print()}
+                        className="rounded border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
+                      >
+                        Print Result Sheet
+                      </button>
                     </div>
 
-                    <div className="mt-3 overflow-hidden rounded border border-slate-200">
+                    <style>{`
+                      @media print {
+                        body * { visibility: hidden; }
+                        #result-sheet-print, #result-sheet-print * { visibility: visible; }
+                        #result-sheet-print { position: absolute; top: 0; left: 0; width: 100%; }
+                      }
+                    `}</style>
+                    <div id="result-sheet-print" className="mt-3 overflow-hidden rounded border border-slate-200">
+                      <h2 className="hidden bg-white px-4 py-3 text-lg font-semibold text-slate-800 print:block">
+                        {detail.test.name} — Result Sheet
+                      </h2>
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <th className="px-4 py-2 font-medium">#</th>
+                            <th className="px-4 py-2 font-medium">Rank</th>
                             <th className="px-4 py-2 font-medium">Student</th>
                             <th className="px-4 py-2 font-medium">ID</th>
                             <th className="px-4 py-2 font-medium">Best score</th>
                             <th className="px-4 py-2 font-medium">%</th>
                             <th className="px-4 py-2 font-medium">Attempts</th>
                             <th className="px-4 py-2 font-medium">Last attempt</th>
-                            {isAdmin && <th className="px-4 py-2 font-medium" />}
+                            {isAdmin && <th className="px-4 py-2 font-medium print:hidden" />}
                           </tr>
                         </thead>
                         <tbody>
@@ -383,10 +490,19 @@ export default function TestAnalyticsPage() {
                                   </td>
                                 </tr>
                               );
-                            return rows.map((r, i) => (
-                              <tr key={r.userId} className="border-b border-slate-100">
-                                <td className="px-4 py-2 text-slate-400">{i + 1}</td>
-                                <td className="px-4 py-2 font-medium text-slate-700">{r.name}</td>
+                            return rows.map((r) => (
+                              <tr key={r.userId} className="border-b border-slate-100 hover:bg-slate-50">
+                                <td className="px-4 py-2 text-slate-400">
+                                  {r.rank} <span className="text-slate-300">/ {r.totalStudents}</span>
+                                </td>
+                                <td className="px-4 py-2 font-medium">
+                                  <button
+                                    onClick={() => openStudent(r.userId)}
+                                    className="text-blue-600 hover:underline print:pointer-events-none print:text-slate-700"
+                                  >
+                                    {r.name}
+                                  </button>
+                                </td>
                                 <td className="px-4 py-2 text-slate-500">{r.memberId || "—"}</td>
                                 <td className="px-4 py-2 text-slate-700">
                                   {r.score}
@@ -398,7 +514,7 @@ export default function TestAnalyticsPage() {
                                   {r.lastAt ? new Date(r.lastAt).toLocaleString() : "—"}
                                 </td>
                                 {isAdmin && (
-                                  <td className="px-4 py-2">
+                                  <td className="px-4 py-2 print:hidden">
                                     <button
                                       disabled={busy}
                                       onClick={() => attemptAction("reset", r.userId, r.name)}
@@ -497,7 +613,184 @@ export default function TestAnalyticsPage() {
           </main>
         </div>
       </div>
+
+      {wrongFor && <WrongStudentsModal question={wrongFor} onClose={() => setWrongFor(null)} />}
+      {studentOpen && (
+        <StudentDetailModal
+          loading={studentLoading}
+          student={studentDetail}
+          totalMarks={detail?.test.totalMarks || 0}
+          onClose={() => setStudentOpen(false)}
+        />
+      )}
     </CmdsShell>
+  );
+}
+
+// Per-student drill-down (legacy: score, right/wrong breakdown, question-by-
+// question, rank) — rank here is institute-scoped, not "All India": legacy's
+// real AIR is a genuine cross-institute aggregation only available for tests
+// shared platform-wide via CMDS to multiple institutes, which doesn't apply
+// to institute-authored tests. See app/api/cmds/tests/analytics/route.ts.
+function StudentDetailModal({
+  loading,
+  student,
+  totalMarks,
+  onClose,
+}: {
+  loading: boolean;
+  student: StudentDetail | null;
+  totalMarks: number;
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
+        {loading ? (
+          <div className="py-16 text-center text-sm text-slate-400">Loading…</div>
+        ) : !student ? (
+          <div className="py-16 text-center text-sm text-slate-400">Couldn't load this student's attempt.</div>
+        ) : (
+          <>
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-800">{student.name}</h3>
+                <p className="text-xs text-slate-400">{student.memberId}</p>
+              </div>
+              <button onClick={onClose} className="text-slate-400 hover:text-slate-700">
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              <div className="rounded border border-slate-200 p-3 text-center">
+                <div className="text-xs text-slate-400">Score</div>
+                <div className="mt-1 text-lg font-semibold text-slate-800">
+                  {student.score}
+                  <span className="text-sm font-normal text-slate-400">/{totalMarks}</span>
+                </div>
+              </div>
+              <div className="rounded border border-slate-200 p-3 text-center">
+                <div className="text-xs text-slate-400">Percent</div>
+                <div className="mt-1 text-lg font-semibold text-slate-800">{student.percent}%</div>
+              </div>
+              <div className="rounded border border-slate-200 p-3 text-center">
+                <div className="text-xs text-slate-400">Rank</div>
+                <div className="mt-1 text-lg font-semibold text-slate-800">
+                  {student.rank}
+                  <span className="text-sm font-normal text-slate-400">/{student.totalStudents}</span>
+                </div>
+              </div>
+            </div>
+            <p className="mt-1 text-center text-[11px] text-slate-400">Rank within this institute's test-takers.</p>
+
+            <div className="mt-4 grid grid-cols-3 gap-3 text-center text-xs">
+              <div>
+                <span className="font-semibold text-emerald-600">
+                  {student.questions.filter((q) => q.verdict === "CORRECT").length}
+                </span>{" "}
+                <span className="text-slate-400">correct</span>
+              </div>
+              <div>
+                <span className="font-semibold text-red-500">
+                  {student.questions.filter((q) => q.verdict === "INCORRECT").length}
+                </span>{" "}
+                <span className="text-slate-400">incorrect</span>
+              </div>
+              <div>
+                <span className="font-semibold text-amber-600">
+                  {student.questions.filter((q) => q.verdict === "PARTIAL").length}
+                </span>{" "}
+                <span className="text-slate-400">partial</span>
+              </div>
+            </div>
+
+            <div className="mt-4 overflow-hidden rounded border border-slate-200">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                    <th className="px-3 py-1.5 font-medium">Q</th>
+                    <th className="px-3 py-1.5 font-medium">Result</th>
+                    <th className="px-3 py-1.5 font-medium">Marks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {student.questions.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="px-3 py-6 text-center text-slate-400">
+                        No question data for this attempt.
+                      </td>
+                    </tr>
+                  ) : (
+                    student.questions.map((q) => (
+                      <tr key={q.qId} className="border-b border-slate-100 last:border-0">
+                        <td className="px-3 py-1.5 font-medium text-slate-700">{q.label}</td>
+                        <td className="px-3 py-1.5">
+                          <span
+                            className={
+                              q.verdict === "CORRECT"
+                                ? "text-emerald-600"
+                                : q.verdict === "PARTIAL"
+                                ? "text-amber-600"
+                                : q.verdict === "UNGRADED"
+                                ? "text-slate-400"
+                                : "text-red-500"
+                            }
+                          >
+                            {q.verdict.charAt(0) + q.verdict.slice(1).toLowerCase()}
+                          </span>
+                        </td>
+                        <td className="px-3 py-1.5 text-slate-500">
+                          {q.marks ? `+${q.marks.positive} / -${q.marks.negative}` : "—"}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-5 flex justify-end">
+              <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100">
+                Close
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Who got a specific question wrong — buildable from existing per-question
+// attempt verdicts (userquestionattempts), no new tracking needed. Real
+// per-question timing isn't captured anywhere in the pipeline (deferred).
+function WrongStudentsModal({ question, onClose }: { question: PerQuestion; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
+        <h3 className="text-lg font-semibold text-slate-800">{question.label} — Got it wrong</h3>
+        <p className="mt-1 text-sm text-slate-500">
+          {question.wrongStudents.length} student(s) answered incorrectly or partially.
+        </p>
+        <div className="mt-4 max-h-72 overflow-y-auto rounded border border-slate-200">
+          {question.wrongStudents.map((s) => (
+            <div
+              key={s.userId}
+              className="flex items-center justify-between border-b border-slate-50 px-3 py-2 text-sm last:border-0"
+            >
+              <span className="text-slate-700">{s.name}</span>
+              <span className="text-xs text-slate-400">{s.memberId}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 flex justify-end">
+          <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
