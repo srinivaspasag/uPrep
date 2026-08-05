@@ -33,7 +33,7 @@ To size that replacement fairly, this table compares the legacy code that specif
 | **Total lines of code** | **61,373** | **34,248** |
 | Code shared between the two | None — different language, different runtime, zero code reuse is possible | |
 
-**Read the file/LOC gap correctly — it is not "less was built."** Legacy typically split one feature across several templates (a list view, a detail view, an edit modal, and an empty state as four separate `.html` files); the rebuild consolidates that into fewer, dynamic components — 74 pages covering what 488 templates did, a real architectural consolidation, not a smaller effort. And legacy's controllers mix routing with business logic in the same Java file, where the rebuild counts pages and API routes as separate files in the table above; add them together (74 + 91 = 165 route-level files) and the "fewer moving parts, same or greater capability" pattern holds throughout this project — see the feature-status table in §4, where the rebuild's inventory is consistently equal to or larger than legacy's for every area actually rebuilt.
+**Read the file/LOC gap correctly — it is not "less was built."** Legacy typically split one feature across several templates (a list view, a detail view, an edit modal, and an empty state as four separate `.html` files); the rebuild consolidates that into fewer, dynamic components — 74 pages covering what 488 templates did, a real architectural consolidation, not a smaller effort. And legacy's controllers mix routing with business logic in the same Java file, where the rebuild counts pages and API routes as separate files in the table above; add them together (74 + 91 = 165 route-level files) and the "fewer moving parts, same or greater capability" pattern holds throughout this project — see the feature-status table in §5, where the rebuild's inventory is consistently equal to or larger than legacy's for every area actually rebuilt.
 
 ### 2.1 It's not a port — it's a from-scratch redesign
 
@@ -46,7 +46,17 @@ Every one of those 200 rebuild files is original code written against the same M
 
 None of the above is a claim about visual taste — it's a structural fact: the rebuild's component tree, state management, styling approach, and data-fetching pattern share nothing with legacy's server-rendered Scala templates. A legacy template cannot be dropped into the rebuild or vice versa; every screen was independently built.
 
-## 3. Architecture, side by side
+## 3. Why this is a structural improvement, not just a different stack
+
+"Different technology" and "better technology" aren't the same claim, and this document has otherwise been deliberately even-handed — §8 documents a real security risk the new architecture introduced, and the Architecture Deep Dive's own risk list (§12) is not soft-pedaled. So it's worth being equally precise about where the new architecture is a genuine structural improvement, with the same evidence standard as everything else in this document — not a general "modern is better" assertion.
+
+- **One application and zero search infrastructure, where legacy needed three moving parts.** Legacy's browse/listing features depended on an Elasticsearch index alongside the two Play web apps; the current deployment has no Elasticsearch service at all (confirmed absent from `platform/deploy/docker-compose.yml`) and one application process instead of two. Every service that has to be running, patched, and kept healthy is one more thing that can fail — this removed one of them entirely rather than replacing it with an equivalent.
+- **Component reuse where legacy had duplication.** The 74-pages-vs-488-templates gap in §2 isn't just a smaller number, it's a different maintenance property: a shared pattern (the empty-state redesign done this session, for instance) changes once in one component and applies everywhere it's used, where legacy's template-per-view-per-feature structure means the same visual/behavioral change has to be repeated across every relevant `.html` file individually.
+- **A uniform request-handling pattern made a systematic security review actually tractable.** Every one of the 91 API routes follows the identical Next.js route-handler shape — this is precisely what let this project mechanically read and categorize all 91 for their authorization logic in a single pass and find the real issue documented in §8. Legacy's 83 controllers are spread across two applications with more historically-varied internal patterns; auditing them exhaustively the same way would be a materially larger undertaking. The uniformity that made a real bug easy to *find and fix in one pass* is itself the architectural improvement — the alternative isn't "no bugs," it's "harder to find them systematically."
+- **A session model that doesn't tie identity to one server's memory.** Legacy's server-side session requires sticky routing back to whichever process holds it in memory. The rebuild's signed, stateless cookie is verifiable at the edge, by any process, without shared state — a precondition for horizontal scaling. To be precise about what this claim does and doesn't cover: the current single-VM deployment doesn't exercise multi-instance scaling today (Architecture Deep Dive §12), so this is a capability the new design enables, not a scaling win already realized in production.
+- **New product capability shipped inside the same effort as the modernization, not deferred after it.** §9 lists what has no legacy equivalent at all — advanced per-student analytics, CSV bulk import with generated credentials, the Instant Test Generator, admin-configurable multi-section tests, a native Android app. These aren't claims about the old system being slow to build features (this project has no reliable data on legacy's own historical development pace, and doesn't assert one) — they're a direct observation that the rebuild delivered new, verifiable capability in the same timeframe as replacing the old surface, not "redesign now, features later."
+
+## 4. Architecture, side by side
 
 ```mermaid
 flowchart TB
@@ -68,9 +78,9 @@ flowchart TB
     end
 ```
 
-The single biggest structural change: **two separate legacy web apps collapsed into one Next.js app**, which now also absorbs everything Elasticsearch used to do for browse/listing (by querying Mongo directly instead — a deliberate trade-off, see §6).
+The single biggest structural change: **two separate legacy web apps collapsed into one Next.js app**, which now also absorbs everything Elasticsearch used to do for browse/listing (by querying Mongo directly instead — a deliberate trade-off, see §7).
 
-## 4. Feature-area migration status
+## 5. Feature-area migration status
 
 Status legend: **Replaced** = fully reimplemented, legacy web app no longer used for this · **Replaced+Enhanced** = reimplemented and then extended beyond legacy's original behavior · **New** = did not exist in legacy at all · **Removed** = existed in the rebuild at some point, deliberately taken back out.
 
@@ -80,10 +90,10 @@ Status legend: **Replaced** = fully reimplemented, legacy web app no longer used
 | People Management | `QrPeople.java` | `/cmds/tools/people` + `/cmds/tools/people/bulk` | Replaced+Enhanced (CSV bulk import with auto-generated credentials is new) |
 | Academic Structure | Implicit in `Institute.java` / org data model | `/cmds/tools/academic` dedicated screen | Replaced+Enhanced |
 | Content Resources / Question Bank | `QrModules`, `QrDocuments`, general CMDS content screens | `/cmds` resources + `/cmds/questions` | Replaced+Enhanced (chapter/topic display resolved live via board-service, added this session) |
-| Test creation | `QrTests.createTest()` (manual) / `createTestAuto()` (auto), **one shared Setup screen**, forking on an auto-generate flag | `/cmds/tests/new` — **now correctly mirrors this**: one Setup → Subjects & Types → Chapters flow with a mode toggle | Replaced — but see §5 for how this project initially got it wrong |
+| Test creation | `QrTests.createTest()` (manual) / `createTestAuto()` (auto), **one shared Setup screen**, forking on an auto-generate flag | `/cmds/tests/new` — **now correctly mirrors this**: one Setup → Subjects & Types → Chapters flow with a mode toggle | Replaced — but see §6 for how this project initially got it wrong |
 | Instant Test Generator (multi-subject, difficulty split, review & replace) | Not confirmed as existing in legacy in this form | `/cmds/tests/new` auto mode | New |
 | Course Packs (bundle-grant courses across orgs) | Not part of legacy's model | Built, then explicitly removed by product decision ("no concept of Other Courses" / Academic Structure supersedes it) | Removed |
-| Test-taking (student) | `Tests.java` (`testPage`, `testPageDirect`, `leaderBoard`) | `/test/[id]` | Replaced+Enhanced (see §5, one-attempt rule) |
+| Test-taking (student) | `Tests.java` (`testPage`, `testPageDirect`, `leaderBoard`) | `/test/[id]` | Replaced+Enhanced (see §6, one-attempt rule) |
 | Digital Library (student content browsing) | `MyContents.java`, subject-card tree (`Library/subjects.html`) | `/learn/courses` | Replaced — rebuilt to match legacy's real structure after an earlier version incorrectly duplicated it with a second flat "Library" section (removed) |
 | Leaderboard / toppers | `_getToppers()` / `toppersData`, **passed only into the teacher template**, never the student template | Rebuild initially showed peer leaderboard data to students (unverified assumption) | Corrected to match legacy: staff-only, removed from student surfaces |
 | Doubts Forum | `social`/legacy doubt flow (module not actively proxied — see §1) | `/learn/doubts`, direct Mongo (`discussions`/`answers`) | Replaced (native data model, not a proxy to the dormant `social` service) |
@@ -91,7 +101,7 @@ Status legend: **Replaced** = fully reimplemented, legacy web app no longer used
 | Sidebar navigation (student) | `header.html` + `conf/messages` — exactly 5 items: Digital Library, Programs, Doubts Forum, Analytics, Recent Activity | Rebuild had accumulated 14 nav items before being trimmed back to legacy's real 5 | Corrected to match legacy |
 | Mobile app | No evidence of a legacy mobile app in this repository | Native Android app (Compose), evolving from WebView shell to native screens + offline downloads | New |
 
-## 5. Business-rule fidelity findings
+## 6. Business-rule fidelity findings
 
 These are cases where this project's assumption about "what legacy does" was wrong, discovered by reading legacy source or live legacy data, and then corrected. Recorded here because they're exactly the kind of drift a "rebuild matches legacy" claim needs to survive scrutiny on.
 
@@ -103,7 +113,7 @@ These are cases where this project's assumption about "what legacy does" was wro
 6. **Board Tree depth.** Assumed (early on): a 2-level Subject → Chapter tree. Actual, confirmed via `BoardXLParser`'s `maxAllowedColumns=3` and the "Add SubTopic" control in legacy's tagging UI: a real 3-level tree (Subject → Chapter → Concept). The rebuild's board-tree UI now matches.
 7. **Bulk student upload format.** Modeled on legacy's real `StudentsXLParser` / `OrgMemberManager.uploadOrgStudents`: one Program chosen up front for the whole batch, with Center + Section supplied per row. Legacy's XL format also carries gender/DOB/parent-contact columns this rebuild's member model doesn't store — those are intentionally dropped, not silently lost (documented in the bulk-upload page's own header comment).
 
-## 6. Deliberate trade-offs (not fidelity bugs — explicit decisions)
+## 7. Deliberate trade-offs (not fidelity bugs — explicit decisions)
 
 | Trade-off | Legacy | Rebuild | Why |
 |---|---|---|---|
@@ -111,13 +121,13 @@ These are cases where this project's assumption about "what legacy does" was wro
 | Session model | Play server-side session | Stateless HMAC-signed cookie (§ Architecture doc, §6) | Required by the Edge middleware architecture; not a legacy behavior being matched, a new constraint being solved. |
 | Password storage for new accounts | Delegated to `user-services` | Self-issued `scrypt` hash for locally-created accounts, legacy proxy kept for legacy-issued accounts | Lets CMDS-created accounts work without a round trip to legacy for every login. |
 
-## 7. A risk the new architecture introduced, then found and fixed
+## 8. A risk the new architecture introduced, then found and fixed
 
-The session-model change in §6 is worth a second look specifically because it's where a real bug came from, not just an architectural swap. Legacy's Play server-side session meant a request's identity was never something a route had to think about separately — it was just *there*, tied to server-side state. The rebuild's stateless model means every route receives identity as data on the request, and it's up to that route to get it from the right place (the signed cookie, via `sessionFromReq()`) rather than the wrong one (a client-supplied `userId` field).
+The session-model change in §7 is worth a second look specifically because it's where a real bug came from, not just an architectural swap. Legacy's Play server-side session meant a request's identity was never something a route had to think about separately — it was just *there*, tied to server-side state. The rebuild's stateless model means every route receives identity as data on the request, and it's up to that route to get it from the right place (the signed cookie, via `sessionFromReq()`) rather than the wrong one (a client-supplied `userId` field).
 
 A systematic read of all 92 API routes (see the companion Architecture Deep Dive, §6.2, for the full route-by-route table) found that roughly a fifth of them had done exactly that — trusted a client-supplied `userId` instead of the session, in some cases going back to this project's earliest `/api/learn/**` routes. This wasn't present in legacy, and it wasn't an intended trade-off; it's the specific shape of bug this particular architecture change makes possible if a route is written carelessly. All instances found have been remediated (session-derived identity throughout, plus two staff-side cross-tenant org checks that were missing entirely); see the Deep Dive for the full finding, fix, and verification.
 
-## 8. Net new capability inventory (does not exist in legacy at all)
+## 9. Net new capability inventory (does not exist in legacy at all)
 
 - Advanced per-student analytics (subject/question-type accuracy resolved through the live board-tree hierarchy, score trend, strengths/focus-areas)
 - CSV bulk student import with auto-generated Institute ID + password, downloadable as a credentials sheet
@@ -127,6 +137,6 @@ A systematic read of all 92 API routes (see the companion Architecture Deep Dive
 - Native Android app with offline content downloads (Room + WorkManager)
 - The visual redesign itself (energetic, subject-color-coded UI) — a product decision, not a legacy-parity concern
 
-## 9. What still fails if legacy goes down
+## 10. What still fails if legacy goes down
 
 Because four legacy Play services are proxied live rather than fully absorbed, the following break if `lmsbe` is unreachable: Board Tree browsing/tagging (question bank chapter filters, doubt tagging, student analytics' subject rollup), the actual test-taking screen's question content (`getTestInfo`/`getTestQuestions`), legacy-issued-account login, and whatever `organization-services` calls are still in `lib/legacyOrg.ts`. This is the direct cost of the Strangler Fig approach at its current stage of completion — it is not yet a fully independent system.
