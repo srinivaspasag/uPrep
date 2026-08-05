@@ -113,3 +113,50 @@ export async function resolveStudentEnrollment(
 
   return { enrolledRoots, studentProgramIds, studentSectionIds, programGroups };
 }
+
+// Staff/super-admin "preview" version — there's no personal enrollment to
+// derive from (see the `staff` branch in app/api/learn/courses/route.ts,
+// which previously left programGroups empty for staff entirely, so the
+// Learning Network's Programs page just showed nothing for an admin
+// account). Returns every ACTIVE program in the org with its real course
+// list (program.courseIds unioned with all of its sections' courseIds,
+// same fold-in logic as the per-student version above), with no personal
+// center/section — an admin isn't "enrolled" anywhere specific.
+export async function resolveAllProgramGroups(
+  db: Db,
+  orgId: string,
+  allCourseRoots: string[]
+): Promise<StudentEnrollment["programGroups"]> {
+  const programDocs = await db
+    .collection("orgprograms")
+    .find({ orgId, recordState: "ACTIVE" } as any)
+    .toArray();
+  if (programDocs.length === 0) return [];
+
+  const programIds = programDocs.map((d: any) => String(d._id));
+  const sectionDocs = await db
+    .collection("orgsections")
+    .find({ orgId, programId: { $in: programIds }, recordState: "ACTIVE" } as any)
+    .toArray();
+
+  const programCourseIdSets = new Map<string, Set<string>>();
+  for (const d of programDocs as any[]) {
+    programCourseIdSets.set(String(d._id), new Set(Array.isArray(d.courseIds) ? d.courseIds : []));
+  }
+  for (const s of sectionDocs as any[]) {
+    const pid = s.programId ? String(s.programId) : null;
+    if (!pid || !programCourseIdSets.has(pid)) continue;
+    for (const cid of Array.isArray(s.courseIds) ? s.courseIds : []) programCourseIdSets.get(pid)!.add(cid);
+  }
+
+  return (programDocs as any[]).map((d) => {
+    const pid = String(d._id);
+    return {
+      id: pid,
+      name: d.name || "(untitled program)",
+      courseIds: Array.from(programCourseIdSets.get(pid) || []).filter((id) => allCourseRoots.includes(id)),
+      centerName: null,
+      sectionName: null,
+    };
+  });
+}

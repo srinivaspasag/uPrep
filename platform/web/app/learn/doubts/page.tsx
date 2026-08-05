@@ -115,8 +115,8 @@ export default function DoubtsPage() {
         <div className="py-16 text-center text-sm text-[#8890A1]">Loading doubts…</div>
       ) : items.length === 0 ? (
         <div className="mt-4 rounded-2xl border border-dashed border-[#D9D6C9] bg-white">
-          <ZeroState img="/legacy/zero/2doubts-zero.jpg">
-            {tab === "asked" ? "You haven't asked any doubts yet." : "No doubts here yet — be the first to ask!"}
+          <ZeroState icon="💬" title={tab === "asked" ? "No doubts asked yet" : "Be the first to ask"}>
+            {tab === "asked" ? "You haven't asked any doubts yet." : "No doubts here yet — ask one and get help from peers and teachers."}
           </ZeroState>
         </div>
       ) : (

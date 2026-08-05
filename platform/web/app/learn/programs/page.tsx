@@ -23,6 +23,7 @@ type ProgramGroup = {
 export default function ProgramsPage() {
   const [programGroups, setProgramGroups] = useState<ProgramGroup[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [staff, setStaff] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function ProgramsPage() {
       .then((d) => {
         setProgramGroups(d.programGroups || []);
         setCourses(d.courses || []);
+        setStaff(!!d.staff);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -39,21 +41,29 @@ export default function ProgramsPage() {
     <LmsShell active="programs">
       <div className="border-b-2 border-[#16233D] pb-3">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EDEEE9] px-3 py-1 text-xs font-medium uppercase tracking-wide text-[#8890A1]">
-          🎯 My Programs
+          🎯 {staff ? "Programs" : "My Programs"}
         </span>
-        <h1 className="mt-2 font-serif text-2xl font-semibold text-[#16233D]">Where you're enrolled</h1>
+        <h1 className="mt-2 font-serif text-2xl font-semibold text-[#16233D]">
+          {staff ? "All programs in this institute" : "Where you're enrolled"}
+        </h1>
       </div>
 
       <div className="mt-6">
         {loading ? (
           <div className="text-[#8890A1]">Loading…</div>
         ) : programGroups.length === 0 ? (
-          <ZeroState img="/legacy/zero/general-no-content.jpg">
-            You're not assigned to a program yet — check with your institute, or use an access code from{" "}
-            <Link href="/learn/courses" className="text-amber-700 underline underline-offset-2">
-              My Courses
-            </Link>
-            .
+          <ZeroState icon="🎯" title={staff ? "No programs yet" : "Not enrolled yet"}>
+            {staff ? (
+              "No programs have been created yet."
+            ) : (
+              <>
+                You're not assigned to a program yet — check with your institute, or use an access code from{" "}
+                <Link href="/learn/courses" className="text-amber-700 underline underline-offset-2">
+                  My Courses
+                </Link>
+                .
+              </>
+            )}
           </ZeroState>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

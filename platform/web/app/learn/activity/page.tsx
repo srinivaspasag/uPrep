@@ -44,7 +44,7 @@ export default function ActivityPage() {
         {loading ? (
           <div className="py-16 text-center text-sm text-slate-400">Loading…</div>
         ) : feed.length === 0 ? (
-          <ZeroState img="/legacy/zero/1recent-activity-zero.jpg">
+          <ZeroState icon="🕒" title="Nothing recent yet">
             Your recent tests, doubts and answers will show up here.
           </ZeroState>
         ) : (

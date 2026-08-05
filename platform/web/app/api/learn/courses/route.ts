@@ -10,7 +10,7 @@ import {
   naturalCompare,
 } from "@/lib/courses";
 import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
-import { resolveStudentEnrollment } from "@/lib/enrollment";
+import { resolveStudentEnrollment, resolveAllProgramGroups } from "@/lib/enrollment";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -61,6 +61,10 @@ export async function GET(req: NextRequest) {
     }[] = [];
     if (staff) {
       enrolledRoots = allCourseRoots;
+      // Staff have no personal enrollment to group by — without this, the
+      // Learning Network's Programs page showed nothing at all for a staff/
+      // super-admin account. Show every real program in the org instead.
+      programGroups = await resolveAllProgramGroups(db, orgId, allCourseRoots);
     } else {
       const enrollment = await resolveStudentEnrollment(db, session.id, allCourseRoots);
       enrolledRoots = enrollment.enrolledRoots;

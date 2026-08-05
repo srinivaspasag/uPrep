@@ -38,7 +38,14 @@ type ParsedRow = {
   sectionId: string;
 };
 
-type RowResult = { key: number; ok: boolean; memberId?: string; password?: string; error?: string };
+type RowResult = {
+  key: number;
+  ok: boolean;
+  name?: string;
+  memberId?: string;
+  password?: string;
+  error?: string;
+};
 
 const TEMPLATE_HEADERS = ["MemberId", "First Name", "Last Name", "Email", "Contact No", "Center", "Section"];
 
@@ -246,8 +253,9 @@ export default function BulkUploadStudentsPage() {
           }),
         });
         const d = await res.json().catch(() => ({}));
-        if (!res.ok || d.error) out.push({ key: r.key, ok: false, error: d.error || "Failed" });
-        else out.push({ key: r.key, ok: true, memberId: d.memberId, password: d.password });
+        const name = [r.firstName, r.lastName].filter(Boolean).join(" ");
+        if (!res.ok || d.error) out.push({ key: r.key, ok: false, name, error: d.error || "Failed" });
+        else out.push({ key: r.key, ok: true, name, memberId: d.memberId, password: d.password });
       } catch {
         out.push({ key: r.key, ok: false, error: "Network error" });
       }
@@ -259,7 +267,10 @@ export default function BulkUploadStudentsPage() {
 
   function downloadCredentials() {
     const created = results.filter((r) => r.ok);
-    const csv = ["Login ID,Password", ...created.map((r) => `${r.memberId},${r.password}`)].join("\n");
+    const csv = [
+      "Name,Login ID,Password",
+      ...created.map((r) => `${(r.name || "").replace(/,/g, " ")},${r.memberId},${r.password}`),
+    ].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -529,6 +540,7 @@ export default function BulkUploadStudentsPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-slate-50 text-left text-xs uppercase text-slate-500">
+                        <th className="px-3 py-2">Name</th>
                         <th className="px-3 py-2">Login ID</th>
                         <th className="px-3 py-2">Password</th>
                       </tr>
@@ -538,6 +550,7 @@ export default function BulkUploadStudentsPage() {
                         .filter((r) => r.ok)
                         .map((r) => (
                           <tr key={r.key} className="border-t border-slate-100">
+                            <td className="px-3 py-1.5 text-slate-700">{r.name}</td>
                             <td className="px-3 py-1.5 font-mono text-xs">{r.memberId}</td>
                             <td className="px-3 py-1.5 font-mono text-xs">{r.password}</td>
                           </tr>
@@ -556,7 +569,7 @@ export default function BulkUploadStudentsPage() {
                     .filter((r) => !r.ok)
                     .map((r) => (
                       <div key={r.key}>
-                        Row {r.key + 2}: {r.error}
+                        Row {r.key + 2}{r.name ? ` (${r.name})` : ""}: {r.error}
                       </div>
                     ))}
                 </div>

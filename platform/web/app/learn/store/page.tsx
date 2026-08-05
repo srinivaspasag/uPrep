@@ -85,7 +85,7 @@ export default function StorePage() {
         {loading ? (
           <div className="py-16 text-center text-slate-400">Loading…</div>
         ) : products.length === 0 ? (
-          <ZeroState img="/legacy/zero/general-no-content.jpg">
+          <ZeroState icon="🛍️" title="Store is empty">
             Nothing for sale right now.
           </ZeroState>
         ) : (

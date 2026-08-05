@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import LmsShell, { ZeroState } from "@/components/LmsShell";
 import { subjectAccent } from "@/lib/subjectColors";
-import LibrarySection from "@/components/LibrarySection";
 
 type Course = {
   id: string;
@@ -182,64 +181,43 @@ export default function MyCoursesPage() {
         {loading ? (
           <div className="py-16 text-center text-[#8890A1]">Loading…</div>
         ) : atRoot ? (
-          courses.length === 0 ? (
-            <ZeroState img="/legacy/zero/general-no-content.jpg">
-              You have no courses yet. Ask your institute to assign one.
+          programGroups.length === 0 ? (
+            <ZeroState icon="📚" title="No subjects yet">
+              You're not assigned to a program yet. Ask your institute to assign one.
             </ZeroState>
           ) : (
-            (() => {
-              // Group courses under the Program that granted them — bug found
-              // live: a student assigned to "JEE XI" saw Physics/Chem/Math
-              // with no indication of which program they belonged to.
-              const groupedIds = new Set(programGroups.flatMap((g) => g.courseIds));
-              const ungrouped = courses.filter((c) => !groupedIds.has(c.id));
-              return (
-                <div className="space-y-10">
-                  {programGroups.map((g) => {
-                    const groupCourses = courses.filter((c) => g.courseIds.includes(c.id));
-                    if (groupCourses.length === 0) return null;
-                    return (
-                      <div key={g.id}>
-                        <div className="mb-4 flex items-baseline gap-2.5">
-                          <span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-blue-500 to-violet-500" />
-                          <h2 className="font-serif text-lg font-semibold text-[#16233D]">{g.name}</h2>
-                          {(g.centerName || g.sectionName) && (
-                            <span className="text-xs text-[#8890A1]">
-                              {[g.centerName, g.sectionName].filter(Boolean).join(" · ")}
-                            </span>
-                          )}
-                        </div>
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                          {groupCourses.map((c) => (
-                            <CourseCard key={c.id} course={c} onOpen={openFolder} />
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {ungrouped.length > 0 && (
-                    <div>
-                      {programGroups.length > 0 && (
-                        <div className="mb-4 flex items-baseline gap-2.5">
-                          <span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-amber-500 to-rose-500" />
-                          <h2 className="font-serif text-lg font-semibold text-[#16233D]">Other Courses</h2>
-                        </div>
+            // Courses only ever show grouped under the Program that granted
+            // them — there's no "ungrouped"/"Other Courses" concept, a course
+            // with no Program isn't shown here at all.
+            <div className="space-y-10">
+              {programGroups.map((g) => {
+                const groupCourses = courses.filter((c) => g.courseIds.includes(c.id));
+                if (groupCourses.length === 0) return null;
+                return (
+                  <div key={g.id}>
+                    <div className="mb-4 flex items-baseline gap-2.5">
+                      <span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-blue-500 to-violet-500" />
+                      <h2 className="font-serif text-lg font-semibold text-[#16233D]">{g.name}</h2>
+                      {(g.centerName || g.sectionName) && (
+                        <span className="text-xs text-[#8890A1]">
+                          {[g.centerName, g.sectionName].filter(Boolean).join(" · ")}
+                        </span>
                       )}
-                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {ungrouped.map((c) => (
-                          <CourseCard key={c.id} course={c} onOpen={openFolder} />
-                        ))}
-                      </div>
                     </div>
-                  )}
-                </div>
-              );
-            })()
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {groupCourses.map((c) => (
+                        <CourseCard key={c.id} course={c} onOpen={openFolder} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )
         ) : browsing ? (
           <div className="py-16 text-center text-[#8890A1]">Loading…</div>
         ) : subfolders.length === 0 && items.length === 0 ? (
-          <ZeroState img="/legacy/zero/general-no-content.jpg">This folder is empty.</ZeroState>
+          <ZeroState icon="📁" title="Empty folder">This folder is empty.</ZeroState>
         ) : (
           <div className="space-y-6">
             {subfolders.length > 0 && (
@@ -281,24 +259,6 @@ export default function MyCoursesPage() {
         )}
       </div>
 
-      {/* Correction: legacy's real "Digital Library" (TXT_LIBRARY) IS the
-          subject-card page above (Library/subjects.html) — this flat by-type
-          section is NOT a second copy of that; it's a rebuild-only fallback
-          for content that has no subject/chapter tag at all (e.g. added
-          straight to a section via Programs > Content > Make Visible), which
-          the subject/chapter tree above can never surface. Named and framed
-          distinctly so it doesn't read as a duplicate "Library". */}
-      {atRoot && !loading && (
-        <div className="mt-12">
-          <h2 className="font-serif text-lg font-semibold text-[#16233D]">Other Shared Content</h2>
-          <p className="mt-1 text-xs text-[#8890A1]">
-            Content shared directly with you or your section, not filed under any subject above.
-          </p>
-          <div className="mt-4">
-            <LibrarySection />
-          </div>
-        </div>
-      )}
     </LmsShell>
   );
 }

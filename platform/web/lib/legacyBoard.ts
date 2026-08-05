@@ -63,6 +63,51 @@ export async function resolveBoardNames(
   }
 }
 
+// Resolves a set of (usually chapter-level) board ids all the way up to
+// their top-level Subject name — one extra batched getTreesOfBoards call on
+// the union of parent ids, reusing the same BoardBasicInfo.parentIds field
+// resolveBoardNames already receives but doesn't expose. Powers the
+// per-subject rollup in student analytics: a question is tagged at chapter
+// level (see resolveBoardNames's own comment), but "which subject is this
+// student weak in" needs the subject, not the chapter.
+export async function resolveBoardSubjects(
+  orgId: string,
+  chapterIds: string[]
+): Promise<Record<string, string>> {
+  const unique = Array.from(new Set(chapterIds.filter(Boolean)));
+  if (unique.length === 0) return {};
+  try {
+    const res = await callBoardService<{ list?: any[] }>("getTreesOfBoards", {
+      orgId,
+      userId: "admin",
+      callingUserId: "admin",
+      context: "ORG",
+      ownerId: orgId,
+      treeRootIds: unique,
+      depth: 0,
+    });
+    const parentOf: Record<string, string | null> = {};
+    const nameOf: Record<string, string> = {};
+    for (const t of res.list || []) {
+      const id = t?.board?.id;
+      if (!id) continue;
+      nameOf[id] = t.board.name || "";
+      const parentIds: string[] = Array.isArray(t.board.parentIds) ? t.board.parentIds : [];
+      parentOf[id] = parentIds[0] || null;
+    }
+    const subjectIds = Array.from(new Set(Object.values(parentOf).filter(Boolean))) as string[];
+    const subjectNames = subjectIds.length ? await resolveBoardNames(orgId, subjectIds) : {};
+    const out: Record<string, string> = {};
+    for (const id of unique) {
+      const parentId = parentOf[id];
+      out[id] = (parentId && subjectNames[parentId]) || nameOf[id] || "Other";
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 export async function callBoardService<T = any>(
   action: string,
   params: Record<string, unknown>
