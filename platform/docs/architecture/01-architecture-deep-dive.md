@@ -63,7 +63,7 @@ These are the patterns actually implemented, not aspirational:
 | Pattern | Where | Why |
 |---|---|---|
 | **Strangler Fig** | The whole rebuild | The two legacy front-door web apps (`ui/cmds-app`, `ui/learn-app` — Play + server-rendered templates) are being replaced by the Next.js app one feature at a time, while the underlying legacy *data* services (user/org/content/board) keep running and are called over HTTP for the parts not yet natively reimplemented. |
-| **Backend-for-Frontend (BFF)** | `app/api/**` (92 route handlers) | Next.js API routes are the only backend the browser/Android app talk to. They either read Mongo directly or fan out to legacy services, and shape the response for exactly what the UI needs — the client never talks to Mongo or the legacy services directly. |
+| **Backend-for-Frontend (BFF)** | `app/api/**` (91 route handlers) | Next.js API routes are the only backend the browser/Android app talk to. They either read Mongo directly or fan out to legacy services, and shape the response for exactly what the UI needs — the client never talks to Mongo or the legacy services directly. |
 | **Adapter / Anti-Corruption Layer** | `lib/legacyOrg.ts`, `lib/legacyBoard.ts` | Each wraps one legacy service's form-encoded, Java-DTO-shaped protocol behind a small typed TypeScript function, so the rest of the app never constructs legacy request payloads by hand. |
 | **Edge-gated RBAC** | `middleware.ts` | A single middleware function gates every `/cmds/**` page and `/api/cmds/**` call on one condition (staff profile), mirroring legacy's `Security.checkAccess()` `@Before` interceptor — but running at the edge, before any page code executes. |
 | **Signed, stateless session token** | `lib/auth-session.ts` | HMAC-SHA256-signed cookie carrying identity + org + role, verified with Web Crypto (works identically in the Node route runtime and the Edge middleware runtime). No server-side session store. |
@@ -105,7 +105,7 @@ Facts worth calling out explicitly (all directly from the compose file):
 | Metric | Count |
 |---|---|
 | Page routes (`page.tsx`) | 74 |
-| API route handlers (`route.ts`) | 92 |
+| API route handlers (`route.ts`) | 91 (was 92 at audit time — see §6.2; one dead, vulnerable route was deleted rather than fixed) |
 | — under `/cmds/**` (staff) | 39 pages |
 | — under `/learn/**` (student) | 23 pages |
 | Shared domain modules (`lib/*.ts`) | 21 |
@@ -178,7 +178,7 @@ One explicit, deliberate exception: `GET /api/cmds/tools/news` is public (studen
 
 ### 5.4 Complete API surface reference
 
-**Evidence:** every one of the 92 route handlers under `app/api/**` was individually opened and read (not sampled) to produce this table, specifically to determine each route's real authorization pattern rather than assume one from its path. This exercise is what surfaced the finding written up in §6.2.
+**Evidence:** every one of the 92 route handlers that existed under `app/api/**` at audit time was individually opened and read (not sampled) to produce this table, specifically to determine each route's real authorization pattern rather than assume one from its path. This exercise is what surfaced the finding written up in §6.2; one of those 92 (`/api/analytics`) was subsequently deleted as dead code during remediation, leaving 91 today (§13).
 
 Authorization codes used below:
 
@@ -556,7 +556,7 @@ flowchart LR
 | Item | Count | Source |
 |---|---|---|
 | Next.js page routes | 74 | `find app -name page.tsx \| wc -l` |
-| Next.js API routes | 92 | `find app/api -name route.ts \| wc -l` |
+| Next.js API routes | 91 (92 at audit time, minus 1 deleted — §6.2) | `find app/api -name route.ts \| wc -l` |
 | `lib/` modules | 21 | `ls lib/*.ts` |
 | Mongo collections referenced | 36 | grep across `app/`, `lib/` |
 | Web app TS/TSX LOC | ~34,200 | `wc -l` |
