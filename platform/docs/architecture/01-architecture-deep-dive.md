@@ -95,7 +95,7 @@ Facts worth calling out explicitly (all directly from the compose file):
 2. **`ui` builds itself on container start** — the command is literally `npm install && npm run build && npm start`, not a pre-built image. There is no CI pipeline building a versioned artifact; a deploy is "sync source, recreate container, it rebuilds itself."
 3. **`lmsbe` is one container running four independent legacy JVM services** (ports 19011/19012/19013/19016) via `sbt start <port>` per service, not four separate containers.
 4. **The `socat` sidecar exists purely because legacy `local.conf` hardcodes `localhost:27017`** — it shares `lmsbe`'s network namespace and forwards `127.0.0.1:27017` to the real `mongo` service, so the legacy JVM code doesn't need to be touched to reach a container-networked Mongo.
-5. **MongoDB is version 3.4** (confirmed live: `db.version()` → `3.4.24`), matching the `mongo:3.4` image pin — this is a legacy-mandated floor, not a current choice (see §11, Risks).
+5. **MongoDB is version 3.4** (confirmed live: `db.version()` → `3.4.24`), matching the `mongo:3.4` image pin — this is a legacy-mandated floor, not a current choice (see §12, Risks).
 6. **The actual deploy mechanism** (observed and executed repeatedly in this project) is: `rsync` the `platform/web` source tree to the host, then `docker compose up -d --force-recreate ui`, which re-runs the build-and-start command above. There is no blue/green or rolling deploy — the container restarts with a brief gap.
 
 ## 5. Application architecture (the Next.js app)
@@ -176,6 +176,142 @@ One explicit, deliberate exception: `GET /api/cmds/tools/news` is public (studen
 
 **Evidence:** `middleware.ts` read in full.
 
+### 5.4 Complete API surface reference
+
+**Evidence:** every one of the 92 route handlers under `app/api/**` was individually opened and read (not sampled) to produce this table, specifically to determine each route's real authorization pattern rather than assume one from its path. This exercise is what surfaced the finding written up in §6.2.
+
+Authorization codes used below:
+
+- **Session** — derives identity from `sessionFromReq()` (the signed cookie); rejects with 401 if absent.
+- **Session+Role** — Session, plus an explicit role/ownership check (e.g. `canManageContent`, `isSuperAdmin`, org match).
+- **Gate-only** — sits behind `middleware.ts`'s blanket `/api/cmds/**` staff gate with no further per-route check (any staff profile, any org the session is pinned to).
+- **Public** — intentionally open, no identity required (marketing pages, webhooks with their own shared-secret, health-style lookups).
+- **Fixed** — was a client-trusted-identity vulnerability at the time of the audit; remediated in this project (see §6.2) to **Session** or **Session+Role**.
+
+#### `/api/cmds/tools/**` — org admin tooling
+
+| Route | Methods | Purpose | Authorization |
+|---|---|---|---|
+| `/academic` | GET/POST/PATCH/DELETE | Departments/Programs/Centers/Sections CRUD + course assignment | Gate-only (one MANAGER-only sub-action) |
+| `/boards` | GET | Board Tree proxy | Gate-only |
+| `/channels` | GET/POST | Challenge Channels CRUD | Gate-only |
+| `/commerce/coupons` | GET/POST/DELETE | Coupon codes CRUD | Gate-only |
+| `/commerce/invoices` | GET/PATCH | Invoices list, mark paid/cancel | Gate-only |
+| `/commerce/products` | GET/POST/DELETE | Sellable products CRUD | Gate-only |
+| `/devices` | GET | Device/login-activity monitor | Gate-only |
+| `/exports` | GET/POST | CSV export generation | Gate-only |
+| `/news` | GET/POST/DELETE | Org announcements | GET is **Public** (exempted in middleware); POST/DELETE Gate-only |
+| `/notifications` | GET/POST | Send/list notifications | Gate-only |
+| `/org-grants` | GET/POST | Super-admin cross-org content grants | Session+Role (`isSuperAdmin`) |
+| `/organization` | GET/POST | Org profile view/edit | Gate-only |
+| `/organization/logo` | POST | Upload org logo | Session+Role (MANAGER) |
+| `/organizations` | GET/POST/PATCH | Multi-org admin (create orgs, set plans) | Session+Role (`isSuperAdmin`) |
+| `/people` | GET/POST/PATCH/DELETE | Member management, seat limits | GET/POST Gate-only; PATCH Session (org match, no role check); DELETE Session+Role (MANAGER) |
+| `/people/email` | POST | Bulk-email a section | Session+Role (MANAGER) |
+| `/people/password` | POST | Admin password reset for a member | Session+Role (org match) |
+| `/referrals` | GET/POST/DELETE | Referral codes CRUD | Gate-only |
+| `/schedule` | GET/POST/DELETE | Classroom Connect schedule | Gate-only |
+| `/sections` | GET/POST/DELETE | Sections CRUD | Gate-only |
+| `/seller/access-codes` | GET/POST/PATCH | Offline access-code inventory | GET Gate-only; POST/PATCH Session+Role (MANAGER) |
+| `/seller/groups` | GET/POST | Seller distribution groups | GET Gate-only; POST Session+Role (MANAGER) |
+| `/signup` | GET/PUT | Public self-signup config editor | Gate-only |
+
+#### `/api/cmds/tests/**` — test authoring & operations
+
+| Route | Methods | Purpose | Authorization |
+|---|---|---|---|
+| `/tests` | GET/POST | List gradable questions; create a test | Gate-only |
+| `/tests/[id]` | GET/PATCH | Edit test metadata/questions | Session+Role (`canManageContent`) |
+| `/tests/attempts` | GET/POST | Monitor/reset in-progress attempts | GET Gate-only; POST Session+Role (MANAGER) |
+| `/tests/auto` | POST | Instant Test Generator random pick | Gate-only |
+| `/tests/grading` | GET/POST | Manual subjective-grading queue | Gate-only (session used only for attribution) |
+| `/tests/analytics` | GET | Per-test result analytics | Gate-only |
+| `/tests/analytics/export` | GET | CSV export of result sheet | Gate-only |
+| `/tests/schedule` | GET/POST/DELETE | Schedule a test to sections | Gate-only |
+
+#### `/api/cmds/**` — content & enrollment (other)
+
+| Route | Methods | Purpose | Authorization |
+|---|---|---|---|
+| `/assignments` | GET/POST | Assignment CRUD (admin side) | Gate-only |
+| `/content` | GET/PATCH/POST/DELETE | Institute Resources browser (folders/docs/videos/tests/modules) | Session+Role (`canManageContent`; visibility actions need MANAGER) |
+| `/content/bulk` | POST | Bulk section/visibility/download toggle | Session+Role (MANAGER) |
+| `/enroll` | GET/POST | Direct course enrollment for a student | GET Session (org pin); POST **Fixed** → Session+Role (org match) |
+| `/enroll/program` | GET/POST/DELETE | Program+Center+Section membership | **Fixed** (all three) → Session+Role (org match) |
+| `/modules/[id]` | GET | Module detail viewer | Session+Role (`canManageContent`) |
+| `/papers/[id]` | GET | Printable question paper **incl. answer keys** | Gate-only — no `canManageContent` check, unlike sibling content routes (noted as an inconsistency worth tightening, not yet fixed) |
+| `/programs` | GET/POST | List/create Programs | Gate-only |
+| `/programs/[id]` | GET | Program detail | Session (org-scoped via `resolveOrgId`) |
+| `/programs/[id]/analytics` | GET | Program-level test analytics | Session (org-scoped) |
+| `/programs/[id]/marksheets` | GET/POST | Offline marksheet upload | Session (org-scoped) |
+| `/publish` | POST | Publish a draft question into the gradable library | Gate-only |
+| `/questions` | POST/DELETE | Author/soft-delete a question | POST **Fixed** → Session+Role (`canManageContent`); DELETE already Session+Role |
+| `/questions/[id]` | GET/PATCH | Load/edit a question | Session+Role (`canManageContent`) |
+| `/questions/extract` | POST | PDF/DOCX text extraction utility | Gate-only |
+| `/resources` | GET | List authored questions/tests/modules | Gate-only |
+| `/upload` | POST | Upload a document/video file | Gate-only |
+| `/videos` | POST | Add a video by external URL | Gate-only |
+
+#### `/api/learn/**` — student app
+
+| Route | Methods | Purpose | Authorization |
+|---|---|---|---|
+| `/activity` | GET | Recent-activity feed | **Fixed** → Session |
+| `/analytics` | GET | Advanced per-student analytics | **Fixed** → Session |
+| `/assignments` | GET/POST | Student assignment list + submission | Session |
+| `/boards` | GET | Board tree proxy for doubt-tagging | Public (no personal data) |
+| `/bookmarks` | GET/POST | Bookmarks list + toggle | **Fixed** (both) → Session |
+| `/certificates` | GET/POST | Eligible/issued certificates | Session, with a deliberate public-by-id "verify a certificate" lookup mode (not a bug — see §6.2) |
+| `/challenges` | GET/POST | Time-boxed test challenges | GET Public; POST join already Session; POST create **Fixed** → Session |
+| `/checkout` | GET/POST | Storefront + purchase invoice | Session |
+| `/courses` | GET | Enrolled courses + folder browsing | Session |
+| `/doubts` | GET/POST | Doubts forum list/create | **Fixed** (both) → Session (browse itself stays public; "asked by me" + authorship now session-derived) |
+| `/doubts/[id]` | GET/POST | One doubt + post an answer | GET Public; POST **Fixed** → Session |
+| `/enroll-code` | POST | Redeem a section access code | Session |
+| `/messages` | GET/POST | Class chat (polling) | GET Public (org broadcast only); POST **Fixed** → Session |
+| `/modules/[id]` | GET | Student module viewer | Session |
+| `/notifications` | GET | Notifications inbox | Public (org broadcasts only, no per-user data) |
+| `/password` | POST | Change signed-in user's password | Local-account path already Session; legacy-account fallback **Fixed** → Session |
+| `/playlists` | GET/POST/PATCH | Playlist list/create/mutate | GET Public; POST **Fixed** → Session; PATCH **Fixed** → Session+Role (ownership check added, previously had none at all) |
+| `/profile` | GET/POST | View/edit own profile | **Fixed** (both) → Session |
+| `/ratings` | GET/POST | Ratings/reviews | GET aggregate Public, "mine" **Fixed** → Session; POST **Fixed** → Session |
+| `/schedule` | GET | Live-class schedule | Session |
+| `/search` | GET | Global content search | Session |
+| `/tests` | GET | Scheduled-tests list | Session |
+
+#### `/api/tests/**` — test-taking flow
+
+| Route | Methods | Purpose | Authorization |
+|---|---|---|---|
+| `/tests/[id]` | GET | Test info + questions, `alreadyAttempted` flag | **Fixed** → Session |
+| `/tests/[id]/my-result` | GET | Read back finished-attempt score | **Fixed** → Session |
+| `/tests/[id]/progress` | GET/PUT/DELETE | Save/resume/clear in-progress state | Already Session |
+| `/tests/[id]/review` | GET | Post-submission answer review | **Fixed** → Session (code comment had already claimed this; the code didn't match it) |
+| `/tests/[id]/submit` | POST | Submit + grade a finished attempt | **Fixed** → Session |
+
+#### `/api/auth/**` — identity establishment
+
+| Route | Methods | Purpose | Authorization |
+|---|---|---|---|
+| `/login` | POST | Password login, issues session cookie | Public (pre-auth by definition) |
+| `/logout` | POST | Clear session cookie | Public |
+| `/me` | GET | Return current session identity | Session |
+| `/otp/request`, `/otp/verify` | POST | OTP login/signup | Public (pre-auth) |
+| `/reset-password`, `/forgot-password` | POST | Password reset flow | Public, token/TTL-gated; forgot-password always responds `ok` (no account enumeration) |
+| `/signup` | POST | Public self-registration | Public, gated by org's signup config |
+| `/impersonate` | POST/DELETE | Staff impersonation start/stop | Session+Role (staff, org match, super-admin checks) |
+
+#### Everything else
+
+| Route | Methods | Purpose | Authorization |
+|---|---|---|---|
+| `/api/library` | GET | Browsable content list, enrollment-gated | Session |
+| `/api/analytics` | — | *(legacy result-history endpoint)* | **Deleted** — was vulnerable and unreferenced by any frontend code; removed rather than fixed |
+| `/api/programs` | GET | Public program list, narrowed for logged-in students | Hybrid — intentionally public for the marketing homepage |
+| `/api/seller/verify` | POST | Offline device/access-code verification | Public by design — identity established by the code+email+device pairing itself |
+| `/api/commerce/confirm` | POST | Payment-gateway webhook | Shared-secret header, not a user session |
+| `/api/enquiry`, `/api/orgs/suggest` | POST/GET | Public marketing form / org type-ahead | Public |
+
 ## 6. Authentication & session model
 
 ```mermaid
@@ -202,7 +338,30 @@ Two independent password paths coexist (**verified in `app/api/auth/login/route.
 1. **Locally-created accounts** (students/teachers added via CMDS, or self-signups) — password hashed with `scrypt`, stored as `orgmembers.passwordHash`, format `scrypt$<saltHex>$<hashHex>`. This is a genuinely new capability the legacy stack didn't need, since legacy always owned auth.
 2. **Legacy-issued accounts** — authenticated by proxying to `user-services`' `authenticateUser`.
 
-The session token itself (`lib/auth-session.ts`) is a from-scratch addition this rebuild needed and legacy didn't: legacy ran one Play process with server-side sessions; this rebuild's middleware runs on the Edge runtime, which cannot share in-process state with the Node route runtime, so identity has to travel *in* the request as a signed, stateless token. Falls back to a **hardcoded dev secret** if `SESSION_SECRET` is unset (flagged in §11).
+The session token itself (`lib/auth-session.ts`) is a from-scratch addition this rebuild needed and legacy didn't: legacy ran one Play process with server-side sessions; this rebuild's middleware runs on the Edge runtime, which cannot share in-process state with the Node route runtime, so identity has to travel *in* the request as a signed, stateless token. Falls back to a **hardcoded dev secret** if `SESSION_SECRET` is unset (flagged in §12).
+
+### 6.2 Authorization audit and remediation
+
+`middleware.ts` correctly gates the `/cmds/**` surface (§5.3), but that gate only proves the caller is *some* authenticated staff member — it says nothing about *which* identity a route should act as, or whose data a `/learn/**`/`/api/tests/**` route should return. That second question is answered per-route, and a systematic read of all 92 handlers (§5.4) found it was answered incorrectly in a specific, repeated way across roughly a fifth of the API surface.
+
+**The pattern.** A route would read `userId` from a client-controlled source — a `?userId=` query parameter or a `body.userId` field — and use it directly as the identity to read or write data for, instead of deriving it from the signed session cookie (`sessionFromReq()`). Because the legitimate frontend always happened to pass the caller's *own* id, this was invisible in normal use; nothing stopped a request from passing a *different* id.
+
+**Impact, concretely.** Any authenticated (in several cases, any unauthenticated) caller could, by supplying another user's `userId`:
+
+- Read and **overwrite** another student's profile (name, email, phone) — `GET/POST /api/learn/profile`.
+- Read another student's full test-score history and per-subject weaknesses — `/api/learn/analytics`, `/api/learn/activity`, and the now-deleted `/api/analytics`.
+- Read another student's **revealed answers** on a graded test — `/api/tests/[id]/review`, notably a case where the route's own comment already asserted "derived server-side from the session's userId, never trusted from the client" while the code beneath it did exactly the opposite.
+- Read another student's result, or **submit and have graded a test attempt as them** — `/api/tests/[id]`, `/api/tests/[id]/my-result`, `/api/tests/[id]/submit`.
+- Forge authorship of doubts, doubt answers, and chat messages under any identity — `/api/learn/doubts`, `/api/learn/doubts/[id]`, `/api/learn/messages`.
+- Read/write another user's bookmarks and reviews — `/api/learn/bookmarks`, `/api/learn/ratings`.
+- Mutate any playlist by id with **no authorization check of any kind**, not even an identity check — `PATCH /api/learn/playlists`.
+- Inside the staff-gated area specifically: `POST /api/cmds/enroll` and all three methods on `/api/cmds/enroll/program` never checked that the *acting* staff member's org matched the *target* student's org — a valid staff session from Org A could read or mutate enrollment for a student in Org B, with only the blanket staff gate (not an org boundary) standing in the way. `POST /api/cmds/questions` authored content under a client-supplied identity with no `canManageContent` check at all, unlike every sibling content-authoring route.
+
+**Why this shape of bug, specifically.** The codebase demonstrably knows the correct pattern — `/api/learn/courses`, `/api/tests/[id]/progress`, `/api/learn/search`, and several others already used `sessionFromReq()` correctly, and a few even carried comments describing a *prior* version of this exact class of bug being fixed on that route. The affected routes read as the ones a session-hardening pass missed, not a design that was never attempted.
+
+**Remediation.** Every flagged route now derives identity exclusively from `sessionFromReq()`, returning `401` if no session is present; three (`/api/cmds/questions` POST, `/api/cmds/enroll` POST, `/api/cmds/enroll/program`) additionally gained the role/org-match check their siblings already had; `PATCH /api/learn/playlists` gained an ownership check where none existed before; the dead, equally-vulnerable `/api/analytics` (superseded, unreferenced) was deleted outright rather than fixed. Two routes were deliberately left as public-by-design after review rather than "fixed" — `/api/learn/certificates`'s certificate-by-id lookup (a verification feature, not a leak) and `/api/programs` (intentionally open for the marketing homepage, session-narrowed when a student is logged in).
+
+**Verification.** `npm run build` (TypeScript compilation across the whole route surface) after every change; then, against the live production deployment: `GET /api/learn/profile` with no session cookie returns `401` where it previously returned another account's PII; the identical request with a valid session cookie continues to return the caller's own profile correctly, confirming no regression for legitimate use. No frontend changes were required — the browser already sends the session cookie automatically on same-origin requests, so client-supplied `userId` parameters simply became inert.
 
 ## 7. Data architecture
 
@@ -311,7 +470,44 @@ Digital Library (subject cards grouped strictly by Program — by explicit produ
 
 ### 9.3 Test-taking engine
 
-One attempt per test, permanently — this is not a rebuild policy choice, it is a **discovered legacy business rule** (`AnalyticsManager.isMultiAttemptAllowed()` is hardcoded `return false` in legacy source). The rebuild surfaces this up front (`alreadyAttempted` flag on `GET /api/tests/[id]`) rather than letting a student redo a test and hit a silent grading failure, which is what an earlier, unverified version of this rebuild did.
+The one-attempt rule is not a rebuild policy choice — it's a **discovered legacy business rule**, and it is more precise than "one attempt, ever." Reading `AnalyticsManager.startAttempt()` (`content/content-mgmt/.../AnalyticsManager.java`, legacy) directly:
+
+- `isMultiAttemptAllowed()` is hardcoded `return false` (line ~2820) — confirmed, not paraphrased.
+- But the actual gate (`if (null != userEntityAttempt && !isMultiAttemptAllowed(...))`, ~line 302) branches on whether that prior attempt actually *finished*: if it has `endTime == 0` (abandoned/interrupted mid-test), the same attempt is silently **resumed** (`isReattempt = true`, status reset to `"ONGOING"`, same attempt id returned) — a student who lost connection mid-test is not locked out. Only once an attempt has a real `endTime` does starting again throw `MULTI_ATTEMPTS_NOT_ALLOWED`.
+- `recordAttempt()` re-checks state on *every single answer* (not just at start) — `entityStatus(attemptId)` is checked for `"FINISHED"` (throws `TEST_ENDED`), `"PAUSED"` (throws `TEST_PAUSED`), and `"RESUMED"` (throws `TEST_PAUSED_RESUME_AGAIN`) before accepting the answer. This is a defense-in-depth pattern — no single upfront gate is trusted for the whole attempt's duration.
+- No MongoDB transaction wraps any of `startAttempt`/`recordAttempt`/`endAttempt` (grepped for `startTransaction`/`ClientSession`/`@Transactional` across the legacy `content/` module — no hits). Consistency across the attempt's several writes is enforced by these per-call state checks, not by atomicity.
+
+The rebuild's own attempt path (`app/api/tests/[id]/submit/route.ts`) proxies to the same legacy `startAttempt` → `recordAttempt` (once per answer) → `endAttempt` sequence rather than reimplementing grading, and adds one thing legacy's client didn't have: each `recordAttempt` call is retried up to 3 times with backoff before being reported as failed, because a bug was found live where a silently-dropped network call left a real answer with zero corresponding `userquestionattempts` row (scored as unanswered with no error surfaced anywhere).
+
+```mermaid
+sequenceDiagram
+    participant S as Student browser
+    participant Route as /api/tests/[id]/submit
+    participant Legacy as content-services (legacy)
+    participant Mongo
+
+    S->>Route: POST { answers[] } (session cookie)
+    Route->>Route: derive userId from session (see §6.2 — used to be client-supplied)
+    Route->>Legacy: startAttempt
+    alt prior attempt exists, unfinished (endTime==0)
+        Legacy-->>Route: same attemptId, isReattempt=true, status=ONGOING
+    else prior attempt exists, finished
+        Legacy--xRoute: throws MULTI_ATTEMPTS_NOT_ALLOWED
+    else no prior attempt
+        Legacy-->>Route: new attemptId
+    end
+    loop each answer (up to 3x retry with backoff on failure)
+        Route->>Legacy: recordAttempt(attemptId, qId, answerGiven)
+        Legacy->>Legacy: entityStatus check (FINISHED/PAUSED/RESUMED all reject)
+        Legacy-->>Route: ok (verdict withheld for TEST entityType)
+    end
+    Route->>Legacy: endAttempt(attemptId)
+    Route->>Mongo: read back userquestionattempts by attemptId (grading already committed by legacy)
+    Mongo-->>Route: per-question verdicts
+    Route-->>S: { graded, correct, perQuestion[], failedQIds[] }
+```
+
+The rebuild surfaces the resume-vs-block distinction up front too (`alreadyAttempted` flag on `GET /api/tests/[id]`, computed from a direct read of `userentityattempts` rather than re-deriving legacy's logic) — an earlier, unverified version of this rebuild had no such check and let a student walk through an entire finished test only to have the final submission fail ungracefully.
 
 ### 9.4 Content model — two parallel trees
 
@@ -332,7 +528,17 @@ flowchart LR
 
 **Evidence:** `app/build.gradle.kts` dependency list, file inventory (27 Kotlin files) including `DownloadDao`, `DownloadDatabase`, `DownloadEntity`, `ContentDownloadWorker`, `DownloadRepository`, `OfflineAuth`, `DownloadsScreen`, `DocumentViewerScreen` — i.e. this has moved past "WebView shell" (the README's documented original design) into native screens with offline content download, though the README itself has not been re-verified as updated to reflect this.
 
-## 11. Known risks / limitations (stated plainly, not softened)
+## 11. Consistency, resilience & failure modes
+
+**Evidence:** direct greps against `platform/web` (`app/`, `lib/`) and the legacy `content/` module for transaction primitives, caching, retry logic, and request timeouts — reported as "not found" rather than omitted where that's the honest answer, since absence is itself the finding.
+
+- **No multi-document transactions anywhere, in either system.** Neither the rebuild (`grep -rn "startTransaction|withTransaction|ClientSession" app lib` — zero hits) nor the legacy `content-mgmt` module (same grep pattern, zero hits) wraps a multi-write operation in a transaction. Concretely: `POST /api/cmds/publish` writes to `cmdsquestions`, then `questions`, then `answers` as three independent `insertOne`/`find` calls — if the process crashes between the second and third write, a question exists in the library with no answer key, silently ungradeable, and nothing detects or repairs that state. This mirrors the legacy attempt pipeline's own approach (§9.3): consistency is enforced by per-step state checks, not atomicity, in both systems.
+- **Retry logic exists in exactly one place**: `app/api/tests/[id]/submit/route.ts`'s per-answer `recordAttempt` call (3 attempts, linear backoff), added specifically because of a live-discovered silent-drop bug (§9.3). No other route in `app/api/**` retries a failed operation.
+- **No caching layer of any kind.** Grepped for `unstable_cache`, `revalidate`, Redis, and manual memoization — none found. Every request is a fresh MongoDB round trip or a fresh legacy-service HTTP call; there is no read-through cache anywhere in the stack.
+- **No explicit timeout on any legacy-service call.** None of the `fetch()` calls to `board-services`/`organization-services`/`content-services`/`user-services` (in `lib/legacyBoard.ts`, `lib/legacyOrg.ts`, or inline in route handlers) sets an `AbortController`/`signal`/timeout. A hung legacy service would hang the calling Next.js request indefinitely rather than failing fast.
+- **Idempotency is inconsistent by design, not by oversight**, and mostly appropriately so: course-grant/program-membership writes (`/api/cmds/enroll`, `/api/cmds/enroll/program`) are upserts (safe to retry), while content-creation routes (`/api/cmds/questions` POST, `/api/learn/doubts` POST) are plain `insertOne`s with no dedupe key (a double-click or a client retry creates a duplicate row) — acceptable for admin-authored content where a duplicate is a visible, correctable annoyance, less acceptable if ever exposed to a lossy mobile network without client-side dedup.
+
+## 12. Known risks / limitations (stated plainly, not softened)
 
 1. **MongoDB 3.4.24** is years past end-of-life upstream; the version floor exists because the legacy JVM driver/queries assume 3.x wire behavior, not because it was chosen.
 2. **Single VM, no redundancy** — `mongo`, `lmsbe`, and `ui` are one container each on one host; any one of them going down takes the whole platform down, and a deploy briefly stops the `ui` container.
@@ -341,8 +547,11 @@ flowchart LR
 5. **No automated test suite found** in `platform/web` (verification throughout this project has been `npm run build` type-checking plus manual/live-data verification, not unit/integration tests).
 6. **Runtime coupling to legacy** — four legacy Play services must be up for board-tree browsing, test-taking, and some org lookups to work at all; there is no fallback path if `lmsbe` is down.
 7. **Two independent content hierarchies** (§9.4) reconciled by name-matching, not by ID — a real long-term data-integrity risk if names diverge further.
+8. **No timeout on legacy-service calls** (§11) — a hung `lmsbe` process degrades to a hung Next.js request rather than a fast, visible failure.
+9. **No transaction boundary around any multi-collection write** (§11) — publish, enrollment, and attempt-grading all rely on per-step state checks rather than atomicity; a mid-sequence crash can leave partial state (e.g. a question with no answer key) that nothing currently detects.
+10. **The authorization audit in §6.2 was a point-in-time review, not a standing control** — nothing in the codebase (a lint rule, a route-handler wrapper, a test) currently prevents a new route from reintroducing the same client-trusted-identity pattern; the fix corrected the found instances, it didn't close off the category.
 
-## 12. Appendix — verified counts
+## 13. Appendix — verified counts
 
 | Item | Count | Source |
 |---|---|---|
