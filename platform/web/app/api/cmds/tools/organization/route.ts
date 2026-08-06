@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
+import { getDb } from "@/lib/mongo";
 import { resolveOrgId } from "@/lib/org-scope";
 import { sessionFromReq } from "@/lib/server-session";
 import { callOrgService } from "@/lib/legacyOrg";
@@ -22,6 +24,17 @@ export async function GET(req: NextRequest) {
     const o = await callOrgService<any>("getOrganization", { orgId, userId });
     if (!o?.id) return NextResponse.json({ error: "Organization not found" }, { status: 404 });
 
+    // logoUrl is Mongo-direct (no faithful legacy field — see route header
+    // note in tools/organizations/route.ts's `plan` field for precedent):
+    // legacy's orgThumbnail is write-only via a separate multipart action
+    // (uploadOrgPic) that isn't part of updateOrganization at all.
+    const orgDoc = ObjectId.isValid(orgId)
+      ? await (await getDb()).collection("organizations").findOne({ _id: new ObjectId(orgId) })
+      : null;
+
+    const appInfos: Array<{ type?: string; url?: string }> = Array.isArray(o.appInfos) ? o.appInfos : [];
+    const playStoreLink = appInfos.find((a) => a?.type === "GOOGLE_PLAY")?.url || "";
+
     return NextResponse.json({
       org: {
         id: o.id,
@@ -33,9 +46,14 @@ export async function GET(req: NextRequest) {
         address: o.address || "",
         description: o.description || "",
         authType: o.authType || "VEDANTU",
-        doubtsForumMode: o.doubtsForumMode || "public",
+        // Legacy's DoubtsForumMode is a Java enum (PUBLIC/PRIVATE/HIDDEN,
+        // uppercase) — any other casing crashes Morphia on every subsequent
+        // getOrganization call for this org.
+        doubtsForumMode: (o.doubtsForumMode || "PUBLIC").toUpperCase(),
         locations: Array.isArray(o.locations) ? o.locations : [],
         socialMedia: o.socialMedia || {},
+        playStoreLink,
+        logoUrl: (orgDoc as any)?.logoUrl || "",
       },
     });
   } catch (e: any) {
@@ -51,6 +69,10 @@ export async function POST(req: NextRequest) {
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
 
   // Legacy's updateOrganization only writes fields named in `updateList`.
+  // socialMedia and appInfos are sub-objects, not simple strings — legacy's
+  // own admin JS (submitEditInstituteInfo) always lists both regardless of
+  // whether their sub-fields changed, so we match that rather than only
+  // include them conditionally.
   const fields: Record<string, unknown> = {
     name,
     fullName: (b.fullName || "").trim(),
@@ -60,7 +82,17 @@ export async function POST(req: NextRequest) {
     address: (b.address || "").trim(),
     description: (b.description || "").trim(),
   };
-  const updateList = Object.keys(fields);
+  // authType/doubtsForumMode are set outside `fields` above (radio inputs,
+  // not the plain text fields) but still need to be in updateList or legacy
+  // silently drops them on save — same class of bug as socialMedia/appInfos.
+  const updateList = [...Object.keys(fields), "authType", "doubtsForumMode", "socialMedia", "appInfos"];
+
+  const socialMedia = b.socialMedia || {};
+  const playStoreLink = (b.playStoreLink || "").trim();
+  const appInfos = playStoreLink ? [{ type: "GOOGLE_PLAY", url: playStoreLink }] : [];
+  // Legacy's DoubtsForumMode is a Java enum (PUBLIC/PRIVATE/HIDDEN) — any
+  // other casing crashes Morphia on every subsequent read of this org.
+  const doubtsForumMode = (b.doubtsForumMode || "PUBLIC").toUpperCase();
 
   try {
     await callOrgService("updateOrganization", {
@@ -69,7 +101,9 @@ export async function POST(req: NextRequest) {
       userId,
       callingUserId: userId,
       authType: b.authType || "VEDANTU",
-      doubtsForumMode: b.doubtsForumMode || "public",
+      doubtsForumMode,
+      socialMedia,
+      appInfos,
       updateList,
     });
     return NextResponse.json({ ok: true });

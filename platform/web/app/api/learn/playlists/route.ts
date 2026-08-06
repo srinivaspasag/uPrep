@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -31,15 +32,19 @@ export async function GET(req: NextRequest) {
 }
 
 type CreateBody = {
-  orgId?: string;
-  userId?: string;
-  userName?: string;
   name?: string;
   description?: string;
   items?: any[];
 };
 
+// Security fix: userId/userName used to come straight from the request
+// body (attributing ownership to whoever the client claimed), and PATCH had
+// NO authorization check at all — any caller who knew a playlist's id could
+// add/remove its items. Ownership now comes only from the session, and
+// PATCH verifies the caller owns the playlist before mutating it.
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const b = (await req.json().catch(() => ({}))) as CreateBody;
   const name = (b.name || "").trim();
   if (!name) return NextResponse.json({ error: "Playlist name is required" }, { status: 400 });
@@ -49,9 +54,9 @@ export async function POST(req: NextRequest) {
     const _id = new ObjectId();
     await db.collection("playlists").insertOne({
       _id,
-      orgId: b.orgId || DEFAULT_ORG_ID,
-      userId: b.userId || null,
-      userName: b.userName || "Student",
+      orgId: session.orgId || DEFAULT_ORG_ID,
+      userId: session.id,
+      userName: [session.firstName, session.lastName].filter(Boolean).join(" ") || "Student",
       name,
       description: (b.description || "").trim(),
       items: Array.isArray(b.items) ? b.items : [],
@@ -68,10 +73,16 @@ export async function POST(req: NextRequest) {
 type PatchBody = { id?: string; addItem?: any; removeEntityId?: string };
 
 export async function PATCH(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const b = (await req.json().catch(() => ({}))) as PatchBody;
   if (!b.id || !ObjectId.isValid(b.id)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   try {
     const db = await getDb();
+    const playlist = await db.collection("playlists").findOne({ _id: new ObjectId(b.id) });
+    if (!playlist) return NextResponse.json({ error: "Playlist not found" }, { status: 404 });
+    if (playlist.userId !== session.id)
+      return NextResponse.json({ error: "Not your playlist" }, { status: 403 });
     if (b.addItem) {
       await db
         .collection("playlists")

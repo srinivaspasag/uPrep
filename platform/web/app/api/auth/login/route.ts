@@ -123,6 +123,7 @@ export async function POST(req: NextRequest) {
       return await withSession(
         {
           id: String(member._id),
+          orgId: sessionOrgId,
           firstName: member.firstName || "",
           lastName: member.lastName || "",
           memberId: member.memberId || null,
@@ -186,6 +187,7 @@ export async function POST(req: NextRequest) {
         if (data.result && typeof data.result === "object") {
           data.result.profile = profile;
           data.result.isSuperAdmin = isSuperAdmin;
+          data.result.orgId = orgId;
         }
 
         await recordLogin(req, { orgId, userId: id, memberId, method: "LEGACY" });

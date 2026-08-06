@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Inflated (not used via XML in an Activity) so ExoPlayer's PlayerView uses a
+  TextureView instead of its default SurfaceView. SurfaceView composites in a
+  separate OS layer that doesn't interop correctly with Jetpack Compose's
+  AndroidView — found live: the video surface rendered as an opaque black
+  rectangle covering the WHOLE screen (not just its allotted box), hiding
+  even the screen's own title text underneath it. TextureView renders as a
+  normal View and composites correctly inside Compose.
+-->
+<androidx.media3.ui.PlayerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/player_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:surface_type="texture_view" />

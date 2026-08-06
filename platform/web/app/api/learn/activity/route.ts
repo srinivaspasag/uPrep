@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
-import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -13,17 +13,30 @@ type FeedItem = {
 };
 
 // Recent Activity feed for a student: finished test attempts + doubts they
-// asked + answers they posted, merged and sorted by time. Also returns a
-// weekly leaderboard (most finished tests) for the org.
+// asked + answers they posted, merged and sorted by time.
+//
+// Used to also return a cross-student weekly "leaderboard" here — checked
+// against legacy (MyContents.java's testPage()) and that's not real: legacy
+// fetches toppers/leaderboard data for BOTH roles but only ever passes it
+// into the TEACHER template (postTestTeacherPage.html); the STUDENT template
+// (postTestPage.html) never receives it. Leaderboards are a staff-only test
+// analytics view in the real app, not something a student sees about their
+// peers — removed rather than "fixed", since showing it at all didn't match
+// legacy to begin with.
+// Security fix: userId/orgId used to come straight from the query string,
+// so anyone could read another student's recent-activity feed (tests
+// attempted, doubts asked/answered). Now derived only from the session.
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId") || "";
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ feed: [], error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
 
   try {
     const db = await getDb();
     const feed: FeedItem[] = [];
 
-    if (userId) {
+    {
       const attempts: any[] = await db
         .collection("userentityattempts")
         .find({ userId, orgId, "entity.type": "TEST", finished: true })
@@ -77,53 +90,8 @@ export async function GET(req: NextRequest) {
 
     feed.sort((a, b) => b.at - a.at);
 
-    // Weekly leaderboard: most finished tests in the last 7 days across the org.
-    const weekAgo = Date.now() - 7 * 24 * 3600 * 1000;
-    const weekAttempts: any[] = await db
-      .collection("userentityattempts")
-      .find({ orgId, "entity.type": "TEST", finished: true, endTime: { $gte: weekAgo } })
-      .limit(2000)
-      .toArray();
-
-    const counts = new Map<string, number>();
-    for (const a of weekAttempts) {
-      if (!a.userId) continue;
-      counts.set(a.userId, (counts.get(a.userId) || 0) + 1);
-    }
-    const topIds = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
-
-    // attempts.userId maps to orgmembers.userId (fall back to matching _id).
-    const idStrings = topIds.map(([id]) => id);
-    const idOids = idStrings
-      .map((id) => {
-        try {
-          return new ObjectId(id);
-        } catch {
-          return null;
-        }
-      })
-      .filter(Boolean) as any[];
-    const members: any[] = idStrings.length
-      ? await db
-          .collection("orgmembers")
-          .find({ $or: [{ userId: { $in: idStrings } }, { _id: { $in: idOids } }] })
-          .toArray()
-      : [];
-    const nameById = new Map<string, string>();
-    for (const m of members) {
-      const label = [m.firstName, m.lastName].filter(Boolean).join(" ") || m.name || "Student";
-      if (m.userId) nameById.set(String(m.userId), label);
-      nameById.set(String(m._id), label);
-    }
-
-    const leaderboard = topIds.map(([id, points], i) => ({
-      rank: i + 1,
-      name: nameById.get(id) || "Student",
-      points,
-    }));
-
-    return NextResponse.json({ feed: feed.slice(0, 30), leaderboard, orgId });
+    return NextResponse.json({ feed: feed.slice(0, 30), orgId });
   } catch (e: any) {
-    return NextResponse.json({ feed: [], leaderboard: [], error: e?.message }, { status: 500 });
+    return NextResponse.json({ feed: [], error: e?.message }, { status: 500 });
   }
 }

@@ -1,7 +1,6 @@
 import type { Db } from "mongodb";
 import { ObjectId } from "mongodb";
 import { loadOrgFolders, topLevelCourses } from "@/lib/courses";
-import { getGrantedPackCourseIds } from "@/lib/packs";
 
 // Cross-org course sharing — the new-stack analogue of the legacy
 // `granteeorgprograms` collection (GranteeOrgProgram: provider → subscriber →
@@ -17,11 +16,10 @@ export type CourseGrant = {
   courseId: string; // top-level folder id owned by providerOrgId
 };
 
-// Course ids granted TO an org (from any provider) — the union of directly
-// granted courses (orgcoursegrants) and courses reachable through granted PACKS
-// (orgpackgrants → coursepacks.courseIds). Folding packs in here means every
-// existing access/enrollment check that relies on the granted-course set picks
-// up pack grants for free.
+// Course ids granted TO an org (from any provider) — orgcoursegrants only.
+// Course Packs (a bundled-grant mechanism layered on top of this) has been
+// removed as a duplicate of Academic Structure's own Program/Section course
+// assignment; this no longer folds in pack grants.
 export async function getGrantedCourseIds(
   db: Db,
   subscriberOrgId: string
@@ -30,9 +28,7 @@ export async function getGrantedCourseIds(
     .collection(GRANTS_COLL)
     .find({ subscriberOrgId, recordState: "ACTIVE" } as any)
     .toArray();
-  const direct = (docs as any[]).map((d) => String(d.courseId));
-  const fromPacks = await getGrantedPackCourseIds(db, subscriberOrgId);
-  return Array.from(new Set([...direct, ...fromPacks]));
+  return Array.from(new Set((docs as any[]).map((d) => String(d.courseId))));
 }
 
 export type CatalogCourse = {

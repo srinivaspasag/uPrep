@@ -51,11 +51,16 @@ export async function GET(req: NextRequest) {
   const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   const profile = (req.nextUrl.searchParams.get("profile") || "").toUpperCase();
   const query = (req.nextUrl.searchParams.get("query") || "").trim().toLowerCase();
+  const programId = req.nextUrl.searchParams.get("programId") || "";
 
   try {
     const db = await getDb();
     const filter: Record<string, unknown> = { orgId, recordState: "ACTIVE" };
     if (profile && profile !== "ALL") filter.profile = profile;
+    // Scoped to one Program's roster (e.g. the Program detail page's
+    // Members/Students tabs) — without this every org member showed up
+    // under every program regardless of actual assignment.
+    if (programId) filter["programMemberships.programId"] = programId;
 
     const docs = await db
       .collection("orgmembers")
@@ -74,6 +79,20 @@ export async function GET(req: NextRequest) {
       profile: m.profile || "",
       contactNumber: m.contactNumber || "",
       status: m.recordState === "ACTIVE" ? "Active" : "Inactive",
+      // Bug found live: there was no UI anywhere to assign a student/teacher
+      // to a Program/Center/Section — Add and Edit forms had name/email/role
+      // fields only, never touched this. Returned raw here; the client
+      // resolves names against the same program/center/section data the
+      // Academic Structure page already fetches.
+      programMemberships: Array.isArray(m.programMemberships) ? m.programMemberships : [],
+      // Bug found live: a student can ALSO have courses granted directly
+      // (independent of any Program mapping) via the Enroll tool / coupon /
+      // checkout flow — see lib/enrollment.ts's `directIds`. That grant was
+      // completely invisible in People Management: a student with zero
+      // Program mappings could still see a full course list in the learn
+      // app, and there was no way here to tell why. Returned raw; the
+      // client resolves names against `folders`.
+      enrolledCourseIds: Array.isArray(m.enrolledCourseIds) ? m.enrolledCourseIds : [],
     }));
 
     if (query)
@@ -86,11 +105,42 @@ export async function GET(req: NextRequest) {
     const all = await db.collection("orgmembers").find({ orgId, recordState: "ACTIVE" }).toArray();
     for (const m of all as any[]) counts[m.profile || "UNKNOWN"] = (counts[m.profile || "UNKNOWN"] || 0) + 1;
 
-    return NextResponse.json({ members, counts, orgId });
+    // Students per program (independent of the search box / result cap above,
+    // so it reflects the whole org, not just the current page of results). A
+    // student counts once per program even if mapped to multiple sections
+    // within it.
+    const programCounts: Record<string, number> = {};
+    let unassignedStudents = 0;
+    for (const m of all as any[]) {
+      if ((m.profile || "").toUpperCase() !== "STUDENT") continue;
+      const ms: Mapping[] = Array.isArray(m.programMemberships) ? m.programMemberships : [];
+      if (ms.length === 0) {
+        unassignedStudents++;
+        continue;
+      }
+      const programIds = new Set(ms.map((x) => x.programId).filter(Boolean));
+      for (const pid of programIds) programCounts[pid] = (programCounts[pid] || 0) + 1;
+    }
+
+    // Resolve names for any directly-enrolled course ids on the returned
+    // page of members (not the whole org — same scoping as `members` itself).
+    const courseIds = Array.from(new Set(members.flatMap((m) => m.enrolledCourseIds))).filter(ObjectId.isValid);
+    const courseNames: Record<string, string> = {};
+    if (courseIds.length) {
+      const courseDocs = await db
+        .collection("folders")
+        .find({ _id: { $in: courseIds.map((id) => new ObjectId(id)) } })
+        .toArray();
+      for (const c of courseDocs as any[]) courseNames[String(c._id)] = c.name || "(untitled course)";
+    }
+
+    return NextResponse.json({ members, counts, programCounts, unassignedStudents, courseNames, orgId });
   } catch (e: any) {
     return NextResponse.json({ members: [], counts: {}, error: e?.message }, { status: 500 });
   }
 }
+
+type Mapping = { programId: string; centerId: string; sectionId: string };
 
 type AddBody = {
   firstName?: string;
@@ -101,6 +151,7 @@ type AddBody = {
   contactNumber?: string;
   orgId?: string;
   password?: string;
+  programMemberships?: Mapping[];
 };
 
 // Add a member (STUDENT/TEACHER/etc). Writes to orgmembers AND makes the account
@@ -152,6 +203,15 @@ export async function POST(req: NextRequest) {
 
     const plainPassword = (b.password || "").trim() || generatePassword();
 
+    // Program/center/section assignment, set at creation time when the admin
+    // picked one — legacy does this as an immediate follow-up call after
+    // creating the account (QrPeople Step 2, "Assign Courses and Sections"),
+    // not a separate menu action; setting it inline here is equivalent and
+    // avoids a create-succeeded-but-assignment-failed split state.
+    const programMemberships = (Array.isArray(b.programMemberships) ? b.programMemberships : [])
+      .filter((m) => m && m.programId && m.centerId && m.sectionId)
+      .map((m) => ({ programId: m.programId, centerId: m.centerId, sectionId: m.sectionId, assignedAt: now }));
+
     await db.collection("orgmembers").insertOne({
       _id,
       // Unique placeholder — orgmembers has a unique index on (orgId, userId),
@@ -167,6 +227,7 @@ export async function POST(req: NextRequest) {
       authType: "LOCAL",
       passwordHash: hashPassword(plainPassword),
       recordState: "ACTIVE",
+      programMemberships,
       timeCreated: now,
       lastUpdated: now,
     });
@@ -191,6 +252,7 @@ type EditBody = {
   email?: string;
   profile?: string;
   contactNumber?: string;
+  programMemberships?: Mapping[];
 };
 
 // Confirms the member is inside the caller's org (super admin may reach any org).
@@ -213,14 +275,24 @@ export async function PATCH(req: NextRequest) {
     const db = await getDb();
     const denied = await assertSameOrg(req, db, b.id);
     if (denied) return NextResponse.json({ error: denied }, { status: denied === "Member not found" ? 404 : 403 });
+    const now = Date.now();
     const set: Record<string, unknown> = {
       firstName: (b.firstName || "").trim(),
       lastName: (b.lastName || "").trim(),
       email: (b.email || "").trim(),
       contactNumber: (b.contactNumber || "").trim(),
-      lastUpdated: Date.now(),
+      lastUpdated: now,
     };
     if (b.profile) set.profile = b.profile.toUpperCase();
+    // Full replace, not merge — matches how the rest of this app edits list
+    // fields (e.g. module contentIds, section courseIds). The picker on the
+    // client already shows every current mapping plus lets you add/remove,
+    // so it always submits the complete intended set.
+    if (b.programMemberships !== undefined) {
+      set.programMemberships = (Array.isArray(b.programMemberships) ? b.programMemberships : [])
+        .filter((m) => m && m.programId && m.centerId && m.sectionId)
+        .map((m) => ({ programId: m.programId, centerId: m.centerId, sectionId: m.sectionId, assignedAt: now }));
+    }
     await db.collection("orgmembers").updateOne({ _id: new ObjectId(b.id) }, { $set: set });
     return NextResponse.json({ ok: true });
   } catch (e: any) {
@@ -228,8 +300,13 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// Deactivate a member (soft delete).
+// Deactivate a member (soft delete). Admin-only, matching legacy's
+// QrPeople.showDeactivationPopup (MANAGER-gated).
 export async function DELETE(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if ((session?.profile || "").trim().toUpperCase() !== "MANAGER")
+    return NextResponse.json({ error: "Only institute admins can deactivate members." }, { status: 403 });
+
   const id = req.nextUrl.searchParams.get("id") || "";
   if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   try {

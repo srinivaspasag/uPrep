@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
-import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -12,10 +12,15 @@ async function findMember(db: any, userId: string, orgId: string) {
   return db.collection("orgmembers").findOne({ orgId, $or: or });
 }
 
+// Security fix: this used to trust a client-supplied ?userId= directly, so
+// anyone could read (and, on POST, overwrite) any other user's name/email/
+// phone by guessing their id. Identity now comes only from the signed
+// session cookie — a caller can only ever see/edit their own profile.
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId") || "";
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
-  if (!userId) return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
 
   try {
     const db = await getDb();
@@ -39,8 +44,6 @@ export async function GET(req: NextRequest) {
 }
 
 type UpdateBody = {
-  userId?: string;
-  orgId?: string;
   firstName?: string;
   lastName?: string;
   email?: string;
@@ -48,10 +51,12 @@ type UpdateBody = {
 };
 
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
+
   const b = (await req.json().catch(() => ({}))) as UpdateBody;
-  const userId = b.userId || "";
-  const orgId = b.orgId || DEFAULT_ORG_ID;
-  if (!userId) return NextResponse.json({ error: "Missing userId" }, { status: 400 });
   if (!(b.firstName || "").trim())
     return NextResponse.json({ error: "First name is required" }, { status: 400 });
 

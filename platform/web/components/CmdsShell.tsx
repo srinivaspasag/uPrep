@@ -13,7 +13,6 @@ type ToolLink = { label: string; href: string; superAdminOnly?: boolean };
 const TOOL_LINKS: ToolLink[] = [
   { label: "Organization Info", href: "/cmds/tools/organization" },
   { label: "Organizations (Super Admin)", href: "/cmds/tools/organizations", superAdminOnly: true },
-  { label: "Course Packs (Super Admin)", href: "/cmds/tools/course-packs", superAdminOnly: true },
   { label: "Edit Academic Structure", href: "/cmds/tools/academic" },
   { label: "People Management", href: "/cmds/tools/people" },
   { label: "Assign Courses", href: "/cmds/tools/enroll" },
@@ -24,6 +23,7 @@ const TOOL_LINKS: ToolLink[] = [
   { label: "Boards & Courses", href: "/cmds/tools/boards" },
   { label: "Schedule / Classroom", href: "/cmds/tools/schedule" },
   { label: "Device Management", href: "/cmds/tools/devices" },
+  { label: "Seller Dashboard", href: "/cmds/tools/seller" },
   { label: "Challenge Channels", href: "/cmds/tools/channels" },
   { label: "Send Notification", href: "/cmds/tools/notifications" },
   { label: "News Feed", href: "/cmds/tools/news" },
@@ -189,6 +189,14 @@ export default function CmdsShell({
 }
 
 // Left rail used by the Institute Resources screen (Subjects filter).
+//
+// Bug found live: this used to be a hardcoded ["All Subjects", "Physics"]
+// stub — "Physics" only because one old manual test folder happened to
+// have a `subject` field set, while every real course folder (Chemistry
+// XI, Botany XII, etc.) never had that field populated at all. The real
+// subject taxonomy is the Board Tree (see the Board Tree work) — its root
+// nodes are exactly the org's real subjects (Physics XI, Chemistry XI,
+// ...), so pull the list from there instead.
 export function CmdsSubjectsRail({
   subject,
   onSubject,
@@ -196,7 +204,16 @@ export function CmdsSubjectsRail({
   subject: string;
   onSubject: (s: string) => void;
 }) {
-  const subjects = ["All Subjects", "Physics"];
+  const [subjects, setSubjects] = useState<string[]>(["All Subjects"]);
+  useEffect(() => {
+    fetch("/api/cmds/tools/boards")
+      .then((r) => r.json())
+      .then((d) => {
+        const names: string[] = (d.nodes || []).map((n: { name: string }) => n.name).sort();
+        setSubjects(["All Subjects", ...names]);
+      })
+      .catch(() => {});
+  }, []);
   return (
     <aside className="w-[150px] shrink-0 border-r border-slate-100 px-4 py-6">
       <div className="rounded border border-slate-200 px-3 py-1.5 text-sm text-slate-700">

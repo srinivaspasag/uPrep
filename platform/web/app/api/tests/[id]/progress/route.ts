@@ -27,6 +27,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json({
       progress: {
         answers: doc.answers || {},
+        visited: doc.visited || {},
+        marked: doc.marked || {},
+        currentQId: doc.currentQId || null,
         remaining: doc.remaining ?? null,
         updatedAt: doc.updatedAt,
       },
@@ -36,7 +39,13 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-type SaveBody = { answers?: Record<string, number>; remaining?: number };
+type SaveBody = {
+  answers?: Record<string, number>;
+  remaining?: number;
+  visited?: Record<string, boolean>;
+  marked?: Record<string, boolean>;
+  currentQId?: string | null;
+};
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const uid = await userId(req);
@@ -49,6 +58,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       {
         $set: {
           answers: b.answers || {},
+          visited: b.visited || {},
+          marked: b.marked || {},
+          currentQId: b.currentQId || null,
           remaining: typeof b.remaining === "number" ? b.remaining : null,
           updatedAt: Date.now(),
         },

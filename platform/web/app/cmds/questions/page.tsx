@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getSession, clearSession, type UprepSession } from "@/lib/session";
+import CmdsShell from "@/components/CmdsShell";
+import { getSession } from "@/lib/session";
+import MathText from "@/components/MathText";
 
 type Question = {
   id: string;
@@ -15,6 +16,7 @@ type Question = {
   status: string;
   hasKey: boolean;
   options: number;
+  chapter: string | null;
 };
 type Test = {
   id: string;
@@ -35,6 +37,7 @@ type ModuleItem = {
 };
 
 type Tab = "questions" | "tests" | "modules";
+type BoardNode = { id: string; name: string };
 
 function Pill({ ok, yes, no }: { ok: boolean; yes: string; no: string }) {
   return (
@@ -48,9 +51,7 @@ function Pill({ ok, yes, no }: { ok: boolean; yes: string; no: string }) {
   );
 }
 
-export default function CmdsPage() {
-  const router = useRouter();
-  const [session, setSessionState] = useState<UprepSession | null>(null);
+export default function QuestionBankPage() {
   const [tab, setTab] = useState<Tab>("questions");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [tests, setTests] = useState<Test[]>([]);
@@ -61,10 +62,82 @@ export default function CmdsPage() {
   const [publishing, setPublishing] = useState(false);
   const [notice, setNotice] = useState("");
 
+  // Board Tree browse/filter rail — questions get tagged to a chapter (or
+  // concept) at authoring time via BoardPicker; this is where that tagging
+  // actually becomes useful for finding them again.
+  const [subjects, setSubjects] = useState<BoardNode[]>([]);
+  const [expandedSubject, setExpandedSubject] = useState<string | null>(null);
+  const [chaptersBySubject, setChaptersBySubject] = useState<Record<string, BoardNode[]>>({});
+  const [loadingChapters, setLoadingChapters] = useState(false);
+  const [filterBoardIds, setFilterBoardIds] = useState<string[] | null>(null);
+  const [filterLabel, setFilterLabel] = useState("All Subjects");
+
+  useEffect(() => {
+    fetch("/api/cmds/tools/boards")
+      .then((r) => r.json())
+      .then((d) => setSubjects(d.nodes || []))
+      .catch(() => {});
+  }, []);
+
+  async function toggleSubject(s: BoardNode) {
+    if (expandedSubject === s.id) {
+      setExpandedSubject(null);
+      return;
+    }
+    setExpandedSubject(s.id);
+    if (!chaptersBySubject[s.id]) {
+      setLoadingChapters(true);
+      try {
+        const d = await fetch(`/api/cmds/tools/boards?parentId=${s.id}`).then((r) => r.json());
+        setChaptersBySubject((prev) => ({ ...prev, [s.id]: d.nodes || [] }));
+      } finally {
+        setLoadingChapters(false);
+      }
+    }
+  }
+
+  // Bug found live: clicking a subject's name (as opposed to first expanding
+  // it via the ▸ caret) filtered by ONLY the subject's own board id, since
+  // chaptersBySubject[s.id] hadn't been fetched yet — but questions are
+  // always tagged at chapter (or deeper, concept) level via BoardPicker, so
+  // that filter matched nothing and showed "0 questions" even when real
+  // tagged questions existed. This always walks the full subtree (chapters,
+  // and their own children) before filtering, and caches chapters fetched
+  // this way so re-expanding doesn't refetch.
+  async function subtreeIds(nodeId: string): Promise<string[]> {
+    let chapters = chaptersBySubject[nodeId];
+    if (!chapters) {
+      chapters = await fetch(`/api/cmds/tools/boards?parentId=${nodeId}`)
+        .then((r) => r.json())
+        .then((d) => d.nodes || [])
+        .catch(() => []);
+      setChaptersBySubject((prev) => ({ ...prev, [nodeId]: chapters! }));
+    }
+    if (chapters.length === 0) return [];
+    const deeper = await Promise.all(chapters.map((c) => subtreeIds(c.id)));
+    return [...chapters.map((c) => c.id), ...deeper.flat()];
+  }
+
+  async function filterBySubject(s: BoardNode) {
+    setFilterLabel(s.name);
+    const ids = await subtreeIds(s.id);
+    setFilterBoardIds([s.id, ...ids]);
+  }
+  async function filterByChapter(c: BoardNode) {
+    setFilterLabel(c.name);
+    const ids = await subtreeIds(c.id);
+    setFilterBoardIds([c.id, ...ids]);
+  }
+  function clearFilter() {
+    setFilterBoardIds(null);
+    setFilterLabel("All Subjects");
+  }
+
   async function load() {
     setLoading(true);
     try {
-      const r = await fetch("/api/cmds/resources");
+      const qs = filterBoardIds && filterBoardIds.length ? `?boardIds=${filterBoardIds.join(",")}` : "";
+      const r = await fetch(`/api/cmds/resources${qs}`);
       const d = await r.json();
       if (d.error) setError(d.error);
       setQuestions(d.questions || []);
@@ -109,7 +182,7 @@ export default function CmdsPage() {
       const r = await fetch("/api/cmds/publish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: Array.from(selected), userId: session?.id }),
+        body: JSON.stringify({ ids: Array.from(selected), userId: getSession()?.id }),
       });
       const d = await r.json();
       if (!r.ok || d.error) {
@@ -125,21 +198,53 @@ export default function CmdsPage() {
     }
   }
 
-  useEffect(() => {
-    const s = getSession();
-    if (!s) {
-      router.replace("/login");
-      return;
+  async function deleteQuestion(q: Question) {
+    if (!window.confirm(`Delete "${q.text || "this question"}"? This can't be undone from the UI.`)) return;
+    setError("");
+    setNotice("");
+    try {
+      const r = await fetch(`/api/cmds/questions?id=${encodeURIComponent(q.id)}`, { method: "DELETE" });
+      const d = await r.json();
+      if (!r.ok || d.error) {
+        setError(d.error || "Delete failed");
+      } else {
+        await load();
+      }
+    } catch {
+      setError("Delete failed");
     }
-    setSessionState(s);
+  }
+
+  async function unpublishQuestion(q: Question) {
+    if (
+      !window.confirm(
+        `Unpublish "${q.text || "this question"}"? It goes back to draft and won't be gradable for new tests, unless it's already in use by an existing test.`
+      )
+    )
+      return;
+    setError("");
+    setNotice("");
+    try {
+      const r = await fetch(`/api/cmds/questions/${encodeURIComponent(q.id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "unpublish" }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.error) {
+        setError(d.error || "Failed to unpublish");
+      } else {
+        await load();
+      }
+    } catch {
+      setError("Failed to unpublish");
+    }
+  }
+
+  useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
-
-  function logout() {
-    clearSession();
-    router.replace("/login");
-  }
+  }, [filterBoardIds]);
 
   const counts = useMemo(
     () => ({
@@ -151,35 +256,7 @@ export default function CmdsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200">
-        <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-slate-800 flex items-center justify-center text-white font-bold">
-              C
-            </div>
-            <span className="font-semibold text-slate-800">UPrep CMDS</span>
-            <span className="ml-2 rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-500">
-              Content Management
-            </span>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <Link href="/learn/library" className="text-blue-600 hover:underline">
-              Learn app →
-            </Link>
-            <span className="text-slate-600">
-              {session?.firstName} {session?.lastName}
-            </span>
-            <button
-              onClick={logout}
-              className="rounded-md border border-slate-300 px-3 py-1.5 text-slate-600 hover:bg-slate-100"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
+    <CmdsShell active="resources">
       <main className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex items-center justify-between">
           <div>
@@ -196,10 +273,10 @@ export default function CmdsPage() {
               + Add Question
             </Link>
             <Link
-              href="/cmds/tests/new"
-              className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+              href="/cmds/questions/import"
+              className="rounded-md border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50"
             >
-              + Create Test
+              ⇧ Bulk Import
             </Link>
             <Link
               href="/cmds/assignments/new"
@@ -244,8 +321,86 @@ export default function CmdsPage() {
           </div>
         )}
 
+        <div className="mt-6 flex gap-6">
+          {tab === "questions" && (
+            <aside className="w-56 shrink-0">
+              <div className="rounded-xl bg-white p-4 ring-1 ring-black/5">
+                <h3 className="text-sm font-semibold text-slate-700">Board Tree</h3>
+                <button
+                  onClick={clearFilter}
+                  className={`mt-2 block w-full rounded px-2 py-1 text-left text-sm ${
+                    !filterBoardIds ? "bg-blue-50 font-medium text-blue-700" : "text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  All Subjects
+                </button>
+                <div className="mt-1 space-y-0.5">
+                  {subjects.map((s) => (
+                    <div key={s.id}>
+                      <div className="flex items-center">
+                        <button
+                          onClick={() => toggleSubject(s)}
+                          className="px-1 text-xs text-slate-400 hover:text-slate-600"
+                        >
+                          {expandedSubject === s.id ? "▾" : "▸"}
+                        </button>
+                        <button
+                          onClick={() => filterBySubject(s)}
+                          title={s.name}
+                          className={`flex-1 truncate rounded px-1 py-1 text-left text-sm ${
+                            filterLabel === s.name
+                              ? "bg-blue-50 font-medium text-blue-700"
+                              : "text-slate-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          {s.name}
+                        </button>
+                      </div>
+                      {expandedSubject === s.id && (
+                        <div className="ml-4 space-y-0.5">
+                          {loadingChapters && !chaptersBySubject[s.id] && (
+                            <div className="px-2 py-1 text-xs text-slate-400">Loading…</div>
+                          )}
+                          {(chaptersBySubject[s.id] || []).map((c) => (
+                            <button
+                              key={c.id}
+                              onClick={() => filterByChapter(c)}
+                              title={c.name}
+                              className={`block w-full truncate rounded px-2 py-1 text-left text-xs ${
+                                filterLabel === c.name
+                                  ? "bg-blue-50 font-medium text-blue-700"
+                                  : "text-slate-500 hover:bg-slate-50"
+                              }`}
+                            >
+                              {c.name}
+                            </button>
+                          ))}
+                          {chaptersBySubject[s.id] && chaptersBySubject[s.id].length === 0 && (
+                            <div className="px-2 py-1 text-xs text-slate-300">No chapters</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          )}
+
+          <div className="min-w-0 flex-1">
         {!loading && tab === "questions" && (
           <>
+            {filterBoardIds && (
+              <div className="flex items-center justify-between rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-600">
+                <span>
+                  Filtered by <span className="font-medium text-slate-800">{filterLabel}</span> — {questions.length}{" "}
+                  question{questions.length === 1 ? "" : "s"}
+                </span>
+                <button onClick={clearFilter} className="text-blue-600 hover:underline">
+                  Clear
+                </button>
+              </div>
+            )}
             {selected.size > 0 && (
               <div className="mt-6 flex items-center justify-between rounded-lg bg-blue-50 px-4 py-3 ring-1 ring-blue-200">
                 <span className="text-sm text-blue-800">{selected.size} selected</span>
@@ -276,13 +431,14 @@ export default function CmdsPage() {
                     <th className="px-4 py-3 font-medium">Type</th>
                     <th className="px-4 py-3 font-medium">Answer key</th>
                     <th className="px-4 py-3 font-medium">Published</th>
+                    <th className="px-4 py-3 font-medium w-10"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {questions.map((q) => {
                     const publishable = !q.published && q.hasKey;
                     return (
-                      <tr key={q.id} className="hover:bg-slate-50">
+                      <tr key={q.id} className="group hover:bg-slate-50">
                         <td className="px-4 py-3">
                           <input
                             type="checkbox"
@@ -300,9 +456,19 @@ export default function CmdsPage() {
                           />
                         </td>
                         <td className="px-4 py-3 text-slate-800">
-                          {q.text || <span className="text-slate-400">(no text)</span>}
+                          {q.text ? (
+                            <MathText>{q.text}</MathText>
+                          ) : (
+                            <span className="text-slate-400">(no text)</span>
+                          )}
                           <div className="text-xs text-slate-400">
                             {q.options} options · {q.difficulty || "—"}
+                            {q.chapter && (
+                              <>
+                                {" "}
+                                · <span className="text-slate-500">{q.chapter}</span>
+                              </>
+                            )}
                           </div>
                         </td>
                         <td className="px-4 py-3 text-slate-600">{q.type}</td>
@@ -312,12 +478,51 @@ export default function CmdsPage() {
                         <td className="px-4 py-3">
                           <Pill ok={q.published} yes="Published" no="Draft" />
                         </td>
+                        <td className="px-4 py-3">
+                          {/* Bug found live: these were opacity-0 until hover,
+                              easy to miss entirely — same fix as the
+                              Academic Structure Edit/Remove buttons. */}
+                          <div className="flex items-center gap-3">
+                            <Link
+                              href={`/cmds/questions/${q.id}/edit`}
+                              className="text-slate-400 hover:text-blue-500"
+                              title="Edit question"
+                            >
+                              ✎
+                            </Link>
+                            {q.published && (
+                              <button
+                                onClick={() => unpublishQuestion(q)}
+                                className="text-xs font-medium text-amber-600 hover:underline"
+                                title="Revert to draft — blocked if it's still in use by a test"
+                              >
+                                Unpublish
+                              </button>
+                            )}
+                            {q.published ? (
+                              <span
+                                className="text-slate-300"
+                                title="Published questions can't be deleted directly — unpublish first"
+                              >
+                                🔒
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => deleteQuestion(q)}
+                                className="text-slate-400 hover:text-red-500"
+                                title="Delete question"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        </td>
                       </tr>
                     );
                   })}
                   {questions.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                      <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
                         No questions yet.
                       </td>
                     </tr>
@@ -395,7 +600,9 @@ export default function CmdsPage() {
             )}
           </div>
         )}
+          </div>
+        </div>
       </main>
-    </div>
+    </CmdsShell>
   );
 }

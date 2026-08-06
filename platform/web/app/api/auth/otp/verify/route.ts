@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
     const res = NextResponse.json({
       result: {
         id: String(member._id),
+        orgId,
         firstName: member.firstName || "",
         lastName: member.lastName || "",
         memberId: member.memberId || null,

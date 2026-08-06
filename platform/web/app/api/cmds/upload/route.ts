@@ -25,6 +25,13 @@ export async function POST(req: NextRequest) {
   const userId = String(form.get("userId") || "");
   const orgId = await resolveOrgId(req, String(form.get("orgId") || ""));
   const folderId = String(form.get("folderId") || "").trim() || null;
+  let boardIds: string[] = [];
+  try {
+    const parsed = JSON.parse(String(form.get("boardIds") || "[]"));
+    if (Array.isArray(parsed)) boardIds = parsed.filter(Boolean).map(String);
+  } catch {
+    /* ignore malformed boardIds, leave empty */
+  }
   const file = form.get("file");
 
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -49,11 +56,15 @@ export async function POST(req: NextRequest) {
       fileSize: stored.size,
       mimeType: stored.contentType,
       subject: subject || null,
+      boardIds,
       folderId,
       contentSrc: { type: "ORGANIZATION", id: orgId },
       scope: "ORG",
       userId,
       recordState: "ACTIVE",
+      // Videos are never downloadable — no toggle, no exception. Documents
+      // keep the existing default (enabled unless explicitly turned off).
+      ...(kind === "video" ? { downloadEnabled: false } : {}),
       timeCreated: now,
       lastUpdated: now,
     });

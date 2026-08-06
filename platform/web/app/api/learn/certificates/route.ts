@@ -4,6 +4,7 @@ import { randomBytes } from "crypto";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { sessionFromReq } from "@/lib/server-session";
+import { resolveStudentEnrollment } from "@/lib/enrollment";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -54,12 +55,18 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ certificate: mapCert(c) });
     }
 
-    const programs: any[] = await db
-      .collection("orgprograms")
-      .find({ orgId, recordState: "ACTIVE" })
-      .sort({ lastUpdated: -1 })
-      .limit(100)
-      .toArray();
+    // Certificates are only ever meaningful for programs the student is
+    // actually assigned to — bug found live: this queried every ACTIVE
+    // program in the org regardless of enrollment, so a student saw a
+    // certificate slot for every program in the institute, not just theirs.
+    const { studentProgramIds } = await resolveStudentEnrollment(db, userId, []);
+    const programs: any[] = studentProgramIds.length
+      ? await db
+          .collection("orgprograms")
+          .find({ orgId, recordState: "ACTIVE", _id: { $in: studentProgramIds.map((id) => new ObjectId(id)) } })
+          .sort({ lastUpdated: -1 })
+          .toArray()
+      : [];
 
     const finished = userId
       ? await db.collection("userentityattempts").countDocuments({ userId, entityType: "TEST" })
@@ -89,12 +96,15 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    return NextResponse.json({
-      items,
-      testsCompleted: finished,
-      studentName,
-      issued: issued.map(mapCert),
-    });
+    return NextResponse.json(
+      {
+        items,
+        testsCompleted: finished,
+        studentName,
+        issued: issued.map(mapCert),
+      },
+      { headers: { "Cache-Control": "no-store, private", Vary: "Cookie" } }
+    );
   } catch (e: any) {
     return NextResponse.json({ items: [], error: e?.message }, { status: 500 });
   }

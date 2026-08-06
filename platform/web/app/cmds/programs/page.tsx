@@ -14,13 +14,11 @@ type Program = {
   sectionCount: number;
 };
 
-type SharedPack = { id: string; name: string; courseCount: number };
 type SharedCourse = { id: string; name: string; granted?: boolean };
 
 export default function CmdsProgramsPage() {
   const [session, setSession] = useState<UprepSession | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
-  const [sharedPacks, setSharedPacks] = useState<SharedPack[]>([]);
   const [sharedCourses, setSharedCourses] = useState<SharedCourse[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -28,6 +26,7 @@ export default function CmdsProgramsPage() {
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     setSession(getSession());
@@ -40,13 +39,11 @@ export default function CmdsProgramsPage() {
         .then((r) => (r.ok ? r.json() : {}))
         .catch(() => ({}));
     try {
-      const [prog, pks, crs] = await Promise.all([
+      const [prog, crs] = await Promise.all([
         safe("/api/cmds/programs"),
-        safe("/api/cmds/enroll/pack"),
         safe("/api/cmds/enroll?courses=1"),
       ]);
       setPrograms(prog.programs || []);
-      setSharedPacks(pks.packs || []);
       setSharedCourses((crs.courses || []).filter((c: SharedCourse) => c.granted));
     } finally {
       setLoading(false);
@@ -55,6 +52,33 @@ export default function CmdsProgramsPage() {
   useEffect(() => {
     load();
   }, []);
+
+  // Reuses the same real legacy org-service call (removeProgram) the
+  // Academic Structure page's Program column already goes through — this
+  // just gives Programs its own delete instead of requiring a trip through
+  // Edit Academic Structure to remove one.
+  async function deleteProgram(p: Program) {
+    if (
+      !window.confirm(
+        `Delete "${p.name}"? This removes the program${p.sectionCount ? ` and its ${p.sectionCount} section(s)` : ""}.`
+      )
+    )
+      return;
+    setDeletingId(p.id);
+    try {
+      const res = await fetch(`/api/cmds/tools/academic?kind=program&id=${encodeURIComponent(p.id)}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Failed to delete program");
+        return;
+      }
+      load();
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   async function create() {
     setError("");
@@ -93,7 +117,13 @@ export default function CmdsProgramsPage() {
           </button>
         </div>
 
-        {!loading && (sharedPacks.length > 0 || sharedCourses.length > 0) && (
+        {error && !open && (
+          <div className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-200">
+            {error}
+          </div>
+        )}
+
+        {!loading && sharedCourses.length > 0 && (
           <div className="mt-6 rounded-lg border border-indigo-100 bg-indigo-50/50 p-5">
             <div className="flex items-center justify-between">
               <div>
@@ -101,34 +131,17 @@ export default function CmdsProgramsPage() {
                   Shared with your institute
                 </h2>
                 <p className="mt-1 text-xs text-slate-500">
-                  Content a super admin granted to you. Assign it to a student to make it visible in
-                  their library.
+                  Content a super admin granted to you. Assign a course to a Program in Academic
+                  Structure to make it visible to students.
                 </p>
               </div>
               <Link
-                href="/cmds/tools/enroll"
+                href="/cmds/tools/academic"
                 className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
               >
-                Assign to students →
+                Assign in Academic Structure →
               </Link>
             </div>
-
-            {sharedPacks.length > 0 && (
-              <div className="mt-4">
-                <div className="text-xs font-medium text-slate-400">Course packs</div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {sharedPacks.map((p) => (
-                    <span
-                      key={p.id}
-                      className="rounded-full border border-indigo-200 bg-white px-3 py-1 text-sm font-medium text-indigo-700"
-                    >
-                      {p.name}{" "}
-                      <span className="text-indigo-400">({p.courseCount} courses)</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {sharedCourses.length > 0 && (
               <div className="mt-4">
@@ -162,28 +175,40 @@ export default function CmdsProgramsPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {programs.map((p) => (
-                <Link
+                <div
                   key={p.id}
-                  href={`/cmds/programs/${p.id}`}
-                  className="block rounded-lg border border-slate-200 p-4 transition hover:shadow-md"
+                  className="relative rounded-lg border border-slate-200 p-4 transition hover:shadow-md"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="text-base font-medium text-slate-800">{p.name}</div>
-                    {p.isOffline && (
-                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-600">
-                        Offline
-                      </span>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      deleteProgram(p);
+                    }}
+                    disabled={deletingId === p.id}
+                    title="Delete program"
+                    className="absolute right-3 top-3 rounded px-1.5 py-0.5 text-xs text-slate-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                  >
+                    {deletingId === p.id ? "…" : "✕"}
+                  </button>
+                  <Link href={`/cmds/programs/${p.id}`} className="block">
+                    <div className="flex items-start justify-between pr-6">
+                      <div className="text-base font-medium text-slate-800">{p.name}</div>
+                      {p.isOffline && (
+                        <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-600">
+                          Offline
+                        </span>
+                      )}
+                    </div>
+                    {p.description && (
+                      <div className="mt-1 line-clamp-2 text-sm text-slate-500">{p.description}</div>
                     )}
-                  </div>
-                  {p.description && (
-                    <div className="mt-1 line-clamp-2 text-sm text-slate-500">{p.description}</div>
-                  )}
-                  <div className="mt-3 flex items-center gap-3 text-xs text-slate-400">
-                    <span>🏫 {p.sectionCount} section(s)</span>
-                    {p.code && <span>#{p.code}</span>}
-                  </div>
-                  <div className="mt-3 text-xs font-medium text-blue-600">Manage program →</div>
-                </Link>
+                    <div className="mt-3 flex items-center gap-3 text-xs text-slate-400">
+                      <span>🏫 {p.sectionCount} section(s)</span>
+                      {p.code && <span>#{p.code}</span>}
+                    </div>
+                    <div className="mt-3 text-xs font-medium text-blue-600">Manage program →</div>
+                  </Link>
+                </div>
               ))}
             </div>
           )}

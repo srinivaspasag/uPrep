@@ -34,10 +34,21 @@ export async function GET(req: NextRequest) {
       testDoc?.totalMarks ?? Object.values(marks).reduce((s, mk: any) => s + (mk.positive || 0), 0);
     const testName = testDoc?.name || testDoc?.title || "Test";
 
-    const attempts: any[] = await db
+    const rawAttempts: any[] = await db
       .collection("userentityattempts")
       .find({ orgId, "entity.type": "TEST", "entity.id": testId, finished: true })
       .toArray();
+
+    // Student-only — same fix as the analytics screen itself (a staff/QA
+    // attempt shouldn't appear on an exported result sheet either).
+    const rawUserIds = Array.from(new Set(rawAttempts.map((a) => String(a.userId))));
+    const rawUserOids = rawUserIds.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
+    const profileById = new Map(
+      (
+        await db.collection("orgmembers").find({ _id: { $in: rawUserOids } }).project({ profile: 1 }).toArray()
+      ).map((m: any) => [String(m._id), (m.profile || "").toUpperCase()])
+    );
+    const attempts = rawAttempts.filter((a) => profileById.get(String(a.userId)) === "STUDENT");
 
     const attemptIds = attempts.map((a) => String(a._id));
     const qAttempts: any[] = attemptIds.length

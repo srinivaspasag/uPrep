@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { API, DEFAULT_ORG_ID } from "@/lib/config";
+import { API } from "@/lib/config";
 import { getDb } from "@/lib/mongo";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -18,19 +19,21 @@ type IncomingAnswer = { qId: string; answerGiven: string[]; timeTaken?: number }
 // The backend grades each answer against the stored answer key. We never send
 // the correct answers back to the browser — only per-question correctness and
 // the aggregate score.
+//
+// Security fix: userId/orgId used to come straight from the request body,
+// so anyone could submit (and have graded) a test attempt AS another
+// student. Both now come only from the signed session cookie.
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const entityId = params.id;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
   const body = await req.json().catch(() => ({}));
-  const userId: string = body.userId || "";
-  const orgId: string = body.orgId || DEFAULT_ORG_ID;
   const answers: IncomingAnswer[] = Array.isArray(body.answers) ? body.answers : [];
-
-  if (!userId) {
-    return NextResponse.json({ error: "Missing userId" }, { status: 400 });
-  }
 
   const base = () => ({
     callingApp: LEARN_APP,
@@ -72,6 +75,22 @@ export async function POST(
     // per-question verdict in the recordAttempt response (isJudgeable=false),
     // so we don't rely on it here — the grade is stored server-side and read
     // back from the attempt records after the attempt is ended.
+    //
+    // Bug found live: this used to be `.catch(() => null)` with the HTTP
+    // response never even inspected — a network failure OR a clean 400/500
+    // from the backend were both silently swallowed, with no retry and no
+    // way for the student (or anyone) to know an answered question never
+    // actually got recorded. Confirmed against a real attempt: a student's
+    // second answer had zero userquestionattempts row, silently scoring as
+    // unanswered. Legacy avoids this failure mode structurally — it saves
+    // each answer live, per-question, as the student answers it during the
+    // test (Tests.java submitTestAnswer(), awaited synchronously so the
+    // client gets a real confirmation) — not batched into one shot at final
+    // submit. Matching that live-save architecture is a bigger rebuild; this
+    // is the proportionate fix for the batch-at-submit design that exists
+    // today: retry each save, and if it still fails, say so instead of
+    // going quiet.
+    const failedQIds: string[] = [];
     for (const a of answers) {
       const usp = new URLSearchParams({
         ...base(),
@@ -82,11 +101,32 @@ export async function POST(
       // answerGiven is a repeated form field; append each option string.
       for (const val of a.answerGiven || []) usp.append("answerGiven", val);
 
-      await fetch(`${API.content}/analytics/recordAttempt`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: usp,
-      }).catch(() => null);
+      let ok = false;
+      for (let attempt = 0; attempt < 3 && !ok; attempt++) {
+        try {
+          const r = await fetch(`${API.content}/analytics/recordAttempt`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: usp,
+          });
+          if (r.ok) {
+            const text = await r.text();
+            try {
+              const parsed = JSON.parse(text);
+              ok = !parsed?.errorCode;
+            } catch {
+              ok = false; // non-JSON body on a 200 is the backend's own HTML-error-page case
+            }
+          }
+        } catch {
+          // network-level failure — fall through to retry
+        }
+        if (!ok && attempt < 2) await new Promise((res) => setTimeout(res, 400 * (attempt + 1)));
+      }
+      // Only a question the student actually answered is worth flagging —
+      // an empty answerGiven (skipped/marked-for-review-only) legitimately
+      // has nothing to record, so a "failure" there isn't real data loss.
+      if (!ok && (a.answerGiven || []).length > 0) failedQIds.push(a.qId);
     }
 
     await post("/analytics/endAttempt", { attemptId });
@@ -141,6 +181,7 @@ export async function POST(
       correct,
       ungraded,
       perQuestion,
+      failedQIds,
     });
   } catch (e: any) {
     return NextResponse.json(

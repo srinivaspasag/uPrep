@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
-import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
 // Ratings & reviews — a `reviews` collection ({entityId, userId, rating 1-5,
 // comment}). GET returns the aggregate + recent reviews for an entity (and the
 // caller's own rating). POST upserts the caller's review.
+//
+// Security fix: "mine" used to be looked up by a client-supplied ?userId=,
+// letting anyone learn what rating another user left. The aggregate/review
+// list itself is intentionally public (like any product review page); only
+// "mine" is identity-sensitive, so it's now derived from the session (null
+// if not logged in) rather than gating the whole read.
 export async function GET(req: NextRequest) {
   const entityId = req.nextUrl.searchParams.get("entityId") || "";
-  const userId = req.nextUrl.searchParams.get("userId") || "";
+  const session = await sessionFromReq(req);
+  const userId = session?.id || "";
   if (!entityId) return NextResponse.json({ average: 0, count: 0, reviews: [], mine: null });
   try {
     const db = await getDb();
@@ -46,19 +53,19 @@ export async function GET(req: NextRequest) {
 type Body = {
   entityId?: string;
   entityType?: string;
-  userId?: string;
   userName?: string;
   rating?: number;
   comment?: string;
-  orgId?: string;
 };
 
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
   const b = (await req.json().catch(() => ({}))) as Body;
   const entityId = b.entityId || "";
-  const userId = b.userId || "";
   const rating = Number(b.rating || 0);
-  if (!entityId || !userId) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  if (!entityId) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   if (rating < 1 || rating > 5) return NextResponse.json({ error: "Rating must be 1–5" }, { status: 400 });
   try {
     const db = await getDb();
@@ -73,7 +80,7 @@ export async function POST(req: NextRequest) {
           userName: b.userName || "Student",
           rating,
           comment: (b.comment || "").trim(),
-          orgId: b.orgId || DEFAULT_ORG_ID,
+          orgId: session.orgId,
           recordState: "ACTIVE",
           lastUpdated: now,
         },

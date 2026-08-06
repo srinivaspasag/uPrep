@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     result: {
       id: s.id,
+      orgId: s.orgId,
       firstName: s.firstName || "",
       lastName: s.lastName || "",
       memberId: s.memberId || null,

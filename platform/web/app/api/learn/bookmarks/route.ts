@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
-import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
 // Student bookmarks — a `bookmarks` collection ({userId, entityId, entityType,
 // name, url}). Created on demand; not part of the legacy seed.
+//
+// Security fix: GET and POST both used to trust userId from the query
+// string/body, so anyone could read or write another user's bookmarks.
+// Identity now comes only from the session.
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId") || "";
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
-  if (!userId) return NextResponse.json({ items: [] });
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ items: [] }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
   try {
     const db = await getDb();
     const docs = await db
@@ -34,8 +39,6 @@ export async function GET(req: NextRequest) {
 }
 
 type Body = {
-  userId?: string;
-  orgId?: string;
   entityId?: string;
   entityType?: string;
   name?: string;
@@ -43,10 +46,12 @@ type Body = {
 };
 
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
   const b = (await req.json().catch(() => ({}))) as Body;
-  const userId = b.userId || "";
-  const orgId = b.orgId || DEFAULT_ORG_ID;
-  if (!userId || !b.entityId) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  if (!b.entityId) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   try {
     const db = await getDb();
     // Toggle: remove if it exists, else add.

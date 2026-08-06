@@ -1,159 +1,97 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CmdsShell from "@/components/CmdsShell";
 
-type Node = { id: string; name: string; parentId: string | null };
+type Node = { id: string; name: string; type: string; parentId: string | null };
 
+// Board Tree browser — proxied to the live legacy board-services backend
+// (real subject/chapter data). Read-only for this pass: legacy's own
+// "addBoards" action is unimplemented server-side (a TODO in the real
+// source) — the real way legacy populates this tree is bulk Excel import,
+// which for now is a one-time seed script rather than a UI action. This
+// page mirrors legacy's own admin UX: drill down one level at a time,
+// breadcrumb back up.
 export default function BoardsPage() {
+  const [parentId, setParentId] = useState<string | null>(null);
+  const [breadcrumb, setBreadcrumb] = useState<{ id: string | null; name: string }[]>([
+    { id: null, name: "Subjects" },
+  ]);
   const [nodes, setNodes] = useState<Node[]>([]);
   const [loading, setLoading] = useState(true);
-  const [rootName, setRootName] = useState("");
 
-  async function load() {
-    const d = await fetch("/api/cmds/tools/boards").then((r) => r.json());
-    setNodes(d.nodes || []);
-    setLoading(false);
-  }
   useEffect(() => {
-    load();
-  }, []);
+    setLoading(true);
+    const url = parentId ? `/api/cmds/tools/boards?parentId=${parentId}` : "/api/cmds/tools/boards";
+    fetch(url)
+      .then((r) => r.json())
+      .then((d) => setNodes(d.nodes || []))
+      .finally(() => setLoading(false));
+  }, [parentId]);
 
-  async function add(name: string, parentId: string | null) {
-    if (!name.trim()) return;
-    await fetch("/api/cmds/tools/boards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), parentId }),
-    });
-    load();
+  function enter(n: Node) {
+    setBreadcrumb((prev) => [...prev, { id: n.id, name: n.name }]);
+    setParentId(n.id);
   }
-  async function remove(id: string) {
-    if (!confirm("Remove this node and everything under it?")) return;
-    await fetch(`/api/cmds/tools/boards?id=${id}`, { method: "DELETE" });
-    load();
+  function goTo(index: number) {
+    setBreadcrumb((prev) => prev.slice(0, index + 1));
+    setParentId(breadcrumb[index].id);
   }
 
-  const roots = useMemo(() => nodes.filter((n) => !n.parentId), [nodes]);
+  const atRoot = parentId === null;
 
   return (
     <CmdsShell>
       <div className="mx-auto max-w-[820px] px-8 py-6">
         <h1 className="text-2xl font-light text-slate-700">Boards & Course Management</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Build your subject → chapter → topic tree. Content and questions can be tagged to these.
+          The Board Tree used to tag content and test questions — subjects at the top, chapters
+          underneath. Backed by the same live service legacy used, so this is the real tree, not a
+          separate copy.
         </p>
 
-        <div className="mt-5 flex gap-2">
-          <input
-            value={rootName}
-            onChange={(e) => setRootName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                add(rootName, null);
-                setRootName("");
-              }
-            }}
-            placeholder="Add a subject (top-level)…"
-            className="w-72 rounded border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-slate-500"
-          />
-          <button
-            onClick={() => {
-              add(rootName, null);
-              setRootName("");
-            }}
-            className="rounded bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
-          >
-            Add subject
-          </button>
+        <div className="mt-4 flex flex-wrap items-center gap-1 text-sm text-slate-500">
+          {breadcrumb.map((b, i) => (
+            <span key={i} className="flex items-center gap-1">
+              {i > 0 && <span className="text-slate-300">›</span>}
+              <button
+                onClick={() => goTo(i)}
+                className={i === breadcrumb.length - 1 ? "font-medium text-slate-800" : "hover:text-slate-800"}
+              >
+                {b.name}
+              </button>
+            </span>
+          ))}
         </div>
 
-        {loading ? (
-          <div className="py-16 text-center text-slate-400">Loading tree…</div>
-        ) : roots.length === 0 ? (
-          <div className="mt-6 rounded border border-dashed border-slate-200 py-12 text-center text-sm text-slate-400">
-            No subjects yet. Add your first subject above.
-          </div>
-        ) : (
-          <div className="mt-6 space-y-2">
-            {roots.map((r) => (
-              <TreeNode key={r.id} node={r} nodes={nodes} onAdd={add} onRemove={remove} depth={0} />
-            ))}
-          </div>
-        )}
+        <div className="mt-3 overflow-hidden rounded border border-slate-200">
+          {loading ? (
+            <div className="py-16 text-center text-slate-400">Loading…</div>
+          ) : nodes.length === 0 ? (
+            <div className="py-16 text-center text-sm text-slate-400">
+              {atRoot ? "No subjects in this org's tree yet." : "No chapters under this subject yet."}
+            </div>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {nodes.map((n) => (
+                <li key={n.id}>
+                  {atRoot ? (
+                    <button
+                      onClick={() => enter(n)}
+                      className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                      <span>{n.name}</span>
+                      <span className="text-slate-300">›</span>
+                    </button>
+                  ) : (
+                    <div className="px-4 py-3 text-sm text-slate-700">{n.name}</div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </CmdsShell>
-  );
-}
-
-function TreeNode({
-  node,
-  nodes,
-  onAdd,
-  onRemove,
-  depth,
-}: {
-  node: Node;
-  nodes: Node[];
-  onAdd: (name: string, parentId: string | null) => void;
-  onRemove: (id: string) => void;
-  depth: number;
-}) {
-  const [open, setOpen] = useState(depth < 1);
-  const [adding, setAdding] = useState(false);
-  const [name, setName] = useState("");
-  const children = nodes.filter((n) => n.parentId === node.id);
-
-  return (
-    <div style={{ marginLeft: depth * 18 }}>
-      <div className="group flex items-center gap-2 rounded px-2 py-1.5 hover:bg-slate-50">
-        <button onClick={() => setOpen((o) => !o)} className="w-4 text-slate-400">
-          {children.length > 0 ? (open ? "▾" : "▸") : "•"}
-        </button>
-        <span className="flex-1 text-sm text-slate-700">{node.name}</span>
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100">
-          <button onClick={() => setAdding((a) => !a)} className="text-xs text-emerald-600 hover:underline">
-            + Sub-topic
-          </button>
-          <button onClick={() => onRemove(node.id)} className="text-xs text-red-500 hover:underline">
-            ✕
-          </button>
-        </div>
-      </div>
-
-      {adding && (
-        <div className="ml-6 mt-1 flex gap-2">
-          <input
-            autoFocus
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                onAdd(name, node.id);
-                setName("");
-                setAdding(false);
-              }
-            }}
-            placeholder="New sub-topic…"
-            className="w-56 rounded border border-slate-300 px-2 py-1 text-sm outline-none focus:border-slate-500"
-          />
-          <button
-            onClick={() => {
-              onAdd(name, node.id);
-              setName("");
-              setAdding(false);
-            }}
-            className="text-xs text-emerald-600"
-          >
-            Add
-          </button>
-        </div>
-      )}
-
-      {open &&
-        children.map((c) => (
-          <TreeNode key={c.id} node={c} nodes={nodes} onAdd={onAdd} onRemove={onRemove} depth={depth + 1} />
-        ))}
-    </div>
   );
 }

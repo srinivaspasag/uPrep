@@ -21,25 +21,48 @@ type Data = {
   sections: Entity[];
 };
 
-type Course = { id: string; name: string; granted?: boolean };
+type Course = { id: string; name: string; granted?: boolean; boardMatched?: boolean };
+
+// Board Tree subjects (Physics XI, Chemistry XI, ...) and the content-folder
+// catalog ("courses" as far as Assign Courses is concerned) are two
+// separately-maintained lists that happen to mostly share names. Normalizing
+// this way — strip a leading "1." ordinal, fold "Mathematics" to "Maths" —
+// matched 85-100% of real chapters when checked against production data;
+// the one true mismatch found was Maths XI/XII using the short form while
+// the Board Tree used the long form, which this specifically accounts for.
+function normSubjectName(s: string): string {
+  return (s || "")
+    .toLowerCase()
+    .replace(/^[0-9]+[.)]?\s*/, "")
+    .replace(/mathematics/g, "maths")
+    .replace(/[^a-z0-9]/g, "");
+}
 
 export default function AcademicStructurePage() {
   const [data, setData] = useState<Data>({ departments: [], programs: [], centers: [], sections: [] });
   const [courses, setCourses] = useState<Course[]>([]);
+  // Resolved names for assigned courseIds at any depth (subject or a
+  // specific chapter) — the top-level `courses` catalog only ever lists
+  // subject roots, so a chapter-level assignment needs this to display at
+  // all. See app/api/cmds/tools/academic/route.ts GET.
+  const [courseNames, setCourseNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"structure" | "courses">("structure");
 
   const [dept, setDept] = useState<string | null>(null);
   const [program, setProgram] = useState<string | null>(null);
   const [center, setCenter] = useState<string | null>(null);
+  const [section, setSection] = useState<string | null>(null);
   const [centerPicker, setCenterPicker] = useState(false);
+  const [error, setError] = useState("");
 
   async function load() {
     setLoading(true);
     try {
-      const [struct, crs] = await Promise.all([
+      const [struct, crs, boards] = await Promise.all([
         fetch("/api/cmds/tools/academic").then((r) => r.json()),
         fetch("/api/cmds/enroll?courses=1").then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+        fetch("/api/cmds/tools/boards").then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
       ]);
       setData({
         departments: struct.departments || [],
@@ -47,7 +70,21 @@ export default function AcademicStructurePage() {
         centers: struct.centers || [],
         sections: struct.sections || [],
       });
-      setCourses(crs.courses || []);
+      setCourseNames(struct.courseNames || {});
+      // "Assign Courses" grants access via content-folder ids under the
+      // hood (unchanged — that's the mechanism My Courses/Digital
+      // Library/Certificates already rely on), but the picker itself now
+      // shows and matches against real Board Tree subject names instead of
+      // raw folder names, so it reads as "assign this Board Tree subject"
+      // rather than "assign this uploaded content folder".
+      const subjectNameByNorm = new Map<string, string>(
+        (boards.nodes || []).map((s: { name: string }) => [normSubjectName(s.name), s.name])
+      );
+      const merged: Course[] = (crs.courses || []).map((c: any) => {
+        const canon = subjectNameByNorm.get(normSubjectName(c.name));
+        return { id: c.id, name: canon || c.name, granted: c.granted, boardMatched: !!canon };
+      });
+      setCourses(merged);
     } finally {
       setLoading(false);
     }
@@ -74,7 +111,13 @@ export default function AcademicStructurePage() {
   }
   async function remove(kind: string, id: string) {
     if (!confirm("Remove this item?")) return;
-    await fetch(`/api/cmds/tools/academic?kind=${kind}&id=${id}`, { method: "DELETE" });
+    setError("");
+    const res = await fetch(`/api/cmds/tools/academic?kind=${kind}&id=${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      setError(d.error || "Failed to remove item");
+      return;
+    }
     load();
   }
   async function assignCenter(programId: string, centerId: string) {
@@ -90,18 +133,22 @@ export default function AcademicStructurePage() {
       `/api/cmds/tools/academic?kind=assign-center&programId=${programId}&centerId=${centerId}`,
       { method: "DELETE" }
     );
-    if (center === centerId) setCenter(null);
+    if (center === centerId) {
+      setCenter(null);
+      setSection(null);
+    }
     load();
   }
-  async function assignCourses(programId: string, courseIds: string[]) {
-    await fetch("/api/cmds/tools/academic", {
+  async function assignSectionCourses(sectionId: string, courseIds: string[], notify: boolean) {
+    const res = await fetch("/api/cmds/tools/academic", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ kind: "assign-courses", programId, courseIds }),
+      body: JSON.stringify({ kind: "assign-section-courses", sectionId, courseIds, notify }),
     });
-    load();
+    const d = await res.json().catch(() => ({}));
+    await load();
+    return d as { ok?: boolean; error?: string; notified?: number; delivered?: number };
   }
-
   const programsForDept = dept ? data.programs.filter((p) => p.departmentId === dept) : data.programs;
   const selectedProgram = useMemo(
     () => data.programs.find((p) => p.id === program) || null,
@@ -125,6 +172,22 @@ export default function AcademicStructurePage() {
       ),
     [data.sections, program, center]
   );
+  const selectedSection = useMemo(
+    () => data.sections.find((s) => s.id === section) || null,
+    [data.sections, section]
+  );
+  // Courses already assigned to the selected section — shown as the 5th
+  // column, read-only (assigning/removing happens in the Assign Courses tab
+  // now; this used to have its own separate add/remove flow too, which was
+  // genuinely duplicated functionality doing the same mutation two ways).
+  const assignedCourses = useMemo(() => {
+    const byId = new Map(courses.map((c) => [c.id, c.name]));
+    return (selectedSection?.courseIds || []).map((id) => ({
+      id,
+      name: byId.get(id) || courseNames[id] || "(unknown course)",
+      code: "",
+    }));
+  }, [selectedSection, courses, courseNames]);
 
   return (
     <CmdsShell>
@@ -162,10 +225,16 @@ export default function AcademicStructurePage() {
             </button>
           </div>
 
+          {error && (
+            <div className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-200">
+              {error}
+            </div>
+          )}
+
           {loading ? (
             <div className="py-16 text-center text-slate-400">Loading structure…</div>
           ) : tab === "structure" ? (
-            <div className="mt-6 grid grid-cols-4 gap-3">
+            <div className="mt-6 grid grid-cols-5 gap-3">
               <Column
                 title="Departments"
                 searchLabel="Departments"
@@ -176,6 +245,7 @@ export default function AcademicStructurePage() {
                   setDept(id === dept ? null : id);
                   setProgram(null);
                   setCenter(null);
+                  setSection(null);
                 }}
                 footerLabel="Add New Department"
                 onAdd={(name) => add("department", name)}
@@ -191,6 +261,7 @@ export default function AcademicStructurePage() {
                 onSelect={(id) => {
                   setProgram(id === program ? null : id);
                   setCenter(null);
+                  setSection(null);
                 }}
                 footerLabel="Add New Program"
                 onAdd={(name) => add("program", name, dept ? { departmentId: dept } : {})}
@@ -205,7 +276,10 @@ export default function AcademicStructurePage() {
                 kind="center"
                 items={centersForProgram}
                 selected={center}
-                onSelect={(id) => setCenter(id === center ? null : id)}
+                onSelect={(id) => {
+                  setCenter(id === center ? null : id);
+                  setSection(null);
+                }}
                 footerLabel="Assign a Center"
                 onFooterClick={() => setCenterPicker(true)}
                 onRename={rename}
@@ -220,8 +294,8 @@ export default function AcademicStructurePage() {
                 searchLabel="Has Sections"
                 kind="section"
                 items={sectionsForProgramCenter}
-                selected={null}
-                onSelect={() => {}}
+                selected={section}
+                onSelect={(id) => setSection(id === section ? null : id)}
                 footerLabel="Add New Section"
                 onAdd={(name) =>
                   add("section", name, {
@@ -230,13 +304,42 @@ export default function AcademicStructurePage() {
                   })
                 }
                 onRename={rename}
-                onRemove={remove}
+                onRemove={(k, id) => {
+                  if (section === id) setSection(null);
+                  remove(k, id);
+                }}
                 disabled={!center}
                 disabledHint="Select a center"
               />
+              <Column
+                title="Has Courses"
+                searchLabel="Has Courses"
+                kind="section-course"
+                items={assignedCourses}
+                selected={null}
+                onSelect={() => {}}
+                footerLabel="Manage in Assign Courses →"
+                onFooterClick={() => setTab("courses")}
+                onRename={() => {}}
+                onRemove={() => {}}
+                disabled={!section}
+                disabledHint="Select a section"
+                emptyHint="No courses assigned — use “Manage in Assign Courses”."
+                showEdit={false}
+                showRemove={false}
+              />
             </div>
           ) : (
-            <AssignCoursesTab programs={data.programs} courses={courses} onSave={assignCourses} />
+            <AssignCoursesTab
+              programs={data.programs}
+              centers={data.centers}
+              sections={data.sections}
+              courses={courses}
+              onSave={assignSectionCourses}
+              initialProgramId={program}
+              initialCenterId={center}
+              initialSectionId={section}
+            />
           )}
         </main>
       </div>
@@ -254,6 +357,7 @@ export default function AcademicStructurePage() {
           }}
         />
       )}
+
     </CmdsShell>
   );
 }
@@ -343,6 +447,8 @@ function Column({
   disabled,
   disabledHint,
   emptyHint,
+  showEdit = true,
+  showRemove = true,
 }: {
   title: string;
   searchLabel: string;
@@ -359,6 +465,8 @@ function Column({
   disabled?: boolean;
   disabledHint?: string;
   emptyHint?: string;
+  showEdit?: boolean;
+  showRemove?: boolean;
 }) {
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState("");
@@ -447,23 +555,34 @@ function Column({
               >
                 <button onClick={() => onSelect(it.id)} className="flex-1 truncate text-left">
                   {it.name}
+                  {kind === "section" && it.code && (
+                    <span className="ml-2 font-mono text-[11px] font-normal text-slate-400">{it.code}</span>
+                  )}
                 </button>
-                <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100">
-                  <button
-                    onClick={() => {
-                      setEditingId(it.id);
-                      setEditName(it.name);
-                    }}
-                    className="text-xs text-blue-600 hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => onRemove(kind, it.id)}
-                    className="text-xs text-red-500 hover:underline"
-                  >
-                    {removeLabel || "✕"}
-                  </button>
+                {/* Bug found live: Edit/Remove were opacity-0 until hover — easy
+                    to miss entirely (especially on touch/trackpad), which is
+                    what made "delete" look like it was missing rather than
+                    just invisible. Always visible now. */}
+                <div className="flex items-center gap-1.5">
+                  {showEdit && (
+                    <button
+                      onClick={() => {
+                        setEditingId(it.id);
+                        setEditName(it.name);
+                      }}
+                      className="text-xs text-blue-600 hover:underline"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  {showRemove && (
+                    <button
+                      onClick={() => onRemove(kind, it.id)}
+                      className="text-xs text-red-500 hover:underline"
+                    >
+                      {removeLabel || "✕"}
+                    </button>
+                  )}
                 </div>
               </div>
             )
@@ -556,25 +675,194 @@ function CenterPickerModal({
   );
 }
 
+// Picker for the "Has Courses" column's "+ Add Courses" action — only offers
+// courses not already assigned to the selected section (already-assigned
+// ones are shown directly in the column itself, removed via its "remove").
+type FolderChild = { id: string; name: string; hasChildren: boolean };
+
+// Chapters (and deeper) under a course root, fetched lazily per-node on
+// first expand rather than eagerly walking the whole tree up front — a
+// subject can have 15-20 chapters, each potentially with their own
+// sub-folders, and most staff only ever expand one or two subjects per visit.
+async function fetchChildren(parentId: string): Promise<FolderChild[]> {
+  const d = await fetch(`/api/cmds/content?parentId=${encodeURIComponent(parentId)}`)
+    .then((r) => r.json())
+    .catch(() => ({ resources: [] }));
+  return (d.resources || [])
+    .filter((r: any) => r.type === "FOLDER")
+    .map((r: any) => ({ id: r.id, name: r.title, hasChildren: true }));
+}
+
+// Used by AssignCoursesTab, the sole course-assignment UI (the Edit Academic
+// Structure tab's "Has Courses" column used to have its own separate
+// add/remove flow doing the same thing — genuinely duplicated functionality
+// — so that column is now a read-only view of what's assigned, linking here
+// to actually change it). Recursive so a chapter can itself expand into its own
+// sub-folders (concepts). Checking a node grants exactly that folder's
+// subtree, not everything above or below it.
+function CourseTree({
+  courses,
+  picked,
+  onToggle,
+}: {
+  courses: Course[];
+  picked: Set<string>;
+  onToggle: (id: string) => void;
+}) {
+  // Per-node expansion state: undefined = not expanded, "loading", or the
+  // fetched children array.
+  const [expanded, setExpanded] = useState<Record<string, FolderChild[] | "loading" | undefined>>({});
+
+  async function toggleExpand(id: string) {
+    if (expanded[id] !== undefined) {
+      setExpanded((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+      return;
+    }
+    setExpanded((prev) => ({ ...prev, [id]: "loading" }));
+    const children = await fetchChildren(id);
+    setExpanded((prev) => ({ ...prev, [id]: children }));
+  }
+
+  const boardCourses = courses.filter((c) => c.boardMatched);
+  const otherCourses = courses.filter((c) => !c.boardMatched);
+
+  function TreeRow({
+    id,
+    name,
+    granted,
+    depth,
+  }: {
+    id: string;
+    name: string;
+    granted?: boolean;
+    depth: number;
+  }) {
+    const kids = expanded[id];
+    return (
+      <div>
+        <div
+          className="flex items-center gap-2 border-b border-slate-50 py-2.5 pr-4 text-sm text-slate-700 hover:bg-slate-50"
+          style={{ paddingLeft: 16 + depth * 20 }}
+        >
+          <button
+            onClick={() => toggleExpand(id)}
+            className="w-4 shrink-0 text-slate-400 hover:text-slate-600"
+            title="Show chapters"
+          >
+            {kids === "loading" ? "⋯" : kids ? "▾" : "▸"}
+          </button>
+          <label className="flex flex-1 cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              checked={picked.has(id)}
+              onChange={() => onToggle(id)}
+              className="accent-emerald-600"
+            />
+            <span className="flex-1">{name}</span>
+            {granted && (
+              <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-600">
+                shared
+              </span>
+            )}
+          </label>
+        </div>
+        {Array.isArray(kids) &&
+          (kids.length === 0 ? (
+            <div className="py-2 text-xs text-slate-400" style={{ paddingLeft: 40 + depth * 20 }}>
+              No sub-chapters.
+            </div>
+          ) : (
+            kids.map((k) => <TreeRow key={k.id} id={k.id} name={k.name} depth={depth + 1} />)
+          ))}
+      </div>
+    );
+  }
+
+  if (courses.length === 0) return null;
+  return (
+    <>
+      {boardCourses.map((c) => (
+        <TreeRow key={c.id} id={c.id} name={c.name} granted={c.granted} depth={0} />
+      ))}
+      {otherCourses.length > 0 && (
+        <>
+          <div className="border-b border-t border-slate-100 bg-slate-50 px-4 py-1.5 text-[11px] font-medium uppercase tracking-wide text-slate-400">
+            Other content folders (no matching Board Tree subject)
+          </div>
+          {otherCourses.map((c) => (
+            <TreeRow key={c.id} id={c.id} name={c.name} granted={c.granted} depth={0} />
+          ))}
+        </>
+      )}
+    </>
+  );
+}
+
+// Courses are assigned per Section (Program -> Center -> Section -> Course),
+// on top of (not replacing) the org-wide program.courseIds list — see the
+// "Section-level course assignment" plan. A cascading picker narrows down to
+// one section, whose course list this tab reads/writes.
 function AssignCoursesTab({
   programs,
+  centers,
+  sections,
   courses,
   onSave,
+  initialProgramId,
+  initialCenterId,
+  initialSectionId,
 }: {
   programs: Entity[];
+  centers: Entity[];
+  sections: Entity[];
   courses: Course[];
-  onSave: (programId: string, courseIds: string[]) => void;
+  onSave: (
+    sectionId: string,
+    courseIds: string[],
+    notify: boolean
+  ) => Promise<{ ok?: boolean; error?: string; notified?: number; delivered?: number }>;
+  initialProgramId?: string | null;
+  initialCenterId?: string | null;
+  initialSectionId?: string | null;
 }) {
-  const [programId, setProgramId] = useState<string>("");
+  // Seeded once from whatever was selected in the Edit Academic Structure
+  // tab (the "Manage in Assign Courses →" link on Has Courses) so switching
+  // tabs doesn't dump you back to three empty dropdowns.
+  const [programId, setProgramId] = useState(initialProgramId || "");
+  const [centerId, setCenterId] = useState(initialCenterId || "");
+  const [sectionId, setSectionId] = useState(initialSectionId || "");
   const [picked, setPicked] = useState<Set<string>>(new Set());
+  const [notify, setNotify] = useState(false);
   const [saving, setSaving] = useState(false);
   const [savedNote, setSavedNote] = useState("");
 
+  const selectedProgram = useMemo(() => programs.find((p) => p.id === programId) || null, [programs, programId]);
+  const centersForProgram = useMemo(() => {
+    if (!selectedProgram) return [] as Entity[];
+    const ids = new Set(selectedProgram.centerIds || []);
+    return centers.filter((c) => ids.has(c.id));
+  }, [selectedProgram, centers]);
+  const sectionsForProgramCenter = useMemo(
+    () => sections.filter((s) => s.programId === programId && s.centerId === centerId),
+    [sections, programId, centerId]
+  );
+  const selectedSection = useMemo(() => sections.find((s) => s.id === sectionId) || null, [sections, sectionId]);
+
   useEffect(() => {
-    const p = programs.find((x) => x.id === programId);
-    setPicked(new Set(p?.courseIds || []));
+    setCenterId("");
+    setSectionId("");
+  }, [programId]);
+  useEffect(() => {
+    setSectionId("");
+  }, [centerId]);
+  useEffect(() => {
+    setPicked(new Set(selectedSection?.courseIds || []));
     setSavedNote("");
-  }, [programId, programs]);
+  }, [selectedSection]);
 
   function toggle(id: string) {
     setPicked((prev) => {
@@ -585,11 +873,34 @@ function AssignCoursesTab({
   }
 
   async function save() {
-    if (!programId) return;
+    if (!sectionId) return;
+    // Guard against the exact accident that hit production twice already:
+    // this save is a full replace, not a merge, so an empty selection wipes
+    // every course this section's students currently have — silently, if
+    // the picker happened to render before it was pre-seeded, or a click
+    // just missed. Confirm before actually removing an existing grant to
+    // nothing.
+    const hadExisting = (selectedSection?.courseIds || []).length > 0;
+    if (picked.size === 0 && hadExisting) {
+      const ok = window.confirm(
+        "This will remove ALL course access currently granted to this section's students — nothing is selected. Continue?"
+      );
+      if (!ok) return;
+    }
     setSaving(true);
-    await onSave(programId, Array.from(picked));
+    const res = await onSave(sectionId, Array.from(picked), notify);
     setSaving(false);
-    setSavedNote("Saved.");
+    if (res.error) {
+      setSavedNote(res.error);
+    } else if (notify) {
+      setSavedNote(
+        `Saved. Notify attempted for ${res.notified ?? 0} student(s) — ${res.delivered ?? 0} delivered${
+          !res.delivered ? " (no email provider configured yet)" : ""
+        }.`
+      );
+    } else {
+      setSavedNote("Saved.");
+    }
   }
 
   return (
@@ -610,50 +921,81 @@ function AssignCoursesTab({
         </select>
       </label>
 
-      {!programId ? (
+      {programId && (
+        <label className="mt-4 block">
+          <span className="text-xs font-medium text-slate-500">Center</span>
+          <select
+            value={centerId}
+            onChange={(e) => setCenterId(e.target.value)}
+            disabled={centersForProgram.length === 0}
+            className="mt-1 w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-500 disabled:bg-slate-50"
+          >
+            <option value="">{centersForProgram.length === 0 ? "No centers assigned" : "Select a center…"}</option>
+            {centersForProgram.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
+      {centerId && (
+        <label className="mt-4 block">
+          <span className="text-xs font-medium text-slate-500">Section</span>
+          <select
+            value={sectionId}
+            onChange={(e) => setSectionId(e.target.value)}
+            disabled={sectionsForProgramCenter.length === 0}
+            className="mt-1 w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-500 disabled:bg-slate-50"
+          >
+            <option value="">
+              {sectionsForProgramCenter.length === 0 ? "No sections in this center" : "Select a section…"}
+            </option>
+            {sectionsForProgramCenter.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
+      {!sectionId ? (
         <div className="mt-6 rounded border border-dashed border-slate-200 py-12 text-center text-sm text-slate-400">
-          Pick a program to choose the courses it includes.
+          Pick a Program, Center and Section to choose the courses assigned to it.
         </div>
       ) : (
         <>
           <div className="mt-5">
             <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Courses in this program
+              Courses assigned to this section
             </div>
+            <p className="mt-1 text-xs text-slate-400">
+              Pick a whole Board Tree subject, or expand ▸ it to assign individual chapters instead.
+            </p>
             {courses.length === 0 ? (
               <div className="mt-2 text-sm text-slate-400">
                 No courses in your catalog yet — create courses in Resources first.
               </div>
             ) : (
-              <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                {courses.map((c) => (
-                  <label
-                    key={c.id}
-                    className={`flex cursor-pointer items-center gap-2 rounded border px-3 py-2 text-sm ${
-                      picked.has(c.id)
-                        ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                        : "border-slate-200 bg-white text-slate-600"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={picked.has(c.id)}
-                      onChange={() => toggle(c.id)}
-                      className="accent-emerald-600"
-                    />
-                    <span className="flex-1">{c.name}</span>
-                    {c.granted && (
-                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-600">
-                        shared
-                      </span>
-                    )}
-                  </label>
-                ))}
+              <div className="mt-2 max-h-96 overflow-y-auto rounded border border-slate-200">
+                <CourseTree courses={courses} picked={picked} onToggle={toggle} />
               </div>
             )}
           </div>
 
-          <div className="mt-5 flex items-center gap-3">
+          <label className="mt-4 flex cursor-pointer items-center gap-2 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              checked={notify}
+              onChange={(e) => setNotify(e.target.checked)}
+              className="accent-emerald-600"
+            />
+            Notify students in this section by email
+          </label>
+
+          <div className="mt-3 flex items-center gap-3">
             <button
               onClick={save}
               disabled={saving}
@@ -661,7 +1003,7 @@ function AssignCoursesTab({
             >
               {saving ? "Saving…" : "Save courses"}
             </button>
-            {savedNote && <span className="text-sm text-emerald-600">{savedNote}</span>}
+            {savedNote && <span className="text-sm text-slate-600">{savedNote}</span>}
           </div>
         </>
       )}

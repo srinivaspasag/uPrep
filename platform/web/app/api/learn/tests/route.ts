@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
 import { isStaff } from "@/lib/roles";
+import { resolveStudentEnrollment } from "@/lib/enrollment";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -22,15 +23,16 @@ export async function GET(req: NextRequest) {
     const staff = isStaff(session.profile);
 
     // Which sections does this student belong to? (staff preview everything)
+    // Bug found live: this used to read `orgmembers.mappings`, a field no
+    // real student doc actually has (they carry `programMemberships`
+    // instead) — so mySections was always empty, meaning a test scheduled
+    // to a specific section was silently invisible to everyone in it; only
+    // fully-global (sectionIds: []) tests ever showed. Same enrollment
+    // source as every other student-facing surface now.
     let mySections = new Set<string>();
-    if (!staff && ObjectId.isValid(session.id)) {
-      const m: any = await db
-        .collection("orgmembers")
-        .findOne({ _id: new ObjectId(session.id) })
-        .catch(() => null);
-      for (const map of m?.mappings || []) {
-        if (map?.sectionId) mySections.add(String(map.sectionId));
-      }
+    if (!staff) {
+      const { studentSectionIds } = await resolveStudentEnrollment(db, session.id, []);
+      mySections = new Set(studentSectionIds);
     }
 
     const now = Date.now();
@@ -68,7 +70,7 @@ export async function GET(req: NextRequest) {
       })
       .filter((s) => s.status !== "ENDED" || (s.endAt && now - s.endAt < grace));
 
-    return NextResponse.json({ items });
+    return NextResponse.json({ items }, { headers: { "Cache-Control": "no-store, private", Vary: "Cookie" } });
   } catch (e: any) {
     return NextResponse.json({ items: [], error: e?.message }, { status: 500 });
   }

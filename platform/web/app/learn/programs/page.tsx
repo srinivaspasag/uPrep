@@ -1,58 +1,124 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import LmsShell from "@/components/LmsShell";
+import Link from "next/link";
+import LmsShell, { ZeroState } from "@/components/LmsShell";
+import { subjectAccent } from "@/lib/subjectColors";
 
-type Program = { id: string; name: string; code: string | null };
+type Course = { id: string; name: string; chapterCount: number; folderCount: number };
+type ProgramGroup = {
+  id: string;
+  name: string;
+  courseIds: string[];
+  centerName: string | null;
+  sectionName: string | null;
+};
 
+// Mirrors legacy's real Program card (Institute.getMySections /
+// categorySections.html): program name + center + batch — legacy shows no
+// progress/chapter data on this screen either, so we don't fabricate any.
+// The subject list here is the one addition, since it's real data we have
+// and legacy's "Visit Library" popup led to a subject-organized library
+// anyway (tags/institute/library/home.html's subjectBar).
 export default function ProgramsPage() {
-  const [programs, setPrograms] = useState<Program[]>([]);
+  const [programGroups, setProgramGroups] = useState<ProgramGroup[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [staff, setStaff] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/programs")
+    fetch("/api/learn/courses")
       .then((r) => r.json())
-      .then((d) => setPrograms(d.programs || []))
+      .then((d) => {
+        setProgramGroups(d.programGroups || []);
+        setCourses(d.courses || []);
+        setStaff(!!d.staff);
+      })
       .finally(() => setLoading(false));
   }, []);
 
   return (
     <LmsShell active="programs">
-      <h1 className="text-xl font-semibold tracking-wide text-slate-700">MY PROGRAMS</h1>
-      <div className="mt-5">
+      <div className="border-b-2 border-[#16233D] pb-3">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EDEEE9] px-3 py-1 text-xs font-medium uppercase tracking-wide text-[#8890A1]">
+          🎯 {staff ? "Programs" : "My Programs"}
+        </span>
+        <h1 className="mt-2 font-serif text-2xl font-semibold text-[#16233D]">
+          {staff ? "All programs in this institute" : "Where you're enrolled"}
+        </h1>
+      </div>
+
+      <div className="mt-6">
         {loading ? (
-          <div className="text-slate-400">Loading…</div>
-        ) : programs.length === 0 ? (
-          <div className="text-slate-400">You are not enrolled in any program yet.</div>
+          <div className="text-[#8890A1]">Loading…</div>
+        ) : programGroups.length === 0 ? (
+          <ZeroState icon="🎯" title={staff ? "No programs yet" : "Not enrolled yet"}>
+            {staff ? (
+              "No programs have been created yet."
+            ) : (
+              <>
+                You're not assigned to a program yet — check with your institute, or use an access code from{" "}
+                <Link href="/learn/courses" className="text-amber-700 underline underline-offset-2">
+                  My Courses
+                </Link>
+                .
+              </>
+            )}
+          </ZeroState>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {programs.map((p) => (
-              <div
-                key={p.id}
-                className="flex h-[150px] w-[240px] items-start rounded-md border border-slate-200 bg-[repeating-linear-gradient(0deg,#fafafa,#fafafa_23px,#f0f0f0_24px)] p-4"
-              >
-                <span className="text-[15px] font-bold uppercase leading-snug text-[#f0a020]">
-                  {p.name}
-                </span>
-              </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {programGroups.map((g) => (
+              <ProgramCard key={g.id} group={g} courses={courses} />
             ))}
           </div>
         )}
       </div>
-
-      <div className="mt-12 border-t border-slate-100 pt-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold tracking-wide text-slate-700">
-            AVAILABLE PROGRAMS
-          </h2>
-          <span className="text-sm text-slate-400">CATEGORY</span>
-        </div>
-        <div className="mt-6 flex flex-col items-center justify-center rounded-md border border-dashed border-slate-200 py-16 text-center">
-          <div className="text-5xl">🙁</div>
-          <div className="mt-3 text-lg font-medium text-[#f0a020]">SORRY!!</div>
-          <div className="text-slate-400">No programs added yet!</div>
-        </div>
-      </div>
     </LmsShell>
+  );
+}
+
+function ProgramCard({ group, courses }: { group: ProgramGroup; courses: Course[] }) {
+  const groupCourses = courses.filter((c) => group.courseIds.includes(c.id));
+  const totalChapters = groupCourses.reduce((sum, c) => sum + c.chapterCount, 0);
+
+  return (
+    <Link
+      href="/learn/courses"
+      className="group relative block overflow-hidden rounded-2xl border border-[#D9D6C9] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-transparent hover:shadow-xl"
+    >
+      <span className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue-500 via-violet-500 to-orange-500" />
+      <div className="font-serif text-lg font-semibold text-[#16233D]">{group.name}</div>
+      {(group.centerName || group.sectionName) && (
+        <div className="mt-1 text-xs text-[#8890A1]">
+          {[group.centerName, group.sectionName].filter(Boolean).join(" · ")}
+        </div>
+      )}
+
+      {groupCourses.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {groupCourses.map((c) => {
+            const accent = subjectAccent(c.name);
+            return (
+              <span
+                key={c.id}
+                className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${accent.chip} ${accent.text}`}
+              >
+                {c.name}
+              </span>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="mt-4 flex items-center justify-between border-t border-[#EDEEE9] pt-3">
+        <span className="text-xs text-[#8890A1]">
+          {groupCourses.length} subject{groupCourses.length === 1 ? "" : "s"} · {totalChapters} chapters
+        </span>
+        <span className="flex items-center gap-1 text-xs font-semibold text-amber-700">
+          View courses
+          <span className="transition group-hover:translate-x-0.5">→</span>
+        </span>
+      </div>
+    </Link>
   );
 }
