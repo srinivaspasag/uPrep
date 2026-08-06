@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -14,10 +15,16 @@ export const dynamic = "force-dynamic";
 // established pattern as the submit route — this data isn't safe to expose
 // until the caller's OWN attempt is finished, so it's derived server-side
 // from the session's userId, never trusted from the client.
+//
+// Security fix: the comment above already documented this intent, but the
+// code underneath it actually read userId from the query string — a real
+// IDOR letting anyone read another student's revealed answers. Now actually
+// derived from the session, matching what the comment always claimed.
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const testId = params.id;
-  const userId = req.nextUrl.searchParams.get("userId") || "";
-  if (!userId) return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
   if (!ObjectId.isValid(testId)) return NextResponse.json({ error: "Invalid test id" }, { status: 400 });
 
   try {

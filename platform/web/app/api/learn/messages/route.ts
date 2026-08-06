@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -35,22 +36,27 @@ export async function GET(req: NextRequest) {
   }
 }
 
-type Body = { orgId?: string; channel?: string; userId?: string; userName?: string; text?: string };
+type Body = { channel?: string; text?: string };
 
+// Security fix: userId/userName used to come straight from the request
+// body, so anyone could post a chat message that displays as sent by
+// another user. Author identity now comes only from the session.
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const b = (await req.json().catch(() => ({}))) as Body;
   const text = (b.text || "").trim();
-  if (!b.userId || !text) return NextResponse.json({ error: "Empty message" }, { status: 400 });
+  if (!text) return NextResponse.json({ error: "Empty message" }, { status: 400 });
   try {
     const db = await getDb();
     const now = Date.now();
     const _id = new ObjectId();
     await db.collection("messages").insertOne({
       _id,
-      orgId: b.orgId || DEFAULT_ORG_ID,
+      orgId: session.orgId || DEFAULT_ORG_ID,
       channel: b.channel || "general",
-      userId: b.userId,
-      userName: b.userName || "Student",
+      userId: session.id,
+      userName: [session.firstName, session.lastName].filter(Boolean).join(" ") || "Student",
       text,
       timeCreated: now,
     });

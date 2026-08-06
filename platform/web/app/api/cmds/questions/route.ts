@@ -14,7 +14,6 @@ const DEFAULT_BOARD_ID = process.env.CMDS_DEFAULT_BOARD_ID || "6a3b7ab30cf2f6add
 type QType = "SCQ" | "MCQ" | "NUMERIC" | "SUBJECTIVE" | "MATRIX" | "PARA";
 
 type AddQuestionBody = {
-  userId?: string;
   orgId?: string;
   content: string;
   type: QType;
@@ -34,16 +33,25 @@ type AddQuestionBody = {
 // Author a CMDS question directly into Mongo (`cmdsquestions`) in the shape the
 // publish route consumes. Supports all legacy question types; SCQ/MCQ/NUMERIC
 // are auto-gradable, SUBJECTIVE/MATRIX/PARA are stored for manual grading.
+//
+// Security fix: this used to require a client-supplied body.userId and store
+// it as the question's author with no session check at all — unlike every
+// sibling content route (which all gate on canManageContent), so any staff
+// session (or, more precisely, anyone who could reach past the blanket
+// /api/cmds gate) could author content under an arbitrary identity. Now
+// gated the same way as PATCH/DELETE on this same resource.
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session || !canManageContent(session.profile))
+    return NextResponse.json({ error: "Not authorized" }, { status: 403 });
+  const userId = session.id;
   const b = (await req.json().catch(() => ({}))) as AddQuestionBody;
-  const userId = b.userId || "";
   const orgId = await resolveOrgId(req, b.orgId);
   const type = (b.type || "SCQ") as QType;
   const content = (b.content || "").trim();
   const options = (b.options || []).map((o) => o.trim());
   const correct = b.correct || [];
 
-  if (!userId) return NextResponse.json({ error: "Missing userId" }, { status: 400 });
   if (!content) return NextResponse.json({ error: "Question text is required" }, { status: 400 });
 
   // Validate + derive the answer key per type.

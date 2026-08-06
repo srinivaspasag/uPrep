@@ -1,20 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
-import { API, DEFAULT_ORG_ID, CALLING_APP, CALLING_APP_ID } from "@/lib/config";
+import { API, CALLING_APP, CALLING_APP_ID } from "@/lib/config";
 import { getDb } from "@/lib/mongo";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
 // Fetches a test's info + questions from the REAL legacy content service
 // (getTestInfo / getTestQuestions). Answer keys are intentionally NOT sent to
-// the client. userId/orgId come from the caller (logged-in session).
+// the client. userId/orgId come from the signed session cookie, never from
+// the caller — this used to trust ?userId=/?orgId= directly, which let
+// anyone read another student's alreadyAttempted status (and forwarded an
+// arbitrary identity to the legacy service as callingUserId).
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const id = params.id;
-  const userId = req.nextUrl.searchParams.get("userId") || "";
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
 
   const form = () =>
     new URLSearchParams({

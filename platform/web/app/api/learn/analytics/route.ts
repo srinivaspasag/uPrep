@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
-import { DEFAULT_ORG_ID } from "@/lib/config";
 import { resolveBoardSubjects } from "@/lib/legacyBoard";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -24,11 +24,18 @@ function marksMap(test: any): Record<string, { positive: number; negative: numbe
   return m;
 }
 
+// Security fix: this originally trusted ?userId=/?orgId= from the query
+// string, so anyone could read another student's full score history and
+// subject-level weaknesses. Identity now comes only from the session.
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId") || "";
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
-  if (!userId)
-    return NextResponse.json({ results: [], trend: [], subjects: [], types: [], summary: null });
+  const session = await sessionFromReq(req);
+  if (!session)
+    return NextResponse.json(
+      { results: [], trend: [], subjects: [], types: [], summary: null, error: "Not authenticated" },
+      { status: 401 }
+    );
+  const userId = session.id;
+  const orgId = session.orgId;
 
   try {
     const db = await getDb();

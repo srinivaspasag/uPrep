@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { API, DEFAULT_ORG_ID } from "@/lib/config";
+import { API } from "@/lib/config";
 import { getDb } from "@/lib/mongo";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -18,19 +19,21 @@ type IncomingAnswer = { qId: string; answerGiven: string[]; timeTaken?: number }
 // The backend grades each answer against the stored answer key. We never send
 // the correct answers back to the browser — only per-question correctness and
 // the aggregate score.
+//
+// Security fix: userId/orgId used to come straight from the request body,
+// so anyone could submit (and have graded) a test attempt AS another
+// student. Both now come only from the signed session cookie.
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const entityId = params.id;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
   const body = await req.json().catch(() => ({}));
-  const userId: string = body.userId || "";
-  const orgId: string = body.orgId || DEFAULT_ORG_ID;
   const answers: IncomingAnswer[] = Array.isArray(body.answers) ? body.answers : [];
-
-  if (!userId) {
-    return NextResponse.json({ error: "Missing userId" }, { status: 400 });
-  }
 
   const base = () => ({
     callingApp: LEARN_APP,

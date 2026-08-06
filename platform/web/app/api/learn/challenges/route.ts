@@ -61,20 +61,22 @@ export async function POST(req: NextRequest) {
         .updateOne({ _id: new ObjectId(b.id) }, { $addToSet: { participants: session.id } });
       return NextResponse.json({ ok: true });
     }
-    // create
+    // create — orgId/createdBy also now come from the session rather than
+    // the client, for the same reason as "join" above.
+    if (!session?.id) return NextResponse.json({ error: "Sign in to create a challenge" }, { status: 401 });
     const name = (b.name || "").trim();
     if (!name) return NextResponse.json({ error: "Challenge name is required" }, { status: 400 });
     const now = Date.now();
     const _id = new ObjectId();
     await db.collection("challenges").insertOne({
       _id,
-      orgId: b.orgId || DEFAULT_ORG_ID,
+      orgId: session.orgId || DEFAULT_ORG_ID,
       name,
       description: (b.description || "").trim(),
       testId: b.testId || null,
       endAt: b.endAt || null,
       participants: [],
-      createdBy: b.userId || null,
+      createdBy: session.id,
       recordState: "ACTIVE",
       timeCreated: now,
       lastUpdated: now,

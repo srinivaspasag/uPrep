@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongo";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +14,9 @@ export const dynamic = "force-dynamic";
 // app/api/tests/[id]/submit/route.ts.
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const entityId = params.id;
-  const userId = req.nextUrl.searchParams.get("userId") || "";
-  if (!userId) return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
 
   try {
     const db = await getDb();

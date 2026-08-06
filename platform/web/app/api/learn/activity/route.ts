@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
-import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -23,15 +23,20 @@ type FeedItem = {
 // analytics view in the real app, not something a student sees about their
 // peers — removed rather than "fixed", since showing it at all didn't match
 // legacy to begin with.
+// Security fix: userId/orgId used to come straight from the query string,
+// so anyone could read another student's recent-activity feed (tests
+// attempted, doubts asked/answered). Now derived only from the session.
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId") || "";
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ feed: [], error: "Not authenticated" }, { status: 401 });
+  const userId = session.id;
+  const orgId = session.orgId;
 
   try {
     const db = await getDb();
     const feed: FeedItem[] = [];
 
-    if (userId) {
+    {
       const attempts: any[] = await db
         .collection("userentityattempts")
         .find({ userId, orgId, "entity.type": "TEST", finished: true })

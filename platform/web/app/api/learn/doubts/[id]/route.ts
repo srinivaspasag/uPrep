@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
@@ -53,11 +54,17 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   }
 }
 
-type AnswerBody = { content?: string; userId?: string; userName?: string };
+type AnswerBody = { content?: string };
 
 // POST an answer to this doubt.
+// Security fix: userId/userName used to come straight from the request
+// body, so anyone could post an answer that displays as authored by
+// another user. Author identity now comes only from the session.
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  const userName = [session.firstName, session.lastName].filter(Boolean).join(" ") || "Member";
   const b = (await req.json().catch(() => ({}))) as AnswerBody;
   const content = (b.content || "").trim();
   if (!content) return NextResponse.json({ error: "Answer cannot be empty" }, { status: 400 });
@@ -74,8 +81,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       entityId: id,
       entityType: "DISCUSSION",
       content,
-      userId: b.userId || null,
-      userName: (b.userName || "").trim() || "Member",
+      userId: session.id,
+      userName,
       recordState: "ACTIVE",
       timeCreated: now,
       lastUpdated: now,
@@ -88,7 +95,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({
       id: _id.toHexString(),
       content,
-      userName: (b.userName || "").trim() || "Member",
+      userName,
       timeCreated: now,
     });
   } catch (e: any) {

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
+import { sessionFromReq } from "@/lib/server-session";
+import { isSuperAdmin } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -12,6 +14,13 @@ export const runtime = "nodejs";
 //   GET ?memberId=<orgmember _id>                       -> { memberships }
 //   POST { memberId, programId, centerId, sectionId }   -> upsert one entry
 //   DELETE ?memberId=&programId=                        -> remove one entry
+//
+// Security fix: none of these three checked the ACTING staff member's own
+// org — only that the target program/center/section belonged to the
+// target student's org. A staff session from Org A could read or mutate a
+// student's program membership in Org B, blocked only by the blanket
+// /api/cmds staff gate. All three now require the caller's session org to
+// match the target member's org (or be a super admin).
 type Membership = {
   programId: string;
   centerId: string;
@@ -19,7 +28,15 @@ type Membership = {
   assignedAt: number;
 };
 
+async function assertSameOrg(session: any, memberOrgId: string): Promise<string | null> {
+  if (isSuperAdmin(session.profile, session.isSuperAdmin)) return null;
+  if (memberOrgId !== session.orgId) return "That member belongs to another institute";
+  return null;
+}
+
 export async function GET(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const memberId = req.nextUrl.searchParams.get("memberId") || "";
   if (!ObjectId.isValid(memberId))
     return NextResponse.json({ error: "Invalid memberId" }, { status: 400 });
@@ -28,6 +45,8 @@ export async function GET(req: NextRequest) {
     const db = await getDb();
     const member: any = await db.collection("orgmembers").findOne({ _id: new ObjectId(memberId) });
     if (!member) return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    const orgErr = await assertSameOrg(session, member.orgId);
+    if (orgErr) return NextResponse.json({ error: orgErr }, { status: 403 });
     const memberships: Membership[] = Array.isArray(member.programMemberships)
       ? member.programMemberships
       : [];
@@ -40,6 +59,8 @@ export async function GET(req: NextRequest) {
 type SaveBody = { memberId?: string; programId?: string; centerId?: string; sectionId?: string };
 
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const b = (await req.json().catch(() => ({}))) as SaveBody;
   const memberId = String(b.memberId || "");
   const programId = String(b.programId || "");
@@ -55,6 +76,8 @@ export async function POST(req: NextRequest) {
     const db = await getDb();
     const member: any = await db.collection("orgmembers").findOne({ _id: new ObjectId(memberId) });
     if (!member) return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    const orgErr = await assertSameOrg(session, member.orgId);
+    if (orgErr) return NextResponse.json({ error: orgErr }, { status: 403 });
 
     // Program/center/section must exist and belong to the member's own org.
     const [program, center, section] = await Promise.all([
@@ -83,6 +106,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const memberId = req.nextUrl.searchParams.get("memberId") || "";
   const programId = req.nextUrl.searchParams.get("programId") || "";
   if (!ObjectId.isValid(memberId) || !programId)
@@ -92,6 +117,8 @@ export async function DELETE(req: NextRequest) {
     const db = await getDb();
     const member: any = await db.collection("orgmembers").findOne({ _id: new ObjectId(memberId) });
     if (!member) return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    const orgErr = await assertSameOrg(session, member.orgId);
+    if (orgErr) return NextResponse.json({ error: orgErr }, { status: 403 });
     const existing: Membership[] = Array.isArray(member.programMemberships)
       ? member.programMemberships
       : [];

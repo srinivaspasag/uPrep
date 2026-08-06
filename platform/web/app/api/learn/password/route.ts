@@ -9,8 +9,6 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 type Body = {
-  userId?: string;
-  email?: string;
   oldPassword?: string;
   newPassword?: string;
 };
@@ -21,7 +19,16 @@ type Body = {
 // are updated directly in Mongo against the server-trusted session — no legacy
 // user-services round-trip. Legacy accounts still proxy to
 // `changeUserPassword` (per-user salt + SYSTEM_SALT hashing).
+//
+// Security fix: the legacy-account fallback used to take userId/email
+// straight from the request body — the *target* account was entirely
+// client-controlled, so the only thing stopping an attacker changing
+// another legacy account's password was that account's own oldPassword
+// (which the legacy service checks, but this route had no business relying
+// on that alone). Both now come from the session/DB, never the client.
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const b = (await req.json().catch(() => ({}))) as Body;
   const oldPassword = b.oldPassword || "";
   const newPassword = b.newPassword || "";
@@ -32,32 +39,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "New password must be at least 6 characters" }, { status: 400 });
 
   // Local-account path: identify the caller from the signed session cookie.
+  let member: any;
   try {
-    const session = await sessionFromReq(req);
-    if (session?.id && ObjectId.isValid(session.id)) {
-      const db = await getDb();
-      const member: any = await db
+    const db = await getDb();
+    if (ObjectId.isValid(session.id)) {
+      member = await db.collection("orgmembers").findOne({ _id: new ObjectId(session.id), recordState: "ACTIVE" });
+    }
+    if (member?.passwordHash) {
+      if (!verifyPassword(oldPassword, member.passwordHash))
+        return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 });
+      await db
         .collection("orgmembers")
-        .findOne({ _id: new ObjectId(session.id), recordState: "ACTIVE" });
-      if (member?.passwordHash) {
-        if (!verifyPassword(oldPassword, member.passwordHash))
-          return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 });
-        await db
-          .collection("orgmembers")
-          .updateOne(
-            { _id: member._id },
-            { $set: { passwordHash: hashPassword(newPassword), lastUpdated: Date.now() } }
-          );
-        return NextResponse.json({ ok: true });
-      }
+        .updateOne(
+          { _id: member._id },
+          { $set: { passwordHash: hashPassword(newPassword), lastUpdated: Date.now() } }
+        );
+      return NextResponse.json({ ok: true });
     }
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Could not change password" }, { status: 500 });
   }
 
-  // Legacy account fallback.
-  const userId = (b.userId || "").trim();
-  const email = (b.email || "").trim();
+  // Legacy account fallback — target account is the session's own account,
+  // resolved server-side (never the client's claimed userId/email).
+  const userId = session.id;
+  const email = (member?.email || "").trim();
   if (!userId || !email)
     return NextResponse.json({ error: "Missing account details" }, { status: 400 });
 

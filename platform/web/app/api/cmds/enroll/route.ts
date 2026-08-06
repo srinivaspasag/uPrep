@@ -65,7 +65,13 @@ export async function GET(req: NextRequest) {
 
 type SaveBody = { memberId?: string; courseIds?: string[] };
 
+// Security fix: this never checked the ACTING staff member's own org at
+// all (only that the target student's requested courses were within that
+// student's org catalog) — a staff session from Org A could enroll/modify
+// a student in Org B, blocked only by the blanket /api/cmds staff gate.
 export async function POST(req: NextRequest) {
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const b = (await req.json().catch(() => ({}))) as SaveBody;
   const memberId = String(b.memberId || "");
   if (!ObjectId.isValid(memberId))
@@ -82,6 +88,8 @@ export async function POST(req: NextRequest) {
       .collection("orgmembers")
       .findOne({ _id: new ObjectId(memberId) });
     if (!member) return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    if (!isSuperAdmin(session.profile, session.isSuperAdmin) && member.orgId !== session.orgId)
+      return NextResponse.json({ error: "That member belongs to another institute" }, { status: 403 });
 
     // A student can only be enrolled in courses in THEIR org's catalog
     // (own + granted). Silently drop anything outside it.
