@@ -16,15 +16,27 @@ export async function GET(req: NextRequest) {
       .find({ orgId } as any)
       .sort({ timeCreated: -1 })
       .toArray();
-    const coupons = (docs as any[]).map((c) => ({
-      id: String(c._id),
-      code: c.code,
-      percentOff: c.percentOff || null,
-      amountOffCents: c.amountOffCents || null,
-      active: c.active !== false,
-      maxRedemptions: c.maxRedemptions ?? null,
-      redeemed: c.redeemed || 0,
-    }));
+    const coupons = (docs as any[]).map((c) => {
+      const validUntilStr = c.validUntil
+        ? c.validUntil instanceof Date
+          ? c.validUntil.toISOString()
+          : typeof c.validUntil === "number"
+          ? new Date(c.validUntil).toISOString()
+          : String(c.validUntil)
+        : null;
+      const isExpired = validUntilStr ? new Date(validUntilStr).getTime() < Date.now() : false;
+      return {
+        id: String(c._id),
+        code: c.code,
+        percentOff: c.percentOff || null,
+        amountOffCents: c.amountOffCents || null,
+        active: c.active !== false,
+        maxRedemptions: c.maxRedemptions ?? null,
+        validUntil: validUntilStr,
+        isExpired,
+        redeemed: c.redeemed || 0,
+      };
+    });
     return NextResponse.json({ coupons, orgId });
   } catch (e: any) {
     return NextResponse.json({ coupons: [], error: e?.message }, { status: 500 });
@@ -36,6 +48,7 @@ type Body = {
   percentOff?: number;
   amountOff?: number;
   maxRedemptions?: number | null;
+  validUntil?: string | null;
   orgId?: string;
 };
 
@@ -49,6 +62,17 @@ export async function POST(req: NextRequest) {
   const amountOffCents = b.amountOff ? Math.max(0, Math.round(b.amountOff * 100)) : 0;
   if (!percentOff && !amountOffCents)
     return NextResponse.json({ error: "Set a percent or amount discount" }, { status: 400 });
+
+  let validUntilIso: string | null = null;
+  if (b.validUntil && b.validUntil.trim()) {
+    const raw = b.validUntil.trim();
+    const dateToParse = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? `${raw}T23:59:59.999Z` : raw;
+    const parsedDate = new Date(dateToParse);
+    if (isNaN(parsedDate.getTime())) {
+      return NextResponse.json({ error: "Invalid validity date" }, { status: 400 });
+    }
+    validUntilIso = parsedDate.toISOString();
+  }
 
   try {
     const db = await getDb();
@@ -65,10 +89,11 @@ export async function POST(req: NextRequest) {
       amountOffCents: amountOffCents || null,
       active: true,
       maxRedemptions: b.maxRedemptions ?? null,
+      validUntil: validUntilIso,
       redeemed: 0,
       timeCreated: now,
     });
-    return NextResponse.json({ id: _id.toHexString(), code });
+    return NextResponse.json({ id: _id.toHexString(), code, validUntil: validUntilIso });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Create failed" }, { status: 500 });
   }

@@ -73,13 +73,20 @@ export async function POST(req: NextRequest) {
     // org. Otherwise the Institute ID / email is resolved across ALL orgs so
     // users don't need to know their org's internal id. If the same Institute
     // ID exists in more than one org it's ambiguous, and we ask for the prefix.
+    const upperMember = memberOrEmail.toUpperCase();
+    const lowerMember = memberOrEmail.toLowerCase();
     let member: any = null;
     if (explicitOrg) {
       member = await db.collection("orgmembers").findOne({
         orgId,
         recordState: "ACTIVE",
         passwordHash: { $exists: true, $ne: null },
-        $or: [{ memberId: memberOrEmail }, { email: lookup }],
+        $or: [
+          { memberId: memberOrEmail },
+          { memberId: upperMember },
+          { memberId: lowerMember },
+          { email: lookup },
+        ],
       });
     } else {
       const matches = await db
@@ -87,7 +94,12 @@ export async function POST(req: NextRequest) {
         .find({
           recordState: "ACTIVE",
           passwordHash: { $exists: true, $ne: null },
-          $or: [{ memberId: memberOrEmail }, { email: lookup }],
+          $or: [
+            { memberId: memberOrEmail },
+            { memberId: upperMember },
+            { memberId: lowerMember },
+            { email: lookup },
+          ],
         })
         .limit(5)
         .toArray();
