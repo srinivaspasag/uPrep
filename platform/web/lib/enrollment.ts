@@ -114,6 +114,34 @@ export async function resolveStudentEnrollment(
   return { enrolledRoots, studentProgramIds, studentSectionIds, programGroups };
 }
 
+// An admin/staff account's Program scope — legacy's real OrgMember.mappings
+// field applies to any profile, not just STUDENT (confirmed by reading the
+// model source: it explicitly lists which fields ARE student-only, and
+// `mappings` isn't one of them; QrPeople.java's mapping-edit actions operate
+// on whatever member is being viewed, not gated by profile). This is the
+// admin-side counterpart to resolveStudentEnrollment.
+//
+// Returns null for an UNRESTRICTED admin — either a super admin (who always
+// operates org/cross-org-wide regardless of any personal mapping) or an
+// admin with no Program assigned at all, which is every admin account that
+// existed before this feature and must keep seeing the whole org exactly as
+// before. Only an admin with at least one real Program assignment gets a
+// non-null list back, which is what actually turns scoping on.
+export async function resolveAdminProgramScope(
+  db: Db,
+  memberId: string,
+  isSuperAdminFlag: boolean
+): Promise<string[] | null> {
+  if (isSuperAdminFlag) return null;
+  if (!ObjectId.isValid(memberId)) return null;
+  const m: any = await db.collection("orgmembers").findOne({ _id: new ObjectId(memberId) });
+  const memberships: Array<{ programId?: string }> = Array.isArray(m?.programMemberships)
+    ? m.programMemberships
+    : [];
+  const ids = Array.from(new Set(memberships.map((mm) => mm.programId).filter(Boolean))) as string[];
+  return ids.length > 0 ? ids : null;
+}
+
 // Staff/super-admin "preview" version — there's no personal enrollment to
 // derive from (see the `staff` branch in app/api/learn/courses/route.ts,
 // which previously left programGroups empty for staff entirely, so the

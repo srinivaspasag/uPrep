@@ -14,7 +14,7 @@ export default function CmdsUploadForm({
   accept,
   hint,
 }: {
-  kind: "document" | "video";
+  kind: "document" | "video" | "book";
   title: string;
   accept: string;
   hint: string;
@@ -210,7 +210,7 @@ export default function CmdsUploadForm({
                   }}
                   className="flex cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-slate-300 py-10 text-center hover:border-emerald-400"
                 >
-                  <div className="text-3xl">{kind === "video" ? "🎬" : "📄"}</div>
+                  <div className="text-3xl">{kind === "video" ? "🎬" : kind === "book" ? "📖" : "📄"}</div>
                   <div className="mt-2 text-sm text-slate-600">
                     {file ? file.name : "Click or drag a file here"}
                   </div>

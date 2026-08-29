@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -91,25 +92,47 @@ private fun DocumentError(message: String, remoteUrl: String, context: android.c
     }
 }
 
+// internal, not private: reused directly by ui.sdcard's local-file document
+// screen (a freshly-decrypted SD-card PDF pages the same way a downloaded
+// one does — this composable only ever needed a plain File).
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun PdfPager(file: File) {
+internal fun PdfPager(file: File) {
     var pageCount by remember { mutableStateOf(0) }
     var renderer by remember { mutableStateOf<PdfRenderer?>(null) }
     var pfd by remember { mutableStateOf<ParcelFileDescriptor?>(null) }
+    // PdfRenderer's constructor throws IOException for anything that isn't a
+    // real, well-formed PDF — found live via a corrupted test file: uncaught,
+    // this crashed the whole app rather than showing an error. A device with
+    // no network can't "just retry" its way out of a bad file on an SD card,
+    // so this needs to degrade to a message, not a crash, same as the
+    // existing DocumentError state above for the network-fetch-failed case.
+    var broken by remember { mutableStateOf(false) }
 
     LaunchedEffect(file) {
         val descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-        val r = PdfRenderer(descriptor)
-        pfd = descriptor
-        renderer = r
-        pageCount = r.pageCount
+        try {
+            val r = PdfRenderer(descriptor)
+            pfd = descriptor
+            renderer = r
+            pageCount = r.pageCount
+        } catch (e: Exception) {
+            descriptor.close()
+            broken = true
+        }
     }
     DisposableEffect(file) {
         onDispose {
             renderer?.close()
             pfd?.close()
         }
+    }
+
+    if (broken) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("This document couldn't be opened — it may be corrupted or incomplete.")
+        }
+        return
     }
 
     val currentRenderer = renderer
@@ -134,7 +157,7 @@ private fun PdfPager(file: File) {
         Text(
             "Page ${pagerState.currentPage + 1} of $pageCount",
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(8.dp),
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )

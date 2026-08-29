@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
+import { getOrCreateGroupKey, ENCRYPTION_INFO } from "@/lib/group-crypto";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -58,10 +59,20 @@ export async function POST(req: NextRequest) {
     }
 
     const group: any = await db.collection(GROUPS_COLL).findOne({ _id: new ObjectId(doc.groupId) } as any);
+
+    // The decryption key for this group's packaged content — see
+    // lib/group-crypto.ts. This is the ONLY place it's ever released, and
+    // only after the device+user binding above has succeeded. A card that's
+    // been copied or handed to someone else still needs a successful verify
+    // with the right email+device to ever decrypt anything on it.
+    const encryptionKey = group ? (await getOrCreateGroupKey(db, String(group._id))).toString("base64") : null;
+
     return NextResponse.json({
       ok: true,
       groupName: group?.name || doc.groupName || "",
       contentIds: Array.isArray(group?.contentIds) ? group.contentIds : [],
+      encryptionKey,
+      encryption: encryptionKey ? ENCRYPTION_INFO : null,
     });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Verification failed" }, { status: 500 });

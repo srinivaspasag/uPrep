@@ -116,8 +116,11 @@ private fun NativeYouTubePlayer(videoId: String) {
     )
 }
 
+// internal, not private: reused directly by ui.sdcard's local-file player
+// screen (a freshly-decrypted SD-card file is played the same way a
+// downloaded one is — this composable only ever needed a URL string).
 @Composable
-private fun DirectPlayer(url: String) {
+internal fun DirectPlayer(url: String) {
     val context = LocalContext.current
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {

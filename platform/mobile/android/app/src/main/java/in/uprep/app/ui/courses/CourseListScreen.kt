@@ -31,6 +31,7 @@ fun CourseListScreen(
     viewModel: CoursesViewModel = viewModel(),
     onOpenCourse: (CourseSummary) -> Unit,
     onOpenDownloads: () -> Unit,
+    onOpenSdCard: () -> Unit,
     onLogout: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -39,6 +40,7 @@ fun CourseListScreen(
         TopAppBar(
             title = { Text("My Courses") },
             actions = {
+                IconButton(onClick = onOpenSdCard) { Text("💾") }
                 IconButton(onClick = onOpenDownloads) { Text("⬇") }
                 IconButton(onClick = onLogout) { Text("⎋") }
             }

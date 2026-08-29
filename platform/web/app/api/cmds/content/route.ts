@@ -121,6 +121,7 @@ export async function GET(req: NextRequest) {
 
     await pull("folders", "FOLDER", () => ({}));
     await pull("documents", "DOCUMENT", () => ({}));
+    await pull("books", "BOOK", () => ({}));
     await pull("videos", "VIDEO", () => ({}));
     await pull("tests", "TEST", (d) => ({ count: d.qusCount ?? 0 }));
     await pull("modules", "MODULE", (d) => ({
@@ -164,6 +165,7 @@ export async function GET(req: NextRequest) {
 const COLL_FOR_TYPE: Record<string, string> = {
   FOLDER: "folders",
   DOCUMENT: "documents",
+  BOOK: "books",
   VIDEO: "videos",
   TEST: "tests",
   MODULE: "modules",

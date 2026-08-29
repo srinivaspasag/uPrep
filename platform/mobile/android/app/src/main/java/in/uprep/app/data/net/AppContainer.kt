@@ -3,7 +3,10 @@ package `in`.uprep.app.data.net
 import android.content.Context
 import `in`.uprep.app.data.api.AuthApi
 import `in`.uprep.app.data.api.LearnApi
+import `in`.uprep.app.data.api.SellerApi
 import `in`.uprep.app.data.download.DownloadRepository
+import `in`.uprep.app.data.sdcard.DeviceIdStore
+import `in`.uprep.app.data.sdcard.SdCardRepository
 import `in`.uprep.app.data.session.CookieStore
 import `in`.uprep.app.data.session.SessionStore
 import okhttp3.OkHttpClient
@@ -34,7 +37,10 @@ class AppContainer(context: Context) {
 
     val authApi: AuthApi = retrofit.create(AuthApi::class.java)
     val learnApi: LearnApi = retrofit.create(LearnApi::class.java)
+    val sellerApi: SellerApi = retrofit.create(SellerApi::class.java)
     val downloadRepository = DownloadRepository(context)
+    val sdCardRepository = SdCardRepository(context)
+    val deviceIdStore = DeviceIdStore(context)
 
     // Absolute URL for a possibly-relative content path (e.g. "/uploads/x.mp4").
     fun absoluteUrl(path: String): String =

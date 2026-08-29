@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Expected multipart form data" }, { status: 400 });
   }
 
-  const kind = String(form.get("kind") || "document").toLowerCase(); // document | video
+  const kind = String(form.get("kind") || "document").toLowerCase(); // document | video | book
   const name = String(form.get("name") || "").trim();
   const subject = String(form.get("subject") || "").trim();
   const userId = String(form.get("userId") || "");
@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
   if (!(file instanceof File) || file.size === 0)
     return NextResponse.json({ error: "A file is required" }, { status: 400 });
 
-  const collection = kind === "video" ? "videos" : "documents";
-  const contentType = kind === "video" ? "VIDEO" : "DOCUMENT";
+  const collection = kind === "video" ? "videos" : kind === "book" ? "books" : "documents";
+  const contentType = kind === "video" ? "VIDEO" : kind === "book" ? "BOOK" : "DOCUMENT";
 
   try {
     const stored = await saveUpload(file);

@@ -732,17 +732,23 @@ function EditMemberModal({
             <Field label="Email" value={email} onChange={setEmail} />
           </div>
         </div>
-        {(memberProfile === "STUDENT" || memberProfile === "TEACHER") && (
-          <div className="mt-3">
-            <MappingPicker
-              programs={programs}
-              centers={centers}
-              sections={sections}
-              mappings={mappings}
-              onChange={setMappings}
-            />
-          </div>
-        )}
+        {/* Legacy's real OrgMember.mappings field (Program/Center/Section) is
+            generic to every profile — its own model comment lists exactly
+            which fields are STUDENT-only (father/mother/guardian/etc.) and
+            mappings isn't one of them; QrPeople.java's mapping-edit actions
+            operate on whatever member is being viewed, not gated to
+            STUDENT/TEACHER. This used to be restricted to those two
+            profiles here, which didn't match legacy — an admin (MANAGER)
+            or any other staff profile can be assigned a Program too. */}
+        <div className="mt-3">
+          <MappingPicker
+            programs={programs}
+            centers={centers}
+            sections={sections}
+            mappings={mappings}
+            onChange={setMappings}
+          />
+        </div>
         {memberProfile === "STUDENT" && (member.enrolledCourseIds || []).length > 0 && (
           <div className="mt-3 rounded border border-amber-200 bg-amber-50 p-3">
             <span className="text-sm font-medium text-amber-800">
@@ -915,18 +921,19 @@ function AddMemberModal({
             />
           </div>
         </div>
-        {(profile === "STUDENT" || profile === "TEACHER") && (
-          <div className="mt-3">
-            <MappingPicker
-              programs={programs}
-              centers={centers}
-              sections={sections}
-              mappings={mappings}
-              onChange={setMappings}
-              initialProgramId={initialProgramId}
-            />
-          </div>
-        )}
+        {/* See the Edit modal's matching comment — legacy's real Program/
+            Center/Section mapping applies to any profile, not just
+            STUDENT/TEACHER. */}
+        <div className="mt-3">
+          <MappingPicker
+            programs={programs}
+            centers={centers}
+            sections={sections}
+            mappings={mappings}
+            onChange={setMappings}
+            initialProgramId={initialProgramId}
+          />
+        </div>
         {error && <div className="mt-3 text-sm text-red-600">{error}</div>}
         <div className="mt-5 flex justify-end gap-2">
           <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100">

@@ -19,6 +19,7 @@ const TOOL_LINKS: ToolLink[] = [
   { label: "Sections & Batches", href: "/cmds/tools/sections" },
   { label: "Schedule a Test", href: "/cmds/tests/schedule" },
   { label: "Test Analytics", href: "/cmds/tests/analytics" },
+  { label: "AI Tutor Review Queue", href: "/cmds/doubts/ai-review" },
   { label: "Subjective Grading", href: "/cmds/tests/grading" },
   { label: "Boards & Courses", href: "/cmds/tools/boards" },
   { label: "Schedule / Classroom", href: "/cmds/tools/schedule" },
