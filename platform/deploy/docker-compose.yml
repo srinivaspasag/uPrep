@@ -52,6 +52,17 @@ services:
       # the real key here; docker compose auto-loads .env from this directory.
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5}
+      # Optional: enables the AI Tutor in the Doubts Forum (open-weight model
+      # via Groq's free-tier API — see app/api/learn/doubts/[id]/ai-answer).
+      # Set via the same ~/uprep/.env file — never commit the real key here.
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_MODEL: ${GROQ_MODEL:-openai/gpt-oss-120b}
+      # Optional: enables real password-reset email delivery (Resend). Unset
+      # means "Forgot Password" only logs + records the link, never sends it.
+      # Set via the same ~/uprep/.env file — never commit the real key here.
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-log}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM: ${RESEND_FROM:-}
     command: bash -lc "npm install --no-audit --no-fund && npm run build && npm start -- -p 3000 -H 0.0.0.0"
     depends_on:
       - mongo

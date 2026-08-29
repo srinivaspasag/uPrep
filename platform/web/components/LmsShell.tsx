@@ -40,7 +40,7 @@ export type LmsNavKey =
 const NAV: { key: LmsNavKey; label: string; href: string; icon: string; active: string; dot: string }[] = [
   { key: "courses", label: "Digital Library", href: "/learn/courses", icon: "📚", active: "bg-blue-50 text-blue-800", dot: "bg-gradient-to-b from-blue-500 to-violet-500" },
   { key: "programs", label: "Programs", href: "/learn/programs", icon: "🎯", active: "bg-emerald-50 text-emerald-800", dot: "bg-gradient-to-b from-emerald-500 to-teal-500" },
-  { key: "doubts", label: "Doubts Forum", href: "/learn/doubts", icon: "💬", active: "bg-rose-50 text-rose-800", dot: "bg-gradient-to-b from-rose-500 to-red-500" },
+  { key: "doubts", label: "Ask Aira", href: "/learn/doubts", icon: "✨", active: "bg-rose-50 text-rose-800", dot: "bg-gradient-to-b from-rose-500 to-red-500" },
   { key: "analytics", label: "Analytics", href: "/learn/analytics", icon: "📊", active: "bg-violet-50 text-violet-800", dot: "bg-gradient-to-b from-violet-500 to-purple-500" },
   { key: "activity", label: "Recent Activity", href: "/learn/activity", icon: "🕒", active: "bg-amber-50 text-amber-800", dot: "bg-gradient-to-b from-amber-500 to-orange-500" },
 ];
@@ -48,9 +48,14 @@ const NAV: { key: LmsNavKey; label: string; href: string; icon: string; active: 
 export default function LmsShell({
   active,
   children,
+  fullWidth,
 }: {
   active: LmsNavKey;
   children: React.ReactNode;
+  // Opt-in for master-detail layouts (e.g. Ask Aira) that need the full
+  // viewport width and manage their own internal padding/panes, instead of
+  // sitting inside the standard 1100px-max, padded content column.
+  fullWidth?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -210,7 +215,7 @@ export default function LmsShell({
         <div className="h-[3px] bg-gradient-to-r from-blue-500 via-violet-500 to-amber-500" />
       </header>
 
-      <div className="mx-auto flex max-w-[1100px]">
+      <div className={`flex ${fullWidth ? "" : "mx-auto max-w-[1100px]"}`}>
         {/* Left sidebar nav */}
         <aside className="w-[220px] shrink-0 border-r border-[#D9D6C9] bg-white py-5">
           {session && (
@@ -246,9 +251,7 @@ export default function LmsShell({
         </aside>
 
         {/* Main content */}
-        <main className="min-h-[calc(100vh-52px)] flex-1 px-8 py-6">
-          {children}
-        </main>
+        <main className={`min-h-[calc(100vh-52px)] flex-1 ${fullWidth ? "" : "px-8 py-6"}`}>{children}</main>
       </div>
     </div>
   );

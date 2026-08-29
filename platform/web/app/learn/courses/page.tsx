@@ -12,6 +12,7 @@ type Course = {
   folderCount: number;
   videoCount: number;
   documentCount: number;
+  bookCount: number;
   testCount: number;
 };
 type ProgramGroup = {
@@ -21,7 +22,15 @@ type ProgramGroup = {
   centerName: string | null;
   sectionName: string | null;
 };
-type Sub = { id: string; name: string; type: "FOLDER"; videoCount: number; documentCount: number; testCount: number };
+type Sub = {
+  id: string;
+  name: string;
+  type: "FOLDER";
+  videoCount: number;
+  documentCount: number;
+  bookCount: number;
+  testCount: number;
+};
 type Item = {
   id: string;
   name: string;
@@ -240,6 +249,9 @@ export default function MyCoursesPage() {
                         {f.documentCount} e-book{f.documentCount === 1 ? "" : "s"}
                       </span>
                       <span>
+                        {f.bookCount} book{f.bookCount === 1 ? "" : "s"}
+                      </span>
+                      <span>
                         {f.testCount} test{f.testCount === 1 ? "" : "s"}
                       </span>
                     </span>
@@ -275,6 +287,7 @@ function CourseCard({ course, onOpen }: { course: Course; onOpen: (crumbs: Crumb
     { label: "Chapters", value: course.chapterCount, icon: "📖" },
     { label: "Videos", value: course.videoCount, icon: "▶️" },
     { label: "E-Books", value: course.documentCount, icon: "📄" },
+    { label: "Books", value: course.bookCount, icon: "📚" },
     { label: "Tests", value: course.testCount, icon: "📝" },
   ];
   return (
@@ -335,6 +348,8 @@ function CourseItemCard({ item }: { item: Item }) {
             ? "bg-rose-100 text-rose-700"
             : item.type === "DOCUMENT"
             ? "bg-amber-100 text-amber-700"
+            : item.type === "BOOK"
+            ? "bg-indigo-100 text-indigo-700"
             : "bg-emerald-100 text-emerald-700"
         }`}
       >
@@ -363,11 +378,12 @@ function CourseItemCard({ item }: { item: Item }) {
         />
       )}
       {item.type === "DOCUMENT" && <div className="mt-2 text-xs text-blue-600">Open document ↗</div>}
+      {item.type === "BOOK" && <div className="mt-2 text-xs text-indigo-600">Open book ↗</div>}
     </div>
   );
 
   if (item.type === "TEST") return <Link href={`/test/${item.id}`}>{inner}</Link>;
-  if (item.type === "DOCUMENT" && item.url)
+  if ((item.type === "DOCUMENT" || item.type === "BOOK") && item.url)
     return (
       <a href={item.url} target="_blank" rel="noreferrer">
         {inner}

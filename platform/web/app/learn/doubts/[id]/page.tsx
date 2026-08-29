@@ -2,23 +2,34 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import LmsShell from "@/components/LmsShell";
-import { getSession, type UprepSession } from "@/lib/session";
-import { subjectAccent } from "@/lib/subjectColors";
+import AnswerText from "@/components/AnswerText";
+import GuidedAnswer, { type AnswerStep } from "@/components/GuidedAnswer";
+import RelatedContent, { AiraRecommendedVideo, type RelatedItem } from "@/components/RelatedContent";
+import { AiraAvatar } from "../layout";
 
-type Answer = { id: string; content: string; userName: string; timeCreated: number };
+type Answer = {
+  id: string;
+  content: string;
+  userName: string;
+  timeCreated: number;
+  isAi?: boolean;
+  steps?: AnswerStep[] | null;
+};
 type Doubt = {
   id: string;
   name: string;
   content: string;
   userName: string;
   subject: string | null;
-  upVotes: number;
   views: number;
   state: string;
   timeCreated: number;
 };
+
+function fullDate(ts: number): string {
+  if (!ts) return "";
+  return new Date(ts).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
+}
 
 function timeAgo(ts: number): string {
   if (!ts) return "";
@@ -29,28 +40,20 @@ function timeAgo(ts: number): string {
   return `${Math.floor(s / 86400)}d ago`;
 }
 
-function Avatar({ name, chip, text }: { name: string; chip: string; text: string }) {
-  return (
-    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${chip} ${text}`}>
-      {(name || "U").charAt(0).toUpperCase()}
-    </span>
-  );
-}
-
-export default function DoubtDetailPage() {
+export default function DoubtConversationPage() {
   const params = useParams();
   const id = String(params.id);
-  const [session, setSession] = useState<UprepSession | null>(null);
   const [doubt, setDoubt] = useState<Doubt | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
+  const [relatedContent, setRelatedContent] = useState<RelatedItem[]>([]);
+  const [aiPending, setAiPending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [recommendedPlaying, setRecommendedPlaying] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const [retryError, setRetryError] = useState<string | null>(null);
   const [reply, setReply] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setSession(getSession());
-  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -58,8 +61,31 @@ export default function DoubtDetailPage() {
     const data = await res.json();
     setDoubt(data.doubt || null);
     setAnswers(data.answers || []);
+    setRelatedContent(data.relatedContent || []);
+    setAiPending(!!data.aiPending);
     setLoading(false);
   }, [id]);
+
+  async function retryAira() {
+    setRetrying(true);
+    setRetryError(null);
+    const res = await fetch(`/api/learn/doubts/${id}/ai-answer`, { method: "POST" });
+    const data = await res.json().catch(() => ({}));
+    setRetrying(false);
+    if (!res.ok) {
+      setRetryError(data.error || "Aira still couldn't answer this one.");
+      return;
+    }
+    if (data.pending) {
+      setAiPending(true);
+    } else {
+      setAnswers((prev) =>
+        prev.some((a) => a.id === data.id)
+          ? prev
+          : [...prev, { id: data.id, content: data.content, userName: data.userName, timeCreated: data.timeCreated, isAi: true, steps: data.steps || null }]
+      );
+    }
+  }
 
   useEffect(() => {
     load();
@@ -72,16 +98,12 @@ export default function DoubtDetailPage() {
     const res = await fetch(`/api/learn/doubts/${id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: reply.trim(),
-        userId: session?.id,
-        userName: [session?.firstName, session?.lastName].filter(Boolean).join(" ") || "Member",
-      }),
+      body: JSON.stringify({ content: reply.trim() }),
     });
     setSaving(false);
     if (!res.ok) {
       const d = await res.json().catch(() => ({}));
-      setError(d.error || "Could not post your answer.");
+      setError(d.error || "Could not post your reply.");
       return;
     }
     const created = await res.json();
@@ -89,98 +111,135 @@ export default function DoubtDetailPage() {
     setReply("");
   }
 
-  const accent = subjectAccent(doubt?.subject || "");
+  if (loading) {
+    return <div className="flex h-full items-center justify-center text-sm text-[#8890A1]">Loading…</div>;
+  }
+  if (!doubt) {
+    return <div className="flex h-full items-center justify-center text-sm text-[#8890A1]">This doubt could not be found.</div>;
+  }
+
+  const aiAnswer = answers.find((a) => a.isAi);
+  const humanAnswers = answers.filter((a) => !a.isAi);
+  const isGuided = !!aiAnswer?.steps && aiAnswer.steps.length > 1;
+  // Only Guided answers get the explicit "Aira recommends" callout — a
+  // single real video pulled from the same grounded relatedContentFor()
+  // lookup as the strip below, not generated by the model. Pulled out of
+  // the strip so it isn't shown twice.
+  const recommendedVideo = isGuided ? relatedContent.find((i) => i.type === "VIDEO") : null;
+  const remainingContent = recommendedVideo ? relatedContent.filter((i) => i.id !== recommendedVideo.id) : relatedContent;
 
   return (
-    <LmsShell active="doubts">
-      <Link href="/learn/doubts" className="inline-flex items-center gap-1 text-sm text-[#8890A1] hover:text-amber-700">
-        ← Back to Doubts Forum
-      </Link>
+    <div className="flex h-full flex-col">
+      <div className="flex-1 overflow-y-auto px-6 py-6 sm:px-10">
+        <div className="mx-auto max-w-2xl">
+          <div className="text-center text-xs text-[#8890A1]">{fullDate(doubt.timeCreated)}</div>
 
-      {loading ? (
-        <div className="py-16 text-center text-sm text-[#8890A1]">Loading…</div>
-      ) : !doubt ? (
-        <div className="py-16 text-center text-sm text-[#8890A1]">This doubt could not be found.</div>
-      ) : (
-        <>
-          <div className="relative mt-4 overflow-hidden rounded-2xl border border-[#D9D6C9] bg-white p-5 pl-6 sm:p-6 sm:pl-7">
-            <span className={`absolute left-0 top-0 h-full w-1.5 ${accent.dot}`} />
-            <div className="flex items-start gap-3">
-              <Avatar name={doubt.userName} chip={accent.chip} text={accent.text} />
-              <div className="min-w-0 flex-1">
-                <h1 className="font-serif text-xl font-semibold text-[#16233D]">{doubt.name}</h1>
-                {doubt.content && (
-                  <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-[#3E4A63]">{doubt.content}</p>
-                )}
-                <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[#8890A1]">
-                  <span className="font-medium text-[#3E4A63]">Asked by {doubt.userName}</span>
-                  <span>·</span>
-                  <span>{timeAgo(doubt.timeCreated)}</span>
-                  <span>·</span>
-                  <span>{doubt.views} views</span>
-                  {doubt.subject && (
-                    <span className={`rounded-full px-2 py-0.5 font-medium ${accent.chip} ${accent.text}`}>
-                      {doubt.subject}
-                    </span>
-                  )}
-                  <span
-                    className={`rounded-full px-2 py-0.5 font-medium ${
-                      doubt.state === "ANSWERED" ? "bg-emerald-50 text-emerald-700" : "bg-[#EDEEE9] text-[#8890A1]"
-                    }`}
-                  >
-                    {doubt.state === "ANSWERED" ? "Answered" : "Open"}
-                  </span>
-                </div>
+          {/* Question, as a chat bubble on the right — this is "your message". */}
+          <div className="mt-4 flex justify-end">
+            <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-[#16233D] px-4 py-3 text-sm text-white">
+              <div className="font-medium">{doubt.name}</div>
+              {doubt.content && <div className="mt-1 whitespace-pre-wrap text-white/80">{doubt.content}</div>}
+            </div>
+          </div>
+          {doubt.subject && <div className="mt-1.5 text-right text-[11px] text-[#8890A1]">{doubt.subject}</div>}
+
+          {/* Aira's reply. */}
+          <div className="mt-5 flex items-start gap-2.5">
+            <AiraAvatar />
+            <div className="min-w-0 flex-1 rounded-2xl rounded-tl-sm bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-[#16233D]">Aira</span>
+                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700">
+                  AI · verify with your teacher
+                </span>
               </div>
-            </div>
-          </div>
-
-          <h2 className="mt-7 font-serif text-base font-semibold text-[#16233D]">
-            {answers.length} {answers.length === 1 ? "Answer" : "Answers"}
-          </h2>
-
-          <ul className="mt-3 space-y-3">
-            {answers.map((a) => (
-              <li key={a.id} className="flex items-start gap-3 rounded-xl border border-[#D9D6C9] bg-white p-4">
-                <Avatar name={a.userName} chip="bg-[#EDEEE9]" text="text-[#3E4A63]" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium text-[#16233D]">{a.userName}</span>
-                    <span className="text-xs text-[#8890A1]">{timeAgo(a.timeCreated)}</span>
+              {aiAnswer ? (
+                isGuided ? (
+                  <div className="mt-2">
+                    <GuidedAnswer steps={aiAnswer.steps!} />
+                    {recommendedVideo && (
+                      <AiraRecommendedVideo
+                        item={recommendedVideo}
+                        playing={recommendedPlaying}
+                        onPlay={() => setRecommendedPlaying(true)}
+                      />
+                    )}
                   </div>
-                  <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-[#3E4A63]">{a.content}</p>
+                ) : (
+                  <AnswerText className="mt-2 text-sm leading-relaxed text-[#3E4A63]">
+                    {aiAnswer.steps?.[0]?.body || aiAnswer.content}
+                  </AnswerText>
+                )
+              ) : aiPending ? (
+                <p className="mt-2 text-sm text-[#8890A1]">
+                  Aira wasn't confident enough to answer this one directly — it's been sent to a teacher to take a
+                  look. Check back soon, or a teacher may reply below in the meantime.
+                </p>
+              ) : (
+                <div className="mt-2">
+                  <p className="text-sm text-[#8890A1]">Aira had trouble answering this one — worth trying again.</p>
+                  <button
+                    onClick={retryAira}
+                    disabled={retrying}
+                    className="mt-2 rounded-lg border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800 transition hover:bg-blue-100 disabled:opacity-60"
+                  >
+                    {retrying ? "Asking Aira…" : "Try again"}
+                  </button>
+                  {retryError && <p className="mt-1.5 text-xs text-red-500">{retryError}</p>}
                 </div>
-              </li>
-            ))}
-            {answers.length === 0 && (
-              <li className="rounded-xl border border-dashed border-[#D9D6C9] bg-white py-8 text-center text-sm text-[#8890A1]">
-                No answers yet. Be the first to help!
-              </li>
-            )}
-          </ul>
-
-          <div className="mt-6 rounded-2xl border border-[#D9D6C9] bg-white p-5">
-            <label className="text-sm font-medium text-[#3E4A63]">Your answer</label>
-            <textarea
-              value={reply}
-              onChange={(e) => setReply(e.target.value)}
-              rows={3}
-              placeholder="Write a helpful answer…"
-              className="mt-1.5 w-full rounded-lg border border-[#D9D6C9] px-3 py-2.5 text-sm text-[#16233D] outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
-            />
-            {error && <div className="mt-2 text-sm text-red-500">{error}</div>}
-            <div className="mt-3 flex justify-end">
-              <button
-                onClick={postAnswer}
-                disabled={saving || !reply.trim()}
-                className="rounded-lg bg-[#e8443b] px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-900/10 transition hover:bg-[#d33c34] disabled:opacity-60"
-              >
-                {saving ? "Posting…" : "Post Answer"}
-              </button>
+              )}
+              <RelatedContent items={remainingContent} />
             </div>
           </div>
-        </>
-      )}
-    </LmsShell>
+
+          {/* Human/teacher replies, if any. */}
+          {humanAnswers.length > 0 && (
+            <div className="mt-5 space-y-3">
+              {humanAnswers.map((a) => (
+                <div key={a.id} className="flex items-start gap-2.5">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#EDEEE9] text-xs font-semibold text-[#3E4A63]">
+                    {(a.userName || "U").charAt(0).toUpperCase()}
+                  </span>
+                  <div className="min-w-0 flex-1 rounded-2xl rounded-tl-sm bg-white p-4 shadow-sm">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="font-semibold text-[#16233D]">{a.userName}</span>
+                      <span className="text-xs text-[#8890A1]">{timeAgo(a.timeCreated)}</span>
+                    </div>
+                    <AnswerText className="mt-1 text-sm leading-relaxed text-[#3E4A63]">{a.content}</AnswerText>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Follow-up composer, pinned to the bottom of the pane. */}
+      <div className="border-t border-[#D9D6C9] bg-white px-6 py-4 sm:px-10">
+        <div className="mx-auto flex max-w-2xl items-end gap-2">
+          <textarea
+            value={reply}
+            onChange={(e) => setReply(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                postAnswer();
+              }
+            }}
+            rows={1}
+            placeholder="Ask a follow-up or add a reply…"
+            className="max-h-32 flex-1 resize-none rounded-2xl border border-[#D9D6C9] px-4 py-2.5 text-sm text-[#16233D] outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+          />
+          <button
+            onClick={postAnswer}
+            disabled={saving || !reply.trim()}
+            className="shrink-0 rounded-full bg-[#e8443b] px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-900/10 transition hover:bg-[#d33c34] disabled:opacity-60"
+          >
+            {saving ? "…" : "Send"}
+          </button>
+        </div>
+        {error && <div className="mx-auto mt-2 max-w-2xl text-sm text-red-500">{error}</div>}
+      </div>
+    </div>
   );
 }

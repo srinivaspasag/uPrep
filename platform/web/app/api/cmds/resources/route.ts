@@ -34,10 +34,38 @@ export async function GET(req: NextRequest) {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
+  const countOnly = req.nextUrl.searchParams.get("count") === "1";
 
   try {
     const db = await getDb();
     const filter: Record<string, any> = { "contentSrc.id": orgId, recordState: "ACTIVE" };
+
+    // Listing below caps at 200 for UI display; bulk-import tooling needs a
+    // real total (a chapter can legitimately exceed 200 questions), so this
+    // mode skips the listing/enrichment entirely and just counts.
+    if (countOnly && kind === "question") {
+      const qFilter = boardIds.length ? { ...filter, boardIds: { $in: boardIds } } : filter;
+      const count = await db.collection("cmdsquestions").countDocuments(qFilter);
+      return NextResponse.json({ count });
+    }
+
+    const dump = req.nextUrl.searchParams.get("dump") === "1";
+    if (dump && kind === "question") {
+      const qFilter = boardIds.length ? { ...filter, boardIds: { $in: boardIds } } : filter;
+      const docs = await db
+        .collection("cmdsquestions")
+        .find(qFilter)
+        .sort({ lastUpdated: 1 })
+        .limit(2000)
+        .toArray();
+      return NextResponse.json({
+        items: (docs as any[]).map((d) => ({
+          id: String(d._id),
+          text: stripHtml(d.questionBody?.newText),
+          lastUpdated: d.lastUpdated,
+        })),
+      });
+    }
 
     const out: {
       questions: any[];
@@ -122,5 +150,28 @@ export async function GET(req: NextRequest) {
       { questions: [], tests: [], modules: [], error: e?.message || "Failed to load CMDS resources" },
       { status: 500 }
     );
+  }
+}
+
+// One-off restore for a soft-deleted (recordState: INACTIVE) unpublished
+// question — undoes the same soft-delete the DELETE handler in
+// app/api/cmds/questions/route.ts performs, for correcting a bad bulk
+// dedupe run rather than day-to-day use.
+export async function POST(req: NextRequest) {
+  const { ObjectId } = await import("mongodb");
+  const body = (await req.json().catch(() => ({}))) as { restoreId?: string };
+  const id = body.restoreId || "";
+  if (!id || !ObjectId.isValid(id)) {
+    return NextResponse.json({ error: "A valid restoreId is required" }, { status: 400 });
+  }
+  try {
+    const db = await getDb();
+    const oid = new ObjectId(id);
+    const cq = await db.collection("cmdsquestions").findOne({ _id: oid });
+    if (!cq) return NextResponse.json({ error: "Question not found" }, { status: 404 });
+    await db.collection("cmdsquestions").updateOne({ _id: oid }, { $set: { recordState: "ACTIVE", lastUpdated: Date.now() } });
+    return NextResponse.json({ ok: true });
+  } catch (e: any) {
+    return NextResponse.json({ error: e?.message || "Failed to restore" }, { status: 500 });
   }
 }

@@ -5,6 +5,7 @@ import { DEFAULT_ORG_ID } from "@/lib/config";
 import { hashPassword, generatePassword } from "@/lib/password";
 import { sessionFromReq } from "@/lib/server-session";
 import { isSuperAdmin } from "@/lib/roles";
+import { resolveAdminProgramScope } from "@/lib/enrollment";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -55,12 +56,27 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = await getDb();
+    const session = await sessionFromReq(req);
+    const adminScope = session
+      ? await resolveAdminProgramScope(db, session.id, !!session.isSuperAdmin)
+      : null;
+
     const filter: Record<string, unknown> = { orgId, recordState: "ACTIVE" };
     if (profile && profile !== "ALL") filter.profile = profile;
     // Scoped to one Program's roster (e.g. the Program detail page's
     // Members/Students tabs) — without this every org member showed up
     // under every program regardless of actual assignment.
     if (programId) filter["programMemberships.programId"] = programId;
+    // A program-scoped admin (one with a Program assigned to their own
+    // account — see People Management's mapping picker) only ever sees
+    // members within their own assigned program(s), regardless of what
+    // ?programId= a client request asks for. An unscoped admin (no
+    // assignment, or a super admin) is unaffected.
+    if (adminScope) {
+      filter["programMemberships.programId"] = programId && adminScope.includes(programId)
+        ? programId
+        : { $in: adminScope };
+    }
 
     const docs = await db
       .collection("orgmembers")
@@ -100,9 +116,14 @@ export async function GET(req: NextRequest) {
         `${m.firstName} ${m.lastName} ${m.memberId} ${m.email}`.toLowerCase().includes(query)
       );
 
-    // Counts per profile for the selector badges.
+    // Counts per profile for the selector badges — scoped the same way as
+    // `members` above, so a program-scoped admin's badge counts and
+    // "Students by Program" pills only ever reflect their own program(s),
+    // not the whole org.
     const counts: Record<string, number> = {};
-    const all = await db.collection("orgmembers").find({ orgId, recordState: "ACTIVE" }).toArray();
+    const countsFilter: Record<string, unknown> = { orgId, recordState: "ACTIVE" };
+    if (adminScope) countsFilter["programMemberships.programId"] = { $in: adminScope };
+    const all = await db.collection("orgmembers").find(countsFilter).toArray();
     for (const m of all as any[]) counts[m.profile || "UNKNOWN"] = (counts[m.profile || "UNKNOWN"] || 0) + 1;
 
     // Students per program (independent of the search box / result cap above,

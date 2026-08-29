@@ -3,25 +3,20 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { sessionFromReq } from "@/lib/server-session";
+import { ensureAiAnswer, type AnswerMode } from "@/lib/aiTutor";
 
 export const dynamic = "force-dynamic";
 
-// Doubts Forum — backed by the legacy `discussions` collection (contentType
-// DISCUSSION). Answers live in `comments` keyed by the discussion id. This
-// mirrors the legacy DiscussionsService data model closely enough to interop.
-//
-// Security fix: the "asked by me" tab used to filter by a client-supplied
-// ?userId=, letting anyone list another student's doubts by id. The general
-// browse list is intentionally public (it's a forum); only the "asked"
-// filter is identity-sensitive, so that alone is now derived from the
-// session (silently empty if not logged in, matching prior no-userId
-// behavior) rather than gating the whole read.
+// Doubts are private per-student ("My Doubts" + Aira, not a public forum) —
+// backed by the same legacy `discussions`/`comments` collections as before,
+// just always scoped to the caller's own session rather than browsable by
+// tab. See app/learn/doubts/layout.tsx for the list UI this feeds.
 export async function GET(req: NextRequest) {
-  const sp = req.nextUrl.searchParams;
-  const orgId = sp.get("orgId") || DEFAULT_ORG_ID;
-  const tab = (sp.get("tab") || "recent").toLowerCase();
   const session = await sessionFromReq(req);
-  const userId = session?.id || "";
+  if (!session) return NextResponse.json({ error: "Not authenticated", items: [] }, { status: 401 });
+
+  const sp = req.nextUrl.searchParams;
+  const state = (sp.get("state") || "").toLowerCase(); // "open" | "resolved" | "" (all)
   const q = (sp.get("q") || "").trim();
 
   try {
@@ -29,36 +24,30 @@ export async function GET(req: NextRequest) {
     const filter: Record<string, unknown> = {
       contentType: "DISCUSSION",
       recordState: "ACTIVE",
-      "contentSrc.id": orgId,
+      userId: session.id,
     };
-    if (tab === "asked" && userId) filter.userId = userId;
+    if (state === "open") filter.state = { $ne: "ANSWERED" };
+    if (state === "resolved") filter.state = "ANSWERED";
     if (q) filter.name = { $regex: q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" };
-
-    const sort: Record<string, 1 | -1> =
-      tab === "popular" ? { upVotes: -1, comments: -1, timeCreated: -1 } : { timeCreated: -1 };
 
     const docs = await db
       .collection("discussions")
       .find(filter)
-      .sort(sort)
-      .limit(100)
+      .sort({ timeCreated: -1 })
+      .limit(200)
       .toArray();
 
     const items = (docs as any[]).map((d) => ({
       id: String(d._id),
       name: d.name || "(untitled doubt)",
       content: d.content || "",
-      userId: d.userId || null,
-      userName: d.userName || "Student",
       subject: d.subject || null,
       answerCount: d.comments ?? 0,
-      upVotes: d.upVotes ?? 0,
-      views: d.views ?? 0,
       state: d.state || "UNASSIGNED",
       timeCreated: d.timeCreated ?? 0,
     }));
 
-    return NextResponse.json({ items, tab, orgId });
+    return NextResponse.json({ items });
   } catch (e: any) {
     return NextResponse.json({ items: [], error: e?.message || "Failed to load doubts" }, { status: 500 });
   }
@@ -69,11 +58,15 @@ type CreateBody = {
   content?: string;
   subject?: string;
   boardIds?: string[];
+  mode?: AnswerMode;
 };
 
-// Security fix: userId/userName/orgId used to come straight from the
-// request body, so anyone could post a doubt that displays as authored by
-// another user. Author identity now comes only from the session.
+const VALID_MODES: AnswerMode[] = ["detailed", "short", "guided"];
+
+// Security fix (kept from before this rewrite): userId/userName/orgId used
+// to come straight from the request body, so anyone could post a doubt
+// that displays as authored by another user. Author identity only ever
+// comes from the session.
 export async function POST(req: NextRequest) {
   const session = await sessionFromReq(req);
   if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -110,6 +103,15 @@ export async function POST(req: NextRequest) {
       timeCreated: now,
       lastUpdated: now,
     });
+
+    // Aira answers every new doubt automatically — awaited so the doubt
+    // already has (or has attempted) an answer by the time the client
+    // navigates to it, rather than showing a blank thread that only fills
+    // in on a later refetch. Never blocks/fails doubt creation itself —
+    // ensureAiAnswer swallows its own errors.
+    const mode = VALID_MODES.includes(b.mode as AnswerMode) ? (b.mode as AnswerMode) : "guided";
+    await ensureAiAnswer(db, _id.toHexString(), mode);
+
     return NextResponse.json({ id: _id.toHexString(), name });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed to post doubt" }, { status: 500 });

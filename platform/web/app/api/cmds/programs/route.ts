@@ -3,17 +3,32 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { resolveOrgId } from "@/lib/org-scope";
+import { sessionFromReq } from "@/lib/server-session";
+import { resolveAdminProgramScope } from "@/lib/enrollment";
 
 export const dynamic = "force-dynamic";
 
 // List programs (with per-program section counts) and create new ones.
+//
+// Program-scoped admins: an admin with a Program assigned to them (see
+// People Management's Program/Center/Section picker, now available for any
+// staff profile) only sees that program here — everyone else (no
+// assignment, or a super admin) sees the whole org's programs, unchanged.
 export async function GET(req: NextRequest) {
   const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
   try {
     const db = await getDb();
+    const session = await sessionFromReq(req);
+    const scopeIds = session
+      ? await resolveAdminProgramScope(db, session.id, !!session.isSuperAdmin)
+      : null;
+
+    const filter: Record<string, unknown> = { orgId, recordState: "ACTIVE" };
+    if (scopeIds) filter._id = { $in: scopeIds.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id)) };
+
     const docs = await db
       .collection("orgprograms")
-      .find({ orgId, recordState: "ACTIVE" })
+      .find(filter)
       .sort({ lastUpdated: -1 })
       .toArray();
     const sections = await db.collection("orgsections").find({ orgId, recordState: "ACTIVE" }).toArray();

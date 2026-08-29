@@ -103,6 +103,11 @@ dependencies {
     // Image loading (course/content thumbnails).
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // SD-card offline reader: browsing a removable card's folder (Storage
+    // Access Framework) needs DocumentFile — plain java.io.File paths aren't
+    // reliably usable for external/removable storage past Android 10.
+    implementation("androidx.documentfile:documentfile:1.0.1")
+
     // Offline downloads: background work + local persistence + encrypted storage.
     implementation("androidx.work:work-runtime-ktx:2.9.1")
     implementation("androidx.room:room-runtime:2.6.1")

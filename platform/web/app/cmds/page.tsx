@@ -36,19 +36,21 @@ const TYPE_ICON: Record<string, string> = {
   TEST: "📕",
   MODULE: "🟩",
   QUESTION_SET: "🟦",
+  BOOK: "📖",
 };
 
 const ADD_MENU: { icon: string; label: string; action: string }[] = [
   { icon: "📁", label: "Add a Folder", action: "folder" },
   { icon: "🗂️", label: "Add a Session", action: "session" },
   { icon: "📄", label: "Add a Document", action: "/cmds/documents/new" },
+  { icon: "📖", label: "Add a Book", action: "/cmds/books/new" },
   { icon: "🟦", label: "Add a Question Set", action: "/cmds/questions/set/new" },
   { icon: "📕", label: "Add a Test", action: "/cmds/tests/new" },
   { icon: "🎬", label: "Add a Video", action: "/cmds/videos/new" },
   { icon: "🟩", label: "Create a Module", action: "/cmds/modules/new" },
 ];
 
-const FILTERS = ["All Resources", "FOLDER", "DOCUMENT", "VIDEO", "TEST", "MODULE", "QUESTION_SET"];
+const FILTERS = ["All Resources", "FOLDER", "DOCUMENT", "VIDEO", "TEST", "MODULE", "QUESTION_SET", "BOOK"];
 
 export default function CmdsResourcesPage() {
   const router = useRouter();
@@ -367,6 +369,12 @@ export default function CmdsResourcesPage() {
               className="rounded border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
             >
               📚 Question Bank
+            </Link>
+            <Link
+              href="/cmds/books"
+              className="rounded border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
+            >
+              📖 Books
             </Link>
             <div className="relative" ref={addRef}>
               <button
@@ -1223,6 +1231,7 @@ function label(type: string): string {
     TEST: "Test",
     MODULE: "Module",
     QUESTION_SET: "Question Set",
+    BOOK: "Book",
   };
   return m[type] || type;
 }

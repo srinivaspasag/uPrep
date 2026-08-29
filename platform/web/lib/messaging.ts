@@ -7,8 +7,9 @@ import { getDb } from "@/lib/mongo";
 // keeps working with no credentials (messages are persisted + logged).
 //
 // Providers (per channel), selected by env:
-//   EMAIL_PROVIDER / SMS_PROVIDER = "log" (default) | "webhook"
+//   EMAIL_PROVIDER / SMS_PROVIDER = "log" (default) | "webhook" | "resend" (email only)
 //   NOTIFY_WEBHOOK_URL  -> POST { channel, to, subject, text } for real delivery
+//   RESEND_API_KEY / RESEND_FROM -> native Resend delivery for EMAIL_PROVIDER=resend
 // A relay behind NOTIFY_WEBHOOK_URL (SendGrid/SES/Twilio/etc.) turns these into
 // actual emails/texts without changing app code.
 
@@ -70,11 +71,37 @@ async function viaWebhook(msg: OutboundMessage): Promise<DispatchResult> {
   }
 }
 
+// Native Resend delivery — no relay needed. RESEND_FROM defaults to Resend's
+// shared test sender, which delivers without any domain verification (fine
+// for low-volume transactional mail like password resets; verify a custom
+// domain in Resend and set RESEND_FROM to move off it later).
+async function viaResend(msg: OutboundMessage): Promise<DispatchResult> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return { ok: false, delivered: false, provider: "resend", error: "RESEND_API_KEY not set" };
+  const from = process.env.RESEND_FROM || "UPrep <onboarding@resend.dev>";
+  try {
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({ from, to: [msg.to], subject: msg.subject || "UPrep", text: msg.text }),
+    });
+    if (!r.ok) {
+      const body = await r.text().catch(() => "");
+      return { ok: false, delivered: false, provider: "resend", error: `HTTP ${r.status}: ${body.slice(0, 200)}` };
+    }
+    return { ok: true, delivered: true, provider: "resend" };
+  } catch (e: any) {
+    return { ok: false, delivered: false, provider: "resend", error: e?.message || "resend request failed" };
+  }
+}
+
 export async function dispatch(msg: OutboundMessage): Promise<DispatchResult> {
   const provider = providerFor(msg.channel);
   let res: DispatchResult;
   if (provider === "webhook") {
     res = await viaWebhook(msg);
+  } else if (provider === "resend" && msg.channel === "email") {
+    res = await viaResend(msg);
   } else {
     // "log" provider: persisted + logged, not actually delivered. Keeps dev/demo
     // flows (password reset links, notifications) working with zero config.
