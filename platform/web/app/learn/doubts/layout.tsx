@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import LmsShell from "@/components/LmsShell";
@@ -174,6 +174,49 @@ function AskDoubtModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Voice input for the question field — same pattern as the follow-up
+  // composer in [id]/page.tsx.
+  const [isListening, setIsListening] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    const SpeechRecognitionCtor =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) return;
+
+    const recognition = new SpeechRecognitionCtor();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = "en-IN";
+    recognition.onresult = (event: any) => {
+      let transcript = "";
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      setName(transcript);
+    };
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    setVoiceSupported(true);
+
+    return () => recognition.abort();
+  }, []);
+
+  function toggleListening() {
+    const recognition = recognitionRef.current;
+    if (!recognition) return;
+    if (isListening) {
+      recognition.stop();
+    } else {
+      setName("");
+      recognition.start();
+      setIsListening(true);
+    }
+  }
+
   async function submit() {
     if (!name.trim()) {
       setError("Please enter your question.");
@@ -223,13 +266,34 @@ function AskDoubtModal({
         </div>
 
         <label className="mt-5 block text-sm font-medium text-[#3E4A63]">Your question</label>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. How do I find the derivative of sin(x²)?"
-          className="mt-1.5 w-full rounded-lg border border-[#D9D6C9] px-3 py-2.5 text-sm text-[#16233D] outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
-          autoFocus
-        />
+        <div className="relative mt-1.5">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={isListening ? "Listening…" : "e.g. How do I find the derivative of sin(x²)?"}
+            className="w-full rounded-lg border border-[#D9D6C9] px-3 py-2.5 pr-10 text-sm text-[#16233D] outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+            autoFocus
+          />
+          {voiceSupported && (
+            <button
+              type="button"
+              onClick={toggleListening}
+              title={isListening ? "Stop listening" : "Ask by voice"}
+              className={`absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition ${
+                isListening
+                  ? "animate-pulse bg-red-500 text-white"
+                  : "text-[#8890A1] hover:bg-[#EDEEE9] hover:text-[#3E4A63]"
+              }`}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </button>
+          )}
+        </div>
 
         <label className="mt-4 block text-sm font-medium text-[#3E4A63]">Answer style</label>
         <div className="mt-1.5 grid grid-cols-3 gap-2">

@@ -18,6 +18,7 @@ export type Coupon = {
   amountOffCents?: number;
   active: boolean;
   maxRedemptions?: number | null;
+  validUntil?: string | number | Date | null;
   redeemed: number;
 };
 
@@ -27,14 +28,21 @@ export async function applyCoupon(
   orgId: string,
   priceCents: number,
   code?: string | null
-): Promise<{ finalCents: number; coupon: any | null; discountCents: number }> {
+): Promise<{ finalCents: number; coupon: any | null; discountCents: number; error?: string }> {
   if (!code) return { finalCents: priceCents, coupon: null, discountCents: 0 };
   const coupon: any = await db
     .collection(COUPONS_COLL)
     .findOne({ orgId, code: code.trim().toUpperCase(), active: true } as any);
-  if (!coupon) return { finalCents: priceCents, coupon: null, discountCents: 0 };
+  if (!coupon) return { finalCents: priceCents, coupon: null, discountCents: 0, error: "Invalid coupon code" };
+
+  if (coupon.validUntil) {
+    const expiry = new Date(coupon.validUntil).getTime();
+    if (!isNaN(expiry) && Date.now() > expiry)
+      return { finalCents: priceCents, coupon: null, discountCents: 0, error: "Coupon code has expired" };
+  }
+
   if (coupon.maxRedemptions != null && (coupon.redeemed || 0) >= coupon.maxRedemptions)
-    return { finalCents: priceCents, coupon: null, discountCents: 0 };
+    return { finalCents: priceCents, coupon: null, discountCents: 0, error: "Coupon usage limit reached" };
 
   let discount = 0;
   if (coupon.percentOff) discount = Math.round((priceCents * coupon.percentOff) / 100);

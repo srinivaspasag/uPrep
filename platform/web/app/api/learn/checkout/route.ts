@@ -68,12 +68,27 @@ export async function POST(req: NextRequest) {
     if (product.orgId !== session.orgId)
       return NextResponse.json({ error: "Product not available for your institute" }, { status: 403 });
 
-    const { finalCents, coupon, discountCents } = await applyCoupon(
-      db,
-      session.orgId,
-      product.priceCents,
-      b.couponCode
-    );
+    const userCouponCode = (b.couponCode || "").trim();
+    let couponResult: { finalCents: number; coupon: any | null; discountCents: number; error?: string } = {
+      finalCents: product.priceCents,
+      coupon: null,
+      discountCents: 0,
+    };
+    if (userCouponCode) {
+      couponResult = await applyCoupon(
+        db,
+        session.orgId,
+        product.priceCents,
+        userCouponCode
+      );
+      if (!couponResult.coupon) {
+        return NextResponse.json(
+          { error: couponResult.error || "Invalid or expired coupon code" },
+          { status: 400 }
+        );
+      }
+    }
+    const { finalCents, coupon, discountCents } = couponResult;
 
     const now = Date.now();
     const _id = new ObjectId();

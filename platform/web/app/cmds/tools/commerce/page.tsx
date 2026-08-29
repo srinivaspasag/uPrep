@@ -13,6 +13,8 @@ type Coupon = {
   amountOffCents: number | null;
   active: boolean;
   maxRedemptions: number | null;
+  validUntil: string | null;
+  isExpired?: boolean;
   redeemed: number;
 };
 type Invoice = {
@@ -184,6 +186,7 @@ function Coupons() {
   const [code, setCode] = useState("");
   const [percentOff, setPercentOff] = useState("");
   const [amountOff, setAmountOff] = useState("");
+  const [validUntil, setValidUntil] = useState("");
   const [error, setError] = useState("");
 
   async function load() {
@@ -203,6 +206,7 @@ function Coupons() {
         code,
         percentOff: percentOff ? Number(percentOff) : undefined,
         amountOff: amountOff ? Number(amountOff) : undefined,
+        validUntil: validUntil || undefined,
       }),
     });
     const d = await res.json().catch(() => ({}));
@@ -210,6 +214,7 @@ function Coupons() {
     setCode("");
     setPercentOff("");
     setAmountOff("");
+    setValidUntil("");
     load();
   }
 
@@ -226,7 +231,8 @@ function Coupons() {
           <input
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
-            className="w-40 rounded border border-slate-300 px-2 py-1.5 font-mono text-sm"
+            placeholder="e.g. SUMMER50"
+            className="w-36 rounded border border-slate-300 px-2 py-1.5 font-mono text-sm uppercase"
           />
         </label>
         <label className="text-sm">
@@ -235,7 +241,7 @@ function Coupons() {
             type="number"
             value={percentOff}
             onChange={(e) => setPercentOff(e.target.value)}
-            className="w-24 rounded border border-slate-300 px-2 py-1.5 text-sm"
+            className="w-20 rounded border border-slate-300 px-2 py-1.5 text-sm"
           />
         </label>
         <label className="text-sm">
@@ -244,7 +250,16 @@ function Coupons() {
             type="number"
             value={amountOff}
             onChange={(e) => setAmountOff(e.target.value)}
-            className="w-24 rounded border border-slate-300 px-2 py-1.5 text-sm"
+            className="w-20 rounded border border-slate-300 px-2 py-1.5 text-sm"
+          />
+        </label>
+        <label className="text-sm">
+          <span className="mb-1 block text-slate-600">Valid until</span>
+          <input
+            type="date"
+            value={validUntil}
+            onChange={(e) => setValidUntil(e.target.value)}
+            className="w-36 rounded border border-slate-300 px-2 py-1.5 text-sm"
           />
         </label>
         <button
@@ -261,30 +276,68 @@ function Coupons() {
           <tr className="border-b border-slate-200 text-left text-xs uppercase text-slate-500">
             <th className="px-3 py-2">Code</th>
             <th className="px-3 py-2">Discount</th>
+            <th className="px-3 py-2">Validity</th>
             <th className="px-3 py-2">Redeemed</th>
             <th className="px-3 py-2"></th>
           </tr>
         </thead>
         <tbody>
-          {coupons.map((c) => (
-            <tr key={c.id} className={`border-b border-slate-100 ${c.active ? "" : "opacity-40"}`}>
-              <td className="px-3 py-2 font-mono text-slate-700">{c.code}</td>
-              <td className="px-3 py-2 text-slate-600">
-                {c.percentOff ? `${c.percentOff}%` : `₹${((c.amountOffCents || 0) / 100).toFixed(2)}`}
-              </td>
-              <td className="px-3 py-2 text-slate-600">{c.redeemed}</td>
-              <td className="px-3 py-2 text-right">
-                {c.active && (
-                  <button onClick={() => remove(c.id)} className="text-xs text-red-500 hover:underline">
-                    Disable
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
+          {coupons.map((c) => {
+            const isExpired =
+              c.isExpired || (c.validUntil ? new Date(c.validUntil).getTime() < Date.now() : false);
+            return (
+              <tr
+                key={c.id}
+                className={`border-b border-slate-100 ${
+                  !c.active || isExpired ? "bg-slate-50/50 opacity-75" : ""
+                }`}
+              >
+                <td className="px-3 py-2 font-mono text-slate-700">
+                  <span>{c.code}</span>
+                  {isExpired ? (
+                    <span className="ml-2 inline-block rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">
+                      EXPIRED
+                    </span>
+                  ) : !c.active ? (
+                    <span className="ml-2 inline-block rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600">
+                      DISABLED
+                    </span>
+                  ) : (
+                    <span className="ml-2 inline-block rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+                      ACTIVE
+                    </span>
+                  )}
+                </td>
+                <td className="px-3 py-2 text-slate-600">
+                  {c.percentOff ? `${c.percentOff}%` : `₹${((c.amountOffCents || 0) / 100).toFixed(2)}`}
+                </td>
+                <td className="px-3 py-2 text-slate-600">
+                  {c.validUntil ? (
+                    <span className={isExpired ? "text-red-500 line-through" : "text-slate-700 font-medium"}>
+                      {new Date(c.validUntil).toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-slate-400">Lifetime</span>
+                  )}
+                </td>
+                <td className="px-3 py-2 text-slate-600">{c.redeemed}</td>
+                <td className="px-3 py-2 text-right">
+                  {c.active && (
+                    <button onClick={() => remove(c.id)} className="text-xs text-red-500 hover:underline">
+                      Disable
+                    </button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
           {coupons.length === 0 && (
             <tr>
-              <td colSpan={4} className="px-3 py-8 text-center text-slate-400">
+              <td colSpan={5} className="px-3 py-8 text-center text-slate-400">
                 No coupons yet.
               </td>
             </tr>
