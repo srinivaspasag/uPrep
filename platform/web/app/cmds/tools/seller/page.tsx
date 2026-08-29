@@ -152,7 +152,7 @@ function InventoryTab({
               <th className="px-4 py-2 font-medium">Name</th>
               <th className="px-4 py-2 font-medium">Items</th>
               <th className="px-4 py-2 font-medium">Created</th>
-              <th className="w-40 px-4 py-2 font-medium" />
+              <th className="w-64 px-4 py-2 font-medium" />
             </tr>
           </thead>
           <tbody>
@@ -171,12 +171,28 @@ function InventoryTab({
                     {g.createdAt ? new Date(g.createdAt).toLocaleDateString() : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <button
-                      onClick={() => onGenerate(g)}
-                      className="rounded border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100"
-                    >
-                      Generate Access Code(s)
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      <a
+                        href={`/api/cmds/tools/seller/groups/${g.id}/package?mode=plain`}
+                        title="Ready to copy straight onto an SD card — opens on any tablet, no app needed"
+                        className="rounded border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+                      >
+                        Download .zip
+                      </a>
+                      <a
+                        href={`/api/cmds/tools/seller/groups/${g.id}/package?mode=encrypted`}
+                        title="Encrypted — no app exists yet that can open these files on a device"
+                        className="rounded border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-400 hover:bg-slate-100"
+                      >
+                        Download .zip (encrypted)
+                      </a>
+                      <button
+                        onClick={() => onGenerate(g)}
+                        className="rounded border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100"
+                      >
+                        Generate Access Code(s)
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -184,6 +200,18 @@ function InventoryTab({
           </tbody>
         </table>
       </div>
+      <p className="mt-2 text-xs text-slate-400">
+        <strong className="text-slate-500">Download .zip</strong> (green) gives real, ready-to-open
+        files plus an index.html catalog — unzip it on a computer, copy everything straight onto the
+        SD card&apos;s root folder, insert the card into the tablet, and open the files with its
+        Files app (or open index.html in its browser). No app install needed, works fully offline.
+        <strong className="ml-1 text-slate-500">Download .zip (encrypted)</strong> produces
+        AES-256-GCM protected files for a future companion app that can call{" "}
+        <code className="rounded bg-slate-100 px-1">/api/seller/verify</code> to unlock them — no
+        such app exists yet, so those files won&apos;t open on any device today. Question banks and
+        modules aren&apos;t files either way (see the zip&apos;s manifest.json for what needs an
+        online sync instead).
+      </p>
     </div>
   );
 }
@@ -354,8 +382,14 @@ function OrdersTab({ codes }: { codes: AccessCode[] }) {
 
 // Content picker for a new distribution group — same browse pattern as
 // AddContentModal/AddToSectionModal built earlier this session.
+type PickMode = "browse" | "program";
+type ProgramOption = { id: string; name: string; sectionCount: number };
+
 function NewGroupModal({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
   const [name, setName] = useState("");
+  const [mode, setMode] = useState<PickMode>("browse");
+
+  // Browse-content mode state
   const [parentId, setParentId] = useState<string | null>(null);
   const [breadcrumb, setBreadcrumb] = useState<{ id: string | null; name: string }[]>([
     { id: null, name: "Resources" },
@@ -363,17 +397,33 @@ function NewGroupModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [picked, setPicked] = useState<Set<string>>(new Set());
+
+  // Pack-a-Program mode state
+  const [programs, setPrograms] = useState<ProgramOption[]>([]);
+  const [programsLoading, setProgramsLoading] = useState(true);
+  const [programId, setProgramId] = useState<string | null>(null);
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (mode !== "browse") return;
     setLoading(true);
     const url = parentId ? `/api/cmds/content?parentId=${parentId}` : "/api/cmds/content";
     fetch(url)
       .then((r) => r.json())
       .then((d) => setRows(d.resources || []))
       .finally(() => setLoading(false));
-  }, [parentId]);
+  }, [mode, parentId]);
+
+  useEffect(() => {
+    if (mode !== "program" || programs.length > 0) return;
+    setProgramsLoading(true);
+    fetch("/api/cmds/programs")
+      .then((r) => r.json())
+      .then((d) => setPrograms(d.programs || []))
+      .finally(() => setProgramsLoading(false));
+  }, [mode, programs.length]);
 
   function enterFolder(f: any) {
     setBreadcrumb((prev) => [...prev, { id: f.id, name: f.title }]);
@@ -392,14 +442,20 @@ function NewGroupModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
     });
   }
 
+  const canCreate = name.trim() && (mode === "browse" ? picked.size > 0 : !!programId);
+
   async function create() {
-    if (!name.trim() || picked.size === 0) return;
+    if (!canCreate) return;
     setSaving(true);
     setError("");
+    const body =
+      mode === "browse"
+        ? { name: name.trim(), contentIds: Array.from(picked) }
+        : { name: name.trim(), programId };
     const res = await fetch("/api/cmds/tools/seller/groups", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), contentIds: Array.from(picked) }),
+      body: JSON.stringify(body),
     });
     const d = await res.json().catch(() => ({}));
     setSaving(false);
@@ -421,48 +477,104 @@ function NewGroupModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
             placeholder="Group name (e.g. JEE 11th - Offline Pack)"
             className="mt-2 w-full rounded border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-slate-500"
           />
+          <div className="mt-3 flex gap-4 text-xs">
+            <button
+              onClick={() => setMode("browse")}
+              className={`border-b-2 pb-1 ${
+                mode === "browse" ? "border-emerald-500 font-medium text-slate-800" : "border-transparent text-slate-400"
+              }`}
+            >
+              Browse content
+            </button>
+            <button
+              onClick={() => setMode("program")}
+              className={`border-b-2 pb-1 ${
+                mode === "program" ? "border-emerald-500 font-medium text-slate-800" : "border-transparent text-slate-400"
+              }`}
+            >
+              Pack a whole Program
+            </button>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-1 border-b border-slate-100 px-5 py-2 text-xs text-slate-500">
-          {breadcrumb.map((b, i) => (
-            <span key={i}>
-              {i > 0 && <span className="mx-1 text-slate-300">/</span>}
-              <button onClick={() => goTo(i)} className="hover:text-blue-600 hover:underline">
-                {b.name}
-              </button>
-            </span>
-          ))}
-        </div>
-        <div className="flex-1 overflow-y-auto px-5 py-3">
-          {loading ? (
-            <div className="py-10 text-center text-sm text-slate-400">Loading…</div>
-          ) : rows.length === 0 ? (
-            <div className="py-10 text-center text-sm text-slate-400">Empty folder</div>
-          ) : (
-            <ul className="divide-y divide-slate-100">
-              {rows.map((r) => (
-                <li key={r.id} className="flex items-center gap-3 py-2">
-                  {r.type === "FOLDER" ? (
-                    <button
-                      onClick={() => enterFolder(r)}
-                      className="flex-1 text-left text-sm text-slate-700 hover:text-blue-600"
-                    >
-                      📁 {r.title}
-                    </button>
-                  ) : (
-                    <>
-                      <input type="checkbox" checked={picked.has(r.id)} onChange={() => togglePick(r)} />
-                      <span className="flex-1 text-sm text-slate-700">{r.title}</span>
-                      <span className="text-xs text-slate-400">{r.type}</span>
-                    </>
-                  )}
-                </li>
+
+        {mode === "browse" ? (
+          <>
+            <div className="flex flex-wrap items-center gap-1 border-b border-slate-100 px-5 py-2 text-xs text-slate-500">
+              {breadcrumb.map((b, i) => (
+                <span key={i}>
+                  {i > 0 && <span className="mx-1 text-slate-300">/</span>}
+                  <button onClick={() => goTo(i)} className="hover:text-blue-600 hover:underline">
+                    {b.name}
+                  </button>
+                </span>
               ))}
-            </ul>
-          )}
-        </div>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-3">
+              {loading ? (
+                <div className="py-10 text-center text-sm text-slate-400">Loading…</div>
+              ) : rows.length === 0 ? (
+                <div className="py-10 text-center text-sm text-slate-400">Empty folder</div>
+              ) : (
+                <ul className="divide-y divide-slate-100">
+                  {rows.map((r) => (
+                    <li key={r.id} className="flex items-center gap-3 py-2">
+                      {r.type === "FOLDER" ? (
+                        <button
+                          onClick={() => enterFolder(r)}
+                          className="flex-1 text-left text-sm text-slate-700 hover:text-blue-600"
+                        >
+                          📁 {r.title}
+                        </button>
+                      ) : (
+                        <>
+                          <input type="checkbox" checked={picked.has(r.id)} onChange={() => togglePick(r)} />
+                          <span className="flex-1 text-sm text-slate-700">{r.title}</span>
+                          <span className="text-xs text-slate-400">{r.type}</span>
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 overflow-y-auto px-5 py-3">
+            <p className="text-xs text-slate-500">
+              Every item added to any of the program&apos;s sections (plus anything made visible to the
+              whole program directly) is bundled in — a snapshot as of right now. Content added to the
+              program later won&apos;t retroactively appear on cards already created.
+            </p>
+            {programsLoading ? (
+              <div className="py-10 text-center text-sm text-slate-400">Loading programs…</div>
+            ) : programs.length === 0 ? (
+              <div className="py-10 text-center text-sm text-slate-400">No programs found</div>
+            ) : (
+              <ul className="mt-3 divide-y divide-slate-100">
+                {programs.map((p) => (
+                  <li key={p.id} className="flex items-center gap-3 py-2">
+                    <input
+                      type="radio"
+                      name="program"
+                      checked={programId === p.id}
+                      onChange={() => setProgramId(p.id)}
+                    />
+                    <span className="flex-1 text-sm text-slate-700">{p.name}</span>
+                    <span className="text-xs text-slate-400">
+                      {p.sectionCount} section{p.sectionCount === 1 ? "" : "s"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
         {error && <div className="px-5 text-sm text-red-500">{error}</div>}
         <div className="flex items-center justify-between border-t border-slate-200 px-5 py-3">
-          <span className="text-xs text-slate-500">{picked.size} selected</span>
+          <span className="text-xs text-slate-500">
+            {mode === "browse" ? `${picked.size} selected` : programId ? "1 program selected" : "No program selected"}
+          </span>
           <div className="flex gap-2">
             <button
               onClick={onClose}
@@ -471,7 +583,7 @@ function NewGroupModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
               Cancel
             </button>
             <button
-              disabled={!name.trim() || picked.size === 0 || saving}
+              disabled={!canCreate || saving}
               onClick={create}
               className="rounded bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
             >

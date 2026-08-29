@@ -65,29 +65,42 @@ function splitQuestionBlocks(text: string): { num: number; text: string }[] {
   return blocks;
 }
 
-// Finds the last "a) ... b) ... c) ... d) ..." run in a block (searching
-// backward from "d)" so any incidental "a)"-looking text earlier in the
-// question body doesn't get mistaken for the options).
+// Different source institutes mark options differently — "a) b) c) d)" is
+// most common, but some (e.g. an AIIMS-format bank seen in practice) use
+// "(1) (2) (3) (4)" instead. Both map onto the same internal a/b/c/d
+// representation positionally, so this just tries each marker set in turn.
+const OPTION_MARKER_SETS: [string, string, string, string][] = [
+  ["a)", "b)", "c)", "d)"],
+  ["(1)", "(2)", "(3)", "(4)"],
+];
+
+// Finds the last "<a-marker> ... <b-marker> ... <c-marker> ... <d-marker> ..."
+// run in a block (searching backward from the d-marker so any incidental
+// marker-looking text earlier in the question body doesn't get mistaken for
+// the options).
 function splitOptions(block: string): { question: string; options: string[] } | null {
   const low = block.toLowerCase();
-  const dIdx = low.lastIndexOf("d)");
-  if (dIdx === -1) return null;
-  const cIdx = low.lastIndexOf("c)", dIdx);
-  if (cIdx === -1) return null;
-  const bIdx = low.lastIndexOf("b)", cIdx);
-  if (bIdx === -1) return null;
-  const aIdx = low.lastIndexOf("a)", bIdx);
-  if (aIdx === -1) return null;
-  const clean = (s: string) => s.replace(/\s+/g, " ").trim();
-  return {
-    question: clean(block.slice(0, aIdx)),
-    options: [
-      clean(block.slice(aIdx + 2, bIdx)),
-      clean(block.slice(bIdx + 2, cIdx)),
-      clean(block.slice(cIdx + 2, dIdx)),
-      clean(block.slice(dIdx + 2)),
-    ],
-  };
+  for (const [mA, mB, mC, mD] of OPTION_MARKER_SETS) {
+    const dIdx = low.lastIndexOf(mD);
+    if (dIdx === -1) continue;
+    const cIdx = low.lastIndexOf(mC, dIdx);
+    if (cIdx === -1) continue;
+    const bIdx = low.lastIndexOf(mB, cIdx);
+    if (bIdx === -1) continue;
+    const aIdx = low.lastIndexOf(mA, bIdx);
+    if (aIdx === -1) continue;
+    const clean = (s: string) => s.replace(/\s+/g, " ").trim();
+    return {
+      question: clean(block.slice(0, aIdx)),
+      options: [
+        clean(block.slice(aIdx + mA.length, bIdx)),
+        clean(block.slice(bIdx + mB.length, cIdx)),
+        clean(block.slice(cIdx + mC.length, dIdx)),
+        clean(block.slice(dIdx + mD.length)),
+      ],
+    };
+  }
+  return null;
 }
 
 // Matches "1]c", "1] c", "1)c", "1. c" etc. anywhere in the pasted answer

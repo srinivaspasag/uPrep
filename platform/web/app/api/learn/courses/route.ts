@@ -112,17 +112,18 @@ export async function GET(req: NextRequest) {
       const subfolders = await Promise.all(
         rawSubfolders.map(async (f) => {
           const subtree = Array.from(collectSubtreeIds(folders, [f.id]));
-          const [videoCount, documentCount, testCount] = await Promise.all([
+          const [videoCount, documentCount, bookCount, testCount] = await Promise.all([
             db.collection("videos").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
             db.collection("documents").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
+            db.collection("books").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
             db.collection("tests").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
           ]);
-          return { id: f.id, name: f.name, type: "FOLDER" as const, videoCount, documentCount, testCount };
+          return { id: f.id, name: f.name, type: "FOLDER" as const, videoCount, documentCount, bookCount, testCount };
         })
       );
 
       const contentItems: any[] = [];
-      for (const coll of ["videos", "documents", "tests"]) {
+      for (const coll of ["videos", "documents", "books", "tests"]) {
         const docs = await db
           .collection(coll)
           .find({ folderId, recordState: "ACTIVE", ...visClause } as any)
@@ -141,7 +142,9 @@ export async function GET(req: NextRequest) {
           contentItems.push({
             id: String(d._id),
             name: d.name || d.title || "(untitled)",
-            type: d.type || (coll === "videos" ? "VIDEO" : coll === "documents" ? "DOCUMENT" : "TEST"),
+            type:
+              d.type ||
+              (coll === "videos" ? "VIDEO" : coll === "documents" ? "DOCUMENT" : coll === "books" ? "BOOK" : "TEST"),
             url: d.url ?? null,
             embedUrl: d.embedUrl ?? null,
             provider: d.provider ?? null,
@@ -183,9 +186,10 @@ export async function GET(req: NextRequest) {
         .filter(Boolean)
         .map(async (f) => {
           const subtree = Array.from(collectSubtreeIds(folders, [f!.id]));
-          const [videoCount, documentCount, testCount] = await Promise.all([
+          const [videoCount, documentCount, bookCount, testCount] = await Promise.all([
             db.collection("videos").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
             db.collection("documents").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
+            db.collection("books").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
             db.collection("tests").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
           ]);
           return {
@@ -195,6 +199,7 @@ export async function GET(req: NextRequest) {
             folderCount: subtree.length,
             videoCount,
             documentCount,
+            bookCount,
             testCount,
           };
         })

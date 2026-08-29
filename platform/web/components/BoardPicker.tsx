@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-type Node = { id: string; name: string; type: string; parentId: string | null };
+type BoardNode = { id: string; name: string; type: string; parentId: string | null };
 
 // Board Tree tagging picker — Subject -> Chapter multi-select, with an
 // optional per-chapter "Add Concepts" drill-down, backed by the same
@@ -32,20 +32,37 @@ export default function BoardPicker({
   // sync with what's actually tagged in boardIds (see CmdsUploadForm).
   onSubjectChange?: (name: string) => void;
 }) {
-  const [subjects, setSubjects] = useState<Node[]>([]);
+  const [subjects, setSubjects] = useState<BoardNode[]>([]);
   const [subjectId, setSubjectId] = useState("");
-  const [chapters, setChapters] = useState<Node[]>([]);
+  const [chapters, setChapters] = useState<BoardNode[]>([]);
   const [loading, setLoading] = useState(false);
   const [openConceptsFor, setOpenConceptsFor] = useState<string | null>(null);
-  const [concepts, setConcepts] = useState<Record<string, Node[]>>({});
+  const [concepts, setConcepts] = useState<Record<string, BoardNode[]>>({});
   const [loadingConcepts, setLoadingConcepts] = useState(false);
   // Bug found live: the tagged summary only ever showed a bare count ("1
   // item(s) tagged"), never which item — accumulates a name for every node
   // seen while navigating (subjects, chapters, concepts) so the summary can
   // actually name what's tagged instead of just counting it.
   const [nameById, setNameById] = useState<Record<string, string>>({});
+  // The subject picker used to be a native <select> — its open dropdown is
+  // an OS-level popup, not part of the page's own DOM, so on some
+  // screen/window sizes its option list renders partly or wholly outside
+  // the visible browser viewport (confirmed live: a student saw only the
+  // placeholder row before the list got clipped). A custom in-DOM list
+  // can't have that problem — it's just a normal absolutely-positioned
+  // element inside this component's own layout.
+  const [subjectOpen, setSubjectOpen] = useState(false);
+  const subjectRef = useRef<HTMLDivElement>(null);
 
-  function rememberNames(nodes: Node[]) {
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (subjectRef.current && !subjectRef.current.contains(e.target as Node)) setSubjectOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  function rememberNames(nodes: BoardNode[]) {
     if (!nodes.length) return;
     setNameById((prev) => {
       const next = { ...prev };
@@ -54,16 +71,32 @@ export default function BoardPicker({
     });
   }
 
+  // "Loading subjects…" used to be shown any time subjects.length === 0 —
+  // indistinguishable from "the fetch failed" or "it succeeded but the org
+  // genuinely has none", so a real failure looked identical to an infinite
+  // spinner with no way to tell what actually happened. Track the fetch's
+  // own state explicitly instead of inferring it from the data.
+  const [subjectsLoading, setSubjectsLoading] = useState(true);
+  const [subjectsError, setSubjectsError] = useState<string | null>(null);
+  const [reloadTick, setReloadTick] = useState(0);
+
   useEffect(() => {
+    setSubjectsLoading(true);
+    setSubjectsError(null);
     fetch(apiBase)
-      .then((r) => r.json())
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`Server returned ${r.status}`);
+        return r.json();
+      })
       .then((d) => {
+        if (d.error) throw new Error(d.error);
         setSubjects(d.nodes || []);
         rememberNames(d.nodes || []);
       })
-      .catch(() => {});
+      .catch((e) => setSubjectsError(e?.message || "Couldn't load subjects"))
+      .finally(() => setSubjectsLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiBase]);
+  }, [apiBase, reloadTick]);
 
   useEffect(() => {
     if (!subjectId) {
@@ -109,21 +142,59 @@ export default function BoardPicker({
       .finally(() => setLoadingConcepts(false));
   }
 
+  const selectedSubjectName = subjects.find((s) => s.id === subjectId)?.name;
+
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-slate-600">Tag to Board Tree</label>
-      <select
-        value={subjectId}
-        onChange={(e) => setSubjectId(e.target.value)}
-        className="w-full rounded border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
-      >
-        <option value="">Select a subject…</option>
-        {subjects.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.name}
-          </option>
-        ))}
-      </select>
+      <div ref={subjectRef} className="relative">
+        <button
+          type="button"
+          onClick={() => setSubjectOpen((o) => !o)}
+          className="flex w-full items-center justify-between rounded border border-slate-300 px-3 py-2 text-left text-sm text-slate-700 outline-none focus:border-slate-500"
+        >
+          <span className={selectedSubjectName ? "" : "text-slate-400"}>
+            {selectedSubjectName || "Select a subject…"}
+          </span>
+          <span className="text-slate-400">{subjectOpen ? "▴" : "▾"}</span>
+        </button>
+        {subjectOpen && (
+          <div className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded border border-slate-200 bg-white shadow-lg">
+            {subjectsLoading ? (
+              <div className="px-3 py-3 text-center text-xs text-slate-400">Loading subjects…</div>
+            ) : subjectsError ? (
+              <div className="px-3 py-3 text-center text-xs">
+                <div className="text-red-500">{subjectsError}</div>
+                <button
+                  type="button"
+                  onClick={() => setReloadTick((t) => t + 1)}
+                  className="mt-1.5 text-blue-600 hover:underline"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : subjects.length === 0 ? (
+              <div className="px-3 py-3 text-center text-xs text-slate-400">No subjects available</div>
+            ) : (
+              subjects.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => {
+                    setSubjectId(s.id);
+                    setSubjectOpen(false);
+                  }}
+                  className={`block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${
+                    s.id === subjectId ? "bg-emerald-50 font-medium text-emerald-700" : "text-slate-700"
+                  }`}
+                >
+                  {s.name}
+                </button>
+              ))
+            )}
+          </div>
+        )}
+      </div>
 
       {subjectId && (
         <div className="mt-2 max-h-72 overflow-y-auto rounded border border-slate-200">

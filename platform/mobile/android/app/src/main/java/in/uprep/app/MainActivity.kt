@@ -31,10 +31,15 @@ import `in`.uprep.app.ui.login.LoginScreen
 import `in`.uprep.app.ui.login.LoginViewModel
 import `in`.uprep.app.ui.player.DocumentViewerScreen
 import `in`.uprep.app.ui.player.VideoPlayerScreen
+import `in`.uprep.app.ui.sdcard.SdCardDocumentScreen
+import `in`.uprep.app.ui.sdcard.SdCardScreen
+import `in`.uprep.app.ui.sdcard.SdCardVideoScreen
+import `in`.uprep.app.ui.sdcard.SdCardViewModel
 import `in`.uprep.app.ui.theme.UPrepTheme
 import `in`.uprep.app.ui.webview.WebViewFallbackScreen
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.io.File
 
 // Full URLs (https://vimeo.com/12345, containing multiple internal "/")
 // passed as nav-graph query args get silently truncated at an internal
@@ -54,9 +59,14 @@ private object Routes {
     const val FOLDER = "folder/{folderId}"
     const val PLAYER = "player?contentId={contentId}&name={name}&url={url}&embedUrl={embedUrl}&provider={provider}"
     const val DOCUMENT = "document?contentId={contentId}&name={name}&url={url}"
+    const val SD_CARD = "sdcard"
+    const val SD_PLAYER = "sdplayer?name={name}&path={path}"
+    const val SD_DOCUMENT = "sddocument?name={name}&path={path}"
     const val WEBVIEW = "webview?path={path}"
 
     fun folder(id: String) = "folder/$id"
+    fun sdPlayer(name: String, path: String) = "sdplayer?name=${b64encode(name)}&path=${b64encode(path)}"
+    fun sdDocument(name: String, path: String) = "sddocument?name=${b64encode(name)}&path=${b64encode(path)}"
     fun player(contentId: String, name: String, url: String?, embedUrl: String?, provider: String?) =
         "player?contentId=${Uri.encode(contentId)}&name=${Uri.encode(name)}" +
             "&url=${b64encode(url ?: "")}&embedUrl=${b64encode(embedUrl ?: "")}" +
@@ -130,12 +140,54 @@ class MainActivity : ComponentActivity() {
                                 ),
                                 onOpenCourse = { course -> navController.navigate(Routes.folder(course.id)) },
                                 onOpenDownloads = { navController.navigate(Routes.DOWNLOADS) },
+                                onOpenSdCard = { navController.navigate(Routes.SD_CARD) },
                                 onLogout = logout
                             )
                         }
 
                         composable(Routes.DOWNLOADS) {
                             DownloadsScreen(downloadRepository = container.downloadRepository)
+                        }
+
+                        composable(Routes.SD_CARD) {
+                            SdCardScreen(
+                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                    factory = SdCardViewModel.Factory(
+                                        container.sdCardRepository, container.sellerApi, container.deviceIdStore, container.sessionStore
+                                    )
+                                ),
+                                repository = container.sdCardRepository,
+                                onOpenVideo = { name, file -> navController.navigate(Routes.sdPlayer(name, file.absolutePath)) },
+                                onOpenDocument = { name, file -> navController.navigate(Routes.sdDocument(name, file.absolutePath)) }
+                            )
+                        }
+
+                        composable(
+                            route = Routes.SD_PLAYER,
+                            arguments = listOf(
+                                navArgument("name") { type = NavType.StringType; defaultValue = "" },
+                                navArgument("path") { type = NavType.StringType; defaultValue = "" }
+                            )
+                        ) { backStackEntry ->
+                            val args = backStackEntry.arguments
+                            val path = args?.getString("path")?.let(::b64decode).orEmpty()
+                            if (path.isNotEmpty()) {
+                                SdCardVideoScreen(name = args?.getString("name")?.let(::b64decode).orEmpty(), file = File(path))
+                            }
+                        }
+
+                        composable(
+                            route = Routes.SD_DOCUMENT,
+                            arguments = listOf(
+                                navArgument("name") { type = NavType.StringType; defaultValue = "" },
+                                navArgument("path") { type = NavType.StringType; defaultValue = "" }
+                            )
+                        ) { backStackEntry ->
+                            val args = backStackEntry.arguments
+                            val path = args?.getString("path")?.let(::b64decode).orEmpty()
+                            if (path.isNotEmpty()) {
+                                SdCardDocumentScreen(name = args?.getString("name")?.let(::b64decode).orEmpty(), file = File(path))
+                            }
                         }
 
                         composable(

@@ -15,6 +15,7 @@ function collForType(type: string): string {
     TEST: "tests",
     MODULE: "modules",
     DOCUMENT: "documents",
+    BOOK: "books",
     VIDEO: "videos",
   };
   return m[type] || "tests";
@@ -25,6 +26,7 @@ function defaultTypeForColl(coll: string): string {
     tests: "TEST",
     modules: "MODULE",
     documents: "DOCUMENT",
+    books: "BOOK",
     videos: "VIDEO",
   };
   return m[coll] || "TEST";
@@ -118,7 +120,7 @@ export async function GET(req: NextRequest) {
       filter.hiddenUserIds = { $nin: [session!.id] };
     }
 
-    const allCollections = ["tests", "modules", "documents", "videos"];
+    const allCollections = ["tests", "modules", "documents", "books", "videos"];
     const collections = typeParam
       ? allCollections.filter((c) => collForType(typeParam) === c)
       : allCollections;
