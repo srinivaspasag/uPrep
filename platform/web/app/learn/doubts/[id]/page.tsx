@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import AnswerText from "@/components/AnswerText";
 import GuidedAnswer, { type AnswerStep } from "@/components/GuidedAnswer";
@@ -90,6 +90,50 @@ export default function DoubtConversationPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Voice input for the reply box. Uses the browser's built-in speech
+  // recognition (Chrome/Edge only) — no external API, no extra dependency.
+  const [isListening, setIsListening] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    const SpeechRecognitionCtor =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) return; // Firefox/Safari: mic button just won't render.
+
+    const recognition = new SpeechRecognitionCtor();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = "en-IN";
+
+    recognition.onresult = (event: any) => {
+      let transcript = "";
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      setReply(transcript);
+    };
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    setVoiceSupported(true);
+
+    return () => recognition.abort();
+  }, []);
+
+  function toggleListening() {
+    const recognition = recognitionRef.current;
+    if (!recognition) return;
+    if (isListening) {
+      recognition.stop();
+    } else {
+      setReply("");
+      recognition.start();
+      setIsListening(true);
+    }
+  }
 
   async function postAnswer() {
     if (!reply.trim()) return;
@@ -227,9 +271,28 @@ export default function DoubtConversationPage() {
               }
             }}
             rows={1}
-            placeholder="Ask a follow-up or add a reply…"
+            placeholder={isListening ? "Listening…" : "Ask a follow-up or add a reply…"}
             className="max-h-32 flex-1 resize-none rounded-2xl border border-[#D9D6C9] px-4 py-2.5 text-sm text-[#16233D] outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
           />
+          {voiceSupported && (
+            <button
+              type="button"
+              onClick={toggleListening}
+              title={isListening ? "Stop listening" : "Ask by voice"}
+              className={`shrink-0 rounded-full p-2.5 transition ${
+                isListening
+                  ? "animate-pulse bg-red-500 text-white"
+                  : "bg-[#EDEEE9] text-[#3E4A63] hover:bg-[#e2e0d5]"
+              }`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </button>
+          )}
           <button
             onClick={postAnswer}
             disabled={saving || !reply.trim()}
