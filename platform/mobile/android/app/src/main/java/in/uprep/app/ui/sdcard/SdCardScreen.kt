@@ -1,6 +1,7 @@
 package `in`.uprep.app.ui.sdcard
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -109,6 +110,13 @@ fun SdCardScreen(
             selectCourse(null)
         }
     }
+
+    // Without this, the system/hardware back button bypasses goBack()
+    // entirely and pops the whole screen off the nav graph (straight back to
+    // the course list), even mid-drill-down — only the in-app "←" toolbar
+    // icon was wired to goBack(). Disabled at the top level (course list /
+    // root) so back there still exits the screen as expected.
+    BackHandler(enabled = selectedCourse != null || folderStack.isNotEmpty()) { goBack() }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(

@@ -88,7 +88,7 @@ fun FolderBrowseScreen(
                                 when (item.type) {
                                     "VIDEO" -> onOpenVideo(item)
                                     "TEST" -> onOpenTest(item)
-                                    "DOCUMENT" -> onOpenDocument(item)
+                                    "DOCUMENT", "BOOK" -> onOpenDocument(item)
                                 }
                             }
                     ) {
@@ -103,7 +103,7 @@ fun FolderBrowseScreen(
                             )
                             // Only direct files are downloadable — Vimeo/YouTube
                             // items are player pages, not fetchable video files.
-                            val downloadable = item.type == "DOCUMENT" ||
+                            val downloadable = item.type == "DOCUMENT" || item.type == "BOOK" ||
                                 (item.type == "VIDEO" && item.embedUrl.isNullOrEmpty())
                             if (downloadable) {
                                 DownloadButton(
@@ -154,6 +154,7 @@ private fun DownloadButton(
 private fun badge(type: String) = when (type) {
     "VIDEO" -> "🎬"
     "DOCUMENT" -> "📄"
+    "BOOK" -> "📖"
     "TEST" -> "📝"
     else -> "•"
 }
