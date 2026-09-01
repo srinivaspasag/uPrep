@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import `in`.uprep.app.data.sdcard.SdCardCourseGroup
+import `in`.uprep.app.data.sdcard.SdCardFolder
 import `in`.uprep.app.data.sdcard.SdCardManifestItem
 import `in`.uprep.app.data.sdcard.SdCardRepository
 import kotlinx.coroutines.launch
@@ -52,9 +53,16 @@ fun SdCardScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var decryptingId by remember { mutableStateOf<String?>(null) }
-    // Null = showing the course list (or the flat list, for older cards with
-    // no course grouping); non-null = drilled into one course's content.
+    // Null = showing the course list (or the root folder browse, for older
+    // cards with no course grouping); non-null = drilled into one course.
     var selectedCourse by remember { mutableStateOf<SdCardCourseGroup?>(null) }
+    // Path of folder ids drilled into below the current course (or below
+    // root, when there's no course grouping at all) — empty means "showing
+    // this course's/root's direct chapters," matching FolderBrowseScreen's
+    // per-level semantics but as local state instead of a nav-graph, since
+    // the whole manifest is already loaded in memory (no per-level fetch
+    // needed for an offline reader).
+    var folderStack by remember { mutableStateOf<List<SdCardFolder>>(emptyList()) }
 
     val pickFolder = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         if (uri != null) {
@@ -81,12 +89,33 @@ fun SdCardScreen(
 
     val courseGroups = state.manifest?.courseGroups.orEmpty()
     val hasCourseGrouping = courseGroups.isNotEmpty()
+    val allFolders = state.manifest?.folders.orEmpty()
+    // Root of the current drill-down: the selected course's own id (its
+    // direct children are that course's top-level chapters), or null when
+    // there's no course grouping at all (root-level folders, parentId==null).
+    val rootFolderId = selectedCourse?.courseId
+    val currentFolderId = folderStack.lastOrNull()?.id ?: rootFolderId
+    val hasFolderTree = allFolders.isNotEmpty()
+
+    fun selectCourse(course: SdCardCourseGroup?) {
+        selectedCourse = course
+        folderStack = emptyList()
+    }
+
+    fun goBack() {
+        if (folderStack.isNotEmpty()) {
+            folderStack = folderStack.dropLast(1)
+        } else if (selectedCourse != null) {
+            selectCourse(null)
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = {
                 Text(
                     when {
+                        folderStack.isNotEmpty() -> folderStack.last().name ?: "Folder"
                         selectedCourse != null -> selectedCourse!!.courseName ?: "Course"
                         hasCourseGrouping -> state.manifest?.programName ?: "Offline via SD Card"
                         else -> "Offline via SD Card"
@@ -94,8 +123,8 @@ fun SdCardScreen(
                 )
             },
             navigationIcon = {
-                if (selectedCourse != null) {
-                    IconButton(onClick = { selectedCourse = null }) { Text("←") }
+                if (selectedCourse != null || folderStack.isNotEmpty()) {
+                    IconButton(onClick = { goBack() }) { Text("←") }
                 }
             }
         )
@@ -121,6 +150,9 @@ fun SdCardScreen(
                 groupName = state.manifest?.groupName ?: "this card",
                 activating = state.activating,
                 error = state.activateError,
+                expiredNotice = if (state.expired)
+                    "Your access to this card expired 1 year after it was issued. Ask your institute for a new access code to keep using it."
+                else null,
                 onActivate = { code, email -> viewModel.activate(code, email) }
             )
 
@@ -128,14 +160,50 @@ fun SdCardScreen(
                 // Program → Courses view.
                 LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(courseGroups, key = { it.courseId ?: it.hashCode().toString() }) { course ->
-                        CourseRow(course = course, onClick = { selectedCourse = course })
+                        CourseRow(course = course, onClick = { selectCourse(course) })
+                    }
+                }
+            }
+
+            // Course → Chapter → ... → session-wise content, when this card
+            // carries a real folder tree — mirrors the online Learn app's
+            // FolderBrowseScreen, but as in-memory local state (no per-level
+            // network fetch needed, the whole manifest's already loaded).
+            hasFolderTree && (selectedCourse != null || !hasCourseGrouping) -> {
+                val subfolders = allFolders.filter { it.parentId == currentFolderId }
+                val allItems = state.manifest?.items.orEmpty()
+                val here = allItems.filter { it.folderId == currentFolderId }
+                val playable = here.filter { it.includedAsFile == true }
+                val excluded = here.filter { it.includedAsFile != true }
+                if (subfolders.isEmpty() && here.isEmpty()) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Nothing here yet") }
+                } else {
+                    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        items(subfolders, key = { it.id ?: it.hashCode().toString() }) { folder ->
+                            FolderRow(folder = folder, onClick = { folderStack = folderStack + folder })
+                        }
+                        items(playable, key = { it.id ?: it.hashCode().toString() }) { item ->
+                            ContentRow(item = item, busy = decryptingId == item.id, onClick = { openItem(item) })
+                        }
+                        if (excluded.isNotEmpty()) {
+                            item { Text("Needs an online sync", style = MaterialTheme.typography.titleSmall) }
+                            items(excluded, key = { (it.id ?: it.hashCode().toString()) + "_x" }) { item ->
+                                Card(modifier = Modifier.fillMaxWidth()) {
+                                    Column(Modifier.padding(16.dp)) {
+                                        Text(item.name ?: "(untitled)", style = MaterialTheme.typography.titleSmall)
+                                        Text(item.reason ?: "Not available on this card", style = MaterialTheme.typography.bodySmall)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
 
             else -> {
-                // Course → Content view (or the flat fallback when this card
-                // has no course grouping at all — every item, one list).
+                // Flat fallback — a card packaged before the folder-tree
+                // field existed (or one course-scoped grouping with no
+                // folders at all). Every item in this scope, one list.
                 val allItems = state.manifest?.items.orEmpty()
                 val scoped = selectedCourse?.itemIds?.toSet()
                 val playable = allItems.filter { it.includedAsFile == true && (scoped == null || scoped.contains(it.id)) }
@@ -176,6 +244,7 @@ private fun ActivateForm(
     groupName: String,
     activating: Boolean,
     error: String?,
+    expiredNotice: String?,
     onActivate: (code: String, email: String) -> Unit
 ) {
     var code by remember { mutableStateOf("") }
@@ -183,6 +252,14 @@ private fun ActivateForm(
 
     Column(Modifier.fillMaxSize().padding(24.dp)) {
         Text("Activate \"$groupName\"", style = MaterialTheme.typography.titleMedium)
+        if (expiredNotice != null) {
+            Text(
+                expiredNotice,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
         Text(
             "One-time only, and needs internet right now — after this, the card works with no connection at all.",
             style = MaterialTheme.typography.bodySmall,
@@ -224,6 +301,20 @@ private fun CourseRow(course: SdCardCourseGroup, onClick: () -> Unit) {
             val count = course.itemIds?.size ?: 0
             Text("$count item${if (count == 1) "" else "s"}", style = MaterialTheme.typography.bodySmall)
         }
+    }
+}
+
+// Chapter/session node — same 📁-prefixed styling as the online
+// FolderBrowseScreen's subfolder rows, for visual consistency between the
+// SD-card reader and the network browser.
+@Composable
+private fun FolderRow(folder: SdCardFolder, onClick: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
+        Text(
+            "📁  ${folder.name ?: "(untitled folder)"}",
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
 

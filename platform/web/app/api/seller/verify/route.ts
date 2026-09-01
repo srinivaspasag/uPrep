@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { getOrCreateGroupKey, ENCRYPTION_INFO } from "@/lib/group-crypto";
+import { expiresAt as computeExpiresAt } from "@/lib/expiry";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -34,6 +35,18 @@ export async function POST(req: NextRequest) {
     const db = await getDb();
     const doc: any = await db.collection(CODES_COLL).findOne({ code, buyerEmail: email } as any);
     if (!doc) return NextResponse.json({ error: "INVALID_CODE" }, { status: 404 });
+
+    // Access codes are valid for 1 year from generation — same policy as
+    // student account expiry (lib/expiry.ts). This blocks both a fresh
+    // activation attempt AND a re-verification of an already-bound
+    // device/user past that date. The device also gets `expiresAt` back on
+    // success (below) so it can enforce this fully offline afterward — the
+    // whole point of this flow is zero connectivity after the first verify.
+    const codeCreatedAt = typeof doc.timeCreated === "number" ? doc.timeCreated : 0;
+    const codeExpiresAt = codeCreatedAt ? computeExpiresAt(codeCreatedAt) : null;
+    if (codeExpiresAt && Date.now() > codeExpiresAt) {
+      return NextResponse.json({ error: "ACCESS_CODE_EXPIRED" }, { status: 403 });
+    }
 
     const boundDevices: string[] = Array.isArray(doc.deviceIds) ? doc.deviceIds : [];
 
@@ -73,6 +86,7 @@ export async function POST(req: NextRequest) {
       contentIds: Array.isArray(group?.contentIds) ? group.contentIds : [],
       encryptionKey,
       encryption: encryptionKey ? ENCRYPTION_INFO : null,
+      expiresAt: codeExpiresAt,
     });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Verification failed" }, { status: 500 });

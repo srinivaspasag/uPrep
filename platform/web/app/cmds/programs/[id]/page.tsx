@@ -13,6 +13,7 @@ type Section = {
   id: string;
   name: string;
   centerId: string | null;
+  programId?: string | null;
   courses?: { id: string; name: string }[];
 };
 type Counts = { teachers: number; students: number; content: number };
@@ -50,6 +51,23 @@ export default function ProgramDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  // `sections`/`centers` above are ORG-WIDE (the API returns every active
+  // section/center in the org, not just this program's — ContentTab does
+  // its own program-scoped filtering separately, further down). Without
+  // this same filter here, the header below showed centers[0]/sections[0]
+  // of the WHOLE ORG'S list — e.g. a totally unrelated program's section
+  // name — because index 0 of an unfiltered list has no relationship to
+  // the program actually being viewed. Found live: "JEE Online" showing
+  // "AIPMT XII" (a different program's section) in its header.
+  const programSections = useMemo(
+    () => sections.filter((s) => !s.programId || s.programId === id),
+    [sections, id]
+  );
+  const programCenters = useMemo(() => {
+    const centerIds = new Set(programSections.map((s) => s.centerId).filter(Boolean));
+    return centers.filter((c) => centerIds.has(c.id));
+  }, [centers, programSections]);
+
   const searchPlaceholder =
     tab === "students" || tab === "members"
       ? "Search Students"
@@ -72,7 +90,11 @@ export default function ProgramDetailPage() {
               </Link>
             </div>
             <div className="mt-0.5 text-sm text-slate-500">
-              {centers[0]?.name || "All Centers"} · {sections[0]?.name || "All Sections"}
+              {programCenters.length > 0 ? programCenters.map((c) => c.name).join(", ") : "No centers yet"}
+              {" · "}
+              {programSections.length > 0
+                ? `${programSections.length} section${programSections.length === 1 ? "" : "s"}`
+                : "No sections yet"}
             </div>
           </div>
           <input
