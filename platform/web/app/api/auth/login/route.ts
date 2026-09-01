@@ -3,6 +3,7 @@ import { API, DEFAULT_ORG_ID } from "@/lib/config";
 import { getDb } from "@/lib/mongo";
 import { verifyPassword } from "@/lib/password";
 import { recordLogin } from "@/lib/login-log";
+import { isExpired } from "@/lib/expiry";
 import {
   SESSION_COOKIE,
   createSessionToken,
@@ -114,6 +115,20 @@ export async function POST(req: NextRequest) {
       const sessionOrgId = member.orgId || orgId;
       const profile = (member.profile || "STUDENT").toUpperCase();
       const isSuperAdmin = readSuperAdmin(member);
+
+      // Student accounts are valid for 1 year from creation — staff/admin
+      // accounts are unaffected (an institute's own staff shouldn't be
+      // locked out by the same policy that gates a student's course access).
+      if (profile === "STUDENT" && !isSuperAdmin && isExpired(member.timeCreated)) {
+        return NextResponse.json(
+          {
+            errorCode: "ACCOUNT_EXPIRED",
+            errorMessage: "Your account access has expired. Contact your institute to renew.",
+          },
+          { status: 403 }
+        );
+      }
+
       await recordLogin(req, {
         orgId: sessionOrgId,
         userId: String(member._id),

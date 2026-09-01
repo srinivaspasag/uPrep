@@ -21,7 +21,12 @@ data class SdCardUiState(
     val manifest: SdCardManifest? = null,
     val activated: Boolean = false,
     val activating: Boolean = false,
-    val activateError: String? = null
+    val activateError: String? = null,
+    // True when this device WAS activated but its 1-year access window has
+    // since passed (checked fully offline against the cached expiry) — a
+    // distinct state from never-activated, so the UI can explain what
+    // happened instead of just asking to activate again from scratch.
+    val expired: Boolean = false
 )
 
 // Drives the whole card lifecycle: pick a folder -> (if a manifest is
@@ -47,12 +52,14 @@ class SdCardViewModel(
             _state.value = _state.value.copy(loading = true)
             val folderUri = repository.savedFolderUri()
             val manifest = if (folderUri != null) repository.readManifest() else null
-            val activated = manifest?.groupId?.let { repository.hasKeyFor(it) } ?: false
+            val hasKey = manifest?.groupId?.let { repository.hasKeyFor(it) } ?: false
+            val expired = hasKey && manifest?.groupId?.let { repository.isExpired(it) } == true
             _state.value = SdCardUiState(
                 loading = false,
                 folderPicked = folderUri != null,
                 manifest = manifest,
-                activated = activated
+                activated = hasKey && !expired,
+                expired = expired
             )
         }
     }

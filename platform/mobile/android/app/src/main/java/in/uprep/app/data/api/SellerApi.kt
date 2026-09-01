@@ -20,7 +20,11 @@ data class SellerVerifyResponse(
     val groupName: String?,
     val contentIds: List<String>?,
     val encryptionKey: String?,
-    val error: String?
+    val error: String?,
+    // Epoch millis — 1 year from when this access code was generated. Stored
+    // alongside the cached key so the device can keep enforcing it fully
+    // offline after this one online call (see SdCardRepository.isExpired).
+    val expiresAt: Long?
 )
 
 interface SellerApi {

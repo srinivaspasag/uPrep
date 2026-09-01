@@ -7,6 +7,7 @@ import { resolveOrgId } from "@/lib/org-scope";
 import { sessionFromReq } from "@/lib/server-session";
 import { buildZip, type ZipEntry } from "@/lib/zip";
 import { getOrCreateGroupKey, encryptBuffer, ENCRYPTION_INFO } from "@/lib/group-crypto";
+import { loadOrgFolders, orderThenNatural, naturalCompare, type FolderNode } from "@/lib/courses";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -26,7 +27,14 @@ async function requireManager(req: NextRequest) {
   return (s?.profile || "").trim().toUpperCase() === "MANAGER";
 }
 
-type ResolvedItem = { id: string; name: string; type: string; url: string | null };
+type ResolvedItem = {
+  id: string;
+  name: string;
+  type: string;
+  url: string | null;
+  folderId: string | null;
+  order: number | null;
+};
 
 async function resolveItems(db: any, ids: string[]): Promise<ResolvedItem[]> {
   const oids = ids.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
@@ -39,21 +47,25 @@ async function resolveItems(db: any, ids: string[]): Promise<ResolvedItem[]> {
     db.collection("modules").find({ _id: { $in: oids } }).toArray(),
     db.collection("questionsets").find({ _id: { $in: oids } }).toArray(),
   ]);
+  const folderMeta = (d: any) => ({
+    folderId: d.folderId ?? null,
+    order: typeof d.order === "number" ? d.order : null,
+  });
   const out: ResolvedItem[] = [];
-  for (const d of documents as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "DOCUMENT", url: d.url ?? null });
-  for (const d of videos as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "VIDEO", url: d.url ?? null });
-  for (const d of books as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "BOOK", url: d.url ?? null });
-  for (const d of tests as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "TEST", url: null });
-  for (const d of modules as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "MODULE", url: null });
-  for (const d of questionsets as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "QUESTION_SET", url: null });
+  for (const d of documents as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "DOCUMENT", url: d.url ?? null, ...folderMeta(d) });
+  for (const d of videos as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "VIDEO", url: d.url ?? null, ...folderMeta(d) });
+  for (const d of books as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "BOOK", url: d.url ?? null, ...folderMeta(d) });
+  for (const d of tests as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "TEST", url: null, folderId: null, order: null });
+  for (const d of modules as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "MODULE", url: null, folderId: null, order: null });
+  for (const d of questionsets as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "QUESTION_SET", url: null, folderId: null, order: null });
   return out;
 }
 
 // Mode "plain" ships real, directly-openable files (like legacy did) plus a
-// browsable index.html — no companion app exists anywhere that can decrypt
-// mode "encrypted"'s AES-256-GCM output (see group-crypto.ts), so "plain" is
-// the only mode that actually works on a real tablet today. "encrypted" is
-// kept for whenever a reader app gets built.
+// browsable index.html — usable with any file manager, no app required.
+// Mode "encrypted" ships AES-256-GCM ciphertext (see group-crypto.ts),
+// decrypted only by the Android app's native SD-card reader after it binds
+// to this group's access code via /api/seller/verify.
 function buildIndexHtml(groupName: string, items: { fileName: string; name: string; type: string }[]): string {
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const byType = (t: string) => items.filter((i) => i.type === t);
@@ -117,7 +129,35 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     // plus the resolved children.
     const allItems = [...topItems.filter((i) => i.type !== "MODULE"), ...childItems];
     const seen = new Set<string>();
-    const items = allItems.filter((i) => (seen.has(i.id) ? false : (seen.add(i.id), true)));
+    const items = allItems
+      .filter((i) => (seen.has(i.id) ? false : (seen.add(i.id), true)))
+      // Same order-then-natural-name sequencing the online browse route uses
+      // (app/api/learn/courses/route.ts) — the SD-card reader trusts this
+      // array order instead of re-sorting client-side.
+      .sort((a, b) => {
+        if (a.order !== null && b.order !== null) return a.order - b.order;
+        if (a.order !== null) return -1;
+        if (b.order !== null) return 1;
+        return naturalCompare(a.name, b.name);
+      });
+
+    // Real chapter/session tree these items actually live in — derived by
+    // walking each item's own `folderId` up to its root, not from
+    // `group.courseGroups` (empty for manually-picked groups, and documented
+    // to omit sectionIds-tagged items even for program-based ones — walking
+    // up from the item's real folderId works uniformly for every group type).
+    const allFolders = await loadOrgFolders(db, orgId);
+    const folderById = new Map(allFolders.map((f) => [f.id, f]));
+    const neededFolderIds = new Set<string>();
+    for (const item of items) {
+      if (!item.folderId) continue;
+      let cur: FolderNode | undefined = folderById.get(item.folderId);
+      while (cur && !neededFolderIds.has(cur.id)) {
+        neededFolderIds.add(cur.id);
+        cur = cur.parentId ? folderById.get(cur.parentId) : undefined;
+      }
+    }
+    const relevantFolders = orderThenNatural(allFolders.filter((f) => neededFolderIds.has(f.id)));
 
     const zipEntries: ZipEntry[] = [];
     const manifest: {
@@ -125,6 +165,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       name: string;
       type: string;
       includedAsFile: boolean;
+      folderId: string | null;
       reason?: string;
       fileName?: string;
       encryptedFileName?: string;
@@ -150,6 +191,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           name: item.name,
           type: item.type,
           includedAsFile: false,
+          folderId: item.folderId,
           reason:
             item.type === "TEST" || item.type === "QUESTION_SET"
               ? "Question banks aren't files — the device needs a one-time online sync to cache these."
@@ -173,12 +215,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         usedNames.add(safeName);
         if (plain) {
           zipEntries.push({ name: `content/${safeName}`, data: buf });
-          manifest.push({ id: item.id, name: item.name, type: item.type, includedAsFile: true, fileName: safeName, originalExt: ext });
+          manifest.push({ id: item.id, name: item.name, type: item.type, includedAsFile: true, folderId: item.folderId, fileName: safeName, originalExt: ext });
           indexItems.push({ fileName: safeName, name: item.name, type: item.type });
         } else {
           const encryptedName = `${safeName}.enc`;
           zipEntries.push({ name: `content/${encryptedName}`, data: encryptBuffer(buf, groupKey as Buffer) });
-          manifest.push({ id: item.id, name: item.name, type: item.type, includedAsFile: true, encryptedFileName: encryptedName, originalExt: ext });
+          manifest.push({ id: item.id, name: item.name, type: item.type, includedAsFile: true, folderId: item.folderId, encryptedFileName: encryptedName, originalExt: ext });
         }
       } catch {
         manifest.push({
@@ -186,6 +228,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           name: item.name,
           type: item.type,
           includedAsFile: false,
+          folderId: item.folderId,
           reason: "File missing on the server — could not be read.",
         });
       }
@@ -212,6 +255,16 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
             // that as "no hierarchy, show flat" rather than an error.
             programName: group.programName || null,
             courseGroups: Array.isArray(group.courseGroups) && group.courseGroups.length > 0 ? group.courseGroups : null,
+            // Real chapter/session tree below the Course level — every item's
+            // `folderId` (in `items[]` below) points at a node in here, so the
+            // reader can drill Course → Chapter → ... → session-wise content
+            // instead of dumping a course's entire item list flat. Derived
+            // fresh from each item's own folderId (see the ancestor walk
+            // above), not stored on the group — always matches what's really
+            // in items[] even for manually-picked groups.
+            folders: relevantFolders.length > 0
+              ? relevantFolders.map((f) => ({ id: f.id, name: f.name, parentId: f.parentId, order: f.order }))
+              : null,
             totalItems: items.length,
             includedAsFiles: manifest.filter((m) => m.includedAsFile).length,
             // Plain mode: files in content/ are the real, directly-openable
@@ -220,9 +273,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
             // as-is — the decryption key is never in this zip, it's released
             // separately, over the network, by /api/seller/verify to a
             // device that binds itself to this group's access code. See
-            // ENCRYPTION_INFO.layout for the per-file byte format. No client
-            // in this codebase implements that handshake yet, so "encrypted"
-            // mode is not usable on a real device today — use "plain".
+            // ENCRYPTION_INFO.layout for the per-file byte format — the
+            // Android app's SdCardCrypto implements this handshake.
             encryption: plain ? null : ENCRYPTION_INFO,
             items: manifest,
           },

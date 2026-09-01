@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 const COLL_FOR_TYPE: Record<string, string> = {
   DOCUMENT: "documents",
+  BOOK: "books",
   VIDEO: "videos",
   TEST: "tests",
   MODULE: "modules",

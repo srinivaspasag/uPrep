@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.documentfile.provider.DocumentFile
@@ -18,6 +19,7 @@ import java.io.File
 private val Context.sdCardDataStore by preferencesDataStore(name = "uprep_sdcard")
 private val KEY_FOLDER_URI = stringPreferencesKey("folder_uri")
 private fun keyPrefKey(groupId: String) = stringPreferencesKey("group_key_$groupId")
+private fun expiryPrefKey(groupId: String) = longPreferencesKey("group_key_expiry_$groupId")
 
 sealed class ActivateResult {
     object Success : ActivateResult()
@@ -51,6 +53,16 @@ class SdCardRepository(private val context: Context) {
 
     private suspend fun keyFor(groupId: String): String? =
         context.sdCardDataStore.data.first()[keyPrefKey(groupId)]
+
+    // Access codes are valid for 1 year from generation (see the server's
+    // lib/expiry.ts). The expiry handed back by /api/seller/verify is
+    // cached alongside the key so this check works with zero connectivity —
+    // the whole point of activating once and playing offline forever until
+    // then.
+    suspend fun isExpired(groupId: String): Boolean {
+        val expiresAt = context.sdCardDataStore.data.first()[expiryPrefKey(groupId)] ?: return false
+        return System.currentTimeMillis() > expiresAt
+    }
 
     // Reads manifest.json from the previously-picked SAF tree. Returns null
     // if no folder is picked yet, or the folder doesn't look like a card
@@ -86,7 +98,10 @@ class SdCardRepository(private val context: Context) {
             if (!resp.isSuccessful || body?.encryptionKey == null) {
                 return@withContext ActivateResult.Failed(body?.error ?: "Couldn't verify this code — check it and try again.")
             }
-            context.sdCardDataStore.edit { it[keyPrefKey(groupId)] = body.encryptionKey }
+            context.sdCardDataStore.edit {
+                it[keyPrefKey(groupId)] = body.encryptionKey
+                if (body.expiresAt != null) it[expiryPrefKey(groupId)] = body.expiresAt
+            }
             ActivateResult.Success
         } catch (e: Exception) {
             ActivateResult.Failed("No internet right now — activation needs one connected moment, try again once you have signal.")
@@ -107,6 +122,10 @@ class SdCardRepository(private val context: Context) {
         val plainName = item.fileName
         val cacheFile = File(context.cacheDir, "sdcard-${item.id}")
         if (cacheFile.exists() && cacheFile.length() > 0) return@withContext cacheFile
+
+        if (isExpired(groupId)) {
+            return@withContext null.also { Log.e(TAG, "decryptToCache: access for group $groupId has expired") }
+        }
 
         try {
             if (encryptedName != null) {
