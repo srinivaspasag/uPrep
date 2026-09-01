@@ -34,6 +34,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import `in`.uprep.app.data.net.NetworkConfig
+import `in`.uprep.app.data.session.UserSession
+import org.json.JSONObject
 
 // Everything not yet built natively (CMDS admin, test-taking, notifications,
 // profile, doubts, ...) falls back to the live web app in a WebView — same
@@ -44,10 +46,32 @@ import `in`.uprep.app.data.net.NetworkConfig
 //   path == null            -> loads the site root (staff land on /cmds via
 //                               the server's own post-login redirect logic)
 //   path == "/test/123"      -> deep-links straight to a specific page
+// Web pages behind LmsShell (Doubts, Analytics, Activity, ...) gate on a
+// client-side `sessionStorage["uprep_session"]` marker (see lib/session.ts),
+// completely separate from the uprep_auth cookie — it's only ever populated
+// by the web app's own browser login flow calling setSession(). The native
+// app's login never runs that JS, so every fresh WebView load here would
+// redirect straight to /login despite a perfectly valid cookie. Fix: mirror
+// the already-durable native UserSession into that same sessionStorage key,
+// injected in onPageStarted so it lands before the page's own React code
+// hydrates and reads it.
+private fun sessionInjectionScript(session: UserSession): String {
+    val json = JSONObject().apply {
+        put("id", session.id)
+        put("firstName", session.firstName)
+        put("lastName", session.lastName)
+        put("memberId", session.memberId)
+        put("profile", session.profile)
+        put("isSuperAdmin", session.isSuperAdmin)
+    }
+    // JSONObject.toString() already produces valid, escaped JS-string-safe JSON.
+    return "sessionStorage.setItem('uprep_session', '${json.toString().replace("\\", "\\\\").replace("'", "\\'")}');"
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewFallbackScreen(path: String?, cookieValue: String?, onLogout: () -> Unit) {
+fun WebViewFallbackScreen(path: String?, cookieValue: String?, session: UserSession? = null, onLogout: () -> Unit) {
     val context = LocalContext.current
     var filePathCallback by remember { mutableStateOf<ValueCallback<Array<Uri>>?>(null) }
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
@@ -93,6 +117,13 @@ fun WebViewFallbackScreen(path: String?, cookieValue: String?, onLogout: () -> U
                 }
 
                 webViewClient = object : WebViewClient() {
+                    override fun onPageStarted(view: WebView, url: String?, favicon: android.graphics.Bitmap?) {
+                        super.onPageStarted(view, url, favicon)
+                        if (session != null) {
+                            view.evaluateJavascript(sessionInjectionScript(session), null)
+                        }
+                    }
+
                     override fun shouldOverrideUrlLoading(
                         view: WebView,
                         request: WebResourceRequest

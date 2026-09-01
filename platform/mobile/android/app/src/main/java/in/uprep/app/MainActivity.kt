@@ -126,6 +126,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 ),
                                 onLoginSuccess = { session ->
+                                    initialSession = session
                                     navController.navigate(routeFor(session)) {
                                         popUpTo(Routes.LOGIN) { inclusive = true }
                                     }
@@ -141,6 +142,9 @@ class MainActivity : ComponentActivity() {
                                 onOpenCourse = { course -> navController.navigate(Routes.folder(course.id)) },
                                 onOpenDownloads = { navController.navigate(Routes.DOWNLOADS) },
                                 onOpenSdCard = { navController.navigate(Routes.SD_CARD) },
+                                onOpenDoubts = { navController.navigate(Routes.webview("/learn/doubts")) },
+                                onOpenAnalytics = { navController.navigate(Routes.webview("/learn/analytics")) },
+                                onOpenActivity = { navController.navigate(Routes.webview("/learn/activity")) },
                                 onLogout = logout
                             )
                         }
@@ -268,6 +272,7 @@ class MainActivity : ComponentActivity() {
                             WebViewFallbackScreen(
                                 path = path,
                                 cookieValue = container.cookieStore.getCookie(),
+                                session = initialSession,
                                 onLogout = logout
                             )
                         }

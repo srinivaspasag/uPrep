@@ -32,6 +32,9 @@ fun CourseListScreen(
     onOpenCourse: (CourseSummary) -> Unit,
     onOpenDownloads: () -> Unit,
     onOpenSdCard: () -> Unit,
+    onOpenDoubts: () -> Unit,
+    onOpenAnalytics: () -> Unit,
+    onOpenActivity: () -> Unit,
     onLogout: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -40,6 +43,9 @@ fun CourseListScreen(
         TopAppBar(
             title = { Text("My Courses") },
             actions = {
+                IconButton(onClick = onOpenDoubts) { Text("❓") }
+                IconButton(onClick = onOpenAnalytics) { Text("📊") }
+                IconButton(onClick = onOpenActivity) { Text("🕒") }
                 IconButton(onClick = onOpenSdCard) { Text("💾") }
                 IconButton(onClick = onOpenDownloads) { Text("⬇") }
                 IconButton(onClick = onLogout) { Text("⎋") }
