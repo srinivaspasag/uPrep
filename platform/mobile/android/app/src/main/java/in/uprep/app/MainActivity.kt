@@ -22,10 +22,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import `in`.uprep.app.data.session.UserSession
+import `in`.uprep.app.ui.activity.ActivityScreen
+import `in`.uprep.app.ui.activity.ActivityViewModel
+import `in`.uprep.app.ui.analytics.AnalyticsScreen
+import `in`.uprep.app.ui.analytics.AnalyticsViewModel
 import `in`.uprep.app.ui.courses.CourseListScreen
 import `in`.uprep.app.ui.courses.CoursesViewModel
 import `in`.uprep.app.ui.courses.FolderBrowseScreen
 import `in`.uprep.app.ui.courses.FolderBrowseViewModel
+import `in`.uprep.app.ui.doubts.DoubtDetailScreen
+import `in`.uprep.app.ui.doubts.DoubtDetailViewModel
+import `in`.uprep.app.ui.doubts.DoubtsListScreen
+import `in`.uprep.app.ui.doubts.DoubtsListViewModel
 import `in`.uprep.app.ui.downloads.DownloadsScreen
 import `in`.uprep.app.ui.login.LoginScreen
 import `in`.uprep.app.ui.login.LoginViewModel
@@ -63,7 +71,12 @@ private object Routes {
     const val SD_PLAYER = "sdplayer?name={name}&path={path}"
     const val SD_DOCUMENT = "sddocument?name={name}&path={path}"
     const val WEBVIEW = "webview?path={path}"
+    const val DOUBTS = "doubts"
+    const val DOUBT_DETAIL = "doubts/{id}"
+    const val ANALYTICS = "analytics"
+    const val ACTIVITY = "activity"
 
+    fun doubtDetail(id: String) = "doubts/$id"
     fun folder(id: String) = "folder/$id"
     fun sdPlayer(name: String, path: String) = "sdplayer?name=${b64encode(name)}&path=${b64encode(path)}"
     fun sdDocument(name: String, path: String) = "sddocument?name=${b64encode(name)}&path=${b64encode(path)}"
@@ -142,10 +155,51 @@ class MainActivity : ComponentActivity() {
                                 onOpenCourse = { course -> navController.navigate(Routes.folder(course.id)) },
                                 onOpenDownloads = { navController.navigate(Routes.DOWNLOADS) },
                                 onOpenSdCard = { navController.navigate(Routes.SD_CARD) },
-                                onOpenDoubts = { navController.navigate(Routes.webview("/learn/doubts")) },
-                                onOpenAnalytics = { navController.navigate(Routes.webview("/learn/analytics")) },
-                                onOpenActivity = { navController.navigate(Routes.webview("/learn/activity")) },
+                                onOpenDoubts = { navController.navigate(Routes.DOUBTS) },
+                                onOpenAnalytics = { navController.navigate(Routes.ANALYTICS) },
+                                onOpenActivity = { navController.navigate(Routes.ACTIVITY) },
                                 onLogout = logout
+                            )
+                        }
+
+                        composable(Routes.DOUBTS) {
+                            DoubtsListScreen(
+                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                    factory = DoubtsListViewModel.Factory(container.learnApi)
+                                ),
+                                onOpenDoubt = { id -> navController.navigate(Routes.doubtDetail(id)) },
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        composable(
+                            route = Routes.DOUBT_DETAIL,
+                            arguments = listOf(navArgument("id") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id") ?: return@composable
+                            DoubtDetailScreen(
+                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                    factory = DoubtDetailViewModel.Factory(container.learnApi, id)
+                                ),
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        composable(Routes.ANALYTICS) {
+                            AnalyticsScreen(
+                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                    factory = AnalyticsViewModel.Factory(container.learnApi)
+                                ),
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        composable(Routes.ACTIVITY) {
+                            ActivityScreen(
+                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                    factory = ActivityViewModel.Factory(container.learnApi)
+                                ),
+                                onBack = { navController.popBackStack() }
                             )
                         }
 
