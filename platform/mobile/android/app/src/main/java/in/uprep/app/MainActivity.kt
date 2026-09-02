@@ -255,8 +255,6 @@ class MainActivity : ComponentActivity() {
                             val folderId = backStackEntry.arguments?.getString("folderId") ?: return@composable
                             FolderBrowseScreen(
                                 folderId = folderId,
-                                resolveUrl = container::absoluteUrl,
-                                downloadRepository = container.downloadRepository,
                                 viewModelFactory = FolderBrowseViewModel.Factory(container.learnApi, folderId),
                                 onOpenSubfolder = { id -> navController.navigate(Routes.folder(id)) },
                                 onOpenVideo = { item ->
