@@ -25,6 +25,7 @@ function newSessionId() {
 const TYPE_ICON: Record<string, string> = {
   DOCUMENT: "📄",
   VIDEO: "🎬",
+  BOOK: "📖",
   TEST: "📕",
   QUESTION_SET: "🟦",
 };
@@ -133,7 +134,7 @@ export default function ModuleForm({ moduleId }: { moduleId?: string }) {
       .then((d) => {
         const resources: Resource[] = d.resources || [];
         setBrowseFolders(resources.filter((r) => r.type === "FOLDER").map((r) => ({ id: r.id, title: r.title })));
-        setPool(resources.filter((r) => ["DOCUMENT", "VIDEO", "TEST", "QUESTION_SET"].includes(r.type)));
+        setPool(resources.filter((r) => ["DOCUMENT", "VIDEO", "BOOK", "TEST", "QUESTION_SET"].includes(r.type)));
       })
       .catch(() => {
         setBrowseFolders([]);
@@ -149,7 +150,7 @@ export default function ModuleForm({ moduleId }: { moduleId?: string }) {
         .then((r) => r.json())
         .then((d) => {
           const items: Resource[] = (d.resources || []).filter((r: Resource) =>
-            ["DOCUMENT", "VIDEO", "TEST", "QUESTION_SET"].includes(r.type)
+            ["DOCUMENT", "VIDEO", "BOOK", "TEST", "QUESTION_SET"].includes(r.type)
           );
           setPool(items);
         });
