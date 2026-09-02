@@ -93,7 +93,10 @@ export default function MyCoursesPage() {
     }
   }
 
-  const openFolder = useCallback(async (crumbs: Crumb[]) => {
+  // Pure data-fetch for a given breadcrumb path — no history/URL side
+  // effects, so it's safe to call both from clicks and from the
+  // popstate/initial-load handler below without double-pushing history.
+  const fetchFolder = useCallback(async (crumbs: Crumb[]) => {
     const target = crumbs[crumbs.length - 1];
     if (!target) {
       setPath([]);
@@ -113,6 +116,47 @@ export default function MyCoursesPage() {
       setBrowsing(false);
     }
   }, []);
+
+  // Restore whichever folder the URL points to on first load (so a
+  // refresh or bookmark lands in the right place too), and react to the
+  // browser's Back/Forward buttons via popstate. This is what was
+  // missing before — clicking through folders never touched browser
+  // history, so Back had nothing to step back to and just reloaded the
+  // page straight to the subject list instead of the previous folder.
+  useEffect(() => {
+    function crumbsFromLocation(): Crumb[] {
+      const raw = new URLSearchParams(window.location.search).get("path");
+      if (!raw) return [];
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return [];
+      }
+    }
+
+    fetchFolder(crumbsFromLocation());
+
+    function onPopState(e: PopStateEvent) {
+      fetchFolder((e.state && e.state.crumbs) || crumbsFromLocation());
+    }
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [fetchFolder]);
+
+  // Every folder click pushes a real browser history entry (via the URL's
+  // ?path= param), so the Back button now actually steps up one level
+  // instead of leaving the page or resetting to the subject list.
+  const openFolder = useCallback(
+    (crumbs: Crumb[]) => {
+      const url =
+        crumbs.length === 0
+          ? "/learn/courses"
+          : `/learn/courses?path=${encodeURIComponent(JSON.stringify(crumbs))}`;
+      window.history.pushState({ crumbs }, "", url);
+      fetchFolder(crumbs);
+    },
+    [fetchFolder]
+  );
 
   const atRoot = path.length === 0;
 
