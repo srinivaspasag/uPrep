@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import `in`.uprep.app.data.download.DownloadRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -40,28 +39,21 @@ import java.io.File
 
 // Native, in-app PDF rendering (Android's built-in PdfRenderer — legacy used
 // the much heavier MuPDF native library; PdfRenderer needs no extra
-// dependency and is enough for paged viewing). Prefers an already-downloaded
-// local copy (see FolderBrowseScreen's download button); otherwise fetches a
-// temporary copy to the cache dir just for viewing.
+// dependency and is enough for paged viewing). Fetches a temporary copy to
+// the cache dir just for viewing.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentViewerScreen(
     contentId: String,
     name: String,
-    remoteUrl: String,
-    downloadRepository: DownloadRepository
+    remoteUrl: String
 ) {
     val context = LocalContext.current
     var localFile by remember { mutableStateOf<File?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(contentId) {
-        val downloaded = downloadRepository.get(contentId)
-        localFile = if (downloaded != null && downloaded.status.name == "COMPLETE") {
-            downloadRepository.decryptToCache(downloaded)
-        } else {
-            fetchToCache(context.cacheDir, contentId, remoteUrl)
-        }
+        localFile = fetchToCache(context.cacheDir, contentId, remoteUrl)
         if (localFile == null) error = "Couldn't load this document"
     }
 

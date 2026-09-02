@@ -33,25 +33,19 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import `in`.uprep.app.R
-import `in`.uprep.app.data.db.DownloadStatus
-import `in`.uprep.app.data.download.DownloadRepository
 import `in`.uprep.app.data.net.NetworkConfig
-import kotlinx.coroutines.flow.collectLatest
-import java.io.File
 import java.util.regex.Pattern
 
-// Three playback paths, matching what platform/web's own player supports plus
+// Two playback paths, matching what platform/web's own player supports plus
 // the legacy-parity native YouTube player:
-// - Downloaded (local file present, see FolderBrowseScreen's download
-//   button): ExoPlayer against the decrypted local copy — no network needed.
 // - YouTube (provider == "YOUTUBE"): native playback via the actively
 //   maintained android-youtube-player library (IFrame API under the hood,
 //   but with correct fullscreen/lifecycle handling — legacy used Google's
 //   now-deprecated YouTube Android Player SDK for the same native-controls
 //   effect).
-// - Everything else (Vimeo, direct uploads not yet downloaded): ExoPlayer for
-//   a direct URL, or a WebView iframe embed for Vimeo — both already match
-//   what the legacy app itself does for these two cases.
+// - Everything else (Vimeo, direct uploads): ExoPlayer for a direct URL, or
+//   a WebView iframe embed for Vimeo — both already match what the legacy
+//   app itself does for these two cases.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoPlayerScreen(
@@ -59,24 +53,12 @@ fun VideoPlayerScreen(
     name: String,
     directUrl: String?,
     embedUrl: String?,
-    provider: String?,
-    downloadRepository: DownloadRepository
+    provider: String?
 ) {
-    var localFile by remember { mutableStateOf<File?>(null) }
-    LaunchedEffect(contentId) {
-        downloadRepository.observe(contentId).collectLatest { entity ->
-            localFile = if (entity?.status == DownloadStatus.COMPLETE) {
-                downloadRepository.decryptToCache(entity)
-            } else null
-        }
-    }
-
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(title = { Text(name) })
-        val downloaded = localFile
         val youTubeId = if (provider == "YOUTUBE") extractYouTubeId(embedUrl ?: directUrl) else null
         when {
-            downloaded != null -> DirectPlayer(downloaded.toURI().toString())
             youTubeId != null -> NativeYouTubePlayer(youTubeId)
             embedUrl != null -> EmbedPlayer(embedUrl)
             directUrl != null -> DirectPlayer(directUrl)

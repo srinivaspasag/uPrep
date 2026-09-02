@@ -30,7 +30,6 @@ import `in`.uprep.app.data.api.CourseSummary
 fun CourseListScreen(
     viewModel: CoursesViewModel = viewModel(),
     onOpenCourse: (CourseSummary) -> Unit,
-    onOpenDownloads: () -> Unit,
     onOpenSdCard: () -> Unit,
     onOpenDoubts: () -> Unit,
     onOpenAnalytics: () -> Unit,
@@ -47,7 +46,6 @@ fun CourseListScreen(
                 IconButton(onClick = onOpenAnalytics) { Text("📊") }
                 IconButton(onClick = onOpenActivity) { Text("🕒") }
                 IconButton(onClick = onOpenSdCard) { Text("💾") }
-                IconButton(onClick = onOpenDownloads) { Text("⬇") }
                 IconButton(onClick = onLogout) { Text("⎋") }
             }
         )

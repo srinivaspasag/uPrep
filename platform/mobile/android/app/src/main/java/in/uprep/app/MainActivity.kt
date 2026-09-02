@@ -34,7 +34,6 @@ import `in`.uprep.app.ui.doubts.DoubtDetailScreen
 import `in`.uprep.app.ui.doubts.DoubtDetailViewModel
 import `in`.uprep.app.ui.doubts.DoubtsListScreen
 import `in`.uprep.app.ui.doubts.DoubtsListViewModel
-import `in`.uprep.app.ui.downloads.DownloadsScreen
 import `in`.uprep.app.ui.login.LoginScreen
 import `in`.uprep.app.ui.login.LoginViewModel
 import `in`.uprep.app.ui.player.DocumentViewerScreen
@@ -63,7 +62,6 @@ private fun b64decode(s: String): String = String(Base64.decode(s, Base64.URL_SA
 private object Routes {
     const val LOGIN = "login"
     const val COURSES = "courses"
-    const val DOWNLOADS = "downloads"
     const val FOLDER = "folder/{folderId}"
     const val PLAYER = "player?contentId={contentId}&name={name}&url={url}&embedUrl={embedUrl}&provider={provider}"
     const val DOCUMENT = "document?contentId={contentId}&name={name}&url={url}"
@@ -153,7 +151,6 @@ class MainActivity : ComponentActivity() {
                                     factory = CoursesViewModel.Factory(container.learnApi)
                                 ),
                                 onOpenCourse = { course -> navController.navigate(Routes.folder(course.id)) },
-                                onOpenDownloads = { navController.navigate(Routes.DOWNLOADS) },
                                 onOpenSdCard = { navController.navigate(Routes.SD_CARD) },
                                 onOpenDoubts = { navController.navigate(Routes.DOUBTS) },
                                 onOpenAnalytics = { navController.navigate(Routes.ANALYTICS) },
@@ -201,10 +198,6 @@ class MainActivity : ComponentActivity() {
                                 ),
                                 onBack = { navController.popBackStack() }
                             )
-                        }
-
-                        composable(Routes.DOWNLOADS) {
-                            DownloadsScreen(downloadRepository = container.downloadRepository)
                         }
 
                         composable(Routes.SD_CARD) {
@@ -292,8 +285,7 @@ class MainActivity : ComponentActivity() {
                                 name = args?.getString("name").orEmpty(),
                                 directUrl = args?.getString("url")?.let(::b64decode)?.takeIf { it.isNotEmpty() },
                                 embedUrl = args?.getString("embedUrl")?.let(::b64decode)?.takeIf { it.isNotEmpty() },
-                                provider = args?.getString("provider")?.takeIf { it.isNotEmpty() },
-                                downloadRepository = container.downloadRepository
+                                provider = args?.getString("provider")?.takeIf { it.isNotEmpty() }
                             )
                         }
 
@@ -309,8 +301,7 @@ class MainActivity : ComponentActivity() {
                             DocumentViewerScreen(
                                 contentId = args?.getString("contentId").orEmpty(),
                                 name = args?.getString("name").orEmpty(),
-                                remoteUrl = args?.getString("url")?.let(::b64decode).orEmpty(),
-                                downloadRepository = container.downloadRepository
+                                remoteUrl = args?.getString("url")?.let(::b64decode).orEmpty()
                             )
                         }
 
