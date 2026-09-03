@@ -32,6 +32,7 @@ const TOOL_LINKS: ToolLink[] = [
   { label: "Referrals", href: "/cmds/tools/referrals" },
   { label: "External Signup", href: "/cmds/tools/signup" },
   { label: "Exports / SD Cards", href: "/cmds/tools/exports" },
+  { label: "Fix Chapter Numbering", href: "/cmds/tools/fix-numbering" },
 ];
 
 // Exact replica of the legacy CMDS chrome: black title bar + secondary nav
