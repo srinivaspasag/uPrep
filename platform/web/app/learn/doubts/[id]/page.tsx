@@ -148,11 +148,67 @@ export default function DoubtConversationPage() {
     if (typeof window !== "undefined" && "speechSynthesis" in window) setTtsSupported(true);
   }, []);
 
+  // Without this, Aira keeps talking even after you've navigated away from
+  // this doubt (Back button, opening a different doubt, etc.) — the browser
+  // has no idea the page changed, since speechSynthesis runs independently
+  // of React. This stops it the moment this page unmounts.
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  // AnswerText.tsx strips markdown and renders LaTeX into visuals for the
+  // screen, but speech synthesis only ever sees the raw source string — so
+  // without this, it reads "$", "**", and LaTeX commands aloud literally.
+  // This converts the same syntax into natural spoken words instead of
+  // just deleting the symbols, so math actually sounds like math ("a over
+  // b" instead of "a b" or "backslash frac a b").
+  function sanitizeForSpeech(raw: string): string {
+    let s = raw;
+
+    // Common LaTeX commands → words. Must run before the generic
+    // brace/backslash cleanup below, or \frac{a}{b} would be mangled
+    // before we get a chance to read it properly.
+    s = s.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, "$1 over $2");
+    s = s.replace(/\\sqrt\{([^{}]+)\}/g, "square root of $1");
+    s = s.replace(/\\left|\\right/g, "");
+    s = s.replace(/\\times/g, " times ");
+    s = s.replace(/\\cdot/g, " times ");
+    s = s.replace(/\\pm/g, " plus or minus ");
+    s = s.replace(/\\pi/g, "pi");
+    s = s.replace(/\\circ/g, " degrees ");
+    s = s.replace(/\\[Dd]elta/g, "delta ");
+
+    // Remaining LaTeX delimiters and any leftover \command we didn't name
+    // above — drop the syntax, keep whatever text is left.
+    s = s.replace(/\$\$([\s\S]*?)\$\$/g, "$1");
+    s = s.replace(/\$([^$]*?)\$/g, "$1");
+    s = s.replace(/\\[a-zA-Z]+/g, "");
+    s = s.replace(/[{}]/g, "");
+
+    // Markdown: bold markers, headers, list bullets/numbers.
+    s = s.replace(/\*\*([^*]+)\*\*/g, "$1");
+    s = s.replace(/^\s{0,3}#{1,6}\s+/gm, "");
+    s = s.replace(/^\s*[-*]\s+/gm, "");
+    s = s.replace(/^\s*\d+[.)]\s+/gm, "");
+
+    // Superscript/subscript — "x^2" reads as "x to the power of 2"
+    // instead of "x caret 2"; subscript carets just get dropped.
+    s = s.replace(/\^/g, " to the power of ");
+    s = s.replace(/_/g, " ");
+
+    return s.replace(/\s+/g, " ").trim();
+  }
+
   function speakAnswer() {
     if (!aiAnswer || typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    const text = isGuided
+    const rawText = isGuided
       ? (aiAnswer.steps || []).map((s) => `${s.title}. ${s.body}`).join(" ")
       : aiAnswer.steps?.[0]?.body || aiAnswer.content;
+    const text = sanitizeForSpeech(rawText);
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "en-IN";
