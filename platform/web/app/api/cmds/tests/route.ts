@@ -20,7 +20,32 @@ function stripHtml(s: unknown): string {
   return s.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
 }
 
-// GET: list published library questions available to compose into a test.
+function hasAnswerKey(solutionInfo: any): boolean {
+  const a = solutionInfo?.answer;
+  if (a == null) return false;
+  if (Array.isArray(a)) return a.length > 0;
+  return String(a).length > 0;
+}
+
+// See the matching comment in app/api/cmds/tests/auto/route.ts — bulk-
+// imported questions use different difficulty words than this app's own
+// authoring form, so match every known synonym instead of the bare value.
+function difficultyAliases(level: string): string[] {
+  const aliases: Record<string, string[]> = {
+    EASY: ["EASY"],
+    MODERATE: ["MODERATE", "MEDIUM"],
+    TOUGH: ["TOUGH", "HARD"],
+  };
+  return aliases[level] || [level];
+}
+
+// GET: list questions available to compose into a test — published library
+// questions by default, but honors ?publishedFilter=UNPUBLISHED|BOTH the
+// same way Auto-generate mode already does (see app/api/cmds/tests/auto/
+// route.ts's fetchPool). Before this, Manual pick always showed only
+// truly-published questions no matter what the admin chose on the Chapters
+// step — a real bug found live: an org with content authored but never run
+// through Publish saw an empty pool here with no way to see it at all.
 // Optional ?boardIds=<id>,<id>&difficulty=&type= narrows the pool to
 // questions tagged to specific Board Tree chapters — what the Auto Generate
 // Test page uses instead of drawing from the entire org question bank.
@@ -32,30 +57,56 @@ export async function GET(req: NextRequest) {
     .filter(Boolean);
   const difficulty = req.nextUrl.searchParams.get("difficulty") || "";
   const type = req.nextUrl.searchParams.get("type") || "";
+  const publishedFilter = (req.nextUrl.searchParams.get("publishedFilter") || "PUBLISHED") as
+    | "PUBLISHED"
+    | "UNPUBLISHED"
+    | "BOTH";
 
   try {
     const db = await getDb();
-    const docs = await db
-      .collection("questions")
-      .find({
-        "contentSrc.id": orgId,
-        recordState: "ACTIVE",
-        ...(boardIds.length ? { boardIds: { $in: boardIds } } : {}),
-        ...(difficulty ? { difficulty } : {}),
-        ...(type ? { type } : {}),
-      } as any)
-      .sort({ lastUpdated: -1 })
-      .toArray();
+    const baseMatch: any = {
+      "contentSrc.id": orgId,
+      recordState: "ACTIVE",
+      ...(boardIds.length ? { boardIds: { $in: boardIds } } : {}),
+      ...(difficulty ? { difficulty: { $in: difficultyAliases(difficulty) } } : {}),
+      ...(type ? { type } : {}),
+    };
 
-    const questions = docs.map((q: any) => ({
-      id: q._id.toString(),
-      text: stripHtml(q.content),
-      type: q.type || "SCQ",
-      options: Array.isArray(q.options) ? q.options.length : 0,
-      difficulty: q.difficulty || null,
-      hasKey: !!q.hasAns,
-      boardIds: Array.isArray(q.boardIds) ? q.boardIds : [],
-    }));
+    const questions: any[] = [];
+
+    if (publishedFilter === "PUBLISHED" || publishedFilter === "BOTH") {
+      const docs = await db.collection("questions").find(baseMatch).sort({ lastUpdated: -1 }).toArray();
+      for (const q of docs as any[]) {
+        questions.push({
+          id: q._id.toString(),
+          text: stripHtml(q.content),
+          type: q.type || "SCQ",
+          options: Array.isArray(q.options) ? q.options.length : 0,
+          difficulty: q.difficulty || null,
+          hasKey: !!q.hasAns,
+          boardIds: Array.isArray(q.boardIds) ? q.boardIds : [],
+        });
+      }
+    }
+
+    if (publishedFilter === "UNPUBLISHED" || publishedFilter === "BOTH") {
+      const docs = await db
+        .collection("cmdsquestions")
+        .find({ ...baseMatch, published: false })
+        .sort({ lastUpdated: -1 })
+        .toArray();
+      for (const q of docs as any[]) {
+        questions.push({
+          id: q._id.toString(),
+          text: stripHtml(q.questionBody?.newText),
+          type: q.type || "SCQ",
+          options: q.solutionInfo?.optionBody?.newOptions?.length ?? 0,
+          difficulty: q.difficulty || null,
+          hasKey: hasAnswerKey(q.solutionInfo),
+          boardIds: Array.isArray(q.boardIds) ? q.boardIds : [],
+        });
+      }
+    }
 
     return NextResponse.json({ questions, orgId });
   } catch (e: any) {
