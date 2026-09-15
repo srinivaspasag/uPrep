@@ -75,11 +75,20 @@ export async function GET(req: NextRequest) {
 
     if (kind === "question" || kind === "all") {
       const qFilter = boardIds.length ? { ...filter, boardIds: { $in: boardIds } } : filter;
+      // Bug found live: a flat 200 cap here meant a subject/chapter with
+      // more than 200 authored questions (routine after this session's bulk
+      // imports — some chapters run into the thousands) silently hid
+      // everything past the newest 200, with no indication anything was
+      // missing. Scoped browsing (a real boardIds filter — subject or
+      // chapter, not "All Subjects") gets a much higher ceiling since that's
+      // a bounded, real workflow; the unscoped "All Subjects" overview stays
+      // capped at 200 to avoid loading the entire 13k+ question org-wide
+      // list into one table for a view nobody actually reads row-by-row.
       const docs = await db
         .collection("cmdsquestions")
         .find(qFilter)
         .sort({ lastUpdated: -1 })
-        .limit(200)
+        .limit(boardIds.length ? 5000 : 200)
         .toArray();
       // Each question is tagged with its deepest chapter/topic board id (see
       // lib/legacyBoard.ts's resolveBoardNames) — resolved in one batch call
