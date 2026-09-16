@@ -409,8 +409,12 @@ export default function CreateTestPage() {
     subjects.forEach((s) => {
       setPoolLoadingBySubject((prev) => ({ ...prev, [s.subjectId]: true }));
       const chapterIds = effectiveChapterBoardIds(s);
-      const qs = chapterIds.length ? `?boardIds=${chapterIds.join(",")}` : "";
-      fetch(`/api/cmds/tests${qs}`)
+      const params = new URLSearchParams();
+      if (chapterIds.length) params.set("boardIds", chapterIds.join(","));
+      // Was missing before — Manual pick silently ignored whatever the
+      // admin chose here and always showed only truly-published questions.
+      params.set("publishedFilter", s.publishedFilter || "PUBLISHED");
+      fetch(`/api/cmds/tests?${params.toString()}`)
         .then((r) => r.json())
         .then((d) =>
           setPoolBySubject((prev) => ({

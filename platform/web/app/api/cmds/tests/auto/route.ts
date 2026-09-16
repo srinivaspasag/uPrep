@@ -14,6 +14,23 @@ export const runtime = "nodejs";
 // random matching questions per selection and returns them grouped by
 // subject for the review step — does NOT create the test yet.
 
+// Bulk-imported questions were tagged with plain-English difficulty words
+// ("MEDIUM") that don't match this app's own vocabulary from the
+// authoring form ("MODERATE"/"TOUGH") — found live: a subject with real,
+// correctly-tagged questions returned zero results the moment a specific
+// difficulty was requested, because "MODERATE" and "MEDIUM" never matched
+// as exact strings. Matching against every known synonym instead of the
+// bare value fixes this for both old imported content and newly-authored
+// content, with no data migration needed.
+function difficultyAliases(level: string): string[] {
+  const aliases: Record<string, string[]> = {
+    EASY: ["EASY"],
+    MODERATE: ["MODERATE", "MEDIUM"],
+    TOUGH: ["TOUGH", "HARD"],
+  };
+  return aliases[level] || [level];
+}
+
 function stripHtml(s: unknown): string {
   if (typeof s !== "string") return "";
   return s.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
@@ -74,7 +91,7 @@ async function fetchPool(
   const baseMatch: any = {
     boardIds: { $in: s.chapterBoardIds },
     type: s.type,
-    ...(difficulty ? { difficulty } : {}),
+    ...(difficulty ? { difficulty: { $in: difficultyAliases(difficulty) } } : {}),
     ...(exclude.length ? { _id: { $nin: exclude } } : {}),
   };
 

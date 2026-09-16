@@ -63,9 +63,9 @@ export default function DoubtsLayout({ children }: { children: React.ReactNode }
 
   return (
     <LmsShell active="doubts" fullWidth>
-      <div className="flex h-[calc(100vh-52px)]">
+      <div className="flex h-[calc(100vh-52px)] min-h-0">
         {/* My Doubts rail */}
-        <aside className="flex w-[300px] shrink-0 flex-col border-r border-[#D9D6C9] bg-white">
+        <aside className="flex w-[300px] shrink-0 flex-col border-r border-[#D9D6C9] bg-white min-h-0">
           <div className="flex items-center gap-2 border-b border-[#D9D6C9] px-4 py-4">
             <AiraAvatar size="md" />
             <div>
@@ -98,7 +98,7 @@ export default function DoubtsLayout({ children }: { children: React.ReactNode }
             ))}
           </div>
 
-          <div className="mt-3 flex-1 overflow-y-auto">
+          <div className="mt-3 min-h-0 flex-1 overflow-y-auto">
             {loading ? (
               <div className="px-4 py-8 text-center text-xs text-[#8890A1]">Loading…</div>
             ) : items.length === 0 ? (
@@ -133,7 +133,7 @@ export default function DoubtsLayout({ children }: { children: React.ReactNode }
         </aside>
 
         {/* Conversation pane */}
-        <div className="min-w-0 flex-1 overflow-y-auto bg-[#F8F7F3]">{children}</div>
+        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#F8F7F3]">{children}</div>
       </div>
 
       {showAsk && (
