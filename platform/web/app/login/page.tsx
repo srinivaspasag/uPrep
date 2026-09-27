@@ -232,9 +232,9 @@ function LoginForm() {
           <Image
             src="/scholar-spectra-login.png"
             alt="Scholar Spectra"
-            width={360}
-            height={186}
-            className="h-auto w-56"
+            width={520}
+            height={395}
+            className="h-auto w-48"
             priority
           />
         </div>
