@@ -121,15 +121,14 @@ export default function CmdsShell({
 
       {/* Secondary nav */}
       <header className="flex h-11 items-center border-b border-slate-200 bg-white px-4">
-        <Link href="/cmds" className="flex items-center gap-2">
+        <Link href="/cmds" className="flex items-center">
           <Image
-            src="/legacy/logo.png"
+            src="/legacy/logo-horizontal.png"
             alt="Scholar Spectra"
-            width={256}
-            height={256}
-            className="h-9 w-auto object-contain"
+            width={2029}
+            height={300}
+            className="h-7 w-auto object-contain"
           />
-          <span className="text-[15px] font-bold text-[#16233D]">Scholar Spectra</span>
         </Link>
 
         <nav className="mx-auto flex items-center gap-8 text-sm">
