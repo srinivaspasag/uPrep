@@ -101,15 +101,18 @@ export default function LmsShell({
           visible on every single page carries a little energy. */}
       <header className="sticky top-0 z-30 bg-white px-5 shadow-sm">
         <div className="flex h-[52px] items-center justify-between">
-        <Link href="/learn/courses" className="flex items-center gap-2">
+        <Link href="/learn/courses" className="flex items-center gap-2.5">
           <Image
             src="/legacy/logo.png"
             alt="Scholar Spectra"
             width={96}
             height={96}
-            className="h-[34px] w-auto object-contain"
+            className="h-[38px] w-auto object-contain"
             priority
           />
+          <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-[#16233D]">
+            Scholar Spectra
+          </span>
         </Link>
 
         <div className="flex items-center gap-3">

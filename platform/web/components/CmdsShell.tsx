@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getSession, clearSession, setSession as persistSession, type UprepSession } from "@/lib/session";
 import { isSuperAdmin } from "@/lib/roles";
 import ImpersonationBanner from "@/components/ImpersonationBanner";
@@ -121,9 +122,14 @@ export default function CmdsShell({
       {/* Secondary nav */}
       <header className="flex h-11 items-center border-b border-slate-200 bg-white px-4">
         <Link href="/cmds" className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded bg-[#e8443b] text-xs font-bold text-white">
-            U
-          </span>
+          <Image
+            src="/legacy/logo.png"
+            alt="Scholar Spectra"
+            width={96}
+            height={96}
+            className="h-8 w-auto object-contain"
+          />
+          <span className="text-sm font-semibold text-[#16233D]">Scholar Spectra</span>
         </Link>
 
         <nav className="mx-auto flex items-center gap-8 text-sm">
