@@ -105,12 +105,12 @@ export default function LmsShell({
           <Image
             src="/legacy/logo.png"
             alt="Scholar Spectra"
-            width={96}
-            height={96}
-            className="h-[38px] w-auto object-contain"
+            width={256}
+            height={256}
+            className="h-[46px] w-auto object-contain"
             priority
           />
-          <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-[#16233D]">
+          <span className="hidden sm:inline text-[17px] font-bold tracking-tight text-[#16233D]">
             Scholar Spectra
           </span>
         </Link>

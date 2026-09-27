@@ -125,11 +125,11 @@ export default function CmdsShell({
           <Image
             src="/legacy/logo.png"
             alt="Scholar Spectra"
-            width={96}
-            height={96}
-            className="h-8 w-auto object-contain"
+            width={256}
+            height={256}
+            className="h-9 w-auto object-contain"
           />
-          <span className="text-sm font-semibold text-[#16233D]">Scholar Spectra</span>
+          <span className="text-[15px] font-bold text-[#16233D]">Scholar Spectra</span>
         </Link>
 
         <nav className="mx-auto flex items-center gap-8 text-sm">
