@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isStaff } from "@/lib/roles";
 
@@ -227,11 +228,15 @@ function LoginForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-8">
-        <div className="mb-6 flex items-center gap-2">
-          <div className="h-9 w-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
-            U
-          </div>
-          <span className="text-xl font-semibold text-slate-800">UPrep</span>
+        <div className="mb-6 flex justify-center">
+          <Image
+            src="/scholar-spectra-login.png"
+            alt="Scholar Spectra"
+            width={360}
+            height={186}
+            className="h-auto w-56"
+            priority
+          />
         </div>
 
         <h1 className="text-lg font-semibold text-slate-700 tracking-wide">ENTER YOUR DETAILS</h1>

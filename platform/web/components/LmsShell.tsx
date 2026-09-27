@@ -104,10 +104,10 @@ export default function LmsShell({
         <Link href="/learn/courses" className="flex items-center gap-2">
           <Image
             src="/legacy/logo.png"
-            alt="UPrep Learning"
-            width={130}
-            height={30}
-            className="h-[30px] w-auto object-contain"
+            alt="Scholar Spectra"
+            width={96}
+            height={96}
+            className="h-[34px] w-auto object-contain"
             priority
           />
         </Link>
