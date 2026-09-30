@@ -17,6 +17,7 @@ type Org = {
   socialMedia: Record<string, string>;
   logoUrl: string;
   playStoreLink: string;
+  slug: string;
 };
 
 const TYPES = ["COLLEGE", "SCHOOL", "UNIVERSITY", "INSTITUTE", "COMPANY", "OTHER"];
@@ -27,11 +28,17 @@ export default function OrganizationInfoPage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [logoUploading, setLogoUploading] = useState(false);
+  const [slugInput, setSlugInput] = useState("");
+  const [slugSaving, setSlugSaving] = useState(false);
+  const [slugMsg, setSlugMsg] = useState("");
 
   useEffect(() => {
     fetch("/api/cmds/tools/organization")
       .then((r) => r.json())
-      .then((d) => setOrg(d.org || null))
+      .then((d) => {
+        setOrg(d.org || null);
+        setSlugInput(d.org?.slug || "");
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -55,6 +62,28 @@ export default function OrganizationInfoPage() {
       if (res.ok && d.url) set("logoUrl", d.url);
     } finally {
       setLogoUploading(false);
+    }
+  }
+
+  async function saveSlug() {
+    setSlugMsg("");
+    setSlugSaving(true);
+    try {
+      const res = await fetch("/api/cmds/tools/organization/slug", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: slugInput }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok && d.slug) {
+        set("slug", d.slug);
+        setSlugInput(d.slug);
+        setSlugMsg("Saved.");
+      } else {
+        setSlugMsg(d.error || "Save failed.");
+      }
+    } finally {
+      setSlugSaving(false);
     }
   }
 
@@ -107,6 +136,31 @@ export default function OrganizationInfoPage() {
                   />
                 </label>
               </div>
+            </Row>
+            <Row label="Your Own Login URL">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-400">/i/</span>
+                <input
+                  className={inp}
+                  value={slugInput}
+                  onChange={(e) => setSlugInput(e.target.value)}
+                  placeholder="e.g. scholar-spectra"
+                />
+                <button
+                  onClick={saveSlug}
+                  disabled={slugSaving || !slugInput.trim() || slugInput === org.slug}
+                  className="whitespace-nowrap rounded border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+                >
+                  {slugSaving ? "Saving…" : "Save"}
+                </button>
+              </div>
+              {org.slug && (
+                <p className="mt-1 text-xs text-slate-400">
+                  Live at <span className="font-mono text-slate-600">/i/{org.slug}</span> — students go straight
+                  there instead of picking your institute by name.
+                </p>
+              )}
+              {slugMsg && <p className="mt-1 text-xs text-slate-500">{slugMsg}</p>}
             </Row>
             <Row label="Name*">
               <input className={inp} value={org.name} onChange={(e) => set("name", e.target.value)} />

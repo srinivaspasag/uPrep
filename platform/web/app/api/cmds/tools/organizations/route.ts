@@ -4,6 +4,7 @@ import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
 import { isSuperAdmin } from "@/lib/roles";
 import { hashPassword, generatePassword } from "@/lib/password";
+import { slugify } from "@/lib/slug";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -39,6 +40,7 @@ export async function GET(req: NextRequest) {
           type: o.type || "COLLEGE",
           memberCount,
           plan: o.plan || null,
+          slug: o.slug || "",
         };
       })
     );
@@ -98,6 +100,21 @@ export async function POST(req: NextRequest) {
     };
     const website = (b.website || "").trim();
     if (website) orgDoc.website = website;
+
+    // Auto-derive a URL slug from the name (/i/<slug> is that institute's own
+    // branded login entry point — see app/i/[slug]/page.tsx). Collides with
+    // an existing slug -> append -2, -3, ... until unique; never write an
+    // empty slug (see the unique-index note above).
+    const base = slugify(name);
+    if (base) {
+      let candidate = base;
+      let n = 2;
+      while (await db.collection("organizations").findOne({ slug: candidate })) {
+        candidate = `${base}-${n}`;
+        n++;
+      }
+      orgDoc.slug = candidate;
+    }
 
     await db.collection("organizations").insertOne(orgDoc);
 

@@ -54,6 +54,7 @@ export async function GET(req: NextRequest) {
         socialMedia: o.socialMedia || {},
         playStoreLink,
         logoUrl: (orgDoc as any)?.logoUrl || "",
+        slug: (orgDoc as any)?.slug || "",
       },
     });
   } catch (e: any) {

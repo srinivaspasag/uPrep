@@ -3,6 +3,7 @@ import { ObjectId, Long } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { resolveOrgId } from "@/lib/org-scope";
+import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,25 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = await getDb();
-    const baseMatch: any = {
+
+    // Test composition draws from this org's OWN published library plus any
+    // org that has granted it a course (e.g. Scholar Spectra composing a test
+    // from both their own authored questions and uPrep's shared JEE/NEET
+    // bank) — same cross-org resolution already used for student-facing
+    // browse/search. Draft/unpublished questions stay own-org only below; a
+    // subscriber has no business picking through a provider's in-progress
+    // drafts, only their finished, published library.
+    const catalog = await resolveCourseCatalog(db, orgId);
+    const publishedOwnerOrgIds = catalogOwnerOrgs(orgId, catalog);
+
+    const publishedMatch: any = {
+      "contentSrc.id": { $in: publishedOwnerOrgIds },
+      recordState: "ACTIVE",
+      ...(boardIds.length ? { boardIds: { $in: boardIds } } : {}),
+      ...(difficulty ? { difficulty: { $in: difficultyAliases(difficulty) } } : {}),
+      ...(type ? { type } : {}),
+    };
+    const draftMatch: any = {
       "contentSrc.id": orgId,
       recordState: "ACTIVE",
       ...(boardIds.length ? { boardIds: { $in: boardIds } } : {}),
@@ -75,8 +94,9 @@ export async function GET(req: NextRequest) {
     const questions: any[] = [];
 
     if (publishedFilter === "PUBLISHED" || publishedFilter === "BOTH") {
-      const docs = await db.collection("questions").find(baseMatch).sort({ lastUpdated: -1 }).toArray();
+      const docs = await db.collection("questions").find(publishedMatch).sort({ lastUpdated: -1 }).toArray();
       for (const q of docs as any[]) {
+        const qOwnerOrgId = q?.contentSrc?.id || orgId;
         questions.push({
           id: q._id.toString(),
           text: stripHtml(q.content),
@@ -85,6 +105,8 @@ export async function GET(req: NextRequest) {
           difficulty: q.difficulty || null,
           hasKey: !!q.hasAns,
           boardIds: Array.isArray(q.boardIds) ? q.boardIds : [],
+          ownerOrgId: qOwnerOrgId,
+          shared: qOwnerOrgId !== orgId,
         });
       }
     }
@@ -92,7 +114,7 @@ export async function GET(req: NextRequest) {
     if (publishedFilter === "UNPUBLISHED" || publishedFilter === "BOTH") {
       const docs = await db
         .collection("cmdsquestions")
-        .find({ ...baseMatch, published: false })
+        .find({ ...draftMatch, published: false })
         .sort({ lastUpdated: -1 })
         .toArray();
       for (const q of docs as any[]) {
@@ -104,6 +126,8 @@ export async function GET(req: NextRequest) {
           difficulty: q.difficulty || null,
           hasKey: hasAnswerKey(q.solutionInfo),
           boardIds: Array.isArray(q.boardIds) ? q.boardIds : [],
+          ownerOrgId: orgId,
+          shared: false,
         });
       }
     }

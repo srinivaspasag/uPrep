@@ -38,9 +38,14 @@ function LoginForm() {
   const [showSuggest, setShowSuggest] = useState(false);
   const [instFrozen, setInstFrozen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+  const [deepLinkLogoUrl, setDeepLinkLogoUrl] = useState("");
 
   // Deep link: /login?org=<id>&inst=<name> pre-selects and freezes the institute
-  // so an org can hand out its own branded login URL (legacy micrositeByOrgId).
+  // so an org can hand out its own branded login URL (legacy micrositeByOrgId;
+  // now also what /i/[slug] redirects into). Also fetches that org's own logo
+  // so the page shows THEIR branding instead of the hardcoded default below —
+  // without this, every institute's students would see Scholar Spectra's logo
+  // even when signing in through their own institute's link.
   useEffect(() => {
     const oid = search.get("org");
     if (oid) {
@@ -48,6 +53,12 @@ function LoginForm() {
       setOrgId(oid);
       setOrgName(search.get("inst") || "Your institute");
       setInstFrozen(true);
+      fetch(`/api/orgs/by-id?id=${encodeURIComponent(oid)}`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.logoUrl) setDeepLinkLogoUrl(d.logoUrl);
+        })
+        .catch(() => {});
     }
   }, [search]);
 
@@ -229,14 +240,22 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-8">
         <div className="mb-6 flex justify-center">
-          <Image
-            src="/scholar-spectra-login.png"
-            alt="Scholar Spectra"
-            width={520}
-            height={395}
-            className="h-auto w-48"
-            priority
-          />
+          {deepLinkLogoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- uploaded
+            // org logo, unknown intrinsic size, served straight off disk by
+            // Caddy (see /api/cmds/tools/organization/logo) — not a fit for
+            // next/image's static-import/remote-pattern config.
+            <img src={deepLinkLogoUrl} alt={orgName || "Institute logo"} className="h-auto max-h-28 w-auto" />
+          ) : (
+            <Image
+              src="/scholar-spectra-login.png"
+              alt="Scholar Spectra"
+              width={520}
+              height={395}
+              className="h-auto w-48"
+              priority
+            />
+          )}
         </div>
 
         <h1 className="text-lg font-semibold text-slate-700 tracking-wide">ENTER YOUR DETAILS</h1>
