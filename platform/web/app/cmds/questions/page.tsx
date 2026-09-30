@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import CmdsShell from "@/components/CmdsShell";
 import { getSession } from "@/lib/session";
 import MathText from "@/components/MathText";
@@ -52,6 +53,7 @@ function Pill({ ok, yes, no }: { ok: boolean; yes: string; no: string }) {
 }
 
 export default function QuestionBankPage() {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>("questions");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [tests, setTests] = useState<Test[]>([]);
@@ -61,6 +63,12 @@ export default function QuestionBankPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [publishing, setPublishing] = useState(false);
   const [notice, setNotice] = useState("");
+  const [testModalOpen, setTestModalOpen] = useState(false);
+  const [testName, setTestName] = useState("");
+  const [testDuration, setTestDuration] = useState(30);
+  const [testPositive, setTestPositive] = useState(4);
+  const [testNegative, setTestNegative] = useState(1);
+  const [creatingTest, setCreatingTest] = useState(false);
 
   // Board Tree browse/filter rail — questions get tagged to a chapter (or
   // concept) at authoring time via BoardPicker; this is where that tagging
@@ -195,6 +203,50 @@ export default function QuestionBankPage() {
       setError("Publish failed");
     } finally {
       setPublishing(false);
+    }
+  }
+
+  // Only published questions can go into a test — /api/cmds/tests validates
+  // against the published `questions` collection, not drafts. A selection
+  // may still contain drafts (the row checkbox no longer locks those out),
+  // so this is what "Create Test" actually sends.
+  const selectedPublished = useMemo(
+    () => questions.filter((q) => selected.has(q.id) && q.published),
+    [questions, selected]
+  );
+
+  async function createTestFromSelected() {
+    const name = testName.trim();
+    if (!name || selectedPublished.length === 0) return;
+    setCreatingTest(true);
+    setError("");
+    setNotice("");
+    try {
+      const r = await fetch("/api/cmds/tests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          userId: getSession()?.id,
+          durationMin: testDuration,
+          positive: testPositive,
+          negative: testNegative,
+          questionIds: selectedPublished.map((q) => q.id),
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.error) {
+        setError(d.error || "Failed to create test");
+        return;
+      }
+      setTestModalOpen(false);
+      setTestName("");
+      setSelected(new Set());
+      router.push(`/cmds/tests/${d.id}/edit`);
+    } catch {
+      setError("Failed to create test");
+    } finally {
+      setCreatingTest(false);
     }
   }
 
@@ -403,14 +455,35 @@ export default function QuestionBankPage() {
             )}
             {selected.size > 0 && (
               <div className="mt-6 flex items-center justify-between rounded-lg bg-blue-50 px-4 py-3 ring-1 ring-blue-200">
-                <span className="text-sm text-blue-800">{selected.size} selected</span>
-                <button
-                  onClick={publishSelected}
-                  disabled={publishing}
-                  className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-                >
-                  {publishing ? "Publishing…" : "Publish selected"}
-                </button>
+                <span className="text-sm text-blue-800">
+                  {selected.size} selected
+                  {selectedPublished.length > 0 && selectedPublished.length < selected.size && (
+                    <span className="text-blue-500"> ({selectedPublished.length} published)</span>
+                  )}
+                </span>
+                <div className="flex items-center gap-2">
+                  {publishableIds.some((id) => selected.has(id)) && (
+                    <button
+                      onClick={publishSelected}
+                      disabled={publishing}
+                      className="rounded-md border border-blue-300 bg-white px-4 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-60"
+                    >
+                      {publishing ? "Publishing…" : "Publish selected"}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setTestModalOpen(true)}
+                    disabled={selectedPublished.length === 0}
+                    title={
+                      selectedPublished.length === 0
+                        ? "Select at least one published question — drafts must be published first"
+                        : `Create a test from ${selectedPublished.length} question(s)`
+                    }
+                    className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-40"
+                  >
+                    Create Test ({selectedPublished.length})
+                  </button>
+                </div>
               </div>
             )}
             <div className="mt-6 overflow-hidden rounded-xl bg-white ring-1 ring-black/5">
@@ -436,21 +509,19 @@ export default function QuestionBankPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {questions.map((q) => {
-                    const publishable = !q.published && q.hasKey;
                     return (
                       <tr key={q.id} className="group hover:bg-slate-50">
                         <td className="px-4 py-3">
                           <input
                             type="checkbox"
-                            className="h-4 w-4 accent-blue-600 disabled:opacity-30"
+                            className="h-4 w-4 accent-blue-600"
                             checked={selected.has(q.id)}
-                            disabled={!publishable}
                             onChange={() => toggleSelect(q.id)}
                             title={
                               q.published
-                                ? "Already published"
+                                ? "Select for a test"
                                 : q.hasKey
-                                ? "Select to publish"
+                                ? "Select to publish, or add to a test after publishing"
                                 : "Add an answer key first"
                             }
                           />
@@ -603,6 +674,81 @@ export default function QuestionBankPage() {
           </div>
         </div>
       </main>
+
+      {testModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl">
+            <h2 className="text-base font-semibold text-slate-800">
+              Create Test from {selectedPublished.length} Question{selectedPublished.length === 1 ? "" : "s"}
+            </h2>
+            <div className="mt-4 flex flex-col gap-3">
+              <label className="flex flex-col text-xs text-slate-500">
+                Test name
+                <input
+                  autoFocus
+                  value={testName}
+                  onChange={(e) => setTestName(e.target.value)}
+                  placeholder="e.g. Chemical Coordination — Quick Test"
+                  className="mt-1 rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-800 outline-none focus:border-blue-500"
+                />
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <label className="flex flex-col text-xs text-slate-500">
+                  Duration (min)
+                  <input
+                    type="number"
+                    min={1}
+                    value={testDuration}
+                    onChange={(e) => setTestDuration(Math.max(1, Number(e.target.value) || 1))}
+                    className="mt-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-800 outline-none focus:border-blue-500"
+                  />
+                </label>
+                <label className="flex flex-col text-xs text-slate-500">
+                  Marks +
+                  <input
+                    type="number"
+                    min={0}
+                    value={testPositive}
+                    onChange={(e) => setTestPositive(Math.max(0, Number(e.target.value) || 0))}
+                    className="mt-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-800 outline-none focus:border-blue-500"
+                  />
+                </label>
+                <label className="flex flex-col text-xs text-slate-500">
+                  Marks −
+                  <input
+                    type="number"
+                    min={0}
+                    value={testNegative}
+                    onChange={(e) => setTestNegative(Math.max(0, Number(e.target.value) || 0))}
+                    className="mt-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-800 outline-none focus:border-blue-500"
+                  />
+                </label>
+              </div>
+              {selected.size > selectedPublished.length && (
+                <p className="text-xs text-amber-600">
+                  {selected.size - selectedPublished.length} of your selected question(s) aren't published yet and
+                  won't be included — publish them first if you want them in this test too.
+                </p>
+              )}
+            </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={() => setTestModalOpen(false)}
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={createTestFromSelected}
+                disabled={creatingTest || !testName.trim()}
+                className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {creatingTest ? "Creating…" : "Create Test"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </CmdsShell>
   );
 }
