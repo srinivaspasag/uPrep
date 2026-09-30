@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { getSession, clearSession, type UprepSession } from "@/lib/session";
 import ImpersonationBanner from "@/components/ImpersonationBanner";
 import { isStaff } from "@/lib/roles";
@@ -62,6 +61,9 @@ export default function LmsShell({
   const [session, setSession] = useState<UprepSession | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
+  // Same per-org branding as CmdsShell — was hardcoded to Scholar Spectra
+  // for every student regardless of which institute they actually belong to.
+  const [orgBrand, setOrgBrand] = useState<{ name: string; logoUrl: string } | null>(null);
 
   useEffect(() => {
     const s = getSession();
@@ -71,6 +73,15 @@ export default function LmsShell({
     }
     setSession(s);
   }, [router, pathname]);
+
+  useEffect(() => {
+    fetch("/api/orgs/mine")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.id) setOrgBrand({ name: d.name || "UPrep", logoUrl: d.logoUrl || "" });
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -102,14 +113,14 @@ export default function LmsShell({
       <header className="sticky top-0 z-30 bg-white px-5 shadow-sm">
         <div className="flex h-[52px] items-center justify-between">
         <Link href="/learn/courses" className="flex items-center">
-          <Image
-            src="/legacy/logo-horizontal.png"
-            alt="Scholar Spectra"
-            width={2029}
-            height={300}
-            className="h-9 w-auto object-contain"
-            priority
-          />
+          {orgBrand?.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- uploaded org logo, unknown intrinsic size
+            <img src={orgBrand.logoUrl} alt={orgBrand.name} className="h-9 w-auto object-contain" />
+          ) : (
+            <span className="text-lg font-semibold tracking-tight text-[#16233D]">
+              {orgBrand?.name || "UPrep"}
+            </span>
+          )}
         </Link>
 
         <div className="flex items-center gap-3">
