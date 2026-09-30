@@ -544,11 +544,17 @@ export default function QuestionBankPage() {
                           />
                         </td>
                         <td className="px-4 py-3 text-slate-800">
-                          {q.text ? (
-                            <MathText>{q.text}</MathText>
-                          ) : (
-                            <span className="text-slate-400">(no text)</span>
-                          )}
+                          <Link
+                            href={`/cmds/questions/${q.id}/edit`}
+                            className="block hover:text-blue-700"
+                            title="Open this question"
+                          >
+                            {q.text ? (
+                              <MathText>{q.text}</MathText>
+                            ) : (
+                              <span className="text-slate-400">(no text)</span>
+                            )}
+                          </Link>
                           <div className="text-xs text-slate-400">
                             {q.options} options · {q.difficulty || "—"}
                             {q.chapter && (

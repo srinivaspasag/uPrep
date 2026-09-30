@@ -3,9 +3,15 @@
 import katex from "katex";
 import { useMemo } from "react";
 
-// Renders text containing LaTeX. Supports $$...$$ (block) and $...$ (inline)
-// delimiters; everything else is treated as plain text. Falls back to the raw
+// Renders text containing LaTeX. Supports both delimiter conventions found in
+// the actual question bank: $$...$$ / $...$ (the ones this originally
+// handled) AND \[...\] / \(...\) — the AI transcription pipeline used for
+// equation-heavy PDFs (bulk import) outputs the backslash style almost
+// exclusively, so questions using it were rendering as literal text with
+// visible backslashes and parens instead of math. Falls back to the raw
 // source if KaTeX can't parse a segment.
+const MATH_SPLIT = /(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\$[^$\n]+?\$|\\\([\s\S]*?\\\))/g;
+
 function renderToHtml(input: string): string {
   if (!input) return "";
   const escapeHtml = (s: string) =>
@@ -14,31 +20,33 @@ function renderToHtml(input: string): string {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
 
-  // Split on $$...$$ first, then $...$ inside plain segments.
   const out: string[] = [];
-  const blockParts = input.split(/(\$\$[^$]*\$\$)/g);
-  for (const part of blockParts) {
+  for (const part of input.split(MATH_SPLIT)) {
+    if (!part) continue;
+    let tex: string | null = null;
+    let displayMode = false;
     if (part.startsWith("$$") && part.endsWith("$$") && part.length >= 4) {
-      const tex = part.slice(2, -2);
+      tex = part.slice(2, -2);
+      displayMode = true;
+    } else if (part.startsWith("\\[") && part.endsWith("\\]") && part.length >= 4) {
+      tex = part.slice(2, -2);
+      displayMode = true;
+    } else if (part.startsWith("\\(") && part.endsWith("\\)") && part.length >= 4) {
+      tex = part.slice(2, -2);
+      displayMode = false;
+    } else if (part.startsWith("$") && part.endsWith("$") && part.length >= 2) {
+      tex = part.slice(1, -1);
+      displayMode = false;
+    }
+
+    if (tex !== null) {
       try {
-        out.push(katex.renderToString(tex, { displayMode: true, throwOnError: false }));
+        out.push(katex.renderToString(tex, { displayMode, throwOnError: false }));
       } catch {
         out.push(escapeHtml(part));
       }
-      continue;
-    }
-    const inlineParts = part.split(/(\$[^$]+\$)/g);
-    for (const seg of inlineParts) {
-      if (seg.startsWith("$") && seg.endsWith("$") && seg.length >= 2) {
-        const tex = seg.slice(1, -1);
-        try {
-          out.push(katex.renderToString(tex, { displayMode: false, throwOnError: false }));
-        } catch {
-          out.push(escapeHtml(seg));
-        }
-      } else {
-        out.push(escapeHtml(seg));
-      }
+    } else {
+      out.push(escapeHtml(part));
     }
   }
   return out.join("");
