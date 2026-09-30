@@ -95,8 +95,20 @@ export default function OrganizationInfoPage() {
   async function save() {
     if (!org) return;
     setMsg("");
-    if (!org.website.trim()) {
-      setMsg("Website is required to save — the platform won't accept changes without one.");
+    // The legacy platform hard-requires ALL of these to save anything at
+    // all, not just Website — confirmed live (each missing one rejects with
+    // "missing <field>"). The form already marks them with * but never
+    // enforced it, so a save could fail with no clue which field to fix.
+    const required: [string, string][] = [
+      ["name", "Name"],
+      ["fullName", "Full Name"],
+      ["website", "Website"],
+      ["contactNumber", "Contact Number"],
+      ["address", "Address"],
+    ];
+    const missing = required.filter(([key]) => !(org as any)[key]?.trim()).map(([, label]) => label);
+    if (missing.length) {
+      setMsg(`Please fill in: ${missing.join(", ")} — the platform requires these to save.`);
       return;
     }
     setSaving(true);

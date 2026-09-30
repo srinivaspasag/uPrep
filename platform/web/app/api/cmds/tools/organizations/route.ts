@@ -72,13 +72,22 @@ export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as CreateBody;
   const name = (b.name || "").trim();
   if (!name) return NextResponse.json({ error: "Organization name is required" }, { status: 400 });
-  // The legacy org-service's updateOrganization hard-requires a non-empty
-  // website on every future save ("missing full website") — an org created
-  // without one can never be edited again (confirmed live against lmsbe).
-  // Enforce it here too, not just in the UI, so this can't recur via a
-  // direct API call either.
+  // The legacy org-service's updateOrganization hard-requires website,
+  // contactNumber, AND address to be non-empty on every future save
+  // ("missing <field>") — confirmed live against lmsbe by testing each one.
+  // An org created without all three can log in fine but can never save
+  // Organization Info afterward. Enforce them here too, not just in the UI,
+  // so this can't recur via a direct API call either.
   const website = (b.website || "").trim();
-  if (!website) return NextResponse.json({ error: "Website is required" }, { status: 400 });
+  const contactNumber = (b.contactNumber || "").trim();
+  const address = (b.address || "").trim();
+  const missing = [
+    !website && "Website",
+    !contactNumber && "Contact Number",
+    !address && "Address",
+  ].filter(Boolean);
+  if (missing.length)
+    return NextResponse.json({ error: `Required: ${missing.join(", ")}` }, { status: 400 });
 
   try {
     const db = await getDb();
@@ -88,16 +97,16 @@ export async function POST(req: NextRequest) {
 
     // `organizations` has a legacy UNIQUE index on slug/referer too — never
     // write empty strings for those, an empty value would collide with the
-    // next org that also lacks one. website is required above so it's always
-    // safe to set here.
+    // next org that also lacks one. website/contactNumber/address are all
+    // required above so they're always safe to set here.
     const orgDoc: Record<string, any> = {
       _id: orgObjId,
       name,
       fullName: (b.fullName || "").trim() || name,
       website,
       type: b.type || "COLLEGE",
-      contactNumber: (b.contactNumber || "").trim(),
-      address: (b.address || "").trim(),
+      contactNumber,
+      address,
       authType: "VEDANTU",
       // Legacy's DoubtsForumMode is a Java enum (PUBLIC/PRIVATE/HIDDEN) —
       // Morphia throws IllegalArgumentException deserializing any other

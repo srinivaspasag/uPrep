@@ -52,7 +52,13 @@ async function callLegacy<T = any>(
   });
   const json = await resp.json().catch(() => ({}));
   if (json.errorCode) {
-    throw new Error(json.errorMessage || json.errorCode);
+    // On MISSING_PARAMETERS, legacy's own errorMessage is always empty — the
+    // actually useful detail (e.g. ":missing  address") is in `result`
+    // instead. Prefer it so callers see which field, not just the generic
+    // error code.
+    const detail =
+      json.errorMessage || (typeof json.result === "string" ? json.result : "") || json.errorCode;
+    throw new Error(detail);
   }
   return (json.result ?? {}) as T;
 }

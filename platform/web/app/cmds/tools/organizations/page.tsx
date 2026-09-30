@@ -288,6 +288,8 @@ function CreateOrgModal({ onClose, onDone }: { onClose: () => void; onDone: () =
   const [name, setName] = useState("");
   const [fullName, setFullName] = useState("");
   const [website, setWebsite] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [address, setAddress] = useState("");
   const [type, setType] = useState("COLLEGE");
   const [adminFirstName, setAdminFirstName] = useState("");
   const [adminMemberId, setAdminMemberId] = useState("admin");
@@ -299,14 +301,33 @@ function CreateOrgModal({ onClose, onDone }: { onClose: () => void; onDone: () =
   async function submit() {
     setError("");
     if (!name.trim()) return setError("Organization name is required.");
-    if (!website.trim())
-      return setError("Website is required — the platform won't let this org save changes later without one.");
+    // The legacy platform hard-requires all three of these before this org
+    // can ever save its own Organization Info later — confirmed live
+    // (each missing one rejects with "missing <field>"). Enforced here so a
+    // newly created institute is never born unable to edit itself.
+    const missing = [
+      !website.trim() && "Website",
+      !contactNumber.trim() && "Contact Number",
+      !address.trim() && "Address",
+    ].filter(Boolean);
+    if (missing.length)
+      return setError(`Required: ${missing.join(", ")} — the platform won't let this org save changes later without them.`);
     setSaving(true);
     try {
       const res = await fetch("/api/cmds/tools/organizations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, fullName, website, type, adminFirstName, adminMemberId, adminPassword }),
+        body: JSON.stringify({
+          name,
+          fullName,
+          website,
+          contactNumber,
+          address,
+          type,
+          adminFirstName,
+          adminMemberId,
+          adminPassword,
+        }),
       });
       const d = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -379,7 +400,12 @@ function CreateOrgModal({ onClose, onDone }: { onClose: () => void; onDone: () =
         <div className="col-span-2">
           <Field label="Full name" value={fullName} onChange={setFullName} />
         </div>
+        <Field label="Contact Number*" value={contactNumber} onChange={setContactNumber} />
+        <Field label="Address*" value={address} onChange={setAddress} placeholder="City, State" />
       </div>
+      <p className="mt-1 text-xs text-slate-400">
+        * Required by the platform to save this org's info later, not just to create it.
+      </p>
 
       <div className="mt-4 rounded border border-slate-100 bg-slate-50 p-3">
         <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
