@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { getSession, clearSession, setSession as persistSession, type UprepSession } from "@/lib/session";
 import { isSuperAdmin } from "@/lib/roles";
 import ImpersonationBanner from "@/components/ImpersonationBanner";
@@ -51,6 +50,11 @@ export default function CmdsShell({
   const [userMenu, setUserMenu] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);
+  // This shell is shared by every org's staff console (super admin included)
+  // — it used to hardcode Scholar Spectra's logo for everyone. Now it shows
+  // the CALLER'S OWN org's branding (logoUrl if uploaded, else the org name
+  // as text), so e.g. UPrep's own admins see "UPrep", not Scholar Spectra.
+  const [orgBrand, setOrgBrand] = useState<{ name: string; logoUrl: string } | null>(null);
 
   useEffect(() => {
     // Show the cached snapshot immediately, then rehydrate from the
@@ -71,6 +75,12 @@ export default function CmdsShell({
       .catch(() => {
         if (!cached) router.replace("/login");
       });
+    fetch("/api/cmds/tools/organization")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.org) setOrgBrand({ name: d.org.name || d.org.fullName || "UPrep", logoUrl: d.org.logoUrl || "" });
+      })
+      .catch(() => {});
   }, [router]);
 
   useEffect(() => {
@@ -122,13 +132,14 @@ export default function CmdsShell({
       {/* Secondary nav */}
       <header className="flex h-11 items-center border-b border-slate-200 bg-white px-4">
         <Link href="/cmds" className="flex items-center">
-          <Image
-            src="/legacy/logo-horizontal.png"
-            alt="Scholar Spectra"
-            width={2029}
-            height={300}
-            className="h-7 w-auto object-contain"
-          />
+          {orgBrand?.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- uploaded org logo, unknown intrinsic size
+            <img src={orgBrand.logoUrl} alt={orgBrand.name} className="h-7 w-auto object-contain" />
+          ) : (
+            <span className="text-lg font-semibold tracking-tight text-slate-800">
+              {orgBrand?.name || "UPrep"}
+            </span>
+          )}
         </Link>
 
         <nav className="mx-auto flex items-center gap-8 text-sm">
