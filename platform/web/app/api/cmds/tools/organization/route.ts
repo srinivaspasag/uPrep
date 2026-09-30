@@ -96,6 +96,18 @@ export async function POST(req: NextRequest) {
   const doubtsForumMode = (b.doubtsForumMode || "PUBLIC").toUpperCase();
 
   try {
+    // Confirmed live: legacy's updateOrganization does a full Morphia
+    // save() of its Java Organization object, which has no `logoUrl`
+    // property — every call SILENTLY WIPES logoUrl from the Mongo doc,
+    // even though it's untouched by `fields`/`updateList` above. (slug
+    // survives because legacy's model genuinely has that field; logoUrl
+    // does not.) Capture it before the legacy call and restore it after,
+    // so saving the rest of Organization Info can never destroy the logo.
+    const orgIdValid = ObjectId.isValid(orgId);
+    const before = orgIdValid
+      ? await (await getDb()).collection("organizations").findOne({ _id: new ObjectId(orgId) })
+      : null;
+
     await callOrgService("updateOrganization", {
       ...fields,
       orgId,
@@ -107,6 +119,12 @@ export async function POST(req: NextRequest) {
       appInfos,
       updateList,
     });
+
+    if (orgIdValid && before?.logoUrl) {
+      await (await getDb())
+        .collection("organizations")
+        .updateOne({ _id: new ObjectId(orgId) }, { $set: { logoUrl: before.logoUrl } });
+    }
     return NextResponse.json({ ok: true });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Update failed" }, { status: 500 });
