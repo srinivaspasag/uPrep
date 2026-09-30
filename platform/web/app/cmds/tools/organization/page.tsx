@@ -28,6 +28,7 @@ export default function OrganizationInfoPage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [logoUploading, setLogoUploading] = useState(false);
+  const [logoError, setLogoError] = useState("");
   const [slugInput, setSlugInput] = useState("");
   const [slugSaving, setSlugSaving] = useState(false);
   const [slugMsg, setSlugMsg] = useState("");
@@ -53,6 +54,7 @@ export default function OrganizationInfoPage() {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+    setLogoError("");
     setLogoUploading(true);
     try {
       const fd = new FormData();
@@ -60,6 +62,9 @@ export default function OrganizationInfoPage() {
       const res = await fetch("/api/cmds/tools/organization/logo", { method: "POST", body: fd });
       const d = await res.json().catch(() => ({}));
       if (res.ok && d.url) set("logoUrl", d.url);
+      else setLogoError(d.error || "Upload failed.");
+    } catch {
+      setLogoError("Upload failed.");
     } finally {
       setLogoUploading(false);
     }
@@ -90,6 +95,10 @@ export default function OrganizationInfoPage() {
   async function save() {
     if (!org) return;
     setMsg("");
+    if (!org.website.trim()) {
+      setMsg("Website is required to save — the platform won't accept changes without one.");
+      return;
+    }
     setSaving(true);
     try {
       const res = await fetch("/api/cmds/tools/organization", {
@@ -97,7 +106,8 @@ export default function OrganizationInfoPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(org),
       });
-      setMsg(res.ok ? "Saved." : "Save failed.");
+      const d = await res.json().catch(() => ({}));
+      setMsg(res.ok ? "Saved." : d.error || "Save failed.");
     } finally {
       setSaving(false);
     }
@@ -136,6 +146,7 @@ export default function OrganizationInfoPage() {
                   />
                 </label>
               </div>
+              {logoError && <p className="mt-1 text-xs text-red-600">{logoError}</p>}
             </Row>
             <Row label="Your Own Login URL">
               <div className="flex items-center gap-2">

@@ -287,6 +287,7 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
 function CreateOrgModal({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
   const [name, setName] = useState("");
   const [fullName, setFullName] = useState("");
+  const [website, setWebsite] = useState("");
   const [type, setType] = useState("COLLEGE");
   const [adminFirstName, setAdminFirstName] = useState("");
   const [adminMemberId, setAdminMemberId] = useState("admin");
@@ -298,12 +299,14 @@ function CreateOrgModal({ onClose, onDone }: { onClose: () => void; onDone: () =
   async function submit() {
     setError("");
     if (!name.trim()) return setError("Organization name is required.");
+    if (!website.trim())
+      return setError("Website is required — the platform won't let this org save changes later without one.");
     setSaving(true);
     try {
       const res = await fetch("/api/cmds/tools/organizations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, fullName, type, adminFirstName, adminMemberId, adminPassword }),
+        body: JSON.stringify({ name, fullName, website, type, adminFirstName, adminMemberId, adminPassword }),
       });
       const d = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -360,6 +363,7 @@ function CreateOrgModal({ onClose, onDone }: { onClose: () => void; onDone: () =
       <h3 className="text-lg font-semibold text-slate-800">Create Organization</h3>
       <div className="mt-4 grid grid-cols-2 gap-3">
         <Field label="Name*" value={name} onChange={setName} />
+        <Field label="Website*" value={website} onChange={setWebsite} placeholder="e.g. https://scholarspectra.com" />
         <label className="block text-sm">
           <span className="mb-1 block text-slate-600">Type</span>
           <select
@@ -419,13 +423,24 @@ function Modal({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
   return (
     <label className="block text-sm">
       <span className="mb-1 block text-slate-600">{label}</span>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
         className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-slate-500"
       />
     </label>

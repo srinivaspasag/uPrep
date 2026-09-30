@@ -72,6 +72,13 @@ export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as CreateBody;
   const name = (b.name || "").trim();
   if (!name) return NextResponse.json({ error: "Organization name is required" }, { status: 400 });
+  // The legacy org-service's updateOrganization hard-requires a non-empty
+  // website on every future save ("missing full website") — an org created
+  // without one can never be edited again (confirmed live against lmsbe).
+  // Enforce it here too, not just in the UI, so this can't recur via a
+  // direct API call either.
+  const website = (b.website || "").trim();
+  if (!website) return NextResponse.json({ error: "Website is required" }, { status: 400 });
 
   try {
     const db = await getDb();
@@ -79,13 +86,15 @@ export async function POST(req: NextRequest) {
     const orgObjId = new ObjectId();
     const orgId = orgObjId.toHexString();
 
-    // `organizations` has legacy UNIQUE indexes on website/slug/referer. Never
-    // write empty strings for these — an empty value would collide with the next
-    // org that also lacks one. Only set them when a real value is provided.
+    // `organizations` has a legacy UNIQUE index on slug/referer too — never
+    // write empty strings for those, an empty value would collide with the
+    // next org that also lacks one. website is required above so it's always
+    // safe to set here.
     const orgDoc: Record<string, any> = {
       _id: orgObjId,
       name,
       fullName: (b.fullName || "").trim() || name,
+      website,
       type: b.type || "COLLEGE",
       contactNumber: (b.contactNumber || "").trim(),
       address: (b.address || "").trim(),
@@ -98,8 +107,6 @@ export async function POST(req: NextRequest) {
       timeCreated: now,
       lastUpdated: now,
     };
-    const website = (b.website || "").trim();
-    if (website) orgDoc.website = website;
 
     // Auto-derive a URL slug from the name (/i/<slug> is that institute's own
     // branded login entry point — see app/i/[slug]/page.tsx). Collides with
