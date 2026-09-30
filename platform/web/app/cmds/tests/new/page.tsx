@@ -519,12 +519,18 @@ export default function CreateTestPage() {
 
       <main className="mx-auto max-w-3xl px-4 py-8">
         <h1 className="text-2xl font-semibold text-slate-800">Create Test</h1>
-        <p className="mt-1 text-slate-500">
-          It becomes attemptable and auto-graded in the learn app immediately.
-        </p>
-        {folderName && (
+        <p className="mt-1 text-slate-500">Auto-graded once a student attempts it.</p>
+        {folderName ? (
           <p className="mt-1 text-sm text-slate-400">
             This test will be added to <span className="font-medium text-slate-600">{folderName}</span>.
+          </p>
+        ) : (
+          <p className="mt-2 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800 ring-1 ring-amber-100">
+            You're not creating this inside a course folder, so it won't show up for students in "My
+            Courses" until you file it into one afterward — go to Resources, open this test's{" "}
+            <span className="font-medium">⋯</span> menu, and choose{" "}
+            <span className="font-medium">Move to folder</span>. It also needs to be added to a section
+            and marked Visible (or scheduled) before students can take it.
           </p>
         )}
 
