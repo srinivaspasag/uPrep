@@ -58,6 +58,11 @@ export default function QuestionBankPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [tests, setTests] = useState<Test[]>([]);
   const [modules, setModules] = useState<ModuleItem[]>([]);
+  // Real total, independent of the listing cap below — the tab badge used to
+  // show questions.length, which is just the capped page of results (200 for
+  // "All Subjects"), so a bank with 13,700+ questions displayed "(200)" no
+  // matter how many actually existed.
+  const [totalQuestionCount, setTotalQuestionCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -144,13 +149,19 @@ export default function QuestionBankPage() {
   async function load() {
     setLoading(true);
     try {
-      const qs = filterBoardIds && filterBoardIds.length ? `?boardIds=${filterBoardIds.join(",")}` : "";
-      const r = await fetch(`/api/cmds/resources${qs}`);
+      const boardQs = filterBoardIds && filterBoardIds.length ? `boardIds=${filterBoardIds.join(",")}` : "";
+      const qs = boardQs ? `?${boardQs}` : "";
+      const [r, countRes] = await Promise.all([
+        fetch(`/api/cmds/resources${qs}`),
+        fetch(`/api/cmds/resources?kind=question&count=1${boardQs ? `&${boardQs}` : ""}`),
+      ]);
       const d = await r.json();
       if (d.error) setError(d.error);
       setQuestions(d.questions || []);
       setTests(d.tests || []);
       setModules(d.modules || []);
+      const countData = await countRes.json().catch(() => null);
+      setTotalQuestionCount(typeof countData?.count === "number" ? countData.count : (d.questions || []).length);
       setSelected(new Set());
     } catch {
       setError("Failed to load CMDS resources");
@@ -300,11 +311,11 @@ export default function QuestionBankPage() {
 
   const counts = useMemo(
     () => ({
-      questions: questions.length,
+      questions: totalQuestionCount ?? questions.length,
       tests: tests.length,
       modules: modules.length,
     }),
-    [questions, tests, modules]
+    [questions, totalQuestionCount, tests, modules]
   );
 
   return (
@@ -442,6 +453,12 @@ export default function QuestionBankPage() {
           <div className="min-w-0 flex-1">
         {!loading && tab === "questions" && (
           <>
+            {totalQuestionCount !== null && totalQuestionCount > questions.length && (
+              <div className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-700 ring-1 ring-amber-200">
+                Showing {questions.length} of {totalQuestionCount.toLocaleString()} questions — pick a subject or
+                chapter on the left to see the rest.
+              </div>
+            )}
             {filterBoardIds && (
               <div className="flex items-center justify-between rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-600">
                 <span>
