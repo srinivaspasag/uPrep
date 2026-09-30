@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { sessionFromReq } from "@/lib/server-session";
-import { isStaff } from "@/lib/roles";
+import { isStaff, isSuperAdmin } from "@/lib/roles";
 import { loadFoldersForOrgs, collectSubtreeIds } from "@/lib/courses";
 import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
 
@@ -34,11 +34,16 @@ export async function GET(req: NextRequest) {
   try {
     const db = await getDb();
 
+    // Same org boundary as /api/library: students and ordinary (non-super-
+    // admin) staff are pinned to their session's org — this used to let any
+    // staff member pass ?orgId= and search a different institute's content.
     const session = await sessionFromReq(req);
     const isStudent = !!session && !isStaff(session.profile);
-    const orgId = isStudent
-      ? session!.orgId
-      : req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+    const requestedOrgId = req.nextUrl.searchParams.get("orgId");
+    const orgId =
+      isStudent || (session && isStaff(session.profile) && !isSuperAdmin(session.profile, session.isSuperAdmin))
+        ? session!.orgId
+        : requestedOrgId || DEFAULT_ORG_ID;
 
     // Enrollment gate for students -> restrict to the subtree of enrolled courses.
     let allowedFolderIds: string[] | null = null;

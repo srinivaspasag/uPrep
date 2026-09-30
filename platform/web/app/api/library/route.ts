@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { sessionFromReq } from "@/lib/server-session";
-import { isStaff } from "@/lib/roles";
+import { isStaff, isSuperAdmin } from "@/lib/roles";
 import { loadFoldersForOrgs, collectSubtreeIds } from "@/lib/courses";
 import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
 import { resolveStudentEnrollment } from "@/lib/enrollment";
@@ -69,12 +69,17 @@ export async function GET(req: NextRequest) {
 
     // Enrollment gate: a student sees only content inside the courses they're
     // enrolled in (staff / anonymous preview see the whole org library). The
-    // org + role come from the server-trusted session, not query params.
+    // org + role come from the server-trusted session, not query params —
+    // EXCEPT ordinary (non-super-admin) staff, who used to be able to pass
+    // any ?orgId= and browse a different institute's library. Anonymous
+    // preview and super admins can still target any org explicitly.
     const session = await sessionFromReq(req);
     const isStudent = !!session && !isStaff(session.profile);
-    const orgId = isStudent
-      ? session!.orgId
-      : req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+    const requestedOrgId = req.nextUrl.searchParams.get("orgId");
+    const orgId =
+      isStudent || (session && isStaff(session.profile) && !isSuperAdmin(session.profile, session.isSuperAdmin))
+        ? session!.orgId
+        : requestedOrgId || DEFAULT_ORG_ID;
 
     let allowedFolderIds: string[] | null = null;
     let studentSectionIds: string[] = [];

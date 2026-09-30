@@ -8,8 +8,14 @@ export const dynamic = "force-dynamic";
 
 // Class chat — a `messages` collection ({channel, userId, userName, text}).
 // Real-time in legacy uses websockets; here the client polls this endpoint.
+//
+// orgId comes from the session, never a client-supplied param — this used
+// to trust `?orgId=` outright, so any institute's class chat was readable
+// just by passing a different orgId, no login required at all.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ messages: [] }, { status: 401 });
+  const orgId = session.orgId || DEFAULT_ORG_ID;
   const channel = req.nextUrl.searchParams.get("channel") || "general";
   const since = Number(req.nextUrl.searchParams.get("since") || 0);
   try {

@@ -7,8 +7,14 @@ import { sessionFromReq } from "@/lib/server-session";
 export const dynamic = "force-dynamic";
 
 // Playlists — a `playlists` collection ({name, description, items[], userId}).
+//
+// orgId comes from the session, never a client-supplied param — this used
+// to trust `?orgId=` outright, so any institute's playlists were readable
+// just by passing a different orgId, no login required at all.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ items: [] }, { status: 401 });
+  const orgId = session.orgId || DEFAULT_ORG_ID;
   try {
     const db = await getDb();
     const docs = await db

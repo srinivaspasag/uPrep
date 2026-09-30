@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongo";
-import { DEFAULT_ORG_ID } from "@/lib/config";
+import { sessionFromReq } from "@/lib/server-session";
 
 export const dynamic = "force-dynamic";
 
 // Student notifications inbox — reads org-wide broadcasts from `orgnotifications`
 // (the same collection CMDS "Send Notification" writes to). Closes the loop
 // between the admin composer and the student.
+//
+// orgId comes from the session, never a client-supplied param — this used to
+// read `?orgId=` straight off the query string with no auth check at all,
+// so any institute's broadcast notifications were readable by anyone who
+// knew (or guessed) another institute's orgId.
 export async function GET(req: NextRequest) {
-  const orgId = req.nextUrl.searchParams.get("orgId") || DEFAULT_ORG_ID;
+  const session = await sessionFromReq(req);
+  if (!session) return NextResponse.json({ items: [] }, { status: 401 });
+  const orgId = session.orgId;
   try {
     const db = await getDb();
     const docs = await db
