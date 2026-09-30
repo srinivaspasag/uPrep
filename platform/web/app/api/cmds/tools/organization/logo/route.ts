@@ -27,9 +27,14 @@ export async function POST(req: NextRequest) {
   try {
     const stored = await saveUpload(file);
     const db = await getDb();
-    await db
+    const result = await db
       .collection("organizations")
       .updateOne({ _id: new ObjectId(orgId) }, { $set: { logoUrl: stored.url, lastUpdated: Date.now() } });
+    // The file write to disk can succeed independently of the DB write — do
+    // NOT report success unless the org doc was actually matched, or the
+    // caller sees a logo that "uploaded fine" but never actually persisted.
+    if (result.matchedCount === 0)
+      return NextResponse.json({ error: `Organization ${orgId} not found — logo was not saved.` }, { status: 404 });
     return NextResponse.json({ ok: true, url: stored.url });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Upload failed" }, { status: 500 });

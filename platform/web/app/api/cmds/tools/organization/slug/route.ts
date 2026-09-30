@@ -30,9 +30,11 @@ export async function POST(req: NextRequest) {
     const clash = await db.collection("organizations").findOne({ slug, _id: { $ne: new ObjectId(orgId) } });
     if (clash) return NextResponse.json({ error: `"${slug}" is already in use by another institute.` }, { status: 409 });
 
-    await db
+    const result = await db
       .collection("organizations")
       .updateOne({ _id: new ObjectId(orgId) }, { $set: { slug, lastUpdated: Date.now() } });
+    if (result.matchedCount === 0)
+      return NextResponse.json({ error: `Organization ${orgId} not found — slug was not saved.` }, { status: 404 });
     return NextResponse.json({ ok: true, slug });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed to save" }, { status: 500 });
