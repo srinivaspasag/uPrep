@@ -11,6 +11,7 @@ type Org = {
   type: string;
   memberCount: number;
   plan?: Plan | null;
+  slug: string;
 };
 
 const ORG_TYPES = ["COLLEGE", "SCHOOL", "COACHING", "UNIVERSITY", "OTHER"];
@@ -102,13 +103,14 @@ export default function OrganizationsPage() {
                   <th className="px-4 py-2 font-medium">Type</th>
                   <th className="px-4 py-2 font-medium">Members</th>
                   <th className="px-4 py-2 font-medium">Org ID</th>
+                  <th className="px-4 py-2 font-medium">Login URL</th>
                   <th className="px-4 py-2 font-medium">Courses</th>
                 </tr>
               </thead>
               <tbody>
                 {orgs.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
+                    <td colSpan={6} className="px-4 py-10 text-center text-slate-400">
                       No organizations yet.
                     </td>
                   </tr>
@@ -124,6 +126,28 @@ export default function OrganizationsPage() {
                       <td className="px-4 py-3 text-slate-500">{o.type}</td>
                       <td className="px-4 py-3 text-slate-500">{o.memberCount}</td>
                       <td className="px-4 py-3 font-mono text-xs text-slate-400">{o.id}</td>
+                      <td className="px-4 py-3">
+                        {o.slug ? (
+                          <a
+                            href={`/i/${o.slug}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="font-mono text-xs text-blue-600 hover:underline"
+                          >
+                            /i/{o.slug} ↗
+                          </a>
+                        ) : (
+                          <a
+                            href={`/login?org=${encodeURIComponent(o.id)}&inst=${encodeURIComponent(o.name)}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-xs text-slate-400 hover:text-blue-600 hover:underline"
+                            title="No slug set yet — this org admin can set one from Organization Info"
+                          >
+                            Login (no slug yet) ↗
+                          </a>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
           <div className="flex gap-2">
             <button
