@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CmdsShell from "@/components/CmdsShell";
@@ -63,6 +63,8 @@ export default function QuestionBankPage() {
   // "All Subjects"), so a bank with 13,700+ questions displayed "(200)" no
   // matter how many actually existed.
   const [totalQuestionCount, setTotalQuestionCount] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 50;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -135,22 +137,26 @@ export default function QuestionBankPage() {
     setFilterLabel(s.name);
     const ids = await subtreeIds(s.id);
     setFilterBoardIds([s.id, ...ids]);
+    setPage(1);
   }
   async function filterByChapter(c: BoardNode) {
     setFilterLabel(c.name);
     const ids = await subtreeIds(c.id);
     setFilterBoardIds([c.id, ...ids]);
+    setPage(1);
   }
   function clearFilter() {
     setFilterBoardIds(null);
     setFilterLabel("All Subjects");
+    setPage(1);
   }
 
   async function load() {
     setLoading(true);
     try {
       const boardQs = filterBoardIds && filterBoardIds.length ? `boardIds=${filterBoardIds.join(",")}` : "";
-      const qs = boardQs ? `?${boardQs}` : "";
+      const pageQs = `page=${page}&pageSize=${PAGE_SIZE}`;
+      const qs = `?${[boardQs, pageQs].filter(Boolean).join("&")}`;
       const [r, countRes] = await Promise.all([
         fetch(`/api/cmds/resources${qs}`),
         fetch(`/api/cmds/resources?kind=question&count=1${boardQs ? `&${boardQs}` : ""}`),
@@ -307,7 +313,7 @@ export default function QuestionBankPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterBoardIds]);
+  }, [filterBoardIds, page]);
 
   const counts = useMemo(
     () => ({
@@ -453,17 +459,12 @@ export default function QuestionBankPage() {
           <div className="min-w-0 flex-1">
         {!loading && tab === "questions" && (
           <>
-            {totalQuestionCount !== null && totalQuestionCount > questions.length && (
-              <div className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-700 ring-1 ring-amber-200">
-                Showing {questions.length} of {totalQuestionCount.toLocaleString()} questions — pick a subject or
-                chapter on the left to see the rest.
-              </div>
-            )}
             {filterBoardIds && (
               <div className="flex items-center justify-between rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-600">
                 <span>
-                  Filtered by <span className="font-medium text-slate-800">{filterLabel}</span> — {questions.length}{" "}
-                  question{questions.length === 1 ? "" : "s"}
+                  Filtered by <span className="font-medium text-slate-800">{filterLabel}</span> —{" "}
+                  {(totalQuestionCount ?? questions.length).toLocaleString()} question
+                  {(totalQuestionCount ?? questions.length) === 1 ? "" : "s"}
                 </span>
                 <button onClick={clearFilter} className="text-blue-600 hover:underline">
                   Clear
@@ -624,6 +625,14 @@ export default function QuestionBankPage() {
                 </tbody>
               </table>
             </div>
+
+            {totalQuestionCount !== null && totalQuestionCount > PAGE_SIZE && (
+              <QuestionPageControls
+                page={page}
+                totalPages={Math.ceil(totalQuestionCount / PAGE_SIZE)}
+                onPage={setPage}
+              />
+            )}
           </>
         )}
 
@@ -773,5 +782,58 @@ export default function QuestionBankPage() {
         </div>
       )}
     </CmdsShell>
+  );
+}
+
+// A bank can run into the thousands, so unlike a short list this never
+// renders every page number — just Prev/Next, a "Page X of Y" readout, and
+// a jump-to-page box for getting across a few hundred pages quickly.
+function QuestionPageControls({
+  page,
+  totalPages,
+  onPage,
+}: {
+  page: number;
+  totalPages: number;
+  onPage: (p: number) => void;
+}) {
+  const [jump, setJump] = useState("");
+  function submitJump(e: FormEvent) {
+    e.preventDefault();
+    const n = Number(jump);
+    if (n >= 1 && n <= totalPages) onPage(Math.round(n));
+    setJump("");
+  }
+  return (
+    <div className="mt-4 flex items-center justify-center gap-3">
+      <button
+        onClick={() => onPage(Math.max(1, page - 1))}
+        disabled={page === 1}
+        className="rounded border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-30"
+      >
+        ← Prev
+      </button>
+      <span className="text-sm text-slate-500">
+        Page {page.toLocaleString()} of {totalPages.toLocaleString()}
+      </span>
+      <button
+        onClick={() => onPage(Math.min(totalPages, page + 1))}
+        disabled={page === totalPages}
+        className="rounded border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-30"
+      >
+        Next →
+      </button>
+      <form onSubmit={submitJump} className="flex items-center gap-1">
+        <input
+          value={jump}
+          onChange={(e) => setJump(e.target.value)}
+          placeholder="Go to…"
+          className="w-16 rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500"
+        />
+        <button type="submit" className="rounded border border-slate-300 px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
+          Go
+        </button>
+      </form>
+    </div>
   );
 }
