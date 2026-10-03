@@ -289,9 +289,11 @@ export default function MyCoursesPage() {
                       <span>
                         {f.videoCount} video{f.videoCount === 1 ? "" : "s"}
                       </span>
-                      <span>
-                        {f.documentCount} e-book{f.documentCount === 1 ? "" : "s"}
-                      </span>
+                      {f.documentCount > 0 && (
+                        <span>
+                          {f.documentCount} e-book{f.documentCount === 1 ? "" : "s"}
+                        </span>
+                      )}
                       <span>
                         {f.bookCount} book{f.bookCount === 1 ? "" : "s"}
                       </span>
@@ -327,10 +329,14 @@ export default function MyCoursesPage() {
 // four numbers legacy shows, no fabricated progress bars.
 function CourseCard({ course, onOpen }: { course: Course; onOpen: (crumbs: Crumb[]) => void }) {
   const accent = subjectAccent(course.name);
+  // E-Books (the old generic "document" upload type) sits unused on every
+  // subject now that real book uploads go through the dedicated Books
+  // feature instead — showing a permanent "0" tile on every single card
+  // was just dead weight, so it only appears if a subject actually has one.
   const stats: { label: string; value: number; icon: string }[] = [
     { label: "Chapters", value: course.chapterCount, icon: "📖" },
     { label: "Videos", value: course.videoCount, icon: "▶️" },
-    { label: "E-Books", value: course.documentCount, icon: "📄" },
+    ...(course.documentCount > 0 ? [{ label: "E-Books", value: course.documentCount, icon: "📄" }] : []),
     { label: "Books", value: course.bookCount, icon: "📚" },
     { label: "Tests", value: course.testCount, icon: "📝" },
   ];
