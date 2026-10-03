@@ -50,6 +50,13 @@ export default function CmdsShell({
   const [userMenu, setUserMenu] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);
+  // "Programs ▾" had a dropdown caret baked into its label text but no
+  // actual dropdown behind it — just a plain link to /cmds/programs. With
+  // a dozen+ programs, staff had no quick way to jump to one from anywhere
+  // in CMDS without first landing on the full grid page.
+  const [programsOpen, setProgramsOpen] = useState(false);
+  const programsRef = useRef<HTMLDivElement>(null);
+  const [programsList, setProgramsList] = useState<{ id: string; name: string }[] | null>(null);
   // This shell is shared by every org's staff console (super admin included)
   // — it used to hardcode Scholar Spectra's logo for everyone. Now it shows
   // the CALLER'S OWN org's branding (logoUrl if uploaded, else the org name
@@ -86,10 +93,21 @@ export default function CmdsShell({
   useEffect(() => {
     function onClick(e: MouseEvent) {
       if (toolsRef.current && !toolsRef.current.contains(e.target as Node)) setToolsOpen(false);
+      if (programsRef.current && !programsRef.current.contains(e.target as Node)) setProgramsOpen(false);
     }
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
+
+  function toggleProgramsOpen() {
+    setProgramsOpen((o) => !o);
+    if (!programsList) {
+      fetch("/api/cmds/programs")
+        .then((r) => (r.ok ? r.json() : { programs: [] }))
+        .then((d) => setProgramsList(d.programs || []))
+        .catch(() => setProgramsList([]));
+    }
+  }
 
   function logout() {
     clearSession();
@@ -153,16 +171,46 @@ export default function CmdsShell({
           >
             Resources
           </Link>
-          <Link
-            href="/cmds/programs"
-            className={
-              active === "programs"
-                ? "font-medium text-slate-900"
-                : "text-slate-500 hover:text-slate-800"
-            }
-          >
-            Programs ▾
-          </Link>
+          <div className="relative" ref={programsRef}>
+            <button
+              onClick={toggleProgramsOpen}
+              className={`flex items-center gap-1 ${
+                active === "programs" ? "font-medium text-slate-900" : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              Programs <span className="text-slate-400">▾</span>
+            </button>
+            {programsOpen && (
+              <div className="absolute left-0 z-40 mt-2 max-h-80 w-64 overflow-y-auto rounded-md border border-slate-200 bg-white py-1 text-sm shadow-lg">
+                {programsList === null ? (
+                  <div className="px-4 py-3 text-slate-400">Loading…</div>
+                ) : programsList.length === 0 ? (
+                  <div className="px-4 py-3 text-slate-400">No programs yet</div>
+                ) : (
+                  programsList.map((p) => (
+                    <Link
+                      key={p.id}
+                      href={`/cmds/programs/${p.id}`}
+                      onClick={() => setProgramsOpen(false)}
+                      className="block truncate px-4 py-2 text-slate-600 hover:bg-slate-50"
+                      title={p.name}
+                    >
+                      {p.name}
+                    </Link>
+                  ))
+                )}
+                <div className="mt-1 border-t border-slate-100 pt-1">
+                  <Link
+                    href="/cmds/programs"
+                    onClick={() => setProgramsOpen(false)}
+                    className="block px-4 py-2 font-medium text-blue-600 hover:bg-slate-50"
+                  >
+                    View all programs →
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="flex items-center gap-4 text-sm">
