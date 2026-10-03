@@ -27,6 +27,7 @@ export default function CmdsProgramsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     setSession(getSession());
@@ -104,17 +105,33 @@ export default function CmdsProgramsPage() {
     }
   }
 
+  const filteredPrograms = programs.filter((p) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return p.name.toLowerCase().includes(q) || (p.code || "").toLowerCase().includes(q);
+  });
+
   return (
     <CmdsShell active="programs">
       <div className="mx-auto max-w-[1000px] px-8 py-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <h1 className="text-2xl font-light text-slate-700">Programs</h1>
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded bg-[#e8443b] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#d13a32]"
-          >
-            + Create Program
-          </button>
+          <div className="flex items-center gap-3">
+            {!loading && programs.length > 0 && (
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search programs…"
+                className="w-56 rounded border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-slate-500"
+              />
+            )}
+            <button
+              onClick={() => setOpen(true)}
+              className="whitespace-nowrap rounded bg-[#e8443b] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#d13a32]"
+            >
+              + Create Program
+            </button>
+          </div>
         </div>
 
         {error && !open && (
@@ -172,9 +189,14 @@ export default function CmdsProgramsPage() {
                 Create a program to organize content and enroll students.
               </div>
             </div>
+          ) : filteredPrograms.length === 0 ? (
+            <div className="rounded border border-dashed border-slate-200 py-16 text-center">
+              <div className="text-4xl">🔍</div>
+              <div className="mt-3 text-slate-500">No programs match &quot;{query}&quot;</div>
+            </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {programs.map((p) => (
+              {filteredPrograms.map((p) => (
                 <div
                   key={p.id}
                   className="relative rounded-lg border border-slate-200 p-4 transition hover:shadow-md"
