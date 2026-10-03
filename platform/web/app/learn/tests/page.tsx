@@ -37,6 +37,7 @@ export default function ScheduledTestsPage() {
   const [items, setItems] = useState<ScheduledTest[]>([]);
   const [loading, setLoading] = useState(true);
   const [, setTick] = useState(0);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     fetch("/api/learn/tests")
@@ -57,6 +58,15 @@ export default function ScheduledTestsPage() {
         Tests your institute has scheduled. You can start a test only during its window.
       </p>
 
+      {!loading && items.length > 10 && (
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search tests…"
+          className="mt-4 w-full max-w-xs rounded-md border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-slate-500 sm:w-72"
+        />
+      )}
+
       <div className="mt-6">
         {loading ? (
           <div className="py-16 text-center text-slate-400">Loading…</div>
@@ -64,9 +74,13 @@ export default function ScheduledTestsPage() {
           <ZeroState icon="📝" title="No tests yet">
             No tests scheduled for you right now.
           </ZeroState>
+        ) : items.filter((t) => t.testName.toLowerCase().includes(query.trim().toLowerCase())).length === 0 ? (
+          <div className="py-16 text-center text-slate-400">No tests match &quot;{query}&quot;</div>
         ) : (
           <div className="space-y-3">
-            {items.map((t) => {
+            {items
+              .filter((t) => t.testName.toLowerCase().includes(query.trim().toLowerCase()))
+              .map((t) => {
               const now = Date.now();
               const startsIn = t.startAt ? t.startAt - now : null;
               const endsIn = t.endAt ? t.endAt - now : null;

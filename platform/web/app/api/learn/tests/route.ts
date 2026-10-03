@@ -37,11 +37,15 @@ export async function GET(req: NextRequest) {
 
     const now = Date.now();
     const grace = 6 * 60 * 60 * 1000; // keep ended tests visible for 6h
+    // Was capped at 300 — a chapter-wise bulk test batch alone can run into
+    // the thousands, and the cap silently hid everything past it with no
+    // indication anything was missing (same failure shape found live in the
+    // Question Bank and Resources listings).
     const docs = await db
       .collection(COLL)
       .find({ orgId: session.orgId, recordState: "ACTIVE" } as any)
       .sort({ startAt: 1 })
-      .limit(300)
+      .limit(5000)
       .toArray();
 
     const items = (docs as any[])
