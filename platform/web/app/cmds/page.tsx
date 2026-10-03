@@ -69,7 +69,9 @@ export default function CmdsResourcesPage() {
   const [previewVideo, setPreviewVideo] = useState<Resource | null>(null);
   const [studentVisTarget, setStudentVisTarget] = useState<Resource | null>(null);
   const [checked, setChecked] = useState<Set<string>>(new Set());
-  const [sectionsMeta, setSectionsMeta] = useState<{ id: string; name: string; programId: string | null }[]>([]);
+  const [sectionsMeta, setSectionsMeta] = useState<
+    { id: string; name: string; programId: string | null; programName?: string | null }[]
+  >([]);
   const addRef = useRef<HTMLDivElement>(null);
 
   const currentFolderId = path.length ? path[path.length - 1].id : null;
@@ -880,7 +882,7 @@ function SectionsCell({
   sectionsMeta,
 }: {
   sectionIds: string[];
-  sectionsMeta: { id: string; name: string; programId: string | null }[];
+  sectionsMeta: { id: string; name: string; programId: string | null; programName?: string | null }[];
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -896,14 +898,18 @@ function SectionsCell({
   const matched = sectionIds.map((id) => metaById.get(id)).filter((s): s is NonNullable<typeof s> => !!s);
 
   // A single section resolves straight to its program; several become a
-  // small dropdown so the count itself stays clickable either way.
+  // small dropdown so the count itself stays clickable either way. Shows
+  // the PROGRAM's name (e.g. "JEE Online"), not the section's own name
+  // (e.g. "Section A") — a raw section name means nothing to staff looking
+  // at this table; the program is what they actually published content to.
   if (matched.length === 1) {
+    const label = matched[0].programName || matched[0].name;
     return matched[0].programId ? (
       <Link href={`/cmds/programs/${matched[0].programId}`} className="hover:text-blue-600 hover:underline">
-        {matched[0].name}
+        {label}
       </Link>
     ) : (
-      <span>{matched[0].name}</span>
+      <span>{label}</span>
     );
   }
 
@@ -925,7 +931,7 @@ function SectionsCell({
                   className="block px-4 py-2 text-slate-600 hover:bg-slate-50"
                   onClick={() => setOpen(false)}
                 >
-                  {s.name}
+                  {s.programName ? `${s.programName} — ${s.name}` : s.name}
                 </Link>
               ) : (
                 <div key={s.id} className="px-4 py-2 text-slate-600">

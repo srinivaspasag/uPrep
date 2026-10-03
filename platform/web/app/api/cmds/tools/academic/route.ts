@@ -138,6 +138,7 @@ export async function GET(req: NextRequest) {
                   name: s.name,
                   code: s.code,
                   programId: p.id,
+                  programName: p.name,
                   centerId,
                 }))
               )
