@@ -33,6 +33,8 @@ export default function BooksPage() {
   const [loadingChapters, setLoadingChapters] = useState(false);
   const [filterBoardId, setFilterBoardId] = useState<string | null>(null);
   const [filterLabel, setFilterLabel] = useState("All Subjects");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 20;
 
   useEffect(() => {
     fetch("/api/cmds/tools/boards")
@@ -84,6 +86,7 @@ export default function BooksPage() {
   }
 
   useEffect(() => {
+    setPage(1);
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterBoardId]);
@@ -213,7 +216,7 @@ export default function BooksPage() {
               </div>
             ) : (
               <ul className="space-y-2">
-                {books.map((b) => (
+                {books.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((b) => (
                   <li
                     key={b.id}
                     className="flex items-center justify-between gap-3 rounded-lg bg-white p-3 ring-1 ring-black/5"
@@ -250,9 +253,57 @@ export default function BooksPage() {
                 ))}
               </ul>
             )}
+
+            {!loading && books.length > PAGE_SIZE && (
+              <PageControls
+                page={page}
+                totalPages={Math.ceil(books.length / PAGE_SIZE)}
+                onPage={setPage}
+              />
+            )}
           </div>
         </div>
       </main>
     </CmdsShell>
+  );
+}
+
+function PageControls({
+  page,
+  totalPages,
+  onPage,
+}: {
+  page: number;
+  totalPages: number;
+  onPage: (p: number) => void;
+}) {
+  return (
+    <div className="mt-4 flex items-center justify-center gap-1">
+      <button
+        onClick={() => onPage(Math.max(1, page - 1))}
+        disabled={page === 1}
+        className="rounded px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 disabled:opacity-30"
+      >
+        ← Prev
+      </button>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+        <button
+          key={p}
+          onClick={() => onPage(p)}
+          className={`rounded px-3 py-1 text-sm ${
+            p === page ? "bg-blue-600 font-medium text-white" : "text-slate-600 hover:bg-slate-100"
+          }`}
+        >
+          {p}
+        </button>
+      ))}
+      <button
+        onClick={() => onPage(Math.min(totalPages, page + 1))}
+        disabled={page === totalPages}
+        className="rounded px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 disabled:opacity-30"
+      >
+        Next →
+      </button>
+    </div>
   );
 }
