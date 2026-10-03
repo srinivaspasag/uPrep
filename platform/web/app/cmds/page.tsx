@@ -58,6 +58,8 @@ export default function CmdsResourcesPage() {
   const [subject, setSubject] = useState("All Subjects");
   const [typeFilter, setTypeFilter] = useState("All Resources");
   const [sortBy, setSortBy] = useState<"date" | "title" | "sequence">("date");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 50;
   const [rows, setRows] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
@@ -106,6 +108,7 @@ export default function CmdsResourcesPage() {
 
   useEffect(() => {
     if (session) load();
+    setPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, subject, typeFilter, currentFolderId]);
 
@@ -493,7 +496,9 @@ export default function CmdsResourcesPage() {
                     </td>
                   </tr>
                 ) : (
-                  sorted.map((r, i) => (
+                  sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((r, localI) => {
+                    const i = (page - 1) * PAGE_SIZE + localI;
+                    return (
                     <tr key={r.id} className="border-b border-slate-100 hover:bg-slate-50">
                       <td className="px-4 py-3">
                         <input
@@ -563,10 +568,19 @@ export default function CmdsResourcesPage() {
                         />
                       </td>
                     </tr>
-                  ))
+                    );
+                  })
                 )}
               </tbody>
             </table>
+
+            {sorted.length > PAGE_SIZE && (
+              <ResourcePageControls
+                page={page}
+                totalPages={Math.ceil(sorted.length / PAGE_SIZE)}
+                onPage={setPage}
+              />
+            )}
           </div>
         </main>
       </div>
@@ -1389,6 +1403,46 @@ function AddToSectionModal({
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ResourcePageControls({
+  page,
+  totalPages,
+  onPage,
+}: {
+  page: number;
+  totalPages: number;
+  onPage: (p: number) => void;
+}) {
+  return (
+    <div className="flex items-center justify-center gap-1 border-t border-slate-100 py-3">
+      <button
+        onClick={() => onPage(Math.max(1, page - 1))}
+        disabled={page === 1}
+        className="rounded px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 disabled:opacity-30"
+      >
+        ← Prev
+      </button>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+        <button
+          key={p}
+          onClick={() => onPage(p)}
+          className={`rounded px-3 py-1 text-sm ${
+            p === page ? "bg-blue-600 font-medium text-white" : "text-slate-600 hover:bg-slate-100"
+          }`}
+        >
+          {p}
+        </button>
+      ))}
+      <button
+        onClick={() => onPage(Math.min(totalPages, page + 1))}
+        disabled={page === totalPages}
+        className="rounded px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 disabled:opacity-30"
+      >
+        Next →
+      </button>
     </div>
   );
 }
