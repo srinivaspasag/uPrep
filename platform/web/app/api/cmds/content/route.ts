@@ -132,7 +132,13 @@ export async function GET(req: NextRequest) {
     }));
 
     let out = rows;
-    if (subject && subject !== "All Subjects") {
+    // Only meaningful at root: it picks out the one top-level folder named
+    // e.g. "Chemistry XI" from the root listing. Once parentId scopes us
+    // to inside that folder, every child is already guaranteed to belong
+    // to that subject — re-applying the name match here filtered out every
+    // real chapter (none of them are literally named "Chemistry XI") and
+    // made every subject's folder look empty the moment you opened it.
+    if (subject && subject !== "All Subjects" && !parentId) {
       // The Subjects filter now lists real Board Tree subject names (e.g.
       // "Chemistry XI") — match top-level subject folders by their own
       // name (that's literally what they're named), falling back to the
