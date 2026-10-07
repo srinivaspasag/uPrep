@@ -55,7 +55,6 @@ const FILTERS = ["All Resources", "FOLDER", "DOCUMENT", "VIDEO", "TEST", "MODULE
 export default function CmdsResourcesPage() {
   const router = useRouter();
   const [session, setSession] = useState<UprepSession | null>(null);
-  const [subject, setSubject] = useState("All Subjects");
   const [typeFilter, setTypeFilter] = useState("All Resources");
   const [sortBy, setSortBy] = useState<"date" | "title" | "sequence">("date");
   const [page, setPage] = useState(1);
@@ -95,7 +94,7 @@ export default function CmdsResourcesPage() {
   async function load() {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ subject, type: typeFilter });
+      const params = new URLSearchParams({ type: typeFilter });
       if (currentFolderId) params.set("parentId", currentFolderId);
       const res = await fetch(`/api/cmds/content?${params.toString()}`);
       const data = await res.json();
@@ -110,7 +109,7 @@ export default function CmdsResourcesPage() {
     if (session) load();
     setPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, subject, typeFilter, currentFolderId]);
+  }, [session, typeFilter, currentFolderId]);
 
   // Section -> Program lookup, so the "N Sections" cell can link straight
   // to the program a piece of content was assigned to — bug found live:
@@ -212,7 +211,7 @@ export default function CmdsResourcesPage() {
       body: JSON.stringify({
         kind: "folder",
         name: folderName.trim(),
-        subject: subject === "All Subjects" ? "" : subject,
+        subject: "",
         userId: session?.id,
         parentId: currentFolderId,
       }),
@@ -244,7 +243,7 @@ export default function CmdsResourcesPage() {
       body: JSON.stringify({
         kind: "folder",
         name: `Session ${max + 1}`,
-        subject: subject === "All Subjects" ? "" : subject,
+        subject: "",
         userId: session?.id,
         parentId: currentFolderId,
       }),
@@ -344,7 +343,7 @@ export default function CmdsResourcesPage() {
   return (
     <CmdsShell active="resources">
       <div className="flex">
-        <CmdsSubjectsRail subject={subject} onSubject={setSubject} />
+        <CmdsSubjectsRail currentFolderId={currentFolderId} onOpenFolder={setPath} />
 
         <main className="flex-1 px-8 py-6">
           <h1 className="text-2xl font-light text-slate-700">Institute Resources</h1>

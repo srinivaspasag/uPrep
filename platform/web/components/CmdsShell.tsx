@@ -263,41 +263,131 @@ export default function CmdsShell({
 // subject taxonomy is the Board Tree (see the Board Tree work) — its root
 // nodes are exactly the org's real subjects (Physics XI, Chemistry XI,
 // ...), so pull the list from there instead.
+type RailFolder = { id: string; name: string };
+
+// Was driven by the Board Tree (Subject -> Chapter -> Concept — the
+// taxonomy used to TAG questions), which is a completely separate thing
+// from the `folders` collection this page's table actually browses. That
+// mismatch caused two real problems: clicking a subject could only ever
+// show the one matching top-level folder row, never its real chapters
+// (the Board Tree has no relationship to folder ids at all); and the Board
+// Tree carries a stray generic "Physics" node (treeName "default", not a
+// real subject) alongside the real "Physics XI"/"Physics XII" ones, which
+// showed up as dead-end noise in this list. Rebuilt to browse the real
+// folder tree instead — chapters are just that subject folder's own
+// children, and the stray board-only "Physics" node was never part of
+// `folders` to begin with, so it's gone without any special-casing.
 export function CmdsSubjectsRail({
-  subject,
-  onSubject,
+  currentFolderId,
+  onOpenFolder,
 }: {
-  subject: string;
-  onSubject: (s: string) => void;
+  currentFolderId: string | null;
+  onOpenFolder: (path: RailFolder[]) => void;
 }) {
-  const [subjects, setSubjects] = useState<string[]>(["All Subjects"]);
+  const [subjects, setSubjects] = useState<RailFolder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [chaptersBySubject, setChaptersBySubject] = useState<Record<string, RailFolder[]>>({});
+  const [loadingChapters, setLoadingChapters] = useState(false);
+
   useEffect(() => {
-    fetch("/api/cmds/tools/boards")
+    fetch("/api/cmds/content?type=FOLDER")
       .then((r) => r.json())
       .then((d) => {
-        const names: string[] = (d.nodes || []).map((n: { name: string }) => n.name).sort();
-        setSubjects(["All Subjects", ...names]);
+        const names = ["EBook", "Miscellaneous"]; // utility folders, not real subjects
+        const list: RailFolder[] = (d.resources || [])
+          .filter((r: { type: string; title: string }) => r.type === "FOLDER" && !names.includes(r.title))
+          .map((r: { id: string; title: string }) => ({ id: r.id, name: r.title }))
+          .sort((a: RailFolder, b: RailFolder) => a.name.localeCompare(b.name));
+        setSubjects(list);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
+
+  async function toggleSubject(s: RailFolder) {
+    if (expanded === s.id) {
+      setExpanded(null);
+      return;
+    }
+    setExpanded(s.id);
+    if (!chaptersBySubject[s.id]) {
+      setLoadingChapters(true);
+      try {
+        const d = await fetch(`/api/cmds/content?type=FOLDER&parentId=${s.id}`).then((r) => r.json());
+        const chapters: RailFolder[] = (d.resources || [])
+          .filter((r: { type: string }) => r.type === "FOLDER")
+          .map((r: { id: string; title: string }) => ({ id: r.id, name: r.title }));
+        setChaptersBySubject((prev) => ({ ...prev, [s.id]: chapters }));
+      } finally {
+        setLoadingChapters(false);
+      }
+    }
+  }
+
   return (
-    <aside className="w-[150px] shrink-0 border-r border-slate-100 px-4 py-6">
-      <div className="rounded border border-slate-200 px-3 py-1.5 text-sm text-slate-700">
+    <aside className="w-[180px] shrink-0 border-r border-slate-100 px-4 py-6">
+      <button
+        onClick={() => onOpenFolder([])}
+        className="w-full rounded border border-slate-200 px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+      >
         Institute Resources
-      </div>
+      </button>
       <h3 className="mt-6 font-semibold text-slate-700">Subjects</h3>
-      <div className="mt-2 space-y-1 text-sm">
+      <div className="mt-2 space-y-0.5 text-sm">
+        <button
+          onClick={() => onOpenFolder([])}
+          className={`block w-full truncate rounded px-1 py-1 text-left ${
+            currentFolderId === null ? "bg-emerald-50 font-medium text-emerald-700" : "text-slate-600 hover:bg-slate-50"
+          }`}
+        >
+          All Subjects
+        </button>
+        {loading && <div className="px-1 py-1 text-xs text-slate-400">Loading…</div>}
         {subjects.map((s) => (
-          <label key={s} className="flex cursor-pointer items-center gap-2 text-slate-600">
-            <input
-              type="radio"
-              name="subject"
-              checked={subject === s}
-              onChange={() => onSubject(s)}
-              className="accent-emerald-600"
-            />
-            {s}
-          </label>
+          <div key={s.id}>
+            <div className="flex items-center">
+              <button
+                onClick={() => toggleSubject(s)}
+                className="px-1 text-xs text-slate-400 hover:text-slate-600"
+              >
+                {expanded === s.id ? "▾" : "▸"}
+              </button>
+              <button
+                onClick={() => onOpenFolder([s])}
+                title={s.name}
+                className={`flex-1 truncate rounded px-1 py-1 text-left ${
+                  currentFolderId === s.id ? "bg-emerald-50 font-medium text-emerald-700" : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                {s.name}
+              </button>
+            </div>
+            {expanded === s.id && (
+              <div className="ml-4 space-y-0.5">
+                {loadingChapters && !chaptersBySubject[s.id] && (
+                  <div className="px-2 py-1 text-xs text-slate-400">Loading…</div>
+                )}
+                {(chaptersBySubject[s.id] || []).map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => onOpenFolder([s, c])}
+                    title={c.name}
+                    className={`block w-full truncate rounded px-2 py-1 text-left text-xs ${
+                      currentFolderId === c.id
+                        ? "bg-emerald-50 font-medium text-emerald-700"
+                        : "text-slate-500 hover:bg-slate-50"
+                    }`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+                {chaptersBySubject[s.id] && chaptersBySubject[s.id].length === 0 && (
+                  <div className="px-2 py-1 text-xs text-slate-300">No chapters</div>
+                )}
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </aside>
