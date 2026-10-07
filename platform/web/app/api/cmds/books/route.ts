@@ -43,6 +43,8 @@ export async function GET(req: NextRequest) {
         subject: d.subject || null,
         chapter: chapterId ? chapterNames[chapterId] || null : null,
         boardIds: Array.isArray(d.boardIds) ? d.boardIds : [],
+        sectionIds: Array.isArray(d.sectionIds) ? d.sectionIds : [],
+        visibleSectionIds: Array.isArray(d.visibleSectionIds) ? d.visibleSectionIds : [],
         lastUpdated: d.lastUpdated ?? 0,
       };
     });

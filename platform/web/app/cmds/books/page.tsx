@@ -12,9 +12,12 @@ type Book = {
   subject: string | null;
   chapter: string | null;
   boardIds: string[];
+  sectionIds: string[];
+  visibleSectionIds: string[];
   lastUpdated: number;
 };
 type BoardNode = { id: string; name: string };
+type Section = { id: string; name: string; programId: string | null; programName: string | null; centerId: string | null };
 
 function fmtSize(bytes: number | null): string {
   if (!bytes) return "";
@@ -36,11 +39,20 @@ export default function BooksPage() {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 20;
 
+  const [sections, setSections] = useState<Section[]>([]);
+  const [sectionsLoaded, setSectionsLoaded] = useState(false);
+  const [assignBook, setAssignBook] = useState<Book | null>(null);
+
   useEffect(() => {
     fetch("/api/cmds/tools/boards")
       .then((r) => r.json())
       .then((d) => setSubjects(d.nodes || []))
       .catch(() => {});
+    fetch("/api/cmds/tools/academic")
+      .then((r) => r.json())
+      .then((d) => setSections(d.sections || []))
+      .catch(() => {})
+      .finally(() => setSectionsLoaded(true));
   }, []);
 
   async function toggleSubject(s: BoardNode) {
@@ -90,6 +102,18 @@ export default function BooksPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterBoardId]);
+
+  function assignedLabel(b: Book): string | null {
+    const visibleNames = sections
+      .filter((s) => b.visibleSectionIds.includes(s.id))
+      .map((s) => (s.programName ? `${s.programName} — ${s.name}` : s.name));
+    if (visibleNames.length) return `Visible in ${visibleNames.join(", ")}`;
+    const addedNames = sections
+      .filter((s) => b.sectionIds.includes(s.id))
+      .map((s) => (s.programName ? `${s.programName} — ${s.name}` : s.name));
+    if (addedNames.length) return `Added to ${addedNames.join(", ")} (not yet visible)`;
+    return null;
+  }
 
   async function deleteBook(b: Book) {
     if (!window.confirm(`Delete "${b.name}"? This can't be undone from the UI.`)) return;
@@ -229,9 +253,24 @@ export default function BooksPage() {
                           {b.chapter || "Untagged"}
                           {b.fileSize ? ` · ${fmtSize(b.fileSize)}` : ""}
                         </div>
+                        {sectionsLoaded && (
+                          <div
+                            className={`mt-0.5 text-xs ${
+                              b.visibleSectionIds.length ? "text-emerald-600" : "text-amber-600"
+                            }`}
+                          >
+                            {assignedLabel(b) || "Not assigned to any program yet"}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-3">
+                      <button
+                        onClick={() => setAssignBook(b)}
+                        className="text-sm text-blue-600 hover:underline"
+                      >
+                        Assign to Program
+                      </button>
                       {b.url && (
                         <a
                           href={b.url}
@@ -264,7 +303,147 @@ export default function BooksPage() {
           </div>
         </div>
       </main>
+
+      {assignBook && (
+        <AssignModal
+          book={assignBook}
+          sections={sections}
+          onClose={() => setAssignBook(null)}
+          onAssigned={() => {
+            setAssignBook(null);
+            load();
+          }}
+        />
+      )}
     </CmdsShell>
+  );
+}
+
+// Books have no folder placement (they're tagged by chapter via the Board
+// Tree instead, not filed into the `folders` tree), so unlike other content
+// they never show up in the subject/chapter browser used elsewhere. A
+// student only ever sees a book via its visibleSectionIds — same grant the
+// Program > Content tab's "Make Visible" sets — so this is a shortcut for
+// exactly that: add to the section, then mark it visible, in one step.
+function AssignModal({
+  book,
+  sections,
+  onClose,
+  onAssigned,
+}: {
+  book: Book;
+  sections: Section[];
+  onClose: () => void;
+  onAssigned: () => void;
+}) {
+  const programIds = Array.from(new Set(sections.map((s) => s.programId || "")));
+  const programs = programIds
+    .map((id) => {
+      const s = sections.find((s) => (s.programId || "") === id);
+      return { id, name: s?.programName || "(Unnamed Program)" };
+    })
+    .filter((p) => p.id);
+
+  const [programId, setProgramId] = useState(programs[0]?.id || "");
+  const programSections = sections.filter((s) => s.programId === programId);
+  const [sectionId, setSectionId] = useState(programSections[0]?.id || "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const first = sections.find((s) => s.programId === programId);
+    setSectionId(first?.id || "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [programId]);
+
+  async function confirmAssign() {
+    if (!sectionId) return;
+    setBusy(true);
+    setError("");
+    try {
+      const items = [{ id: book.id, type: "BOOK" }];
+      for (const action of ["addToSection", "visible"]) {
+        const r = await fetch("/api/cmds/content/bulk", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items, action, sectionId }),
+        });
+        const d = await r.json();
+        if (!r.ok || d.error) throw new Error(d.error || "Assign failed");
+      }
+      onAssigned();
+    } catch (e: any) {
+      setError(e?.message || "Assign failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-xl">
+        <h3 className="text-sm font-semibold text-slate-700">Assign &quot;{book.name}&quot; to a Program</h3>
+        <p className="mt-1 text-xs text-slate-400">
+          This adds the book to the section and makes it visible to its students right away.
+        </p>
+
+        {programs.length === 0 ? (
+          <p className="mt-4 text-sm text-slate-500">
+            No programs/sections set up yet — create one from Academic Structure first.
+          </p>
+        ) : (
+          <div className="mt-4 space-y-3">
+            <div>
+              <label className="block text-xs font-medium text-slate-500">Program</label>
+              <select
+                value={programId}
+                onChange={(e) => setProgramId(e.target.value)}
+                className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm"
+              >
+                {programs.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-500">Section</label>
+              <select
+                value={sectionId}
+                onChange={(e) => setSectionId(e.target.value)}
+                className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm"
+              >
+                {programSections.length === 0 && <option value="">No sections</option>}
+                {programSections.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+
+        <div className="mt-5 flex justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={confirmAssign}
+            disabled={!sectionId || busy}
+            className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          >
+            {busy ? "Assigning…" : "Assign & Make Visible"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
