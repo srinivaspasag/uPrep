@@ -691,10 +691,10 @@ function RowTitle({
     // Bug found live: this linked straight into the student "Start Test"
     // attempt flow — a staff member browsing Resources could accidentally
     // burn a student's only attempt, or just land on a screen that makes no
-    // sense for them. /cmds/papers is the staff-appropriate view: the
-    // question paper with an answer-key/solution toggle, read-only.
+    // sense for them. Go to the real editor instead — settings + question
+    // picker, same page /cmds/tests/new's results land on.
     return (
-      <Link href={`/cmds/papers/${r.id}`} className="text-slate-700 hover:text-blue-600">
+      <Link href={`/cmds/tests/${r.id}/edit`} className="text-slate-700 hover:text-blue-600">
         {r.title}
       </Link>
     );

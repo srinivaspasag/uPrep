@@ -157,9 +157,9 @@ function ModuleItemRow({ item, onPreview }: { item: Item; onPreview: (i: Item) =
         {inner}
       </button>
     );
-  // /cmds/papers, not /test — this is a staff preview context, not the
-  // student "Start Test" attempt flow.
-  if (item.type === "TEST") return <Link href={`/cmds/papers/${item.id}`}>{inner}</Link>;
+  // /cmds/tests/[id]/edit, not /test — this is a staff preview context,
+  // not the student "Start Test" attempt flow.
+  if (item.type === "TEST") return <Link href={`/cmds/tests/${item.id}/edit`}>{inner}</Link>;
   if (item.type === "QUESTION_SET") return <Link href="/cmds/questions">{inner}</Link>;
   if (item.type === "DOCUMENT" && item.url) return <a href={item.url}>{inner}</a>;
   return inner;
@@ -212,7 +212,7 @@ function VideoModal({ item, onClose }: { item: Item; onClose: () => void }) {
 function NextUpModal({ item, onOpen, onDismiss }: { item: Item; onOpen: () => void; onDismiss: () => void }) {
   const href =
     item.type === "TEST"
-      ? `/cmds/papers/${item.id}`
+      ? `/cmds/tests/${item.id}/edit`
       : item.type === "QUESTION_SET"
       ? "/cmds/questions"
       : item.type === "DOCUMENT" && item.url
