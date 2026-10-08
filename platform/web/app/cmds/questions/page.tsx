@@ -654,10 +654,10 @@ export default function QuestionBankPage() {
                 </div>
                 <div className="mt-4 flex gap-2">
                   <Link
-                    href={`/test/${t.id}`}
+                    href={`/cmds/tests/${t.id}/edit`}
                     className="inline-block rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
                   >
-                    Open →
+                    Edit →
                   </Link>
                   <Link
                     href={`/cmds/papers/${t.id}`}

@@ -688,8 +688,13 @@ function RowTitle({
       </a>
     );
   if (r.type === "TEST")
+    // Bug found live: this linked straight into the student "Start Test"
+    // attempt flow — a staff member browsing Resources could accidentally
+    // burn a student's only attempt, or just land on a screen that makes no
+    // sense for them. /cmds/papers is the staff-appropriate view: the
+    // question paper with an answer-key/solution toggle, read-only.
     return (
-      <Link href={`/test/${r.id}`} className="text-slate-700 hover:text-blue-600">
+      <Link href={`/cmds/papers/${r.id}`} className="text-slate-700 hover:text-blue-600">
         {r.title}
       </Link>
     );
