@@ -44,8 +44,8 @@ function LoginForm() {
   // so an org can hand out its own branded login URL (legacy micrositeByOrgId;
   // now also what /i/[slug] redirects into). Also fetches that org's own logo
   // so the page shows THEIR branding instead of the hardcoded default below —
-  // without this, every institute's students would see Scholar Spectra's logo
-  // even when signing in through their own institute's link.
+  // without this, every institute's students would see Cognora's logo even
+  // when signing in through their own institute's link.
   useEffect(() => {
     const oid = search.get("org");
     if (oid) {
@@ -248,11 +248,11 @@ function LoginForm() {
             <img src={deepLinkLogoUrl} alt={orgName || "Institute logo"} className="h-auto max-h-28 w-auto" />
           ) : (
             <Image
-              src="/scholar-spectra-login.png"
-              alt="Scholar Spectra"
-              width={520}
-              height={395}
-              className="h-auto w-48"
+              src="/cognora-login.png"
+              alt="Cognora"
+              width={937}
+              height={255}
+              className="h-auto w-64"
               priority
             />
           )}
