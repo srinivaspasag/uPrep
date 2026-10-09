@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import CmdsShell from "@/components/CmdsShell";
 import { getSession } from "@/lib/session";
+import MathText from "@/components/MathText";
 
 type TestRow = { testId: string; name: string; attempts: number; students: number; lastAt: number };
 type Overall = {
@@ -10,6 +11,7 @@ type Overall = {
   students: number;
   avgScore: number;
   avgPercent: number;
+  avgTimeSec: number;
   highScore: number;
   lowScore: number;
 };
@@ -17,12 +19,18 @@ type WrongStudent = { userId: string; name: string; memberId: string };
 type PerQuestion = {
   qId: string;
   label: string;
+  content: string;
+  type: string;
+  options: string[];
+  correctIndexes: string[];
   attempts: number;
   correct: number;
   incorrect: number;
   partial: number;
   ungraded: number;
+  notAttempted: number;
   correctPercent: number;
+  avgTimeSec: number;
   wrongStudents: WrongStudent[];
 };
 type ResultRow = {
@@ -38,8 +46,26 @@ type ResultRow = {
 };
 type TopPerformer = { name: string; memberId: string; score: number; percent: number };
 type DistBucket = { label: string; count: number; percentOfStudents: number };
-type StudentQuestion = { qId: string; label: string; verdict: string; marks: { positive: number; negative: number } | null };
+type StudentQuestion = {
+  qId: string;
+  label: string;
+  verdict: string;
+  marks: { positive: number; negative: number } | null;
+  timeSec: number;
+};
 type StudentDetail = ResultRow & { questions: StudentQuestion[] };
+
+// mm:ss for sub-minute precision where it matters (per-question), plain
+// "Xm" for test-level averages where seconds are just noise.
+function fmtTime(sec: number): string {
+  const s = Math.round(sec);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  const rem = s % 60;
+  return rem > 0 ? `${m}m ${rem}s` : `${m}m`;
+}
+
+const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 type Detail = {
   test: { id: string; name: string; totalMarks: number };
   overall: Overall;
@@ -69,6 +95,7 @@ export default function TestAnalyticsPage() {
   const [maxPct, setMaxPct] = useState("");
   const [busy, setBusy] = useState(false);
   const [wrongFor, setWrongFor] = useState<PerQuestion | null>(null);
+  const [solutionFor, setSolutionFor] = useState<PerQuestion | null>(null);
   // Matches legacy's "Most/Least Attempted" and "Most/Least Correct" question
   // sort (AnalyticsManager.getQuestionSetOrderQuery — sorts by attempts or
   // correct count, asc/desc). We already compute both per question, so this
@@ -254,6 +281,7 @@ export default function TestAnalyticsPage() {
                       <Stat label="Total marks" value={detail.test.totalMarks} />
                       <Stat label="Average score" value={detail.overall.avgScore} />
                       <Stat label="Average %" value={`${detail.overall.avgPercent}%`} />
+                      <Stat label="Average time" value={fmtTime(detail.overall.avgTimeSec)} />
                       <Stat
                         label="High / Low"
                         value={`${detail.overall.highScore} / ${detail.overall.lowScore}`}
@@ -351,6 +379,8 @@ export default function TestAnalyticsPage() {
                           <th className="px-4 py-2 font-medium">Incorrect</th>
                           <th className="px-4 py-2 font-medium">Partial</th>
                           <th className="px-4 py-2 font-medium">Ungraded</th>
+                          <th className="px-4 py-2 font-medium">Not attempted</th>
+                          <th className="px-4 py-2 font-medium">Avg time</th>
                           <th className="px-4 py-2 font-medium">% Correct</th>
                           <th className="px-4 py-2 font-medium" />
                         </tr>
@@ -358,7 +388,7 @@ export default function TestAnalyticsPage() {
                       <tbody>
                         {sortedQuestions.length === 0 ? (
                           <tr>
-                            <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
+                            <td colSpan={10} className="px-4 py-8 text-center text-slate-400">
                               No question data.
                             </td>
                           </tr>
@@ -371,6 +401,8 @@ export default function TestAnalyticsPage() {
                               <td className="px-4 py-2 text-red-500">{q.incorrect}</td>
                               <td className="px-4 py-2 text-amber-600">{q.partial}</td>
                               <td className="px-4 py-2 text-slate-400">{q.ungraded}</td>
+                              <td className="px-4 py-2 text-slate-400">{q.notAttempted}</td>
+                              <td className="px-4 py-2 text-slate-500">{fmtTime(q.avgTimeSec)}</td>
                               <td className="px-4 py-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-1.5 w-24 overflow-hidden rounded bg-slate-100">
@@ -383,14 +415,22 @@ export default function TestAnalyticsPage() {
                                 </div>
                               </td>
                               <td className="px-4 py-2">
-                                {q.wrongStudents.length > 0 && (
+                                <div className="flex flex-col items-start gap-1">
                                   <button
-                                    onClick={() => setWrongFor(q)}
+                                    onClick={() => setSolutionFor(q)}
                                     className="text-xs text-blue-600 hover:underline"
                                   >
-                                    Who got it wrong?
+                                    View solution
                                   </button>
-                                )}
+                                  {q.wrongStudents.length > 0 && (
+                                    <button
+                                      onClick={() => setWrongFor(q)}
+                                      className="text-xs text-blue-600 hover:underline"
+                                    >
+                                      Who got it wrong?
+                                    </button>
+                                  )}
+                                </div>
                               </td>
                             </tr>
                           ))
@@ -615,6 +655,7 @@ export default function TestAnalyticsPage() {
       </div>
 
       {wrongFor && <WrongStudentsModal question={wrongFor} onClose={() => setWrongFor(null)} />}
+      {solutionFor && <SolutionModal question={solutionFor} onClose={() => setSolutionFor(null)} />}
       {studentOpen && (
         <StudentDetailModal
           loading={studentLoading}
@@ -712,12 +753,13 @@ function StudentDetailModal({
                     <th className="px-3 py-1.5 font-medium">Q</th>
                     <th className="px-3 py-1.5 font-medium">Result</th>
                     <th className="px-3 py-1.5 font-medium">Marks</th>
+                    <th className="px-3 py-1.5 font-medium">Time</th>
                   </tr>
                 </thead>
                 <tbody>
                   {student.questions.length === 0 ? (
                     <tr>
-                      <td colSpan={3} className="px-3 py-6 text-center text-slate-400">
+                      <td colSpan={4} className="px-3 py-6 text-center text-slate-400">
                         No question data for this attempt.
                       </td>
                     </tr>
@@ -743,6 +785,7 @@ function StudentDetailModal({
                         <td className="px-3 py-1.5 text-slate-500">
                           {q.marks ? `+${q.marks.positive} / -${q.marks.negative}` : "—"}
                         </td>
+                        <td className="px-3 py-1.5 text-slate-500">{fmtTime(q.timeSec)}</td>
                       </tr>
                     ))
                   )}
@@ -784,6 +827,88 @@ function WrongStudentsModal({ question, onClose }: { question: PerQuestion; onCl
             </div>
           ))}
         </div>
+        <div className="mt-5 flex justify-end">
+          <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Admin-only solution view — question content + options with the correct
+// one(s) highlighted, plus this question's own stats for context. Same data
+// students see post-submission via /api/tests/[id]/review, just reachable
+// from the analytics screen instead of requiring the admin to take the test.
+function SolutionModal({ question: q, onClose }: { question: PerQuestion; onClose: () => void }) {
+  const correctSet = new Set(q.correctIndexes.map(String));
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
+        <div className="flex items-start justify-between">
+          <h3 className="text-lg font-semibold text-slate-800">{q.label} — Solution</h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-700">
+            ✕
+          </button>
+        </div>
+
+        <div className="mt-4 grid grid-cols-5 gap-2 text-center text-xs">
+          <div>
+            <div className="font-semibold text-slate-700">{q.attempts}</div>
+            <div className="text-slate-400">attempted</div>
+          </div>
+          <div>
+            <div className="font-semibold text-emerald-600">{q.correct}</div>
+            <div className="text-slate-400">correct</div>
+          </div>
+          <div>
+            <div className="font-semibold text-red-500">{q.incorrect}</div>
+            <div className="text-slate-400">incorrect</div>
+          </div>
+          <div>
+            <div className="font-semibold text-slate-400">{q.notAttempted}</div>
+            <div className="text-slate-400">skipped</div>
+          </div>
+          <div>
+            <div className="font-semibold text-slate-700">{fmtTime(q.avgTimeSec)}</div>
+            <div className="text-slate-400">avg time</div>
+          </div>
+        </div>
+
+        <div className="mt-4 text-sm text-slate-800">
+          {q.content ? <MathText>{q.content}</MathText> : <span className="text-slate-400">No content found.</span>}
+        </div>
+
+        <div className="mt-4 space-y-2">
+          {q.options.map((opt, i) => {
+            const isCorrect = correctSet.has(String(i));
+            return (
+              <div
+                key={i}
+                className={`flex items-start gap-2 rounded-md border px-3 py-2 text-sm ${
+                  isCorrect ? "border-emerald-300 bg-emerald-50" : "border-slate-200"
+                }`}
+              >
+                <span
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
+                    isCorrect ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {LETTERS[i] || i + 1}
+                </span>
+                <span className="text-slate-700">
+                  <MathText>{opt}</MathText>
+                </span>
+                {isCorrect && <span className="ml-auto shrink-0 text-xs font-medium text-emerald-600">Correct</span>}
+              </div>
+            );
+          })}
+          {q.options.length === 0 && (
+            <p className="text-sm text-slate-400">No options found for this question.</p>
+          )}
+        </div>
+
         <div className="mt-5 flex justify-end">
           <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100">
             Close

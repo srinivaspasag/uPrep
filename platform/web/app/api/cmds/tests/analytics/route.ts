@@ -122,7 +122,7 @@ export async function GET(req: NextRequest) {
     if (attempts.length === 0) {
       return NextResponse.json({
         test: { id: testId, name: testDoc?.name || testDoc?.title || "Test", totalMarks },
-        overall: { attempts: 0, students: 0, avgScore: 0, avgPercent: 0, highScore: 0, lowScore: 0 },
+        overall: { attempts: 0, students: 0, avgScore: 0, avgPercent: 0, avgTimeSec: 0, highScore: 0, lowScore: 0 },
         perQuestion: [],
         resultSheet: [],
         orgId,
@@ -152,6 +152,19 @@ export async function GET(req: NextRequest) {
         qOrder.push(id);
       }
     }
+
+    // Question content + correct answer for the admin's "View solution"
+    // panel — same two-collection lookup as the student-facing review route
+    // (app/api/tests/[id]/review/route.ts), just never surfaced to admins
+    // before. Never exposed to students from here — this route is CMDS-only.
+    const qOids = qOrder.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
+    const [questionDocs, answerDocs] = await Promise.all([
+      db.collection("questions").find({ _id: { $in: qOids } }).toArray(),
+      db.collection("answers").find({ qId: { $in: qOrder } }).toArray(),
+    ]);
+    const questionById = new Map((questionDocs as any[]).map((q) => [String(q._id), q]));
+    const answerByQId = new Map((answerDocs as any[]).map((a) => [String(a.qId), a]));
+
     const perQ: Record<
       string,
       {
@@ -161,10 +174,21 @@ export async function GET(req: NextRequest) {
         partial: number;
         ungraded: number;
         wrongUserIds: Set<string>;
+        attemptedUserIds: Set<string>;
+        timeSum: number;
       }
     > = {};
     for (const id of qOrder)
-      perQ[id] = { attempts: 0, correct: 0, incorrect: 0, partial: 0, ungraded: 0, wrongUserIds: new Set() };
+      perQ[id] = {
+        attempts: 0,
+        correct: 0,
+        incorrect: 0,
+        partial: 0,
+        ungraded: 0,
+        wrongUserIds: new Set(),
+        attemptedUserIds: new Set(),
+        timeSum: 0,
+      };
     const labelByQId = new Map(qOrder.map((id, i) => [id, `Q${i + 1}`]));
 
     // Score each attempt + tally per-question outcomes.
@@ -175,20 +199,36 @@ export async function GET(req: NextRequest) {
     // user's best score, same attempt the result sheet itself reports on.
     const bestAttemptDetail = new Map<
       string,
-      { qId: string; label: string; verdict: string; marks: { positive: number; negative: number } | null }[]
+      { qId: string; label: string; verdict: string; marks: { positive: number; negative: number } | null; timeSec: number }[]
     >();
     const scores: number[] = [];
+    // Total wall-clock duration of each attempt — endTime/timeCreated are
+    // already on every userentityattempts doc, no new tracking needed for
+    // the test-level "Average time" stat.
+    const attemptDurationsSec: number[] = [];
 
     for (const at of attempts) {
       const qs = byAttempt.get(String(at._id)) || [];
       const uid = String(at.userId);
       let score = 0;
-      const thisAttemptDetail: { qId: string; label: string; verdict: string; marks: { positive: number; negative: number } | null }[] = [];
+      const thisAttemptDetail: { qId: string; label: string; verdict: string; marks: { positive: number; negative: number } | null; timeSec: number }[] = [];
       for (const q of qs) {
         const id = String(q.qId);
         const bucket =
-          perQ[id] || (perQ[id] = { attempts: 0, correct: 0, incorrect: 0, partial: 0, ungraded: 0, wrongUserIds: new Set() });
+          perQ[id] ||
+          (perQ[id] = {
+            attempts: 0,
+            correct: 0,
+            incorrect: 0,
+            partial: 0,
+            ungraded: 0,
+            wrongUserIds: new Set(),
+            attemptedUserIds: new Set(),
+            timeSum: 0,
+          });
         bucket.attempts++;
+        bucket.attemptedUserIds.add(uid);
+        bucket.timeSum += Number(q.timeTaken) || 0;
         const mk = marks[id] || { positive: 0, negative: 0 };
         if (!q.isJudgeable) {
           bucket.ungraded++;
@@ -211,12 +251,15 @@ export async function GET(req: NextRequest) {
           label: labelByQId.get(id) || id,
           verdict: q.isJudgeable ? verdict : "UNGRADED",
           marks: marks[id] || null,
+          timeSec: Math.round(Number(q.timeTaken) || 0),
         });
       }
       if (score < 0) score = 0;
       scores.push(score);
 
-      const endAt = Number(at.endTime) || Number(at.timeCreated) || 0;
+      const startAt = Number(at.timeCreated) || 0;
+      const endAt = Number(at.endTime) || startAt;
+      if (startAt && endAt > startAt) attemptDurationsSec.push((endAt - startAt) / 1000);
       const prev = scoreByUser.get(uid);
       if (!prev) {
         scoreByUser.set(uid, { best: score, attempts: 1, lastAt: endAt });
@@ -280,19 +323,30 @@ export async function GET(req: NextRequest) {
     const perQuestion = qOrder.map((id, i) => {
       const b = perQ[id];
       const graded = b.correct + b.incorrect + b.partial;
+      const qDoc = questionById.get(id);
+      const aDoc = answerByQId.get(id);
       return {
         qId: id,
         label: `Q${i + 1}`,
+        content: qDoc?.content || "",
+        type: qDoc?.type || "SCQ",
+        options: qDoc?.options || [],
+        correctIndexes: aDoc?.answer || [],
         attempts: b.attempts,
         correct: b.correct,
         incorrect: b.incorrect,
         partial: b.partial,
         ungraded: b.ungraded,
+        // Students who never answered this question at all — distinct from
+        // "ungraded" (answered, pending subjective grading). A
+        // userquestionattempts row only ever exists for a question the
+        // student actually answered (confirmed live: zero rows with an
+        // empty answerGiven), so this is just the complement.
+        notAttempted: Math.max(0, scoreByUser.size - b.attemptedUserIds.size),
         correctPercent: graded > 0 ? Math.round((b.correct / graded) * 1000) / 10 : 0,
+        avgTimeSec: b.attempts > 0 ? Math.round((b.timeSum / b.attempts) * 10) / 10 : 0,
         marks: marks[id] || null,
         // Who got it wrong (incorrect/partial) — drill-down for the admin.
-        // Real per-question timing isn't tracked anywhere in the pipeline
-        // today (deferred — see the plan), so no duration here.
         wrongStudents: Array.from(b.wrongUserIds).map((uid) => {
           const info = memberById.get(uid) || { name: "Student", memberId: "" };
           return { userId: uid, name: info.name, memberId: info.memberId };
@@ -301,11 +355,15 @@ export async function GET(req: NextRequest) {
     });
 
     const sum = scores.reduce((a, b) => a + b, 0);
+    const avgTimeSec = attemptDurationsSec.length
+      ? Math.round(attemptDurationsSec.reduce((a, b) => a + b, 0) / attemptDurationsSec.length)
+      : 0;
     const overall = {
       attempts: attempts.length,
       students: scoreByUser.size,
       avgScore: scores.length ? Math.round((sum / scores.length) * 10) / 10 : 0,
       avgPercent: scores.length ? pct(sum / scores.length) : 0,
+      avgTimeSec,
       highScore: scores.length ? Math.max(...scores) : 0,
       lowScore: scores.length ? Math.min(...scores) : 0,
     };

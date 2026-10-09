@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSession, type UprepSession } from "@/lib/session";
@@ -73,6 +73,12 @@ export default function TestPage({ params }: { params: { id: string } }) {
   const [marked, setMarked] = useState<Record<string, boolean>>({});
   const [currentQId, setCurrentQId] = useState<string | null>(null);
   const [showOnlyMarked, setShowOnlyMarked] = useState(false);
+  // Per-question time tracking — accumulated seconds per qId, plus which
+  // question is "open" right now and when it was opened. Refs (not state)
+  // since every question switch would otherwise trigger a render; only
+  // flushed into submit/save payloads when actually needed.
+  const qTimeRef = useRef<Record<string, number>>({});
+  const activeRef = useRef<{ qId: string | null; since: number }>({ qId: null, since: 0 });
   const [instructionsChecked, setInstructionsChecked] = useState(false);
   const [phase, setPhase] = useState<Phase>("landing");
   const [loading, setLoading] = useState(true);
@@ -139,10 +145,15 @@ export default function TestPage({ params }: { params: { id: string } }) {
           setAnswers(prog.answers || {});
           setVisited(prog.visited || {});
           setMarked(prog.marked || {});
-          setCurrentQId(prog.currentQId || (d.questions || [])[0]?.id || null);
+          const resumeQId = prog.currentQId || (d.questions || [])[0]?.id || null;
+          setCurrentQId(resumeQId);
           setRemaining(prog.remaining);
           setResumed(true);
           setPhase("attempt");
+          // Pick up per-question timing where the student left off, rather
+          // than losing pre-pause time or crediting it all to one question.
+          qTimeRef.current = prog.qTime || {};
+          activeRef.current = { qId: resumeQId, since: Date.now() };
         } else if (d.alreadyAttempted) {
           // Legacy allows exactly ONE attempt per test, ever (confirmed in
           // the real backend: AnalyticsManager.isMultiAttemptAllowed() is
@@ -172,14 +183,26 @@ export default function TestPage({ params }: { params: { id: string } }) {
     if (!session || phase !== "attempt") return;
     if (showBusy) setSaving(true);
     try {
+      flushActive();
       await fetch(`/api/tests/${params.id}/progress`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, remaining, visited, marked, currentQId }),
+        body: JSON.stringify({ answers, remaining, visited, marked, currentQId, qTime: qTimeRef.current }),
       });
     } finally {
       if (showBusy) setSaving(false);
     }
+  }
+
+  // Credits elapsed seconds since the active question was opened into its
+  // running total, then resets the clock — called before every switch,
+  // save, and submit so no window of time goes unaccounted for.
+  function flushActive() {
+    const a = activeRef.current;
+    if (!a.qId) return;
+    const elapsed = (Date.now() - a.since) / 1000;
+    if (elapsed > 0) qTimeRef.current[a.qId] = (qTimeRef.current[a.qId] || 0) + elapsed;
+    a.since = Date.now();
   }
 
   // Autosave progress periodically while attempting.
@@ -208,6 +231,10 @@ export default function TestPage({ params }: { params: { id: string } }) {
   }
 
   function goTo(qId: string) {
+    if (qId !== activeRef.current.qId) {
+      flushActive();
+      activeRef.current = { qId, since: Date.now() };
+    }
     markVisited(qId);
     setCurrentQId(qId);
   }
@@ -307,6 +334,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
     if (firstQ) {
       markVisited(firstQ);
       setCurrentQId(firstQ);
+      activeRef.current = { qId: firstQ, since: Date.now() };
     }
     setPhase("attempt");
   }
@@ -314,6 +342,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
   async function submit() {
     if (submitting || !session) return;
     setSubmitting(true);
+    flushActive();
     const payload = {
       userId: session.id,
       answers: questions.map((q) => ({
@@ -325,7 +354,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
         // backend won't grade them — matching the real exam rule that a
         // bare review-mark, unlike Answered & Marked for Review, is excluded.
         answerGiven: answers[q.id] !== undefined ? [String(answers[q.id])] : [],
-        timeTaken: 0,
+        timeTaken: Math.round(qTimeRef.current[q.id] || 0),
       })),
     };
     try {

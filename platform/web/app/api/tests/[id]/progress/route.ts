@@ -31,6 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         marked: doc.marked || {},
         currentQId: doc.currentQId || null,
         remaining: doc.remaining ?? null,
+        qTime: doc.qTime || {},
         updatedAt: doc.updatedAt,
       },
     });
@@ -45,6 +46,7 @@ type SaveBody = {
   visited?: Record<string, boolean>;
   marked?: Record<string, boolean>;
   currentQId?: string | null;
+  qTime?: Record<string, number>;
 };
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -62,6 +64,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
           marked: b.marked || {},
           currentQId: b.currentQId || null,
           remaining: typeof b.remaining === "number" ? b.remaining : null,
+          qTime: b.qTime || {},
           updatedAt: Date.now(),
         },
       },
