@@ -180,33 +180,34 @@ function AskDoubtModal({
   const [voiceSupported, setVoiceSupported] = useState(false);
   const recognitionRef = useRef<any>(null);
 
-  // Photo of a question (textbook page, handwritten notebook) — another way
-  // to fill in the question field, same idea as voice input above. The
-  // server reads it with Claude vision and moderates it in the same call;
-  // the image itself never leaves that one request.
-  const [imageReading, setImageReading] = useState(false);
+  // Photo / PDF / Word doc of a question — another way to fill in the
+  // question field, same idea as voice input above. The server reads it
+  // (Claude vision for images/PDFs, text extraction for .docx) and
+  // moderates it in the same pass; the file itself never leaves that one
+  // request.
+  const [fileReading, setFileReading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  async function handleImageChosen(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChosen(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = ""; // allow re-choosing the same file later
     if (!file) return;
-    setImageReading(true);
+    setFileReading(true);
     setError(null);
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/learn/doubts/extract-image", { method: "POST", body: fd });
+      const res = await fetch("/api/learn/doubts/extract-file", { method: "POST", body: fd });
       const d = await res.json().catch(() => ({}));
       if (!res.ok || d.error) {
-        setError(d.error || "Couldn't read that image.");
+        setError(d.error || "Couldn't read that file.");
         return;
       }
       setName(d.text || "");
     } catch {
-      setError("Couldn't read that image — please try again or type your question.");
+      setError("Couldn't read that file — please try again or type your question.");
     } finally {
-      setImageReading(false);
+      setFileReading(false);
     }
   }
 
@@ -300,8 +301,8 @@ function AskDoubtModal({
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder={isListening ? "Listening…" : imageReading ? "Reading image…" : "e.g. How do I find the derivative of sin(x²)?"}
-            disabled={imageReading}
+            placeholder={isListening ? "Listening…" : fileReading ? "Reading file…" : "e.g. How do I find the derivative of sin(x²)?"}
+            disabled={fileReading}
             className="w-full rounded-lg border border-[#D9D6C9] px-3 py-2.5 pr-16 text-sm text-[#16233D] outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 disabled:bg-[#F8F7F3]"
             autoFocus
           />
@@ -309,25 +310,24 @@ function AskDoubtModal({
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              onChange={handleImageChosen}
+              accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.pdf,.docx"
+              onChange={handleFileChosen}
               className="hidden"
             />
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              disabled={imageReading}
-              title="Upload a photo of your question"
+              disabled={fileReading}
+              title="Upload a photo, PDF, or Word doc of your question"
               className="rounded-full p-1.5 text-[#8890A1] transition hover:bg-[#EDEEE9] hover:text-[#3E4A63] disabled:opacity-50"
             >
-              {imageReading ? (
+              {fileReading ? (
                 <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 12a9 9 0 1 1-9-9" />
                 </svg>
               ) : (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                  <circle cx="12" cy="13" r="4" />
+                  <path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
                 </svg>
               )}
             </button>
@@ -335,7 +335,7 @@ function AskDoubtModal({
               <button
                 type="button"
                 onClick={toggleListening}
-                disabled={imageReading}
+                disabled={fileReading}
                 title={isListening ? "Stop listening" : "Ask by voice"}
                 className={`rounded-full p-1.5 transition disabled:opacity-50 ${
                   isListening
@@ -354,7 +354,7 @@ function AskDoubtModal({
           </div>
         </div>
         <p className="mt-1 text-[11px] text-[#8890A1]">
-          📷 Upload a clear photo of your question and Aira will read it in — just like typing it.
+          📎 Upload a photo, PDF, or Word doc of your question and Aira will read it in — just like typing it.
         </p>
 
         <label className="mt-4 block text-sm font-medium text-[#3E4A63]">Answer style</label>
