@@ -203,7 +203,12 @@ function AskDoubtModal({
         setError(d.error || "Couldn't read that file.");
         return;
       }
-      setName(d.text || "");
+      const text = d.text || "";
+      setName(text);
+      // Straight to the guided answer — no extra click. Aira already
+      // re-shows the transcribed text as the doubt's title afterward, so a
+      // bad OCR read is still visible, just not blocking the ask.
+      await submit(text);
     } catch {
       setError("Couldn't read that file — please try again or type your question.");
     } finally {
@@ -248,8 +253,13 @@ function AskDoubtModal({
     }
   }
 
-  async function submit() {
-    if (!name.trim()) {
+  // questionOverride lets a caller submit immediately with text that hasn't
+  // landed in `name` state yet (React state updates aren't synchronous) —
+  // used by the file-upload flow below, which auto-submits the moment Aira
+  // finishes reading the file rather than waiting for a second click.
+  async function submit(questionOverride?: string) {
+    const question = (questionOverride ?? name).trim();
+    if (!question) {
       setError("Please enter your question.");
       return;
     }
@@ -259,7 +269,7 @@ function AskDoubtModal({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: name.trim(),
+        name: question,
         content: content.trim(),
         subject: subject.trim(),
         boardIds,
@@ -405,7 +415,7 @@ function AskDoubtModal({
             Cancel
           </button>
           <button
-            onClick={submit}
+            onClick={() => submit()}
             disabled={saving}
             className="rounded-lg bg-[#e8443b] px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-900/10 transition hover:bg-[#d33c34] disabled:opacity-60"
           >
