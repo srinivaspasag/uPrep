@@ -34,8 +34,6 @@ type ParsedRow = {
   contactNumber: string;
   centerName: string;
   sectionName: string;
-  centerId: string;
-  sectionId: string;
 };
 
 type RowResult = {
@@ -110,7 +108,7 @@ export default function BulkUploadStudentsPage() {
   const [programs, setPrograms] = useState<AcadProgram[]>([]);
   const [centers, setCenters] = useState<AcadCenter[]>([]);
   const [sections, setSections] = useState<AcadSection[]>([]);
-  const [programId, setProgramId] = useState("");
+  const [programIds, setProgramIds] = useState<string[]>([]);
   const [raw, setRaw] = useState("");
   const [rows, setRows] = useState<ParsedRow[] | null>(null);
   const [step, setStep] = useState<"input" | "review" | "done">("input");
@@ -130,29 +128,43 @@ export default function BulkUploadStudentsPage() {
       .catch(() => {});
   }, []);
 
-  const centersForProgram = useMemo(() => {
-    const prog = programs.find((p) => p.id === programId);
+  // Every helper below is scoped to ONE program id — with multiple programs
+  // selected, the same Center/Section text in the CSV has to resolve
+  // independently against each program's own centers/sections (center and
+  // section names aren't shared across programs, just coincidentally reused).
+  function centersForProgram(pid: string): AcadCenter[] {
+    const prog = programs.find((p) => p.id === pid);
     const ids = new Set(prog?.centerIds || []);
     return centers.filter((c) => ids.has(c.id));
-  }, [programs, centers, programId]);
-
-  function sectionsFor(centerId: string) {
-    return sections.filter((s) => s.programId === programId && s.centerId === centerId);
   }
-
-  function resolveCenter(name: string): string {
+  function sectionsForProgramCenter(pid: string, centerId: string) {
+    return sections.filter((s) => s.programId === pid && s.centerId === centerId);
+  }
+  function resolveCenterForProgram(pid: string, name: string): string {
     if (!name.trim()) return "";
-    const hit = centersForProgram.find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
+    const hit = centersForProgram(pid).find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
     return hit?.id || "";
   }
-  function resolveSection(centerId: string, name: string): string {
+  function resolveSectionForProgram(pid: string, centerId: string, name: string): string {
     if (!name.trim() || !centerId) return "";
-    const hit = sectionsFor(centerId).find((s) => s.name.toLowerCase() === name.trim().toLowerCase());
+    const hit = sectionsForProgramCenter(pid, centerId).find((s) => s.name.toLowerCase() === name.trim().toLowerCase());
     return hit?.id || "";
+  }
+  // Resolved {centerId, sectionId} per selected program for a given row's
+  // raw Center/Section text — null entries mean that program couldn't
+  // resolve the name (surfaced in rowError, not silently dropped).
+  function resolveRowForPrograms(r: ParsedRow) {
+    return programIds.map((pid) => {
+      const centerId = resolveCenterForProgram(pid, r.centerName);
+      const sectionId = resolveSectionForProgram(pid, centerId, r.sectionName);
+      const prog = programs.find((p) => p.id === pid);
+      return { programId: pid, programName: prog?.name || "(program)", centerId, sectionId };
+    });
   }
 
   function downloadTemplate() {
-    const example = ["", "Riya", "Sharma", "riya@example.com", "9876543210", centersForProgram[0]?.name || "Center A", "Section A"];
+    const firstCenterName = programIds.length ? centersForProgram(programIds[0])[0]?.name : "";
+    const example = ["", "Riya", "Sharma", "riya@example.com", "9876543210", firstCenterName || "Center A", "Section A"];
     const csv = [TEMPLATE_HEADERS.join(","), example.join(",")].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -165,8 +177,8 @@ export default function BulkUploadStudentsPage() {
 
   function parse() {
     setParseError("");
-    if (!programId) {
-      setParseError("Pick a Program first — every uploaded student is assigned into it.");
+    if (programIds.length === 0) {
+      setParseError("Pick at least one Program first — every uploaded student is assigned into all of them.");
       return;
     }
     const table = parseDelimited(raw);
@@ -185,10 +197,6 @@ export default function BulkUploadStudentsPage() {
         const i = fieldAt.indexOf(field);
         return i === -1 ? "" : (cells[i] || "").trim();
       };
-      const centerName = get("centerName");
-      const sectionName = get("sectionName");
-      const centerId = resolveCenter(centerName);
-      const sectionId = resolveSection(centerId, sectionName);
       return {
         key: idx,
         memberId: get("memberId"),
@@ -196,10 +204,8 @@ export default function BulkUploadStudentsPage() {
         lastName: get("lastName"),
         email: get("email"),
         contactNumber: get("contactNumber"),
-        centerName,
-        sectionName,
-        centerId,
-        sectionId,
+        centerName: get("centerName"),
+        sectionName: get("sectionName"),
       };
     });
     setRows(parsed);
@@ -221,9 +227,17 @@ export default function BulkUploadStudentsPage() {
       );
       if (dupe.length) return "Duplicate Institute ID in this batch";
     }
-    if (r.centerName.trim() && !r.centerId) return `Unknown center "${r.centerName}"`;
-    if (r.sectionName.trim() && r.centerId && !r.sectionId) return `Unknown section "${r.sectionName}"`;
-    if ((r.centerId && !r.sectionId) || (!r.centerId && r.sectionId)) return "Pick both Center and Section, or leave both blank";
+    if (!r.centerName.trim() && !r.sectionName.trim()) return ""; // no section placement, account-only — fine
+    if ((r.centerName.trim() && !r.sectionName.trim()) || (!r.centerName.trim() && r.sectionName.trim()))
+      return "Pick both Center and Section, or leave both blank";
+    // Center/Section given — must resolve for EVERY selected program, since
+    // each one gets its own membership. Partial resolution would otherwise
+    // silently enroll a student into some programs but not others with no
+    // visible signal why.
+    for (const res of resolveRowForPrograms(r)) {
+      if (!res.centerId) return `Unknown center "${r.centerName}" for ${res.programName}`;
+      if (!res.sectionId) return `Unknown section "${r.sectionName}" for ${res.programName}`;
+    }
     return "";
   }
 
@@ -249,7 +263,11 @@ export default function BulkUploadStudentsPage() {
             contactNumber: r.contactNumber,
             profile: "STUDENT",
             programMemberships:
-              r.centerId && r.sectionId ? [{ programId, centerId: r.centerId, sectionId: r.sectionId }] : [],
+              r.centerName.trim() && r.sectionName.trim()
+                ? resolveRowForPrograms(r)
+                    .filter((res) => res.centerId && res.sectionId)
+                    .map((res) => ({ programId: res.programId, centerId: res.centerId, sectionId: res.sectionId }))
+                : [],
           }),
         });
         const d = await res.json().catch(() => ({}));
@@ -292,7 +310,7 @@ export default function BulkUploadStudentsPage() {
           <div>
             <h1 className="text-2xl font-semibold text-slate-800">Bulk Upload Students</h1>
             <p className="mt-1 text-slate-500">
-              Upload a CSV of students into one Program at once — review before anything is created.
+              Upload a CSV of students into one or more Programs at once — review before anything is created.
             </p>
           </div>
           <Link href="/cmds/tools/people" className="text-sm text-blue-600 hover:underline">
@@ -303,22 +321,39 @@ export default function BulkUploadStudentsPage() {
         {step === "input" && (
           <div className="mt-6 space-y-5">
             <div className="rounded-xl bg-white p-5 ring-1 ring-black/5">
-              <label className="block text-sm font-medium text-slate-700">Program</label>
+              <label className="block text-sm font-medium text-slate-700">Programs</label>
               <p className="mt-1 text-xs text-slate-400">
-                Every student in this batch is assigned into this program. Center/Section come from the CSV.
+                Every student in this batch is assigned into all programs checked below — the same Center/Section
+                names from the CSV are resolved separately against each one.
               </p>
-              <select
-                value={programId}
-                onChange={(e) => setProgramId(e.target.value)}
-                className="mt-2 w-full max-w-sm rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700"
-              >
-                <option value="">Select a program…</option>
-                {programs.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {programs.map((p) => {
+                  const checked = programIds.includes(p.id);
+                  return (
+                    <label
+                      key={p.id}
+                      className={`cursor-pointer rounded-md border px-3 py-1.5 text-sm transition ${
+                        checked
+                          ? "border-blue-400 bg-blue-50 text-blue-800"
+                          : "border-slate-300 text-slate-600 hover:bg-slate-50"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) =>
+                          setProgramIds((prev) =>
+                            e.target.checked ? [...prev, p.id] : prev.filter((id) => id !== p.id)
+                          )
+                        }
+                        className="mr-1.5 accent-blue-600"
+                      />
+                      {p.name}
+                    </label>
+                  );
+                })}
+                {programs.length === 0 && <span className="text-sm text-slate-400">Loading programs…</span>}
+              </div>
             </div>
 
             <div className="rounded-xl bg-white p-5 ring-1 ring-black/5">
@@ -443,46 +478,34 @@ export default function BulkUploadStudentsPage() {
                           />
                         </td>
                         <td className="px-3 py-1.5">
-                          <select
-                            value={r.centerId}
-                            onChange={(e) => {
-                              const centerId = e.target.value;
-                              const centerName = centersForProgram.find((c) => c.id === centerId)?.name || "";
-                              updateRow(r.key, { centerId, centerName, sectionId: "", sectionName: "" });
-                            }}
-                            className="w-32 rounded border border-slate-200 px-2 py-1 text-xs"
-                          >
-                            <option value="">—</option>
-                            {centersForProgram.map((c) => (
-                              <option key={c.id} value={c.id}>
-                                {c.name}
-                              </option>
-                            ))}
-                          </select>
+                          <input
+                            value={r.centerName}
+                            onChange={(e) => updateRow(r.key, { centerName: e.target.value })}
+                            placeholder="—"
+                            className="w-28 rounded border border-slate-200 px-2 py-1 text-xs"
+                          />
                         </td>
                         <td className="px-3 py-1.5">
-                          <select
-                            value={r.sectionId}
-                            onChange={(e) => {
-                              const sectionId = e.target.value;
-                              const sectionName = sectionsFor(r.centerId).find((s) => s.id === sectionId)?.name || "";
-                              updateRow(r.key, { sectionId, sectionName });
-                            }}
-                            disabled={!r.centerId}
-                            className="w-32 rounded border border-slate-200 px-2 py-1 text-xs disabled:bg-slate-50"
-                          >
-                            <option value="">—</option>
-                            {sectionsFor(r.centerId).map((s) => (
-                              <option key={s.id} value={s.id}>
-                                {s.name}
-                              </option>
-                            ))}
-                          </select>
+                          <input
+                            value={r.sectionName}
+                            onChange={(e) => updateRow(r.key, { sectionName: e.target.value })}
+                            placeholder="—"
+                            className="w-28 rounded border border-slate-200 px-2 py-1 text-xs"
+                          />
                         </td>
                         <td className="px-3 py-1.5 text-xs">
                           {err ? (
                             <span className="text-amber-700" title={err}>
                               ⚠
+                            </span>
+                          ) : programIds.length > 1 && r.centerName.trim() ? (
+                            <span
+                              className="text-emerald-600"
+                              title={`Resolved for: ${resolveRowForPrograms(r)
+                                .map((res) => res.programName)
+                                .join(", ")}`}
+                            >
+                              ✓ ({programIds.length})
                             </span>
                           ) : (
                             <span className="text-emerald-600">✓</span>
