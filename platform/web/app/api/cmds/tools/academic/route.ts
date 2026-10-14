@@ -91,20 +91,33 @@ export async function GET(req: NextRequest) {
     const activeDeptIds = await activeIds(db, "orgdepartments", departmentsRaw.map((d) => d.id));
     const departments = departmentsRaw.filter((d) => activeDeptIds.has(d.id));
 
-    let programsBase: any[];
-    if (departments.length > 0) {
-      const perDept = await Promise.all(
+    // Bug found live: this used to fetch programs ONLY per-department when
+    // any department existed, so a program with no department (or whose
+    // department was later deleted) was never queried at all — confirmed
+    // live: 5 real active programs ("NEET 2027" x2, "NIIT2006", "JEE2026",
+    // "NEET Model Test Zoology - Dr. SAB") silently missing from both the
+    // Academic Structure page and the Bulk Upload Students program picker.
+    // getPrograms called with NO departmentId returns the full org-wide
+    // list regardless of department (confirmed live: 16 programs, same
+    // count as all per-department calls combined, including the
+    // department-less ones) — use that as the authoritative list, and the
+    // per-department calls only to annotate which department each program
+    // belongs to for grouping.
+    const [orgWideRes, perDept] = await Promise.all([
+      callOrgService<{ list?: any[] }>("getPrograms", auth),
+      Promise.all(
         departments.map((d) =>
-          callOrgService<{ list?: any[] }>("getPrograms", { ...auth, departmentId: d.id }).then(
-            (r) => (r.list || []).map((p) => ({ ...p, departmentId: d.id }))
+          callOrgService<{ list?: any[] }>("getPrograms", { ...auth, departmentId: d.id }).then((r) =>
+            (r.list || []).map((p) => ({ id: p.id, departmentId: d.id }))
           )
         )
-      );
-      programsBase = perDept.flat();
-    } else {
-      const r = await callOrgService<{ list?: any[] }>("getPrograms", auth);
-      programsBase = (r.list || []).map((p) => ({ ...p, departmentId: null }));
-    }
+      ),
+    ]);
+    const departmentIdByProgramId = new Map(perDept.flat().map((p) => [p.id, p.departmentId]));
+    let programsBase: any[] = (orgWideRes.list || []).map((p) => ({
+      ...p,
+      departmentId: departmentIdByProgramId.get(p.id) || null,
+    }));
     const activeProgramIds = await activeIds(db, "orgprograms", programsBase.map((p) => p.id));
     programsBase = programsBase.filter((p) => activeProgramIds.has(p.id));
 
