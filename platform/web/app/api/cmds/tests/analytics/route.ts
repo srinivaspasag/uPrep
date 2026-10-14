@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { resolveOrgId } from "@/lib/org-scope";
+import { resolveBoardNames } from "@/lib/legacyBoard";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -90,6 +91,38 @@ export async function GET(req: NextRequest) {
     const totalMarks =
       testDoc?.totalMarks ??
       Object.values(marks).reduce((sum, mk: any) => sum + (mk.positive || 0), 0);
+    const durationMin = testDoc?.duration ? Math.round(Number(testDoc.duration) / 60000) : 0;
+
+    // Subject-wise breakdown + curriculum (the legacy "Test Details" tab —
+    // Format: question/marks count per subject, Curriculum: chapter names
+    // actually drawn from). test.metadata already groups qIds by subject
+    // (see app/api/tests/[id]/review/route.ts); chapter names come from each
+    // question's own boardIds (last entry = chapter level, same convention
+    // as app/api/cmds/tests/auto/route.ts's chapter resolution).
+    const metadataSections: any[] = Array.isArray(testDoc?.metadata) ? testDoc.metadata : [];
+    const allMetaQIds: string[] = metadataSections.flatMap((m) => (Array.isArray(m.qIds) ? m.qIds : []));
+    const metaQOids = allMetaQIds.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
+    const boardIdDocs = metaQOids.length
+      ? await db.collection("questions").find({ _id: { $in: metaQOids } }).project({ boardIds: 1 }).toArray()
+      : [];
+    const chapterIdByQId = new Map(
+      (boardIdDocs as any[]).map((q) => [String(q._id), Array.isArray(q.boardIds) ? q.boardIds[q.boardIds.length - 1] : null])
+    );
+    const allChapterIds = Array.from(new Set(Array.from(chapterIdByQId.values()).filter(Boolean))) as string[];
+    const chapterNameById = allChapterIds.length ? await resolveBoardNames(orgId, allChapterIds) : {};
+    const subjects = metadataSections.map((m: any) => {
+      const qIds: string[] = Array.isArray(m.qIds) ? m.qIds : [];
+      const topics = Array.from(
+        new Set(
+          qIds
+            .map((qId) => chapterIdByQId.get(qId))
+            .filter(Boolean)
+            .map((bId) => chapterNameById[bId as string])
+            .filter(Boolean)
+        )
+      ) as string[];
+      return { name: m.name || "Section", questionCount: qIds.length, totalMarks: m.totalMarks || 0, topics };
+    });
 
     const rawAttempts: any[] = await db
       .collection("userentityattempts")
@@ -121,8 +154,15 @@ export async function GET(req: NextRequest) {
 
     if (attempts.length === 0) {
       return NextResponse.json({
-        test: { id: testId, name: testDoc?.name || testDoc?.title || "Test", totalMarks },
+        test: {
+          id: testId,
+          name: testDoc?.name || testDoc?.title || "Test",
+          totalMarks,
+          durationMin,
+          totalQuestions: allMetaQIds.length,
+        },
         overall: { attempts: 0, students: 0, avgScore: 0, avgPercent: 0, avgTimeSec: 0, highScore: 0, lowScore: 0 },
+        subjects,
         perQuestion: [],
         resultSheet: [],
         orgId,
@@ -407,8 +447,15 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({
-      test: { id: testId, name: testDoc?.name || testDoc?.title || "Test", totalMarks },
+      test: {
+        id: testId,
+        name: testDoc?.name || testDoc?.title || "Test",
+        totalMarks,
+        durationMin,
+        totalQuestions: qOrder.length,
+      },
       overall,
+      subjects,
       topPerformers,
       distribution,
       perQuestion,

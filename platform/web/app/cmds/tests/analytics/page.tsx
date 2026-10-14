@@ -6,6 +6,7 @@ import { getSession } from "@/lib/session";
 import MathText from "@/components/MathText";
 
 type TestRow = { testId: string; name: string; attempts: number; students: number; lastAt: number };
+type Subject = { name: string; questionCount: number; totalMarks: number; topics: string[] };
 type Overall = {
   attempts: number;
   students: number;
@@ -60,15 +61,21 @@ type StudentDetail = ResultRow & { questions: StudentQuestion[] };
 function fmtTime(sec: number): string {
   const s = Math.round(sec);
   if (s < 60) return `${s}s`;
-  const m = Math.floor(s / 60);
-  const rem = s % 60;
-  return rem > 0 ? `${m}m ${rem}s` : `${m}m`;
+  if (s < 3600) {
+    const m = Math.floor(s / 60);
+    const rem = s % 60;
+    return rem > 0 ? `${m}m ${rem}s` : `${m}m`;
+  }
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  return `${h}:${String(m).padStart(2, "0")} hrs`;
 }
 
 const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 type Detail = {
-  test: { id: string; name: string; totalMarks: number };
+  test: { id: string; name: string; totalMarks: number; durationMin: number; totalQuestions: number };
   overall: Overall;
+  subjects: Subject[];
   topPerformers: TopPerformer[];
   distribution: DistBucket[];
   perQuestion: PerQuestion[];
@@ -89,7 +96,7 @@ export default function TestAnalyticsPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [detail, setDetail] = useState<Detail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
-  const [tab, setTab] = useState<"overview" | "questions" | "results" | "monitor">("overview");
+  const [tab, setTab] = useState<"details" | "overview" | "questions" | "results" | "monitor">("details");
   const [inProgress, setInProgress] = useState<InProgress[]>([]);
   const [minPct, setMinPct] = useState("");
   const [maxPct, setMaxPct] = useState("");
@@ -160,7 +167,7 @@ export default function TestAnalyticsPage() {
     setSelected(testId);
     setDetail(null);
     setDetailLoading(true);
-    setTab("overview");
+    setTab("details");
     setMinPct("");
     setMaxPct("");
     const d = await (await fetch(`/api/cmds/tests/analytics?testId=${encodeURIComponent(testId)}`)).json();
@@ -252,7 +259,7 @@ export default function TestAnalyticsPage() {
                   </button>
                 </div>
                 <div className="mt-4 flex gap-6 border-b border-slate-200 text-sm">
-                  {(["overview", "questions", "results", "monitor"] as const).map((k) => (
+                  {(["details", "overview", "questions", "results", "monitor"] as const).map((k) => (
                     <button
                       key={k}
                       onClick={() => setTab(k)}
@@ -262,16 +269,61 @@ export default function TestAnalyticsPage() {
                           : "border-transparent text-slate-500 hover:text-slate-700"
                       }`}
                     >
-                      {k === "questions"
+                      {k === "details"
+                        ? "Test details"
+                        : k === "questions"
                         ? "Per-question"
                         : k === "results"
                         ? "Result sheet"
                         : k === "monitor"
                         ? `In progress${inProgress.length ? ` (${inProgress.length})` : ""}`
-                        : "Overview"}
+                        : "Overall performance"}
                     </button>
                   ))}
                 </div>
+
+                {tab === "details" && (
+                  <div className="mt-5 space-y-6">
+                    <div className="grid grid-cols-3 gap-4">
+                      <Stat label="Total marks" value={detail.test.totalMarks} />
+                      <Stat label="Time alloted" value={`${detail.test.durationMin} min`} />
+                      <Stat label="Total questions" value={detail.test.totalQuestions} />
+                    </div>
+
+                    {detail.subjects.length === 0 ? (
+                      <p className="text-sm text-slate-400">No subject breakdown available for this test.</p>
+                    ) : (
+                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {detail.subjects.map((s) => (
+                          <div key={s.name} className="rounded-lg border border-slate-200 p-4">
+                            <h3 className="text-sm font-semibold text-blue-700">{s.name}</h3>
+                            <div className="mt-2 text-xs font-medium uppercase tracking-wide text-slate-400">
+                              Format
+                            </div>
+                            <p className="mt-1 text-sm text-slate-600">
+                              <span className="font-semibold text-slate-800">{s.questionCount}</span> Questions ·{" "}
+                              <span className="font-semibold text-slate-800">{s.totalMarks}</span> Marks
+                            </p>
+                            <div className="mt-3 border-t border-slate-100 pt-3">
+                              <div className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                                Curriculum
+                              </div>
+                              {s.topics.length === 0 ? (
+                                <p className="mt-1 text-sm text-slate-400">Not tagged to a chapter.</p>
+                              ) : (
+                                <ul className="mt-1 space-y-0.5 text-sm text-slate-600">
+                                  {s.topics.map((t) => (
+                                    <li key={t}>{t}</li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {tab === "overview" && (
                   <div className="mt-5 space-y-6">
