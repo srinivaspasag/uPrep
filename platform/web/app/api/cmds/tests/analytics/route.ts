@@ -214,7 +214,9 @@ export async function GET(req: NextRequest) {
         partial: number;
         ungraded: number;
         wrongUserIds: Set<string>;
+        correctUserIds: Set<string>;
         attemptedUserIds: Set<string>;
+        timeByUser: Map<string, number>;
         timeSum: number;
       }
     > = {};
@@ -226,10 +228,17 @@ export async function GET(req: NextRequest) {
         partial: 0,
         ungraded: 0,
         wrongUserIds: new Set(),
+        correctUserIds: new Set(),
         attemptedUserIds: new Set(),
+        timeByUser: new Map(),
         timeSum: 0,
       };
     const labelByQId = new Map(qOrder.map((id, i) => [id, `Q${i + 1}`]));
+    // Subject/section each question belongs to (test.metadata already groups
+    // qIds by subject — see the Test Details breakdown above) — powers the
+    // "Filter By: All Subjects" dropdown on the per-question analytics view.
+    const sectionByQId = new Map<string, string>();
+    for (const m of metadataSections) for (const qId of m.qIds || []) sectionByQId.set(qId, m.name || "Section");
 
     // Score each attempt + tally per-question outcomes.
     const scoreByUser = new Map<string, { best: number; attempts: number; lastAt: number }>();
@@ -246,6 +255,10 @@ export async function GET(req: NextRequest) {
     // already on every userentityattempts doc, no new tracking needed for
     // the test-level "Average time" stat.
     const attemptDurationsSec: number[] = [];
+    // Duration of each user's BEST-scoring attempt specifically — the result
+    // sheet's own "Time Taken" column (legacy: "1 Hr : 54 Mins : 41 Secs"),
+    // tracked alongside bestAttemptDetail since they're always updated together.
+    const bestAttemptDurationSec = new Map<string, number>();
 
     for (const at of attempts) {
       const qs = byAttempt.get(String(at._id)) || [];
@@ -263,12 +276,16 @@ export async function GET(req: NextRequest) {
             partial: 0,
             ungraded: 0,
             wrongUserIds: new Set(),
+            correctUserIds: new Set(),
             attemptedUserIds: new Set(),
+            timeByUser: new Map(),
             timeSum: 0,
           });
         bucket.attempts++;
         bucket.attemptedUserIds.add(uid);
+        const timeSec = Math.round(Number(q.timeTaken) || 0);
         bucket.timeSum += Number(q.timeTaken) || 0;
+        bucket.timeByUser.set(uid, timeSec);
         const mk = marks[id] || { positive: 0, negative: 0 };
         if (!q.isJudgeable) {
           bucket.ungraded++;
@@ -277,6 +294,7 @@ export async function GET(req: NextRequest) {
         const verdict = String(q.isCorrect || "").toUpperCase();
         if (verdict === "CORRECT") {
           bucket.correct++;
+          bucket.correctUserIds.add(uid);
           score += mk.positive || 0;
         } else if (verdict === "PARTIAL") {
           bucket.partial++;
@@ -299,16 +317,21 @@ export async function GET(req: NextRequest) {
 
       const startAt = Number(at.timeCreated) || 0;
       const endAt = Number(at.endTime) || startAt;
-      if (startAt && endAt > startAt) attemptDurationsSec.push((endAt - startAt) / 1000);
+      const durSec = startAt && endAt > startAt ? (endAt - startAt) / 1000 : 0;
+      if (durSec > 0) attemptDurationsSec.push(durSec);
       const prev = scoreByUser.get(uid);
       if (!prev) {
         scoreByUser.set(uid, { best: score, attempts: 1, lastAt: endAt });
         bestAttemptDetail.set(uid, thisAttemptDetail);
+        bestAttemptDurationSec.set(uid, durSec);
       } else {
         const newBest = Math.max(prev.best, score);
         // Keep the detail from whichever attempt is actually reported as the
         // best score — matches the result sheet, which also reports `best`.
-        if (score >= prev.best) bestAttemptDetail.set(uid, thisAttemptDetail);
+        if (score >= prev.best) {
+          bestAttemptDetail.set(uid, thisAttemptDetail);
+          bestAttemptDurationSec.set(uid, durSec);
+        }
         scoreByUser.set(uid, { best: newBest, attempts: prev.attempts + 1, lastAt: Math.max(prev.lastAt, endAt) });
       }
     }
@@ -343,6 +366,36 @@ export async function GET(req: NextRequest) {
     // this single-institute rebuild can honestly compute. This is the
     // institute-scoped rank instead: real, computed, just labeled for what
     // it actually is (position among this institute's own test-takers).
+    // Subject-wise score + CWL (Correct/Wrong/Left) breakdown per student,
+    // from their own best-scoring attempt's question detail (already have
+    // verdict + marks there) grouped by each question's subject (sectionByQId,
+    // same grouping the Test Details tab's "Format" breakdown uses). Partial
+    // counts as "wrong" here, same convention as the per-question wrongUserIds
+    // bucket elsewhere in this route — CWL only has 3 buckets, no partial.
+    const subjectBreakdown = (uid: string) => {
+      const detail = bestAttemptDetail.get(uid) || [];
+      const detailByQId = new Map(detail.map((d) => [d.qId, d]));
+      return metadataSections.map((m: any) => {
+        const qIds: string[] = Array.isArray(m.qIds) ? m.qIds : [];
+        let correct = 0,
+          wrong = 0,
+          score = 0;
+        for (const qId of qIds) {
+          const d = detailByQId.get(qId);
+          if (!d) continue;
+          if (d.verdict === "CORRECT") {
+            correct++;
+            score += d.marks?.positive || 0;
+          } else if (d.verdict === "INCORRECT" || d.verdict === "PARTIAL") {
+            wrong++;
+            score -= d.marks?.negative || 0;
+          }
+        }
+        const left = qIds.length - detail.filter((d) => qIds.includes(d.qId)).length;
+        return { name: m.name || "Section", correct, wrong, left, total: qIds.length, score: Math.round(score * 10) / 10 };
+      });
+    };
+
     const resultSheet = userIds
       .map((uid) => {
         const rec = scoreByUser.get(uid)!;
@@ -355,6 +408,8 @@ export async function GET(req: NextRequest) {
           percent: pct(rec.best),
           attempts: rec.attempts,
           lastAt: rec.lastAt,
+          timeSec: Math.round(bestAttemptDurationSec.get(uid) || 0),
+          subjects: subjectBreakdown(uid),
         };
       })
       .sort((a, b) => b.score - a.score)
@@ -368,6 +423,7 @@ export async function GET(req: NextRequest) {
       return {
         qId: id,
         label: `Q${i + 1}`,
+        section: sectionByQId.get(id) || null,
         content: qDoc?.content || "",
         type: qDoc?.type || "SCQ",
         options: qDoc?.options || [],
@@ -386,10 +442,16 @@ export async function GET(req: NextRequest) {
         correctPercent: graded > 0 ? Math.round((b.correct / graded) * 1000) / 10 : 0,
         avgTimeSec: b.attempts > 0 ? Math.round((b.timeSum / b.attempts) * 10) / 10 : 0,
         marks: marks[id] || null,
-        // Who got it wrong (incorrect/partial) — drill-down for the admin.
+        // Who got it right, with the time each spent on it — legacy's
+        // "click the count, see the list + time taken" drill-down.
+        correctStudents: Array.from(b.correctUserIds).map((uid) => {
+          const info = memberById.get(uid) || { name: "Student", memberId: "" };
+          return { userId: uid, name: info.name, memberId: info.memberId, timeSec: b.timeByUser.get(uid) || 0 };
+        }),
+        // Who got it wrong (incorrect/partial), same time-taken drill-down.
         wrongStudents: Array.from(b.wrongUserIds).map((uid) => {
           const info = memberById.get(uid) || { name: "Student", memberId: "" };
-          return { userId: uid, name: info.name, memberId: info.memberId };
+          return { userId: uid, name: info.name, memberId: info.memberId, timeSec: b.timeByUser.get(uid) || 0 };
         }),
       };
     });

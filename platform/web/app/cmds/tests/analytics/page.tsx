@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import CmdsShell from "@/components/CmdsShell";
 import { getSession } from "@/lib/session";
 import MathText from "@/components/MathText";
@@ -16,10 +16,11 @@ type Overall = {
   highScore: number;
   lowScore: number;
 };
-type WrongStudent = { userId: string; name: string; memberId: string };
+type QuestionStudent = { userId: string; name: string; memberId: string; timeSec: number };
 type PerQuestion = {
   qId: string;
   label: string;
+  section: string | null;
   content: string;
   type: string;
   options: string[];
@@ -32,8 +33,10 @@ type PerQuestion = {
   notAttempted: number;
   correctPercent: number;
   avgTimeSec: number;
-  wrongStudents: WrongStudent[];
+  correctStudents: QuestionStudent[];
+  wrongStudents: QuestionStudent[];
 };
+type SubjectCWL = { name: string; correct: number; wrong: number; left: number; total: number; score: number };
 type ResultRow = {
   userId: string;
   name: string;
@@ -42,6 +45,8 @@ type ResultRow = {
   percent: number;
   attempts: number;
   lastAt: number;
+  timeSec: number;
+  subjects: SubjectCWL[];
   rank: number;
   totalStudents: number;
 };
@@ -101,7 +106,7 @@ export default function TestAnalyticsPage() {
   const [minPct, setMinPct] = useState("");
   const [maxPct, setMaxPct] = useState("");
   const [busy, setBusy] = useState(false);
-  const [wrongFor, setWrongFor] = useState<PerQuestion | null>(null);
+  const [studentsFor, setStudentsFor] = useState<{ question: PerQuestion; kind: "correct" | "wrong" } | null>(null);
   const [solutionFor, setSolutionFor] = useState<PerQuestion | null>(null);
   // Matches legacy's "Most/Least Attempted" and "Most/Least Correct" question
   // sort (AnalyticsManager.getQuestionSetOrderQuery — sorts by attempts or
@@ -110,6 +115,8 @@ export default function TestAnalyticsPage() {
   const [qSort, setQSort] = useState<"default" | "mostAttempted" | "leastAttempted" | "mostCorrect" | "leastCorrect">(
     "default"
   );
+  const [resultView, setResultView] = useState<"overall" | "cwl">("overall");
+  const [subjectFilter, setSubjectFilter] = useState("all");
   const [studentOpen, setStudentOpen] = useState(false);
   const [studentDetail, setStudentDetail] = useState<StudentDetail | null>(null);
   const [studentLoading, setStudentLoading] = useState(false);
@@ -127,9 +134,14 @@ export default function TestAnalyticsPage() {
     setStudentLoading(false);
   }
 
+  const subjectNames = useMemo(() => {
+    if (!detail) return [];
+    return Array.from(new Set(detail.perQuestion.map((q) => q.section).filter(Boolean))) as string[];
+  }, [detail]);
+
   const sortedQuestions = useMemo(() => {
     if (!detail) return [];
-    const list = [...detail.perQuestion];
+    const list = detail.perQuestion.filter((q) => subjectFilter === "all" || q.section === subjectFilter);
     switch (qSort) {
       case "mostAttempted":
         return list.sort((a, b) => b.attempts - a.attempts);
@@ -142,7 +154,7 @@ export default function TestAnalyticsPage() {
       default:
         return list;
     }
-  }, [detail, qSort]);
+  }, [detail, qSort, subjectFilter]);
 
   useEffect(() => {
     fetch("/api/cmds/tests/analytics")
@@ -170,6 +182,8 @@ export default function TestAnalyticsPage() {
     setTab("details");
     setMinPct("");
     setMaxPct("");
+    setSubjectFilter("all");
+    setResultView("overall");
     const d = await (await fetch(`/api/cmds/tests/analytics?testId=${encodeURIComponent(testId)}`)).json();
     setDetail(d);
     setDetailLoading(false);
@@ -405,7 +419,22 @@ export default function TestAnalyticsPage() {
 
                 {tab === "questions" && (
                   <div className="mt-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <label className="text-xs text-slate-500">
+                        Filter by{" "}
+                        <select
+                          value={subjectFilter}
+                          onChange={(e) => setSubjectFilter(e.target.value)}
+                          className="ml-1 rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 outline-none focus:border-slate-500"
+                        >
+                          <option value="all">All subjects</option>
+                          {subjectNames.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
                       <label className="text-xs text-slate-500">
                         Sort by{" "}
                         <select
@@ -449,8 +478,32 @@ export default function TestAnalyticsPage() {
                             <tr key={q.qId} className="border-b border-slate-100">
                               <td className="px-4 py-2 font-medium text-slate-700">{q.label}</td>
                               <td className="px-4 py-2 text-slate-500">{q.attempts}</td>
-                              <td className="px-4 py-2 text-emerald-600">{q.correct}</td>
-                              <td className="px-4 py-2 text-red-500">{q.incorrect}</td>
+                              <td className="px-4 py-2">
+                                {q.correctStudents.length > 0 ? (
+                                  <button
+                                    onClick={() => setStudentsFor({ question: q, kind: "correct" })}
+                                    className="font-medium text-emerald-600 hover:underline"
+                                    title="See who answered correctly, with time taken"
+                                  >
+                                    {q.correct}
+                                  </button>
+                                ) : (
+                                  <span className="text-emerald-600">{q.correct}</span>
+                                )}
+                              </td>
+                              <td className="px-4 py-2">
+                                {q.wrongStudents.length > 0 ? (
+                                  <button
+                                    onClick={() => setStudentsFor({ question: q, kind: "wrong" })}
+                                    className="font-medium text-red-500 hover:underline"
+                                    title="See who answered incorrectly, with time taken"
+                                  >
+                                    {q.incorrect}
+                                  </button>
+                                ) : (
+                                  <span className="text-red-500">{q.incorrect}</span>
+                                )}
+                              </td>
                               <td className="px-4 py-2 text-amber-600">{q.partial}</td>
                               <td className="px-4 py-2 text-slate-400">{q.ungraded}</td>
                               <td className="px-4 py-2 text-slate-400">{q.notAttempted}</td>
@@ -467,22 +520,12 @@ export default function TestAnalyticsPage() {
                                 </div>
                               </td>
                               <td className="px-4 py-2">
-                                <div className="flex flex-col items-start gap-1">
-                                  <button
-                                    onClick={() => setSolutionFor(q)}
-                                    className="text-xs text-blue-600 hover:underline"
-                                  >
-                                    View solution
-                                  </button>
-                                  {q.wrongStudents.length > 0 && (
-                                    <button
-                                      onClick={() => setWrongFor(q)}
-                                      className="text-xs text-blue-600 hover:underline"
-                                    >
-                                      Who got it wrong?
-                                    </button>
-                                  )}
-                                </div>
+                                <button
+                                  onClick={() => setSolutionFor(q)}
+                                  className="text-xs text-blue-600 hover:underline"
+                                >
+                                  View solution
+                                </button>
                               </td>
                             </tr>
                           ))
@@ -496,7 +539,18 @@ export default function TestAnalyticsPage() {
                 {tab === "results" && (
                   <div className="mt-5">
                     <div className="flex flex-wrap items-end justify-between gap-3">
-                      <div className="flex items-end gap-2">
+                      <div className="flex items-end gap-3">
+                        <label className="text-xs text-slate-500">
+                          View
+                          <select
+                            value={resultView}
+                            onChange={(e) => setResultView(e.target.value as typeof resultView)}
+                            className="mt-1 block rounded border border-slate-300 px-2 py-1 text-sm outline-none focus:border-slate-500"
+                          >
+                            <option value="overall">Overall Results</option>
+                            <option value="cwl">CWL Analytics</option>
+                          </select>
+                        </label>
                         <label className="text-xs text-slate-500">
                           Min %
                           <input
@@ -550,78 +604,173 @@ export default function TestAnalyticsPage() {
                         #result-sheet-print { position: absolute; top: 0; left: 0; width: 100%; }
                       }
                     `}</style>
-                    <div id="result-sheet-print" className="mt-3 overflow-hidden rounded border border-slate-200">
+                    <div id="result-sheet-print" className="mt-3 overflow-x-auto rounded border border-slate-200">
                       <h2 className="hidden bg-white px-4 py-3 text-lg font-semibold text-slate-800 print:block">
                         {detail.test.name} — Result Sheet
                       </h2>
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <th className="px-4 py-2 font-medium">Rank</th>
-                            <th className="px-4 py-2 font-medium">Student</th>
-                            <th className="px-4 py-2 font-medium">ID</th>
-                            <th className="px-4 py-2 font-medium">Best score</th>
-                            <th className="px-4 py-2 font-medium">%</th>
-                            <th className="px-4 py-2 font-medium">Attempts</th>
-                            <th className="px-4 py-2 font-medium">Last attempt</th>
-                            {isAdmin && <th className="px-4 py-2 font-medium print:hidden" />}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(() => {
-                            const lo = minPct === "" ? -Infinity : Number(minPct);
-                            const hi = maxPct === "" ? Infinity : Number(maxPct);
-                            const rows = detail.resultSheet.filter(
-                              (r) => r.percent >= lo && r.percent <= hi
-                            );
-                            if (rows.length === 0)
-                              return (
+                      {(() => {
+                        const lo = minPct === "" ? -Infinity : Number(minPct);
+                        const hi = maxPct === "" ? Infinity : Number(maxPct);
+                        const rows = detail.resultSheet.filter((r) => r.percent >= lo && r.percent <= hi);
+                        const subjectCols = detail.subjects.map((s) => s.name);
+
+                        if (resultView === "cwl") {
+                          return (
+                            <table className="w-full min-w-[720px] text-sm">
+                              <thead>
+                                <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                                  <th rowSpan={2} className="px-4 py-2 align-bottom font-medium">Rank</th>
+                                  <th rowSpan={2} className="px-4 py-2 align-bottom font-medium">Student</th>
+                                  <th rowSpan={2} className="px-4 py-2 align-bottom font-medium text-right">
+                                    Total score
+                                  </th>
+                                  {subjectCols.map((s) => (
+                                    <th key={s} colSpan={4} className="border-l border-slate-200 px-2 py-1 text-center font-medium text-blue-600">
+                                      {s}
+                                    </th>
+                                  ))}
+                                </tr>
+                                <tr className="border-b border-slate-200 bg-slate-50 text-left text-[10px] uppercase tracking-wide text-slate-400">
+                                  {subjectCols.map((s) => (
+                                    <Fragment key={s}>
+                                      <th className="border-l border-slate-200 px-2 py-1 font-medium">C</th>
+                                      <th className="px-2 py-1 font-medium">W</th>
+                                      <th className="px-2 py-1 font-medium">L</th>
+                                      <th className="px-2 py-1 font-medium">T</th>
+                                    </Fragment>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {rows.length === 0 ? (
+                                  <tr>
+                                    <td colSpan={3 + subjectCols.length * 4} className="px-4 py-8 text-center text-slate-400">
+                                      No students in this range.
+                                    </td>
+                                  </tr>
+                                ) : (
+                                  rows.map((r) => (
+                                    <tr key={r.userId} className="border-b border-slate-100 hover:bg-slate-50">
+                                      <td className="px-4 py-2 text-slate-400">{r.rank}</td>
+                                      <td className="px-4 py-2 font-medium">
+                                        <button
+                                          onClick={() => openStudent(r.userId)}
+                                          className="text-blue-600 hover:underline print:pointer-events-none print:text-slate-700"
+                                        >
+                                          {r.name}
+                                        </button>
+                                        {r.memberId && <span className="ml-1 text-xs text-slate-400">({r.memberId})</span>}
+                                      </td>
+                                      <td className="px-4 py-2 text-right font-medium text-slate-700">{r.score}</td>
+                                      {subjectCols.map((s) => {
+                                        const sub = r.subjects.find((x) => x.name === s);
+                                        return (
+                                          <Fragment key={s}>
+                                            <td className="border-l border-slate-100 px-2 py-2 text-center text-emerald-600">
+                                              {sub?.correct ?? 0}
+                                            </td>
+                                            <td className="px-2 py-2 text-center text-red-500">
+                                              {sub?.wrong ?? 0}
+                                            </td>
+                                            <td className="px-2 py-2 text-center text-slate-400">
+                                              {sub?.left ?? 0}
+                                            </td>
+                                            <td className="px-2 py-2 text-center text-slate-500">
+                                              {sub?.total ?? 0}
+                                            </td>
+                                          </Fragment>
+                                        );
+                                      })}
+                                    </tr>
+                                  ))
+                                )}
+                              </tbody>
+                            </table>
+                          );
+                        }
+
+                        return (
+                          <table className="w-full min-w-[720px] text-sm">
+                            <thead>
+                              <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                                <th className="px-4 py-2 font-medium">Rank</th>
+                                <th className="px-4 py-2 font-medium">Student</th>
+                                <th className="px-4 py-2 font-medium">ID</th>
+                                <th className="px-4 py-2 font-medium">Time taken</th>
+                                {subjectCols.map((s) => (
+                                  <th key={s} className="px-4 py-2 text-right font-medium text-blue-600">
+                                    {s}
+                                  </th>
+                                ))}
+                                <th className="px-4 py-2 text-right font-medium">Total score</th>
+                                <th className="px-4 py-2 font-medium">%</th>
+                                <th className="px-4 py-2 font-medium">Attempts</th>
+                                <th className="px-4 py-2 font-medium">Last attempt</th>
+                                {isAdmin && <th className="px-4 py-2 font-medium print:hidden" />}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {rows.length === 0 ? (
                                 <tr>
-                                  <td colSpan={isAdmin ? 8 : 7} className="px-4 py-8 text-center text-slate-400">
+                                  <td
+                                    colSpan={8 + subjectCols.length + (isAdmin ? 1 : 0)}
+                                    className="px-4 py-8 text-center text-slate-400"
+                                  >
                                     No students in this range.
                                   </td>
                                 </tr>
-                              );
-                            return rows.map((r) => (
-                              <tr key={r.userId} className="border-b border-slate-100 hover:bg-slate-50">
-                                <td className="px-4 py-2 text-slate-400">
-                                  {r.rank} <span className="text-slate-300">/ {r.totalStudents}</span>
-                                </td>
-                                <td className="px-4 py-2 font-medium">
-                                  <button
-                                    onClick={() => openStudent(r.userId)}
-                                    className="text-blue-600 hover:underline print:pointer-events-none print:text-slate-700"
-                                  >
-                                    {r.name}
-                                  </button>
-                                </td>
-                                <td className="px-4 py-2 text-slate-500">{r.memberId || "—"}</td>
-                                <td className="px-4 py-2 text-slate-700">
-                                  {r.score}
-                                  <span className="text-slate-400"> / {detail.test.totalMarks}</span>
-                                </td>
-                                <td className="px-4 py-2 text-slate-500">{r.percent}%</td>
-                                <td className="px-4 py-2 text-slate-500">{r.attempts}</td>
-                                <td className="px-4 py-2 text-slate-400">
-                                  {r.lastAt ? new Date(r.lastAt).toLocaleString() : "—"}
-                                </td>
-                                {isAdmin && (
-                                  <td className="px-4 py-2 print:hidden">
-                                    <button
-                                      disabled={busy}
-                                      onClick={() => attemptAction("reset", r.userId, r.name)}
-                                      className="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50 disabled:opacity-50"
-                                      title="Delete this student's attempts so they can retake"
-                                    >
-                                      Reset
-                                    </button>
-                                  </td>
-                                )}
-                              </tr>
-                            ));
-                          })()}
-                        </tbody>
-                      </table>
+                              ) : (
+                                rows.map((r) => (
+                                  <tr key={r.userId} className="border-b border-slate-100 hover:bg-slate-50">
+                                    <td className="px-4 py-2 text-slate-400">
+                                      {r.rank} <span className="text-slate-300">/ {r.totalStudents}</span>
+                                    </td>
+                                    <td className="px-4 py-2 font-medium">
+                                      <button
+                                        onClick={() => openStudent(r.userId)}
+                                        className="text-blue-600 hover:underline print:pointer-events-none print:text-slate-700"
+                                      >
+                                        {r.name}
+                                      </button>
+                                    </td>
+                                    <td className="px-4 py-2 text-slate-500">{r.memberId || "—"}</td>
+                                    <td className="px-4 py-2 text-slate-500">{r.timeSec ? fmtTime(r.timeSec) : "—"}</td>
+                                    {subjectCols.map((s) => {
+                                      const sub = r.subjects.find((x) => x.name === s);
+                                      return (
+                                        <td key={s} className="px-4 py-2 text-right text-slate-600">
+                                          {sub ? sub.score : "—"}
+                                        </td>
+                                      );
+                                    })}
+                                    <td className="px-4 py-2 text-right text-slate-700">
+                                      {r.score}
+                                      <span className="text-slate-400"> / {detail.test.totalMarks}</span>
+                                    </td>
+                                    <td className="px-4 py-2 text-slate-500">{r.percent}%</td>
+                                    <td className="px-4 py-2 text-slate-500">{r.attempts}</td>
+                                    <td className="px-4 py-2 text-slate-400">
+                                      {r.lastAt ? new Date(r.lastAt).toLocaleString() : "—"}
+                                    </td>
+                                    {isAdmin && (
+                                      <td className="px-4 py-2 print:hidden">
+                                        <button
+                                          disabled={busy}
+                                          onClick={() => attemptAction("reset", r.userId, r.name)}
+                                          className="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50 disabled:opacity-50"
+                                          title="Delete this student's attempts so they can retake"
+                                        >
+                                          Reset
+                                        </button>
+                                      </td>
+                                    )}
+                                  </tr>
+                                ))
+                              )}
+                            </tbody>
+                          </table>
+                        );
+                      })()}
                     </div>
                   </div>
                 )}
@@ -706,7 +855,13 @@ export default function TestAnalyticsPage() {
         </div>
       </div>
 
-      {wrongFor && <WrongStudentsModal question={wrongFor} onClose={() => setWrongFor(null)} />}
+      {studentsFor && (
+        <QuestionStudentsModal
+          question={studentsFor.question}
+          kind={studentsFor.kind}
+          onClose={() => setStudentsFor(null)}
+        />
+      )}
       {solutionFor && <SolutionModal question={solutionFor} onClose={() => setSolutionFor(null)} />}
       {studentOpen && (
         <StudentDetailModal
@@ -857,27 +1012,50 @@ function StudentDetailModal({
   );
 }
 
-// Who got a specific question wrong — buildable from existing per-question
-// attempt verdicts (userquestionattempts), no new tracking needed. Real
-// per-question timing isn't captured anywhere in the pipeline (deferred).
-function WrongStudentsModal({ question, onClose }: { question: PerQuestion; onClose: () => void }) {
+// Who got a specific question right/wrong, with time taken on that question —
+// legacy's "click the count, see the list + time taken" drill-down.
+function QuestionStudentsModal({
+  question,
+  kind,
+  onClose,
+}: {
+  question: PerQuestion;
+  kind: "correct" | "wrong";
+  onClose: () => void;
+}) {
+  const students = kind === "correct" ? question.correctStudents : question.wrongStudents;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
-        <h3 className="text-lg font-semibold text-slate-800">{question.label} — Got it wrong</h3>
+        <h3 className="text-lg font-semibold text-slate-800">
+          {question.label} — {kind === "correct" ? "Answered correctly" : "Answered incorrectly"}
+        </h3>
         <p className="mt-1 text-sm text-slate-500">
-          {question.wrongStudents.length} student(s) answered incorrectly or partially.
+          {students.length} student{students.length === 1 ? "" : "s"}
+          {kind === "correct" ? "" : " answered incorrectly or partially"}.
         </p>
         <div className="mt-4 max-h-72 overflow-y-auto rounded border border-slate-200">
-          {question.wrongStudents.map((s) => (
-            <div
-              key={s.userId}
-              className="flex items-center justify-between border-b border-slate-50 px-3 py-2 text-sm last:border-0"
-            >
-              <span className="text-slate-700">{s.name}</span>
-              <span className="text-xs text-slate-400">{s.memberId}</span>
-            </div>
-          ))}
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                <th className="px-3 py-1.5 font-medium">Student</th>
+                <th className="px-3 py-1.5 font-medium text-right">Time taken</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...students]
+                .sort((a, b) => a.timeSec - b.timeSec)
+                .map((s) => (
+                  <tr key={s.userId} className="border-b border-slate-50 last:border-0">
+                    <td className="px-3 py-2">
+                      <div className="text-slate-700">{s.name}</div>
+                      {s.memberId && <div className="text-xs text-slate-400">{s.memberId}</div>}
+                    </td>
+                    <td className="px-3 py-2 text-right text-slate-500">{fmtTime(s.timeSec)}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
         </div>
         <div className="mt-5 flex justify-end">
           <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100">
