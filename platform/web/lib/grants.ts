@@ -79,3 +79,67 @@ export async function resolveCourseCatalog(
 export function catalogOwnerOrgs(orgId: string, catalog: CatalogCourse[]): string[] {
   return Array.from(new Set([orgId, ...catalog.map((c) => c.ownerOrgId || orgId)]));
 }
+
+export type ProviderProgram = { id: string; name: string; courseIds: string[] };
+
+// An org's own programs, each resolved to the union of courseIds across its
+// own sections — a program itself has no courseIds; that lives on its
+// sections. Used both by the org-grants "by program" bulk-select (provider
+// side) and by the subscriber-side display grouping granted courses back to
+// the program they came from (see resolveGrantedProgramGroups below).
+export async function resolveProviderPrograms(db: Db, providerOrgId: string): Promise<ProviderProgram[]> {
+  const [programDocs, sectionDocs, ownFolders] = await Promise.all([
+    db.collection("orgprograms").find({ orgId: providerOrgId, recordState: "ACTIVE" } as any).project({ name: 1 }).toArray(),
+    db
+      .collection("orgsections")
+      .find({ orgId: providerOrgId, recordState: "ACTIVE" } as any)
+      .project({ programId: 1, courseIds: 1 })
+      .toArray(),
+    loadOrgFolders(db, providerOrgId),
+  ]);
+  const ownCourseIds = new Set(topLevelCourses(ownFolders).map((f) => f.id));
+  const courseIdsByProgram = new Map<string, Set<string>>();
+  for (const sec of sectionDocs as any[]) {
+    const pid = sec.programId ? String(sec.programId) : null;
+    if (!pid) continue;
+    const set = courseIdsByProgram.get(pid) || new Set<string>();
+    for (const cid of Array.isArray(sec.courseIds) ? sec.courseIds : []) set.add(String(cid));
+    courseIdsByProgram.set(pid, set);
+  }
+  return (programDocs as any[]).map((p) => ({
+    id: String(p._id),
+    name: p.name || "(untitled)",
+    courseIds: Array.from(courseIdsByProgram.get(String(p._id)) || []).filter((cid) => ownCourseIds.has(cid)),
+  }));
+}
+
+// For a subscriber org's granted courses, which provider program(s) each one
+// belongs to right now — purely a display grouping (see lib/grants.ts's own
+// header note: the grant itself only ever stores courseId, no program
+// reference, so this is resolved fresh from the provider's CURRENT program
+// structure every time, not frozen at grant time). A course can legitimately
+// belong to more than one program (e.g. Physics XI shared by NEET + JEE), and
+// won't match any program if it was granted individually or its source
+// program was since restructured — callers should treat an empty list as
+// "Other / individually granted," not an error.
+export async function resolveGrantedProgramGroups(
+  db: Db,
+  grantedCourseIds: string[],
+  catalog: CatalogCourse[]
+): Promise<Record<string, string[]>> {
+  const ownerOrgIds = Array.from(
+    new Set(
+      grantedCourseIds
+        .map((cid) => catalog.find((c) => c.id === cid)?.ownerOrgId)
+        .filter((id): id is string => !!id)
+    )
+  );
+  if (ownerOrgIds.length === 0) return {};
+  const programsByOwner = await Promise.all(ownerOrgIds.map((oid) => resolveProviderPrograms(db, oid)));
+  const programs = programsByOwner.flat();
+  const out: Record<string, string[]> = {};
+  for (const cid of grantedCourseIds) {
+    out[cid] = programs.filter((p) => p.courseIds.includes(cid)).map((p) => p.name);
+  }
+  return out;
+}

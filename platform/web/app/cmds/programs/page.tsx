@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import CmdsShell from "@/components/CmdsShell";
 import { getSession, type UprepSession } from "@/lib/session";
@@ -14,7 +14,7 @@ type Program = {
   sectionCount: number;
 };
 
-type SharedCourse = { id: string; name: string; granted?: boolean };
+type SharedCourse = { id: string; name: string; granted?: boolean; fromPrograms?: string[] };
 
 export default function CmdsProgramsPage() {
   const [session, setSession] = useState<UprepSession | null>(null);
@@ -53,6 +53,29 @@ export default function CmdsProgramsPage() {
   useEffect(() => {
     load();
   }, []);
+
+  // Group granted courses by the provider program they currently belong to
+  // (resolved fresh server-side, not frozen at grant time — see
+  // lib/grants.ts's resolveGrantedProgramGroups). A course with no matching
+  // program (granted individually, or its source program was since
+  // restructured) falls into "Other courses". A course can legitimately
+  // appear under more than one group when programs share a subject.
+  const groupedSharedCourses = useMemo(() => {
+    const groups = new Map<string, SharedCourse[]>();
+    const other: SharedCourse[] = [];
+    for (const c of sharedCourses) {
+      if (!c.fromPrograms || c.fromPrograms.length === 0) {
+        other.push(c);
+        continue;
+      }
+      for (const pname of c.fromPrograms) {
+        const list = groups.get(pname) || [];
+        list.push(c);
+        groups.set(pname, list);
+      }
+    }
+    return { groups: Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0])), other };
+  }, [sharedCourses]);
 
   // Reuses the same real legacy org-service call (removeProgram) the
   // Academic Structure page's Program column already goes through — this
@@ -160,11 +183,26 @@ export default function CmdsProgramsPage() {
               </Link>
             </div>
 
-            {sharedCourses.length > 0 && (
-              <div className="mt-4">
-                <div className="text-xs font-medium text-slate-400">Courses</div>
+            {groupedSharedCourses.groups.map(([programName, courses]) => (
+              <div key={programName} className="mt-4">
+                <div className="text-xs font-medium text-slate-400">{programName}</div>
                 <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                  {sharedCourses.map((c) => (
+                  {courses.map((c) => (
+                    <div
+                      key={c.id}
+                      className="rounded border border-slate-100 bg-white px-3 py-2 text-sm text-slate-700"
+                    >
+                      {c.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {groupedSharedCourses.other.length > 0 && (
+              <div className="mt-4">
+                <div className="text-xs font-medium text-slate-400">Other courses</div>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {groupedSharedCourses.other.map((c) => (
                     <div
                       key={c.id}
                       className="rounded border border-slate-100 bg-white px-3 py-2 text-sm text-slate-700"

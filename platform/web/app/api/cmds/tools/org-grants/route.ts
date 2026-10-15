@@ -3,7 +3,7 @@ import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
 import { isSuperAdmin } from "@/lib/roles";
 import { loadOrgFolders, topLevelCourses } from "@/lib/courses";
-import { GRANTS_COLL, getGrantedCourseIds } from "@/lib/grants";
+import { GRANTS_COLL, getGrantedCourseIds, resolveProviderPrograms } from "@/lib/grants";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -39,36 +39,9 @@ export async function GET(req: NextRequest) {
     // its own sections — lets the UI offer "grant everything in this
     // program" as one click instead of checking each course individually
     // (a program itself has no courseIds of its own; that lives on its
-    // sections — see app/api/cmds/programs/[id]/route.ts's same resolution).
-    const programDocs = await db
-      .collection("orgprograms")
-      .find({ orgId: s.orgId, recordState: "ACTIVE" })
-      .project({ name: 1 })
-      .toArray();
-    const sectionDocs = await db
-      .collection("orgsections")
-      .find({ orgId: s.orgId, recordState: "ACTIVE" })
-      .project({ programId: 1, courseIds: 1 })
-      .toArray();
-    const courseIdsByProgram = new Map<string, Set<string>>();
-    for (const sec of sectionDocs as any[]) {
-      const pid = sec.programId ? String(sec.programId) : null;
-      if (!pid) continue;
-      const set = courseIdsByProgram.get(pid) || new Set<string>();
-      for (const cid of Array.isArray(sec.courseIds) ? sec.courseIds : []) set.add(String(cid));
-      courseIdsByProgram.set(pid, set);
-    }
-    const ownCourseIds = new Set(courses.map((c) => c.id));
-    const programs = (programDocs as any[])
-      .map((p) => ({
-        id: String(p._id),
-        name: p.name || "(untitled)",
-        // Only courses this org actually owns as a top-level folder — a
-        // section's courseIds can include ids granted FROM another org too
-        // (see resolveCourseCatalog), which this org has no right to re-grant.
-        courseIds: Array.from(courseIdsByProgram.get(String(p._id)) || []).filter((cid) => ownCourseIds.has(cid)),
-      }))
-      .filter((p) => p.courseIds.length > 0);
+    // sections — see lib/grants.ts's resolveProviderPrograms, shared with the
+    // subscriber-side grouping display in /api/cmds/enroll).
+    const programs = (await resolveProviderPrograms(db, s.orgId)).filter((p) => p.courseIds.length > 0);
 
     return NextResponse.json({ providerOrgId: s.orgId, courses, grantedCourseIds, programs });
   } catch (e: any) {
