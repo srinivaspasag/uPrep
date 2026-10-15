@@ -219,13 +219,18 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
       .finally(() => setLoading(false));
   }, [org.id]);
 
-  // Checks every course belonging to this program — a pure convenience over
-  // checking each one individually below; doesn't save on its own, same as
-  // any other checkbox change (the "Save grants" button still applies it).
-  function selectProgram(p: GrantProgram) {
+  // Toggles every course belonging to this program as a block — select if
+  // any are missing, deselect if all are already checked (undoes its own
+  // "select all" click, rather than only ever adding). Programs can share
+  // subjects (NEET + JEE both use Physics/Chemistry, say), so clicking this
+  // for a second program can still leave an earlier program's courses
+  // checked too — that's expected overlap, not a bug; "Clear all" below is
+  // the fast way to start over if that's not what was intended.
+  function toggleProgram(p: GrantProgram) {
+    const allSelected = p.courseIds.every((id) => selected.has(id));
     setSelected((prev) => {
       const next = new Set(prev);
-      p.courseIds.forEach((id) => next.add(id));
+      p.courseIds.forEach((id) => (allSelected ? next.delete(id) : next.add(id)));
       return next;
     });
   }
@@ -236,6 +241,15 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
+  }
+
+  // Which of this org's programs each grantable course belongs to — shown as
+  // a hint next to each checkbox so it's clear why something got checked.
+  const programsByCourseId = new Map<string, string[]>();
+  for (const p of programs) for (const cid of p.courseIds) {
+    const list = programsByCourseId.get(cid) || [];
+    list.push(p.name);
+    programsByCourseId.set(cid, list);
   }
 
   async function save() {
@@ -277,8 +291,16 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
         <div className="mt-4 max-h-[340px] space-y-4 overflow-auto rounded border border-slate-100 p-2">
           {programs.length > 0 && (
             <div>
-              <div className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                By Program
+              <div className="flex items-center justify-between px-2 pb-1">
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">By Program</span>
+                {selected.size > 0 && (
+                  <button
+                    onClick={() => setSelected(new Set())}
+                    className="text-xs text-slate-400 hover:text-red-600 hover:underline"
+                  >
+                    Clear all ({selected.size})
+                  </button>
+                )}
               </div>
               {programs.map((p) => {
                 const allSelected = p.courseIds.every((id) => selected.has(id));
@@ -288,11 +310,14 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
                       {p.name} <span className="text-xs text-slate-400">({p.courseIds.length} courses)</span>
                     </span>
                     <button
-                      onClick={() => selectProgram(p)}
-                      disabled={allSelected}
-                      className="shrink-0 rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 disabled:cursor-default disabled:opacity-50"
+                      onClick={() => toggleProgram(p)}
+                      className={`shrink-0 rounded border px-2 py-0.5 text-xs font-medium ${
+                        allSelected
+                          ? "border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+                          : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                      }`}
                     >
-                      {allSelected ? "All selected" : "Select all courses"}
+                      {allSelected ? "Deselect all courses" : "Select all courses"}
                     </button>
                   </div>
                 );
@@ -308,20 +333,26 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
                 No courses to grant. Create top-level folders in Resources first.
               </div>
             ) : (
-              courses.map((c) => (
-                <label
-                  key={c.id}
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm hover:bg-slate-50"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selected.has(c.id)}
-                    onChange={() => toggle(c.id)}
-                    className="accent-emerald-600"
-                  />
-                  <span>{c.name}</span>
-                </label>
-              ))
+              courses.map((c) => {
+                const fromPrograms = programsByCourseId.get(c.id) || [];
+                return (
+                  <label
+                    key={c.id}
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm hover:bg-slate-50"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selected.has(c.id)}
+                      onChange={() => toggle(c.id)}
+                      className="accent-emerald-600"
+                    />
+                    <span>{c.name}</span>
+                    {fromPrograms.length > 0 && (
+                      <span className="text-xs text-slate-400">— {fromPrograms.join(", ")}</span>
+                    )}
+                  </label>
+                );
+              })
             )}
           </div>
         </div>
