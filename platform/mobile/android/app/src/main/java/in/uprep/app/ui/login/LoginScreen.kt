@@ -55,7 +55,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)
         )
-        Text(text = "UPrep", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Scholars Spectra", style = MaterialTheme.typography.headlineMedium)
         Text(
             text = "Sign in with your Institute ID or email",
             style = MaterialTheme.typography.bodyMedium,
