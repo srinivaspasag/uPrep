@@ -13,7 +13,7 @@ export const runtime = "nodejs";
 // "share program to org" flow (granteeorgprograms).
 //
 //   GET  ?subscriberOrgId=<id> -> { courses:[{id,name}], grantedCourseIds:[], programs:[{id,name,courseIds}] }
-//   POST { subscriberOrgId, courseIds } -> replace the grant set for that org
+//   POST { subscriberOrgId, courseIds, grantedProgramIds } -> replace the grant set for that org
 async function requireSuperAdmin(req: NextRequest) {
   const s = await sessionFromReq(req);
   if (!s || !isSuperAdmin(s.profile, s.isSuperAdmin)) return null;
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-type SaveBody = { subscriberOrgId?: string; courseIds?: string[] };
+type SaveBody = { subscriberOrgId?: string; courseIds?: string[]; grantedProgramIds?: string[] };
 
 export async function POST(req: NextRequest) {
   const s = await requireSuperAdmin(req);
@@ -71,6 +71,30 @@ export async function POST(req: NextRequest) {
       new Set((Array.isArray(b.courseIds) ? b.courseIds : []).map(String))
     ).filter((id) => ownIds.has(id));
 
+    // Which program(s) each course is attributed to — FROZEN at grant time
+    // from the programs the admin had fully checked via "Select all courses"
+    // when they clicked Save, not re-derived later. Re-deriving against every
+    // CURRENT provider program that happens to reuse the same subject folder
+    // was the original (buggy) design — found live: granting "JEE Online" +
+    // "NEET Online" showed up grouped under a dozen unrelated programs too
+    // (Demo Class XI & XII, JEE Main 2026, JEE XI, ...) because they all
+    // happen to share the same Physics/Chemistry/... course folders. A course
+    // checked individually (not via a program button) gets no program name —
+    // shown as "Other courses" by the subscriber-side display.
+    const grantedProgramIds = Array.from(
+      new Set((Array.isArray(b.grantedProgramIds) ? b.grantedProgramIds : []).map(String))
+    );
+    const relevantPrograms = grantedProgramIds.length
+      ? (await resolveProviderPrograms(db, s.orgId)).filter((p) => grantedProgramIds.includes(p.id))
+      : [];
+    const programNamesByCourseId = new Map<string, string[]>();
+    for (const cid of courseIds) {
+      programNamesByCourseId.set(
+        cid,
+        relevantPrograms.filter((p) => p.courseIds.includes(cid)).map((p) => p.name)
+      );
+    }
+
     // Replace this provider's grants to this subscriber.
     await db
       .collection(GRANTS_COLL)
@@ -82,6 +106,7 @@ export async function POST(req: NextRequest) {
           providerOrgId: s.orgId,
           subscriberOrgId,
           courseId,
+          programNames: programNamesByCourseId.get(courseId) || [],
           recordState: "ACTIVE",
           timeCreated: now,
           lastUpdated: now,

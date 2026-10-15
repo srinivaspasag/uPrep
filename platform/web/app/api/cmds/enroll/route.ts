@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { loadFoldersForOrgs } from "@/lib/courses";
-import { resolveCourseCatalog, catalogOwnerOrgs, resolveGrantedProgramGroups } from "@/lib/grants";
+import { resolveCourseCatalog, catalogOwnerOrgs, getGrantedCoursesWithOrigin } from "@/lib/grants";
 import { sessionFromReq } from "@/lib/server-session";
 import { isSuperAdmin } from "@/lib/roles";
 
@@ -36,17 +36,19 @@ export async function GET(req: NextRequest) {
       // Own courses + courses granted to this org by a provider org.
       const catalog = await resolveCourseCatalog(db, orgId);
       const folders = await loadFoldersForOrgs(db, catalogOwnerOrgs(orgId, catalog));
-      // Which provider program(s) each granted course currently belongs to —
-      // display-only grouping (see lib/grants.ts's own note: never frozen at
-      // grant time, always resolved fresh). Empty for an org's own courses.
-      const grantedIds = catalog.filter((c) => c.granted).map((c) => c.id);
-      const programsByCourseId = await resolveGrantedProgramGroups(db, grantedIds, catalog);
+      // Which program(s) each granted course was actually granted through —
+      // frozen on the grant doc at grant time (see lib/grants.ts's own note
+      // on why this isn't re-derived from the provider's current program
+      // structure). Empty for an org's own courses, and for a course that was
+      // granted individually rather than via a program's "select all".
+      const origin = await getGrantedCoursesWithOrigin(db, orgId);
+      const programsByCourseId = new Map(origin.map((o) => [o.courseId, o.programNames]));
       const courses = catalog.map((c) => ({
         id: c.id,
         name: c.name,
         granted: c.granted,
         chapterCount: folders.filter((f) => f.parentId === c.id).length,
-        fromPrograms: programsByCourseId[c.id] || [],
+        fromPrograms: programsByCourseId.get(c.id) || [],
       }));
       return NextResponse.json({ courses, orgId });
     }

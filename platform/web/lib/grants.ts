@@ -31,6 +31,30 @@ export async function getGrantedCourseIds(
   return Array.from(new Set((docs as any[]).map((d) => String(d.courseId))));
 }
 
+// Same as getGrantedCourseIds, but also returns the program name(s) each
+// course was actually granted through — see the header note below for why
+// this is a stored field, not re-derived.
+export async function getGrantedCoursesWithOrigin(
+  db: Db,
+  subscriberOrgId: string
+): Promise<{ courseId: string; programNames: string[] }[]> {
+  const docs = await db
+    .collection(GRANTS_COLL)
+    .find({ subscriberOrgId, recordState: "ACTIVE" } as any)
+    .toArray();
+  const byCourse = new Map<string, Set<string>>();
+  for (const d of docs as any[]) {
+    const cid = String(d.courseId);
+    const set = byCourse.get(cid) || new Set<string>();
+    for (const name of Array.isArray(d.programNames) ? d.programNames : []) set.add(String(name));
+    byCourse.set(cid, set);
+  }
+  return Array.from(byCourse.entries()).map(([courseId, names]) => ({
+    courseId,
+    programNames: Array.from(names),
+  }));
+}
+
 export type CatalogCourse = {
   id: string;
   name: string;
@@ -84,9 +108,10 @@ export type ProviderProgram = { id: string; name: string; courseIds: string[] };
 
 // An org's own programs, each resolved to the union of courseIds across its
 // own sections — a program itself has no courseIds; that lives on its
-// sections. Used both by the org-grants "by program" bulk-select (provider
-// side) and by the subscriber-side display grouping granted courses back to
-// the program they came from (see resolveGrantedProgramGroups below).
+// sections. Used by the org-grants "by program" bulk-select (provider side)
+// to compute what "select all courses in this program" actually checks, and
+// by its POST handler to freeze which program(s) a grant came from at save
+// time — see that route's own note on why this is frozen, not re-derived.
 export async function resolveProviderPrograms(db: Db, providerOrgId: string): Promise<ProviderProgram[]> {
   const [programDocs, sectionDocs, ownFolders] = await Promise.all([
     db.collection("orgprograms").find({ orgId: providerOrgId, recordState: "ACTIVE" } as any).project({ name: 1 }).toArray(),
@@ -113,33 +138,3 @@ export async function resolveProviderPrograms(db: Db, providerOrgId: string): Pr
   }));
 }
 
-// For a subscriber org's granted courses, which provider program(s) each one
-// belongs to right now — purely a display grouping (see lib/grants.ts's own
-// header note: the grant itself only ever stores courseId, no program
-// reference, so this is resolved fresh from the provider's CURRENT program
-// structure every time, not frozen at grant time). A course can legitimately
-// belong to more than one program (e.g. Physics XI shared by NEET + JEE), and
-// won't match any program if it was granted individually or its source
-// program was since restructured — callers should treat an empty list as
-// "Other / individually granted," not an error.
-export async function resolveGrantedProgramGroups(
-  db: Db,
-  grantedCourseIds: string[],
-  catalog: CatalogCourse[]
-): Promise<Record<string, string[]>> {
-  const ownerOrgIds = Array.from(
-    new Set(
-      grantedCourseIds
-        .map((cid) => catalog.find((c) => c.id === cid)?.ownerOrgId)
-        .filter((id): id is string => !!id)
-    )
-  );
-  if (ownerOrgIds.length === 0) return {};
-  const programsByOwner = await Promise.all(ownerOrgIds.map((oid) => resolveProviderPrograms(db, oid)));
-  const programs = programsByOwner.flat();
-  const out: Record<string, string[]> = {};
-  for (const cid of grantedCourseIds) {
-    out[cid] = programs.filter((p) => p.courseIds.includes(cid)).map((p) => p.name);
-  }
-  return out;
-}
