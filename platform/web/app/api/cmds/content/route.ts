@@ -5,7 +5,8 @@ import { DEFAULT_ORG_ID } from "@/lib/config";
 import { resolveOrgId } from "@/lib/org-scope";
 import { sessionFromReq } from "@/lib/server-session";
 import { canManageContent } from "@/lib/roles";
-import { naturalCompare } from "@/lib/courses";
+import { naturalCompare, loadFoldersForOrgs, courseRootOf } from "@/lib/courses";
+import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,8 @@ type ResourceRow = {
   order?: number | null; // manual sequence override — see the "reorder" PATCH action
   visibleUserIds?: string[]; // per-student override: force-visible even if program/section rules wouldn't show it
   hiddenUserIds?: string[]; // per-student override: force-hidden even if otherwise visible
+  granted?: boolean; // true = a top-level course another org granted to this one, read-only here
+  ownerOrgId?: string | null; // which org actually owns this item (self for non-granted)
 };
 
 // GET: aggregate all Institute Resources across content collections. When
@@ -61,7 +64,28 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = await getDb();
-    const base = { "contentSrc.id": orgId, recordState: "ACTIVE" };
+
+    // Courses another org granted to this one live under a DIFFERENT
+    // contentSrc.id than the viewing org — browsing into one needs to query
+    // that owner's content, not the viewer's. Resolved once up front so both
+    // the root listing (append granted top-level folders) and subtree
+    // browsing (swap which org's content to query) can use it. Also doubles
+    // as the access check for `parentId`: a folder only resolves if its
+    // course root is either owned by this org or was actually granted to
+    // it — guards against an admin browsing another org's content by
+    // guessing a folder id.
+    const catalog = await resolveCourseCatalog(db, orgId);
+    let contentOrgId = orgId;
+    if (parentId && !sectionId && !allContent) {
+      const ownerOrgIds = catalogOwnerOrgs(orgId, catalog);
+      const allFolders = await loadFoldersForOrgs(db, ownerOrgIds);
+      const root = courseRootOf(allFolders, parentId);
+      const rootEntry = root ? catalog.find((c) => c.id === root) : null;
+      if (!rootEntry) return NextResponse.json({ error: "Not found" }, { status: 404 });
+      contentOrgId = rootEntry.ownerOrgId || orgId;
+    }
+
+    const base = { "contentSrc.id": contentOrgId, recordState: "ACTIVE" };
 
 
     const rows: ResourceRow[] = [];
@@ -114,6 +138,8 @@ export async function GET(req: NextRequest) {
         order: typeof d.order === "number" ? d.order : null,
         visibleUserIds: Array.isArray(d.visibleUserIds) ? d.visibleUserIds : [],
         hiddenUserIds: Array.isArray(d.hiddenUserIds) ? d.hiddenUserIds : [],
+        ownerOrgId: contentOrgId,
+        granted: contentOrgId !== orgId,
         ...map(d),
       });
       }
@@ -130,6 +156,35 @@ export async function GET(req: NextRequest) {
     await pull("questionsets", "QUESTION_SET", (d) => ({
       count: Array.isArray(d.qIds) ? d.qIds.length : 0,
     }));
+
+    // At root, also surface top-level courses granted by another org — same
+    // "Subjects" board tree an admin for the owning org sees, just tagged
+    // `granted` so the UI can mark them read-only (no rename/move/delete;
+    // PATCH/DELETE/POST all reject writes against content this org doesn't
+    // own anyway — see those handlers below).
+    if (!parentId && !sectionId && !allContent && (!typeFilter || typeFilter === "All Resources" || typeFilter === "FOLDER")) {
+      for (const c of catalog) {
+        if (!c.granted) continue;
+        rows.push({
+          id: c.id,
+          title: c.name,
+          type: "FOLDER",
+          subject: null,
+          addedBy: null,
+          addedAt: 0,
+          hidden: false,
+          visibleProgramIds: [],
+          sectionIds: [],
+          visibleSectionIds: [],
+          downloadEnabled: true,
+          order: null,
+          visibleUserIds: [],
+          hiddenUserIds: [],
+          ownerOrgId: c.ownerOrgId,
+          granted: true,
+        });
+      }
+    }
 
     let out = rows;
     // Only meaningful at root: it picks out the one top-level folder named
@@ -156,10 +211,16 @@ export async function GET(req: NextRequest) {
     out.sort((a, b) => b.addedAt - a.addedAt);
 
     // Resolve current folder name for breadcrumbs.
-    let folder: { id: string; name: string; parentId: string | null } | null = null;
+    let folder: { id: string; name: string; parentId: string | null; granted?: boolean } | null = null;
     if (parentId && ObjectId.isValid(parentId)) {
       const f: any = await db.collection("folders").findOne({ _id: new ObjectId(parentId) });
-      if (f) folder = { id: String(f._id), name: f.name || "Folder", parentId: f.parentId || null };
+      if (f)
+        folder = {
+          id: String(f._id),
+          name: f.name || "Folder",
+          parentId: f.parentId || null,
+          granted: contentOrgId !== orgId,
+        };
     }
 
     return NextResponse.json({ resources: out, orgId, folder });
@@ -177,6 +238,26 @@ const COLL_FOR_TYPE: Record<string, string> = {
   MODULE: "modules",
   QUESTION_SET: "questionsets",
 };
+
+// Ownership gate for every mutation below — found live while adding granted-
+// content browsing to GET: PATCH/DELETE/POST never checked which org a
+// content id actually belongs to, so any staff account that could pass
+// canManageContent could rename/move/delete/file-into ANY org's content by
+// id alone. Granted top-level courses are now visible (read-only) in this
+// org's Institute Resources, which makes an id easier to come by — this
+// closes the gap rather than widening it. Returns the doc on success, or
+// null (with the response already sent) on failure.
+async function requireOwnedDoc(
+  db: Awaited<ReturnType<typeof getDb>>,
+  coll: string,
+  id: string,
+  orgId: string
+): Promise<any | null> {
+  if (!ObjectId.isValid(id)) return null;
+  const doc = await db.collection(coll).findOne({ _id: new ObjectId(id) });
+  if (!doc || doc?.contentSrc?.id !== orgId) return null;
+  return doc;
+}
 
 type MutateBody = {
   id?: string;
@@ -207,6 +288,11 @@ export async function PATCH(req: NextRequest) {
   const coll = COLL_FOR_TYPE[String(b.type || "").toUpperCase()];
   if (!coll || !b.id) return NextResponse.json({ error: "id and valid type required" }, { status: 400 });
   if (!ObjectId.isValid(b.id)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
+  const db = await getDb();
+  if (!(await requireOwnedDoc(db, coll, b.id, orgId)))
+    return NextResponse.json({ error: "Not found, or you don't own this content — granted content is read-only." }, { status: 403 });
 
   const set: Record<string, unknown> = { lastUpdated: Date.now() };
   if (b.action === "rename") {
@@ -275,7 +361,6 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
-    const db = await getDb();
     await db.collection(coll).updateOne({ _id: new ObjectId(b.id) }, { $set: set });
     return NextResponse.json({ ok: true });
   } catch (e: any) {
@@ -295,8 +380,12 @@ export async function DELETE(req: NextRequest) {
   if (!coll || !id) return NextResponse.json({ error: "id and valid type required" }, { status: 400 });
   if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 
+  const orgId = await resolveOrgId(req, req.nextUrl.searchParams.get("orgId"));
+  const db = await getDb();
+  if (!(await requireOwnedDoc(db, coll, id, orgId)))
+    return NextResponse.json({ error: "Not found, or you don't own this content — granted content is read-only." }, { status: 403 });
+
   try {
-    const db = await getDb();
     await db
       .collection(coll)
       .updateOne({ _id: new ObjectId(id) }, { $set: { recordState: "INACTIVE", lastUpdated: Date.now() } });
@@ -334,6 +423,21 @@ export async function POST(req: NextRequest) {
   const orgId = await resolveOrgId(req, body.orgId);
   const userId = body.userId || "";
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
+
+  // Filing new content into a folder this org doesn't own — e.g. a granted
+  // top-level course, now visible (read-only) in Institute Resources — would
+  // be writing into another org's tree. parentId is a FOLDER's own id either
+  // way (a module/questionset's folderId points at the same folders
+  // collection), so one ownership check covers both.
+  const targetFolderId = body.parentId || body.folderId;
+  if (targetFolderId) {
+    const db = await getDb();
+    if (!(await requireOwnedDoc(db, "folders", targetFolderId, orgId)))
+      return NextResponse.json(
+        { error: "Not found, or you don't own that folder — granted content is read-only." },
+        { status: 403 }
+      );
+  }
 
   const now = Date.now();
   const _id = new ObjectId();

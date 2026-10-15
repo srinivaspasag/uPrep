@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
+import { resolveOrgId } from "@/lib/org-scope";
 
 export const dynamic = "force-dynamic";
 
@@ -85,9 +86,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const db = await getDb();
+    // Scope every bulk update to content this org actually owns — found live
+    // while adding granted-content browsing elsewhere: this had no ownership
+    // check at all, so a selection containing another org's content id would
+    // have silently published/unpublished it too. Granted (shared) content
+    // is read-only from here; only the id, not the section/visibility
+    // relationship, is ever shared.
+    const orgId = await resolveOrgId(req, null);
     await Promise.all(
       Array.from(byColl.entries()).map(([coll, ids]) =>
-        db.collection(coll).updateMany({ _id: { $in: ids } }, update as any)
+        db.collection(coll).updateMany({ _id: { $in: ids }, "contentSrc.id": orgId } as any, update as any)
       )
     );
     return NextResponse.json({ ok: true });

@@ -25,6 +25,7 @@ type Resource = {
   order?: number | null;
   visibleUserIds?: string[];
   hiddenUserIds?: string[];
+  granted?: boolean;
 };
 
 type Crumb = { id: string; name: string };
@@ -535,6 +536,14 @@ export default function CmdsResourcesPage() {
                               Hidden
                             </span>
                           )}
+                          {r.granted && (
+                            <span
+                              title="Shared by another org — browse only, can't rename/move/delete from here"
+                              className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-600"
+                            >
+                              Shared
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-slate-500">{r.addedBy || "—"}</td>
@@ -550,21 +559,25 @@ export default function CmdsResourcesPage() {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <RowActions
-                          hidden={!!r.hidden}
-                          isFolder={r.type === "FOLDER"}
-                          editHref={r.type === "TEST" ? `/cmds/tests/${r.id}/edit` : undefined}
-                          canToggleVisibility={isAdmin}
-                          downloadEnabled={r.downloadEnabled !== false}
-                          canToggleDownload={isAdmin && r.type === "DOCUMENT"}
-                          canSetStudentVisibility={isAdmin && r.type !== "FOLDER"}
-                          onRename={() => renameResource(r)}
-                          onMove={() => setMoveTarget([r])}
-                          onToggleVisibility={() => toggleVisibility(r)}
-                          onToggleDownload={() => toggleDownload(r)}
-                          onSetStudentVisibility={() => setStudentVisTarget(r)}
-                          onDelete={() => deleteResource(r)}
-                        />
+                        {r.granted ? (
+                          <span className="text-xs text-slate-400">Read-only</span>
+                        ) : (
+                          <RowActions
+                            hidden={!!r.hidden}
+                            isFolder={r.type === "FOLDER"}
+                            editHref={r.type === "TEST" ? `/cmds/tests/${r.id}/edit` : undefined}
+                            canToggleVisibility={isAdmin}
+                            downloadEnabled={r.downloadEnabled !== false}
+                            canToggleDownload={isAdmin && r.type === "DOCUMENT"}
+                            canSetStudentVisibility={isAdmin && r.type !== "FOLDER"}
+                            onRename={() => renameResource(r)}
+                            onMove={() => setMoveTarget([r])}
+                            onToggleVisibility={() => toggleVisibility(r)}
+                            onToggleDownload={() => toggleDownload(r)}
+                            onSetStudentVisibility={() => setStudentVisTarget(r)}
+                            onDelete={() => deleteResource(r)}
+                          />
+                        )}
                       </td>
                     </tr>
                     );

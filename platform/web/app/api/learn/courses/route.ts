@@ -72,6 +72,14 @@ export async function GET(req: NextRequest) {
       studentSectionIds = enrollment.studentSectionIds;
       programGroups = enrollment.programGroups;
     }
+    // A program with zero courses attached (nothing locally created, nothing
+    // granted+assigned yet) has nothing to show — found live: a freshly
+    // created program showed up as an empty "0 subjects · 0 chapters" card,
+    // which reads as broken rather than "not set up yet." Hide it from
+    // Learning Network until at least one course is actually on it; it still
+    // shows everywhere else (CMDS Programs list, Academic Structure) so
+    // staff can keep configuring it.
+    programGroups = programGroups.filter((g) => g.courseIds.length > 0);
 
     // Browse mode: list one folder's children, gated by enrollment.
     if (folderId) {
