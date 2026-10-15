@@ -193,9 +193,11 @@ export default function OrganizationsPage() {
 }
 
 type GrantCourse = { id: string; name: string };
+type GrantProgram = { id: string; name: string; courseIds: string[] };
 
 function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) {
   const [courses, setCourses] = useState<GrantCourse[]>([]);
+  const [programs, setPrograms] = useState<GrantProgram[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -211,10 +213,22 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
           return;
         }
         setCourses(g.courses || []);
+        setPrograms(g.programs || []);
         setSelected(new Set<string>(g.grantedCourseIds || []));
       })
       .finally(() => setLoading(false));
   }, [org.id]);
+
+  // Checks every course belonging to this program — a pure convenience over
+  // checking each one individually below; doesn't save on its own, same as
+  // any other checkbox change (the "Save grants" button still applies it).
+  function selectProgram(p: GrantProgram) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      p.courseIds.forEach((id) => next.add(id));
+      return next;
+    });
+  }
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -249,8 +263,8 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
     <Modal>
       <h3 className="text-lg font-semibold text-slate-800">Grant content to {org.name}</h3>
       <p className="mt-1 text-sm text-slate-500">
-        Grant individual courses. The org admin then assigns them to students via Academic
-        Structure.
+        Grant individual courses, or check all of a program's courses at once below. The org
+        admin then assigns them to students via Academic Structure.
       </p>
 
       {loading ? (
@@ -261,6 +275,30 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
         </div>
       ) : (
         <div className="mt-4 max-h-[340px] space-y-4 overflow-auto rounded border border-slate-100 p-2">
+          {programs.length > 0 && (
+            <div>
+              <div className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                By Program
+              </div>
+              {programs.map((p) => {
+                const allSelected = p.courseIds.every((id) => selected.has(id));
+                return (
+                  <div key={p.id} className="flex items-center justify-between gap-2 rounded px-2 py-1.5 text-sm">
+                    <span className="text-slate-700">
+                      {p.name} <span className="text-xs text-slate-400">({p.courseIds.length} courses)</span>
+                    </span>
+                    <button
+                      onClick={() => selectProgram(p)}
+                      disabled={allSelected}
+                      className="shrink-0 rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 disabled:cursor-default disabled:opacity-50"
+                    >
+                      {allSelected ? "All selected" : "Select all courses"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div>
             <div className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
               Individual Courses
