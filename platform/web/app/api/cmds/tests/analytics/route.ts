@@ -259,6 +259,9 @@ export async function GET(req: NextRequest) {
     // sheet's own "Time Taken" column (legacy: "1 Hr : 54 Mins : 41 Secs"),
     // tracked alongside bestAttemptDetail since they're always updated together.
     const bestAttemptDurationSec = new Map<string, number>();
+    // Start/end timestamps of each user's best-scoring attempt — the printable
+    // Result Sheet's "Start Time"/"End Time" columns.
+    const bestAttemptStartEnd = new Map<string, { start: number; end: number }>();
 
     for (const at of attempts) {
       const qs = byAttempt.get(String(at._id)) || [];
@@ -324,6 +327,7 @@ export async function GET(req: NextRequest) {
         scoreByUser.set(uid, { best: score, attempts: 1, lastAt: endAt });
         bestAttemptDetail.set(uid, thisAttemptDetail);
         bestAttemptDurationSec.set(uid, durSec);
+        bestAttemptStartEnd.set(uid, { start: startAt, end: endAt });
       } else {
         const newBest = Math.max(prev.best, score);
         // Keep the detail from whichever attempt is actually reported as the
@@ -331,6 +335,7 @@ export async function GET(req: NextRequest) {
         if (score >= prev.best) {
           bestAttemptDetail.set(uid, thisAttemptDetail);
           bestAttemptDurationSec.set(uid, durSec);
+          bestAttemptStartEnd.set(uid, { start: startAt, end: endAt });
         }
         scoreByUser.set(uid, { best: newBest, attempts: prev.attempts + 1, lastAt: Math.max(prev.lastAt, endAt) });
       }
@@ -354,7 +359,11 @@ export async function GET(req: NextRequest) {
     const memberById = new Map(
       (members as any[]).map((m) => [
         String(m._id),
-        { name: `${m.firstName || ""} ${m.lastName || ""}`.trim() || m.memberId || "Student", memberId: m.memberId || "" },
+        {
+          name: `${m.firstName || ""} ${m.lastName || ""}`.trim() || m.memberId || "Student",
+          memberId: m.memberId || "",
+          contactNumber: m.contactNumber || "",
+        },
       ])
     );
 
@@ -392,28 +401,59 @@ export async function GET(req: NextRequest) {
           }
         }
         const left = qIds.length - detail.filter((d) => qIds.includes(d.qId)).length;
-        return { name: m.name || "Section", correct, wrong, left, total: qIds.length, score: Math.round(score * 10) / 10 };
+        return {
+          name: m.name || "Section",
+          correct,
+          wrong,
+          left,
+          total: qIds.length,
+          score: Math.round(score * 10) / 10,
+          rank: null as number | null,
+        };
       });
     };
 
     const resultSheet = userIds
       .map((uid) => {
         const rec = scoreByUser.get(uid)!;
-        const info = memberById.get(uid) || { name: "Student", memberId: "" };
+        const info = memberById.get(uid) || { name: "Student", memberId: "", contactNumber: "" };
+        const se = bestAttemptStartEnd.get(uid);
         return {
           userId: uid,
           name: info.name,
           memberId: info.memberId,
+          contactNumber: (info as any).contactNumber || "",
           score: rec.best,
           percent: pct(rec.best),
           attempts: rec.attempts,
           lastAt: rec.lastAt,
           timeSec: Math.round(bestAttemptDurationSec.get(uid) || 0),
+          startAt: se?.start || 0,
+          endAt: se?.end || 0,
           subjects: subjectBreakdown(uid),
         };
       })
       .sort((a, b) => b.score - a.score)
       .map((r, i) => ({ ...r, rank: i + 1, totalStudents: userIds.length }));
+
+    // Per-subject rank (standard competition ranking — ties share a rank,
+    // the next distinct score skips ahead by the tie count), same "Rank Vs
+    // Roll Number" report legacy's printable Result Sheet shows per subject.
+    for (const subj of subjects) {
+      const pairs = resultSheet
+        .map((r) => ({ uid: r.userId, score: r.subjects.find((x) => x.name === subj.name)?.score ?? 0 }))
+        .sort((a, b) => b.score - a.score);
+      const rankByUid = new Map<string, number>();
+      let rank = 1;
+      pairs.forEach((p, i) => {
+        if (i > 0 && p.score < pairs[i - 1].score) rank = i + 1;
+        rankByUid.set(p.uid, rank);
+      });
+      for (const r of resultSheet) {
+        const s = r.subjects.find((x) => x.name === subj.name);
+        if (s) s.rank = rankByUid.get(r.userId) ?? null;
+      }
+    }
 
     const perQuestion = qOrder.map((id, i) => {
       const b = perQ[id];

@@ -36,16 +36,27 @@ type PerQuestion = {
   correctStudents: QuestionStudent[];
   wrongStudents: QuestionStudent[];
 };
-type SubjectCWL = { name: string; correct: number; wrong: number; left: number; total: number; score: number };
+type SubjectCWL = {
+  name: string;
+  correct: number;
+  wrong: number;
+  left: number;
+  total: number;
+  score: number;
+  rank: number | null;
+};
 type ResultRow = {
   userId: string;
   name: string;
   memberId: string;
+  contactNumber: string;
   score: number;
   percent: number;
   attempts: number;
   lastAt: number;
   timeSec: number;
+  startAt: number;
+  endAt: number;
   subjects: SubjectCWL[];
   rank: number;
   totalStudents: number;
@@ -600,10 +611,11 @@ export default function TestAnalyticsPage() {
                     <style>{`
                       @media print {
                         body * { visibility: hidden; }
-                        #result-sheet-print, #result-sheet-print * { visibility: visible; }
-                        #result-sheet-print { position: absolute; top: 0; left: 0; width: 100%; }
+                        #printable-result-sheet, #printable-result-sheet * { visibility: visible; }
+                        #printable-result-sheet { position: absolute; top: 0; left: 0; width: 100%; }
                       }
                     `}</style>
+                    <PrintableResultSheet detail={detail} />
                     <div id="result-sheet-print" className="mt-3 overflow-x-auto rounded border border-slate-200">
                       <h2 className="hidden bg-white px-4 py-3 text-lg font-semibold text-slate-800 print:block">
                         {detail.test.name} — Result Sheet
@@ -1145,6 +1157,102 @@ function SolutionModal({ question: q, onClose }: { question: PerQuestion; onClos
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function fmtDateTime(ms: number): string {
+  if (!ms) return "—";
+  return new Date(ms).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+// Legacy's "Print Result Sheet" report — a self-contained formatted sheet
+// (max marks per subject, class highest/average, per-subject rank, contact
+// number, start/end time) rendered off-screen and shown only under
+// @media print (see the sibling <style> block's #printable-result-sheet
+// selector), independent of whatever view (Overall/CWL) is on screen.
+function PrintableResultSheet({ detail }: { detail: Detail }) {
+  return (
+    <div id="printable-result-sheet" className="hidden print:block" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+      <h1 className="text-center text-lg font-bold text-slate-900">{detail.test.name}</h1>
+      <div className="mt-2 text-center text-xs text-slate-700">
+        <p>
+          Maximum Marks : {detail.test.totalMarks}
+          {detail.subjects.length > 0 && (
+            <>
+              {" "}
+              ({" "}
+              {detail.subjects.map((s, i) => (
+                <span key={s.name}>
+                  {i > 0 ? " " : ""}
+                  {s.name} : {s.totalMarks}
+                </span>
+              ))}
+              {" )"}
+            </>
+          )}
+        </p>
+        <p>Class Highest : {detail.overall.highScore}</p>
+        <p>Class Average : {detail.overall.avgScore}</p>
+        <p>Rank Vs Roll Number Each subject marks and total marks</p>
+      </div>
+      <table className="mt-3 w-full border-collapse text-[11px]">
+        <thead>
+          <tr className="bg-slate-800 text-white">
+            <th className="border border-slate-400 px-2 py-1 text-left">ID NO</th>
+            <th className="border border-slate-400 px-2 py-1 text-left">Name</th>
+            <th className="border border-slate-400 px-2 py-1 text-left">Contact Number</th>
+            {detail.subjects.map((s) => (
+              <th key={s.name} colSpan={2} className="border border-slate-400 px-2 py-1 text-center">
+                {s.name}
+              </th>
+            ))}
+            <th className="border border-slate-400 px-2 py-1 text-center">OVERALL</th>
+            <th className="border border-slate-400 px-2 py-1 text-center">Rank</th>
+            <th className="border border-slate-400 px-2 py-1 text-left">Start Time</th>
+            <th className="border border-slate-400 px-2 py-1 text-left">End Time</th>
+          </tr>
+          <tr className="bg-slate-100">
+            <th className="border border-slate-300 px-2 py-0.5" colSpan={3} />
+            {detail.subjects.map((s) => (
+              <Fragment key={s.name}>
+                <th className="border border-slate-300 px-2 py-0.5 text-center font-normal">Score</th>
+                <th className="border border-slate-300 px-2 py-0.5 text-center font-normal">Rank</th>
+              </Fragment>
+            ))}
+            <th className="border border-slate-300 px-2 py-0.5" colSpan={4} />
+          </tr>
+        </thead>
+        <tbody>
+          {detail.resultSheet.map((r) => (
+            <tr key={r.userId}>
+              <td className="border border-slate-300 px-2 py-1">{r.memberId || "—"}</td>
+              <td className="border border-slate-300 px-2 py-1">{r.name}</td>
+              <td className="border border-slate-300 px-2 py-1">{r.contactNumber || "—"}</td>
+              {detail.subjects.map((s) => {
+                const sub = r.subjects.find((x) => x.name === s.name);
+                return (
+                  <Fragment key={s.name}>
+                    <td className="border border-slate-300 px-2 py-1 text-center">{sub ? sub.score : "—"}</td>
+                    <td className="border border-slate-300 px-2 py-1 text-center">{sub?.rank ?? "—"}</td>
+                  </Fragment>
+                );
+              })}
+              <td className="border border-slate-300 px-2 py-1 text-center">{r.score}</td>
+              <td className="border border-slate-300 px-2 py-1 text-center">{r.rank}</td>
+              <td className="border border-slate-300 px-2 py-1">{fmtDateTime(r.startAt)}</td>
+              <td className="border border-slate-300 px-2 py-1">{fmtDateTime(r.endAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
