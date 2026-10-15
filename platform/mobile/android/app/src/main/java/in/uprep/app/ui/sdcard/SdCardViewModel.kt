@@ -26,7 +26,13 @@ data class SdCardUiState(
     // since passed (checked fully offline against the cached expiry) — a
     // distinct state from never-activated, so the UI can explain what
     // happened instead of just asking to activate again from scratch.
-    val expired: Boolean = false
+    val expired: Boolean = false,
+    // Plain-mode cards have no access code to redeem at all, so an expired
+    // one is a dead end, not a "re-enter your code" prompt — kept separate
+    // from `expired` (which drives the encrypted-mode ActivateForm) so the
+    // UI can show a plain blocking message instead of a form with nothing
+    // to submit.
+    val plainExpired: Boolean = false
 )
 
 // Drives the whole card lifecycle: pick a folder -> (if a manifest is
@@ -52,14 +58,24 @@ class SdCardViewModel(
             _state.value = _state.value.copy(loading = true)
             val folderUri = repository.savedFolderUri()
             val manifest = if (folderUri != null) repository.readManifest() else null
+            // "plain" packaging has no key to protect — there's nothing an
+            // online activation step would be gating, so requiring one just
+            // blocks offline-first use (a tablet provisioned once, never
+            // online again) for no security benefit. Only "encrypted" cards
+            // need the real access-code verify flow below.
+            val isPlain = manifest?.packagingMode == "plain"
             val hasKey = manifest?.groupId?.let { repository.hasKeyFor(it) } ?: false
-            val expired = hasKey && manifest?.groupId?.let { repository.isExpired(it) } == true
+            val encryptedExpired = hasKey && manifest?.groupId?.let { repository.isExpired(it) } == true
+            // Plain mode has no server/key to check against — just the
+            // manifest's own expiryDate against the device's local clock.
+            val plainExpired = isPlain && manifest?.expiryDate?.let { System.currentTimeMillis() > it } == true
             _state.value = SdCardUiState(
                 loading = false,
                 folderPicked = folderUri != null,
                 manifest = manifest,
-                activated = hasKey && !expired,
-                expired = expired
+                activated = (isPlain && !plainExpired) || (hasKey && !encryptedExpired),
+                expired = !isPlain && encryptedExpired,
+                plainExpired = plainExpired
             )
         }
     }

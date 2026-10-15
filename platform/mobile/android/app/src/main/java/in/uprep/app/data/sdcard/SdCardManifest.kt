@@ -17,6 +17,14 @@ data class SdCardManifest(
     // Absent (null) on cards packaged before this field existed; readers
     // must fall back to the old flat-per-course view in that case.
     val folders: List<SdCardFolder>?,
+    // Epoch millis after which this card should stop being browsable, for
+    // "plain" (unencrypted) packages — there's no key/server to enforce this
+    // the way encrypted mode's access-code expiry works, so it's purely a
+    // local clock check (see SdCardViewModel.refresh). Deliberately weak:
+    // a device with its clock rolled back, or content opened straight via a
+    // file manager instead of this app, bypasses it entirely. Absent (null)
+    // on cards packaged before this field existed, or with no expiry set.
+    val expiryDate: Long?,
     val items: List<SdCardManifestItem>?
 )
 

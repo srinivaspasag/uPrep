@@ -1,6 +1,9 @@
 package `in`.uprep.app.ui.sdcard
 
 import android.content.Intent
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -125,8 +128,8 @@ fun SdCardScreen(
                     when {
                         folderStack.isNotEmpty() -> folderStack.last().name ?: "Folder"
                         selectedCourse != null -> selectedCourse!!.courseName ?: "Course"
-                        hasCourseGrouping -> state.manifest?.programName ?: "Offline via SD Card"
-                        else -> "Offline via SD Card"
+                        hasCourseGrouping -> state.manifest?.programName ?: "Offline Content"
+                        else -> "Offline Content"
                     }
                 )
             },
@@ -143,13 +146,21 @@ fun SdCardScreen(
             }
 
             !state.folderPicked -> EmptyState(
-                message = "Insert the SD card, then pick its folder — the one containing manifest.json.",
-                buttonLabel = "Select SD card folder",
+                message = "Pick the offline content folder on this device — the one containing manifest.json. (An SD card works too, if you use one.)",
+                buttonLabel = "Select offline content folder",
                 onClick = { pickFolder.launch(null) }
             )
 
             state.manifest == null -> EmptyState(
-                message = "This folder doesn't look like a packaged SD card — no manifest.json found inside it.",
+                message = "This folder doesn't look like packaged offline content — no manifest.json found inside it.",
+                buttonLabel = "Pick a different folder",
+                onClick = { pickFolder.launch(null) }
+            )
+
+            state.plainExpired -> EmptyState(
+                message = "This offline content's access period has ended" +
+                    (state.manifest?.expiryDate?.let { " (expired " + formatExpiryDate(it) + ")" } ?: "") +
+                    ". Ask your institute for a refreshed copy.",
                 buttonLabel = "Pick a different folder",
                 onClick = { pickFolder.launch(null) }
             )
@@ -236,6 +247,9 @@ fun SdCardScreen(
         }
     }
 }
+
+private fun formatExpiryDate(epochMs: Long): String =
+    SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(Date(epochMs))
 
 @Composable
 private fun EmptyState(message: String, buttonLabel: String, onClick: () -> Unit) {
