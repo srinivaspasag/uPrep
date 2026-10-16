@@ -262,6 +262,8 @@ export default function BulkUploadStudentsPage() {
             email: r.email,
             contactNumber: r.contactNumber,
             profile: "STUDENT",
+            // Bulk uploads: each student's password is their Login ID (MemberId).
+            passwordIsMemberId: true,
             programMemberships:
               r.centerName.trim() && r.sectionName.trim()
                 ? resolveRowForPrograms(r)
@@ -383,7 +385,8 @@ export default function BulkUploadStudentsPage() {
               </div>
               <p className="mt-1 text-xs text-slate-400">
                 Columns: {TEMPLATE_HEADERS.join(", ")}. MemberId is optional (auto-generated if blank); Center/Section
-                are optional but must both be given, or both left blank.
+                are optional but must both be given, or both left blank. Each student logs in with their MemberId as
+                both username and password; download the logins after the upload.
               </p>
               <textarea
                 value={raw}

@@ -257,10 +257,15 @@ function GrantCoursesModal({ org, onClose }: { org: Org; onClose: () => void }) 
     setMsg("");
     setError("");
     try {
+      // Which program(s) to attribute each granted course to — any program
+      // whose courses are ALL currently checked, at the moment Save is
+      // clicked. The server freezes this attribution on each grant doc
+      // rather than re-deriving it later (see org-grants/route.ts's POST).
+      const grantedProgramIds = programs.filter((p) => p.courseIds.every((id) => selected.has(id))).map((p) => p.id);
       const gRes = await fetch("/api/cmds/tools/org-grants", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subscriberOrgId: org.id, courseIds: Array.from(selected) }),
+        body: JSON.stringify({ subscriberOrgId: org.id, courseIds: Array.from(selected), grantedProgramIds }),
       });
       const gd = await gRes.json().catch(() => ({}));
       if (!gRes.ok) {

@@ -172,6 +172,9 @@ type AddBody = {
   contactNumber?: string;
   orgId?: string;
   password?: string;
+  // Bulk upload only: the password is the member's login id (memberId), so the
+  // institute can hand out logins without a separate password list.
+  passwordIsMemberId?: boolean;
   programMemberships?: Mapping[];
 };
 
@@ -222,7 +225,8 @@ export async function POST(req: NextRequest) {
       memberId = await generateMemberId(db, orgId, firstName, (b.lastName || "").trim(), profile);
     }
 
-    const plainPassword = (b.password || "").trim() || generatePassword();
+    const plainPassword =
+      (b.password || "").trim() || (b.passwordIsMemberId ? memberId : generatePassword());
 
     // Program/center/section assignment, set at creation time when the admin
     // picked one — legacy does this as an immediate follow-up call after
