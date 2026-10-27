@@ -16,6 +16,14 @@ import { PRODUCTS_COLL } from "@/lib/commerce";
 // links it to the master subject, moves anything filed in the others into it,
 // repoints every program/section/student/product reference (including ones
 // that pointed straight at the master subject) and archives the rest.
+//
+// Own-content programs. A program flagged `ownContent: true` (e.g. Scholar
+// Spectra's "Scholar Repeater JEE/NEET") builds its subjects itself — its
+// "Physics XI" is deliberately NOT the master's, even though the names match.
+// Found live: the first run linked/merged those folders by name and the
+// Repeater programs suddenly showed the master's whole library. Folders such
+// a program (or its sections) uses are never linked or merged, and its
+// program/section references are never repointed.
 
 const CONTENT_COLLS = ["videos", "documents", "books", "tests", "modules", "questionsets"];
 
@@ -28,7 +36,40 @@ export type LinkPlan = {
   keeper: { id: string; name: string; alreadyLinked: boolean; itemCount: number } | null;
   duplicates: { id: string; name: string; itemCount: number; chapterCount: number }[];
   refs: { programs: number; sections: number; members: number; products: number };
+  // Own-content programs in the subscriber org, left untouched (see above).
+  skippedPrograms: { id: string; name: string }[];
 };
+
+// Own-content programs of an org, and every folder they or their sections use.
+async function ownContentScope(db: Db, orgId: string) {
+  const programs = (await db
+    .collection("orgprograms")
+    .find({ orgId, recordState: "ACTIVE", ownContent: true } as any)
+    .project({ name: 1, courseIds: 1 })
+    .toArray()) as any[];
+  const programIds = programs.map((p) => String(p._id));
+  const folderIds = new Set<string>(programs.flatMap((p) => (Array.isArray(p.courseIds) ? p.courseIds.map(String) : [])));
+  if (programIds.length) {
+    const sections = (await db
+      .collection("orgsections")
+      .find({ orgId, programId: { $in: programIds } } as any)
+      .project({ courseIds: 1 })
+      .toArray()) as any[];
+    for (const s of sections) for (const id of Array.isArray(s.courseIds) ? s.courseIds : []) folderIds.add(String(id));
+  }
+  return { programs: programs.map((p) => ({ id: String(p._id), name: p.name || "(untitled)" })), programIds, folderIds };
+}
+
+// Repoint scopes that leave own-content programs (and their sections) alone.
+function repointScopes(orgId: string, skipProgramIds: string[]) {
+  const progOids = skipProgramIds.filter(ObjectId.isValid).map((id) => new ObjectId(id));
+  return {
+    programs: { orgId, _id: { $nin: [...progOids, ...skipProgramIds] } },
+    sections: { orgId, programId: { $nin: skipProgramIds } },
+    // A student in an own-content program keeps its enrolments as they are.
+    members: { orgId, "programMemberships.programId": { $nin: skipProgramIds } },
+  };
+}
 
 const norm = (s: string) => s.trim().replace(/\s+/g, " ").toLowerCase();
 
@@ -78,7 +119,10 @@ export async function planCourseLinks(
         $or: [{ parentId: null }, { parentId: { $exists: false } }],
       } as any)
       .toArray()) as any[];
-    const claimed = new Set<string>(); // a folder can back only one grant
+    const own = await ownContentScope(db, subscriberOrgId);
+    const scopes = repointScopes(subscriberOrgId, own.programIds);
+    // a folder can back only one grant; own-content programs' folders back none
+    const claimed = new Set<string>(own.folderIds);
 
     for (const g of subGrants) {
       const provider = providerById.get(String(g.courseId));
@@ -117,9 +161,9 @@ export async function planCourseLinks(
       const oldIds = [providerCourseId, ...duplicates.map((d) => d.id)];
       const count = async (coll: string, q: any) => Number(await db.collection(coll).countDocuments(q));
       const [programs, sections, members, products] = await Promise.all([
-        count("orgprograms", { orgId: subscriberOrgId, courseIds: { $in: oldIds } }),
-        count("orgsections", { orgId: subscriberOrgId, courseIds: { $in: oldIds } }),
-        count("orgmembers", { orgId: subscriberOrgId, enrolledCourseIds: { $in: oldIds } }),
+        count("orgprograms", { ...scopes.programs, courseIds: { $in: oldIds } }),
+        count("orgsections", { ...scopes.sections, courseIds: { $in: oldIds } }),
+        count("orgmembers", { ...scopes.members, enrolledCourseIds: { $in: oldIds } }),
         count(PRODUCTS_COLL, { orgId: subscriberOrgId, courseId: { $in: oldIds } }),
       ]);
 
@@ -133,6 +177,7 @@ export async function planCourseLinks(
           : null,
         duplicates: duplicates.map((d) => ({ id: d.id, name: d.name, itemCount: d.itemCount, chapterCount: d.chapterCount })),
         refs: { programs, sections, members, products },
+        skippedPrograms: own.programs,
       });
     }
   }
@@ -206,9 +251,10 @@ export async function applyCourseLinkPlans(db: Db, plans: LinkPlan[]): Promise<{
 
     const oldIds = [p.providerCourseId, ...dupIds];
     const scope = { orgId: p.subscriberOrgId };
-    await repointArray(db, "orgprograms", "courseIds", scope, oldIds, keeperId);
-    await repointArray(db, "orgsections", "courseIds", scope, oldIds, keeperId);
-    await repointArray(db, "orgmembers", "enrolledCourseIds", scope, oldIds, keeperId);
+    const scopes = repointScopes(p.subscriberOrgId, (p.skippedPrograms || []).map((s) => s.id));
+    await repointArray(db, "orgprograms", "courseIds", scopes.programs, oldIds, keeperId);
+    await repointArray(db, "orgsections", "courseIds", scopes.sections, oldIds, keeperId);
+    await repointArray(db, "orgmembers", "enrolledCourseIds", scopes.members, oldIds, keeperId);
     await db
       .collection(PRODUCTS_COLL)
       .updateMany({ ...scope, courseId: { $in: oldIds } } as any, { $set: { courseId: keeperId, lastUpdated: now } });

@@ -8,6 +8,8 @@
 //     a worksheet) and its own unshared "Physics XI".
 //     Program "Scholar Regular JEE XI": Sec A -> [dup Chemistry XI, Physics XI],
 //     Sec B -> [Master's Chemistry XI directly]. One student in each.
+//     Program "Scholar Repeater JEE" (ownContent): its own, empty "Chemistry XI"
+//     that must never be linked/merged into the master's.
 //   Fresh Institute — no folders at all; gets grants during the run.
 const { MongoClient, ObjectId } = require("mongodb");
 
@@ -31,7 +33,7 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
   const item = (name, org, folderId, type) =>
     ({ _id: id(), name, type, folderId: String(folderId), timeCreated: now, ...owned(org) });
 
-  const M = id(), C1 = id(), PHY = id(), D1 = id(), D2 = id(), D3 = id(), EXTRA = id(), SPHY = id();
+  const M = id(), C1 = id(), PHY = id(), D1 = id(), D2 = id(), D3 = id(), EXTRA = id(), SPHY = id(), RCHEM = id();
   await db.collection("organizations").insertMany([
     { _id: P, name: "Master Org" }, { _id: S, name: "Scholar Spectra" }, { _id: S2, name: "Fresh Institute" },
   ]);
@@ -41,6 +43,7 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
     folder(D2, "Chemistry XI", S, null, { timeCreated: now - 2000 }),
     folder(D3, "chemistry  xi", S, null, { timeCreated: now - 1000 }),
     folder(EXTRA, "Extra Practice", S, String(D2)), folder(SPHY, "Physics XI", S),
+    folder(RCHEM, "Chemistry XI", S, null, { timeCreated: now - 5000 }),
   ]);
   await db.collection("books").insertOne(item("Master NCERT Book", P, C1, "BOOK"));
   await db.collection("videos").insertOne(item("Master Lecture 1", P, C1, "VIDEO"));
@@ -49,16 +52,18 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
     providerOrgId: String(P), subscriberOrgId: String(S), courseId: String(M), programNames: ["NEET Online"], recordState: "ACTIVE",
   });
 
-  const CENTER = id(), PROG = id(), OTHER_PROG = id(), SEC1 = id(), SEC2 = id(), OTHER_SEC = id();
+  const CENTER = id(), PROG = id(), OTHER_PROG = id(), SEC1 = id(), SEC2 = id(), OTHER_SEC = id(), REP = id(), REP_SEC = id();
   await db.collection("orgcenters").insertOne({ _id: CENTER, orgId: String(S), name: "Puducherry", recordState: "ACTIVE" });
   await db.collection("orgprograms").insertMany([
     { _id: PROG, orgId: String(S), name: "Scholar Regular JEE XI", courseIds: [], recordState: "ACTIVE" },
     { _id: OTHER_PROG, orgId: String(S), name: "Unrelated Program", courseIds: [], recordState: "ACTIVE" },
+    { _id: REP, orgId: String(S), name: "Scholar Repeater JEE", courseIds: [String(RCHEM)], ownContent: true, recordState: "ACTIVE" },
   ]);
   await db.collection("orgsections").insertMany([
     { _id: SEC1, orgId: String(S), programId: String(PROG), centerId: String(CENTER), name: "Sec A", courseIds: [String(D1), String(SPHY)], recordState: "ACTIVE" },
     { _id: SEC2, orgId: String(S), programId: String(PROG), centerId: String(CENTER), name: "Sec B", courseIds: [String(M)], recordState: "ACTIVE" },
     { _id: OTHER_SEC, orgId: String(S), programId: String(OTHER_PROG), centerId: String(CENTER), name: "Other Sec", courseIds: [], recordState: "ACTIVE" },
+    { _id: REP_SEC, orgId: String(S), programId: String(REP), centerId: String(CENTER), name: "Rep Sec", courseIds: [String(RCHEM), String(M)], recordState: "ACTIVE" },
   ]);
   const ST1 = id(), ST2 = id();
   await db.collection("orgmembers").insertMany([
@@ -71,7 +76,7 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
   await db.collection("questions").insertMany([QM, QS, QX]);
   await db.collection("answers").insertMany([QM, QS, QX].map((x) => ({ qId: String(x._id) })));
 
-  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, ST1, ST2, QM: QM._id, QS: QS._id, QX: QX._id };
+  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, QM: QM._id, QS: QS._id, QX: QX._id };
   console.log(JSON.stringify(Object.fromEntries(Object.entries(out).map(([k, v]) => [k, String(v)]))));
   await c.close();
 })().catch((e) => {
