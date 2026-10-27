@@ -12,11 +12,17 @@ data class SellerVerifyRequest(
     val code: String,
     val email: String,
     val deviceId: String,
-    val userId: String
+    val userId: String,
+    // The card's own group (manifest.groupId) — the server refuses a code
+    // for any other group before binding it to this device.
+    val groupId: String? = null
 )
 
 data class SellerVerifyResponse(
     val ok: Boolean?,
+    // Which group the redeemed code belongs to — its key only decrypts that
+    // group's cards. Absent from servers older than this field.
+    val groupId: String?,
     val groupName: String?,
     val contentIds: List<String>?,
     val encryptionKey: String?,

@@ -76,7 +76,18 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
   await db.collection("questions").insertMany([QM, QS, QX]);
   await db.collection("answers").insertMany([QM, QS, QX].map((x) => ({ qId: String(x._id) })));
 
-  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, QM: QM._id, QS: QS._id, QX: QX._id };
+  // Seller groups + an access code for the SD-card activation checks.
+  const G1 = id(), G2 = id();
+  await db.collection("sellergroups").insertMany([
+    { _id: G1, name: "JEE Online", orgId: String(P), encryptionKey: Buffer.alloc(32, 7).toString("base64") },
+    { _id: G2, name: "JEE XI", orgId: String(P), encryptionKey: Buffer.alloc(32, 9).toString("base64") },
+  ]);
+  await db.collection("accesscodes").insertOne({
+    _id: id(), orgId: String(P), code: "SMOKE1", groupId: String(G2), groupName: "JEE XI",
+    buyerEmail: "buyer@smoke.local", deviceIds: [], timeCreated: now, lastUpdated: now,
+  });
+
+  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2 };
   console.log(JSON.stringify(Object.fromEntries(Object.entries(out).map(([k, v]) => [k, String(v)]))));
   await c.close();
 })().catch((e) => {

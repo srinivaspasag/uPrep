@@ -201,6 +201,19 @@ await group("7. Sharing lifecycle", async () => {
     (await rootSubjects("fresh")).join() === "Chemistry XI [Linked],Physics XI [Linked]");
 });
 
+await group("8. SD-card activation (seller verify)", async () => {
+  const verify = (groupId, deviceId = "dev-1") =>
+    call("none", "/api/seller/verify", json("POST", { code: "smoke1", email: "buyer@smoke.local", deviceId, userId: "u1", groupId }));
+  const wrong = await verify(ids.G1);
+  check("code for another group → refused, names its group",
+    wrong.status === 409 && wrong.j?.error === "CODE_FOR_DIFFERENT_CARD" && wrong.j?.groupName === "JEE XI", JSON.stringify(wrong.j));
+  const right = await verify(ids.G2, "dev-2");
+  check("refused attempt didn't bind the code — right card on another device still activates",
+    right.status === 200 && right.j?.groupId === ids.G2 && !!right.j?.encryptionKey, JSON.stringify(right.j));
+  const legacy = await call("none", "/api/seller/verify", json("POST", { code: "smoke1", email: "buyer@smoke.local", deviceId: "dev-2", userId: "u1" }));
+  check("older apps (no groupId) still verify", legacy.status === 200 && legacy.j?.groupId === ids.G2);
+});
+
 console.log(`\n${pass} passed, ${failures.length} failed`);
 if (failures.length) {
   console.log("Failed:\n" + failures.map((f) => `  - ${f}`).join("\n"));

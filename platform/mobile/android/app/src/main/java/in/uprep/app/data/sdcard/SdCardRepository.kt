@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
+import javax.crypto.AEADBadTagException
 
 private val Context.sdCardDataStore by preferencesDataStore(name = "uprep_sdcard")
 private val KEY_FOLDER_URI = stringPreferencesKey("folder_uri")
@@ -25,6 +26,29 @@ sealed class ActivateResult {
     object Success : ActivateResult()
     data class Failed(val message: String) : ActivateResult()
 }
+
+sealed class OpenResult {
+    data class Ready(val file: File) : OpenResult()
+    data class Failed(val message: String) : OpenResult()
+    // The cached key doesn't decrypt this card — it was activated with a code
+    // for a different group. The key has been dropped; the card needs
+    // activating again with the right code.
+    object WrongKey : OpenResult()
+}
+
+// Server error codes from /api/seller/verify, in words a student can act on.
+private fun verifyErrorMessage(error: String?, groupName: String?): String = when (error) {
+    "INVALID_CODE" -> "That code and email don't match any access code — check both and try again."
+    "ACCESS_CODE_EXPIRED" -> "This access code has expired. Ask your institute for a new one."
+    "ITEM_ALREADY_VERIFIED_WITH_DIFFERENT_DEVICE" -> "This code has already been used on another device."
+    "ITEM_ALREADY_VERIFIED_FOR_DIFFERENT_USER" -> "This code has already been used by another student."
+    "CODE_FOR_DIFFERENT_CARD" ->
+        "This code is for " + (if (groupName.isNullOrBlank()) "a different course" else "\"$groupName\"") +
+            ", not the content on this card. Use the access code that came with this card."
+    else -> "Couldn't verify this code — check it and try again."
+}
+
+private data class VerifyError(val error: String?, val groupName: String?)
 
 // Everything the SD-card reader needs on top of a picked Storage Access
 // Framework tree: persisting which folder was picked, persisting the
@@ -53,6 +77,13 @@ class SdCardRepository(private val context: Context) {
 
     private suspend fun keyFor(groupId: String): String? =
         context.sdCardDataStore.data.first()[keyPrefKey(groupId)]
+
+    private suspend fun forgetKey(groupId: String) {
+        context.sdCardDataStore.edit {
+            it.remove(keyPrefKey(groupId))
+            it.remove(expiryPrefKey(groupId))
+        }
+    }
 
     // Access codes are valid for 1 year from generation (see the server's
     // lib/expiry.ts). The expiry handed back by /api/seller/verify is
@@ -93,10 +124,20 @@ class SdCardRepository(private val context: Context) {
         userId: String
     ): ActivateResult = withContext(Dispatchers.IO) {
         try {
-            val resp = sellerApi.verify(SellerVerifyRequest(code = code, email = email, deviceId = deviceId, userId = userId))
+            val resp = sellerApi.verify(
+                SellerVerifyRequest(code = code, email = email, deviceId = deviceId, userId = userId, groupId = groupId)
+            )
             val body = resp.body()
             if (!resp.isSuccessful || body?.encryptionKey == null) {
-                return@withContext ActivateResult.Failed(body?.error ?: "Couldn't verify this code — check it and try again.")
+                // Error responses carry their JSON in errorBody(), not body().
+                val err = body?.let { VerifyError(it.error, it.groupName) }
+                    ?: runCatching { gson.fromJson(resp.errorBody()?.string(), VerifyError::class.java) }.getOrNull()
+                return@withContext ActivateResult.Failed(verifyErrorMessage(err?.error, err?.groupName))
+            }
+            // Older servers don't check the group themselves — never cache a
+            // key that can't open this card.
+            if (body.groupId != null && body.groupId != groupId) {
+                return@withContext ActivateResult.Failed(verifyErrorMessage("CODE_FOR_DIFFERENT_CARD", body.groupName))
             }
             context.sdCardDataStore.edit {
                 it[keyPrefKey(groupId)] = body.encryptionKey
@@ -112,41 +153,52 @@ class SdCardRepository(private val context: Context) {
     // item's file into the app cache dir, ready for ExoPlayer/PdfRenderer —
     // same destination shape as DownloadRepository.decryptToCache() uses for
     // the network-download feature, so the existing player composables can
-    // be pointed at either one interchangeably.
-    suspend fun decryptToCache(groupId: String, item: SdCardManifestItem): File? = withContext(Dispatchers.IO) {
-        val treeUri = savedFolderUri() ?: return@withContext null.also { Log.e(TAG, "decryptToCache: no saved folder uri") }
-        val root = DocumentFile.fromTreeUri(context, treeUri) ?: return@withContext null.also { Log.e(TAG, "decryptToCache: fromTreeUri returned null for $treeUri") }
-        val contentDir = root.findFile("content") ?: return@withContext null.also { Log.e(TAG, "decryptToCache: no content/ dir under $treeUri; children=${root.listFiles().map { it.name }}") }
+    // be pointed at either one interchangeably. Never fails silently: every
+    // way it can't produce a file comes back as a reason the UI shows.
+    suspend fun decryptToCache(groupId: String, item: SdCardManifestItem): OpenResult = withContext(Dispatchers.IO) {
+        val notFound = OpenResult.Failed("This video isn't on the card. Make sure the whole content folder was copied, then try again.")
+        val treeUri = savedFolderUri() ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: no saved folder uri") }
+        val root = DocumentFile.fromTreeUri(context, treeUri) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: fromTreeUri returned null for $treeUri") }
+        val contentDir = root.findFile("content") ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: no content/ dir under $treeUri") }
 
         val encryptedName = item.encryptedFileName
         val plainName = item.fileName
         val cacheFile = File(context.cacheDir, "sdcard-${item.id}")
-        if (cacheFile.exists() && cacheFile.length() > 0) return@withContext cacheFile
+        if (cacheFile.exists() && cacheFile.length() > 0) return@withContext OpenResult.Ready(cacheFile)
 
         if (isExpired(groupId)) {
-            return@withContext null.also { Log.e(TAG, "decryptToCache: access for group $groupId has expired") }
+            return@withContext OpenResult.Failed("Your access to this content has expired. Ask your institute for a new access code.")
+                .also { Log.e(TAG, "decryptToCache: access for group $groupId has expired") }
         }
 
         try {
             if (encryptedName != null) {
-                val key = keyFor(groupId) ?: return@withContext null.also { Log.e(TAG, "decryptToCache: no cached key for group $groupId") }
-                val source = contentDir.findFile(encryptedName) ?: return@withContext null.also { Log.e(TAG, "decryptToCache: '$encryptedName' not found; siblings=${contentDir.listFiles().map { it.name }}") }
+                val key = keyFor(groupId) ?: return@withContext OpenResult.WrongKey.also { Log.e(TAG, "decryptToCache: no cached key for group $groupId") }
+                val source = contentDir.findFile(encryptedName) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: '$encryptedName' not found") }
                 context.contentResolver.openInputStream(source.uri)?.use { input ->
                     cacheFile.outputStream().use { output -> SdCardCrypto.decrypt(input, key, output) }
-                } ?: return@withContext null.also { Log.e(TAG, "decryptToCache: openInputStream returned null for ${source.uri}") }
+                } ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: openInputStream returned null for ${source.uri}") }
             } else if (plainName != null) {
-                val source = contentDir.findFile(plainName) ?: return@withContext null.also { Log.e(TAG, "decryptToCache: '$plainName' not found; siblings=${contentDir.listFiles().map { it.name }}") }
+                val source = contentDir.findFile(plainName) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: '$plainName' not found") }
                 context.contentResolver.openInputStream(source.uri)?.use { input ->
                     cacheFile.outputStream().use { output -> input.copyTo(output) }
-                } ?: return@withContext null.also { Log.e(TAG, "decryptToCache: openInputStream returned null for ${source.uri}") }
+                } ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: openInputStream returned null for ${source.uri}") }
             } else {
-                return@withContext null.also { Log.e(TAG, "decryptToCache: item has neither encryptedFileName nor fileName") }
+                return@withContext notFound.also { Log.e(TAG, "decryptToCache: item has neither encryptedFileName nor fileName") }
             }
-            cacheFile
+            OpenResult.Ready(cacheFile)
+        } catch (e: AEADBadTagException) {
+            // Wrong key for this card (activated with another group's code) —
+            // or a damaged file, but then the next item will open fine and the
+            // student just re-activates once. Either way this key can't be trusted.
+            Log.e(TAG, "decryptToCache: key does not decrypt ${item.name} — dropping cached key for $groupId", e)
+            cacheFile.delete()
+            forgetKey(groupId)
+            OpenResult.WrongKey
         } catch (e: Exception) {
             Log.e(TAG, "decryptToCache: failed for ${item.name}", e)
             cacheFile.delete()
-            null
+            OpenResult.Failed("Couldn't open this video (${e.javaClass.simpleName}). Check the device has free storage and try again.")
         }
     }
 }

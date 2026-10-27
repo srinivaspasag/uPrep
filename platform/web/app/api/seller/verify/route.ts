@@ -20,7 +20,13 @@ export const runtime = "nodejs";
 const CODES_COLL = "accesscodes";
 const GROUPS_COLL = "sellergroups";
 
-type VerifyBody = { code?: string; email?: string; deviceId?: string; userId?: string };
+// groupId (optional): the group of the card being activated, from its
+// manifest. Sent by newer apps so a code for a DIFFERENT group is refused
+// before it gets bound to the device — found live: a JEE card activated with
+// another group's code "succeeded", the app cached that group's key, and every
+// video on the card then failed to decrypt (silently). Older apps don't send
+// it and keep the old behaviour.
+type VerifyBody = { code?: string; email?: string; deviceId?: string; userId?: string; groupId?: string };
 
 export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as VerifyBody;
@@ -35,6 +41,13 @@ export async function POST(req: NextRequest) {
     const db = await getDb();
     const doc: any = await db.collection(CODES_COLL).findOne({ code, buyerEmail: email } as any);
     if (!doc) return NextResponse.json({ error: "INVALID_CODE" }, { status: 404 });
+
+    const cardGroupId = (b.groupId || "").trim();
+    if (cardGroupId && String(doc.groupId) !== cardGroupId)
+      return NextResponse.json(
+        { error: "CODE_FOR_DIFFERENT_CARD", groupName: doc.groupName || "" },
+        { status: 409 }
+      );
 
     // Access codes are valid for 1 year from generation — same policy as
     // student account expiry (lib/expiry.ts). This blocks both a fresh
@@ -82,6 +95,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ok: true,
+      groupId: String(doc.groupId),
       groupName: group?.name || doc.groupName || "",
       contentIds: Array.isArray(group?.contentIds) ? group.contentIds : [],
       encryptionKey,
