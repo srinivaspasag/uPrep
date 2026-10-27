@@ -77,9 +77,13 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
   await db.collection("answers").insertMany([QM, QS, QX].map((x) => ({ qId: String(x._id) })));
 
   // Seller groups + an access code for the SD-card activation checks.
-  const G1 = id(), G2 = id();
+  // Own chapter (under master Physics XI) so these don't change any other check's counts.
+  const G1 = id(), G2 = id(), T1 = id(), V1 = id(), PCH = id();
+  await db.collection("folders").insertOne(folder(PCH, "1.Units and Measurement", P, String(PHY)));
+  await db.collection("tests").insertOne({ _id: T1, name: "Smoke Chapter Test", folderId: String(PCH), ...owned(P) });
+  await db.collection("videos").insertOne({ _id: V1, name: "Smoke Card Video", folderId: String(PCH), url: "/uploads/none.mp4", ...owned(P) });
   await db.collection("sellergroups").insertMany([
-    { _id: G1, name: "JEE Online", orgId: String(P), encryptionKey: Buffer.alloc(32, 7).toString("base64") },
+    { _id: G1, name: "JEE Online", orgId: String(P), encryptionKey: Buffer.alloc(32, 7).toString("base64"), contentIds: [String(T1), String(V1)] },
     { _id: G2, name: "JEE XI", orgId: String(P), encryptionKey: Buffer.alloc(32, 9).toString("base64") },
   ]);
   await db.collection("accesscodes").insertOne({
@@ -87,7 +91,7 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
     buyerEmail: "buyer@smoke.local", deviceIds: [], timeCreated: now, lastUpdated: now,
   });
 
-  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2 };
+  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2, T1, V1, PCH };
   console.log(JSON.stringify(Object.fromEntries(Object.entries(out).map(([k, v]) => [k, String(v)]))));
   await c.close();
 })().catch((e) => {

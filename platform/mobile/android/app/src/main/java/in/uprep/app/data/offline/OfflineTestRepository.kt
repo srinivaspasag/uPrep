@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import `in`.uprep.app.data.api.SubmitAnswer
 import `in`.uprep.app.data.api.SubmitRequest
+import `in`.uprep.app.data.api.TestDetailResponse
 import `in`.uprep.app.data.api.TestsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -50,30 +51,45 @@ class OfflineTestRepository(
             if (!resp.isSuccessful || body == null) {
                 return@withContext DownloadResult.Failed("Couldn't download this test — try again once you're online.")
             }
-            val test = CachedTest(
-                testId = body.id,
-                name = body.name,
-                durationMin = body.durationMin,
-                totalMarks = body.totalMarks,
-                code = body.code,
-                downloadedAt = System.currentTimeMillis()
-            )
-            val questions = body.questions.mapIndexed { index, q ->
-                CachedQuestion(
-                    id = q.id,
-                    testId = body.id,
-                    content = q.content,
-                    type = q.type,
-                    board = q.board,
-                    orderIndex = index,
-                    optionsJson = gson.toJson(q.options)
-                )
-            }
-            dao.saveDownloadedTest(test, questions)
+            saveTest(body)
             DownloadResult.Success
         } catch (e: Exception) {
             DownloadResult.Failed("No internet right now — downloading a test needs one connected moment.")
         }
+    }
+
+    // A test read off an SD card (content/<id>.test.json — same shape as the
+    // live download) — stored exactly like a downloaded one, so taking it and
+    // syncing the attempt later work the same way. Returns the test id.
+    suspend fun importTest(json: String): String = withContext(Dispatchers.IO) {
+        val body = gson.fromJson(json, TestDetailResponse::class.java)
+        require(body?.test?.id != null && !body.questions.isNullOrEmpty()) { "Not a valid test file" }
+        saveTest(body)
+        body.test.id
+    }
+
+    private suspend fun saveTest(body: TestDetailResponse) {
+        val info = body.test
+        val test = CachedTest(
+            testId = info.id,
+            name = info.name,
+            durationMin = info.durationMin,
+            totalMarks = info.totalMarks,
+            code = info.code,
+            downloadedAt = System.currentTimeMillis()
+        )
+        val questions = body.questions.mapIndexed { index, q ->
+            CachedQuestion(
+                id = q.id,
+                testId = info.id,
+                content = q.content,
+                type = q.type,
+                board = q.board,
+                orderIndex = index,
+                optionsJson = gson.toJson(q.options)
+            )
+        }
+        dao.saveDownloadedTest(test, questions)
     }
 
     suspend fun getTestWithQuestions(testId: String): CachedTestWithQuestions? =

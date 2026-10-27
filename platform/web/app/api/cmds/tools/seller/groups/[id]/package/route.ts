@@ -8,6 +8,7 @@ import { sessionFromReq } from "@/lib/server-session";
 import { ZipStreamWriter } from "@/lib/zip";
 import { getOrCreateGroupKey, encryptBuffer, ENCRYPTION_INFO } from "@/lib/group-crypto";
 import { loadOrgFolders, orderThenNatural, naturalCompare, type FolderNode } from "@/lib/courses";
+import { fetchTestPayload } from "@/lib/test-payload";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -66,7 +67,7 @@ async function resolveItems(db: any, ids: string[]): Promise<ResolvedItem[]> {
   for (const d of documents as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "DOCUMENT", url: d.url ?? null, ...folderMeta(d) });
   for (const d of videos as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "VIDEO", url: d.url ?? null, ...folderMeta(d) });
   for (const d of books as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "BOOK", url: d.url ?? null, ...folderMeta(d) });
-  for (const d of tests as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "TEST", url: null, folderId: null, order: null });
+  for (const d of tests as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "TEST", url: null, ...folderMeta(d) });
   for (const d of modules as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "MODULE", url: null, folderId: null, order: null });
   for (const d of questionsets as any[]) out.push({ id: String(d._id), name: d.name || d.title || "(untitled)", type: "QUESTION_SET", url: null, folderId: null, order: null });
   return out;
@@ -104,7 +105,14 @@ ${section("Documents", byType("DOCUMENT"))}
 </body></html>`;
 }
 
-async function runPackageJob(jobId: string, groupId: string, orgId: string, plain: boolean) {
+// Tests ride on the card as JSON (see lib/test-payload.ts) — one
+// `<testId>.test.json` per test, encrypted like everything else in encrypted
+// mode. `testsOnly` builds just that: a small add-on (tests + their chapter
+// tree + tests-manifest.json) to copy into a card that's already out there,
+// instead of re-copying 30+ GB of videos to add a few MB of tests. The app
+// merges tests-manifest.json into the card's own manifest.json (same group
+// only), so the existing manifest and its video file names are never touched.
+async function runPackageJob(jobId: string, groupId: string, orgId: string, userId: string, plain: boolean, testsOnly: boolean) {
   const db = await getDb();
   const jobs = db.collection(JOBS_COLL);
 
@@ -134,7 +142,9 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, plai
     // Flat, deduped set of everything that ends up in the manifest — top-level
     // items minus MODULE containers themselves (superseded by their children)
     // plus the resolved children.
-    const allItems = [...topItems.filter((i) => i.type !== "MODULE"), ...childItems];
+    const allItems = [...topItems.filter((i) => i.type !== "MODULE"), ...childItems].filter(
+      (i) => !testsOnly || i.type === "TEST"
+    );
     const seen = new Set<string>();
     const items = allItems
       .filter((i) => (seen.has(i.id) ? false : (seen.add(i.id), true)))
@@ -191,12 +201,39 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, plai
     const groupKey = plain ? null : await getOrCreateGroupKey(db, groupId);
 
     const total = items.filter(
-      (i) => (i.type === "DOCUMENT" || i.type === "VIDEO" || i.type === "BOOK") && i.url && i.url.startsWith("/uploads/")
+      (i) => i.type === "TEST" || ((i.type === "DOCUMENT" || i.type === "VIDEO" || i.type === "BOOK") && i.url && i.url.startsWith("/uploads/"))
     ).length;
     await jobs.updateOne({ _id: jobId } as any, { $set: { total, processed: 0 } });
 
     let processed = 0;
     for (const item of items) {
+      if (item.type === "TEST") {
+        try {
+          const payload = await fetchTestPayload(item.id, orgId, userId);
+          if (payload.questions.length === 0) throw new Error("This test has no questions yet.");
+          const buf = Buffer.from(JSON.stringify(payload), "utf8");
+          const fileName = `${item.id}.test.json`;
+          if (plain) {
+            await writer.addFile(`content/${fileName}`, buf);
+            manifest.push({ id: item.id, name: item.name, type: item.type, includedAsFile: true, folderId: item.folderId, fileName, originalExt: ".json" });
+          } else {
+            await writer.addFile(`content/${fileName}.enc`, encryptBuffer(buf, groupKey as Buffer));
+            manifest.push({ id: item.id, name: item.name, type: item.type, includedAsFile: true, folderId: item.folderId, encryptedFileName: `${fileName}.enc`, originalExt: ".json" });
+          }
+        } catch (e: any) {
+          manifest.push({
+            id: item.id,
+            name: item.name,
+            type: item.type,
+            includedAsFile: false,
+            folderId: item.folderId,
+            reason: "Couldn't package this test (" + (e?.message || "unknown error") + ") — the device needs an online sync for it.",
+          });
+        }
+        processed++;
+        await jobs.updateOne({ _id: jobId } as any, { $set: { processed, timeUpdated: Date.now() } });
+        continue;
+      }
       const isLocalFile =
         (item.type === "DOCUMENT" || item.type === "VIDEO" || item.type === "BOOK") &&
         item.url &&
@@ -209,7 +246,7 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, plai
           includedAsFile: false,
           folderId: item.folderId,
           reason:
-            item.type === "TEST" || item.type === "QUESTION_SET"
+            item.type === "QUESTION_SET"
               ? "Question banks aren't files — the device needs a one-time online sync to cache these."
               : item.url
               ? "External URL, not hosted here — the device needs network access to reach it."
@@ -252,12 +289,12 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, plai
       await jobs.updateOne({ _id: jobId } as any, { $set: { processed, timeUpdated: Date.now() } });
     }
 
-    if (plain && indexItems.length > 0) {
+    if (plain && !testsOnly && indexItems.length > 0) {
       await writer.addFile("index.html", Buffer.from(buildIndexHtml(group.name || "Content", indexItems), "utf8"));
     }
 
     await writer.addFile(
-      "manifest.json",
+      testsOnly ? "tests-manifest.json" : "manifest.json",
       Buffer.from(
         JSON.stringify(
           {
@@ -305,7 +342,8 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, plai
 
     const { sizeBytes } = await writer.finish();
 
-    const safeGroupName = (group.name || "distribution-group").replace(/[\\/:*?"<>|]/g, "_");
+    const safeGroupName =
+      (group.name || "distribution-group").replace(/[\\/:*?"<>|]/g, "_") + (testsOnly ? " - tests add-on" : "");
     await jobs.updateOne(
       { _id: jobId } as any,
       {
@@ -336,7 +374,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid group id" }, { status: 400 });
 
   const plain = req.nextUrl.searchParams.get("mode") !== "encrypted";
+  const testsOnly = req.nextUrl.searchParams.get("part") === "tests";
   const orgId = await resolveOrgId(req, null);
+  const session = await sessionFromReq(req);
 
   try {
     const db = await getDb();
@@ -350,6 +390,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       orgId,
       status: "queued",
       plain,
+      testsOnly,
       processed: 0,
       total: 0,
       url: null,
@@ -365,7 +406,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     // (not serverless, see DEPLOYMENT.md), so this keeps running after the
     // response is sent. A job interrupted by a container restart can simply
     // be re-triggered from the UI.
-    runPackageJob(jobId, id, orgId, plain).catch(() => {
+    runPackageJob(jobId, id, orgId, session?.id || "system", plain, testsOnly).catch(() => {
       /* runPackageJob already records failure on the job doc itself */
     });
 

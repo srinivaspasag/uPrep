@@ -216,7 +216,9 @@ class MainActivity : ComponentActivity() {
                                     )
                                 ),
                                 repository = container.sdCardRepository,
+                                offlineTests = container.offlineTestRepository,
                                 onOpenVideo = { name, file -> navController.navigate(Routes.sdPlayer(name, file.absolutePath)) },
+                                onOpenTest = { testId -> navController.navigate(Routes.nativeTest(testId)) },
                                 onOpenDocument = { name, file -> navController.navigate(Routes.sdDocument(name, file.absolutePath)) }
                             )
                         }

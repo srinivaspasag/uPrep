@@ -6,6 +6,7 @@
 // stays fixed.
 import crypto from "node:crypto";
 import fs from "node:fs";
+import { execFileSync } from "node:child_process";
 
 const BASE = process.env.SMOKE_BASE || "http://localhost:3457";
 const SECRET = process.env.SESSION_SECRET;
@@ -212,6 +213,28 @@ await group("8. SD-card activation (seller verify)", async () => {
     right.status === 200 && right.j?.groupId === ids.G2 && !!right.j?.encryptionKey, JSON.stringify(right.j));
   const legacy = await call("none", "/api/seller/verify", json("POST", { code: "smoke1", email: "buyer@smoke.local", deviceId: "dev-2", userId: "u1" }));
   check("older apps (no groupId) still verify", legacy.status === 200 && legacy.j?.groupId === ids.G2);
+});
+
+await group("9. Tests add-on package", async () => {
+  const start = await call("master", `/api/cmds/tools/seller/groups/${ids.G1}/package?mode=encrypted&part=tests`);
+  check("tests add-on job starts", start.status === 200 && !!start.j?.jobId, JSON.stringify(start.j));
+  let job = null;
+  for (let i = 0; i < 30; i++) {
+    job = (await call("master", `/api/cmds/tools/seller/groups/${ids.G1}/package/status?jobId=${start.j?.jobId}`)).j;
+    if (job?.status === "done" || job?.status === "failed") break;
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  check("job finishes", job?.status === "done", JSON.stringify(job));
+  // The packager always writes under the app's own public/uploads/packages.
+  const zipPath = `public/uploads/packages/${start.j?.jobId}.zip`;
+  const listing = fs.existsSync(zipPath) ? execFileSync("unzip", ["-Z1", zipPath]).toString().trim().split("\n") : [];
+  check("zip holds tests-manifest.json, not manifest.json", listing.includes("tests-manifest.json") && !listing.includes("manifest.json"), listing.join(","));
+  const m = listing.includes("tests-manifest.json") ? JSON.parse(execFileSync("unzip", ["-p", zipPath, "tests-manifest.json"]).toString()) : null;
+  const t = m?.items?.find((i) => i.id === ids.T1);
+  check("only the test is in it (no videos), filed under its chapter", m?.items?.length === 1 && t?.folderId === ids.PCH, JSON.stringify(m?.items));
+  check("unreachable question service → listed with a reason, not a broken package", t?.includedAsFile === false && /Couldn't package this test/.test(t?.reason || ""));
+  check("chapter tree included for the test", (m?.folders || []).some((f) => f.id === ids.PCH));
+  fs.rmSync(zipPath, { force: true });
 });
 
 console.log(`\n${pass} passed, ${failures.length} failed`);

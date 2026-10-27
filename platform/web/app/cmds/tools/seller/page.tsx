@@ -145,23 +145,24 @@ function InventoryTab({
 }) {
   // Packaging now runs as a background job (large groups — JEE/NEET-scale —
   // used to time out / OOM the request when this built the whole zip inline)
-  // — keyed by `${groupId}:${mode}` so plain/encrypted packaging for the same
-  // group can run and show progress independently.
+  // — keyed by `${groupId}:${mode}` (plus `:tests` for a tests add-on) so each
+  // packaging run for the same group shows its own progress independently.
   const [jobs, setJobs] = useState<Record<string, PackageJob>>({});
 
-  async function startPackage(groupId: string, mode: "plain" | "encrypted") {
-    const key = `${groupId}:${mode}`;
-    const res = await (await fetch(`/api/cmds/tools/seller/groups/${groupId}/package?mode=${mode}`)).json();
+  async function startPackage(groupId: string, mode: "plain" | "encrypted", testsOnly = false) {
+    const key = `${groupId}:${mode}${testsOnly ? ":tests" : ""}`;
+    const res = await (
+      await fetch(`/api/cmds/tools/seller/groups/${groupId}/package?mode=${mode}${testsOnly ? "&part=tests" : ""}`)
+    ).json();
     if (res.error || !res.jobId) {
       setJobs((j) => ({ ...j, [key]: { status: "failed", processed: 0, total: 0, url: null, fileName: null, error: res.error || "Failed to start" } }));
       return;
     }
     setJobs((j) => ({ ...j, [key]: { status: "queued", processed: 0, total: 0, url: null, fileName: null, error: null } }));
-    poll(groupId, mode, res.jobId);
+    poll(key, groupId, res.jobId);
   }
 
-  async function poll(groupId: string, mode: "plain" | "encrypted", jobId: string) {
-    const key = `${groupId}:${mode}`;
+  async function poll(key: string, groupId: string, jobId: string) {
     const res = await (
       await fetch(`/api/cmds/tools/seller/groups/${groupId}/package/status?jobId=${jobId}`)
     ).json();
@@ -181,7 +182,7 @@ function InventoryTab({
       },
     }));
     if (res.status === "queued" || res.status === "running") {
-      setTimeout(() => poll(groupId, mode, jobId), 2000);
+      setTimeout(() => poll(key, groupId, jobId), 2000);
     }
   }
 
@@ -222,7 +223,7 @@ function InventoryTab({
                     {g.createdAt ? new Date(g.createdAt).toLocaleDateString() : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex flex-wrap justify-end gap-2">
                       <PackageButton
                         job={jobs[`${g.id}:plain`]}
                         label="Download .zip"
@@ -236,6 +237,20 @@ function InventoryTab({
                         title="Encrypted — unlocked on-device by the Android app's SD-card reader after it binds to an access code"
                         tone="slate"
                         onStart={() => startPackage(g.id, "encrypted")}
+                      />
+                      <PackageButton
+                        job={jobs[`${g.id}:plain:tests`]}
+                        label="Tests add-on"
+                        title="Just this group's tests (a few MB) — copy into a plain card that's already out there"
+                        tone="emerald"
+                        onStart={() => startPackage(g.id, "plain", true)}
+                      />
+                      <PackageButton
+                        job={jobs[`${g.id}:encrypted:tests`]}
+                        label="Tests add-on (encrypted)"
+                        title="Just this group's tests, encrypted — copy into an encrypted card that's already out there"
+                        tone="slate"
+                        onStart={() => startPackage(g.id, "encrypted", true)}
                       />
                       <button
                         onClick={() => onGenerate(g)}
@@ -260,9 +275,14 @@ function InventoryTab({
         AES-256-GCM protected files, unlocked only by the Scholars Spectra Android app's SD-card
         reader after a device binds to an access code via{" "}
         <code className="rounded bg-slate-100 px-1">/api/seller/verify</code> — use this for content
-        shared across multiple institutes, each on its own access code and expiry. Question banks
-        and modules aren&apos;t files either way (see the zip&apos;s manifest.json for what needs an
-        online sync instead).
+        shared across multiple institutes, each on its own access code and expiry. Tests are
+        included (questions only, never answers) and run offline in the app; answers sync back the
+        next time the tablet is online. <strong className="text-slate-500">Tests add-on</strong>{" "}
+        packs only the tests, for a card that&apos;s already been copied: unzip it and copy its{" "}
+        <code className="rounded bg-slate-100 px-1">tests-manifest.json</code> and{" "}
+        <code className="rounded bg-slate-100 px-1">content</code> folder into the card&apos;s folder
+        (next to manifest.json) — pick the same mode as the card. Question banks aren&apos;t files
+        either way (see the zip&apos;s manifest for what needs an online sync instead).
       </p>
     </div>
   );
