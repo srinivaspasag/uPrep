@@ -98,15 +98,30 @@ class SdCardRepository(private val context: Context) {
     // Reads manifest.json from the previously-picked SAF tree. Returns null
     // if no folder is picked yet, or the folder doesn't look like a card
     // packaged by the Seller Dashboard (no manifest.json at its root).
+    //
+    // A tests add-on (Seller Dashboard → "Tests add-on") drops a
+    // tests-manifest.json next to it: its folders and items are merged in,
+    // replacing the card's own "needs an online sync" entries for the same
+    // tests. Only an add-on for this card's own group counts — anything else
+    // is ignored rather than mixed in.
     suspend fun readManifest(): SdCardManifest? = withContext(Dispatchers.IO) {
         val treeUri = savedFolderUri() ?: return@withContext null
         val root = DocumentFile.fromTreeUri(context, treeUri) ?: return@withContext null
-        val manifestFile = root.findFile("manifest.json") ?: return@withContext null
-        val text = context.contentResolver.openInputStream(manifestFile.uri)?.use { it.readBytes().decodeToString() }
-            ?: return@withContext null
-        try {
+        val manifest = readJson(root, "manifest.json") ?: return@withContext null
+        val addOn = readJson(root, "tests-manifest.json")
+        if (addOn == null || addOn.groupId != manifest.groupId) return@withContext manifest
+        val folders = (manifest.folders.orEmpty() + addOn.folders.orEmpty()).associateBy { it.id }.values.toList()
+        val items = (manifest.items.orEmpty() + addOn.items.orEmpty()).associateBy { it.id }.values.toList()
+        manifest.copy(folders = folders, items = items)
+    }
+
+    private fun readJson(root: DocumentFile, name: String): SdCardManifest? {
+        val file = root.findFile(name) ?: return null
+        val text = context.contentResolver.openInputStream(file.uri)?.use { it.readBytes().decodeToString() } ?: return null
+        return try {
             gson.fromJson(text, SdCardManifest::class.java)
         } catch (e: Exception) {
+            Log.e(TAG, "readManifest: couldn't parse $name", e)
             null
         }
     }
@@ -156,7 +171,7 @@ class SdCardRepository(private val context: Context) {
     // be pointed at either one interchangeably. Never fails silently: every
     // way it can't produce a file comes back as a reason the UI shows.
     suspend fun decryptToCache(groupId: String, item: SdCardManifestItem): OpenResult = withContext(Dispatchers.IO) {
-        val notFound = OpenResult.Failed("This video isn't on the card. Make sure the whole content folder was copied, then try again.")
+        val notFound = OpenResult.Failed("This item isn't on the card. Make sure the whole content folder was copied, then try again.")
         val treeUri = savedFolderUri() ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: no saved folder uri") }
         val root = DocumentFile.fromTreeUri(context, treeUri) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: fromTreeUri returned null for $treeUri") }
         val contentDir = root.findFile("content") ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: no content/ dir under $treeUri") }
@@ -198,7 +213,7 @@ class SdCardRepository(private val context: Context) {
         } catch (e: Exception) {
             Log.e(TAG, "decryptToCache: failed for ${item.name}", e)
             cacheFile.delete()
-            OpenResult.Failed("Couldn't open this video (${e.javaClass.simpleName}). Check the device has free storage and try again.")
+            OpenResult.Failed("Couldn't open this (${e.javaClass.simpleName}). Check the device has free storage and try again.")
         }
     }
 }

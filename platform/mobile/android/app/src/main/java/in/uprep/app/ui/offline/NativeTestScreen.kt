@@ -1,5 +1,6 @@
 package `in`.uprep.app.ui.offline
 
+import androidx.core.text.HtmlCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -80,7 +81,7 @@ fun NativeTestScreen(
                             .padding(16.dp)
                     ) {
                         Text(
-                            "Q${state.currentIndex + 1}. ${question.content}",
+                            "Q${state.currentIndex + 1}. ${displayText(question.content)}",
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(Modifier.height(16.dp))
@@ -100,7 +101,7 @@ fun NativeTestScreen(
                                 } else {
                                     Checkbox(checked = selected.contains(value), onCheckedChange = { viewModel.selectOption(question.id, value) })
                                 }
-                                Text(optionText, modifier = Modifier.padding(start = 8.dp))
+                                Text(displayText(optionText), modifier = Modifier.padding(start = 8.dp))
                             }
                         }
                     }
@@ -152,6 +153,13 @@ fun NativeTestScreen(
 // OfflineTestRepository's comment on why) — this just decodes them for
 // display; kept as a free function rather than ViewModel state since it's
 // pure derived data, not something that changes independently.
+// Question text comes from the content service as HTML-escaped text — found
+// live on JEE Chemistry: options read "6.625 &times; 10⁻&sup2;⁹ m" verbatim.
+// Decoded for display only; answers are still recorded against the raw
+// option strings the server grades against.
+private fun displayText(html: String): String =
+    HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT).toString().trim()
+
 private fun optionsOf(question: CachedQuestion): List<String> =
     runCatching {
         com.google.gson.Gson().fromJson(question.optionsJson, Array<String>::class.java).toList()

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
-import { API, CALLING_APP, CALLING_APP_ID } from "@/lib/config";
+import { fetchTestPayload } from "@/lib/test-payload";
 import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
 
@@ -22,62 +22,9 @@ export async function GET(
   const userId = session.id;
   const orgId = session.orgId;
 
-  const form = () =>
-    new URLSearchParams({
-      callingApp: CALLING_APP,
-      callingAppId: CALLING_APP_ID,
-      callingUserId: userId,
-      userId,
-      orgId,
-      id,
-    });
-
   try {
-    const [infoResp, qResp] = await Promise.all([
-      fetch(`${API.content}/tests/getTestInfo`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: form(),
-      }),
-      fetch(`${API.content}/tests/getTestQuestions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: form(),
-      }),
-    ]);
+    const { test, questions } = await fetchTestPayload(id, orgId, userId);
 
-    const info = await infoResp.json();
-    const q = await qResp.json();
-
-    if (info.errorCode || q.errorCode) {
-      return NextResponse.json(
-        { error: info.errorMessage || q.errorMessage || info.errorCode || q.errorCode },
-        { status: 400 }
-      );
-    }
-
-    const ir = info.result || {};
-    const qr = q.result || {};
-
-    // Flatten board -> questions into a clean, key-free question list.
-    const questions: any[] = [];
-    for (const b of qr.boards || []) {
-      for (const qq of b.questions || []) {
-        questions.push({
-          id: qq.id,
-          content: qq.content,
-          type: qq.type,
-          options: qq.options || [],
-          board: b.name,
-        });
-      }
-    }
-
-    // resultVisibility isn't exposed by the real content-service's
-    // getTestInfo response, so it's read straight from the same Mongo the
-    // backend itself writes to — same established pattern as the submit
-    // route reading userquestionattempts directly. Defaults to VISIBLE,
-    // matching the create route's own default.
     let resultVisibility = "VISIBLE";
     // Legacy allows exactly ONE attempt per test, ever — confirmed in the
     // real backend source (AnalyticsManager.isMultiAttemptAllowed() is
@@ -106,23 +53,14 @@ export async function GET(
     }
 
     return NextResponse.json({
-      test: {
-        id: ir.id || id,
-        name: ir.name || qr.name || "Test",
-        durationMin: (qr.totalTestTime || ir.duration || 0)
-          ? Math.round((qr.totalTestTime || ir.duration) / 60000)
-          : 0,
-        totalMarks: ir.totalMarks ?? 0,
-        code: qr.code || ir.code || null,
-        resultVisibility,
-      },
+      test: { ...test, resultVisibility },
       questions,
       alreadyAttempted,
     });
   } catch (e: any) {
     return NextResponse.json(
       { error: e?.message || "Failed to load test" },
-      { status: 500 }
+      { status: e?.legacy ? 400 : 500 }
     );
   }
 }

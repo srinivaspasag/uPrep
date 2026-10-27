@@ -43,6 +43,7 @@ import `in`.uprep.app.data.sdcard.SdCardFolder
 import `in`.uprep.app.data.sdcard.SdCardManifestItem
 import `in`.uprep.app.data.sdcard.SdCardRepository
 import `in`.uprep.app.data.sdcard.OpenResult
+import `in`.uprep.app.data.offline.OfflineTestRepository
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -51,7 +52,9 @@ import java.io.File
 fun SdCardScreen(
     viewModel: SdCardViewModel,
     repository: SdCardRepository,
+    offlineTests: OfflineTestRepository,
     onOpenVideo: (name: String, file: File) -> Unit,
+    onOpenTest: (testId: String) -> Unit,
     onOpenDocument: (name: String, file: File) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -88,12 +91,31 @@ fun SdCardScreen(
         decryptingId = item.id
         openError = null
         scope.launch {
+            // Tests: stored like a downloaded test the first time (then the
+            // card isn't needed to reopen it), and taken in the offline test
+            // screen — answers sync back once the tablet is next online.
+            val testId = item.id
+            if (item.type == "TEST" && testId != null && offlineTests.getTestWithQuestions(testId) != null) {
+                decryptingId = null
+                onOpenTest(testId)
+                return@launch
+            }
             val result = repository.decryptToCache(groupId, item)
             decryptingId = null
             when (result) {
                 is OpenResult.Ready -> {
                     val name = item.name ?: "Content"
-                    if (item.type == "VIDEO") onOpenVideo(name, result.file) else onOpenDocument(name, result.file)
+                    when (item.type) {
+                        "TEST" -> {
+                            val imported = runCatching { offlineTests.importTest(result.file.readText()) }
+                            result.file.delete()
+                            imported.onSuccess(onOpenTest).onFailure {
+                                openError = "This test file on the card couldn't be read. Copy the tests add-on again, then retry."
+                            }
+                        }
+                        "VIDEO" -> onOpenVideo(name, result.file)
+                        else -> onOpenDocument(name, result.file)
+                    }
                 }
                 is OpenResult.Failed -> openError = result.message
                 OpenResult.WrongKey -> viewModel.onWrongKey()

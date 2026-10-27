@@ -7,9 +7,10 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 // Mirrors GET /api/tests/{id}'s response shape exactly (see
-// app/api/tests/[id]/route.ts) — question content + options only, never
-// correct answers (those live in a separate `answers` Mongo collection,
-// never joined into this response). Safe to cache on-device as-is.
+// app/api/tests/[id]/route.ts and lib/test-payload.ts) — question content +
+// options only, never correct answers (those live in a separate `answers`
+// Mongo collection, never joined into this response). Safe to cache
+// on-device as-is. SD cards carry the same shape per test (content/<id>.test.json).
 data class RemoteQuestion(
     val id: String,
     val content: String,
@@ -18,15 +19,22 @@ data class RemoteQuestion(
     val board: String?
 )
 
-data class TestDetailResponse(
+// Bug found while adding tests to SD cards: this used to be flat (id, name,
+// durationMin… at the top level), but the route nests them under `test` —
+// Gson silently left every field null, so a downloaded test had no id/name.
+data class RemoteTestInfo(
     val id: String,
     val name: String,
     val durationMin: Int,
     val totalMarks: Int,
     val code: String?,
-    val resultVisibility: String?,
+    val resultVisibility: String?
+)
+
+data class TestDetailResponse(
+    val test: RemoteTestInfo,
     val questions: List<RemoteQuestion>,
-    val alreadyAttempted: Boolean
+    val alreadyAttempted: Boolean?
 )
 
 // Matches submit/route.ts's IncomingAnswer + the offline-sync fields added
