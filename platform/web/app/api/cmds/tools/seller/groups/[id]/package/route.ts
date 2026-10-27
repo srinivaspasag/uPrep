@@ -5,7 +5,7 @@ import path from "path";
 import { getDb } from "@/lib/mongo";
 import { resolveOrgId } from "@/lib/org-scope";
 import { sessionFromReq } from "@/lib/server-session";
-import { buildZip, type ZipEntry } from "@/lib/zip";
+import { ZipStreamWriter } from "@/lib/zip";
 import { getOrCreateGroupKey, encryptBuffer, ENCRYPTION_INFO } from "@/lib/group-crypto";
 import { loadOrgFolders, orderThenNatural, naturalCompare, type FolderNode } from "@/lib/courses";
 
@@ -19,8 +19,19 @@ export const runtime = "nodejs";
 // out of public/uploads (see lib/storage.ts — that's the only place files
 // live; there's no S3 in this deployment) and zips them together with a
 // manifest so staff know what's missing and why.
+//
+// Runs as a background job (packagejobs collection, mirroring the `exports`
+// collection's status-record pattern) instead of inline in the request —
+// large groups (JEE/NEET-scale: 50-70GB, 3,800+ files) blocked the event
+// loop for minutes and buffered the entire zip in memory on a 7.6GB box when
+// this was a single synchronous handler. GET now just enqueues and returns a
+// jobId immediately; the real work streams straight to disk via
+// ZipStreamWriter (see lib/zip.ts) so peak memory is "one file at a time,"
+// not "every file plus the whole archive."
 const GROUPS_COLL = "sellergroups";
+const JOBS_COLL = "packagejobs";
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const PACKAGES_DIR = path.join(UPLOAD_DIR, "packages");
 
 async function requireManager(req: NextRequest) {
   const s = await sessionFromReq(req);
@@ -93,20 +104,16 @@ ${section("Documents", byType("DOCUMENT"))}
 </body></html>`;
 }
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  if (!(await requireManager(req)))
-    return NextResponse.json({ error: "Only institute admins can package distribution groups." }, { status: 403 });
+async function runPackageJob(jobId: string, groupId: string, orgId: string, plain: boolean) {
+  const db = await getDb();
+  const jobs = db.collection(JOBS_COLL);
 
-  const id = params.id;
-  if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid group id" }, { status: 400 });
-
-  const plain = req.nextUrl.searchParams.get("mode") !== "encrypted";
-  const orgId = await resolveOrgId(req, null);
-
+  let writer: ZipStreamWriter | null = null;
   try {
-    const db = await getDb();
-    const group: any = await db.collection(GROUPS_COLL).findOne({ _id: new ObjectId(id), orgId } as any);
-    if (!group) return NextResponse.json({ error: "Group not found" }, { status: 404 });
+    await jobs.updateOne({ _id: jobId } as any, { $set: { status: "running", timeUpdated: Date.now() } });
+
+    const group: any = await db.collection(GROUPS_COLL).findOne({ _id: new ObjectId(groupId), orgId } as any);
+    if (!group) throw new Error("Group not found");
 
     const topIds: string[] = Array.isArray(group.contentIds) ? group.contentIds : [];
     const topItems = await resolveItems(db, topIds);
@@ -159,7 +166,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
     const relevantFolders = orderThenNatural(allFolders.filter((f) => neededFolderIds.has(f.id)));
 
-    const zipEntries: ZipEntry[] = [];
+    await fs.mkdir(PACKAGES_DIR, { recursive: true });
+    const outPath = path.join(PACKAGES_DIR, `${jobId}.zip`);
+    writer = new ZipStreamWriter(outPath);
+
     const manifest: {
       id: string;
       name: string;
@@ -178,8 +188,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     // every file in this group, and is only ever handed out separately by
     // /api/seller/verify to a device that's already bound to an access code.
     // Only needed for the encrypted mode; plain mode never touches this.
-    const groupKey = plain ? null : await getOrCreateGroupKey(db, id);
+    const groupKey = plain ? null : await getOrCreateGroupKey(db, groupId);
 
+    const total = items.filter(
+      (i) => (i.type === "DOCUMENT" || i.type === "VIDEO" || i.type === "BOOK") && i.url && i.url.startsWith("/uploads/")
+    ).length;
+    await jobs.updateOne({ _id: jobId } as any, { $set: { total, processed: 0 } });
+
+    let processed = 0;
     for (const item of items) {
       const isLocalFile =
         (item.type === "DOCUMENT" || item.type === "VIDEO" || item.type === "BOOK") &&
@@ -214,12 +230,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         }
         usedNames.add(safeName);
         if (plain) {
-          zipEntries.push({ name: `content/${safeName}`, data: buf });
+          await writer.addFile(`content/${safeName}`, buf);
           manifest.push({ id: item.id, name: item.name, type: item.type, includedAsFile: true, folderId: item.folderId, fileName: safeName, originalExt: ext });
           indexItems.push({ fileName: safeName, name: item.name, type: item.type });
         } else {
           const encryptedName = `${safeName}.enc`;
-          zipEntries.push({ name: `content/${encryptedName}`, data: encryptBuffer(buf, groupKey as Buffer) });
+          await writer.addFile(`content/${encryptedName}`, encryptBuffer(buf, groupKey as Buffer));
           manifest.push({ id: item.id, name: item.name, type: item.type, includedAsFile: true, folderId: item.folderId, encryptedFileName: encryptedName, originalExt: ext });
         }
       } catch {
@@ -232,18 +248,20 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           reason: "File missing on the server — could not be read.",
         });
       }
+      processed++;
+      await jobs.updateOne({ _id: jobId } as any, { $set: { processed, timeUpdated: Date.now() } });
     }
 
     if (plain && indexItems.length > 0) {
-      zipEntries.push({ name: "index.html", data: Buffer.from(buildIndexHtml(group.name || "Content", indexItems), "utf8") });
+      await writer.addFile("index.html", Buffer.from(buildIndexHtml(group.name || "Content", indexItems), "utf8"));
     }
 
-    zipEntries.push({
-      name: "manifest.json",
-      data: Buffer.from(
+    await writer.addFile(
+      "manifest.json",
+      Buffer.from(
         JSON.stringify(
           {
-            groupId: id,
+            groupId,
             groupName: group.name,
             packagedAt: Date.now(),
             packagingMode: plain ? "plain" : "encrypted",
@@ -282,20 +300,76 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           2
         ),
         "utf8"
-      ),
-    });
+      )
+    );
 
-    const zipBuffer = buildZip(zipEntries);
+    const { sizeBytes } = await writer.finish();
 
     const safeGroupName = (group.name || "distribution-group").replace(/[\\/:*?"<>|]/g, "_");
-    return new NextResponse(new Uint8Array(zipBuffer), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/zip",
-        "Content-Disposition": `attachment; filename="${safeGroupName}.zip"`,
-        "Content-Length": String(zipBuffer.length),
-      },
+    await jobs.updateOne(
+      { _id: jobId } as any,
+      {
+        $set: {
+          status: "done",
+          url: `/uploads/packages/${jobId}.zip`,
+          fileName: `${safeGroupName}.zip`,
+          sizeBytes,
+          timeUpdated: Date.now(),
+        },
+      }
+    );
+  } catch (e: any) {
+    writer?.destroy();
+    await fs.rm(path.join(PACKAGES_DIR, `${jobId}.zip`), { force: true }).catch(() => {});
+    await jobs.updateOne(
+      { _id: jobId } as any,
+      { $set: { status: "failed", error: e?.message || "Package failed", timeUpdated: Date.now() } }
+    );
+  }
+}
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  if (!(await requireManager(req)))
+    return NextResponse.json({ error: "Only institute admins can package distribution groups." }, { status: 403 });
+
+  const id = params.id;
+  if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid group id" }, { status: 400 });
+
+  const plain = req.nextUrl.searchParams.get("mode") !== "encrypted";
+  const orgId = await resolveOrgId(req, null);
+
+  try {
+    const db = await getDb();
+    const group = await db.collection(GROUPS_COLL).findOne({ _id: new ObjectId(id), orgId } as any);
+    if (!group) return NextResponse.json({ error: "Group not found" }, { status: 404 });
+
+    const jobId = new ObjectId().toString();
+    await db.collection(JOBS_COLL).insertOne({
+      _id: jobId,
+      groupId: id,
+      orgId,
+      status: "queued",
+      plain,
+      processed: 0,
+      total: 0,
+      url: null,
+      fileName: null,
+      sizeBytes: null,
+      error: null,
+      timeCreated: Date.now(),
+      timeUpdated: Date.now(),
+    } as any);
+
+    // Fire-and-forget — the route returns immediately with the jobId; the
+    // CMDS UI polls the status route below. Self-hosted `next start` process
+    // (not serverless, see DEPLOYMENT.md), so this keeps running after the
+    // response is sent. A job interrupted by a container restart can simply
+    // be re-triggered from the UI.
+    runPackageJob(jobId, id, orgId, plain).catch(() => {
+      /* runPackageJob already records failure on the job doc itself */
     });
+
+    return NextResponse.json({ jobId });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Package failed" }, { status: 500 });
   }

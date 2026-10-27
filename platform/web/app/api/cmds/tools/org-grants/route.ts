@@ -4,6 +4,7 @@ import { sessionFromReq } from "@/lib/server-session";
 import { isSuperAdmin } from "@/lib/roles";
 import { loadOrgFolders, topLevelCourses } from "@/lib/courses";
 import { GRANTS_COLL, getGrantedCourseIds, resolveProviderPrograms } from "@/lib/grants";
+import { planCourseLinks, applyCourseLinkPlans } from "@/lib/course-links";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -112,6 +113,12 @@ export async function POST(req: NextRequest) {
           lastUpdated: now,
         }))
       );
+      // Give the subscriber ONE linked "Chemistry XI" of its own for each
+      // granted subject (reusing a same-named folder it already made, if any)
+      // instead of a separate read-only "Shared" copy — see lib/course-links.ts.
+      // No merging of duplicates here; that's the reviewed Link Shared
+      // Subjects tool's job.
+      await applyCourseLinkPlans(db, await planCourseLinks(db, { subscriberOrgId, courseIds, merge: false }));
     }
     return NextResponse.json({ ok: true, grantedCourseIds: courseIds });
   } catch (e: any) {

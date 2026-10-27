@@ -47,8 +47,22 @@ The live deployment details (host, containers, source↔host mapping) are in
 
 ### A) Redeploy the web app (most common — what's live)
 
-The `ui` container builds itself from mounted source on start, so you ship
-source and recreate it (no image build):
+**Use the script** — it refuses to deploy unless the smoke suite passes:
+
+```bash
+bash platform/deploy/deploy-web.sh        # shows what ships, runs smoke, asks, deploys, checks live
+```
+
+The smoke suite (`platform/web/smoke/`) builds the app, runs it against a
+throwaway Docker Mongo seeded with fake institutes/students, and checks the
+basics every change must not break: logins and access control, folder/book
+lifecycle, program/section publishing, linked shared subjects, tests, and
+share/revoke. It never touches production. Run it alone with
+`cd platform/web && bash smoke/run.sh`. **When you fix something that broke
+live, add a check for it in `smoke/checks.mjs`.**
+
+Manual steps (what the script does). The `ui` container builds itself from
+mounted source on start, so you ship source and recreate it (no image build):
 
 ```bash
 # 1. optional local sanity check

@@ -1,6 +1,6 @@
 import type { Db } from "mongodb";
 import { ObjectId } from "mongodb";
-import { loadOrgFolders, topLevelCourses } from "@/lib/courses";
+import { loadOrgFolders, loadOrgCourseLinks, topLevelCourses } from "@/lib/courses";
 
 // Cross-org course sharing — the new-stack analogue of the legacy
 // `granteeorgprograms` collection (GranteeOrgProgram: provider → subscriber →
@@ -60,6 +60,10 @@ export type CatalogCourse = {
   name: string;
   ownerOrgId: string | null;
   granted: boolean;
+  // Own subject that live-links a granted provider subject (see
+  // lib/courses.ts "Linked subjects"): the provider subject id + its org.
+  linkedCourseId?: string | null;
+  sourceOrgId?: string | null;
 };
 
 // The full course catalog available to an org: its OWN top-level courses plus
@@ -69,15 +73,23 @@ export async function resolveCourseCatalog(
   db: Db,
   orgId: string
 ): Promise<CatalogCourse[]> {
-  const ownFolders = await loadOrgFolders(db, orgId);
-  const own: CatalogCourse[] = topLevelCourses(ownFolders).map((f) => ({
-    id: f.id,
-    name: f.name,
-    ownerOrgId: f.ownerOrgId,
-    granted: false,
-  }));
+  const [ownFolders, links, grantedIds] = await Promise.all([
+    loadOrgFolders(db, orgId),
+    loadOrgCourseLinks(db, orgId),
+    getGrantedCourseIds(db, orgId),
+  ]);
+  const grantedSet = new Set(grantedIds);
+  const own: CatalogCourse[] = topLevelCourses(ownFolders).map((f) => {
+    const link = links.get(f.id);
+    return {
+      id: f.id,
+      name: f.name,
+      ownerOrgId: f.ownerOrgId,
+      granted: false,
+      linkedCourseId: link && grantedSet.has(link) ? link : null,
+    };
+  });
 
-  const grantedIds = await getGrantedCourseIds(db, orgId);
   let granted: CatalogCourse[] = [];
   if (grantedIds.length) {
     const objIds = grantedIds.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
@@ -93,15 +105,24 @@ export async function resolveCourseCatalog(
     }));
   }
 
+  // A granted subject this org already has a linked subject for is
+  // represented by that one — listing it again is exactly the duplicate
+  // "Chemistry XI" + "Chemistry XI (Shared)" this replaces.
+  const ownerOfGranted = new Map(granted.map((c) => [c.id, c.ownerOrgId]));
+  for (const c of own) if (c.linkedCourseId) c.sourceOrgId = ownerOfGranted.get(c.linkedCourseId) || null;
+  const linkedIds = new Set(own.map((c) => c.linkedCourseId).filter(Boolean));
+
   // Own courses first, then granted (dedupe by id in case of overlap).
   const seen = new Set(own.map((c) => c.id));
-  return [...own, ...granted.filter((c) => !seen.has(c.id))];
+  return [...own, ...granted.filter((c) => !seen.has(c.id) && !linkedIds.has(c.id))];
 }
 
 // Owner orgs whose folder trees back an org's catalog — the set to load folders
 // for when resolving subtrees (own org + every provider org that granted a course).
 export function catalogOwnerOrgs(orgId: string, catalog: CatalogCourse[]): string[] {
-  return Array.from(new Set([orgId, ...catalog.map((c) => c.ownerOrgId || orgId)]));
+  return Array.from(
+    new Set([orgId, ...catalog.flatMap((c) => [c.ownerOrgId || orgId, c.sourceOrgId || orgId])])
+  );
 }
 
 export type ProviderProgram = { id: string; name: string; courseIds: string[] };

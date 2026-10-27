@@ -14,6 +14,12 @@ const LEARN_APP = "learn-app";
 
 type IncomingAnswer = { qId: string; answerGiven: string[]; timeTaken?: number };
 
+// Collection for offline-attempt metadata only — see OFFLINE_ATTEMPT_META
+// below. Purely descriptive; the real attempt record lives in the legacy
+// backend's own storage via the startAttempt/recordAttempt/endAttempt calls
+// in this route, same as every other submission. Never read by grading.
+const OFFLINE_META_COLL = "offlineattemptmeta";
+
 // Submits a test attempt to the REAL backend grading pipeline:
 //   startAttempt -> recordAttempt (per question) -> endAttempt
 // The backend grades each answer against the stored answer key. We never send
@@ -34,6 +40,14 @@ export async function POST(
   const orgId = session.orgId;
   const body = await req.json().catch(() => ({}));
   const answers: IncomingAnswer[] = Array.isArray(body.answers) ? body.answers : [];
+  // Set by the Android app's offline-test flow when this attempt was taken
+  // with no connectivity and is only now being synced — the student's device
+  // clock is trusted for timing rather than blocking offline submission
+  // outright (see offline-sync plan). Both fields are client epoch millis;
+  // absent/non-numeric is treated as "not offline."
+  const offline = body.offline === true;
+  const deviceStartedAt = typeof body.deviceStartedAt === "number" ? body.deviceStartedAt : null;
+  const deviceEndedAt = typeof body.deviceEndedAt === "number" ? body.deviceEndedAt : null;
 
   const base = () => ({
     callingApp: LEARN_APP,
@@ -130,6 +144,26 @@ export async function POST(
     }
 
     await post("/analytics/endAttempt", { attemptId });
+
+    // Record that this attempt was taken offline, if so — write-only, best
+    // effort, never allowed to affect grading or the response below.
+    if (offline) {
+      try {
+        const db = await getDb();
+        await db.collection(OFFLINE_META_COLL).insertOne({
+          attemptId,
+          userId,
+          orgId,
+          entityId,
+          offline: true,
+          deviceStartedAt,
+          deviceEndedAt,
+          serverReceivedAt: Date.now(),
+        } as any);
+      } catch {
+        // Non-fatal — the real attempt is already recorded by endAttempt above.
+      }
+    }
 
     // Read the stored, backend-computed verdicts for this attempt. This avoids
     // the legacy results HTTP endpoint (which has a Play 2.1 accessor issue on

@@ -13,6 +13,10 @@ export type FolderNode = {
   parentId: string | null;
   ownerOrgId: string | null;
   order: number | null;
+  // Set on a subscriber org's own top-level subject that is a live link to a
+  // provider org's subject (see "Linked subjects" below) — the provider
+  // folder id it mirrors. Only honoured while the grant is still active.
+  linkedCourseId?: string | null;
 };
 
 function mapFolder(f: any): FolderNode {
@@ -22,7 +26,51 @@ function mapFolder(f: any): FolderNode {
     parentId: f.parentId || null,
     ownerOrgId: f?.contentSrc?.id || null,
     order: typeof f.order === "number" ? f.order : null,
+    linkedCourseId: f.linkedCourseId ? String(f.linkedCourseId) : null,
   };
+}
+
+// Linked subjects. Sharing a provider subject (e.g. master "Chemistry XI")
+// with another org creates ONE "Chemistry XI" folder in that org carrying
+// `linkedCourseId` = the provider folder — instead of the subscriber seeing a
+// separate read-only "Shared" copy next to its own same-named, empty
+// folders (found live: Scholar Spectra had 4x "Chemistry XI" + 1 Shared, and
+// students saw the empty local ones). The link is live: in any folder set
+// that contains both ends, the provider subject's direct children are
+// re-parented onto the subscriber's folder, so chapter listing, courseRootOf
+// and subtree walks all treat the provider chapters as the subscriber
+// subject's own (read-only — writes are still ownership-checked per doc).
+// Content filed directly in the provider subject root is picked up by
+// collectSubtreeIds, which includes `linkedCourseId` alongside the link.
+//
+// A link only counts while an ACTIVE grant (subscriber, provider subject)
+// exists, so revoking the grant cuts off access even though the folder
+// itself (and anything the subscriber filed in it) stays.
+export async function applyCourseLinks(db: Db, folders: FolderNode[]): Promise<FolderNode[]> {
+  const linked = folders.filter((f) => f.linkedCourseId && !f.parentId);
+  if (linked.length === 0) return folders;
+  const grants = await db
+    .collection("orgcoursegrants")
+    .find({
+      recordState: "ACTIVE",
+      courseId: { $in: linked.map((f) => f.linkedCourseId!) },
+      subscriberOrgId: { $in: Array.from(new Set(linked.map((f) => f.ownerOrgId).filter(Boolean))) },
+    } as any)
+    .project({ courseId: 1, subscriberOrgId: 1 })
+    .toArray();
+  const active = new Set((grants as any[]).map((g) => `${g.subscriberOrgId}:${g.courseId}`));
+  const present = new Set(folders.map((f) => f.id));
+  const aliasOf = new Map<string, string>(); // provider subject id -> subscriber folder id
+  for (const f of linked) {
+    if (!present.has(f.linkedCourseId!) || aliasOf.has(f.linkedCourseId!)) continue;
+    if (active.has(`${f.ownerOrgId}:${f.linkedCourseId}`)) aliasOf.set(f.linkedCourseId!, f.id);
+  }
+  return folders.map((f) => {
+    if (f.linkedCourseId && !f.parentId && aliasOf.get(f.linkedCourseId) !== f.id)
+      return { ...f, linkedCourseId: null }; // grant gone: plain local folder again
+    if (f.parentId && aliasOf.has(f.parentId)) return { ...f, parentId: aliasOf.get(f.parentId)! };
+    return f;
+  });
 }
 
 // Plain alphabetical sort breaks on real chapter/session names — e.g.
@@ -71,7 +119,22 @@ export async function loadOrgFolders(
     .collection("folders")
     .find({ "contentSrc.id": orgId, recordState: "ACTIVE" } as any)
     .toArray();
-  return (docs as any[]).map(mapFolder);
+  // Provider folders aren't in this set, so every link resolves to "not
+  // present" and is cleared — a single-org walk never reaches provider content.
+  return applyCourseLinks(db, (docs as any[]).map(mapFolder));
+}
+
+// Raw `linkedCourseId` of each of an org's top-level folders, unvalidated —
+// for the catalog, which checks it against the org's active grants itself.
+export async function loadOrgCourseLinks(db: Db, orgId: string): Promise<Map<string, string>> {
+  const docs = await db
+    .collection("folders")
+    .find({ "contentSrc.id": orgId, recordState: "ACTIVE", linkedCourseId: { $exists: true, $nin: [null, ""] } } as any)
+    .project({ linkedCourseId: 1, parentId: 1 })
+    .toArray();
+  const out = new Map<string, string>();
+  for (const d of docs as any[]) if (!d.parentId) out.set(String(d._id), String(d.linkedCourseId));
+  return out;
 }
 
 // Loads ACTIVE folders across several owner orgs at once — needed when a course
@@ -87,7 +150,7 @@ export async function loadFoldersForOrgs(
     .collection("folders")
     .find({ "contentSrc.id": { $in: uniq }, recordState: "ACTIVE" } as any)
     .toArray();
-  return (docs as any[]).map(mapFolder);
+  return applyCourseLinks(db, (docs as any[]).map(mapFolder));
 }
 
 // Top-level folders = the course catalog.
@@ -100,6 +163,7 @@ export function collectSubtreeIds(
   folders: FolderNode[],
   rootIds: string[]
 ): Set<string> {
+  const byId = new Map(folders.map((f) => [f.id, f]));
   const childrenOf = new Map<string, FolderNode[]>();
   for (const f of folders) {
     if (!f.parentId) continue;
@@ -112,6 +176,10 @@ export function collectSubtreeIds(
     const id = stack.pop()!;
     if (out.has(id)) continue;
     out.add(id);
+    // A linked subject also owns whatever is filed directly in the provider
+    // subject root (its child folders are already re-parented onto it).
+    const linkedTo = byId.get(id)?.linkedCourseId;
+    if (linkedTo) out.add(linkedTo);
     for (const c of childrenOf.get(id) || []) stack.push(c.id);
   }
   return out;

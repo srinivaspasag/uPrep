@@ -36,6 +36,10 @@ import `in`.uprep.app.ui.doubts.DoubtsListScreen
 import `in`.uprep.app.ui.doubts.DoubtsListViewModel
 import `in`.uprep.app.ui.login.LoginScreen
 import `in`.uprep.app.ui.login.LoginViewModel
+import `in`.uprep.app.ui.offline.NativeTestScreen
+import `in`.uprep.app.ui.offline.NativeTestViewModel
+import `in`.uprep.app.ui.offline.OfflineTestsScreen
+import `in`.uprep.app.ui.offline.OfflineTestsViewModel
 import `in`.uprep.app.ui.player.DocumentViewerScreen
 import `in`.uprep.app.ui.player.VideoPlayerScreen
 import `in`.uprep.app.ui.sdcard.SdCardDocumentScreen
@@ -73,11 +77,14 @@ private object Routes {
     const val DOUBT_DETAIL = "doubts/{id}"
     const val ANALYTICS = "analytics"
     const val ACTIVITY = "activity"
+    const val OFFLINE_TESTS = "offlineTests"
+    const val NATIVE_TEST = "nativeTest/{testId}"
 
     fun doubtDetail(id: String) = "doubts/$id"
     fun folder(id: String) = "folder/$id"
     fun sdPlayer(name: String, path: String) = "sdplayer?name=${b64encode(name)}&path=${b64encode(path)}"
     fun sdDocument(name: String, path: String) = "sddocument?name=${b64encode(name)}&path=${b64encode(path)}"
+    fun nativeTest(testId: String) = "nativeTest/${b64encode(testId)}"
     fun player(contentId: String, name: String, url: String?, embedUrl: String?, provider: String?) =
         "player?contentId=${Uri.encode(contentId)}&name=${Uri.encode(name)}" +
             "&url=${b64encode(url ?: "")}&embedUrl=${b64encode(embedUrl ?: "")}" +
@@ -152,6 +159,7 @@ class MainActivity : ComponentActivity() {
                                 ),
                                 onOpenCourse = { course -> navController.navigate(Routes.folder(course.id)) },
                                 onOpenSdCard = { navController.navigate(Routes.SD_CARD) },
+                                onOpenOfflineTests = { navController.navigate(Routes.OFFLINE_TESTS) },
                                 onOpenDoubts = { navController.navigate(Routes.DOUBTS) },
                                 onOpenAnalytics = { navController.navigate(Routes.ANALYTICS) },
                                 onOpenActivity = { navController.navigate(Routes.ACTIVITY) },
@@ -265,7 +273,8 @@ class MainActivity : ComponentActivity() {
                                     val url = item.url?.let(container::absoluteUrl) ?: return@FolderBrowseScreen
                                     navController.navigate(Routes.document(item.id, item.name, url))
                                 },
-                                onOpenTest = { item -> navController.navigate(Routes.webview("/test/${item.id}")) }
+                                onOpenTest = { item -> navController.navigate(Routes.webview("/test/${item.id}")) },
+                                onDownloadTest = { item -> scope.launch { container.offlineTestRepository.downloadTest(item.id) } }
                             )
                         }
 
@@ -303,6 +312,31 @@ class MainActivity : ComponentActivity() {
                                 name = args?.getString("name").orEmpty(),
                                 remoteUrl = args?.getString("url")?.let(::b64decode).orEmpty()
                             )
+                        }
+
+                        composable(Routes.OFFLINE_TESTS) {
+                            OfflineTestsScreen(
+                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                    factory = OfflineTestsViewModel.Factory(container.offlineTestRepository)
+                                ),
+                                onOpenTest = { test -> navController.navigate(Routes.nativeTest(test.testId)) }
+                            )
+                        }
+
+                        composable(
+                            route = Routes.NATIVE_TEST,
+                            arguments = listOf(navArgument("testId") { type = NavType.StringType; defaultValue = "" })
+                        ) { backStackEntry ->
+                            val testId = backStackEntry.arguments?.getString("testId")?.let(::b64decode).orEmpty()
+                            if (testId.isNotEmpty()) {
+                                NativeTestScreen(
+                                    viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                        key = testId,
+                                        factory = NativeTestViewModel.Factory(testId, container.offlineTestRepository)
+                                    ),
+                                    onFinished = { navController.popBackStack(Routes.OFFLINE_TESTS, inclusive = false) }
+                                )
+                            }
                         }
 
                         composable(

@@ -227,8 +227,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid question id" }, { status: 400 });
     }
 
+    // Same owner set the picker (GET above) offers published questions from:
+    // this org plus every org that shared a subject with it. Validating
+    // against this org alone rejected every shared question the picker had
+    // just offered ("not published/available").
+    const ownerOrgIds = catalogOwnerOrgs(orgId, await resolveCourseCatalog(db, orgId));
     const found: any[] = await libQ
-      .find({ _id: { $in: oids }, "contentSrc.id": orgId, recordState: "ACTIVE" })
+      .find({ _id: { $in: oids }, "contentSrc.id": { $in: ownerOrgIds }, recordState: "ACTIVE" })
       .toArray();
     const byId = new Map(found.map((q) => [q._id.toString(), q]));
 
@@ -250,6 +255,19 @@ export async function POST(req: NextRequest) {
         { error: `These questions have no answer key: ${noKey.join(", ")}` },
         { status: 400 }
       );
+    }
+
+    // Only file the test into a folder this org owns — a provider chapter
+    // shown inside a linked subject is browse-only (same rule as uploads).
+    if (body.folderId) {
+      const folder: any = ObjectId.isValid(body.folderId)
+        ? await db.collection("folders").findOne({ _id: new ObjectId(body.folderId), recordState: "ACTIVE" } as any)
+        : null;
+      if (!folder || folder?.contentSrc?.id !== orgId)
+        return NextResponse.json(
+          { error: "You can only add tests to your own folders — shared chapters are read-only." },
+          { status: 403 }
+        );
     }
 
     const n = questionIds.length;

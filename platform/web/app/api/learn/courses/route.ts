@@ -130,11 +130,15 @@ export async function GET(req: NextRequest) {
         })
       );
 
+      // A linked subject also shows what's filed directly in the provider
+      // subject it mirrors (see lib/courses.ts "Linked subjects").
+      const linkedTo = folders.find((f) => f.id === folderId)?.linkedCourseId;
+      const folderIds = linkedTo ? [folderId, linkedTo] : [folderId];
       const contentItems: any[] = [];
       for (const coll of ["videos", "documents", "books", "tests"]) {
         const docs = await db
           .collection(coll)
-          .find({ folderId, recordState: "ACTIVE", ...visClause } as any)
+          .find({ folderId: { $in: folderIds }, recordState: "ACTIVE", ...visClause } as any)
           .toArray();
         // Same sequencing bug as folders (e.g. "Part 10" sorting before
         // "Part 2") — explicit `order` wins, otherwise natural sort by name.

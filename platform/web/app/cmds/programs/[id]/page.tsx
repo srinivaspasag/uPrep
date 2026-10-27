@@ -140,7 +140,10 @@ export default function ProgramDetailPage() {
         {/* Main */}
         <main className="flex-1 px-8 py-6">
           {tab === "content" && (
-            <ContentTab query={query} programId={id} centers={centers} sections={sections} />
+            // Program-scoped centers, not org-wide: otherwise the center picker
+            // defaults to the org's first center (e.g. "Online") even when this
+            // program's sections all live under another one, and shows "No sections".
+            <ContentTab query={query} programId={id} centers={programCenters} sections={programSections} />
           )}
           {tab === "members" && <PeopleTab profile="TEACHER" query={query} label="teachers" programId={id} />}
           {tab === "students" && <PeopleTab profile="STUDENT" query={query} label="students" programId={id} />}

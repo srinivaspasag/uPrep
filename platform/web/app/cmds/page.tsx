@@ -26,6 +26,7 @@ type Resource = {
   visibleUserIds?: string[];
   hiddenUserIds?: string[];
   granted?: boolean;
+  linked?: boolean;
 };
 
 type Crumb = { id: string; name: string };
@@ -542,6 +543,14 @@ export default function CmdsResourcesPage() {
                               className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-600"
                             >
                               Shared
+                            </span>
+                          )}
+                          {r.linked && (
+                            <span
+                              title="Linked to the master org's subject — its chapters and content update automatically; anything you add here stays yours"
+                              className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-medium text-sky-600"
+                            >
+                              Linked
                             </span>
                           )}
                         </div>

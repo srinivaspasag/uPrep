@@ -33,6 +33,7 @@ const TOOL_LINKS: ToolLink[] = [
   { label: "External Signup", href: "/cmds/tools/signup" },
   { label: "Exports / SD Cards", href: "/cmds/tools/exports" },
   { label: "Fix Chapter Numbering", href: "/cmds/tools/fix-numbering" },
+  { label: "Link Shared Subjects", href: "/cmds/tools/course-links" },
 ];
 
 // Exact replica of the legacy CMDS chrome: black title bar + secondary nav
@@ -263,7 +264,7 @@ export default function CmdsShell({
 // subject taxonomy is the Board Tree (see the Board Tree work) — its root
 // nodes are exactly the org's real subjects (Physics XI, Chemistry XI,
 // ...), so pull the list from there instead.
-type RailFolder = { id: string; name: string; granted?: boolean };
+type RailFolder = { id: string; name: string; granted?: boolean; linked?: boolean };
 
 // Was driven by the Board Tree (Subject -> Chapter -> Concept — the
 // taxonomy used to TAG questions), which is a completely separate thing
@@ -297,7 +298,12 @@ export function CmdsSubjectsRail({
         const names = ["EBook", "Miscellaneous"]; // utility folders, not real subjects
         const list: RailFolder[] = (d.resources || [])
           .filter((r: { type: string; title: string }) => r.type === "FOLDER" && !names.includes(r.title))
-          .map((r: { id: string; title: string; granted?: boolean }) => ({ id: r.id, name: r.title, granted: !!r.granted }))
+          .map((r: { id: string; title: string; granted?: boolean; linked?: boolean }) => ({
+            id: r.id,
+            name: r.title,
+            granted: !!r.granted,
+            linked: !!r.linked,
+          }))
           .sort((a: RailFolder, b: RailFolder) => a.name.localeCompare(b.name));
         setSubjects(list);
       })
@@ -355,7 +361,13 @@ export function CmdsSubjectsRail({
               </button>
               <button
                 onClick={() => onOpenFolder([s])}
-                title={s.granted ? `${s.name} — shared by another org, read-only` : s.name}
+                title={
+                  s.granted
+                    ? `${s.name} — shared by another org, read-only`
+                    : s.linked
+                    ? `${s.name} — linked to the master org's subject; its chapters update automatically`
+                    : s.name
+                }
                 className={`flex-1 truncate rounded px-1 py-1 text-left ${
                   currentFolderId === s.id ? "bg-emerald-50 font-medium text-emerald-700" : "text-slate-600 hover:bg-slate-50"
                 }`}
@@ -364,6 +376,11 @@ export function CmdsSubjectsRail({
                 {s.granted && (
                   <span className="ml-1.5 rounded-full bg-indigo-50 px-1.5 py-0.5 text-[10px] font-medium text-indigo-600">
                     Shared
+                  </span>
+                )}
+                {s.linked && (
+                  <span className="ml-1.5 rounded-full bg-sky-50 px-1.5 py-0.5 text-[10px] font-medium text-sky-600">
+                    Linked
                   </span>
                 )}
               </button>

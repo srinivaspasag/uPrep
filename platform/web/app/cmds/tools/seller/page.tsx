@@ -125,6 +125,15 @@ export default function SellerDashboardPage() {
   );
 }
 
+type PackageJob = {
+  status: "queued" | "running" | "done" | "failed";
+  processed: number;
+  total: number;
+  url: string | null;
+  fileName: string | null;
+  error: string | null;
+};
+
 function InventoryTab({
   groups,
   onNewGroup,
@@ -134,6 +143,48 @@ function InventoryTab({
   onNewGroup: () => void;
   onGenerate: (g: Group) => void;
 }) {
+  // Packaging now runs as a background job (large groups — JEE/NEET-scale —
+  // used to time out / OOM the request when this built the whole zip inline)
+  // — keyed by `${groupId}:${mode}` so plain/encrypted packaging for the same
+  // group can run and show progress independently.
+  const [jobs, setJobs] = useState<Record<string, PackageJob>>({});
+
+  async function startPackage(groupId: string, mode: "plain" | "encrypted") {
+    const key = `${groupId}:${mode}`;
+    const res = await (await fetch(`/api/cmds/tools/seller/groups/${groupId}/package?mode=${mode}`)).json();
+    if (res.error || !res.jobId) {
+      setJobs((j) => ({ ...j, [key]: { status: "failed", processed: 0, total: 0, url: null, fileName: null, error: res.error || "Failed to start" } }));
+      return;
+    }
+    setJobs((j) => ({ ...j, [key]: { status: "queued", processed: 0, total: 0, url: null, fileName: null, error: null } }));
+    poll(groupId, mode, res.jobId);
+  }
+
+  async function poll(groupId: string, mode: "plain" | "encrypted", jobId: string) {
+    const key = `${groupId}:${mode}`;
+    const res = await (
+      await fetch(`/api/cmds/tools/seller/groups/${groupId}/package/status?jobId=${jobId}`)
+    ).json();
+    if (res.error) {
+      setJobs((j) => ({ ...j, [key]: { status: "failed", processed: 0, total: 0, url: null, fileName: null, error: res.error } }));
+      return;
+    }
+    setJobs((j) => ({
+      ...j,
+      [key]: {
+        status: res.status,
+        processed: res.processed,
+        total: res.total,
+        url: res.url,
+        fileName: res.fileName,
+        error: res.error,
+      },
+    }));
+    if (res.status === "queued" || res.status === "running") {
+      setTimeout(() => poll(groupId, mode, jobId), 2000);
+    }
+  }
+
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between">
@@ -172,20 +223,20 @@ function InventoryTab({
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
-                      <a
-                        href={`/api/cmds/tools/seller/groups/${g.id}/package?mode=plain`}
+                      <PackageButton
+                        job={jobs[`${g.id}:plain`]}
+                        label="Download .zip"
                         title="Ready to copy straight onto an SD card — opens on any tablet, no app needed"
-                        className="rounded border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
-                      >
-                        Download .zip
-                      </a>
-                      <a
-                        href={`/api/cmds/tools/seller/groups/${g.id}/package?mode=encrypted`}
-                        title="Encrypted — no app exists yet that can open these files on a device"
-                        className="rounded border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-400 hover:bg-slate-100"
-                      >
-                        Download .zip (encrypted)
-                      </a>
+                        tone="emerald"
+                        onStart={() => startPackage(g.id, "plain")}
+                      />
+                      <PackageButton
+                        job={jobs[`${g.id}:encrypted`]}
+                        label="Download .zip (encrypted)"
+                        title="Encrypted — unlocked on-device by the Android app's SD-card reader after it binds to an access code"
+                        tone="slate"
+                        onStart={() => startPackage(g.id, "encrypted")}
+                      />
                       <button
                         onClick={() => onGenerate(g)}
                         className="rounded border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100"
@@ -206,13 +257,60 @@ function InventoryTab({
         SD card&apos;s root folder, insert the card into the tablet, and open the files with its
         Files app (or open index.html in its browser). No app install needed, works fully offline.
         <strong className="ml-1 text-slate-500">Download .zip (encrypted)</strong> produces
-        AES-256-GCM protected files for a future companion app that can call{" "}
-        <code className="rounded bg-slate-100 px-1">/api/seller/verify</code> to unlock them — no
-        such app exists yet, so those files won&apos;t open on any device today. Question banks and
-        modules aren&apos;t files either way (see the zip&apos;s manifest.json for what needs an
+        AES-256-GCM protected files, unlocked only by the Scholars Spectra Android app's SD-card
+        reader after a device binds to an access code via{" "}
+        <code className="rounded bg-slate-100 px-1">/api/seller/verify</code> — use this for content
+        shared across multiple institutes, each on its own access code and expiry. Question banks
+        and modules aren&apos;t files either way (see the zip&apos;s manifest.json for what needs an
         online sync instead).
       </p>
     </div>
+  );
+}
+
+function PackageButton({
+  job,
+  label,
+  title,
+  tone,
+  onStart,
+}: {
+  job: PackageJob | undefined;
+  label: string;
+  title: string;
+  tone: "emerald" | "slate";
+  onStart: () => void;
+}) {
+  const toneClass =
+    tone === "emerald"
+      ? "border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+      : "border-slate-200 text-slate-400 hover:bg-slate-100";
+
+  if (!job || job.status === "failed") {
+    return (
+      <button onClick={onStart} title={job?.error ? `Previous attempt failed: ${job.error}` : title} className={`rounded border px-2.5 py-1 text-xs font-medium ${toneClass}`}>
+        {job?.status === "failed" ? "Retry — " : ""}
+        {label}
+      </button>
+    );
+  }
+  if (job.status === "queued" || job.status === "running") {
+    const pct = job.total > 0 ? Math.round((job.processed / job.total) * 100) : 0;
+    return (
+      <span className="rounded border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-500" title={title}>
+        Packaging… {job.total > 0 ? `${job.processed}/${job.total} (${pct}%)` : "starting"}
+      </span>
+    );
+  }
+  // done
+  return (
+    <a
+      href={job.url || "#"}
+      title={title}
+      className={`rounded border px-2.5 py-1 text-xs font-medium ${toneClass}`}
+    >
+      Download {job.fileName ? job.fileName : ""}
+    </a>
   );
 }
 

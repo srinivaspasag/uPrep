@@ -42,8 +42,22 @@ export async function POST(req: NextRequest) {
   const contentType = kind === "video" ? "VIDEO" : kind === "book" ? "BOOK" : "DOCUMENT";
 
   try {
-    const stored = await saveUpload(file);
     const db = await getDb();
+    // Only file into a folder this org owns. Inside a linked subject the
+    // provider's chapters are listed alongside the org's own (browse-only) —
+    // a book uploaded into one would show up for the provider and every
+    // other org that chapter is shared with.
+    if (folderId) {
+      const folder: any = ObjectId.isValid(folderId)
+        ? await db.collection("folders").findOne({ _id: new ObjectId(folderId), recordState: "ACTIVE" } as any)
+        : null;
+      if (!folder || folder?.contentSrc?.id !== orgId)
+        return NextResponse.json(
+          { error: "You can only add content to your own folders — shared chapters are read-only." },
+          { status: 403 }
+        );
+    }
+    const stored = await saveUpload(file);
     const now = Date.now();
     const _id = new ObjectId();
 

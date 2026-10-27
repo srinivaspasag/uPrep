@@ -31,6 +31,7 @@ fun CourseListScreen(
     viewModel: CoursesViewModel = viewModel(),
     onOpenCourse: (CourseSummary) -> Unit,
     onOpenSdCard: () -> Unit,
+    onOpenOfflineTests: () -> Unit,
     onOpenDoubts: () -> Unit,
     onOpenAnalytics: () -> Unit,
     onOpenActivity: () -> Unit,
@@ -46,6 +47,7 @@ fun CourseListScreen(
                 IconButton(onClick = onOpenAnalytics) { Text("📊") }
                 IconButton(onClick = onOpenActivity) { Text("🕒") }
                 IconButton(onClick = onOpenSdCard) { Text("💾") }
+                IconButton(onClick = onOpenOfflineTests) { Text("📝") }
                 IconButton(onClick = onLogout) { Text("⎋") }
             }
         )

@@ -7,7 +7,9 @@ import crypto from "crypto";
 // This is intentionally behind a small interface so it can be swapped for S3
 // (signed uploads + CloudFront) when deploying to AWS without touching callers.
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+// UPLOAD_DIR override is for the smoke suite (platform/web/smoke), so test
+// uploads land in a throwaway dir instead of the real public/uploads.
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), "public", "uploads");
 
 export type StoredFile = {
   url: string; // public URL path, e.g. /uploads/ab12.mp4

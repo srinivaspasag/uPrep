@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -35,7 +36,8 @@ fun FolderBrowseScreen(
     onOpenSubfolder: (String) -> Unit,
     onOpenVideo: (ContentItem) -> Unit,
     onOpenDocument: (ContentItem) -> Unit,
-    onOpenTest: (ContentItem) -> Unit
+    onOpenTest: (ContentItem) -> Unit,
+    onDownloadTest: (ContentItem) -> Unit
 ) {
     val viewModel: FolderBrowseViewModel = viewModel(
         key = folderId,
@@ -95,6 +97,14 @@ fun FolderBrowseScreen(
                                 style = MaterialTheme.typography.titleSmall,
                                 modifier = Modifier.weight(1f)
                             )
+                            // Offline tests are explicitly pre-downloaded while
+                            // online (same mental model as picking an SD-card
+                            // folder) rather than auto-cached — this is the one
+                            // entry point for that, kept inline instead of a
+                            // separate picker screen.
+                            if (item.type == "TEST") {
+                                IconButton(onClick = { onDownloadTest(item) }) { Text("⬇") }
+                            }
                         }
                     }
                 }

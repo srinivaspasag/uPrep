@@ -30,6 +30,7 @@ type ResourceRow = {
   visibleUserIds?: string[]; // per-student override: force-visible even if program/section rules wouldn't show it
   hiddenUserIds?: string[]; // per-student override: force-hidden even if otherwise visible
   granted?: boolean; // true = a top-level course another org granted to this one, read-only here
+  linked?: boolean; // true = this org's own subject that live-links a granted provider subject
   ownerOrgId?: string | null; // which org actually owns this item (self for non-granted)
 };
 
@@ -75,17 +76,27 @@ export async function GET(req: NextRequest) {
     // it — guards against an admin browsing another org's content by
     // guessing a folder id.
     const catalog = await resolveCourseCatalog(db, orgId);
-    let contentOrgId = orgId;
+    // Which (owner org, folder) pairs back the folder being listed. Usually
+    // one; a linked subject (lib/courses.ts "Linked subjects") is two — this
+    // org's own additions filed in it, plus the provider subject it mirrors,
+    // listed read-only. The owner is the browsed folder's OWN org, not its
+    // course root's: inside a linked subject the root is this org's folder
+    // while the chapter being opened still belongs to the provider.
+    let scopes: { orgId: string; folderId: string | null }[] = [{ orgId, folderId: parentId }];
+    let browsedFolder: { id: string; name: string; parentId: string | null; ownerOrgId: string | null } | null = null;
     if (parentId && !sectionId && !allContent) {
       const ownerOrgIds = catalogOwnerOrgs(orgId, catalog);
       const allFolders = await loadFoldersForOrgs(db, ownerOrgIds);
       const root = courseRootOf(allFolders, parentId);
       const rootEntry = root ? catalog.find((c) => c.id === root) : null;
-      if (!rootEntry) return NextResponse.json({ error: "Not found" }, { status: 404 });
-      contentOrgId = rootEntry.ownerOrgId || orgId;
+      const here = allFolders.find((f) => f.id === parentId);
+      if (!rootEntry || !here) return NextResponse.json({ error: "Not found" }, { status: 404 });
+      browsedFolder = here;
+      scopes = [{ orgId: here.ownerOrgId || orgId, folderId: parentId }];
+      const providerRoot = here.linkedCourseId ? allFolders.find((f) => f.id === here.linkedCourseId) : null;
+      if (providerRoot) scopes.push({ orgId: providerRoot.ownerOrgId || orgId, folderId: providerRoot.id });
     }
-
-    const base = { "contentSrc.id": contentOrgId, recordState: "ACTIVE" };
+    const linkedIds = new Set(catalog.filter((c) => c.linkedCourseId).map((c) => c.id));
 
 
     const rows: ResourceRow[] = [];
@@ -94,13 +105,13 @@ export async function GET(req: NextRequest) {
     // sectionId overrides folder scoping entirely (flat list, content only);
     // so does `all=1`, which additionally skips FOLDER rows (a module's
     // content picker never lists folders, only leaf content).
-    const inFolder = (field: string) =>
+    const inFolder = (field: string, folderId: string | null) =>
       allContent
         ? {}
         : sectionId
         ? { sectionIds: sectionId }
-        : parentId
-        ? { [field]: parentId }
+        : folderId
+        ? { [field]: folderId }
         : { $or: [{ [field]: null }, { [field]: { $exists: false } }] };
 
     const pull = async (
@@ -113,9 +124,12 @@ export async function GET(req: NextRequest) {
       const searchMatch = q
         ? { $or: [{ name: { $regex: q, $options: "i" } }, { title: { $regex: q, $options: "i" } }] }
         : {};
+      for (const scope of scopes) {
+      const contentOrgId = scope.orgId;
+      const base = { "contentSrc.id": contentOrgId, recordState: "ACTIVE" };
       const docs = await db
         .collection(coll)
-        .find({ ...base, ...inFolder(field), ...searchMatch } as any)
+        .find({ ...base, ...inFolder(field, scope.folderId), ...searchMatch } as any)
         .sort({ lastUpdated: -1 })
         .limit(200)
         .toArray();
@@ -140,8 +154,10 @@ export async function GET(req: NextRequest) {
         hiddenUserIds: Array.isArray(d.hiddenUserIds) ? d.hiddenUserIds : [],
         ownerOrgId: contentOrgId,
         granted: contentOrgId !== orgId,
+        linked: type === "FOLDER" && linkedIds.has(String(d._id)),
         ...map(d),
       });
+      }
       }
     };
 
@@ -211,17 +227,17 @@ export async function GET(req: NextRequest) {
     out.sort((a, b) => b.addedAt - a.addedAt);
 
     // Resolve current folder name for breadcrumbs.
+    // parentId comes from the link-aware tree, so a provider chapter inside
+    // a linked subject breadcrumbs back to this org's subject, not the
+    // provider's.
     let folder: { id: string; name: string; parentId: string | null; granted?: boolean } | null = null;
-    if (parentId && ObjectId.isValid(parentId)) {
-      const f: any = await db.collection("folders").findOne({ _id: new ObjectId(parentId) });
-      if (f)
-        folder = {
-          id: String(f._id),
-          name: f.name || "Folder",
-          parentId: f.parentId || null,
-          granted: contentOrgId !== orgId,
-        };
-    }
+    if (browsedFolder)
+      folder = {
+        id: browsedFolder.id,
+        name: browsedFolder.name,
+        parentId: browsedFolder.parentId,
+        granted: (browsedFolder.ownerOrgId || orgId) !== orgId,
+      };
 
     return NextResponse.json({ resources: out, orgId, folder });
   } catch (e: any) {
@@ -302,6 +318,14 @@ export async function PATCH(req: NextRequest) {
   } else if (b.action === "move") {
     // Folders track parentId; other content tracks folderId.
     const field = String(b.type).toUpperCase() === "FOLDER" ? "parentId" : "folderId";
+    // Same rule as creating: only into a folder this org owns. A provider
+    // chapter shown inside a linked subject is browse-only — an item moved
+    // there would surface for the provider and every other org it's shared with.
+    if (b.folderId && !(await requireOwnedDoc(await getDb(), "folders", b.folderId, orgId)))
+      return NextResponse.json(
+        { error: "You can only move into your own folders — shared chapters are read-only." },
+        { status: 403 }
+      );
     set[field] = b.folderId || null;
   } else if (b.action === "visibility") {
     // Visibility is an admin-only control (Institute/Super Admin), not teachers.
