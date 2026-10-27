@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isStaff } from "@/lib/roles";
+import { DEFAULT_ORG_ID } from "@/lib/config";
 
 type OrgSuggestion = { id: string; name: string; fullName: string };
 type Mode = "INSTITUTE" | "EMAIL" | "OTP";
@@ -39,6 +40,11 @@ function LoginForm() {
   const [instFrozen, setInstFrozen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const [deepLinkLogoUrl, setDeepLinkLogoUrl] = useState("");
+  // The platform's own brand (the master org's uploaded logo + name, set on
+  // its Organization page) for the plain /login page — this used to be a
+  // hardcoded Cognora image, so renaming the platform (Cognora → Edunora)
+  // meant a code change and redeploy. "" until loaded; null = none uploaded.
+  const [platformBrand, setPlatformBrand] = useState<{ name: string; logoUrl: string } | null | "">("");
 
   // Deep link: /login?org=<id>&inst=<name> pre-selects and freezes the institute
   // so an org can hand out its own branded login URL (legacy micrositeByOrgId;
@@ -48,6 +54,12 @@ function LoginForm() {
   // when signing in through their own institute's link.
   useEffect(() => {
     const oid = search.get("org");
+    if (!oid) {
+      fetch(`/api/orgs/by-id?id=${encodeURIComponent(DEFAULT_ORG_ID)}`)
+        .then((r) => r.json())
+        .then((d) => setPlatformBrand(d.logoUrl ? { name: d.name || "", logoUrl: d.logoUrl } : null))
+        .catch(() => setPlatformBrand(null));
+    }
     if (oid) {
       setMode("INSTITUTE");
       setOrgId(oid);
@@ -246,15 +258,13 @@ function LoginForm() {
             // Caddy (see /api/cmds/tools/organization/logo) — not a fit for
             // next/image's static-import/remote-pattern config.
             <img src={deepLinkLogoUrl} alt={orgName || "Institute logo"} className="h-auto max-h-28 w-auto" />
+          ) : platformBrand ? (
+            // eslint-disable-next-line @next/next/no-img-element -- uploaded org logo, as above
+            <img src={platformBrand.logoUrl} alt={platformBrand.name} className="h-auto max-h-28 w-auto" />
+          ) : platformBrand === null ? (
+            <Image src="/cognora-login.png" alt="Logo" width={937} height={255} className="h-auto w-64" priority />
           ) : (
-            <Image
-              src="/cognora-login.png"
-              alt="Cognora"
-              width={937}
-              height={255}
-              className="h-auto w-64"
-              priority
-            />
+            <div className="h-16" />
           )}
         </div>
 
