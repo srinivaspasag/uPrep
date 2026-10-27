@@ -125,15 +125,20 @@ await group("3. Program page + section publishing", async () => {
 });
 
 await group("4. Shared subjects: Link Shared Subjects tool", async () => {
-  check("before: duplicates + Shared copy (the bug)", (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).length === 4);
+  check("before: duplicates + Shared copy (the bug)", (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).length === 5);
   check("tool refused for non-super-admin", (await call("spectra", "/api/cmds/tools/course-links")).status === 403);
   const plan = (await call("master", "/api/cmds/tools/course-links")).j?.plans?.find((p) => p.subscriberOrgId === ids.S);
   check("preview keeps the duplicate that has content", plan?.keeper?.id === ids.D2);
   check("preview merges the others (case/space-insensitive)", plan?.duplicates.map((d) => d.id).sort().join() === [ids.D1, ids.D3].sort().join());
-  check("preview changes nothing", (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).length === 4);
+  check("preview leaves the own-content program alone", plan?.skippedPrograms?.map((p) => p.id).join() === ids.REP);
+  check("preview changes nothing", (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).length === 5);
   check("apply", (await call("master", "/api/cmds/tools/course-links", { method: "POST" })).status === 200);
-  check("after: exactly one Chemistry XI, Linked",
-    (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).join() === "Chemistry XI [Linked]");
+  check("after: one Linked Chemistry XI + the Repeater's own, unlinked",
+    (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).join() === "Chemistry XI,Chemistry XI [Linked]");
+  const rep = (await call("spectra", `/api/cmds/programs/${ids.REP}`)).j?.sections?.find((s) => s.id === ids.REP_SEC);
+  check("own-content program's section not repointed",
+    rep?.courses.map((c) => c.id).join() === [ids.RCHEM, ids.M].join(), JSON.stringify(rep?.courses));
+  check("own-content subject stays empty (no master chapters)", (await adminList("spectra", `parentId=${ids.RCHEM}`)).length === 0);
   const again = (await call("master", "/api/cmds/tools/course-links")).j?.plans || [];
   check("re-run preview: nothing left to do",
     again.every((p) => p.keeper?.alreadyLinked && !p.duplicates.length && Object.values(p.refs).every((n) => n === 0)));
@@ -189,7 +194,7 @@ await group("7. Sharing lifecycle", async () => {
     (subj.subfolders || []).map((f) => f.name).join() === "Extra Practice" && has(subj.items, "Spectra Subject Book"));
   await call("master", "/api/cmds/tools/org-grants", json("POST", { subscriberOrgId: ids.S, courseIds: [ids.M] }));
   check("re-share reuses the same folder (no new duplicate)",
-    (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).join() === "Chemistry XI [Linked]");
+    (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).join() === "Chemistry XI,Chemistry XI [Linked]");
   check("after re-share: master chapter visible again", (await call("st1", `/api/learn/courses?folderId=${ids.C1}`)).status === 200);
   await call("master", "/api/cmds/tools/org-grants", json("POST", { subscriberOrgId: ids.S2, courseIds: [ids.M, ids.PHY] }));
   check("share to institute with no folders → linked subjects created",
