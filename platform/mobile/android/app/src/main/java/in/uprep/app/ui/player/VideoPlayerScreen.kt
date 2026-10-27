@@ -1,5 +1,6 @@
 package `in`.uprep.app.ui.player
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.webkit.WebView
 import androidx.compose.foundation.layout.Box
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -27,6 +29,8 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -116,8 +120,29 @@ internal fun DirectPlayer(url: String) {
             playWhenReady = true
         }
     }
+    // Until the first frame is drawn the TextureView is just a black box —
+    // found live: on a tablet that black box never changed and read as "the
+    // video doesn't play", with no way to tell loading from a real failure.
+    // Show a spinner until the first frame, and the player's own error if
+    // playback fails, instead of an unexplained black rectangle.
+    var firstFrame by remember { mutableStateOf(false) }
+    var playError by remember { mutableStateOf<String?>(null) }
     DisposableEffect(Unit) {
-        onDispose { exoPlayer.release() }
+        val listener = object : Player.Listener {
+            override fun onRenderedFirstFrame() {
+                firstFrame = true
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                Log.e("DirectPlayer", "playback failed for $url", error)
+                playError = "This video can't be played on this device (" + error.errorCodeName + ")."
+            }
+        }
+        exoPlayer.addListener(listener)
+        onDispose {
+            exoPlayer.removeListener(listener)
+            exoPlayer.release()
+        }
     }
     // Media3's PlayerView ships a fullscreen/enlarge button in its default
     // control overlay, but it only becomes visible once a fullscreen-mode
@@ -144,6 +169,14 @@ internal fun DirectPlayer(url: String) {
             },
             modifier = Modifier.fillMaxSize()
         )
+        when {
+            playError != null -> Text(
+                playError!!,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Center).padding(24.dp)
+            )
+            !firstFrame -> CircularProgressIndicator(color = Color.White, modifier = Modifier.align(Alignment.Center))
+        }
     }
 }
 

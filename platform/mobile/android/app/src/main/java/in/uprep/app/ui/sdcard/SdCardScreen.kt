@@ -42,6 +42,7 @@ import `in`.uprep.app.data.sdcard.SdCardCourseGroup
 import `in`.uprep.app.data.sdcard.SdCardFolder
 import `in`.uprep.app.data.sdcard.SdCardManifestItem
 import `in`.uprep.app.data.sdcard.SdCardRepository
+import `in`.uprep.app.data.sdcard.OpenResult
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -57,6 +58,10 @@ fun SdCardScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var decryptingId by remember { mutableStateOf<String?>(null) }
+    // Why the last tapped item didn't open — shown above the list instead of
+    // the tap silently doing nothing (found live: every video on a card
+    // activated with the wrong group's code just "didn't play").
+    var openError by remember { mutableStateOf<String?>(null) }
     // Null = showing the course list (or the root folder browse, for older
     // cards with no course grouping); non-null = drilled into one course.
     var selectedCourse by remember { mutableStateOf<SdCardCourseGroup?>(null) }
@@ -81,12 +86,17 @@ fun SdCardScreen(
     fun openItem(item: SdCardManifestItem) {
         val groupId = state.manifest?.groupId ?: return
         decryptingId = item.id
+        openError = null
         scope.launch {
-            val file = repository.decryptToCache(groupId, item)
+            val result = repository.decryptToCache(groupId, item)
             decryptingId = null
-            if (file != null) {
-                val name = item.name ?: "Content"
-                if (item.type == "VIDEO") onOpenVideo(name, file) else onOpenDocument(name, file)
+            when (result) {
+                is OpenResult.Ready -> {
+                    val name = item.name ?: "Content"
+                    if (item.type == "VIDEO") onOpenVideo(name, result.file) else onOpenDocument(name, result.file)
+                }
+                is OpenResult.Failed -> openError = result.message
+                OpenResult.WrongKey -> viewModel.onWrongKey()
             }
         }
     }
@@ -139,6 +149,15 @@ fun SdCardScreen(
                 }
             }
         )
+
+        openError?.let {
+            Text(
+                it,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
 
         when {
             state.loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

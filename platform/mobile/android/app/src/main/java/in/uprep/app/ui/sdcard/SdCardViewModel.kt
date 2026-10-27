@@ -54,30 +54,44 @@ class SdCardViewModel(
     }
 
     fun refresh() {
+        viewModelScope.launch { load() }
+    }
+
+    // A video failed to decrypt with the cached key (the repository has
+    // already dropped it) — back to the activation form, saying why.
+    fun onWrongKey() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(loading = true)
-            val folderUri = repository.savedFolderUri()
-            val manifest = if (folderUri != null) repository.readManifest() else null
-            // "plain" packaging has no key to protect — there's nothing an
-            // online activation step would be gating, so requiring one just
-            // blocks offline-first use (a tablet provisioned once, never
-            // online again) for no security benefit. Only "encrypted" cards
-            // need the real access-code verify flow below.
-            val isPlain = manifest?.packagingMode == "plain"
-            val hasKey = manifest?.groupId?.let { repository.hasKeyFor(it) } ?: false
-            val encryptedExpired = hasKey && manifest?.groupId?.let { repository.isExpired(it) } == true
-            // Plain mode has no server/key to check against — just the
-            // manifest's own expiryDate against the device's local clock.
-            val plainExpired = isPlain && manifest?.expiryDate?.let { System.currentTimeMillis() > it } == true
-            _state.value = SdCardUiState(
-                loading = false,
-                folderPicked = folderUri != null,
-                manifest = manifest,
-                activated = (isPlain && !plainExpired) || (hasKey && !encryptedExpired),
-                expired = !isPlain && encryptedExpired,
-                plainExpired = plainExpired
+            load()
+            _state.value = _state.value.copy(
+                activateError = "This card was activated with an access code for different content, so its videos can't be " +
+                    "opened. Enter the access code that came with this card (" + (_state.value.manifest?.groupName ?: "this card") + ")."
             )
         }
+    }
+
+    private suspend fun load() {
+        _state.value = _state.value.copy(loading = true)
+        val folderUri = repository.savedFolderUri()
+        val manifest = if (folderUri != null) repository.readManifest() else null
+        // "plain" packaging has no key to protect — there's nothing an
+        // online activation step would be gating, so requiring one just
+        // blocks offline-first use (a tablet provisioned once, never
+        // online again) for no security benefit. Only "encrypted" cards
+        // need the real access-code verify flow below.
+        val isPlain = manifest?.packagingMode == "plain"
+        val hasKey = manifest?.groupId?.let { repository.hasKeyFor(it) } ?: false
+        val encryptedExpired = hasKey && manifest?.groupId?.let { repository.isExpired(it) } == true
+        // Plain mode has no server/key to check against — just the
+        // manifest's own expiryDate against the device's local clock.
+        val plainExpired = isPlain && manifest?.expiryDate?.let { System.currentTimeMillis() > it } == true
+        _state.value = SdCardUiState(
+            loading = false,
+            folderPicked = folderUri != null,
+            manifest = manifest,
+            activated = (isPlain && !plainExpired) || (hasKey && !encryptedExpired),
+            expired = !isPlain && encryptedExpired,
+            plainExpired = plainExpired
+        )
     }
 
     fun onFolderPicked(uri: Uri) {
