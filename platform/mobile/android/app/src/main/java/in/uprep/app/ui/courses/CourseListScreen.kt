@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import `in`.uprep.app.data.api.ContentItem
 import `in`.uprep.app.data.api.CourseSummary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +31,7 @@ import `in`.uprep.app.data.api.CourseSummary
 fun CourseListScreen(
     viewModel: CoursesViewModel = viewModel(),
     onOpenCourse: (CourseSummary) -> Unit,
+    onOpenItem: (ContentItem) -> Unit,
     onOpenSdCard: () -> Unit,
     onOpenOfflineTests: () -> Unit,
     onOpenDoubts: () -> Unit,
@@ -59,7 +61,7 @@ fun CourseListScreen(
             state.error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(state.error ?: "Something went wrong")
             }
-            state.courses.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            state.courses.isEmpty() && state.shared.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("No courses assigned yet")
             }
             else -> {
@@ -73,6 +75,18 @@ fun CourseListScreen(
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    if (state.shared.isNotEmpty()) {
+                        item(key = "header_shared") {
+                            Text(
+                                "Shared with your class",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        items(state.shared, key = { "shared_${it.id}" }) { item ->
+                            SharedItemCard(item, onOpenItem)
+                        }
+                    }
                     state.programGroups.forEach { group ->
                         val groupCourses = state.courses.filter { it.id in group.courseIds }
                         if (groupCourses.isNotEmpty()) {
@@ -100,6 +114,27 @@ fun CourseListScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SharedItemCard(item: ContentItem, onOpenItem: (ContentItem) -> Unit) {
+    val label = when (item.type) {
+        "VIDEO" -> "Video"
+        "TEST" -> "Test"
+        "BOOK" -> "Book"
+        "DOCUMENT" -> "E-book"
+        else -> item.type
+    }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onOpenItem(item) }
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(item.name, style = MaterialTheme.typography.titleMedium)
+            Text(label, style = MaterialTheme.typography.bodySmall)
         }
     }
 }

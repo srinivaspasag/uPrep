@@ -44,6 +44,12 @@ data class LearnCoursesResponse(
     val error: String?
 )
 
+// GET /api/library?onlyLoose=1 — content an admin published straight to the
+// student's Section (Programs → Content → Make Visible), not filed in a
+// subject, so it never shows up in the subject/chapter browse. Same item
+// shape as a folder browse.
+data class LibraryResponse(val items: List<ContentItem>?, val error: String?)
+
 // --- Doubts ("Ask Aira") — matches app/api/learn/doubts/**/route.ts exactly ---
 data class DoubtSummary(
     val id: String,
@@ -113,6 +119,9 @@ interface LearnApi {
 
     @GET("/api/learn/courses")
     suspend fun browseFolder(@Query("folderId") folderId: String): Response<LearnCoursesResponse>
+
+    @GET("/api/library")
+    suspend fun sharedWithClass(@Query("onlyLoose") onlyLoose: Int = 1): Response<LibraryResponse>
 
     @GET("/api/learn/doubts")
     suspend fun myDoubts(@Query("state") state: String = ""): Response<DoubtsListResponse>
