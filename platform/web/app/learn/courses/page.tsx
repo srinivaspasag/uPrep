@@ -50,10 +50,28 @@ export default function MyCoursesPage() {
   const [subfolders, setSubfolders] = useState<Sub[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [browsing, setBrowsing] = useState(false);
+  // Content an admin added straight to the student's Section and published
+  // ("Make Visible"), not filed inside a subject — found live: Scholar
+  // Spectra published a video, e-book and test to SECTION_A-6 and its
+  // students saw nothing, because the "Recently Added" library strip that
+  // used to list these was removed (4cb5aaf) and the subject cards below
+  // only ever show content inside a subject. onlyLoose=1 = just those
+  // section/student grants, never duplicates of subject content.
+  const [shared, setShared] = useState<Item[]>([]);
 
   const [code, setCode] = useState("");
   const [joining, setJoining] = useState(false);
   const [joinMsg, setJoinMsg] = useState("");
+
+  useEffect(() => {
+    // Wait for the course load to say who this is — staff would get the whole
+    // org library here, not a class list.
+    if (loading || staff) return;
+    fetch("/api/library?onlyLoose=1")
+      .then((r) => r.json())
+      .then((d) => setShared(Array.isArray(d.items) ? d.items.filter((i: Item) => i.type !== "MODULE") : []))
+      .catch(() => {});
+  }, [loading, staff]);
 
   const loadCourses = useCallback(() => {
     return fetch("/api/learn/courses")
@@ -234,10 +252,27 @@ export default function MyCoursesPage() {
         {loading ? (
           <div className="py-16 text-center text-[#8890A1]">Loading…</div>
         ) : atRoot ? (
-          programGroups.length === 0 ? (
+          <div className="space-y-10">
+          {shared.length > 0 && (
+            <div>
+              <div className="mb-4 flex items-baseline gap-2.5">
+                <span className="h-5 w-1.5 rounded-full bg-gradient-to-b from-amber-400 to-rose-500" />
+                <h2 className="font-serif text-lg font-semibold text-[#16233D]">Shared with your class</h2>
+                <span className="text-xs text-[#8890A1]">from your institute</span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {shared.map((it) => (
+                  <CourseItemCard key={it.id} item={it} />
+                ))}
+              </div>
+            </div>
+          )}
+          {programGroups.length === 0 ? (
+            shared.length > 0 ? null : (
             <ZeroState icon="📚" title="No subjects yet">
               You're not assigned to a program yet. Ask your institute to assign one.
             </ZeroState>
+            )
           ) : (
             // Courses only ever show grouped under the Program that granted
             // them — there's no "ungrouped"/"Other Courses" concept, a course
@@ -266,7 +301,8 @@ export default function MyCoursesPage() {
                 );
               })}
             </div>
-          )
+          )}
+          </div>
         ) : browsing ? (
           <div className="py-16 text-center text-[#8890A1]">Loading…</div>
         ) : subfolders.length === 0 && items.length === 0 ? (
