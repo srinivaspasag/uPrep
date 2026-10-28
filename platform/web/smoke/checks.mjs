@@ -123,6 +123,12 @@ await group("3. Program page + section publishing", async () => {
   check("Make Visible", (await bulk("visible")).status === 200);
   check("Sec A student sees it", await inLib("st1"));
   check("Sec B student does not", !(await inLib("st2")));
+  // What the Digital Library's "Shared with your class" strip lists — only
+  // section/student grants, never content already inside a subject.
+  const shared = async (who) => (await call(who, "/api/library?onlyLoose=1")).j?.items || [];
+  check("'Shared with your class' lists it for Sec A", has(await shared("st1"), "Section Sample Book"));
+  check("…not for Sec B", !has(await shared("st2"), "Section Sample Book"));
+  check("…and no subject content in that list", !has(await shared("st1"), "Master Lecture 1"));
 });
 
 await group("4. Shared subjects: Link Shared Subjects tool", async () => {
