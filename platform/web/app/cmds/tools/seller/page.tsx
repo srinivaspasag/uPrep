@@ -360,6 +360,18 @@ function ShipmentsTab({
     onReload(filter || undefined);
   }
 
+  async function release(c: AccessCode) {
+    if (!confirm(`Release ${c.code}? It can then be activated on another tablet (the next one to use it).`)) return;
+    setBusy(c.id);
+    await fetch("/api/cmds/tools/seller/access-codes", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: c.id, action: "releaseDevice" }),
+    });
+    setBusy(null);
+    onReload(filter || undefined);
+  }
+
   async function resend(c: AccessCode) {
     setBusy(c.id);
     await fetch("/api/cmds/tools/seller/access-codes", {
@@ -437,6 +449,15 @@ function ShipmentsTab({
                     >
                       Resend Email
                     </button>
+                    {c.deviceIds.length > 0 && (
+                      <button
+                        onClick={() => release(c)}
+                        disabled={busy === c.id}
+                        className="ml-2 rounded border border-amber-200 px-2.5 py-1 text-xs font-medium text-amber-700 hover:bg-amber-50 disabled:opacity-50"
+                      >
+                        Release device
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

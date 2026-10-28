@@ -234,6 +234,15 @@ await group("8. SD-card activation (seller verify)", async () => {
     right.status === 200 && right.j?.groupId === ids.G2 && !!right.j?.encryptionKey, JSON.stringify(right.j));
   const legacy = await call("none", "/api/seller/verify", json("POST", { code: "smoke1", email: "buyer@smoke.local", deviceId: "dev-2", userId: "u1" }));
   check("older apps (no groupId) still verify", legacy.status === 200 && legacy.j?.groupId === ids.G2);
+  // Reinstalled / replaced tablet: admin releases the code, the new device can activate.
+  check("new tablet refused before release", (await verify(ids.G2, "dev-3")).j?.error === "ITEM_ALREADY_VERIFIED_WITH_DIFFERENT_DEVICE");
+  const codeRow = (await call("master", "/api/cmds/tools/seller/access-codes")).j?.codes?.find((c) => c.code === "SMOKE1");
+  check("another institute can't release it",
+    (await call("spectra", "/api/cmds/tools/seller/access-codes", json("PATCH", { id: codeRow?.id, action: "releaseDevice" }))).status === 404);
+  check("admin releases the device",
+    (await call("master", "/api/cmds/tools/seller/access-codes", json("PATCH", { id: codeRow?.id, action: "releaseDevice" }))).status === 200);
+  check("new tablet activates after release", (await verify(ids.G2, "dev-3")).status === 200);
+  check("…and the old one is now refused", (await verify(ids.G2, "dev-2")).j?.error === "ITEM_ALREADY_VERIFIED_WITH_DIFFERENT_DEVICE");
 });
 
 await group("9. Tests add-on package", async () => {
