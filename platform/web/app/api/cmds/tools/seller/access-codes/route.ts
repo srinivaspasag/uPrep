@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-type PatchBody = { id?: string; action?: "updateShipmentStatus" | "resendEmail"; status?: string };
+type PatchBody = { id?: string; action?: "updateShipmentStatus" | "resendEmail" | "releaseDevice"; status?: string };
 
 export async function PATCH(req: NextRequest) {
   if (!(await requireManager(req)))
@@ -146,7 +146,10 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const db = await getDb();
-    const code: any = await db.collection(CODES_COLL).findOne({ _id: new ObjectId(b.id) });
+    // Scoped to the caller's org — an admin of another institute must not be
+    // able to edit (or release) this institute's codes by id.
+    const orgId = await resolveOrgId(req, null);
+    const code: any = await db.collection(CODES_COLL).findOne({ _id: new ObjectId(b.id), orgId } as any);
     if (!code) return NextResponse.json({ error: "Access code not found" }, { status: 404 });
 
     if (b.action === "updateShipmentStatus") {
@@ -169,6 +172,21 @@ export async function PATCH(req: NextRequest) {
         { accessCodeId: String(code._id) }
       );
       return NextResponse.json({ ok: true, delivered: res.delivered });
+    }
+
+    // Frees a used code so it can be activated again — for a tablet that was
+    // reset/replaced (or a code burned while testing). The next device to
+    // verify it becomes the locked one. The card's content key is unchanged,
+    // so the old device keeps whatever it already unlocked.
+    if (b.action === "releaseDevice") {
+      await db.collection(CODES_COLL).updateOne(
+        { _id: code._id },
+        {
+          $set: { deviceIds: [], userId: null, verified: false, verifiedAt: null, lastUpdated: Date.now() },
+          $push: { releases: { at: Date.now(), deviceIds: code.deviceIds || [], userId: code.userId || null } },
+        } as any
+      );
+      return NextResponse.json({ ok: true });
     }
 
     return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
