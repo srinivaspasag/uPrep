@@ -5,7 +5,7 @@ package `in`.uprep.app.data.net
 // always point at the same host and the shared auth cookie stays valid for
 // both.
 object NetworkConfig {
-    const val BASE_URL = "https://65.2.108.70.sslip.io"
+    const val BASE_URL = "https://app.edunora.ai"
     const val COOKIE_NAME = "uprep_auth"
-    const val COOKIE_DOMAIN = "65.2.108.70.sslip.io"
+    const val COOKIE_DOMAIN = "app.edunora.ai"
 }
