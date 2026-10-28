@@ -158,6 +158,24 @@ class MainActivity : ComponentActivity() {
                                     factory = CoursesViewModel.Factory(container.learnApi)
                                 ),
                                 onOpenCourse = { course -> navController.navigate(Routes.folder(course.id)) },
+                                // Same destinations as a chapter's items (FolderBrowseScreen below).
+                                onOpenItem = { item ->
+                                    when (item.type) {
+                                        "VIDEO" -> navController.navigate(
+                                            Routes.player(
+                                                contentId = item.id,
+                                                name = item.name,
+                                                url = item.url?.let(container::absoluteUrl),
+                                                embedUrl = item.embedUrl,
+                                                provider = item.provider
+                                            )
+                                        )
+                                        "TEST" -> navController.navigate(Routes.webview("/test/${item.id}"))
+                                        else -> item.url?.let(container::absoluteUrl)?.let { url ->
+                                            navController.navigate(Routes.document(item.id, item.name, url))
+                                        }
+                                    }
+                                },
                                 onOpenSdCard = { navController.navigate(Routes.SD_CARD) },
                                 onOpenOfflineTests = { navController.navigate(Routes.OFFLINE_TESTS) },
                                 onOpenDoubts = { navController.navigate(Routes.DOUBTS) },

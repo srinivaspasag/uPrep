@@ -3,6 +3,7 @@ package `in`.uprep.app.ui.courses
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import `in`.uprep.app.data.api.ContentItem
 import `in`.uprep.app.data.api.CourseSummary
 import `in`.uprep.app.data.api.LearnApi
 import `in`.uprep.app.data.api.ProgramGroup
@@ -14,6 +15,8 @@ import kotlinx.coroutines.launch
 data class CoursesUiState(
     val courses: List<CourseSummary> = emptyList(),
     val programGroups: List<ProgramGroup> = emptyList(),
+    // Section-published content outside any subject (see LearnApi.sharedWithClass).
+    val shared: List<ContentItem> = emptyList(),
     val loading: Boolean = true,
     val error: String? = null
 )
@@ -32,9 +35,17 @@ class CoursesViewModel(private val learnApi: LearnApi) : ViewModel() {
             try {
                 val resp = learnApi.myCourses()
                 if (resp.isSuccessful) {
+                    // Found live: a video/e-book/test published to a section
+                    // never appeared in the app — it only listed subjects.
+                    // Staff get the whole org library from this call, so only
+                    // students load it; a failure just leaves the list empty.
+                    val shared = if (resp.body()?.staff == true) emptyList() else runCatching {
+                        learnApi.sharedWithClass().body()?.items.orEmpty().filter { it.type != "MODULE" }
+                    }.getOrDefault(emptyList())
                     _state.value = CoursesUiState(
                         courses = resp.body()?.courses ?: emptyList(),
                         programGroups = resp.body()?.programGroups ?: emptyList(),
+                        shared = shared,
                         loading = false
                     )
                 } else {
