@@ -3,9 +3,9 @@ import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { sessionFromReq } from "@/lib/server-session";
 import { isStaff, isSuperAdmin } from "@/lib/roles";
-import { loadFoldersForOrgs, collectSubtreeIds } from "@/lib/courses";
+import { loadFoldersForOrgs } from "@/lib/courses";
 import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
-import { resolveStudentEnrollment } from "@/lib/enrollment";
+import { resolveStudentEnrollment, accessibleFolderIds } from "@/lib/enrollment";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -93,7 +93,7 @@ export async function GET(req: NextRequest) {
       const folders = await loadFoldersForOrgs(db, catalogOwnerOrgs(orgId, catalog));
       const enrollment = await resolveStudentEnrollment(db, session!.id, courseRoots);
       // Restrict to the subtree of enrolled courses. No enrollment => empty set.
-      allowedFolderIds = Array.from(collectSubtreeIds(folders, enrollment.enrolledRoots));
+      allowedFolderIds = Array.from(accessibleFolderIds(folders, enrollment, orgId));
       studentSectionIds = enrollment.studentSectionIds;
     }
 

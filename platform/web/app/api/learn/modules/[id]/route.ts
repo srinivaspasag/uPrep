@@ -4,9 +4,9 @@ import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { sessionFromReq } from "@/lib/server-session";
 import { isStaff } from "@/lib/roles";
-import { loadFoldersForOrgs, collectSubtreeIds } from "@/lib/courses";
+import { loadFoldersForOrgs } from "@/lib/courses";
 import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
-import { resolveStudentEnrollment } from "@/lib/enrollment";
+import { resolveStudentEnrollment, accessibleFolderIds } from "@/lib/enrollment";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       const courseRoots = catalog.map((c) => c.id);
       const folders = await loadFoldersForOrgs(db, catalogOwnerOrgs(orgId, catalog));
       const enrollment = await resolveStudentEnrollment(db, session!.id, courseRoots);
-      const allowedFolderIds = new Set(collectSubtreeIds(folders, enrollment.enrolledRoots));
+      const allowedFolderIds = accessibleFolderIds(folders, enrollment, orgId);
 
       const inGrantedFolder = mod.folderId && allowedFolderIds.has(mod.folderId);
       const sectionVisible =

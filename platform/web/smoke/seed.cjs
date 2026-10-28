@@ -8,8 +8,10 @@
 //     a worksheet) and its own unshared "Physics XI".
 //     Program "Scholar Regular JEE XI": Sec A -> [dup Chemistry XI, Physics XI],
 //     Sec B -> [Master's Chemistry XI directly]. One student in each.
-//     Program "Scholar Repeater JEE" (ownContent): its own, empty "Chemistry XI"
-//     that must never be linked/merged into the master's.
+//     Program "Scholar Repeater JEE" (ownContent): has its own empty "Chemistry
+//     XI" copy — merged into the one common subject like any duplicate, but
+//     its student (ST3) must see only Spectra's own content in it, never the
+//     master's.
 //   Fresh Institute — no folders at all; gets grants during the run.
 const { MongoClient, ObjectId } = require("mongodb");
 
@@ -65,10 +67,11 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
     { _id: OTHER_SEC, orgId: String(S), programId: String(OTHER_PROG), centerId: String(CENTER), name: "Other Sec", courseIds: [], recordState: "ACTIVE" },
     { _id: REP_SEC, orgId: String(S), programId: String(REP), centerId: String(CENTER), name: "Rep Sec", courseIds: [String(RCHEM), String(M)], recordState: "ACTIVE" },
   ]);
-  const ST1 = id(), ST2 = id();
+  const ST1 = id(), ST2 = id(), ST3 = id();
   await db.collection("orgmembers").insertMany([
     { _id: ST1, orgId: String(S), profile: "STUDENT", recordState: "ACTIVE", programMemberships: [{ programId: String(PROG), centerId: String(CENTER), sectionId: String(SEC1) }] },
     { _id: ST2, orgId: String(S), profile: "STUDENT", recordState: "ACTIVE", programMemberships: [{ programId: String(PROG), centerId: String(CENTER), sectionId: String(SEC2) }] },
+    { _id: ST3, orgId: String(S), profile: "STUDENT", recordState: "ACTIVE", programMemberships: [{ programId: String(REP), centerId: String(CENTER), sectionId: String(REP_SEC) }] },
   ]);
 
   const q = (org, text) => ({ _id: id(), content: text, type: "SCQ", options: ["a", "b"], hasAns: true, boardIds: [], ...owned(org) });
@@ -91,7 +94,7 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
     buyerEmail: "buyer@smoke.local", deviceIds: [], timeCreated: now, lastUpdated: now,
   });
 
-  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2, T1, V1, PCH };
+  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, ST3, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2, T1, V1, PCH };
   console.log(JSON.stringify(Object.fromEntries(Object.entries(out).map(([k, v]) => [k, String(v)]))));
   await c.close();
 })().catch((e) => {

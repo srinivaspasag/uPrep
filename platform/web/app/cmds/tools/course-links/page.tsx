@@ -12,7 +12,6 @@ type Plan = {
   keeper: { id: string; name: string; alreadyLinked: boolean; itemCount: number } | null;
   duplicates: { id: string; name: string; itemCount: number; chapterCount: number }[];
   refs: { programs: number; sections: number; members: number; products: number };
-  skippedPrograms?: { id: string; name: string }[];
 };
 
 // A plan needs no work once its subject is linked, has no duplicates to fold
@@ -144,11 +143,6 @@ export default function CourseLinksPage() {
                     <td className="px-4 py-2 text-slate-700">
                       {p.subscriberOrgName}
                       <div className="text-xs text-slate-400">from {p.providerOrgName}</div>
-                      {!!p.skippedPrograms?.length && (
-                        <div className="mt-1 text-xs text-amber-700">
-                          Left alone (own content): {p.skippedPrograms.map((s) => s.name).join(", ")}
-                        </div>
-                      )}
                     </td>
                     <td className="px-4 py-2 font-medium text-slate-700">{p.name}</td>
                     <td className="px-4 py-2 text-slate-600">

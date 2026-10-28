@@ -24,6 +24,7 @@ const as = {
   fresh: token({ id: "u-fresh", orgId: ids.S2, profile: "MANAGER" }),
   st1: token({ id: ids.ST1, memberId: ids.ST1, orgId: ids.S, profile: "STUDENT" }),
   st2: token({ id: ids.ST2, memberId: ids.ST2, orgId: ids.S, profile: "STUDENT" }),
+  st3: token({ id: ids.ST3, memberId: ids.ST3, orgId: ids.S, profile: "STUDENT" }),
   forged: token({ id: "x", orgId: ids.S, profile: "MANAGER" }, "wrong-secret"),
   none: null,
 };
@@ -136,16 +137,30 @@ await group("4. Shared subjects: Link Shared Subjects tool", async () => {
   check("tool refused for non-super-admin", (await call("spectra", "/api/cmds/tools/course-links")).status === 403);
   const plan = (await call("master", "/api/cmds/tools/course-links")).j?.plans?.find((p) => p.subscriberOrgId === ids.S);
   check("preview keeps the duplicate that has content", plan?.keeper?.id === ids.D2);
-  check("preview merges the others (case/space-insensitive)", plan?.duplicates.map((d) => d.id).sort().join() === [ids.D1, ids.D3].sort().join());
-  check("preview leaves the own-content program alone", plan?.skippedPrograms?.map((p) => p.id).join() === ids.REP);
+  check("preview merges the others — the own-content program's copy too",
+    plan?.duplicates.map((d) => d.id).sort().join() === [ids.D1, ids.D3, ids.RCHEM].sort().join());
   check("preview changes nothing", (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).length === 5);
   check("apply", (await call("master", "/api/cmds/tools/course-links", { method: "POST" })).status === 200);
-  check("after: one Linked Chemistry XI + the Repeater's own, unlinked",
-    (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).join() === "Chemistry XI,Chemistry XI [Linked]");
+  check("after: exactly one Chemistry XI (the common subject), Linked",
+    (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).join() === "Chemistry XI [Linked]");
   const rep = (await call("spectra", `/api/cmds/programs/${ids.REP}`)).j?.sections?.find((s) => s.id === ids.REP_SEC);
-  check("own-content program's section not repointed",
-    rep?.courses.map((c) => c.id).join() === [ids.RCHEM, ids.M].join(), JSON.stringify(rep?.courses));
-  check("own-content subject stays empty (no master chapters)", (await adminList("spectra", `parentId=${ids.RCHEM}`)).length === 0);
+  check("own-content program's section now uses the common subject",
+    rep?.courses.map((c) => c.id).join() === ids.D2, JSON.stringify(rep?.courses));
+  // Own-content program: common subject, but only Spectra's own content in it.
+  const chem3 = (await call("st3", "/api/learn/courses")).j?.courses?.find((c) => c.id === ids.D2);
+  check("own-content student: Chemistry XI shows only Spectra's chapter, no master videos/books",
+    chem3?.chapterCount === 1 && chem3?.videoCount === 0 && chem3?.bookCount === 0 && chem3?.documentCount === 1, JSON.stringify(chem3));
+  const in3 = await studentFolder("st3", ids.D2);
+  check("own-content student: browsing lists only Spectra's chapter", (in3.subfolders || []).map((f) => f.name).join() === "Extra Practice");
+  check("own-content student: master chapter blocked", (await call("st3", `/api/learn/courses?folderId=${ids.C1}`)).status === 403);
+  check("normal-program student still gets master content",
+    ((await call("st1", "/api/learn/courses")).j?.courses?.find((c) => c.id === ids.D2)?.videoCount || 0) >= 1);
+  const prev = (await call("spectra", "/api/learn/courses")).j || {};
+  const pc = prev.courses?.find((c) => c.id === ids.D2);
+  check("staff preview: own-content program flagged, its card gets own-only counts",
+    prev.programGroups?.find((g) => g.id === ids.REP)?.ownContent === true && pc?.own?.videoCount === 0 && pc?.videoCount >= 1, JSON.stringify(pc));
+  check("staff preview: opening from that card (own=1) hides master chapters",
+    ((await call("spectra", `/api/learn/courses?folderId=${ids.D2}&own=1`)).j?.subfolders || []).map((f) => f.name).join() === "Extra Practice");
   const again = (await call("master", "/api/cmds/tools/course-links")).j?.plans || [];
   check("re-run preview: nothing left to do",
     again.every((p) => p.keeper?.alreadyLinked && !p.duplicates.length && Object.values(p.refs).every((n) => n === 0)));
@@ -201,7 +216,7 @@ await group("7. Sharing lifecycle", async () => {
     (subj.subfolders || []).map((f) => f.name).join() === "Extra Practice" && has(subj.items, "Spectra Subject Book"));
   await call("master", "/api/cmds/tools/org-grants", json("POST", { subscriberOrgId: ids.S, courseIds: [ids.M] }));
   check("re-share reuses the same folder (no new duplicate)",
-    (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).join() === "Chemistry XI,Chemistry XI [Linked]");
+    (await rootSubjects("spectra")).filter((s) => /chemistry/i.test(s)).join() === "Chemistry XI [Linked]");
   check("after re-share: master chapter visible again", (await call("st1", `/api/learn/courses?folderId=${ids.C1}`)).status === 200);
   await call("master", "/api/cmds/tools/org-grants", json("POST", { subscriberOrgId: ids.S2, courseIds: [ids.M, ids.PHY] }));
   check("share to institute with no folders → linked subjects created",
