@@ -30,7 +30,9 @@ import `in`.uprep.app.data.api.CourseSummary
 @Composable
 fun CourseListScreen(
     viewModel: CoursesViewModel = viewModel(),
-    onOpenCourse: (CourseSummary) -> Unit,
+    // own = opened from an ownContent program's card: browse only the
+    // institute's own content (matches the website's Digital Library).
+    onOpenCourse: (course: CourseSummary, own: Boolean) -> Unit,
     onOpenItem: (ContentItem) -> Unit,
     onOpenSdCard: () -> Unit,
     onOpenOfflineTests: () -> Unit,
@@ -97,8 +99,9 @@ fun CourseListScreen(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
+                            val own = group.ownContent == true
                             items(groupCourses, key = { "${group.id}_${it.id}" }) { course ->
-                                CourseCard(course, onOpenCourse)
+                                CourseCard(course, own, onOpenCourse)
                             }
                         }
                     }
@@ -109,7 +112,7 @@ fun CourseListScreen(
                             }
                         }
                         items(ungrouped, key = { "ungrouped_${it.id}" }) { course ->
-                            CourseCard(course, onOpenCourse)
+                            CourseCard(course, false, onOpenCourse)
                         }
                     }
                 }
@@ -140,16 +143,20 @@ private fun SharedItemCard(item: ContentItem, onOpenItem: (ContentItem) -> Unit)
 }
 
 @Composable
-private fun CourseCard(course: CourseSummary, onOpenCourse: (CourseSummary) -> Unit) {
+private fun CourseCard(course: CourseSummary, own: Boolean, onOpenCourse: (CourseSummary, Boolean) -> Unit) {
+    // Found live: a student in both "Scholar Repeater JEE" and "JEE Online" saw
+    // the master's 20 chapters under the Scholar program too — the app ignored
+    // which program a card sits under.
+    val chapters = if (own) course.own?.chapterCount ?: course.chapterCount else course.chapterCount
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onOpenCourse(course) }
+            .clickable { onOpenCourse(course, own) }
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(course.name, style = MaterialTheme.typography.titleMedium)
             Text(
-                "${course.chapterCount} chapters",
+                "$chapters chapters",
                 style = MaterialTheme.typography.bodySmall
             )
         }

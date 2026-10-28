@@ -32,6 +32,10 @@ import `in`.uprep.app.data.api.SubfolderInfo
 @Composable
 fun FolderBrowseScreen(
     folderId: String,
+    // Own-content view (see FolderBrowseViewModel) — part of the cache key,
+    // so the same subject opened from a normal and an ownContent program
+    // never shares one view model.
+    own: Boolean = false,
     viewModelFactory: FolderBrowseViewModel.Factory,
     onOpenSubfolder: (String) -> Unit,
     onOpenVideo: (ContentItem) -> Unit,
@@ -40,7 +44,7 @@ fun FolderBrowseScreen(
     onDownloadTest: (ContentItem) -> Unit
 ) {
     val viewModel: FolderBrowseViewModel = viewModel(
-        key = folderId,
+        key = "$folderId:$own",
         factory = viewModelFactory
     )
     val state by viewModel.state.collectAsState()
