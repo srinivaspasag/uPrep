@@ -185,6 +185,37 @@ export function collectSubtreeIds(
   return out;
 }
 
+// Own-content view of a subject: the same walk as collectSubtreeIds, but only
+// through folders `orgId` itself owns, and without the linked provider subject
+// root — i.e. the subscriber's own chapters/items in a linked subject, none of
+// the provider's. Used for Programs flagged `ownContent` (e.g. Scholar
+// Spectra's "Scholar Regular/Repeater" programs): they share the institute's
+// one common subject with its other programs, but show only what the
+// institute itself created in it, never the master's content.
+export function collectOwnSubtreeIds(
+  folders: FolderNode[],
+  rootIds: string[],
+  orgId: string
+): Set<string> {
+  const own = folders.filter((f) => (f.ownerOrgId || orgId) === orgId);
+  const childrenOf = new Map<string, FolderNode[]>();
+  for (const f of own) {
+    if (!f.parentId) continue;
+    if (!childrenOf.has(f.parentId)) childrenOf.set(f.parentId, []);
+    childrenOf.get(f.parentId)!.push(f);
+  }
+  const ownIds = new Set(own.map((f) => f.id));
+  const out = new Set<string>();
+  const stack = rootIds.filter((id) => ownIds.has(id));
+  while (stack.length) {
+    const id = stack.pop()!;
+    if (out.has(id)) continue;
+    out.add(id);
+    for (const c of childrenOf.get(id) || []) stack.push(c.id);
+  }
+  return out;
+}
+
 // Walks a folder up to its top-level ancestor (the course root it belongs to).
 export function courseRootOf(
   folders: FolderNode[],

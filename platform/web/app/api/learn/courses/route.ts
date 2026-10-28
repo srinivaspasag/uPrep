@@ -5,6 +5,7 @@ import { isStaff } from "@/lib/roles";
 import {
   loadFoldersForOrgs,
   collectSubtreeIds,
+  collectOwnSubtreeIds,
   courseRootOf,
   orderThenNatural,
   naturalCompare,
@@ -50,6 +51,9 @@ export async function GET(req: NextRequest) {
     // — see resolveStudentEnrollment for the full union logic (shared with
     // /api/library so both surfaces agree on what a student can see).
     let enrolledRoots: string[];
+    // Roots this caller may only see the institute's OWN content in (reached
+    // solely via Programs flagged ownContent — see lib/enrollment.ts).
+    let ownOnlyRoots: string[] = [];
     let studentProgramIds: string[] = []; // used below to scope content visibility too
     let studentSectionIds: string[] = []; // ditto, for section-level publishing
     let programGroups: {
@@ -58,6 +62,7 @@ export async function GET(req: NextRequest) {
       courseIds: string[];
       centerName: string | null;
       sectionName: string | null;
+      ownContent: boolean;
     }[] = [];
     if (staff) {
       enrolledRoots = allCourseRoots;
@@ -68,6 +73,7 @@ export async function GET(req: NextRequest) {
     } else {
       const enrollment = await resolveStudentEnrollment(db, session.id, allCourseRoots);
       enrolledRoots = enrollment.enrolledRoots;
+      ownOnlyRoots = enrollment.ownOnlyRoots;
       studentProgramIds = enrollment.studentProgramIds;
       studentSectionIds = enrollment.studentSectionIds;
       programGroups = enrollment.programGroups;
@@ -87,7 +93,21 @@ export async function GET(req: NextRequest) {
       if (!root || !enrolledRoots.includes(root))
         return NextResponse.json({ error: "Not enrolled in this course" }, { status: 403 });
 
-      const rawSubfolders = orderThenNatural(folders.filter((f) => f.parentId === folderId));
+      // Own-content view: forced for a student who reaches this subject only
+      // through own-content programs; requested (?own=1) when the subject was
+      // opened from an own-content program's card (staff preview, or a student
+      // who also has it via a normal program). Only the institute's own
+      // folders/items, never the provider's.
+      const ownView = ownOnlyRoots.includes(root) || req.nextUrl.searchParams.get("own") === "1";
+      const ownFolderIds = ownView ? collectOwnSubtreeIds(folders, [root], orgId) : null;
+      if (ownFolderIds && !ownFolderIds.has(folderId))
+        return NextResponse.json({ error: "Not enrolled in this course" }, { status: 403 });
+      const subtreeOf = (id: string) =>
+        Array.from(ownFolderIds ? collectOwnSubtreeIds(folders, [id], orgId) : collectSubtreeIds(folders, [id]));
+
+      const rawSubfolders = orderThenNatural(
+        folders.filter((f) => f.parentId === folderId && (!ownFolderIds || ownFolderIds.has(f.id)))
+      );
 
       // Students only see content marked visible (hidden !== true). On top of
       // that, an item is visible if it has NO scoping at all (today's default),
@@ -119,7 +139,7 @@ export async function GET(req: NextRequest) {
       // for the top-level subject cards.
       const subfolders = await Promise.all(
         rawSubfolders.map(async (f) => {
-          const subtree = Array.from(collectSubtreeIds(folders, [f.id]));
+          const subtree = subtreeOf(f.id);
           const [videoCount, documentCount, bookCount, testCount] = await Promise.all([
             db.collection("videos").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
             db.collection("documents").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
@@ -133,7 +153,7 @@ export async function GET(req: NextRequest) {
       // A linked subject also shows what's filed directly in the provider
       // subject it mirrors (see lib/courses.ts "Linked subjects").
       const linkedTo = folders.find((f) => f.id === folderId)?.linkedCourseId;
-      const folderIds = linkedTo ? [folderId, linkedTo] : [folderId];
+      const folderIds = linkedTo && !ownView ? [folderId, linkedTo] : [folderId];
       const contentItems: any[] = [];
       for (const coll of ["videos", "documents", "books", "tests"]) {
         const docs = await db
@@ -192,28 +212,37 @@ export async function GET(req: NextRequest) {
             { visibleSectionIds: { $in: studentSectionIds } },
           ],
         };
+    const countIn = async (rootId: string, subtree: string[]) => {
+      const [videoCount, documentCount, bookCount, testCount] = await Promise.all(
+        ["videos", "documents", "books", "tests"].map((c) =>
+          db.collection(c).countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any)
+        )
+      );
+      const sub = new Set(subtree);
+      return {
+        chapterCount: folders.filter((x) => x.parentId === rootId && sub.has(x.id)).length,
+        folderCount: subtree.length,
+        videoCount,
+        documentCount,
+        bookCount,
+        testCount,
+      };
+    };
+    // Subjects shown under an own-content program's heading also need the
+    // own-content counts (staff preview, or a student who has the subject via
+    // a normal program too) — the client uses `own` for those cards.
+    const underOwnProgram = new Set(programGroups.filter((g) => g.ownContent).flatMap((g) => g.courseIds));
     const courses = await Promise.all(
       enrolledRoots
         .map((id) => folders.find((f) => f.id === id))
         .filter(Boolean)
         .map(async (f) => {
-          const subtree = Array.from(collectSubtreeIds(folders, [f!.id]));
-          const [videoCount, documentCount, bookCount, testCount] = await Promise.all([
-            db.collection("videos").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
-            db.collection("documents").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
-            db.collection("books").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
-            db.collection("tests").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
-          ]);
-          return {
-            id: f!.id,
-            name: f!.name,
-            chapterCount: folders.filter((x) => x.parentId === f!.id).length,
-            folderCount: subtree.length,
-            videoCount,
-            documentCount,
-            bookCount,
-            testCount,
-          };
+          const id = f!.id;
+          const ownOnly = ownOnlyRoots.includes(id);
+          const ownSubtree = () => Array.from(collectOwnSubtreeIds(folders, [id], orgId));
+          const counts = await countIn(id, ownOnly ? ownSubtree() : Array.from(collectSubtreeIds(folders, [id])));
+          const own = ownOnly ? counts : underOwnProgram.has(id) ? await countIn(id, ownSubtree()) : undefined;
+          return { id, name: f!.name, ...counts, own };
         })
     );
 

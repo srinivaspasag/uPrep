@@ -1,5 +1,6 @@
 import type { Db } from "mongodb";
 import { ObjectId } from "mongodb";
+import { collectSubtreeIds, collectOwnSubtreeIds, type FolderNode } from "@/lib/courses";
 
 // A student's course access is the union of three independent grants:
 //   1. enrolledCourseIds  — direct manual override on the member doc (Assign
@@ -14,6 +15,12 @@ import { ObjectId } from "mongodb";
 // surface computes the exact same access set.
 export type StudentEnrollment = {
   enrolledRoots: string[];
+  // Roots this student reaches ONLY through Programs flagged `ownContent` —
+  // no direct enrolment and no other program/section grants them. For these
+  // the student sees just the institute's own content in the subject, never
+  // a provider's (see lib/courses.ts collectOwnSubtreeIds). A root also
+  // granted by a normal program (e.g. JEE Online) shows everything.
+  ownOnlyRoots: string[];
   studentProgramIds: string[];
   studentSectionIds: string[];
   // centerName/sectionName mirror legacy's real "Program, Center, Batch"
@@ -26,6 +33,7 @@ export type StudentEnrollment = {
     courseIds: string[];
     centerName: string | null;
     sectionName: string | null;
+    ownContent: boolean;
   }[];
 };
 
@@ -102,6 +110,7 @@ export async function resolveStudentEnrollment(
         courseIds: Array.from(programCourseIdSets.get(pid) || []).filter((id) => allCourseRoots.includes(id)),
         centerName: (mm?.centerId && centerNameById.get(mm.centerId)) || null,
         sectionName: (mm?.sectionId && sectionNameById.get(mm.sectionId)) || null,
+        ownContent: !!d.ownContent,
       };
     })
     .filter((g) => g.courseIds.length > 0);
@@ -111,7 +120,17 @@ export async function resolveStudentEnrollment(
   const ids = Array.from(new Set([...directIds, ...programCourseIds, ...sectionCourseIds]));
   const enrolledRoots = ids.filter((id) => allCourseRoots.includes(id));
 
-  return { enrolledRoots, studentProgramIds, studentSectionIds, programGroups };
+  // Which roots some grant OTHER than an own-content program gives: direct
+  // enrolment, a normal program's courseIds, or a section of a normal program.
+  const ownProgramIds = new Set(programDocs.filter((d) => d.ownContent).map((d) => String(d._id)));
+  const fullAccess = new Set<string>(directIds);
+  for (const d of programDocs)
+    if (!ownProgramIds.has(String(d._id))) for (const cid of d.courseIds || []) fullAccess.add(String(cid));
+  for (const s of sectionDocs)
+    if (!ownProgramIds.has(String(s.programId))) for (const cid of s.courseIds || []) fullAccess.add(String(cid));
+  const ownOnlyRoots = enrolledRoots.filter((id) => !fullAccess.has(id));
+
+  return { enrolledRoots, ownOnlyRoots, studentProgramIds, studentSectionIds, programGroups };
 }
 
 // An admin/staff account's Program scope — legacy's real OrgMember.mappings
@@ -185,6 +204,22 @@ export async function resolveAllProgramGroups(
       courseIds: Array.from(programCourseIdSets.get(pid) || []).filter((id) => allCourseRoots.includes(id)),
       centerName: null,
       sectionName: null,
+      ownContent: !!d.ownContent,
     };
   });
+}
+
+// Every folder a student may open: the full subtree of each root they reach
+// through a normal grant, plus only the institute's own folders for roots they
+// reach solely through own-content programs. Shared by the course browser,
+// library and module routes so they agree.
+export function accessibleFolderIds(
+  folders: FolderNode[],
+  enrollment: Pick<StudentEnrollment, "enrolledRoots" | "ownOnlyRoots">,
+  orgId: string
+): Set<string> {
+  const ownOnly = new Set(enrollment.ownOnlyRoots);
+  const full = collectSubtreeIds(folders, enrollment.enrolledRoots.filter((id) => !ownOnly.has(id)));
+  for (const id of Array.from(collectOwnSubtreeIds(folders, enrollment.ownOnlyRoots, orgId))) full.add(id);
+  return full;
 }

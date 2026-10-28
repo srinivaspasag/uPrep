@@ -14,6 +14,9 @@ type Course = {
   documentCount: number;
   bookCount: number;
   testCount: number;
+  // Counts of just the institute's own content in this subject — set when it
+  // is shown under an own-content program (see lib/enrollment.ts).
+  own?: Omit<Course, "id" | "name" | "own">;
 };
 type ProgramGroup = {
   id: string;
@@ -21,6 +24,7 @@ type ProgramGroup = {
   courseIds: string[];
   centerName: string | null;
   sectionName: string | null;
+  ownContent?: boolean;
 };
 type Sub = {
   id: string;
@@ -39,7 +43,10 @@ type Item = {
   embedUrl?: string | null;
   provider?: string | null;
 };
-type Crumb = { id: string; name: string };
+// `own` on the root crumb = this subject was opened from an own-content
+// program's card, so browse just the institute's own content (kept in the
+// crumb so it survives Back/Forward and refresh via ?path=).
+type Crumb = { id: string; name: string; own?: boolean };
 
 export default function MyCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -124,7 +131,8 @@ export default function MyCoursesPage() {
     }
     setBrowsing(true);
     try {
-      const d = await fetch(`/api/learn/courses?folderId=${encodeURIComponent(target.id)}`).then((r) =>
+      const own = crumbs[0]?.own ? "&own=1" : "";
+      const d = await fetch(`/api/learn/courses?folderId=${encodeURIComponent(target.id)}${own}`).then((r) =>
         r.json()
       );
       setPath(crumbs);
@@ -294,7 +302,12 @@ export default function MyCoursesPage() {
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                       {groupCourses.map((c) => (
-                        <CourseCard key={c.id} course={c} onOpen={openFolder} />
+                        <CourseCard
+                          key={c.id}
+                          course={g.ownContent && c.own ? { ...c, ...c.own } : c}
+                          own={!!g.ownContent}
+                          onOpen={openFolder}
+                        />
                       ))}
                     </div>
                   </div>
@@ -363,7 +376,15 @@ export default function MyCoursesPage() {
 // medallion that overlaps the header/body seam like a badge, and the stats
 // as small pill-chips instead of a table row — while keeping the exact same
 // four numbers legacy shows, no fabricated progress bars.
-function CourseCard({ course, onOpen }: { course: Course; onOpen: (crumbs: Crumb[]) => void }) {
+function CourseCard({
+  course,
+  own,
+  onOpen,
+}: {
+  course: Course;
+  own: boolean;
+  onOpen: (crumbs: Crumb[]) => void;
+}) {
   const accent = subjectAccent(course.name);
   // E-Books (the old generic "document" upload type) sits unused on every
   // subject now that real book uploads go through the dedicated Books
@@ -378,7 +399,7 @@ function CourseCard({ course, onOpen }: { course: Course; onOpen: (crumbs: Crumb
   ];
   return (
     <button
-      onClick={() => onOpen([{ id: course.id, name: course.name }])}
+      onClick={() => onOpen([{ id: course.id, name: course.name, ...(own ? { own: true } : {}) }])}
       className={`group overflow-hidden rounded-2xl border border-[#D9D6C9] bg-white text-left shadow-sm transition hover:-translate-y-1 hover:border-transparent hover:shadow-xl`}
     >
       <div className={`relative ${accent.gradient} px-4 pb-8 pt-3.5`}>
