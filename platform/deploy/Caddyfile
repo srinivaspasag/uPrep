@@ -1,4 +1,14 @@
-65.2.108.70.sslip.io {
+{
+	# Institute subdomains (<slug>.edunora.ai) get their certificate on first
+	# visit — but only after the app confirms the name is app.edunora.ai or a
+	# real, active institute's slug (app/api/tls/allowed), so nobody can burn
+	# the Let's Encrypt rate limit with random subdomains.
+	on_demand_tls {
+		ask http://ui:3000/api/tls/allowed
+	}
+}
+
+(site) {
 	encode gzip
 
 	# Next.js `next start` does not serve files added to public/ after build,
@@ -12,4 +22,24 @@
 	handle {
 		reverse_proxy ui:3000
 	}
+}
+
+# Old address — kept so installed apps (≤1.4) and old links keep working.
+65.2.108.70.sslip.io {
+	import site
+}
+
+# The platform: super admin, generic login, Android app 1.5+.
+app.edunora.ai {
+	import site
+}
+
+# Every institute: scholarspectra.edunora.ai, … (one wildcard DNS record).
+# edunora.ai / www.edunora.ai are the marketing site on Hostinger and never
+# point here.
+*.edunora.ai {
+	tls {
+		on_demand
+	}
+	import site
 }

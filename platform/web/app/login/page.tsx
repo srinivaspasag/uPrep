@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isStaff } from "@/lib/roles";
 import { DEFAULT_ORG_ID } from "@/lib/config";
+import { instituteSlugFromHost } from "@/lib/tenant-host";
 
 type OrgSuggestion = { id: string; name: string; fullName: string };
 type Mode = "INSTITUTE" | "EMAIL" | "OTP";
@@ -54,6 +55,27 @@ function LoginForm() {
   // when signing in through their own institute's link.
   useEffect(() => {
     const oid = search.get("org");
+    // An institute's own address (<slug>.edunora.ai, see lib/tenant-host.ts)
+    // is a deep link too: resolve the slug and pre-select that institute.
+    const hostSlug = oid ? null : instituteSlugFromHost(window.location.host);
+    if (hostSlug) {
+      fetch(`/api/orgs/by-slug?slug=${encodeURIComponent(hostSlug)}`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (!d.id) {
+            setPlatformBrand(null);
+            return;
+          }
+          setMode("INSTITUTE");
+          setOrgId(d.id);
+          setOrgName(d.name || "Your institute");
+          setInstFrozen(true);
+          if (d.logoUrl) setDeepLinkLogoUrl(d.logoUrl);
+          else setPlatformBrand(null);
+        })
+        .catch(() => setPlatformBrand(null));
+      return;
+    }
     if (!oid) {
       fetch(`/api/orgs/by-id?id=${encodeURIComponent(DEFAULT_ORG_ID)}`)
         .then((r) => r.json())
