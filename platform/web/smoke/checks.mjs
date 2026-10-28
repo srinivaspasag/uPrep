@@ -258,6 +258,18 @@ await group("9. Tests add-on package", async () => {
   fs.rmSync(zipPath, { force: true });
 });
 
+await group("10. Institute subdomains", async () => {
+  const ask = async (d) => (await call("none", `/api/tls/allowed?domain=${d}`)).status;
+  check("certificate gate: app.edunora.ai allowed", (await ask("app.edunora.ai")) === 200);
+  check("certificate gate: a real institute's subdomain allowed", (await ask("spectra.edunora.ai")) === 200);
+  check("certificate gate: unknown institute refused", (await ask("nosuchinstitute.edunora.ai")) === 404);
+  check("certificate gate: reserved name refused", (await ask("api.edunora.ai")) === 404);
+  check("certificate gate: other domains / deeper names refused",
+    (await ask("evil.com")) === 404 && (await ask("a.spectra.edunora.ai")) === 404);
+  const r = await call("spectra", "/api/cmds/tools/organization/slug", json("POST", { slug: "app" }));
+  check("reserved slug can't be taken", r.status === 400, JSON.stringify(r.j));
+});
+
 console.log(`\n${pass} passed, ${failures.length} failed`);
 if (failures.length) {
   console.log("Failed:\n" + failures.map((f) => `  - ${f}`).join("\n"));

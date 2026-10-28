@@ -37,7 +37,7 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
 
   const M = id(), C1 = id(), PHY = id(), D1 = id(), D2 = id(), D3 = id(), EXTRA = id(), SPHY = id(), RCHEM = id();
   await db.collection("organizations").insertMany([
-    { _id: P, name: "Master Org" }, { _id: S, name: "Scholar Spectra" }, { _id: S2, name: "Fresh Institute" },
+    { _id: P, name: "Master Org" }, { _id: S, name: "Scholar Spectra", slug: "spectra", recordState: "ACTIVE" }, { _id: S2, name: "Fresh Institute" },
   ]);
   await db.collection("folders").insertMany([
     folder(M, "Chemistry XI", P), folder(C1, "1.Some Basic Concepts", P, String(M)), folder(PHY, "Physics XI", P),

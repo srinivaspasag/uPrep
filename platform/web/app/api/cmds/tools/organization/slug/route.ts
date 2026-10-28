@@ -4,6 +4,7 @@ import { getDb } from "@/lib/mongo";
 import { resolveOrgId } from "@/lib/org-scope";
 import { sessionFromReq } from "@/lib/server-session";
 import { slugify } from "@/lib/slug";
+import { RESERVED_SLUGS } from "@/lib/tenant-host";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -24,6 +25,10 @@ export async function POST(req: NextRequest) {
   const b = (await req.json().catch(() => ({}))) as { slug?: string };
   const slug = slugify(b.slug || "");
   if (!slug) return NextResponse.json({ error: "Enter a URL slug (letters, numbers, hyphens)." }, { status: 400 });
+  // The slug is also the institute's subdomain (<slug>.edunora.ai) — keep the
+  // platform's own subdomains (app, www, api, …) out of reach.
+  if (RESERVED_SLUGS.has(slug))
+    return NextResponse.json({ error: `"${slug}" is reserved — pick another name.` }, { status: 400 });
 
   try {
     const db = await getDb();
