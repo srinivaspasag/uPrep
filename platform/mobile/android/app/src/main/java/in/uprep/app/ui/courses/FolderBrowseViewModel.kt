@@ -22,7 +22,8 @@ data class FolderBrowseUiState(
 
 class FolderBrowseViewModel(
     private val learnApi: LearnApi,
-    private val folderId: String
+    private val folderId: String,
+    private val own: Boolean = false
 ) : ViewModel() {
     private val _state = MutableStateFlow(FolderBrowseUiState())
     val state: StateFlow<FolderBrowseUiState> = _state.asStateFlow()
@@ -35,7 +36,7 @@ class FolderBrowseViewModel(
         _state.value = _state.value.copy(loading = true, error = null)
         viewModelScope.launch {
             try {
-                val resp = learnApi.browseFolder(folderId)
+                val resp = learnApi.browseFolder(folderId, if (own) 1 else null)
                 if (resp.isSuccessful) {
                     val body = resp.body()
                     _state.value = FolderBrowseUiState(
@@ -55,10 +56,11 @@ class FolderBrowseViewModel(
 
     class Factory(
         private val learnApi: LearnApi,
-        private val folderId: String
+        private val folderId: String,
+        private val own: Boolean = false
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            FolderBrowseViewModel(learnApi, folderId) as T
+            FolderBrowseViewModel(learnApi, folderId, own) as T
     }
 }

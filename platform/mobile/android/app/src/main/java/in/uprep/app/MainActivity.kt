@@ -66,7 +66,7 @@ private fun b64decode(s: String): String = String(Base64.decode(s, Base64.URL_SA
 private object Routes {
     const val LOGIN = "login"
     const val COURSES = "courses"
-    const val FOLDER = "folder/{folderId}"
+    const val FOLDER = "folder/{folderId}?own={own}"
     const val PLAYER = "player?contentId={contentId}&name={name}&url={url}&embedUrl={embedUrl}&provider={provider}"
     const val DOCUMENT = "document?contentId={contentId}&name={name}&url={url}"
     const val SD_CARD = "sdcard"
@@ -81,7 +81,7 @@ private object Routes {
     const val NATIVE_TEST = "nativeTest/{testId}"
 
     fun doubtDetail(id: String) = "doubts/$id"
-    fun folder(id: String) = "folder/$id"
+    fun folder(id: String, own: Boolean = false) = "folder/$id?own=$own"
     fun sdPlayer(name: String, path: String) = "sdplayer?name=${b64encode(name)}&path=${b64encode(path)}"
     fun sdDocument(name: String, path: String) = "sddocument?name=${b64encode(name)}&path=${b64encode(path)}"
     fun nativeTest(testId: String) = "nativeTest/${b64encode(testId)}"
@@ -157,7 +157,7 @@ class MainActivity : ComponentActivity() {
                                 viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
                                     factory = CoursesViewModel.Factory(container.learnApi)
                                 ),
-                                onOpenCourse = { course -> navController.navigate(Routes.folder(course.id)) },
+                                onOpenCourse = { course, own -> navController.navigate(Routes.folder(course.id, own)) },
                                 // Same destinations as a chapter's items (FolderBrowseScreen below).
                                 onOpenItem = { item ->
                                     when (item.type) {
@@ -271,13 +271,18 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             route = Routes.FOLDER,
-                            arguments = listOf(navArgument("folderId") { type = NavType.StringType })
+                            arguments = listOf(
+                                navArgument("folderId") { type = NavType.StringType },
+                                navArgument("own") { type = NavType.BoolType; defaultValue = false }
+                            )
                         ) { backStackEntry ->
                             val folderId = backStackEntry.arguments?.getString("folderId") ?: return@composable
+                            val own = backStackEntry.arguments?.getBoolean("own") ?: false
                             FolderBrowseScreen(
                                 folderId = folderId,
-                                viewModelFactory = FolderBrowseViewModel.Factory(container.learnApi, folderId),
-                                onOpenSubfolder = { id -> navController.navigate(Routes.folder(id)) },
+                                own = own,
+                                viewModelFactory = FolderBrowseViewModel.Factory(container.learnApi, folderId, own),
+                                onOpenSubfolder = { id -> navController.navigate(Routes.folder(id, own)) },
                                 onOpenVideo = { item ->
                                     navController.navigate(
                                         Routes.player(

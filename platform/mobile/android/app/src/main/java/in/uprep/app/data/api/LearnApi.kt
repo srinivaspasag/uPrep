@@ -7,14 +7,19 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-data class CourseSummary(val id: String, val name: String, val chapterCount: Int, val folderCount: Int)
+// `own`: counts of just the institute's own content in this subject — set when
+// it's listed under a Program flagged ownContent (e.g. Scholar Spectra's
+// "Scholar Repeater"), which shows only the institute's content, never the
+// master's (platform/web lib/enrollment.ts).
+data class OwnCounts(val chapterCount: Int)
+data class CourseSummary(val id: String, val name: String, val chapterCount: Int, val folderCount: Int, val own: OwnCounts? = null)
 data class FolderInfo(val id: String, val name: String, val parentId: String?)
 data class SubfolderInfo(val id: String, val name: String, val type: String)
 
 // Which Program (e.g. "JEE XI") granted a set of courses — bug found live:
 // a student assigned to a Program saw its courses (Physics, Chem, Math)
 // with no indication of the Program itself anywhere in the app.
-data class ProgramGroup(val id: String, val name: String, val courseIds: List<String>)
+data class ProgramGroup(val id: String, val name: String, val courseIds: List<String>, val ownContent: Boolean? = null)
 
 // type: VIDEO | DOCUMENT | TEST. url/embedUrl are relative paths for uploaded
 // files (e.g. "/uploads/xxx.mp4") — must be prefixed with NetworkConfig.BASE_URL
@@ -118,7 +123,11 @@ interface LearnApi {
     suspend fun myCourses(): Response<LearnCoursesResponse>
 
     @GET("/api/learn/courses")
-    suspend fun browseFolder(@Query("folderId") folderId: String): Response<LearnCoursesResponse>
+    suspend fun browseFolder(
+        @Query("folderId") folderId: String,
+        // 1 = only the institute's own content (opened from an ownContent program's card)
+        @Query("own") own: Int? = null
+    ): Response<LearnCoursesResponse>
 
     @GET("/api/library")
     suspend fun sharedWithClass(@Query("onlyLoose") onlyLoose: Int = 1): Response<LibraryResponse>
