@@ -16,7 +16,11 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = await getDb();
-    const org = await db.collection("organizations").findOne({ slug, recordState: "ACTIVE" } as any);
+    // previousSlug: links printed before a rename (e.g. /i/scholar-spectra
+    // → scholarspectra for scholarspectra.edunora.ai) keep working.
+    const org =
+      (await db.collection("organizations").findOne({ slug, recordState: "ACTIVE" } as any)) ||
+      (await db.collection("organizations").findOne({ previousSlug: slug, recordState: "ACTIVE" } as any));
     if (!org) return NextResponse.json({ error: "Institute not found" }, { status: 404 });
     return NextResponse.json({
       id: String(org._id),

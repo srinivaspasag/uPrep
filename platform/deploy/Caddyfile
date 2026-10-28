@@ -29,8 +29,14 @@
 	import site
 }
 
-# The platform: super admin, generic login, Android app 1.5+.
+# The platform: super admin, generic login, Android app 1.5+. On-demand like
+# the institutes — found live: as a regular managed name its certificate was
+# never requested (it also matches *.edunora.ai below), so every TLS handshake
+# failed. /api/tls/allowed approves app.edunora.ai.
 app.edunora.ai {
+	tls {
+		on_demand
+	}
 	import site
 }
 

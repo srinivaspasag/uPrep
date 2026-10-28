@@ -11,7 +11,9 @@ KEY=platform/deploy/uprep-key.pem
 [ -f platform/deploy/instance.env ] && . platform/deploy/instance.env
 HOST="${EIP:-65.2.108.70}"
 SSH="ssh -i $KEY -o ConnectTimeout=15"
-BASE="https://$HOST.sslip.io"
+# Live checks hit the platform's real address (app.edunora.ai, see Caddyfile);
+# override with BASE=… for a different host.
+BASE="${BASE:-https://app.edunora.ai}"
 RSYNC_OPTS=(-az --exclude node_modules --exclude .next --exclude 'public/uploads' --exclude smoke -e "$SSH")
 
 echo "== 1/4 what would ship to $HOST"
@@ -41,7 +43,7 @@ done
 echo "== 4/4 live checks (read-only)"
 FAIL=0
 chk() { local code; code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE$1"); [ "$code" = "$2" ] && echo "  PASS  $1 → $code" || { echo "  FAIL  $1 → $code (want $2)"; FAIL=1; }; }
-chk / 200
+chk / 307          # app.edunora.ai: "/" → sign-in (middleware)
 chk /login 200
 chk /cmds 307
 chk /api/cmds/content 401
