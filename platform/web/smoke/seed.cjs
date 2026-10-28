@@ -81,6 +81,19 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
 
   // Seller groups + an access code for the SD-card activation checks.
   // Own chapter (under master Physics XI) so these don't change any other check's counts.
+  // Spectra's own e-books made for a subject but uploaded at the CMDS root
+  // (shared chapters are read-only) and board-tagged — one with a chapter tag
+  // whose name was already resolved, one subject-only. Assigned to the
+  // Repeater section, not yet visible; checks.mjs group 11 publishes them.
+  const TB1 = id(), TB2 = id();
+  await db.collection("books").insertMany([
+    { _id: TB1, name: "Tagged Chapter Book", type: "BOOK", folderId: null, subject: "Chemistry XI", boardIds: ["bn-sub", "bn-c1"],
+      boardNames: { "bn-sub": "Chemistry XI", "bn-c1": "Some Basic Concepts of Chemistry" }, boardNamesKey: "bn-sub,bn-c1",
+      sectionIds: [String(REP_SEC)], timeCreated: now, ...owned(S) },
+    { _id: TB2, name: "Tagged Subject Book", type: "BOOK", folderId: null, subject: "Chemistry XI", boardIds: [],
+      sectionIds: [String(REP_SEC)], timeCreated: now, ...owned(S) },
+  ]);
+
   const G1 = id(), G2 = id(), T1 = id(), V1 = id(), PCH = id();
   await db.collection("folders").insertOne(folder(PCH, "1.Units and Measurement", P, String(PHY)));
   await db.collection("tests").insertOne({ _id: T1, name: "Smoke Chapter Test", folderId: String(PCH), ...owned(P) });
@@ -94,7 +107,7 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
     buyerEmail: "buyer@smoke.local", deviceIds: [], timeCreated: now, lastUpdated: now,
   });
 
-  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, ST3, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2, T1, V1, PCH };
+  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, ST3, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2, T1, V1, PCH, TB1, TB2 };
   console.log(JSON.stringify(Object.fromEntries(Object.entries(out).map(([k, v]) => [k, String(v)]))));
   await c.close();
 })().catch((e) => {

@@ -6,6 +6,7 @@ import { isStaff, isSuperAdmin } from "@/lib/roles";
 import { loadFoldersForOrgs } from "@/lib/courses";
 import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
 import { resolveStudentEnrollment, accessibleFolderIds } from "@/lib/enrollment";
+import { loadPlacedContent, placedGrantFor } from "@/lib/tagged-content";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -83,6 +84,9 @@ export async function GET(req: NextRequest) {
 
     let allowedFolderIds: string[] | null = null;
     let studentSectionIds: string[] = [];
+    // Board-tagged content already shown inside a subject (lib/tagged-content)
+    // — not "loose", so it stays out of the onlyLoose strip.
+    let placedIds = new Set<string>();
     if (isStudent) {
       // Catalog = own + granted courses; load folders across every owner org so
       // granted (cross-org) course subtrees resolve. Enrollment union (direct +
@@ -95,6 +99,16 @@ export async function GET(req: NextRequest) {
       // Restrict to the subtree of enrolled courses. No enrollment => empty set.
       allowedFolderIds = Array.from(accessibleFolderIds(folders, enrollment, orgId));
       studentSectionIds = enrollment.studentSectionIds;
+      if (onlyLoose) {
+        const placed = await loadPlacedContent(db, {
+          orgId,
+          folders,
+          rootIds: enrollment.enrolledRoots,
+          grant: placedGrantFor(session!.id, enrollment.studentProgramIds, studentSectionIds),
+          ownerOrgIds: catalogOwnerOrgs(orgId, catalog),
+        });
+        placedIds = new Set(placed.map((p) => String(p.doc._id)));
+      }
     }
 
     const filter: Record<string, unknown> = { recordState: "ACTIVE" };
@@ -140,6 +154,7 @@ export async function GET(req: NextRequest) {
         .toArray();
 
       for (const d of docs as any[]) {
+        if (placedIds.has(String(d._id))) continue;
         items.push({
           id: String(d._id),
           name: d.name || d.title || "(untitled)",

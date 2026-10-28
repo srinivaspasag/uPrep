@@ -12,6 +12,7 @@ import {
 } from "@/lib/courses";
 import { resolveCourseCatalog, catalogOwnerOrgs } from "@/lib/grants";
 import { resolveStudentEnrollment, resolveAllProgramGroups } from "@/lib/enrollment";
+import { loadPlacedContent, placedGrantFor, PLACED_PUBLISHED, type PlacedItem } from "@/lib/tagged-content";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -87,6 +88,24 @@ export async function GET(req: NextRequest) {
     // staff can keep configuring it.
     programGroups = programGroups.filter((g) => g.courseIds.length > 0);
 
+    // The institute's own board-tagged content published to this student
+    // but filed outside the subject tree — shown inside the subject/chapter
+    // it's tagged with (lib/tagged-content.ts). Always own content, so it
+    // shows in own-content views too.
+    const placed = await loadPlacedContent(db, {
+      orgId,
+      folders,
+      rootIds: enrolledRoots,
+      grant: staff ? PLACED_PUBLISHED : placedGrantFor(session.id, studentProgramIds, studentSectionIds),
+      ownerOrgIds: catalogOwnerOrgs(orgId, catalog),
+    });
+    const placedCounts = (items: PlacedItem[]) => ({
+      videoCount: items.filter((p) => p.coll === "videos").length,
+      documentCount: items.filter((p) => p.coll === "documents").length,
+      bookCount: items.filter((p) => p.coll === "books").length,
+      testCount: items.filter((p) => p.coll === "tests").length,
+    });
+
     // Browse mode: list one folder's children, gated by enrollment.
     if (folderId) {
       const root = courseRootOf(folders, folderId);
@@ -100,10 +119,18 @@ export async function GET(req: NextRequest) {
       // folders/items, never the provider's.
       const ownView = ownOnlyRoots.includes(root) || req.nextUrl.searchParams.get("own") === "1";
       const ownFolderIds = ownView ? collectOwnSubtreeIds(folders, [root], orgId) : null;
+      // A shared chapter holding the institute's tagged content is listed in
+      // the own view too — showing only that content (see `ownItemsOnly`).
+      const placedHere = placed.filter((p) => p.rootId === root);
+      if (ownFolderIds) for (const p of placedHere) ownFolderIds.add(p.folderId);
       if (ownFolderIds && !ownFolderIds.has(folderId))
         return NextResponse.json({ error: "Not enrolled in this course" }, { status: 403 });
       const subtreeOf = (id: string) =>
         Array.from(ownFolderIds ? collectOwnSubtreeIds(folders, [id], orgId) : collectSubtreeIds(folders, [id]));
+      const placedUnder = (id: string) => {
+        const sub = collectSubtreeIds(folders, [id]);
+        return placedHere.filter((p) => sub.has(p.folderId));
+      };
 
       const rawSubfolders = orderThenNatural(
         folders.filter((f) => f.parentId === folderId && (!ownFolderIds || ownFolderIds.has(f.id)))
@@ -146,7 +173,16 @@ export async function GET(req: NextRequest) {
             db.collection("books").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
             db.collection("tests").countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any),
           ]);
-          return { id: f.id, name: f.name, type: "FOLDER" as const, videoCount, documentCount, bookCount, testCount };
+          const extra = placedCounts(placedUnder(f.id));
+          return {
+            id: f.id,
+            name: f.name,
+            type: "FOLDER" as const,
+            videoCount: Number(videoCount) + extra.videoCount,
+            documentCount: Number(documentCount) + extra.documentCount,
+            bookCount: Number(bookCount) + extra.bookCount,
+            testCount: Number(testCount) + extra.testCount,
+          };
         })
       );
 
@@ -154,12 +190,15 @@ export async function GET(req: NextRequest) {
       // subject it mirrors (see lib/courses.ts "Linked subjects").
       const linkedTo = folders.find((f) => f.id === folderId)?.linkedCourseId;
       const folderIds = linkedTo && !ownView ? [folderId, linkedTo] : [folderId];
+      // Own view of a shared chapter: only the institute's own items in it.
+      const ownItemsOnly = ownView ? { "contentSrc.id": orgId } : {};
       const contentItems: any[] = [];
       for (const coll of ["videos", "documents", "books", "tests"]) {
-        const docs = await db
+        const filed = await db
           .collection(coll)
-          .find({ folderId: { $in: folderIds }, recordState: "ACTIVE", ...visClause } as any)
+          .find({ folderId: { $in: folderIds }, recordState: "ACTIVE", ...visClause, ...ownItemsOnly } as any)
           .toArray();
+        const docs = filed.concat(placedHere.filter((p) => p.coll === coll && p.folderId === folderId).map((p) => p.doc));
         // Same sequencing bug as folders (e.g. "Part 10" sorting before
         // "Part 2") — explicit `order` wins, otherwise natural sort by name.
         const sorted = (docs as any[]).sort((a, b) => {
@@ -218,14 +257,19 @@ export async function GET(req: NextRequest) {
           db.collection(c).countDocuments({ folderId: { $in: subtree }, recordState: "ACTIVE", ...visClause } as any)
         )
       );
+      // Tagged content placed in this subject counts in both views, and the
+      // shared chapter it sits in counts as a chapter of the own view too.
+      const placedHere = placed.filter((p) => p.rootId === rootId);
+      const extra = placedCounts(placedHere);
       const sub = new Set(subtree);
+      for (const p of placedHere) if (p.folderId !== rootId) sub.add(p.folderId);
       return {
         chapterCount: folders.filter((x) => x.parentId === rootId && sub.has(x.id)).length,
-        folderCount: subtree.length,
-        videoCount,
-        documentCount,
-        bookCount,
-        testCount,
+        folderCount: sub.size,
+        videoCount: Number(videoCount) + extra.videoCount,
+        documentCount: Number(documentCount) + extra.documentCount,
+        bookCount: Number(bookCount) + extra.bookCount,
+        testCount: Number(testCount) + extra.testCount,
       };
     };
     // Subjects shown under an own-content program's heading also need the

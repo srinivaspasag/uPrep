@@ -270,6 +270,29 @@ await group("10. Institute subdomains", async () => {
   check("reserved slug can't be taken", r.status === 400, JSON.stringify(r.j));
 });
 
+await group("11. Board-tagged content published to an own-content program", async () => {
+  // Found live: a Spectra e-book tagged Chemistry XI › chapter and published
+  // to Scholar Repeater JEE showed only under "Shared with your class".
+  const items = [{ id: ids.TB1, type: "BOOK" }, { id: ids.TB2, type: "BOOK" }];
+  const before = (await call("st3", "/api/learn/courses")).j?.courses?.find((c) => c.id === ids.D2);
+  check("not shown before Make Visible", !has((await studentFolder("st3", ids.D2)).items, "Tagged Subject Book") && before?.chapterCount === 1);
+  check("Make Visible for the Repeater section",
+    (await call("spectra", "/api/cmds/content/bulk", json("POST", { items, action: "visible", sectionId: ids.REP_SEC }))).status === 200);
+  const chem = (await call("st3", "/api/learn/courses")).j?.courses?.find((c) => c.id === ids.D2);
+  check("subject card counts both books + the tagged chapter",
+    chem?.bookCount === before?.bookCount + 2 && chem?.chapterCount === 2 && chem?.videoCount === 0, JSON.stringify([before, chem]));
+  const subj = await studentFolder("st3", ids.D2);
+  check("subject lists the tagged chapter next to Spectra's own",
+    (subj.subfolders || []).map((f) => f.name).sort().join() === "1.Some Basic Concepts,Extra Practice", JSON.stringify(subj.subfolders));
+  check("subject-only tag sits at the subject", has(subj.items, "Tagged Subject Book") && !has(subj.items, "Tagged Chapter Book"));
+  const chap = await studentFolder("st3", ids.C1);
+  check("tagged chapter opens with ONLY Spectra's book (no master content)", titles(chap.items).join() === "Tagged Chapter Book", JSON.stringify(chap));
+  check("…and its card count agrees", (subj.subfolders || []).find((f) => f.id === ids.C1)?.bookCount === 1);
+  check("not duplicated in 'Shared with your class'",
+    !has((await call("st3", "/api/library?onlyLoose=1")).j?.items, "Tagged Chapter Book"));
+  check("other sections' students don't get it", !has((await studentFolder("st1", ids.D2)).items, "Tagged Subject Book"));
+});
+
 console.log(`\n${pass} passed, ${failures.length} failed`);
 if (failures.length) {
   console.log("Failed:\n" + failures.map((f) => `  - ${f}`).join("\n"));
