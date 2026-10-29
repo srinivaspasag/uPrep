@@ -65,10 +65,47 @@ class SdCardRepository(private val context: Context) {
         private const val TAG = "SdCardRepository"
     }
 
+    // Where each content file actually sits in the picked folder. Found live:
+    // cards copied onto tablets by WeGuard (MDM file push) said "This item
+    // isn't on the card" for every video — the app only ever looked in
+    // content/ under the picked folder, by exact name, and a copy tool that
+    // flattens or nests folders (or tidies file names) breaks that. So when
+    // content/<name> isn't there, the whole folder (3 levels deep) is indexed
+    // once — by exact name and by a tidied name (case, spaces, punctuation
+    // ignored) — and the file is looked up there.
+    private class FileIndex(val tree: Uri, val exact: Map<String, DocumentFile>, val tidy: Map<String, DocumentFile>)
+    @Volatile private var fileIndex: FileIndex? = null
+
+    private fun tidyName(name: String) = name.lowercase().replace(Regex("[^a-z0-9]"), "")
+
+    private fun locate(root: DocumentFile, treeUri: Uri, name: String): DocumentFile? {
+        root.findFile("content")?.findFile(name)?.let { return it }
+        val index = fileIndex?.takeIf { it.tree == treeUri } ?: run {
+            val exact = HashMap<String, DocumentFile>()
+            val tidy = HashMap<String, DocumentFile>()
+            fun walk(dir: DocumentFile, depth: Int) {
+                for (f in dir.listFiles()) {
+                    if (f.isDirectory) {
+                        if (depth < 3) walk(f, depth + 1)
+                    } else {
+                        val n = f.name ?: continue
+                        exact.putIfAbsent(n, f)
+                        tidy.putIfAbsent(tidyName(n), f)
+                    }
+                }
+            }
+            walk(root, 0)
+            Log.i(TAG, "locate: indexed ${exact.size} files under $treeUri")
+            FileIndex(treeUri, exact, tidy).also { fileIndex = it }
+        }
+        return index.exact[name] ?: index.tidy[tidyName(name)]
+    }
+
     suspend fun savedFolderUri(): Uri? =
         context.sdCardDataStore.data.first()[KEY_FOLDER_URI]?.let { Uri.parse(it) }
 
     suspend fun saveFolderUri(uri: Uri) {
+        fileIndex = null
         context.sdCardDataStore.edit { it[KEY_FOLDER_URI] = uri.toString() }
     }
 
@@ -171,13 +208,15 @@ class SdCardRepository(private val context: Context) {
     // be pointed at either one interchangeably. Never fails silently: every
     // way it can't produce a file comes back as a reason the UI shows.
     suspend fun decryptToCache(groupId: String, item: SdCardManifestItem): OpenResult = withContext(Dispatchers.IO) {
-        val notFound = OpenResult.Failed("This item isn't on the card. Make sure the whole content folder was copied, then try again.")
-        val treeUri = savedFolderUri() ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: no saved folder uri") }
-        val root = DocumentFile.fromTreeUri(context, treeUri) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: fromTreeUri returned null for $treeUri") }
-        val contentDir = root.findFile("content") ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: no content/ dir under $treeUri") }
-
         val encryptedName = item.encryptedFileName
         val plainName = item.fileName
+        // Names the missing file, so whoever copied the card can check for it.
+        val notFound = OpenResult.Failed(
+            "This item isn't on the card" + ((encryptedName ?: plainName)?.let { " (file \"$it\")" } ?: "") +
+                ". Copy the whole content folder onto the tablet — manifest.json and the content folder next to it — then try again."
+        )
+        val treeUri = savedFolderUri() ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: no saved folder uri") }
+        val root = DocumentFile.fromTreeUri(context, treeUri) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: fromTreeUri returned null for $treeUri") }
         val cacheFile = File(context.cacheDir, "sdcard-${item.id}")
         if (cacheFile.exists() && cacheFile.length() > 0) return@withContext OpenResult.Ready(cacheFile)
 
@@ -189,12 +228,12 @@ class SdCardRepository(private val context: Context) {
         try {
             if (encryptedName != null) {
                 val key = keyFor(groupId) ?: return@withContext OpenResult.WrongKey.also { Log.e(TAG, "decryptToCache: no cached key for group $groupId") }
-                val source = contentDir.findFile(encryptedName) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: '$encryptedName' not found") }
+                val source = locate(root, treeUri, encryptedName) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: '$encryptedName' not found") }
                 context.contentResolver.openInputStream(source.uri)?.use { input ->
                     cacheFile.outputStream().use { output -> SdCardCrypto.decrypt(input, key, output) }
                 } ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: openInputStream returned null for ${source.uri}") }
             } else if (plainName != null) {
-                val source = contentDir.findFile(plainName) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: '$plainName' not found") }
+                val source = locate(root, treeUri, plainName) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: '$plainName' not found") }
                 context.contentResolver.openInputStream(source.uri)?.use { input ->
                     cacheFile.outputStream().use { output -> input.copyTo(output) }
                 } ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: openInputStream returned null for ${source.uri}") }

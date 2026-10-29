@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -168,6 +169,14 @@ fun SdCardScreen(
             navigationIcon = {
                 if (selectedCourse != null || folderStack.isNotEmpty()) {
                     IconButton(onClick = { goBack() }) { Text("←") }
+                }
+            },
+            // Re-pick the content folder — e.g. the wrong folder was chosen,
+            // or the card was copied again somewhere else. Previously the
+            // first pick was permanent short of clearing the app's data.
+            actions = {
+                if (state.folderPicked && selectedCourse == null && folderStack.isEmpty()) {
+                    TextButton(onClick = { pickFolder.launch(null) }) { Text("Change folder") }
                 }
             }
         )
