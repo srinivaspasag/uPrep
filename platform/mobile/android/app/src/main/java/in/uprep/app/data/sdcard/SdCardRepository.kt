@@ -76,6 +76,13 @@ class SdCardRepository(private val context: Context) {
     private class FileIndex(val tree: Uri, val exact: Map<String, DocumentFile>, val tidy: Map<String, DocumentFile>)
     @Volatile private var fileIndex: FileIndex? = null
 
+    // Every opened item used to leave its full decrypted copy in the cache
+    // for good — a few GB-sized lectures and the tablet's storage was full,
+    // so later videos failed to open. Only the item being opened is kept.
+    private fun pruneCache(keep: File) {
+        context.cacheDir.listFiles { f -> f.name.startsWith("sdcard-") && f != keep && f.name != keep.name + ".part" }?.forEach { it.delete() }
+    }
+
     private fun tidyName(name: String) = name.lowercase().replace(Regex("[^a-z0-9]"), "")
 
     private fun locate(root: DocumentFile, treeUri: Uri, name: String): DocumentFile? {
@@ -218,6 +225,9 @@ class SdCardRepository(private val context: Context) {
         val treeUri = savedFolderUri() ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: no saved folder uri") }
         val root = DocumentFile.fromTreeUri(context, treeUri) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: fromTreeUri returned null for $treeUri") }
         val cacheFile = File(context.cacheDir, "sdcard-${item.id}")
+        // Written here first and renamed when complete, so a copy cut short
+        // (app killed mid-decrypt) is never mistaken for a finished one.
+        val partFile = File(context.cacheDir, "sdcard-${item.id}.part")
         if (cacheFile.exists() && cacheFile.length() > 0) return@withContext OpenResult.Ready(cacheFile)
 
         if (isExpired(groupId)) {
@@ -229,29 +239,34 @@ class SdCardRepository(private val context: Context) {
             if (encryptedName != null) {
                 val key = keyFor(groupId) ?: return@withContext OpenResult.WrongKey.also { Log.e(TAG, "decryptToCache: no cached key for group $groupId") }
                 val source = locate(root, treeUri, encryptedName) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: '$encryptedName' not found") }
+                pruneCache(keep = cacheFile)
                 context.contentResolver.openInputStream(source.uri)?.use { input ->
-                    cacheFile.outputStream().use { output -> SdCardCrypto.decrypt(input, key, output) }
+                    partFile.outputStream().use { output -> SdCardCrypto.decrypt(input, key, output, source.length()) }
                 } ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: openInputStream returned null for ${source.uri}") }
             } else if (plainName != null) {
                 val source = locate(root, treeUri, plainName) ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: '$plainName' not found") }
+                pruneCache(keep = cacheFile)
                 context.contentResolver.openInputStream(source.uri)?.use { input ->
-                    cacheFile.outputStream().use { output -> input.copyTo(output) }
+                    partFile.outputStream().use { output -> input.copyTo(output) }
                 } ?: return@withContext notFound.also { Log.e(TAG, "decryptToCache: openInputStream returned null for ${source.uri}") }
             } else {
                 return@withContext notFound.also { Log.e(TAG, "decryptToCache: item has neither encryptedFileName nor fileName") }
             }
+            if (!partFile.renameTo(cacheFile)) return@withContext OpenResult.Failed("Couldn't save this on the device. Check it has free storage and try again.")
             OpenResult.Ready(cacheFile)
         } catch (e: AEADBadTagException) {
             // Wrong key for this card (activated with another group's code) —
             // or a damaged file, but then the next item will open fine and the
             // student just re-activates once. Either way this key can't be trusted.
             Log.e(TAG, "decryptToCache: key does not decrypt ${item.name} — dropping cached key for $groupId", e)
-            cacheFile.delete()
+            partFile.delete()
             forgetKey(groupId)
             OpenResult.WrongKey
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // Throwable, not Exception: an OutOfMemoryError used to escape
+            // this and crash the app instead of showing a reason.
             Log.e(TAG, "decryptToCache: failed for ${item.name}", e)
-            cacheFile.delete()
+            partFile.delete()
             OpenResult.Failed("Couldn't open this (${e.javaClass.simpleName}). Check the device has free storage and try again.")
         }
     }

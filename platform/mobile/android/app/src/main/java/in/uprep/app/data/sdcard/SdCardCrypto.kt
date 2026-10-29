@@ -5,6 +5,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 // Raw AES-256-GCM decrypt matching lib/group-crypto.ts's per-file layout
@@ -48,7 +49,21 @@ object SdCardCrypto {
     // and verify the tag, exactly matching what the whole-buffer version did
     // (reorder ciphertext-then-tag) without ever holding more than one
     // chunk in memory.
-    private const val CHUNK_SIZE = 64 * 1024
+    //
+    // Bug found live #4 (only 2 videos of a 32 GB card played): the
+    // streaming above never was — Android's GCM (Conscrypt
+    // OpenSSLAeadCipher) holds back ALL ciphertext until doFinal() so it can
+    // check the tag before releasing any plaintext. A 470 MB lecture on the
+    // emulator: OutOfMemoryError at OpenSSLAeadCipher.expand, app crashed.
+    // Small videos fit the heap, so a few played and the rest never did.
+    // Large files are now decrypted as AES-CTR — GCM's ciphertext IS
+    // AES-CTR keystream starting at counter iv||00000002 — which really
+    // streams, in constant memory, from the same card files (nothing to
+    // re-copy). Files up to VERIFY_LIMIT still go through GCM, so the tag
+    // check (and wrong-key detection, AEADBadTagException) stays for tests,
+    // books and short videos.
+    private const val CHUNK_SIZE = 1024 * 1024
+    private const val VERIFY_LIMIT = 32L * 1024 * 1024
 
     private fun readFully(input: InputStream, buf: ByteArray) {
         var off = 0
@@ -59,18 +74,23 @@ object SdCardCrypto {
         }
     }
 
-    fun decrypt(input: InputStream, keyBase64: String, output: OutputStream) {
+    fun decrypt(input: InputStream, keyBase64: String, output: OutputStream, sizeBytes: Long = -1) {
         val keyBytes = Base64.decode(keyBase64, Base64.NO_WRAP)
         val iv = ByteArray(IV_LENGTH)
         readFully(input, iv)
         val tag = ByteArray(TAG_LENGTH_BYTES)
         readFully(input, tag)
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(
-            Cipher.DECRYPT_MODE,
-            SecretKeySpec(keyBytes, "AES"),
-            GCMParameterSpec(TAG_LENGTH_BITS, iv)
-        )
+        val key = SecretKeySpec(keyBytes, "AES")
+        val verify = sizeBytes in 0..VERIFY_LIMIT
+        val cipher = if (verify) {
+            Cipher.getInstance("AES/GCM/NoPadding").apply {
+                init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(TAG_LENGTH_BITS, iv))
+            }
+        } else {
+            Cipher.getInstance("AES/CTR/NoPadding").apply {
+                init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv + byteArrayOf(0, 0, 0, 2)))
+            }
+        }
 
         val chunk = ByteArray(CHUNK_SIZE)
         while (true) {
@@ -79,7 +99,7 @@ object SdCardCrypto {
             val decrypted = cipher.update(chunk, 0, n)
             if (decrypted != null && decrypted.isNotEmpty()) output.write(decrypted)
         }
-        val last = cipher.doFinal(tag)
+        val last = if (verify) cipher.doFinal(tag) else cipher.doFinal()
         if (last != null && last.isNotEmpty()) output.write(last)
     }
 }
