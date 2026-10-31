@@ -63,6 +63,7 @@ class SdCardRepository(private val context: Context) {
 
     companion object {
         private const val TAG = "SdCardRepository"
+        private val ADD_ON_MANIFESTS = listOf("tests-manifest.json", "books-manifest.json")
     }
 
     // Where each content file actually sits in the picked folder. Found live:
@@ -147,15 +148,18 @@ class SdCardRepository(private val context: Context) {
     // tests-manifest.json next to it: its folders and items are merged in,
     // replacing the card's own "needs an online sync" entries for the same
     // tests. Only an add-on for this card's own group counts — anything else
-    // is ignored rather than mixed in.
+    // is ignored rather than mixed in. An e-books add-on (books-manifest.json)
+    // is merged the same way.
     suspend fun readManifest(): SdCardManifest? = withContext(Dispatchers.IO) {
         val treeUri = savedFolderUri() ?: return@withContext null
         val root = DocumentFile.fromTreeUri(context, treeUri) ?: return@withContext null
         val manifest = readJson(root, "manifest.json") ?: return@withContext null
-        val addOn = readJson(root, "tests-manifest.json")
-        if (addOn == null || addOn.groupId != manifest.groupId) return@withContext manifest
-        val folders = (manifest.folders.orEmpty() + addOn.folders.orEmpty()).associateBy { it.id }.values.toList()
-        val items = (manifest.items.orEmpty() + addOn.items.orEmpty()).associateBy { it.id }.values.toList()
+        // An add-on may have been copied in since the folder was last indexed.
+        fileIndex = null
+        val addOns = ADD_ON_MANIFESTS.mapNotNull { readJson(root, it) }.filter { it.groupId == manifest.groupId }
+        if (addOns.isEmpty()) return@withContext manifest
+        val folders = (manifest.folders.orEmpty() + addOns.flatMap { it.folders.orEmpty() }).associateBy { it.id }.values.toList()
+        val items = (manifest.items.orEmpty() + addOns.flatMap { it.items.orEmpty() }).associateBy { it.id }.values.toList()
         manifest.copy(folders = folders, items = items)
     }
 

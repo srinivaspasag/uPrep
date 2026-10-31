@@ -9,6 +9,7 @@ import { ZipStreamWriter } from "@/lib/zip";
 import { getOrCreateGroupKey, encryptBuffer, ENCRYPTION_INFO } from "@/lib/group-crypto";
 import { loadOrgFolders, orderThenNatural, naturalCompare, type FolderNode } from "@/lib/courses";
 import { fetchTestPayload } from "@/lib/test-payload";
+import { resolveProgramContentIds } from "@/lib/seller-program";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -33,6 +34,9 @@ const GROUPS_COLL = "sellergroups";
 const JOBS_COLL = "packagejobs";
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const PACKAGES_DIR = path.join(UPLOAD_DIR, "packages");
+// Where uploaded content files are read from — lib/storage.ts's UPLOAD_DIR
+// override (smoke suite) included, so packaging finds what upload wrote.
+const SOURCE_DIR = process.env.UPLOAD_DIR || UPLOAD_DIR;
 
 async function requireManager(req: NextRequest) {
   const s = await sessionFromReq(req);
@@ -107,12 +111,22 @@ ${section("Documents", byType("DOCUMENT"))}
 
 // Tests ride on the card as JSON (see lib/test-payload.ts) — one
 // `<testId>.test.json` per test, encrypted like everything else in encrypted
-// mode. `testsOnly` builds just that: a small add-on (tests + their chapter
+// mode. `part: "tests"` builds just that: a small add-on (tests + their chapter
 // tree + tests-manifest.json) to copy into a card that's already out there,
 // instead of re-copying 30+ GB of videos to add a few MB of tests. The app
 // merges tests-manifest.json into the card's own manifest.json (same group
 // only), so the existing manifest and its video file names are never touched.
-async function runPackageJob(jobId: string, groupId: string, orgId: string, userId: string, plain: boolean, testsOnly: boolean) {
+//
+// `part: "books"` is the same kind of add-on for e-books (books-manifest.json).
+// Found live: the JEE Online group held 3,807 videos + 1,135 tests and not one
+// of the program's 115 e-books — a group is a snapshot taken at creation, and
+// books filed into the program afterwards never reached it. So this add-on
+// re-resolves the program's books NOW and adds them to the group too, so a
+// later full package carries them as well.
+type AddOn = "tests" | "books" | null;
+const ADD_ON_TYPE: Record<string, string> = { tests: "TEST", books: "BOOK" };
+
+async function runPackageJob(jobId: string, groupId: string, orgId: string, userId: string, plain: boolean, part: AddOn) {
   const db = await getDb();
   const jobs = db.collection(JOBS_COLL);
 
@@ -123,7 +137,20 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, user
     const group: any = await db.collection(GROUPS_COLL).findOne({ _id: new ObjectId(groupId), orgId } as any);
     if (!group) throw new Error("Group not found");
 
-    const topIds: string[] = Array.isArray(group.contentIds) ? group.contentIds : [];
+    let topIds: string[] = Array.isArray(group.contentIds) ? group.contentIds : [];
+    if (part === "books" && group.programId && ObjectId.isValid(group.programId)) {
+      const { contentIds } = await resolveProgramContentIds(db, orgId, group.programId);
+      const books = await db
+        .collection("books")
+        .find({ _id: { $in: contentIds.filter((x) => ObjectId.isValid(x)).map((x) => new ObjectId(x)) } } as any)
+        .project({ _id: 1 })
+        .toArray();
+      const bookIds = (books as any[]).map((b) => String(b._id));
+      if (bookIds.length) {
+        await db.collection(GROUPS_COLL).updateOne({ _id: group._id }, { $addToSet: { contentIds: { $each: bookIds } } } as any);
+        topIds = Array.from(new Set([...topIds, ...bookIds]));
+      }
+    }
     const topItems = await resolveItems(db, topIds);
 
     // One level of MODULE expansion — a module is a container, never a real
@@ -143,7 +170,7 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, user
     // items minus MODULE containers themselves (superseded by their children)
     // plus the resolved children.
     const allItems = [...topItems.filter((i) => i.type !== "MODULE"), ...childItems].filter(
-      (i) => !testsOnly || i.type === "TEST"
+      (i) => !part || i.type === ADD_ON_TYPE[part]
     );
     const seen = new Set<string>();
     const items = allItems
@@ -255,7 +282,7 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, user
         continue;
       }
       const fileName = path.basename(item.url as string);
-      const filePath = path.join(UPLOAD_DIR, fileName);
+      const filePath = path.join(SOURCE_DIR, fileName);
       try {
         const buf = await fs.readFile(filePath);
         const ext = path.extname(fileName);
@@ -289,12 +316,12 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, user
       await jobs.updateOne({ _id: jobId } as any, { $set: { processed, timeUpdated: Date.now() } });
     }
 
-    if (plain && !testsOnly && indexItems.length > 0) {
+    if (plain && !part && indexItems.length > 0) {
       await writer.addFile("index.html", Buffer.from(buildIndexHtml(group.name || "Content", indexItems), "utf8"));
     }
 
     await writer.addFile(
-      testsOnly ? "tests-manifest.json" : "manifest.json",
+      part ? `${part}-manifest.json` : "manifest.json",
       Buffer.from(
         JSON.stringify(
           {
@@ -343,7 +370,7 @@ async function runPackageJob(jobId: string, groupId: string, orgId: string, user
     const { sizeBytes } = await writer.finish();
 
     const safeGroupName =
-      (group.name || "distribution-group").replace(/[\\/:*?"<>|]/g, "_") + (testsOnly ? " - tests add-on" : "");
+      (group.name || "distribution-group").replace(/[\\/:*?"<>|]/g, "_") + (part ? ` - ${part} add-on` : "");
     await jobs.updateOne(
       { _id: jobId } as any,
       {
@@ -374,7 +401,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid group id" }, { status: 400 });
 
   const plain = req.nextUrl.searchParams.get("mode") !== "encrypted";
-  const testsOnly = req.nextUrl.searchParams.get("part") === "tests";
+  const partParam = req.nextUrl.searchParams.get("part");
+  const part: AddOn = partParam === "tests" || partParam === "books" ? partParam : null;
   const orgId = await resolveOrgId(req, null);
   const session = await sessionFromReq(req);
 
@@ -390,7 +418,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       orgId,
       status: "queued",
       plain,
-      testsOnly,
+      testsOnly: part === "tests",
+      part,
       processed: 0,
       total: 0,
       url: null,
@@ -406,7 +435,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     // (not serverless, see DEPLOYMENT.md), so this keeps running after the
     // response is sent. A job interrupted by a container restart can simply
     // be re-triggered from the UI.
-    runPackageJob(jobId, id, orgId, session?.id || "system", plain, testsOnly).catch(() => {
+    runPackageJob(jobId, id, orgId, session?.id || "system", plain, part).catch(() => {
       /* runPackageJob already records failure on the job doc itself */
     });
 
