@@ -145,14 +145,14 @@ function InventoryTab({
 }) {
   // Packaging now runs as a background job (large groups — JEE/NEET-scale —
   // used to time out / OOM the request when this built the whole zip inline)
-  // — keyed by `${groupId}:${mode}` (plus `:tests` for a tests add-on) so each
+  // — keyed by `${groupId}:${mode}` (plus `:tests` / `:books` for an add-on) so each
   // packaging run for the same group shows its own progress independently.
   const [jobs, setJobs] = useState<Record<string, PackageJob>>({});
 
-  async function startPackage(groupId: string, mode: "plain" | "encrypted", testsOnly = false) {
-    const key = `${groupId}:${mode}${testsOnly ? ":tests" : ""}`;
+  async function startPackage(groupId: string, mode: "plain" | "encrypted", part?: "tests" | "books") {
+    const key = `${groupId}:${mode}${part ? `:${part}` : ""}`;
     const res = await (
-      await fetch(`/api/cmds/tools/seller/groups/${groupId}/package?mode=${mode}${testsOnly ? "&part=tests" : ""}`)
+      await fetch(`/api/cmds/tools/seller/groups/${groupId}/package?mode=${mode}${part ? `&part=${part}` : ""}`)
     ).json();
     if (res.error || !res.jobId) {
       setJobs((j) => ({ ...j, [key]: { status: "failed", processed: 0, total: 0, url: null, fileName: null, error: res.error || "Failed to start" } }));
@@ -243,14 +243,28 @@ function InventoryTab({
                         label="Tests add-on"
                         title="Just this group's tests (a few MB) — copy into a plain card that's already out there"
                         tone="emerald"
-                        onStart={() => startPackage(g.id, "plain", true)}
+                        onStart={() => startPackage(g.id, "plain", "tests")}
                       />
                       <PackageButton
                         job={jobs[`${g.id}:encrypted:tests`]}
                         label="Tests add-on (encrypted)"
                         title="Just this group's tests, encrypted — copy into an encrypted card that's already out there"
                         tone="slate"
-                        onStart={() => startPackage(g.id, "encrypted", true)}
+                        onStart={() => startPackage(g.id, "encrypted", "tests")}
+                      />
+                      <PackageButton
+                        job={jobs[`${g.id}:plain:books`]}
+                        label="E-books add-on"
+                        title="Just the program's e-books — copy into a plain card that's already out there"
+                        tone="emerald"
+                        onStart={() => startPackage(g.id, "plain", "books")}
+                      />
+                      <PackageButton
+                        job={jobs[`${g.id}:encrypted:books`]}
+                        label="E-books add-on (encrypted)"
+                        title="Just the program's e-books, encrypted — copy into an encrypted card that's already out there"
+                        tone="slate"
+                        onStart={() => startPackage(g.id, "encrypted", "books")}
                       />
                       <button
                         onClick={() => onGenerate(g)}
@@ -281,7 +295,10 @@ function InventoryTab({
         packs only the tests, for a card that&apos;s already been copied: unzip it and copy its{" "}
         <code className="rounded bg-slate-100 px-1">tests-manifest.json</code> and{" "}
         <code className="rounded bg-slate-100 px-1">content</code> folder into the card&apos;s folder
-        (next to manifest.json) — pick the same mode as the card. Question banks aren&apos;t files
+        (next to manifest.json) — pick the same mode as the card.{" "}
+        <strong className="text-slate-500">E-books add-on</strong> works the same way with{" "}
+        <code className="rounded bg-slate-100 px-1">books-manifest.json</code>, and picks up e-books
+        added to the program after the group was made. Question banks aren&apos;t files
         either way (see the zip&apos;s manifest for what needs an online sync instead).
       </p>
     </div>

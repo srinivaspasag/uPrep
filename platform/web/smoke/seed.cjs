@@ -102,12 +102,17 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
     { _id: G1, name: "JEE Online", orgId: String(P), encryptionKey: Buffer.alloc(32, 7).toString("base64"), contentIds: [String(T1), String(V1)] },
     { _id: G2, name: "JEE XI", orgId: String(P), encryptionKey: Buffer.alloc(32, 9).toString("base64") },
   ]);
+  // A program-made group (snapshot of V1 only) whose program has a book filed
+  // after the group was made — the e-books add-on (group 9) must pick it up.
+  const JP = id(), G3 = id();
+  await db.collection("orgprograms").insertOne({ _id: JP, orgId: String(P), name: "JEE Online", courseIds: [String(PHY)], recordState: "ACTIVE" });
+  await db.collection("sellergroups").insertOne({ _id: G3, name: "JEE Online", orgId: String(P), programId: String(JP), programName: "JEE Online", contentIds: [String(V1)], courseGroups: [] });
   await db.collection("accesscodes").insertOne({
     _id: id(), orgId: String(P), code: "SMOKE1", groupId: String(G2), groupName: "JEE XI",
     buyerEmail: "buyer@smoke.local", deviceIds: [], timeCreated: now, lastUpdated: now,
   });
 
-  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, ST3, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2, T1, V1, PCH, TB1, TB2 };
+  const out = { P, S, S2, M, C1, PHY, D1, D2, D3, EXTRA, SPHY, RCHEM, CENTER, PROG, OTHER_PROG, SEC1, SEC2, OTHER_SEC, REP, REP_SEC, ST1, ST2, ST3, QM: QM._id, QS: QS._id, QX: QX._id, G1, G2, T1, V1, PCH, TB1, TB2, JP, G3 };
   console.log(JSON.stringify(Object.fromEntries(Object.entries(out).map(([k, v]) => [k, String(v)]))));
   await c.close();
 })().catch((e) => {

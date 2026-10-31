@@ -267,6 +267,32 @@ await group("9. Tests add-on package", async () => {
   fs.rmSync(zipPath, { force: true });
 });
 
+await group("9b. E-books add-on package", async () => {
+  // Found live: JEE Online's group (made from the program) had no e-books —
+  // books filed into the program after the group was made never reached it.
+  const up = await upload("master", "Smoke Late Book", ids.PCH);
+  check("book filed into the program's chapter", up.status === 200, JSON.stringify(up.j));
+  const start = await call("master", `/api/cmds/tools/seller/groups/${ids.G3}/package?mode=encrypted&part=books`);
+  let job = null;
+  for (let i = 0; i < 30 && start.j?.jobId; i++) {
+    job = (await call("master", `/api/cmds/tools/seller/groups/${ids.G3}/package/status?jobId=${start.j.jobId}`)).j;
+    if (job?.status === "done" || job?.status === "failed") break;
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  check("e-books add-on job finishes", job?.status === "done", JSON.stringify(job));
+  const zipPath = `public/uploads/packages/${start.j?.jobId}.zip`;
+  const listing = fs.existsSync(zipPath) ? execFileSync("unzip", ["-Z1", zipPath]).toString().trim().split("\n") : [];
+  const m = listing.includes("books-manifest.json") ? JSON.parse(execFileSync("unzip", ["-p", zipPath, "books-manifest.json"]).toString()) : null;
+  const b = m?.items?.find((i) => i.id === up.j?.id);
+  check("only the new book is in it, encrypted, under its chapter",
+    m?.items?.length === 1 && b?.includedAsFile === true && b?.folderId === ids.PCH && listing.includes(`content/${b?.encryptedFileName}`) && !listing.includes("manifest.json"),
+    JSON.stringify({ listing, items: m?.items }));
+  check("same group id as the card, so the app merges it", m?.groupId === ids.G3);
+  const g = (await call("master", "/api/cmds/tools/seller/groups")).j?.groups?.find((x) => x.id === ids.G3);
+  check("book added to the group for later full packages", g?.itemCount === 2, JSON.stringify(g));
+  fs.rmSync(zipPath, { force: true });
+});
+
 await group("10. Institute subdomains", async () => {
   const ask = async (d) => (await call("none", `/api/tls/allowed?domain=${d}`)).status;
   check("certificate gate: app.edunora.ai allowed", (await ask("app.edunora.ai")) === 200);
