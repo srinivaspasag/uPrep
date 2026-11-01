@@ -168,11 +168,14 @@ export async function GET(req: NextRequest) {
           .collection("orgsections")
           .find({ orgId, programId: p.id, recordState: "ACTIVE" } as any)
           .toArray();
+        // Some have no center at all (found live: JEE/NEET Online's "Section
+        // A", 400+ students) — listed with centerId null, offered under any
+        // center the admin picks.
         for (const d of ownSections as any[]) {
           const id = String(d._id);
-          if (known.has(id) || !d.centerId) continue;
-          sections.push({ id, name: d.name, code: d.code, programId: p.id, programName: p.name, centerId: String(d.centerId) });
-          if (!centerIds.includes(String(d.centerId))) centerIds.push(String(d.centerId));
+          if (known.has(id)) continue;
+          sections.push({ id, name: d.name, code: d.code, programId: p.id, programName: p.name, centerId: d.centerId ? String(d.centerId) : (null as any) });
+          if (d.centerId && !centerIds.includes(String(d.centerId))) centerIds.push(String(d.centerId));
         }
         await Promise.all(
           sections.map(async (s: any) => {

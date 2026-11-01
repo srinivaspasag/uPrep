@@ -64,7 +64,7 @@ const orgStub = http.createServer((req, res) => {
   const action = (req.url || "").split("/").pop();
   const result = {
     getDepartments: { list: [] },
-    getPrograms: { list: [{ id: ids.PROG, name: "Scholar Regular JEE XI" }] },
+    getPrograms: { list: [{ id: ids.PROG, name: "Scholar Regular JEE XI" }, { id: ids.OTHER_PROG, name: "Unrelated Program" }] },
     getCenters: { list: [{ id: ids.CENTER, name: "Puducherry" }] },
     getProgramCenters: { list: [] },
     getSections: { list: [] },
@@ -161,6 +161,9 @@ await group("3b. Add Student picker: program with no linked center", async () =>
   check("…and its sections are listed under that center", JSON.stringify(secs) === JSON.stringify([ids.SEC1, ids.SEC2].sort()) &&
     r.j.sections.filter((s) => s.programId === ids.PROG).every((s) => s.centerId === ids.CENTER), JSON.stringify(r.j?.sections));
   check("every center is offered", (r.j?.centers || []).some((c) => c.id === ids.CENTER));
+  // Live: JEE/NEET Online's "Section A" has no center, so no center's list had it.
+  const online = (r.j?.sections || []).find((s) => s.name === "Online Sec A");
+  check("section with no center is still listed (center left open)", online?.programId === ids.OTHER_PROG && online?.centerId == null, JSON.stringify(online));
 });
 
 await group("4. Shared subjects: Link Shared Subjects tool", async () => {

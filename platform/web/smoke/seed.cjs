@@ -65,6 +65,8 @@ if (!uri || !dbName || !/127\.0\.0\.1|localhost/.test(uri)) {
     { _id: SEC1, orgId: String(S), programId: String(PROG), centerId: String(CENTER), name: "Sec A", courseIds: [String(D1), String(SPHY)], recordState: "ACTIVE" },
     { _id: SEC2, orgId: String(S), programId: String(PROG), centerId: String(CENTER), name: "Sec B", courseIds: [String(M)], recordState: "ACTIVE" },
     { _id: OTHER_SEC, orgId: String(S), programId: String(OTHER_PROG), centerId: String(CENTER), name: "Other Sec", courseIds: [], recordState: "ACTIVE" },
+    // No center at all — like JEE/NEET Online's live "Section A".
+    { _id: id(), orgId: String(S), programId: String(OTHER_PROG), name: "Online Sec A", courseIds: [], recordState: "ACTIVE" },
     { _id: REP_SEC, orgId: String(S), programId: String(REP), centerId: String(CENTER), name: "Rep Sec", courseIds: [String(RCHEM), String(M)], recordState: "ACTIVE" },
   ]);
   const ST1 = id(), ST2 = id(), ST3 = id();
