@@ -535,7 +535,7 @@ function MappingPicker({
     return [...centers.filter((c) => ids.has(c.id)), ...centers.filter((c) => !ids.has(c.id))];
   }, [programs, centers, sections, programId]);
   const sectionsForProgramCenter = useMemo(
-    () => sections.filter((s) => s.programId === programId && s.centerId === centerId),
+    () => sections.filter((s) => s.programId === programId && (s.centerId === centerId || !s.centerId)),
     [sections, programId, centerId]
   );
 
