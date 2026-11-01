@@ -526,11 +526,14 @@ function MappingPicker({
   const [centerId, setCenterId] = useState("");
   const [sectionId, setSectionId] = useState("");
 
+  // Every center of the institute, the program's own first — a program with
+  // no center linked yet used to leave this list empty (found live: NEET
+  // Online), with no way to pick anything.
   const centersForProgram = useMemo(() => {
     const prog = programs.find((p) => p.id === programId);
-    const ids = new Set(prog?.centerIds || []);
-    return centers.filter((c) => ids.has(c.id));
-  }, [programs, centers, programId]);
+    const ids = new Set([...(prog?.centerIds || []), ...sections.filter((s) => s.programId === programId).map((s) => s.centerId)]);
+    return [...centers.filter((c) => ids.has(c.id)), ...centers.filter((c) => !ids.has(c.id))];
+  }, [programs, centers, sections, programId]);
   const sectionsForProgramCenter = useMemo(
     () => sections.filter((s) => s.programId === programId && s.centerId === centerId),
     [sections, programId, centerId]
@@ -618,7 +621,7 @@ function MappingPicker({
           disabled={!centerId}
           className="rounded border border-slate-300 px-2 py-1.5 text-xs outline-none focus:border-slate-500 disabled:bg-slate-50"
         >
-          <option value="">Section…</option>
+          <option value="">{centerId && sectionsForProgramCenter.length === 0 ? "No sections here — add one in Academic" : "Section…"}</option>
           {sectionsForProgramCenter.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
