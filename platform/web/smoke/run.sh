@@ -8,6 +8,8 @@ cd "$(dirname "$0")/.."
 PORT=3457; MPORT=27999; NAME=uprep-smoke-mongo
 TMP=$(mktemp -d)
 export MONGO_URI="mongodb://127.0.0.1:$MPORT" MONGO_DB=smoke SESSION_SECRET=smoke-secret UPLOAD_DIR="$TMP/uploads" SMOKE_BASE="http://localhost:$PORT"
+# Stand-in for the legacy org service — served by checks.mjs (see orgStub there).
+export ORG_SERVICE_URL="http://127.0.0.1:3458"
 
 cleanup() { [ -n "${SRV:-}" ] && kill "$SRV" 2>/dev/null; docker rm -f $NAME >/dev/null 2>&1; rm -rf "$TMP"; }
 trap cleanup EXIT

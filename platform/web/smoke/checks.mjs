@@ -7,6 +7,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { execFileSync } from "node:child_process";
+import http from "node:http";
 
 const BASE = process.env.SMOKE_BASE || "http://localhost:3457";
 const SECRET = process.env.SESSION_SECRET;
@@ -55,6 +56,23 @@ const adminList = async (who, qs) => (await call(who, `/api/cmds/content?${qs}`)
 const studentFolder = async (who, folderId) => (await call(who, `/api/learn/courses?folderId=${folderId}`)).j || {};
 const rootSubjects = async (who) =>
   (await adminList(who, "type=FOLDER")).map((r) => `${r.title}${r.granted ? " [Shared]" : ""}${r.linked ? " [Linked]" : ""}`).sort();
+
+// Minimal legacy org service (ORG_SERVICE_URL, see run.sh): Spectra's one
+// program and one center, with NO program↔center link — the live NEET Online
+// case. Anything else answers with an error, as an unreachable service would.
+const orgStub = http.createServer((req, res) => {
+  const action = (req.url || "").split("/").pop();
+  const result = {
+    getDepartments: { list: [] },
+    getPrograms: { list: [{ id: ids.PROG, name: "Scholar Regular JEE XI" }] },
+    getCenters: { list: [{ id: ids.CENTER, name: "Puducherry" }] },
+    getProgramCenters: { list: [] },
+    getSections: { list: [] },
+  }[action];
+  res.setHeader("content-type", "application/json");
+  res.end(JSON.stringify(result ? { result } : { errorCode: "SMOKE_STUB" }));
+});
+await new Promise((r) => orgStub.listen(3458, "127.0.0.1", r));
 
 let pass = 0;
 const failures = [];
@@ -130,6 +148,19 @@ await group("3. Program page + section publishing", async () => {
   check("'Shared with your class' lists it for Sec A", has(await shared("st1"), "Section Sample Book"));
   check("…not for Sec B", !has(await shared("st2"), "Section Sample Book"));
   check("…and no subject content in that list", !has(await shared("st1"), "Master Lecture 1"));
+});
+
+await group("3b. Add Student picker: program with no linked center", async () => {
+  // Found live: NEET Online's Center dropdown was empty — its centers came
+  // only from the org service's program↔center links, which it didn't have.
+  const r = await call("spectra", "/api/cmds/tools/academic");
+  check("academic structure loads", r.status === 200, JSON.stringify(r.j).slice(0, 200));
+  const prog = r.j?.programs?.find((p) => p.id === ids.PROG);
+  check("program's center comes from its sections", (prog?.centerIds || []).includes(ids.CENTER), JSON.stringify(prog));
+  const secs = (r.j?.sections || []).filter((s) => s.programId === ids.PROG).map((s) => s.id).sort();
+  check("…and its sections are listed under that center", JSON.stringify(secs) === JSON.stringify([ids.SEC1, ids.SEC2].sort()) &&
+    r.j.sections.filter((s) => s.programId === ids.PROG).every((s) => s.centerId === ids.CENTER), JSON.stringify(r.j?.sections));
+  check("every center is offered", (r.j?.centers || []).some((c) => c.id === ids.CENTER));
 });
 
 await group("4. Shared subjects: Link Shared Subjects tool", async () => {
@@ -328,6 +359,7 @@ await group("11. Board-tagged content published to an own-content program", asyn
   check("other sections' students don't get it", !has((await studentFolder("st1", ids.D2)).items, "Tagged Subject Book"));
 });
 
+orgStub.close();
 console.log(`\n${pass} passed, ${failures.length} failed`);
 if (failures.length) {
   console.log("Failed:\n" + failures.map((f) => `  - ${f}`).join("\n"));

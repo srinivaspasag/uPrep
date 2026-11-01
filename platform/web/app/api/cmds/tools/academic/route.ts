@@ -158,6 +158,22 @@ export async function GET(req: NextRequest) {
             )
           )
         ).flat();
+        // Found live: NEET Online's Add Student picker had no centers at all —
+        // the program had no program↔center link in the org service, so
+        // neither its centers nor its sections were ever listed, though its
+        // sections (each with a center) exist. Sections stored here count
+        // too, and their centers become the program's.
+        const known = new Set(sections.map((s: any) => s.id));
+        const ownSections = await db
+          .collection("orgsections")
+          .find({ orgId, programId: p.id, recordState: "ACTIVE" } as any)
+          .toArray();
+        for (const d of ownSections as any[]) {
+          const id = String(d._id);
+          if (known.has(id) || !d.centerId) continue;
+          sections.push({ id, name: d.name, code: d.code, programId: p.id, programName: p.name, centerId: String(d.centerId) });
+          if (!centerIds.includes(String(d.centerId))) centerIds.push(String(d.centerId));
+        }
         await Promise.all(
           sections.map(async (s: any) => {
             const secDoc = ObjectId.isValid(s.id)
