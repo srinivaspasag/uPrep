@@ -137,7 +137,7 @@ export default function CmdsShell({
           </button>
           {userMenu && (
             <div className="absolute right-0 z-40 mt-1 w-36 rounded-md border border-slate-200 bg-white py-1 text-xs text-slate-700 shadow-lg">
-              <Link href="/learn/library" className="block px-3 py-2 hover:bg-slate-50">
+              <Link href="/learn/courses" className="block px-3 py-2 hover:bg-slate-50">
                 Learn app
               </Link>
               <button onClick={logout} className="block w-full px-3 py-2 text-left hover:bg-slate-50">
@@ -241,7 +241,7 @@ export default function CmdsShell({
           </div>
 
           <a
-            href="/learn/library"
+            href="/learn/courses"
             className="flex items-center gap-1 rounded bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-600"
             title="Open the student Learning Network"
           >

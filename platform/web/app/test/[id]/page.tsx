@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSession, type UprepSession } from "@/lib/session";
 import MathText from "@/components/MathText";
+import { DEFAULT_RETURN, returnLabel, safeReturnPath } from "@/lib/returnTo";
 
 type Question = {
   id: string;
@@ -65,6 +66,13 @@ type QState = "NOT_VISITED" | "NOT_ANSWERED" | "ANSWERED" | "MARKED" | "ANSWERED
 
 export default function TestPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  // Page the student opened this test from (?from=, set by TestLink). Every
+  // exit goes back there; replace (not push) so Back doesn't re-enter the test.
+  const [returnTo, setReturnTo] = useState(DEFAULT_RETURN);
+  useEffect(() => {
+    setReturnTo(safeReturnPath(new URLSearchParams(window.location.search).get("from")));
+  }, []);
+  const backLabel = returnLabel(returnTo);
   const [session, setSession] = useState<UprepSession | null>(null);
   const [test, setTest] = useState<TestMeta | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -215,7 +223,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
 
   async function pauseAndExit() {
     await saveProgress(true);
-    router.push("/learn/library");
+    router.replace(returnTo);
   }
 
   useEffect(() => {
@@ -409,8 +417,8 @@ export default function TestPage({ params }: { params: { id: string } }) {
     return (
       <Centered>
         <div className="text-red-600">{error}</div>
-        <Link href="/learn/library" className="mt-3 text-blue-600 hover:underline">
-          ← Back to Library
+        <Link href={returnTo} replace className="mt-3 text-blue-600 hover:underline">
+          ← {backLabel}
         </Link>
       </Centered>
     );
@@ -420,7 +428,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
     <div className="min-h-screen bg-slate-50">
       <header className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-5xl px-4 h-14 flex items-center justify-between">
-          <Link href="/learn/library" className="flex items-center gap-2">
+          <Link href={returnTo} replace className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
               U
             </div>
@@ -480,8 +488,8 @@ export default function TestPage({ params }: { params: { id: string } }) {
             >
               {questions.length === 0 ? "No questions available" : "Start Test"}
             </button>
-            <Link href="/library" className="mt-4 block text-center text-sm text-slate-500 hover:text-blue-600">
-              ← Back to Library
+            <Link href={returnTo} replace className="mt-4 block text-center text-sm text-slate-500 hover:text-blue-600">
+              ← {backLabel}
             </Link>
           </div>
         )}
@@ -852,10 +860,11 @@ export default function TestPage({ params }: { params: { id: string } }) {
 
               <div className="mt-8 flex justify-center gap-3 border-t border-slate-100 pt-6">
                 <Link
-                  href="/learn/library"
+                  href={returnTo}
+                  replace
                   className="rounded-md border border-slate-300 px-4 py-2 text-slate-600 hover:bg-slate-100"
                 >
-                  Back to Library
+                  {backLabel}
                 </Link>
                 <Link
                   href="/learn/analytics"

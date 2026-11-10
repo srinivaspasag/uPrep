@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import TestLink from "@/components/TestLink";
 import LmsShell from "@/components/LmsShell";
 import { getSession } from "@/lib/session";
 
@@ -78,12 +78,12 @@ export default function ChallengesPage() {
                     Join
                   </button>
                   {c.testId && !ended && (
-                    <Link
+                    <TestLink
                       href={`/test/${c.testId}`}
                       className="rounded-md bg-[#e8443b] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#d33c34]"
                     >
                       Start
-                    </Link>
+                    </TestLink>
                   )}
                 </div>
               </div>

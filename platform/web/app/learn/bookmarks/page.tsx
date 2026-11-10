@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import TestLink from "@/components/TestLink";
 import LmsShell from "@/components/LmsShell";
 import { getSession } from "@/lib/session";
 
@@ -17,7 +17,7 @@ const BADGE: Record<string, string> = {
 function hrefFor(b: Bookmark): string {
   if (b.entityType === "TEST") return `/test/${b.entityId}`;
   if (b.url) return b.url;
-  return "/learn/library";
+  return "/learn/courses";
 }
 
 export default function BookmarksPage() {
@@ -66,13 +66,13 @@ export default function BookmarksPage() {
               >
                 {b.entityType}
               </span>
-              <Link
+              <TestLink
                 href={hrefFor(b)}
                 target={b.url && b.entityType !== "TEST" ? "_blank" : undefined}
                 className="flex-1 text-slate-700 hover:text-blue-600"
               >
                 {b.name}
-              </Link>
+              </TestLink>
               <button
                 onClick={() => remove(b)}
                 className="text-sm text-slate-400 hover:text-red-500"

@@ -35,7 +35,7 @@ export default function HelpCenter() {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
           <span className="font-semibold text-slate-800">UPrep · Help Center</span>
-          <Link href="/learn/library" className="text-sm text-emerald-600 hover:underline">
+          <Link href="/learn/courses" className="text-sm text-emerald-600 hover:underline">
             ← Back to app
           </Link>
         </div>

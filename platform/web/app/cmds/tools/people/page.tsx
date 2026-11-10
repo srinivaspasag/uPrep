@@ -96,7 +96,7 @@ export default function PeoplePage() {
     const result = d.result;
     setSession(result);
     setImpersonating(`${m.firstName} ${m.lastName}`.trim() || m.memberId || "user");
-    router.push(isStaff(result?.profile) ? "/cmds" : "/learn/library");
+    router.push(isStaff(result?.profile) ? "/cmds" : "/learn/courses");
   }
 
   async function load() {
