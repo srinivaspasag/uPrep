@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import TestLink from "@/components/TestLink";
 import LmsShell, { ZeroState } from "@/components/LmsShell";
 
 type ScheduledTest = {
@@ -124,12 +124,12 @@ export default function ScheduledTestsPage() {
                     </div>
                   </div>
                   {t.canStart ? (
-                    <Link
+                    <TestLink
                       href={`/test/${t.testId}`}
                       className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700"
                     >
                       Start test
-                    </Link>
+                    </TestLink>
                   ) : (
                     <span className="rounded-md bg-slate-100 px-4 py-1.5 text-sm font-medium text-slate-400">
                       {t.status === "ENDED" ? "Closed" : "Locked"}

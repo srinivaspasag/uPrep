@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import TestLink from "@/components/TestLink";
 import LmsShell, { ZeroState } from "@/components/LmsShell";
 import { subjectAccent } from "@/lib/subjectColors";
 
@@ -489,7 +489,7 @@ function CourseItemCard({ item }: { item: Item }) {
     </div>
   );
 
-  if (item.type === "TEST") return <Link href={`/test/${item.id}`}>{inner}</Link>;
+  if (item.type === "TEST") return <TestLink href={`/test/${item.id}`}>{inner}</TestLink>;
   if ((item.type === "DOCUMENT" || item.type === "BOOK") && item.url)
     return (
       <a href={item.url} target="_blank" rel="noreferrer">

@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
           <ZeroState icon="📊" title="No analytics yet">
             <span>
               Attempt some{" "}
-              <Link href="/learn/library" className="font-medium text-amber-700 underline underline-offset-2">
+              <Link href="/learn/courses" className="font-medium text-amber-700 underline underline-offset-2">
                 tests
               </Link>{" "}
               to see your analytics.

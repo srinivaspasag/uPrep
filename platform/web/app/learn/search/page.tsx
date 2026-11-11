@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import TestLink from "@/components/TestLink";
 import LmsShell from "@/components/LmsShell";
 
 type Result = { id: string; name: string; type: string; subject: string | null; url: string | null };
@@ -20,7 +21,7 @@ function hrefFor(r: Result): string {
   if (r.type === "TEST") return `/test/${r.id}`;
   if (r.type === "DISCUSSION") return `/learn/doubts/${r.id}`;
   if (r.url) return r.url;
-  return "/learn/library";
+  return "/learn/courses";
 }
 
 function SearchInner() {
@@ -79,7 +80,7 @@ function SearchInner() {
         <ul className="mt-6 divide-y divide-slate-100">
           {results.map((r) => (
             <li key={`${r.type}-${r.id}`}>
-              <Link
+              <TestLink
                 href={hrefFor(r)}
                 target={r.url && r.type !== "TEST" ? "_blank" : undefined}
                 className="flex items-center gap-3 py-3 hover:bg-slate-50"
@@ -93,7 +94,7 @@ function SearchInner() {
                 </span>
                 <span className="flex-1 text-slate-700">{r.name}</span>
                 {r.subject && <span className="text-xs text-slate-400">{r.subject}</span>}
-              </Link>
+              </TestLink>
             </li>
           ))}
         </ul>

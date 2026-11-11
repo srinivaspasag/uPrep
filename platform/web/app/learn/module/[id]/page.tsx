@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import TestLink from "@/components/TestLink";
 import LmsShell from "@/components/LmsShell";
 
 type Item = {
@@ -140,7 +141,7 @@ function ModuleItemRow({ item, isLast, onPlay }: { item: Item; isLast: boolean; 
     </div>
   );
 
-  if (item.type === "TEST") return <Link href={`/test/${item.id}`}>{inner}</Link>;
+  if (item.type === "TEST") return <TestLink href={`/test/${item.id}`}>{inner}</TestLink>;
   if (item.type === "VIDEO" && (item.url || item.embedUrl))
     return (
       <button onClick={onPlay} className="block w-full text-left">
