@@ -71,8 +71,30 @@ private fun sessionInjectionScript(session: UserSession): String {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewFallbackScreen(path: String?, cookieValue: String?, session: UserSession? = null, onLogout: () -> Unit) {
+fun WebViewFallbackScreen(
+    path: String?,
+    cookieValue: String?,
+    session: UserSession? = null,
+    onLogout: () -> Unit,
+    // Leaves this screen for the native one underneath (folder / course list).
+    onClose: () -> Unit = {}
+) {
     val context = LocalContext.current
+    // Opened for a test (from a native folder or the course list): once the
+    // test page navigates on to any /learn/ page — Back to Library/Folder,
+    // Pause & exit, the logo — the test is over, so close this screen and
+    // return to the native screen the student came from. Found live: those
+    // exits loaded the website's Digital Library (subjects grouped by program,
+    // with a Programs sidebar) inside this WebView, stranding students in the
+    // web app instead of back on their dashboard.
+    val closeWhenTestEnds = path?.startsWith("/test/") == true
+    var closed by remember { mutableStateOf(false) }
+    val close = {
+        if (!closed) {
+            closed = true
+            onClose()
+        }
+    }
     var filePathCallback by remember { mutableStateOf<ValueCallback<Array<Uri>>?>(null) }
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
 
@@ -84,9 +106,12 @@ fun WebViewFallbackScreen(path: String?, cookieValue: String?, session: UserSess
         filePathCallback = null
     }
 
+    // Step back inside the web page while it has history; once it doesn't,
+    // leave this screen. Before, Back was swallowed here with nothing to go
+    // back to, so the hardware Back button did nothing at all.
     BackHandler(enabled = true) {
         val wv = webViewRef
-        if (wv != null && wv.canGoBack()) wv.goBack()
+        if (wv != null && wv.canGoBack()) wv.goBack() else close()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -122,6 +147,16 @@ fun WebViewFallbackScreen(path: String?, cookieValue: String?, session: UserSess
                         if (session != null) {
                             view.evaluateJavascript(sessionInjectionScript(session), null)
                         }
+                    }
+
+                    // Fires for full page loads AND the web app's in-page
+                    // (pushState/replaceState) navigations, which never reach
+                    // shouldOverrideUrlLoading.
+                    override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
+                        super.doUpdateVisitedHistory(view, url, isReload)
+                        if (!closeWhenTestEnds || url == null) return
+                        val p = Uri.parse(url).path.orEmpty()
+                        if (p.startsWith("/learn")) close()
                     }
 
                     override fun shouldOverrideUrlLoading(

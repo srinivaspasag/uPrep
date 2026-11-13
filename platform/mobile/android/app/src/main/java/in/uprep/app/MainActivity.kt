@@ -375,7 +375,14 @@ class MainActivity : ComponentActivity() {
                                 path = path,
                                 cookieValue = container.cookieStore.getCookie(),
                                 session = initialSession,
-                                onLogout = logout
+                                onLogout = logout,
+                                // Back to the native screen underneath; at the
+                                // root (staff's CMDS) there is none, so leave
+                                // the app like any other root screen.
+                                onClose = {
+                                    if (navController.previousBackStackEntry != null) navController.popBackStack()
+                                    else finish()
+                                }
                             )
                         }
                     }
