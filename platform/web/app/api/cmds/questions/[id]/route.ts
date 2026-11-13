@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
 import { canManageContent } from "@/lib/roles";
+import { normalizeDifficulty } from "@/lib/difficulty";
 
 export const dynamic = "force-dynamic";
 
@@ -167,7 +168,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         explanation: (b.solution || "").trim() || null,
         globalAnsId: existing.solutionInfo?.globalAnsId ?? null,
       },
-      difficulty: (b.difficulty || "EASY").toUpperCase(),
+      difficulty: normalizeDifficulty(b.difficulty),
       tags: Array.isArray(b.tags) ? b.tags.filter(Boolean) : [],
       subject: (b.subject || "").trim() || null,
       boardIds: b.boardIds && b.boardIds.length ? b.boardIds : [DEFAULT_BOARD_ID],

@@ -122,7 +122,7 @@ export default function BulkImportQuestionsPage() {
   const [questionsText, setQuestionsText] = useState("");
   const [answerKeyText, setAnswerKeyText] = useState("");
   const [boardIds, setBoardIds] = useState<string[]>([]);
-  const [difficulty, setDifficulty] = useState("MEDIUM");
+  const [difficulty, setDifficulty] = useState("MODERATE");
   const [rows, setRows] = useState<ParsedRow[] | null>(null);
   const [step, setStep] = useState<"input" | "review" | "done">("input");
   const [importing, setImporting] = useState(false);
@@ -279,8 +279,8 @@ export default function BulkImportQuestionsPage() {
               className="mt-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700"
             >
               <option value="EASY">Easy</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="HARD">Hard</option>
+              <option value="MODERATE">Medium</option>
+              <option value="TOUGH">Hard</option>
             </select>
           </div>
 

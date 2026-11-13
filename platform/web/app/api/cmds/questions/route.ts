@@ -5,6 +5,7 @@ import { DEFAULT_ORG_ID } from "@/lib/config";
 import { resolveOrgId } from "@/lib/org-scope";
 import { sessionFromReq } from "@/lib/server-session";
 import { canManageContent } from "@/lib/roles";
+import { normalizeDifficulty } from "@/lib/difficulty";
 
 export const dynamic = "force-dynamic";
 
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
         explanation: (b.solution || "").trim() || null,
         globalAnsId: null,
       },
-      difficulty: (b.difficulty || "EASY").toUpperCase(),
+      difficulty: normalizeDifficulty(b.difficulty),
       tags: Array.isArray(b.tags) ? b.tags.filter(Boolean) : [],
       subject: (b.subject || "").trim() || null,
       status: "DRAFT",

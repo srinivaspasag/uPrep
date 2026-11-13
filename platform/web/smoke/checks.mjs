@@ -240,6 +240,16 @@ await group("6. Tests", async () => {
   const chem = (await call("st1", "/api/learn/courses")).j?.courses?.find((c) => c.id === ids.D2);
   check("student card counts both tests", chem?.testCount === 2, `testCount=${chem?.testCount}`);
   check("student sees master test in master chapter", has((await studentFolder("st1", ids.C1)).items, "Master Chapter Test"));
+  // Legacy's Difficulty enum is EASY/MODERATE/TOUGH/UNKNOWN; anything else
+  // crashes getTestQuestions (WT-17: Bulk Import saved "MEDIUM").
+  for (const [given, want] of [["MEDIUM", "MODERATE"], ["HARD", "TOUGH"], ["weird", "UNKNOWN"]]) {
+    const made = await call("spectra", "/api/cmds/questions", json("POST", {
+      type: "SCQ", content: `Difficulty ${given}`, options: ["a", "b"], correct: [0], difficulty: given,
+    }));
+    const qid = made.j?.id || made.j?.question?.id;
+    const got = qid ? (await call("spectra", `/api/cmds/questions/${qid}`)).j?.question?.difficulty : null;
+    check(`question difficulty "${given}" saved as ${want}`, got === want, `status=${made.status} got=${got}`);
+  }
 });
 
 await group("7. Sharing lifecycle", async () => {

@@ -20,12 +20,27 @@ export type TestPayload = {
 export async function fetchTestPayload(id: string, orgId: string, userId: string): Promise<TestPayload> {
   const form = () =>
     new URLSearchParams({ callingApp: CALLING_APP, callingAppId: CALLING_APP_ID, callingUserId: userId, userId, orgId, id });
-  const post = (p: string) =>
-    fetch(`${API.content}/tests/${p}`, {
+  // The legacy service answers a crash with an HTML error page (Play's
+  // "Oops, an error occured … logged with id @xxxx"). Parsing that as JSON
+  // used to surface "Unexpected token '<' … is not valid JSON" to students —
+  // log what the service actually said and show something readable instead.
+  const post = async (p: string) => {
+    const r = await fetch(`${API.content}/tests/${p}`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: form(),
-    }).then((r) => r.json());
+    });
+    const text = await r.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      const logId = text.match(/logged with id\s+@?([0-9a-z]+)/i)?.[1] || "";
+      console.error(`[tests] legacy ${p} for test ${id} returned HTTP ${r.status} non-JSON${logId ? ` (legacy log id ${logId})` : ""}`);
+      throw Object.assign(new Error("This test couldn't be loaded right now. Please tell your teacher."), {
+        legacy: true,
+      });
+    }
+  };
   const [info, q] = await Promise.all([post("getTestInfo"), post("getTestQuestions")]);
   if (info.errorCode || q.errorCode)
     throw Object.assign(new Error(info.errorMessage || q.errorMessage || info.errorCode || q.errorCode), { legacy: true });
