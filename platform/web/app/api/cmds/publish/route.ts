@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId, Long } from "mongodb";
 import { getDb } from "@/lib/mongo";
+import { normalizeDifficulty } from "@/lib/difficulty";
 
 export const dynamic = "force-dynamic";
 
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
             options,
             answerId: ansId ? ansId.toHexString() : null,
             hasAns: !!ansId,
-            difficulty: cq.difficulty || "EASY",
+            difficulty: normalizeDifficulty(cq.difficulty),
             boardIds: cq.boardIds || [],
             tags: cq.tags || [],
             contentSrc: cq.contentSrc || null,
