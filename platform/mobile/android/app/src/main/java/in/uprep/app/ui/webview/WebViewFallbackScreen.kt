@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import `in`.uprep.app.data.net.NetworkConfig
+import `in`.uprep.app.data.net.SessionExpiry
 import `in`.uprep.app.data.session.UserSession
 import org.json.JSONObject
 
@@ -154,8 +155,15 @@ fun WebViewFallbackScreen(
                     // shouldOverrideUrlLoading.
                     override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
                         super.doUpdateVisitedHistory(view, url, isReload)
-                        if (!closeWhenTestEnds || url == null) return
+                        if (url == null) return
                         val p = Uri.parse(url).path.orEmpty()
+                        // The web app sends a signed-out visitor to /login —
+                        // inside the app that means the saved login expired.
+                        if (p == "/login" || p.startsWith("/login/")) {
+                            SessionExpiry.signal()
+                            return
+                        }
+                        if (!closeWhenTestEnds) return
                         if (p.startsWith("/learn")) close()
                     }
 

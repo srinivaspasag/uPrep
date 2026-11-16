@@ -1,5 +1,6 @@
 package `in`.uprep.app
 
+import `in`.uprep.app.data.net.SessionExpiry
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
@@ -119,6 +120,21 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    // Saved login refused by the server (expired after 7 days) —
+                    // same as logout, plus a note on the login screen saying why.
+                    var sessionExpired by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) {
+                        SessionExpiry.events.collect {
+                            if (navController.currentDestination?.route == Routes.LOGIN) return@collect
+                            container.sessionStore.clear()
+                            container.cookieJar.clear()
+                            sessionExpired = true
+                            navController.navigate(Routes.LOGIN) {
+                                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                            }
+                        }
+                    }
+
                     // Resolve any existing session before deciding the start
                     // screen — null while we haven't checked yet, then either
                     // a UserSession or explicit "none". This is a pure local
@@ -143,7 +159,9 @@ class MainActivity : ComponentActivity() {
                                         applicationContext, container.authApi, container.sessionStore
                                     )
                                 ),
+                                notice = if (sessionExpired) "Your login has expired. Please sign in again." else null,
                                 onLoginSuccess = { session ->
+                                    sessionExpired = false
                                     initialSession = session
                                     navController.navigate(routeFor(session)) {
                                         popUpTo(Routes.LOGIN) { inclusive = true }
