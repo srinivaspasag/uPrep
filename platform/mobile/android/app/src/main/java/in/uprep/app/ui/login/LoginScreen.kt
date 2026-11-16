@@ -34,6 +34,8 @@ import `in`.uprep.app.data.session.UserSession
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel(),
+    // Shown above the form, e.g. why the student was signed out.
+    notice: String? = null,
     onLoginSuccess: (UserSession) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -88,6 +90,14 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(top = 12.dp)
         )
+
+        if (state.error == null) notice?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+        }
 
         state.error?.let {
             Text(

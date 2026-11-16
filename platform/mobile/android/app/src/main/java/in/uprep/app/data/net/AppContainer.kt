@@ -26,6 +26,9 @@ class AppContainer(context: Context) {
 
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
         .cookieJar(cookieJar)
+        // Network interceptor, not application: the Cookie header is only
+        // added after application interceptors run (OkHttp's BridgeInterceptor).
+        .addNetworkInterceptor(SessionExpiry.interceptor)
         .addInterceptor(
             HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
         )
