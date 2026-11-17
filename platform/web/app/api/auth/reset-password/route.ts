@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       .collection("orgmembers")
       .updateOne(
         { _id: rec.memberId },
-        { $set: { passwordHash: hashPassword(newPassword), authType: "LOCAL", lastUpdated: Date.now() } }
+        { $set: { passwordHash: await hashPassword(newPassword), authType: "LOCAL", lastUpdated: Date.now() } }
       );
     await db.collection(RESET_COLL).updateOne({ _id: rec._id }, { $set: { used: true, usedAt: Date.now() } });
 

@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       .collection("orgmembers")
       .updateOne(
         { _id: member._id },
-        { $set: { passwordHash: hashPassword(password), authType: "LOCAL", lastUpdated: Date.now() } }
+        { $set: { passwordHash: await hashPassword(password), authType: "LOCAL", lastUpdated: Date.now() } }
       );
 
     return NextResponse.json({
