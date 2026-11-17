@@ -76,6 +76,14 @@ class SessionStore(private val context: Context) {
         }
     }
 
+    // After a password change, keep the offline-login fallback in step: it
+    // must accept the NEW password (and stop accepting the old one) for the
+    // same identifier this device last signed in with.
+    suspend fun updateOfflinePassword(newPassword: String) {
+        val identifier = context.dataStore.data.first()[KEY_OFFLINE_IDENTIFIER] ?: return
+        saveOfflineCredential(identifier, newPassword)
+    }
+
     suspend fun verifyOfflineCredential(identifier: String, password: String): Boolean {
         val prefs = context.dataStore.data.first()
         val savedIdentifier = prefs[KEY_OFFLINE_IDENTIFIER] ?: return false

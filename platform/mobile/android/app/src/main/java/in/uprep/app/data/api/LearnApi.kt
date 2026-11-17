@@ -67,6 +67,21 @@ data class DoubtSummary(
 )
 data class DoubtsListResponse(val items: List<DoubtSummary> = emptyList(), val error: String? = null)
 
+// --- Profile + change password — app/api/learn/profile and app/api/learn/password ---
+data class StudentProfile(
+    val id: String = "",
+    val memberId: String = "",
+    val firstName: String = "",
+    val lastName: String = "",
+    val email: String = "",
+    val contactNumber: String = "",
+    val profile: String = ""
+)
+data class ProfileResponse(val profile: StudentProfile? = null, val error: String? = null)
+data class ChangePasswordBody(val oldPassword: String, val newPassword: String)
+// Errors come back as 400 {"error": "..."} — read from errorBody().
+data class ChangePasswordResponse(val ok: Boolean = false, val error: String? = null)
+
 data class CreateDoubtBody(val name: String, val content: String, val subject: String? = null, val mode: String = "guided")
 data class CreateDoubtResponse(val id: String?, val name: String?, val error: String? = null)
 
@@ -119,6 +134,12 @@ data class ActivityFeedItem(val type: String, val title: String, val detail: Str
 data class ActivityResponse(val feed: List<ActivityFeedItem> = emptyList(), val error: String? = null)
 
 interface LearnApi {
+    @GET("/api/learn/profile")
+    suspend fun myProfile(): Response<ProfileResponse>
+
+    @POST("/api/learn/password")
+    suspend fun changePassword(@Body body: ChangePasswordBody): Response<ChangePasswordResponse>
+
     @GET("/api/learn/courses")
     suspend fun myCourses(): Response<LearnCoursesResponse>
 
