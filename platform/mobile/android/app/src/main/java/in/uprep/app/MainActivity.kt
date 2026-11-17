@@ -1,6 +1,8 @@
 package `in`.uprep.app
 
 import `in`.uprep.app.data.net.SessionExpiry
+import `in`.uprep.app.ui.profile.ProfileScreen
+import `in`.uprep.app.ui.profile.ProfileViewModel
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
@@ -77,6 +79,7 @@ private object Routes {
     const val DOUBTS = "doubts"
     const val DOUBT_DETAIL = "doubts/{id}"
     const val ANALYTICS = "analytics"
+    const val PROFILE = "profile"
     const val ACTIVITY = "activity"
     const val OFFLINE_TESTS = "offlineTests"
     const val NATIVE_TEST = "nativeTest/{testId}"
@@ -199,6 +202,7 @@ class MainActivity : ComponentActivity() {
                                 onOpenDoubts = { navController.navigate(Routes.DOUBTS) },
                                 onOpenAnalytics = { navController.navigate(Routes.ANALYTICS) },
                                 onOpenActivity = { navController.navigate(Routes.ACTIVITY) },
+                                onOpenProfile = { navController.navigate(Routes.PROFILE) },
                                 onLogout = logout
                             )
                         }
@@ -223,6 +227,16 @@ class MainActivity : ComponentActivity() {
                                     factory = DoubtDetailViewModel.Factory(container.learnApi, id)
                                 ),
                                 onBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        composable(Routes.PROFILE) {
+                            ProfileScreen(
+                                viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                                    factory = ProfileViewModel.Factory(container.learnApi, container.sessionStore)
+                                ),
+                                onBack = { navController.popBackStack() },
+                                onLogout = logout
                             )
                         }
 

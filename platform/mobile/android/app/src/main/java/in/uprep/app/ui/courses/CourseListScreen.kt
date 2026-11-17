@@ -21,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.uprep.app.data.api.ContentItem
@@ -39,19 +40,22 @@ fun CourseListScreen(
     onOpenDoubts: () -> Unit,
     onOpenAnalytics: () -> Unit,
     onOpenActivity: () -> Unit,
+    onOpenProfile: () -> Unit,
     onLogout: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
-            title = { Text("My Courses") },
+            title = { Text("My Courses", maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis) },
             actions = {
                 IconButton(onClick = onOpenDoubts) { Text("❓") }
                 IconButton(onClick = onOpenAnalytics) { Text("📊") }
                 IconButton(onClick = onOpenActivity) { Text("🕒") }
                 IconButton(onClick = onOpenSdCard) { Text("💾") }
                 IconButton(onClick = onOpenOfflineTests) { Text("📝") }
+                // Profile: details, change password, sign out.
+                IconButton(onClick = onOpenProfile) { Text("👤") }
                 IconButton(onClick = onLogout) { Text("⎋") }
             }
         )
