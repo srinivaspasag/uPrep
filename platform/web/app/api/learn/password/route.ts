@@ -46,13 +46,13 @@ export async function POST(req: NextRequest) {
       member = await db.collection("orgmembers").findOne({ _id: new ObjectId(session.id), recordState: "ACTIVE" });
     }
     if (member?.passwordHash) {
-      if (!verifyPassword(oldPassword, member.passwordHash))
+      if (!(await verifyPassword(oldPassword, member.passwordHash)))
         return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 });
       await db
         .collection("orgmembers")
         .updateOne(
           { _id: member._id },
-          { $set: { passwordHash: hashPassword(newPassword), lastUpdated: Date.now() } }
+          { $set: { passwordHash: await hashPassword(newPassword), lastUpdated: Date.now() } }
         );
       return NextResponse.json({ ok: true });
     }

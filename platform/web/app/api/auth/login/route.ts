@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (member?.passwordHash) {
-      if (!verifyPassword(password, member.passwordHash)) {
+      if (!(await verifyPassword(password, member.passwordHash))) {
         return NextResponse.json(
           { errorCode: "INVALID_CREDENTIALS", errorMessage: "Incorrect ID or password" },
           { status: 401 }

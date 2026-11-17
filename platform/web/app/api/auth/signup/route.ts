@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
       profile,
       contactNumber: (b.contactNumber || "").trim(),
       authType: "LOCAL",
-      passwordHash: hashPassword(password),
+      passwordHash: await hashPassword(password),
       signupSource: "SELF",
       approvalStatus: requireApproval ? "PENDING" : "APPROVED",
       recordState: requireApproval ? "PENDING" : "ACTIVE",

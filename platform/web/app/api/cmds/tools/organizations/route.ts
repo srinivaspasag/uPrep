@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
         profile: "MANAGER",
         contactNumber: "",
         authType: "LOCAL",
-        passwordHash: hashPassword(password),
+        passwordHash: await hashPassword(password),
         recordState: "ACTIVE",
         timeCreated: now,
         lastUpdated: now,

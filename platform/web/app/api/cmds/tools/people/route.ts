@@ -250,7 +250,7 @@ export async function POST(req: NextRequest) {
       profile,
       contactNumber: (b.contactNumber || "").trim(),
       authType: "LOCAL",
-      passwordHash: hashPassword(plainPassword),
+      passwordHash: await hashPassword(plainPassword),
       recordState: "ACTIVE",
       programMemberships,
       timeCreated: now,
