@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { API } from "@/lib/config";
 import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
+import { ObjectId } from "mongodb";
+import { summarize, type ScoreSummary } from "@/lib/testScore";
 
 export const dynamic = "force-dynamic";
 
@@ -172,12 +174,18 @@ export async function POST(
     let judgeable = 0;
     let ungraded = 0;
     const perQuestion: { qId: string; result: string }[] = [];
+    let summary: ScoreSummary | null = null;
     try {
       const db = await getDb();
       const attempts = await db
         .collection("userquestionattempts")
         .find({ attemptId })
         .toArray();
+      // Marks (+4/-1 etc.) aren't stored by the grader — see lib/testScore.
+      const testDoc = ObjectId.isValid(entityId)
+        ? await db.collection("tests").findOne({ _id: new ObjectId(entityId) }, { projection: { metadata: 1 } })
+        : null;
+      if (testDoc) summary = summarize(testDoc, attempts);
       const byQ = new Map<string, any>();
       for (const at of attempts) byQ.set(String(at.qId), at);
 
@@ -216,6 +224,7 @@ export async function POST(
       ungraded,
       perQuestion,
       failedQIds,
+      summary,
     });
   } catch (e: any) {
     return NextResponse.json(

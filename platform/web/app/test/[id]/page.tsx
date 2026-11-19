@@ -55,6 +55,17 @@ type SubmitResult = {
   ungraded: number;
   error?: string;
   failedQIds?: string[];
+  // Marks summary (lib/testScore) — absent from older servers / if the read failed.
+  summary?: {
+    score: number;
+    totalMarks: number;
+    totalQuestions: number;
+    correct: number;
+    wrong: number;
+    partial: number;
+    ungraded: number;
+    left: number;
+  } | null;
 };
 
 // The 5 states a question can be in, matching the real exam palette:
@@ -818,14 +829,38 @@ export default function TestPage({ params }: { params: { id: string } }) {
                     <>
                       <div className="text-4xl">🎯</div>
                       <h1 className="mt-3 text-2xl font-semibold text-slate-800">Your Score</h1>
-                      <div className="mt-4 text-5xl font-bold text-emerald-600">
-                        {result.correct}
-                        <span className="text-2xl text-slate-400">/{result.judgeable}</span>
-                      </div>
-                      <p className="mt-2 text-slate-500">
-                        {result.correct} correct out of {result.judgeable} graded
-                        {result.ungraded > 0 && ` · ${result.ungraded} pending review`}
-                      </p>
+                      {result.summary ? (
+                        <>
+                          <div className="mt-4 text-5xl font-bold text-emerald-600">
+                            {result.summary.score}
+                            <span className="text-2xl text-slate-400">/{result.summary.totalMarks}</span>
+                          </div>
+                          <p className="mt-1 text-sm text-slate-500">Marks</p>
+                          <div className="mx-auto mt-6 grid max-w-lg grid-cols-3 gap-3">
+                            <ScoreTile label="Correct" value={result.summary.correct} of={result.summary.totalQuestions} tone="green" />
+                            <ScoreTile label="Wrong" value={result.summary.wrong} of={result.summary.totalQuestions} tone="red" />
+                            <ScoreTile label="Left" value={result.summary.left} of={result.summary.totalQuestions} tone="slate" />
+                          </div>
+                          {(result.summary.partial > 0 || result.summary.ungraded > 0) && (
+                            <p className="mt-3 text-sm text-slate-500">
+                              {result.summary.partial > 0 && `${result.summary.partial} partly correct`}
+                              {result.summary.partial > 0 && result.summary.ungraded > 0 && " · "}
+                              {result.summary.ungraded > 0 && `${result.summary.ungraded} pending review`}
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <div className="mt-4 text-5xl font-bold text-emerald-600">
+                            {result.correct}
+                            <span className="text-2xl text-slate-400">/{result.judgeable}</span>
+                          </div>
+                          <p className="mt-2 text-slate-500">
+                            {result.correct} correct out of {result.judgeable} graded
+                            {result.ungraded > 0 && ` · ${result.ungraded} pending review`}
+                          </p>
+                        </>
+                      )}
                       {!!result.failedQIds?.length && (
                         <p className="mx-auto mt-3 max-w-md rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-700 ring-1 ring-amber-200">
                           {result.failedQIds.length} of your answer{result.failedQIds.length === 1 ? "" : "s"} couldn't
@@ -975,6 +1010,24 @@ function RatingWidget({ entityId, session }: { entityId: string; session: UprepS
         </div>
       )}
       {saved && <div className="mt-2 text-xs text-emerald-600">Thanks for your feedback!</div>}
+    </div>
+  );
+}
+
+function ScoreTile({ label, value, of, tone }: { label: string; value: number; of: number; tone: "green" | "red" | "slate" }) {
+  const cls =
+    tone === "green"
+      ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+      : tone === "red"
+      ? "bg-red-50 text-red-700 ring-red-200"
+      : "bg-slate-50 text-slate-600 ring-slate-200";
+  return (
+    <div className={`rounded-lg px-3 py-3 ring-1 ${cls}`}>
+      <div className="text-2xl font-bold">
+        {value}
+        <span className="text-base font-medium opacity-60">/{of}</span>
+      </div>
+      <div className="mt-0.5 text-xs font-medium uppercase tracking-wide">{label}</div>
     </div>
   );
 }

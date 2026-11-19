@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
+import { ObjectId } from "mongodb";
+import { summarize } from "@/lib/testScore";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +32,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     const attemptId = String(attempt._id);
     const qAttempts = await db.collection("userquestionattempts").find({ attemptId }).toArray();
+    const testDoc = ObjectId.isValid(entityId)
+      ? await db.collection("tests").findOne({ _id: new ObjectId(entityId) }, { projection: { metadata: 1 } })
+      : null;
+    const summary = testDoc ? summarize(testDoc, qAttempts) : null;
 
     let correct = 0;
     let judgeable = 0;
@@ -58,6 +64,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       ungraded,
       perQuestion,
       failedQIds: [],
+      summary,
     });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed to load result" }, { status: 500 });
