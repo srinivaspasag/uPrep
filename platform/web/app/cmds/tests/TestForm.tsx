@@ -124,6 +124,17 @@ export default function TestForm({ testId }: { testId: string }) {
   // 0/unset stays unlimited). Unchecking is never blocked.
   const [typeTargets, setTypeTargets] = useState<Record<string, number>>({});
   const [pickError, setPickError] = useState("");
+  // Edit Test: the test's own questions first, in test order (#1, #2, …),
+  // then the rest of the bank (newest first, as the library returns it).
+  // Based on the order saved when the page opened, so ticking a question
+  // doesn't make it jump to the top while you scroll.
+  const orderedPool = useMemo(() => {
+    if (!testQIds.length) return pool;
+    const pos = new Map(testQIds.map((id, i) => [id, i]));
+    const inTest = pool.filter((q) => pos.has(q.id)).sort((a, b) => pos.get(a.id)! - pos.get(b.id)!);
+    return [...inTest, ...pool.filter((q) => !pos.has(q.id))];
+  }, [pool, testQIds]);
+
   const typesInPool = useMemo(() => Array.from(new Set(pool.map((q) => q.type))).sort(), [pool]);
   const pickedByType = useMemo(() => {
     const poolById = new Map(pool.map((q) => [q.id, q]));
@@ -401,7 +412,7 @@ export default function TestForm({ testId }: { testId: string }) {
                 )}
 
                 <div className="mt-3 space-y-2">
-                  {pool.map((q, i) => (
+                  {orderedPool.map((q, i) => (
                     <label
                       key={q.id}
                       className="flex cursor-pointer items-start gap-3 rounded-md border border-slate-200 px-3 py-2 hover:bg-slate-50"
