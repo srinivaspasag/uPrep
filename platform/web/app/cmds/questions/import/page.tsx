@@ -8,7 +8,7 @@ import MathText from "@/components/MathText";
 import BoardPicker from "@/components/BoardPicker";
 import CmdsShell from "@/components/CmdsShell";
 import PictureButton, { pastePicture } from "@/components/PictureButton";
-import { LETTERS, parseAnswerKey, splitOptions, splitQuestionBlocks } from "@/lib/questionImport";
+import { LETTERS, parseAnswerKey, parseSolutions, splitOptions, splitQuestionBlocks } from "@/lib/questionImport";
 
 // Bulk-import many single-correct MCQs at once from a pasted question bank +
 // answer key (the common coaching-institute PDF/Word format: "1] question
@@ -28,6 +28,9 @@ type ParsedRow = {
   content: string;
   options: string[];
   correctLetter: string; // "a" | "b" | "c" | "d" | ""
+  solution: string;
+  // Answer printed with the solution, when it disagrees with the key file.
+  keyConflict: string;
   parseOk: boolean;
   raw: string;
 };
@@ -37,19 +40,20 @@ export default function BulkImportQuestionsPage() {
   const [session, setSession] = useState<UprepSession | null>(null);
   const [questionsText, setQuestionsText] = useState("");
   const [answerKeyText, setAnswerKeyText] = useState("");
+  const [solutionsText, setSolutionsText] = useState("");
   const [boardIds, setBoardIds] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState("MODERATE");
   const [rows, setRows] = useState<ParsedRow[] | null>(null);
   const [step, setStep] = useState<"input" | "review" | "done">("input");
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState<{ done: number; failed: number; errors: string[] } | null>(null);
-  const [extracting, setExtracting] = useState<"questions" | "answers" | null>(null);
+  const [extracting, setExtracting] = useState<"questions" | "answers" | "solutions" | null>(null);
   const [extractError, setExtractError] = useState("");
-  const [extractNote, setExtractNote] = useState<{ target: "questions" | "answers"; text: string; ok: boolean } | null>(
+  const [extractNote, setExtractNote] = useState<{ target: "questions" | "answers" | "solutions"; text: string; ok: boolean } | null>(
     null
   );
 
-  async function extractFile(file: File, target: "questions" | "answers") {
+  async function extractFile(file: File, target: "questions" | "answers" | "solutions") {
     setExtracting(target);
     setExtractError("");
     setExtractNote(null);
@@ -63,6 +67,7 @@ export default function BulkImportQuestionsPage() {
         return;
       }
       if (target === "questions") setQuestionsText(d.text || "");
+      else if (target === "solutions") setSolutionsText(d.text || "");
       else setAnswerKeyText(d.text || "");
       if (target === "questions" && d.pictures > 0) {
         setExtractNote({
@@ -94,13 +99,19 @@ export default function BulkImportQuestionsPage() {
   function runParse() {
     const blocks = splitQuestionBlocks(questionsText);
     const answers = parseAnswerKey(answerKeyText);
+    const sols = solutionsText.trim() ? parseSolutions(solutionsText) : {};
     const parsed: ParsedRow[] = blocks.map((b) => {
       const split = splitOptions(b.text);
+      const sol = sols[b.num];
+      const fromKey = answers[b.num] || "";
       return {
         num: b.num,
         content: split?.question || b.text,
         options: split?.options || ["", "", "", ""],
-        correctLetter: answers[b.num] || "",
+        // Key file first; the answer printed with the solution fills gaps.
+        correctLetter: fromKey || sol?.key || "",
+        solution: sol?.text || "",
+        keyConflict: fromKey && sol?.key && sol.key !== fromKey ? sol.key : "",
         parseOk: !!split,
         raw: b.text,
       };
@@ -152,6 +163,7 @@ export default function BulkImportQuestionsPage() {
             type: "SCQ",
             options: r.options,
             correct: [correctIdx],
+            solution: r.solution.trim() || undefined,
             difficulty,
             boardIds: boardIds.length ? boardIds : undefined,
           }),
@@ -285,6 +297,38 @@ export default function BulkImportQuestionsPage() {
             </div>
           </div>
 
+          <div className="rounded-xl bg-white p-5 ring-1 ring-black/5">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-slate-700">
+                Solutions <span className="font-normal text-slate-400">(optional)</span>
+              </label>
+              <label className="cursor-pointer rounded-md border border-slate-300 px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-100">
+                {extracting === "solutions" ? "Reading…" : "Upload file (.pdf/.docx/.txt)"}
+                <input
+                  type="file"
+                  accept=".pdf,.docx,.txt"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) extractFile(f, "solutions");
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+            <p className="mt-1 text-xs text-slate-400">
+              Each solution is attached to its question, e.g. "12. [3] explanation…". The answer printed with a solution is
+              checked against the answer key, and used if the key is missing.
+            </p>
+            <textarea
+              value={solutionsText}
+              onChange={(e) => setSolutionsText(e.target.value)}
+              rows={6}
+              className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 font-mono text-xs text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder={"1. [2] Wombat is a marsupial…\n2. [3] …"}
+            />
+          </div>
+
           <button
             onClick={runParse}
             disabled={!questionsText.trim()}
@@ -305,6 +349,13 @@ export default function BulkImportQuestionsPage() {
                   {rows.filter((r) => !r.parseOk).length} need manual fixing (options not detected).
                 </span>
               )}{" "}
+              {rows.filter((r) => r.correctLetter).length}/{rows.length} with answers
+              {solutionsText.trim() ? `, ${rows.filter((r) => r.solution).length}/${rows.length} with solutions` : ""}.{" "}
+              {rows.filter((r) => r.keyConflict).length > 0 && (
+                <span className="font-medium text-red-700">
+                  {rows.filter((r) => r.keyConflict).length} answer(s) differ between key and solutions.{" "}
+                </span>
+              )}
               Review everything below before importing.
             </span>
             <button onClick={() => setStep("input")} className="text-blue-700 hover:underline">
@@ -375,6 +426,28 @@ export default function BulkImportQuestionsPage() {
                     <PictureButton compact fieldRef={{ current: null }} value={opt} onChange={(v) => updateOption(i, oi, v)} />
                   </div>
                 ))}
+              </div>
+              {r.keyConflict && (
+                <p className="mt-2 rounded bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-red-200">
+                  Answer key says {r.correctLetter.toUpperCase()}) but the solution sheet says {r.keyConflict.toUpperCase()}) — check
+                  which is right and tick it above.
+                </p>
+              )}
+              <div className="mt-3">
+                <label className="text-xs font-medium text-slate-500">Solution</label>
+                <textarea
+                  value={r.solution}
+                  onChange={(e) => updateRow(i, { solution: e.target.value })}
+                  onPaste={(e) => pastePicture(e, r.solution, (v) => updateRow(i, { solution: v }), setExtractError)}
+                  rows={2}
+                  placeholder="(no solution)"
+                  className="mt-1 w-full rounded-md border border-slate-200 px-3 py-1.5 text-xs text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+                {r.solution.includes("![") && (
+                  <div className="mt-1 rounded bg-slate-50 px-2 py-1 text-xs text-slate-700">
+                    <MathText>{r.solution}</MathText>
+                  </div>
+                )}
               </div>
               {!r.correctLetter && (
                 <p className="mt-2 text-xs text-amber-600">
