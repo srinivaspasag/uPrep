@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSession, type UprepSession } from "@/lib/session";
 import MathText from "@/components/MathText";
+import PictureButton, { pastePicture } from "@/components/PictureButton";
 import BoardPicker from "@/components/BoardPicker";
 import EquationToolbar from "@/components/EquationToolbar";
 
@@ -247,11 +248,15 @@ export default function QuestionForm({ questionId }: { questionId?: string }) {
           {/* Question text + preview */}
           <div className="rounded-xl bg-white p-5 ring-1 ring-black/5">
             <label className="block text-sm font-medium text-slate-700">Question</label>
-            <EquationToolbar textareaRef={questionRef} value={content} onChange={setContent} />
+            <div className="flex flex-wrap items-center gap-2">
+              <EquationToolbar textareaRef={questionRef} value={content} onChange={setContent} />
+              <PictureButton fieldRef={questionRef} value={content} onChange={setContent} />
+            </div>
             <textarea
               ref={questionRef}
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              onPaste={(e) => pastePicture(e, content, setContent, setError)}
               rows={3}
               placeholder="e.g. Find $\int_0^1 x^2\,dx$"
               className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -315,11 +320,19 @@ export default function QuestionForm({ questionId }: { questionId?: string }) {
               <p className="mt-2 text-xs text-slate-400">
                 Symbols insert into whichever option you clicked into last (Option {activeOption + 1} now).
               </p>
-              <EquationToolbar
-                textareaRef={{ current: optionRefs.current[activeOption] ?? null }}
-                value={options[activeOption] || ""}
-                onChange={(v) => setOption(activeOption, v)}
-              />
+              <div className="flex flex-wrap items-center gap-2">
+                <EquationToolbar
+                  textareaRef={{ current: optionRefs.current[activeOption] ?? null }}
+                  value={options[activeOption] || ""}
+                  onChange={(v) => setOption(activeOption, v)}
+                />
+                <PictureButton
+                  fieldRef={{ current: optionRefs.current[activeOption] ?? null }}
+                  value={options[activeOption] || ""}
+                  onChange={(v) => setOption(activeOption, v)}
+                />
+                <span className="text-xs text-slate-400">adds to option {activeOption + 1}</span>
+              </div>
               <div className="mt-3 space-y-2">
                 {options.map((opt, i) => (
                   <div key={i}>
@@ -338,6 +351,7 @@ export default function QuestionForm({ questionId }: { questionId?: string }) {
                         value={opt}
                         onChange={(e) => setOption(i, e.target.value)}
                         onFocus={() => setActiveOption(i)}
+                        onPaste={(e) => pastePicture(e, opt, (v) => setOption(i, v), setError)}
                         placeholder={`Option ${i + 1}`}
                         className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                       />
@@ -351,7 +365,7 @@ export default function QuestionForm({ questionId }: { questionId?: string }) {
                         </button>
                       )}
                     </div>
-                    {opt.includes("$") && (
+                    {(opt.includes("$") || opt.includes("![")) && (
                       <div className="ml-7 mt-1 rounded bg-slate-50 px-2 py-1 text-sm text-slate-700">
                         <MathText>{opt}</MathText>
                       </div>
@@ -412,11 +426,15 @@ export default function QuestionForm({ questionId }: { questionId?: string }) {
             <label className="block text-sm font-medium text-slate-700">
               Solution / explanation <span className="text-slate-400">(shown after attempt)</span>
             </label>
-            <EquationToolbar textareaRef={solutionRef} value={solution} onChange={setSolution} />
+            <div className="flex flex-wrap items-center gap-2">
+              <EquationToolbar textareaRef={solutionRef} value={solution} onChange={setSolution} />
+              <PictureButton fieldRef={solutionRef} value={solution} onChange={setSolution} />
+            </div>
             <textarea
               ref={solutionRef}
               value={solution}
               onChange={(e) => setSolution(e.target.value)}
+              onPaste={(e) => pastePicture(e, solution, setSolution, setError)}
               rows={3}
               placeholder="Explain the working. LaTeX supported."
               className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"

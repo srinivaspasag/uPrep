@@ -54,9 +54,16 @@ function num(v: any): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+// A row with no chosen option is a skipped question, whatever verdict the
+// grader stamped on it (the live grader doesn't store these, but a blank
+// must never cost negative marks if one does show up).
+export function isBlank(row: any): boolean {
+  return !Array.isArray(row?.answerGiven) || row.answerGiven.filter((v: any) => String(v ?? "").trim() !== "").length === 0;
+}
+
 // Marks one question row earns (before the whole-test floor at 0).
 export function questionMarks(row: any, mk: Marks | undefined): number {
-  if (!row || !row.isJudgeable) return 0;
+  if (!row || !row.isJudgeable || isBlank(row)) return 0;
   const verdict = String(row.isCorrect || "").toUpperCase();
   if (verdict === "CORRECT") return num(mk?.positive);
   if (verdict === "PARTIAL") return 0;
@@ -75,7 +82,7 @@ export function summarize(test: any, rows: any[]): ScoreSummary {
   const seen = new Set<string>();
   for (const r of rows) {
     const id = String(r.qId);
-    if (seen.has(id)) continue;
+    if (seen.has(id) || isBlank(r)) continue;
     seen.add(id);
     if (!r.isJudgeable) {
       ungraded++;
@@ -94,7 +101,7 @@ export function summarize(test: any, rows: any[]): ScoreSummary {
   // Per subject (test section), same rules as the admin Analytics
   // "Subject-wise" breakdown: not floored at 0, partial counted as wrong.
   const rowByQ = new Map<string, any>();
-  for (const r of rows) if (!rowByQ.has(String(r.qId))) rowByQ.set(String(r.qId), r);
+  for (const r of rows) if (!isBlank(r) && !rowByQ.has(String(r.qId))) rowByQ.set(String(r.qId), r);
   const sections: SectionScore[] = (test?.metadata || []).map((m: any) => {
     const ids: string[] = Array.isArray(m?.qIds) ? m.qIds.map(String) : [];
     let sc = 0, c = 0, w = 0, answered = 0;

@@ -7,6 +7,8 @@ import mammoth from "mammoth";
 import pdfParse from "pdf-parse/lib/pdf-parse.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { renderPageColumns } from "@/lib/pdfColumns";
+import { extractPdf } from "@/lib/pdfExtract";
+import { saveBuffer } from "@/lib/storage";
 import { xlsxToText } from "@/lib/sheetText";
 
 export const dynamic = "force-dynamic";
@@ -86,17 +88,40 @@ export async function POST(req: NextRequest) {
           // Fall through to the plain-text fallback below.
         }
       }
-      // Column-aware: two-column papers are read left column, then right
-      // (lib/pdfColumns). Falls back to pdf-parse's plain order if that fails.
+      // Column-aware text plus the paper's pictures (tables pasted as
+      // images, diagrams), each saved to /uploads and linked at the spot it
+      // sits on the page (lib/pdfExtract). Falls back to text-only reading
+      // if that fails.
       let data: { text: string };
+      let pictures = 0;
       try {
-        data = await pdfParse(buf, { pagerender: renderPageColumns });
-      } catch {
-        data = await pdfParse(buf);
+        const { text, images } = await extractPdf(buf);
+        const urls = new Map<number, string>();
+        let withPics = text;
+        for (const m of Array.from(text.matchAll(/!\[image\]\(pdfimg:(\d+)\)/g))) {
+          const i = parseInt(m[1], 10);
+          if (urls.has(i) || !images[i]) continue;
+          const stored = await saveBuffer(images[i], `question-image-${i + 1}.png`, "image/png");
+          urls.set(i, stored.url);
+        }
+        withPics = text.replace(/!\[image\]\(pdfimg:(\d+)\)/g, (_, n) => {
+          const u = urls.get(parseInt(n, 10));
+          return u ? `![image](${u})` : "";
+        });
+        pictures = urls.size;
+        data = { text: withPics };
+      } catch (e) {
+        console.error("[extract] picture-aware PDF read failed, falling back to text only:", (e as any)?.message);
+        try {
+          data = await pdfParse(buf, { pagerender: renderPageColumns });
+        } catch {
+          data = await pdfParse(buf);
+        }
       }
       return NextResponse.json({
         text: data.text,
         method: "text-layer",
+        pictures,
         warning: ANTHROPIC_API_KEY
           ? "AI transcription failed — fell back to plain text extraction, which can garble equations."
           : "AI transcription isn't configured on this server — using plain text extraction, which can garble equations.",
