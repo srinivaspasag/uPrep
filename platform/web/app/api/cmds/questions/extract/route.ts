@@ -6,6 +6,8 @@ import mammoth from "mammoth";
 // tries to read a nonexistent test fixture, crashing the build.
 import pdfParse from "pdf-parse/lib/pdf-parse.js";
 import Anthropic from "@anthropic-ai/sdk";
+import { renderPageColumns } from "@/lib/pdfColumns";
+import { xlsxToText } from "@/lib/sheetText";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -66,6 +68,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ text: value, method: "docx" });
     }
 
+    // Answer-key spreadsheets: rows come back as tab-separated lines, which
+    // parseAnswerKey (lib/questionImport) reads as "Q.No <TAB> answer".
+    if (/\.xlsx$/i.test(name)) {
+      return NextResponse.json({ text: await xlsxToText(buf), method: "xlsx" });
+    }
+    if (/\.csv$/i.test(name)) {
+      return NextResponse.json({ text: buf.toString("utf-8"), method: "csv" });
+    }
+
     if (/\.pdf$/i.test(name)) {
       if (ANTHROPIC_API_KEY) {
         try {
@@ -75,7 +86,14 @@ export async function POST(req: NextRequest) {
           // Fall through to the plain-text fallback below.
         }
       }
-      const data = await pdfParse(buf);
+      // Column-aware: two-column papers are read left column, then right
+      // (lib/pdfColumns). Falls back to pdf-parse's plain order if that fails.
+      let data: { text: string };
+      try {
+        data = await pdfParse(buf, { pagerender: renderPageColumns });
+      } catch {
+        data = await pdfParse(buf);
+      }
       return NextResponse.json({
         text: data.text,
         method: "text-layer",
