@@ -57,6 +57,7 @@ type SubmitResult = {
   failedQIds?: string[];
   // Marks summary (lib/testScore) — absent from older servers / if the read failed.
   summary?: {
+    sections?: { name: string; score: number; totalMarks: number; totalQuestions: number; correct: number; wrong: number; left: number }[];
     score: number;
     totalMarks: number;
     totalQuestions: number;
@@ -836,11 +837,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
                             <span className="text-2xl text-slate-400">/{result.summary.totalMarks}</span>
                           </div>
                           <p className="mt-1 text-sm text-slate-500">Marks</p>
-                          <div className="mx-auto mt-6 grid max-w-lg grid-cols-3 gap-3">
-                            <ScoreTile label="Correct" value={result.summary.correct} of={result.summary.totalQuestions} tone="green" />
-                            <ScoreTile label="Wrong" value={result.summary.wrong} of={result.summary.totalQuestions} tone="red" />
-                            <ScoreTile label="Left" value={result.summary.left} of={result.summary.totalQuestions} tone="slate" />
-                          </div>
+                          <ScoreTable summary={result.summary} />
                           {(result.summary.partial > 0 || result.summary.ungraded > 0) && (
                             <p className="mt-3 text-sm text-slate-500">
                               {result.summary.partial > 0 && `${result.summary.partial} partly correct`}
@@ -1014,20 +1011,50 @@ function RatingWidget({ entityId, session }: { entityId: string; session: UprepS
   );
 }
 
-function ScoreTile({ label, value, of, tone }: { label: string; value: number; of: number; tone: "green" | "red" | "slate" }) {
-  const cls =
-    tone === "green"
-      ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-      : tone === "red"
-      ? "bg-red-50 text-red-700 ring-red-200"
-      : "bg-slate-50 text-slate-600 ring-slate-200";
+// Your Performance: one row per subject (test section) + a TOTAL row, each
+// with Total Score / Correct / Wrong / Left. Single-subject tests show just
+// the one TOTAL row. Wrong here includes partly-correct (same as admin
+// Analytics), so Correct + Wrong + Left always adds up to the question count.
+function ScoreTable({ summary }: { summary: NonNullable<SubmitResult["summary"]> }) {
+  const secs = summary.sections || [];
+  const rows = [
+    ...(secs.length > 1 ? secs.map((x) => ({ ...x, isTotal: false })) : []),
+    {
+      name: "Total",
+      score: summary.score,
+      totalMarks: summary.totalMarks,
+      totalQuestions: summary.totalQuestions,
+      correct: summary.correct,
+      wrong: summary.wrong + summary.partial,
+      left: summary.left,
+      isTotal: true,
+    },
+  ];
+  const cell = "px-3 py-3 text-center";
   return (
-    <div className={`rounded-lg px-3 py-3 ring-1 ${cls}`}>
-      <div className="text-2xl font-bold">
-        {value}
-        <span className="text-base font-medium opacity-60">/{of}</span>
-      </div>
-      <div className="mt-0.5 text-xs font-medium uppercase tracking-wide">{label}</div>
+    <div className="mx-auto mt-6 max-w-2xl overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-slate-200 text-xs uppercase tracking-wide">
+            <th className="px-3 py-2 text-left font-medium text-slate-500">Subject</th>
+            <th className="px-3 py-2 font-medium text-blue-700">Total Score</th>
+            <th className="px-3 py-2 font-medium text-emerald-700">Correct</th>
+            <th className="px-3 py-2 font-medium text-red-600">Wrong</th>
+            <th className="px-3 py-2 font-medium text-amber-600">Left</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {rows.map((r) => (
+            <tr key={r.name + (r.isTotal ? "#t" : "")} className={r.isTotal ? "bg-slate-50 font-semibold" : ""}>
+              <td className="px-3 py-3 text-left text-slate-700">{r.isTotal ? "TOTAL" : r.name}</td>
+              <td className={`${cell} text-blue-700`}>{r.score}/{r.totalMarks}</td>
+              <td className={`${cell} text-emerald-700`}>{r.correct}/{r.totalQuestions}</td>
+              <td className={`${cell} text-red-600`}>{r.wrong}/{r.totalQuestions}</td>
+              <td className={`${cell} text-amber-600`}>{r.left}/{r.totalQuestions}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
