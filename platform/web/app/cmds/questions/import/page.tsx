@@ -7,6 +7,7 @@ import { getSession, type UprepSession } from "@/lib/session";
 import MathText from "@/components/MathText";
 import BoardPicker from "@/components/BoardPicker";
 import CmdsShell from "@/components/CmdsShell";
+import PictureButton, { pastePicture } from "@/components/PictureButton";
 import { LETTERS, parseAnswerKey, splitOptions, splitQuestionBlocks } from "@/lib/questionImport";
 
 // Bulk-import many single-correct MCQs at once from a pasted question bank +
@@ -63,7 +64,13 @@ export default function BulkImportQuestionsPage() {
       }
       if (target === "questions") setQuestionsText(d.text || "");
       else setAnswerKeyText(d.text || "");
-      if (d.method === "vision") {
+      if (target === "questions" && d.pictures > 0) {
+        setExtractNote({
+          target,
+          text: `${d.pictures} picture${d.pictures === 1 ? "" : "s"} (tables/diagrams) found in the PDF and placed in their questions — check them in the review step.${d.warning ? " Equations may still need checking." : ""}`,
+          ok: true,
+        });
+      } else if (d.method === "vision") {
         setExtractNote({ target, text: "Transcribed with AI vision — equations should read correctly.", ok: true });
       } else if (d.warning) {
         setExtractNote({ target, text: d.warning, ok: false });
@@ -327,10 +334,14 @@ export default function BulkImportQuestionsPage() {
               <textarea
                 value={r.content}
                 onChange={(e) => updateRow(i, { content: e.target.value })}
+                onPaste={(e) => pastePicture(e, r.content, (v) => updateRow(i, { content: v }), setExtractError)}
                 rows={2}
                 className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
-              {r.content.includes("$") && (
+              <div className="mt-1">
+                <PictureButton fieldRef={{ current: null }} value={r.content} onChange={(v) => updateRow(i, { content: v })} />
+              </div>
+              {(r.content.includes("$") || r.content.includes("![")) && (
                 <div className="mt-1 rounded bg-slate-50 px-2 py-1 text-sm text-slate-700">
                   <MathText>{r.content}</MathText>
                 </div>
@@ -348,11 +359,20 @@ export default function BulkImportQuestionsPage() {
                       title="Mark as correct answer"
                     />
                     <span className="w-5 text-xs font-medium text-slate-400">{LETTERS[oi]})</span>
-                    <input
-                      value={opt}
-                      onChange={(e) => updateOption(i, oi, e.target.value)}
-                      className="flex-1 rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
+                    <div className="flex-1">
+                      <input
+                        value={opt}
+                        onChange={(e) => updateOption(i, oi, e.target.value)}
+                        onPaste={(e) => pastePicture(e, opt, (v) => updateOption(i, oi, v), setExtractError)}
+                        className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                      {(opt.includes("$") || opt.includes("![")) && (
+                        <div className="mt-1 rounded bg-slate-50 px-2 py-1 text-sm text-slate-700">
+                          <MathText>{opt}</MathText>
+                        </div>
+                      )}
+                    </div>
+                    <PictureButton compact fieldRef={{ current: null }} value={opt} onChange={(v) => updateOption(i, oi, v)} />
                   </div>
                 ))}
               </div>

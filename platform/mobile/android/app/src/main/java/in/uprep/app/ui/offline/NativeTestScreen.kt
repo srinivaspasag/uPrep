@@ -1,6 +1,15 @@
 package `in`.uprep.app.ui.offline
 
 import androidx.core.text.HtmlCompat
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import `in`.uprep.app.data.offline.OfflinePictures
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -78,10 +87,11 @@ fun NativeTestScreen(
                     Column(
                         Modifier
                             .weight(1f)
+                            .verticalScroll(rememberScrollState())
                             .padding(16.dp)
                     ) {
-                        Text(
-                            "Q${state.currentIndex + 1}. ${displayText(question.content)}",
+                        RichText(
+                            "Q${state.currentIndex + 1}. ${question.content}",
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(Modifier.height(16.dp))
@@ -101,7 +111,7 @@ fun NativeTestScreen(
                                 } else {
                                     Checkbox(checked = selected.contains(value), onCheckedChange = { viewModel.selectOption(question.id, value) })
                                 }
-                                Text(displayText(optionText), modifier = Modifier.padding(start = 8.dp))
+                                Box(Modifier.padding(start = 8.dp)) { RichText(optionText) }
                             }
                         }
                     }
@@ -159,6 +169,45 @@ fun NativeTestScreen(
 // option strings the server grades against.
 private fun displayText(html: String): String =
     HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT).toString().trim()
+
+// Text with `![picture](/uploads/…)` pictures (tables/diagrams) — shown from
+// the copy saved when the test was downloaded (OfflinePictures).
+@Composable
+private fun RichText(text: String, style: TextStyle = MaterialTheme.typography.bodyMedium) {
+    val context = LocalContext.current
+    if (!OfflinePictures.TOKEN.containsMatchIn(text)) {
+        Text(displayText(text), style = style)
+        return
+    }
+    Column {
+        var last = 0
+        for (m in OfflinePictures.TOKEN.findAll(text)) {
+            val before = text.substring(last, m.range.first)
+            if (before.isNotBlank()) Text(displayText(before), style = style)
+            val file = OfflinePictures.fileFor(context, m.groupValues[1])
+            val bitmap = remember(file.path) {
+                if (file.exists()) runCatching { BitmapFactory.decodeFile(file.path) }.getOrNull() else null
+            }
+            if (bitmap != null) {
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = "Picture",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.padding(vertical = 6.dp).fillMaxWidth()
+                )
+            } else {
+                Text(
+                    "[Picture — connect to the internet and download this test again to see it]",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+            last = m.range.last + 1
+        }
+        val rest = text.substring(last)
+        if (rest.isNotBlank()) Text(displayText(rest), style = style)
+    }
+}
 
 private fun optionsOf(question: CachedQuestion): List<String> =
     runCatching {

@@ -86,8 +86,14 @@ function lastMarker(low: string, marker: string, bare: boolean, before: number):
 // marker. When more than one marker style fits (statements labelled a)-d)
 // followed by options 1)-4), or the reverse), the run that starts LATEST is
 // the options.
+// Picture tokens ("![image](/uploads/x.png)") are masked out before looking
+// for option labels, so a URL or placeholder ending in "1)" is never taken
+// for an option marker. Same length, so positions still line up.
+export const IMAGE_TOKEN = /!\[[^\]\n]*\]\([^)\s]*\)/g;
+const maskImages = (s: string) => s.replace(IMAGE_TOKEN, (m) => "#".repeat(m.length));
+
 export function splitOptions(block: string): { question: string; options: string[] } | null {
-  const low = block.toLowerCase();
+  const low = maskImages(block).toLowerCase();
   let best: { set: MarkerSet; pos: number[] } | null = null;
   for (const set of OPTION_MARKER_SETS) {
     const pos = set.markers.map((mk) => lastMarker(low, mk, set.bare, low.length));
