@@ -90,6 +90,11 @@ class OfflineTestRepository(
             )
         }
         dao.saveDownloadedTest(test, questions)
+        // Pictures in questions/options (see OfflinePictures) so they show
+        // with no connection too. Skipped for SD-card imports with no network.
+        appContext?.let { ctx ->
+            OfflinePictures.cache(ctx, body.questions.flatMap { listOf(it.content) + (it.options ?: emptyList()) })
+        }
     }
 
     suspend fun getTestWithQuestions(testId: String): CachedTestWithQuestions? =
