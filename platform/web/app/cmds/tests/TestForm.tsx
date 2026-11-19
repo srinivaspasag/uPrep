@@ -54,6 +54,10 @@ export default function TestForm({ testId }: { testId: string }) {
   const [questionsLocked, setQuestionsLocked] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
   const [multiSection, setMultiSection] = useState(false);
+  // Every question in the test, in order, across all sections — for the
+  // read-only list (with Edit links) shown once the selection itself can't
+  // be changed (locked after attempts, or multi-section).
+  const [testQIds, setTestQIds] = useState<string[]>([]);
 
   const backHref = folderId
     ? `/cmds?folder=${encodeURIComponent(folderId)}&folderName=${encodeURIComponent(folderName)}`
@@ -84,6 +88,7 @@ export default function TestForm({ testId }: { testId: string }) {
       setQuestionsLocked(!!d.questionsLocked);
       setAttemptCount(d.attemptCount || 0);
       setMultiSection(!d.singleSection);
+      setTestQIds((d.sections || []).flatMap((sec: { questionIds?: string[] }) => sec.questionIds || []));
       if (d.singleSection && d.sections?.[0]) {
         setSectionName(d.sections[0].name || "General");
         setPositive(d.sections[0].positive || 4);
@@ -204,7 +209,18 @@ export default function TestForm({ testId }: { testId: string }) {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="text-2xl font-semibold text-slate-800">Edit Test</h1>
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-semibold text-slate-800">Edit Test</h1>
+          {/* Same printable paper the Tests tab's "Paper / PDF" opens —
+              question paper or solutions, then the browser's Save as PDF. */}
+          <Link
+            href={`/cmds/papers/${testId}`}
+            target="_blank"
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
+          >
+            Paper / PDF
+          </Link>
+        </div>
         <p className="mt-1 text-slate-500">
           Change this test's settings. It's attemptable and auto-graded in the learn app immediately.
         </p>
@@ -409,11 +425,62 @@ export default function TestForm({ testId }: { testId: string }) {
                           {q.type} · {q.options} options · {q.difficulty || "—"}
                         </span>
                       </span>
+                      {/* Found live: a test's questions could only be ticked
+                          here, never corrected — admins had to hunt for them
+                          among every question in CMDS → Questions. Opens the
+                          normal question editor (its Save re-syncs the live
+                          copy the test grades from) and comes back here.
+                          Same tab on purpose: the CMDS sign-in lives in this
+                          tab's sessionStorage, so a new tab opens signed out. */}
+                      <Link
+                        href={`/cmds/questions/${q.id}/edit?back=${encodeURIComponent(`/cmds/tests/${testId}/edit`)}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="shrink-0 rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-600 hover:bg-white"
+                        title="Edit this question — save your test changes first"
+                      >
+                        ✎ Edit
+                      </Link>
                     </label>
                   ))}
                 </div>
               </div>
             </>
+          )}
+
+          {(questionsLocked || multiSection) && testQIds.length > 0 && (
+            <div className="rounded-xl bg-white p-5 ring-1 ring-black/5">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-slate-700">Questions in this test</label>
+                <span className="text-sm text-slate-500">{testQIds.length} questions</span>
+              </div>
+              {/* The selection is fixed here, but a typo or a wrong key still
+                  has to be fixable after students have started — that's when
+                  it usually gets noticed. */}
+              <p className="mt-1 text-xs text-slate-500">
+                You can still correct a question's wording, options or solution. A corrected answer key
+                only applies to attempts submitted after the change.
+              </p>
+              <div className="mt-3 space-y-2">
+                {testQIds.map((id, i) => {
+                  const q = pool.find((x) => x.id === id);
+                  return (
+                    <div key={id} className="flex items-start gap-3 rounded-md border border-slate-200 px-3 py-2">
+                      <span className="mt-0.5 text-xs font-semibold text-blue-600">#{i + 1}</span>
+                      <span className="flex-1 text-slate-800">
+                        {q?.text ? <MathText>{q.text}</MathText> : `Question ${i + 1}`}
+                      </span>
+                      <Link
+                        href={`/cmds/questions/${id}/edit?back=${encodeURIComponent(`/cmds/tests/${testId}/edit`)}`}
+                        className="shrink-0 rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-600 hover:bg-slate-50"
+                        title="Edit this question — save your test changes first"
+                      >
+                        ✎ Edit
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
 
           {error && (

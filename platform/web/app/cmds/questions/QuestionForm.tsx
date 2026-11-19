@@ -26,9 +26,20 @@ const hasOptions = (t: QType) => t === "SCQ" || t === "MCQ" || t === "PARA";
 // issue list ("Question edit option") found there was no edit path at all,
 // only creation. Rather than fork a second ~400-line form that would drift
 // out of sync with this one, both routes render this same component.
+// Where Save/Cancel return to. Opened from a test's Edit page the editor
+// gets ?back=/cmds/tests/<id>/edit so the admin lands back on that test, not
+// the whole question bank. CMDS paths only (never an absolute URL).
+function backPath(): string {
+  if (typeof window === "undefined") return "/cmds/questions";
+  const b = new URLSearchParams(window.location.search).get("back") || "";
+  return b.startsWith("/cmds/") && !b.startsWith("//") && !b.includes("\\") ? b : "/cmds/questions";
+}
+
 export default function QuestionForm({ questionId }: { questionId?: string }) {
   const router = useRouter();
   const isEdit = !!questionId;
+  const [back, setBack] = useState("/cmds/questions");
+  useEffect(() => setBack(backPath()), []);
   const [session, setSession] = useState<UprepSession | null>(null);
   const [content, setContent] = useState("");
   const [type, setType] = useState<QType>("SCQ");
@@ -151,7 +162,7 @@ export default function QuestionForm({ questionId }: { questionId?: string }) {
         setSaving(false);
         return;
       }
-      router.push("/cmds/questions");
+      router.push(backPath());
     } catch {
       setError("Failed to save question.");
       setSaving(false);
@@ -174,8 +185,8 @@ export default function QuestionForm({ questionId }: { questionId?: string }) {
             </div>
             <span className="font-semibold text-slate-800">UPrep CMDS</span>
           </div>
-          <Link href="/cmds/questions" className="text-sm text-blue-600 hover:underline">
-            ← Questions
+          <Link href={back} className="text-sm text-blue-600 hover:underline">
+            {back.startsWith("/cmds/tests/") ? "← Back to test" : "← Questions"}
           </Link>
         </div>
       </header>
@@ -433,7 +444,7 @@ export default function QuestionForm({ questionId }: { questionId?: string }) {
               {saving ? "Saving…" : isEdit ? "Save Changes" : "Save Question"}
             </button>
             <Link
-              href="/cmds/questions"
+              href={back}
               className="rounded-md border border-slate-300 px-5 py-2.5 text-sm text-slate-600 hover:bg-slate-100"
             >
               Cancel
