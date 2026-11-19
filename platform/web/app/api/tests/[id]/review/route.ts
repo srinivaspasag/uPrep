@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
+import { marksMap, questionMarks, summarize } from "@/lib/testScore";
 
 export const dynamic = "force-dynamic";
 
@@ -58,7 +59,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const questionById = new Map(questionDocs.map((q: any) => [String(q._id), q]));
     const answerByQId = new Map(answerDocs.map((a: any) => [String(a.qId), a]));
 
-    let totalScore = 0;
+    // The grader never stores `score` (always 0) — marks come from the
+    // test's marks map, same as admin Analytics. See lib/testScore.
+    const marks = marksMap(test);
     const sections = (test.metadata || []).map((m: any) => {
       const qIds: string[] = Array.isArray(m.qIds) ? m.qIds : [];
       const questions = qIds
@@ -69,8 +72,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           const answerDoc = answerByQId.get(qId);
           const chosen: string[] = at?.answerGiven || [];
           const correct: string[] = answerDoc?.answer || [];
-          const score = typeof at?.score === "number" ? at.score : 0;
-          totalScore += score;
+          const score = questionMarks(at, marks[qId]);
           const verdict = !at
             ? "UNANSWERED"
             : chosen.length === 0
@@ -95,9 +97,15 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       return { name: m.name || "Section", questions };
     });
 
-    const totalMarks = (test.metadata || []).reduce((sum: number, m: any) => sum + (m.totalMarks || 0), 0);
+    const summary = summarize(test, qAttempts);
 
-    return NextResponse.json({ hidden: false, totalScore, totalMarks, sections });
+    return NextResponse.json({
+      hidden: false,
+      totalScore: summary.score,
+      totalMarks: summary.totalMarks,
+      summary,
+      sections,
+    });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed to load review" }, { status: 500 });
   }
