@@ -155,3 +155,57 @@ export function parseAnswerKey(text: string): Record<number, string> {
   }
   return map;
 }
+
+// Solutions sheet -> { questionNumber: { text, key? } }. Handles the common
+// coaching format "12. [3] explanation…" (Scholar Spectra DT papers) as well
+// as "12] (c) …", "12. Ans: 3 …" and plain "12. explanation…". The key found
+// at the start (1-4 / a-d) is returned separately so it can be cross-checked
+// against the answer-key file, and used when no key file is given.
+// Line breaks from the PDF are joined into readable sentences (the site
+// shows solutions as running text).
+export function parseSolutions(text: string): Record<number, { text: string; key: string }> {
+  const out: Record<number, { text: string; key: string }> = {};
+  const re = /(?:^|\n)\s*(\d{1,3})\s*[.\])]\s+/g;
+  const hits = Array.from(text.matchAll(re)).map((m) => ({ num: parseInt(m[1], 10), index: m.index ?? 0, len: m[0].length }));
+  // Strictly increasing numbers only — numbered steps inside a solution
+  // ("1. Tendrils of…" under Q5) must not start a new solution.
+  const kept: typeof hits = [];
+  let last = 0;
+  for (const h of hits) {
+    if (h.num === last + 1 || (last === 0 && h.num >= 1)) {
+      kept.push(h);
+      last = h.num;
+    }
+  }
+  kept.forEach((h, i) => {
+    let body = text.slice(h.index + h.len, i + 1 < kept.length ? kept[i + 1].index : text.length).trim();
+    let key = "";
+    const km = body.match(/^(?:\[\s*([1-4a-dA-D])\s*\]|\(\s*([1-4a-dA-D])\s*\)|ans(?:wer)?\s*[:.\-]?\s*\(?([1-4a-dA-D])\)?)\s*/i);
+    if (km) {
+      const k = (km[1] || km[2] || km[3]).toLowerCase();
+      key = /[1-4]/.test(k) ? LETTERS[parseInt(k, 10) - 1] : k;
+      body = body.slice(km[0].length);
+    }
+    out[h.num] = { text: joinLines(body), key };
+  });
+  return out;
+}
+
+function joinLines(raw: string): string {
+  const lines = raw
+    .split("\n")
+    .map((s) => s.trim())
+    .filter((s) => s && !/^[∙•·]$/.test(s));
+  let t = "";
+  for (const l of lines) {
+    if (l === "=") {
+      t += " =";
+      continue;
+    }
+    if (!t) t = l;
+    else if (/^!\[/.test(l) || /^!\[/.test(t.split(" ").pop() || "")) t += " " + l;
+    else if (/^[a-z]/.test(l) || /[,(–=-]$/.test(t) || /\b(and|of|the|to|for|by|a|an|in|than|with|as|from|which|is|are|or)$/i.test(t)) t += " " + l;
+    else t += /[.:;!?]$/.test(t) ? " " + l : "; " + l;
+  }
+  return t.replace(/\s+/g, " ").trim();
+}
