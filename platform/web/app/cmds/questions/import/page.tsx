@@ -7,6 +7,7 @@ import { getSession, type UprepSession } from "@/lib/session";
 import MathText from "@/components/MathText";
 import BoardPicker from "@/components/BoardPicker";
 import CmdsShell from "@/components/CmdsShell";
+import { LETTERS, parseAnswerKey, splitOptions, splitQuestionBlocks } from "@/lib/questionImport";
 
 // Bulk-import many single-correct MCQs at once from a pasted question bank +
 // answer key (the common coaching-institute PDF/Word format: "1] question
@@ -29,92 +30,6 @@ type ParsedRow = {
   parseOk: boolean;
   raw: string;
 };
-
-const LETTERS = ["a", "b", "c", "d"];
-
-function splitQuestionBlocks(text: string): { num: number; text: string }[] {
-  // "." / ")" delimited numbers require a line break before them (running
-  // prose has plenty of "2. " and "b) " that aren't question boundaries).
-  // "]" is a much rarer marker in this content, so it only needs to be
-  // preceded by whitespace — important because OCR'd/copy-pasted text (e.g.
-  // from Google Docs) often loses hard line breaks and runs questions
-  // together as one paragraph, e.g. "...E of S 21] A vehicle...".
-  const re = /(?:^|\n)\s*(\d{1,3})\s*[.)]\s+|(?:^|\s)(\d{1,3})\]\s+/g;
-  const raw = [...text.matchAll(re)].map((m) => ({
-    num: parseInt((m[1] ?? m[2]) as string, 10),
-    index: m.index ?? 0,
-    length: m[0].length,
-  }));
-  // Keep only strictly increasing question numbers — guards against a stray
-  // bracketed number (e.g. a "[21]" source citation) being mistaken for a
-  // new question boundary and splitting mid-question.
-  const filtered: typeof raw = [];
-  let last = 0;
-  for (const m of raw) {
-    if (m.num > last) {
-      filtered.push(m);
-      last = m.num;
-    }
-  }
-  const blocks: { num: number; text: string }[] = [];
-  for (let i = 0; i < filtered.length; i++) {
-    const start = filtered[i].index + filtered[i].length;
-    const end = i + 1 < filtered.length ? filtered[i + 1].index : text.length;
-    blocks.push({ num: filtered[i].num, text: text.slice(start, end).trim() });
-  }
-  return blocks;
-}
-
-// Different source institutes mark options differently — "a) b) c) d)" is
-// most common, but some (e.g. an AIIMS-format bank seen in practice) use
-// "(1) (2) (3) (4)" instead. Both map onto the same internal a/b/c/d
-// representation positionally, so this just tries each marker set in turn.
-const OPTION_MARKER_SETS: [string, string, string, string][] = [
-  ["a)", "b)", "c)", "d)"],
-  ["(1)", "(2)", "(3)", "(4)"],
-];
-
-// Finds the last "<a-marker> ... <b-marker> ... <c-marker> ... <d-marker> ..."
-// run in a block (searching backward from the d-marker so any incidental
-// marker-looking text earlier in the question body doesn't get mistaken for
-// the options).
-function splitOptions(block: string): { question: string; options: string[] } | null {
-  const low = block.toLowerCase();
-  for (const [mA, mB, mC, mD] of OPTION_MARKER_SETS) {
-    const dIdx = low.lastIndexOf(mD);
-    if (dIdx === -1) continue;
-    const cIdx = low.lastIndexOf(mC, dIdx);
-    if (cIdx === -1) continue;
-    const bIdx = low.lastIndexOf(mB, cIdx);
-    if (bIdx === -1) continue;
-    const aIdx = low.lastIndexOf(mA, bIdx);
-    if (aIdx === -1) continue;
-    const clean = (s: string) => s.replace(/\s+/g, " ").trim();
-    return {
-      question: clean(block.slice(0, aIdx)),
-      options: [
-        clean(block.slice(aIdx + mA.length, bIdx)),
-        clean(block.slice(bIdx + mB.length, cIdx)),
-        clean(block.slice(cIdx + mC.length, dIdx)),
-        clean(block.slice(dIdx + mD.length)),
-      ],
-    };
-  }
-  return null;
-}
-
-// Matches "1]c", "1] c", "1)c", "1. c" etc. anywhere in the pasted answer
-// key / solutions text — deliberately loose since these documents mix a
-// bare answer list with worked-solution paragraphs that start the same way.
-function parseAnswerKey(text: string): Record<number, string> {
-  const map: Record<number, string> = {};
-  const re = /(\d{1,3})\s*[.)\]]\s*\(?([a-dA-D])\)?/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(text))) {
-    map[parseInt(m[1], 10)] = m[2].toLowerCase();
-  }
-  return map;
-}
 
 export default function BulkImportQuestionsPage() {
   const router = useRouter();
@@ -253,8 +168,8 @@ export default function BulkImportQuestionsPage() {
         <div>
           <h1 className="text-2xl font-semibold text-slate-800">Bulk Import Questions</h1>
           <p className="mt-1 text-slate-500">
-            Paste a numbered question bank (with a/b/c/d options) and its answer key — review the parsed result, then
-            import in one go.
+            Upload or paste a numbered question paper (options a) b) c) d), (1)…(4) or 1)…4) — two-column PDFs are
+            fine) and its answer key — review the parsed result, then import in one go.
           </p>
         </div>
         <Link href="/cmds/questions" className="text-sm text-blue-600 hover:underline">
@@ -330,10 +245,10 @@ export default function BulkImportQuestionsPage() {
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-medium text-slate-700">Answer key / solutions</label>
                 <label className="cursor-pointer rounded-md border border-slate-300 px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-100">
-                  {extracting === "answers" ? "Reading…" : "Upload file (.pdf/.docx/.txt)"}
+                  {extracting === "answers" ? "Reading…" : "Upload file (.xlsx/.csv/.pdf/.docx/.txt)"}
                   <input
                     type="file"
-                    accept=".pdf,.docx,.txt"
+                    accept=".xlsx,.csv,.pdf,.docx,.txt"
                     className="hidden"
                     onChange={(e) => {
                       const f = e.target.files?.[0];
@@ -349,7 +264,8 @@ export default function BulkImportQuestionsPage() {
                 </p>
               ) : (
                 <p className="mt-1 text-xs text-slate-400">
-                  Upload a file or paste directly, e.g. "1] c Sol: ..." or a bare list "1] c".
+                  Upload a file or paste directly, e.g. "1] c Sol: ...", a bare list "1] c", or an Excel key (Q.No | 1-4 or
+                  A-D).
                 </p>
               )}
               <textarea
