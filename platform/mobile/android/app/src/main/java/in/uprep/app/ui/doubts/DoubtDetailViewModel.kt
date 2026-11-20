@@ -1,6 +1,7 @@
 package `in`.uprep.app.ui.doubts
 
 import androidx.lifecycle.ViewModel
+import `in`.uprep.app.data.api.serverError
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import `in`.uprep.app.data.api.DoubtAnswer
@@ -39,7 +40,7 @@ class DoubtDetailViewModel(private val learnApi: LearnApi, private val doubtId: 
                         doubt = body.doubt, answers = body.answers, aiPending = body.aiPending, loading = false
                     )
                 } else {
-                    _state.value = _state.value.copy(loading = false, error = body?.error ?: "Couldn't load this doubt")
+                    _state.value = _state.value.copy(loading = false, error = body?.error ?: resp.serverError() ?: "Couldn't load this doubt")
                 }
             } catch (e: Exception) {
                 _state.value = _state.value.copy(loading = false, error = "Couldn't reach the server")

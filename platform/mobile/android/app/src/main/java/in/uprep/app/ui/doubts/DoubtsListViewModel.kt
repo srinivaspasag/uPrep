@@ -1,6 +1,7 @@
 package `in`.uprep.app.ui.doubts
 
 import androidx.lifecycle.ViewModel
+import `in`.uprep.app.data.api.serverError
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import `in`.uprep.app.data.api.CreateDoubtBody
@@ -39,7 +40,7 @@ class DoubtsListViewModel(private val learnApi: LearnApi) : ViewModel() {
                 if (resp.isSuccessful) {
                     _state.value = _state.value.copy(doubts = resp.body()?.items ?: emptyList(), loading = false)
                 } else {
-                    _state.value = _state.value.copy(loading = false, error = "Couldn't load your doubts")
+                    _state.value = _state.value.copy(loading = false, error = resp.serverError() ?: "Couldn't load your doubts")
                 }
             } catch (e: Exception) {
                 _state.value = _state.value.copy(loading = false, error = "Couldn't reach the server")
@@ -62,7 +63,7 @@ class DoubtsListViewModel(private val learnApi: LearnApi) : ViewModel() {
                     load()
                     onCreated(id)
                 } else {
-                    _state.value = _state.value.copy(creating = false, createError = resp.body()?.error ?: "Failed to post doubt")
+                    _state.value = _state.value.copy(creating = false, createError = resp.body()?.error ?: resp.serverError() ?: "Failed to post doubt")
                 }
             } catch (e: Exception) {
                 _state.value = _state.value.copy(creating = false, createError = "Couldn't reach the server")
