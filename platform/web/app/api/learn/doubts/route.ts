@@ -4,6 +4,7 @@ import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { sessionFromReq } from "@/lib/server-session";
 import { ensureAiAnswer, type AnswerMode } from "@/lib/aiTutor";
+import { examLockResponse } from "@/lib/examLock";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,9 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   const session = await sessionFromReq(req);
   if (!session) return NextResponse.json({ error: "Not authenticated", items: [] }, { status: 401 });
+  // Closed while the student has a test in progress (lib/examLock).
+  const examLocked = await examLockResponse(session.id);
+  if (examLocked) return examLocked;
 
   const sp = req.nextUrl.searchParams;
   const state = (sp.get("state") || "").toLowerCase(); // "open" | "resolved" | "" (all)
@@ -70,6 +74,9 @@ const VALID_MODES: AnswerMode[] = ["detailed", "short", "guided"];
 export async function POST(req: NextRequest) {
   const session = await sessionFromReq(req);
   if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  // Closed while the student has a test in progress (lib/examLock).
+  const examLocked = await examLockResponse(session.id);
+  if (examLocked) return examLocked;
   const b = (await req.json().catch(() => ({}))) as CreateBody;
   const name = (b.name || "").trim();
   const content = (b.content || "").trim();

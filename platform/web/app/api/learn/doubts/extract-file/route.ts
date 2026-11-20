@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import mammoth from "mammoth";
 import { sessionFromReq } from "@/lib/server-session";
+import { examLockResponse } from "@/lib/examLock";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -102,6 +103,9 @@ const ASK_TEXT =
 export async function POST(req: NextRequest) {
   const session = await sessionFromReq(req);
   if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  // Closed while the student has a test in progress (lib/examLock).
+  const examLocked = await examLockResponse(session.id);
+  if (examLocked) return examLocked;
 
   if (!ANTHROPIC_API_KEY) {
     return NextResponse.json(
