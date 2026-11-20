@@ -206,6 +206,9 @@ export default function TestPage({ params }: { params: { id: string } }) {
       flushActive();
       await fetch(`/api/tests/${params.id}/progress`, {
         method: "PUT",
+        // keepalive: still delivered if the page is closing (app's ⎋ button,
+        // Back, switching apps).
+        keepalive: true,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers, remaining, visited, marked, currentQId, qTime: qTimeRef.current }),
       });
@@ -232,6 +235,35 @@ export default function TestPage({ params }: { params: { id: string } }) {
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, answers, remaining, visited, marked, currentQId]);
+
+  // Save straight away when the exam starts, shortly after every answer, and
+  // whenever the page is hidden/closed — not only every 15 s. Found on a
+  // tablet: a student who left via the app's ⎋ button or Back within the
+  // first 15 s had nothing saved, so their answers were lost and the server
+  // didn't know an exam was running (Aira stayed open — lib/examLock).
+  const saveRef = useRef(saveProgress);
+  saveRef.current = saveProgress;
+  useEffect(() => {
+    if (phase === "attempt") saveRef.current(false);
+  }, [phase]);
+  useEffect(() => {
+    if (phase !== "attempt") return;
+    const t = setTimeout(() => saveRef.current(false), 800);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answers, marked, currentQId]);
+  useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === "hidden") saveRef.current(false);
+    };
+    const onPageHide = () => saveRef.current(false);
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", onPageHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", onPageHide);
+    };
+  }, []);
 
   async function pauseAndExit() {
     await saveProgress(true);
