@@ -4,6 +4,7 @@ import { getDb } from "@/lib/mongo";
 import { DEFAULT_ORG_ID } from "@/lib/config";
 import { sessionFromReq } from "@/lib/server-session";
 import { isStaff } from "@/lib/roles";
+import { examLockResponse } from "@/lib/examLock";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   const id = params.id;
   const session = await sessionFromReq(req);
   if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  // Closed while the student has a test in progress (lib/examLock).
+  const examLocked = await examLockResponse(session.id);
+  if (examLocked) return examLocked;
   try {
     const db = await getDb();
     const doc: any = await db.collection("discussions").findOne({ _id: toId(id) as any });
@@ -132,6 +136,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const id = params.id;
   const session = await sessionFromReq(req);
   if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  // Closed while the student has a test in progress (lib/examLock).
+  const examLocked = await examLockResponse(session.id);
+  if (examLocked) return examLocked;
   const userName = [session.firstName, session.lastName].filter(Boolean).join(" ") || "Member";
   const b = (await req.json().catch(() => ({}))) as AnswerBody;
   const content = (b.content || "").trim();

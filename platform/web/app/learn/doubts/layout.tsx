@@ -61,6 +61,37 @@ export default function DoubtsLayout({ children }: { children: React.ReactNode }
     load();
   }, [load]);
 
+  // Aira is closed while the student has a test in progress (Pause & exit
+  // must not become "ask Aira, then resume") — lib/examLock. The doubts APIs
+  // refuse too; this just explains why instead of showing an empty page.
+  // undefined = still checking (render nothing, so Aira doesn't flash open).
+  const [examLock, setExamLock] = useState<{ message: string; testId: string } | null | undefined>(undefined);
+  useEffect(() => {
+    fetch("/api/learn/exam-lock")
+      .then((r) => r.json())
+      .then((d) => setExamLock(d?.locked ? { message: d.message, testId: d.testId } : null))
+      .catch(() => setExamLock(null));
+  }, [pathname]);
+
+  if (examLock === undefined) return <LmsShell active="doubts">{null}</LmsShell>;
+  if (examLock) {
+    return (
+      <LmsShell active="doubts">
+        <div className="mx-auto mt-10 max-w-lg rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-black/5">
+          <div className="text-4xl">🔒</div>
+          <h1 className="mt-3 text-xl font-semibold text-slate-800">Aira is closed during your test</h1>
+          <p className="mt-2 text-slate-600">{examLock.message}</p>
+          <Link
+            href={`/test/${examLock.testId}`}
+            className="mt-6 inline-block rounded-md bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            Back to my test
+          </Link>
+        </div>
+      </LmsShell>
+    );
+  }
+
   return (
     <LmsShell active="doubts" fullWidth>
       <div className="flex h-[calc(100vh-52px)] min-h-0">

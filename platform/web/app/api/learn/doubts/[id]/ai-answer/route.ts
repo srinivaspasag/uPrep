@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongo";
 import { sessionFromReq } from "@/lib/server-session";
 import { aiTutorConfigured, ensureAiAnswer } from "@/lib/aiTutor";
+import { examLockResponse } from "@/lib/examLock";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -21,6 +22,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   }
   const session = await sessionFromReq(req);
   if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  // Closed while the student has a test in progress (lib/examLock).
+  const examLocked = await examLockResponse(session.id);
+  if (examLocked) return examLocked;
 
   const id = params.id;
   try {
