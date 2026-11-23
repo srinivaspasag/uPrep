@@ -165,18 +165,32 @@ export function parseAnswerKey(text: string): Record<number, string> {
 // shows solutions as running text).
 export function parseSolutions(text: string): Record<number, { text: string; key: string }> {
   const out: Record<number, { text: string; key: string }> = {};
-  const re = /(?:^|\n)\s*(\d{1,3})\s*[.\])]\s+/g;
-  const hits = Array.from(text.matchAll(re)).map((m) => ({ num: parseInt(m[1], 10), index: m.index ?? 0, len: m[0].length }));
-  // Strictly increasing numbers only — numbered steps inside a solution
-  // ("1. Tendrils of…" under Q5) must not start a new solution.
-  const kept: typeof hits = [];
-  let last = 0;
-  for (const h of hits) {
-    if (h.num === last + 1 || (last === 0 && h.num >= 1)) {
-      kept.push(h);
-      last = h.num;
+  // Sheets that print the answer with each solution ("12. [3] …") are split
+  // on exactly that marker — reliable even when the PDF's reading order puts
+  // a solution slightly out of sequence (WT-17's A3 sheet). Otherwise fall
+  // back to plain "12." numbering, strictly increasing so numbered steps
+  // inside a solution ("1. Tendrils of…" under Q5) don't start a new one.
+  const bracketed = Array.from(text.matchAll(/(?:^|\n)\s*(\d{1,3})\s*\.\s*(?=\[\s*[1-4a-dA-D]\s*\])/g)).map((m) => ({
+    num: parseInt(m[1], 10),
+    index: m.index ?? 0,
+    len: m[0].length,
+  }));
+  let kept: { num: number; index: number; len: number }[] = [];
+  if (bracketed.length >= 3) {
+    const seen = new Set<number>();
+    kept = bracketed.filter((h) => (seen.has(h.num) ? false : (seen.add(h.num), true)));
+  } else {
+    const re = /(?:^|\n)\s*(\d{1,3})\s*[.\])]\s+/g;
+    const hits = Array.from(text.matchAll(re)).map((m) => ({ num: parseInt(m[1], 10), index: m.index ?? 0, len: m[0].length }));
+    let last = 0;
+    for (const h of hits) {
+      if (h.num === last + 1 || (last === 0 && h.num >= 1)) {
+        kept.push(h);
+        last = h.num;
+      }
     }
   }
+  kept.sort((a, b) => a.index - b.index);
   kept.forEach((h, i) => {
     let body = text.slice(h.index + h.len, i + 1 < kept.length ? kept[i + 1].index : text.length).trim();
     let key = "";
