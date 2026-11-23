@@ -15,14 +15,17 @@
 // option they belong to. They are passed in already turned into text tokens
 // (see lib/pdfExtract) — this file only decides where they go.
 
-type Item = { x: number; y: number; w: number; s: string };
+type Item = { x: number; y: number; w: number; s: string; size?: number };
 export type PlacedImage = { x: number; yTop: number; w: number; token: string };
 
 function joinItems(items: Item[]): string {
   let out = "";
   let end = -Infinity;
   for (const it of items) {
-    if (out && it.x - end > 1.5 && !/\s$/.test(out) && !/^\s/.test(it.s)) out += " ";
+    // A real word gap is about a quarter of the font size; smaller gaps are
+    // kerning inside a word the PDF stored in pieces ("L ytic", "Or ganic").
+    const minGap = Math.max(1.5, (it.size || 0) * 0.2);
+    if (out && it.x - end > minGap && !/\s$/.test(out) && !/^\s/.test(it.s)) out += " ";
     out += it.s;
     end = it.x + it.w;
   }
@@ -38,7 +41,7 @@ export function pageText(rawItems: any[], pageWidth: number, images: PlacedImage
     // solution sheets), never question content — its letters would otherwise
     // land one by one in the middle of answers.
     .filter((i) => Math.abs(i.transform?.[1] || 0) < 0.01 && Math.abs(i.transform?.[2] || 0) < 0.01)
-    .map((i) => ({ x: i.transform[4], y: i.transform[5], w: i.width || 0, s: i.str }));
+    .map((i) => ({ x: i.transform[4], y: i.transform[5], w: i.width || 0, s: i.str, size: Math.abs(i.transform[3] || 0) }));
   // Group into lines (same baseline within 3pt), top of page first.
   items.sort((a, b) => b.y - a.y || a.x - b.x);
   const lines: { y: number; items: Item[]; image?: boolean }[] = [];
