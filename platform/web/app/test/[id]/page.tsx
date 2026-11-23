@@ -88,7 +88,9 @@ export default function TestPage({ params }: { params: { id: string } }) {
   const [session, setSession] = useState<UprepSession | null>(null);
   const [test, setTest] = useState<TestMeta | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  // Option index for choice questions; the typed value (string) for
+  // numerical-answer questions (JEE Section B).
+  const [answers, setAnswers] = useState<Record<string, number | string>>({});
   const [visited, setVisited] = useState<Record<string, boolean>>({});
   const [marked, setMarked] = useState<Record<string, boolean>>({});
   const [currentQId, setCurrentQId] = useState<string | null>(null);
@@ -631,6 +633,20 @@ export default function TestPage({ params }: { params: { id: string } }) {
                 <div className="mt-2 flex gap-2">
                   <MathText className="text-slate-800">{currentQuestion.content}</MathText>
                 </div>
+                {isNumeric(currentQuestion) ? (
+                  <NumericAnswer
+                    key={currentQuestion.id}
+                    value={answers[currentQuestion.id] !== undefined ? String(answers[currentQuestion.id]) : ""}
+                    onChange={(v) =>
+                      setAnswers((a) => {
+                        const next = { ...a };
+                        if (v === "") delete next[currentQuestion.id];
+                        else next[currentQuestion.id] = v;
+                        return next;
+                      })
+                    }
+                  />
+                ) : (
                 <div className="mt-4 space-y-2">
                   {currentQuestion.options.map((opt, oi) => (
                     <label
@@ -651,6 +667,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
                     </label>
                   ))}
                 </div>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -1182,6 +1199,24 @@ function ReviewPanel({
                 <div className="mt-2">
                   <MathText className="text-slate-800">{q.content}</MathText>
                 </div>
+                {isNumeric(q) ? (
+                  <div className="mt-3 flex flex-wrap gap-2 text-sm">
+                    <span
+                      className={`rounded-md border px-3 py-1.5 ${
+                        q.verdict === "CORRECT"
+                          ? "border-emerald-400 bg-emerald-50"
+                          : q.chosenIndexes.length
+                          ? "border-red-400 bg-red-50"
+                          : "border-slate-200"
+                      }`}
+                    >
+                      Your answer: <b>{q.chosenIndexes[0] ?? "—"}</b>
+                    </span>
+                    <span className="rounded-md border border-emerald-400 bg-emerald-50 px-3 py-1.5">
+                      <span className="text-emerald-600">✓</span> Correct answer: <b>{q.correctIndexes.join(" or ") || "—"}</b>
+                    </span>
+                  </div>
+                ) : (
                 <div className="mt-3 space-y-1.5">
                   {q.options.map((opt, oi) => {
                     const idxStr = String(oi);
@@ -1201,11 +1236,43 @@ function ReviewPanel({
                     );
                   })}
                 </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+// Numerical-answer question (JEE Section B): typed value, no options.
+function isNumeric(q: { type?: string; options?: string[] }): boolean {
+  return String(q.type || "").toUpperCase() === "NUMERIC";
+}
+
+// Answer box for a numerical question. Keeps only what a number can
+// contain (digits, one leading minus, one decimal point); the grader
+// compares numerically, so "267" and "267.0" both count.
+function NumericAnswer({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="mt-4">
+      <label className="block text-sm font-medium text-slate-600">Your answer (enter a number)</label>
+      <input
+        type="text"
+        inputMode="decimal"
+        autoComplete="off"
+        value={value}
+        placeholder="e.g. 25 or 2.5"
+        onChange={(e) => {
+          let v = e.target.value.replace(/[^0-9.\-]/g, "");
+          v = v.replace(/(?!^)-/g, "");
+          const dot = v.indexOf(".");
+          if (dot !== -1) v = v.slice(0, dot + 1) + v.slice(dot + 1).replace(/\./g, "");
+          onChange(v.slice(0, 12));
+        }}
+        className="mt-1 w-56 rounded-md border border-slate-300 px-3 py-2 text-lg tracking-wide focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      />
     </div>
   );
 }
