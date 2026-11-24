@@ -477,8 +477,8 @@ export default function TestForm({ testId }: { testId: string }) {
                   return (
                     <div key={id} className="flex items-start gap-3 rounded-md border border-slate-200 px-3 py-2">
                       <span className="mt-0.5 text-xs font-semibold text-blue-600">#{i + 1}</span>
-                      <span className="flex-1 text-slate-800">
-                        {q?.text ? <MathText>{q.text}</MathText> : `Question ${i + 1}`}
+                      <span className="paper-box min-w-0 flex-1 text-slate-800">
+                        {q?.text ? <MathText className="paper-q">{q.text}</MathText> : `Question ${i + 1}`}
                       </span>
                       <Link
                         href={`/cmds/questions/${id}/edit?back=${encodeURIComponent(`/cmds/tests/${testId}/edit`)}`}

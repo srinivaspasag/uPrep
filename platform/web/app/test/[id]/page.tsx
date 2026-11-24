@@ -630,8 +630,8 @@ export default function TestPage({ params }: { params: { id: string } }) {
                     </button>
                   )}
                 </div>
-                <div className="mt-2 flex gap-2">
-                  <MathText className="text-slate-800">{currentQuestion.content}</MathText>
+                <div className="paper-box mt-2">
+                  <MathText className="paper-q">{currentQuestion.content}</MathText>
                 </div>
                 {isNumeric(currentQuestion) ? (
                   <NumericAnswer
@@ -664,7 +664,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
                         checked={answers[currentQuestion.id] === oi}
                         onChange={() => setAnswers((a) => ({ ...a, [currentQuestion.id]: oi }))}
                       />
-                      <MathText className="text-lg text-slate-800 [&_img]:mix-blend-multiply">{opt}</MathText>
+                      <MathText className="paper-opt [&_img]:mix-blend-multiply">{opt}</MathText>
                     </label>
                   ))}
                 </div>
@@ -1197,8 +1197,8 @@ function ReviewPanel({
                     {VERDICT_LABEL[q.verdict]}
                   </span>
                 </div>
-                <div className="mt-2">
-                  <MathText className="text-slate-800">{q.content}</MathText>
+                <div className="paper-box mt-2">
+                  <MathText className="paper-q">{q.content}</MathText>
                 </div>
                 {isNumeric(q) ? (
                   <div className="mt-3 flex flex-wrap gap-2 text-sm">
@@ -1232,7 +1232,7 @@ function ReviewPanel({
                       <div key={oi} className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-base ${cls}`}>
                         {isCorrect && <span className="text-emerald-600">✓</span>}
                         {!isCorrect && isChosen && <span className="text-red-600">✕</span>}
-                        <MathText className="text-slate-700 [&_img]:mix-blend-multiply">{opt}</MathText>
+                        <MathText className="paper-opt [&_img]:mix-blend-multiply">{opt}</MathText>
                       </div>
                     );
                   })}
