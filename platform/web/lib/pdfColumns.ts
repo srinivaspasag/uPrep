@@ -15,16 +15,94 @@
 // option they belong to. They are passed in already turned into text tokens
 // (see lib/pdfExtract) — this file only decides where they go.
 
-type Item = { x: number; y: number; w: number; s: string; size?: number };
+type Item = { x: number; y: number; w: number; s: string; size?: number; script?: "sup" | "sub"; onBase?: boolean };
 export type PlacedImage = { x: number; yTop: number; w: number; token: string };
+
+// Superscripts / subscripts (10⁻¹⁰, A₃, Fe³⁺) are printed in a smaller font
+// slightly above or below the line. They are written with the Unicode
+// superscript/subscript characters so they read right everywhere a question
+// is shown — CMDS editor, web test page and the Android app, which has no
+// math renderer. Letters Unicode has no small form for (the c of Kc) stay
+// plain letters, as before; any other power is written ^(…) — K₂^(1/2), e^(-αt)
+// — which reads the same on every screen.
+const SUP: Record<string, string> = {
+  "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹",
+  "+": "⁺", "-": "⁻", "−": "⁻", "–": "⁻", "=": "⁼", "(": "⁽", ")": "⁾", n: "ⁿ", i: "ⁱ", x: "ˣ", y: "ʸ",
+  "′": "′", "'": "′", "″": "″", "*": "*", "∗": "*", " ": "",
+};
+const SUB: Record<string, string> = {
+  "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉",
+  "+": "₊", "-": "₋", "−": "₋", "–": "₋", "=": "₌", "(": "₍", ")": "₎",
+  a: "ₐ", e: "ₑ", o: "ₒ", x: "ₓ", h: "ₕ", k: "ₖ", l: "ₗ", m: "ₘ", n: "ₙ", p: "ₚ", s: "ₛ", t: "ₜ", " ": "",
+};
+const FRAC: Record<string, string> = {
+  "1/2": "½", "1/3": "⅓", "2/3": "⅔", "1/4": "¼", "3/4": "¾", "1/5": "⅕", "1/6": "⅙", "1/8": "⅛", "3/8": "⅜",
+};
+function scriptText(kind: "sup" | "sub", s: string): string {
+  // A raised small o / ring after a number is the degree sign (25°C).
+  if (kind === "sup" && /^\s*[o∘°]\s*$/.test(s)) return "°";
+  const map = kind === "sup" ? SUP : SUB;
+  const chars = Array.from(s);
+  if (chars.every((c) => c in map)) return chars.map((c) => map[c]).join("");
+  // A subscript Unicode can't show stays plain text, as it always was (μ0ε0).
+  if (kind === "sub" || /^[A-Za-zÀ-ÖØ-öø-ɏͰ-Ͽℓ¹²³⁰⁴-⁹₀-₉\s]+$/.test(s)) return s.trim();
+  // A real power Unicode can't show (e^(-αt), r^(3/2)); anything longer is
+  // the top of a display fraction and stays plain text.
+  if (/^[-−]?[A-Za-zÀ-ÖØ-öø-ɏͰ-Ͽℓ¹²³⁰⁴-⁹₀-₉0-9]{1,3}(\/[0-9])?$/.test(s.trim())) return `^(${s.trim().replace(/[−–]/g, "-")})`;
+  return s.trim();
+}
 
 function joinItems(items: Item[]): string {
   let out = "";
   let end = -Infinity;
-  for (const it of items) {
+  let afterPower = false; // the last thing written was a plain superscript
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (it.script) {
+      // The whole cluster of small pieces ("−", "1", "0") belongs to the
+      // character before it — no space.
+      let j = i;
+      while (j + 1 < items.length && items[j + 1].script) j++;
+      const cluster = items.slice(i, j + 1);
+      const sup = cluster.filter((x) => x.script === "sup");
+      const sub = cluster.filter((x) => x.script === "sub");
+      const text = (xs: Item[]) => xs.map((x) => x.s).join("");
+      const lo = (xs: Item[]) => Math.min(...xs.map((x) => x.x));
+      const hi = (xs: Item[]) => Math.max(...xs.map((x) => x.x + x.w));
+      const stacked = sup.length > 0 && sub.length > 0 && lo(sup) < hi(sub) - 0.5 && lo(sub) < hi(sup) - 0.5;
+      const gap = it.x - end;
+      if (stacked && !(gap <= 1.2 && /[A-Za-zÀ-ÖØ-öø-ɏͰ-Ͽℓ¹²³⁰⁴-⁹₀-₉0-9)\]]$/.test(out))) {
+        // Number over number, not touching a symbol before it: a stacked
+        // fraction (the ½ of "½N₂ + 3/2H₂ ⇌ NH₃").
+        // A ring over a small A is the ångström sign (3.4Å).
+        const f = `${text(sup).trim()}/${text(sub).trim()}`.replace(/A\s*[∘˚°]|[∘˚°]\s*A/g, "Å");
+        if (out && gap > 1.5 && !/\s$/.test(out)) out += " ";
+        out += FRAC[f] || f;
+      } else if (stacked) {
+        // Both on one symbol (AB₂⁻, K₁²): subscript first, as chemistry writes it.
+        out += scriptText("sub", text(sub)) + scriptText("sup", text(sup));
+      } else {
+        for (let k = 0; k < cluster.length; ) {
+          let m = k;
+          while (m + 1 < cluster.length && cluster[m + 1].script === cluster[k].script) m++;
+          out += scriptText(cluster[k].script!, text(cluster.slice(k, m + 1)));
+          k = m + 1;
+        }
+      }
+      end = hi(cluster);
+      // A fraction or degree sign is followed directly by what it qualifies
+      // (½N₂, 25°C); a power or ion charge often by a word (AB₂⁻ are).
+      afterPower = /[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁾ⁿⁱˣʸ′″)]$/.test(out) && (!stacked || /[⁺⁻]$/.test(out));
+      i = j;
+      continue;
+    }
     // A real word gap is about a quarter of the font size; smaller gaps are
     // kerning inside a word the PDF stored in pieces ("L ytic", "Or ganic").
-    const minGap = Math.max(1.5, (it.size || 0) * 0.2);
+    // Right after a power the gap is measured from its small raised glyphs,
+    // so a smaller one already separates a following word ("B⁻ and", 0.7pt).
+    // After a subscript a small gap is just math spacing ("H₂O", "SO₂Cl₂").
+    const minGap = afterPower && /^[A-Za-zÀ-ÖØ-öø-ɏͰ-Ͽℓ¹²³⁰⁴-⁹₀-₉0-9]/.test(it.s) ? 0.5 : Math.max(1.5, (it.size || 0) * 0.2);
+    afterPower = false;
     if (out && it.x - end > minGap && !/\s$/.test(out) && !/^\s/.test(it.s)) out += " ";
     out += it.s;
     end = it.x + it.w;
@@ -32,7 +110,23 @@ function joinItems(items: Item[]): string {
   return out.replace(/\s+/g, " ").trim();
 }
 
+// Size of the page's body text: the font size most characters are set in.
+function bodySize(items: Item[]): number {
+  const count = new Map<number, number>();
+  for (const it of items) {
+    const k = Math.round((it.size || 0) * 2) / 2;
+    if (k > 0) count.set(k, (count.get(k) || 0) + it.s.trim().length);
+  }
+  let best = 0;
+  let n = -1;
+  count.forEach((c, k) => {
+    if (c > n) [best, n] = [k, c];
+  });
+  return best;
+}
+
 const QNUM = /^\d{1,3}\.(\s|$)/;
+const LABEL_ONLY = /^\(?([1-4a-dA-D]|i{1,3}|iv)\)$/;
 
 export function pageText(rawItems: any[], pageWidth: number, images: PlacedImage[] = []): string {
   const items: Item[] = rawItems
@@ -42,13 +136,58 @@ export function pageText(rawItems: any[], pageWidth: number, images: PlacedImage
     // land one by one in the middle of answers.
     .filter((i) => Math.abs(i.transform?.[1] || 0) < 0.01 && Math.abs(i.transform?.[2] || 0) < 0.01)
     .map((i) => ({ x: i.transform[4], y: i.transform[5], w: i.width || 0, s: i.str, size: Math.abs(i.transform[3] || 0) }));
+  // Small text sitting off the baseline is a superscript/subscript. It is
+  // held back while lines are formed — a 10⁻¹⁰ exponent is ~4.5pt above its
+  // line, so it used to become a line of its own ("−10" printed above the
+  // question, "2 × 10 and" left without its power) — then attached to the
+  // line it touches.
+  const bodyPt = bodySize(items);
+  const small = (it: Item) => bodyPt > 0 && (it.size || 0) > 0 && (it.size || 0) <= bodyPt * 0.82;
+  const held = items.filter(small);
+  const main = items.filter((it) => !small(it));
+
   // Group into lines (same baseline within 3pt), top of page first.
-  items.sort((a, b) => b.y - a.y || a.x - b.x);
+  main.sort((a, b) => b.y - a.y || a.x - b.x);
   const lines: { y: number; items: Item[]; image?: boolean }[] = [];
-  for (const it of items) {
+  const addToLines = (it: Item) => {
     const line = lines.find((l) => !l.image && Math.abs(l.y - it.y) <= 3);
     if (line) line.items.push(it);
     else lines.push({ y: it.y, items: [it] });
+  };
+  for (const it of main) addToLines(it);
+
+  // Attach each small piece (left to right, so "−", "1", "0" chain) to the
+  // line whose text it touches horizontally and whose baseline is just
+  // below (superscript) or just above (subscript) it. Small text touching
+  // nothing — footnotes, a smaller header — is ordinary text.
+  held.sort((a, b) => a.x - b.x || b.y - a.y);
+  for (const it of held) {
+    let best: { line: (typeof lines)[number]; dy: number } | null = null;
+    for (const l of lines) {
+      const dy = it.y - l.y;
+      const base = Math.max(...l.items.map((x) => x.size || 0));
+      if (dy > base * 0.6 || dy < -base * 0.45) continue;
+      // The piece before it must be something a power/subscript can sit on
+      // (a letter, digit, bracket or another small piece) — not an option
+      // label "1)" or a minus sign, which is where the top of a physics
+      // display fraction (2q over ε₀) sits; that is left as it always was.
+      const touches = l.items.some((x) => {
+        const xEnd = x.x + x.w;
+        const base = !!x.script || (/[A-Za-zÀ-ÖØ-öø-ɏͰ-Ͽℓ¹²³⁰⁴-⁹₀-₉0-9)\]′]\s*$/.test(x.s) && !LABEL_ONLY.test(x.s.trim()));
+        return (base && xEnd >= it.x - 2.5 && xEnd <= it.x + 1.5) || (x.x >= it.x + it.w - 1.5 && x.x <= it.x + it.w + 2.5);
+      });
+      if (touches && (!best || Math.abs(dy) < Math.abs(best.dy))) best = { line: l, dy };
+    }
+    if (best && Math.abs(best.dy) >= 0.8) best.line.items.push({ ...it, script: best.dy > 0 ? "sup" : "sub" });
+    else if (best) best.line.items.push({ ...it, onBase: true }); // small but on the baseline
+    else addToLines(it);
+  }
+  // A small piece on the baseline right under a raised one is the bottom of
+  // a small stacked fraction (0.34nm over 3.4Å in an option).
+  for (const l of lines) {
+    const sups = l.items.filter((x) => x.script === "sup");
+    for (const x of l.items)
+      if (x.onBase && sups.some((s) => s.x < x.x + x.w - 0.5 && x.x < s.x + s.w - 0.5)) x.script = "sub";
   }
   // Each picture is a line of its own, never merged with text beside it.
   for (const im of images) lines.push({ y: im.yTop, items: [{ x: im.x, y: im.yTop, w: im.w, s: im.token }], image: true });
