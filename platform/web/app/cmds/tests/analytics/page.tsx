@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import CmdsShell from "@/components/CmdsShell";
 import { getSession } from "@/lib/session";
 import MathText from "@/components/MathText";
+import { downloadResultExcel, downloadResultPdf } from "@/lib/resultSheetExport";
 
 type TestRow = { testId: string; name: string; attempts: number; students: number; lastAt: number };
 type Subject = { name: string; questionCount: number; totalMarks: number; topics: string[] };
@@ -89,7 +90,16 @@ function fmtTime(sec: number): string {
 
 const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 type Detail = {
-  test: { id: string; name: string; totalMarks: number; durationMin: number; totalQuestions: number };
+  test: {
+    id: string;
+    name: string;
+    totalMarks: number;
+    durationMin: number;
+    totalQuestions: number;
+    orgName?: string;
+    logoUrl?: string;
+    batch?: string;
+  };
   overall: Overall;
   subjects: Subject[];
   topPerformers: TopPerformer[];
@@ -127,6 +137,33 @@ export default function TestAnalyticsPage() {
     "default"
   );
   const [resultView, setResultView] = useState<"overall" | "cwl">("overall");
+  const [exporting, setExporting] = useState<"" | "excel" | "pdf">("");
+
+  // Excel / PDF result sheet in the institute's printed format, for the
+  // students currently listed (the Min % / Max % filter applies).
+  async function downloadSheet(kind: "excel" | "pdf") {
+    if (!detail) return;
+    const lo = minPct === "" ? -Infinity : Number(minPct);
+    const hi = maxPct === "" ? Infinity : Number(maxPct);
+    const input = {
+      testName: detail.test.name,
+      totalMarks: detail.test.totalMarks,
+      orgName: detail.test.orgName || "",
+      logoUrl: detail.test.logoUrl || "",
+      batch: detail.test.batch || "",
+      subjects: detail.subjects.map((x) => ({ name: x.name, totalMarks: x.totalMarks })),
+      rows: detail.resultSheet.filter((r) => r.percent >= lo && r.percent <= hi),
+    };
+    setExporting(kind);
+    try {
+      if (kind === "excel") await downloadResultExcel(input);
+      else await downloadResultPdf(input);
+    } catch (e: any) {
+      alert(`Could not prepare the ${kind === "excel" ? "Excel" : "PDF"} file: ${e?.message || e}`);
+    } finally {
+      setExporting("");
+    }
+  }
   const [subjectFilter, setSubjectFilter] = useState("all");
   const [studentOpen, setStudentOpen] = useState(false);
   const [studentDetail, setStudentDetail] = useState<StudentDetail | null>(null);
@@ -594,12 +631,22 @@ export default function TestAnalyticsPage() {
                           </button>
                         )}
                       </div>
-                      <a
-                        href={`/api/cmds/tests/analytics/export?testId=${encodeURIComponent(detail.test.id)}`}
-                        className="rounded border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
-                      >
-                        Download CSV
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => downloadSheet("excel")}
+                          disabled={!!exporting || detail.resultSheet.length === 0}
+                          className="rounded border border-emerald-300 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
+                        >
+                          {exporting === "excel" ? "Preparing…" : "Download Excel"}
+                        </button>
+                        <button
+                          onClick={() => downloadSheet("pdf")}
+                          disabled={!!exporting || detail.resultSheet.length === 0}
+                          className="rounded border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+                        >
+                          {exporting === "pdf" ? "Preparing…" : "Download PDF"}
+                        </button>
+                      </div>
                       <button
                         onClick={() => window.print()}
                         className="rounded border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
@@ -637,7 +684,7 @@ export default function TestAnalyticsPage() {
                                     Total score
                                   </th>
                                   {subjectCols.map((s) => (
-                                    <th key={s} colSpan={4} className="border-l border-slate-200 px-2 py-1 text-center font-medium text-blue-600">
+                                    <th key={s} colSpan={5} className="border-l border-slate-200 px-2 py-1 text-center font-medium text-blue-600">
                                       {s}
                                     </th>
                                   ))}
@@ -645,10 +692,11 @@ export default function TestAnalyticsPage() {
                                 <tr className="border-b border-slate-200 bg-slate-50 text-left text-[10px] uppercase tracking-wide text-slate-400">
                                   {subjectCols.map((s) => (
                                     <Fragment key={s}>
-                                      <th className="border-l border-slate-200 px-2 py-1 font-medium">C</th>
+                                      <th className="border-l border-slate-200 px-2 py-1 font-medium">Score</th>
+                                      <th className="px-2 py-1 font-medium text-red-500">Rank</th>
+                                      <th className="px-2 py-1 font-medium">C</th>
                                       <th className="px-2 py-1 font-medium">W</th>
                                       <th className="px-2 py-1 font-medium">L</th>
-                                      <th className="px-2 py-1 font-medium">T</th>
                                     </Fragment>
                                   ))}
                                 </tr>
@@ -656,7 +704,7 @@ export default function TestAnalyticsPage() {
                               <tbody>
                                 {rows.length === 0 ? (
                                   <tr>
-                                    <td colSpan={3 + subjectCols.length * 4} className="px-4 py-8 text-center text-slate-400">
+                                    <td colSpan={3 + subjectCols.length * 5} className="px-4 py-8 text-center text-slate-400">
                                       No students in this range.
                                     </td>
                                   </tr>
@@ -678,7 +726,13 @@ export default function TestAnalyticsPage() {
                                         const sub = r.subjects.find((x) => x.name === s);
                                         return (
                                           <Fragment key={s}>
-                                            <td className="border-l border-slate-100 px-2 py-2 text-center text-emerald-600">
+                                            <td className="border-l border-slate-100 px-2 py-2 text-center font-medium text-slate-700">
+                                              {sub?.score ?? 0}
+                                            </td>
+                                            <td className="px-2 py-2 text-center font-semibold text-red-500">
+                                              {sub?.rank ?? "—"}
+                                            </td>
+                                            <td className="px-2 py-2 text-center text-emerald-600">
                                               {sub?.correct ?? 0}
                                             </td>
                                             <td className="px-2 py-2 text-center text-red-500">
@@ -686,9 +740,6 @@ export default function TestAnalyticsPage() {
                                             </td>
                                             <td className="px-2 py-2 text-center text-slate-400">
                                               {sub?.left ?? 0}
-                                            </td>
-                                            <td className="px-2 py-2 text-center text-slate-500">
-                                              {sub?.total ?? 0}
                                             </td>
                                           </Fragment>
                                         );
@@ -752,6 +803,11 @@ export default function TestAnalyticsPage() {
                                       return (
                                         <td key={s} className="px-4 py-2 text-right text-slate-600">
                                           {sub ? sub.score : "—"}
+                                          {sub?.rank != null && (
+                                            <span className="ml-1 text-xs font-semibold text-red-500" title={`Rank in ${s}`}>
+                                              #{sub.rank}
+                                            </span>
+                                          )}
                                         </td>
                                       );
                                     })}

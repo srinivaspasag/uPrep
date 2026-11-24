@@ -121,7 +121,10 @@ export async function GET(req: NextRequest) {
             .filter(Boolean)
         )
       ) as string[];
-      return { name: m.name || "Section", questionCount: qIds.length, totalMarks: m.totalMarks || 0, topics };
+      // Max marks per subject: stored on the section when the test builder set
+      // it, otherwise the sum of its questions' positive marks (WT/DT tests).
+      const subjectMax = m.totalMarks || qIds.reduce((s, q) => s + (marks[q]?.positive || 0), 0);
+      return { name: m.name || "Section", questionCount: qIds.length, totalMarks: subjectMax, topics };
     });
 
     const rawAttempts: any[] = await db
@@ -434,7 +437,9 @@ export async function GET(req: NextRequest) {
         };
       })
       .sort((a, b) => b.score - a.score)
-      .map((r, i) => ({ ...r, rank: i + 1, totalStudents: userIds.length }));
+      // Standard competition ranking: equal totals share a rank (591, 591 ->
+      // 2, 2, then 4), as on the institute's printed result sheets.
+      .map((r, i, all) => ({ ...r, rank: all.findIndex((x) => x.score === r.score) + 1, totalStudents: userIds.length }));
 
     // Per-subject rank (standard competition ranking — ties share a rank,
     // the next distinct score skips ahead by the tie count), same "Rank Vs
@@ -548,6 +553,25 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Header of the downloadable result sheet: institute name + logo, and
+    // the batch = program(s) of the sections the test is assigned to.
+    const report = { orgName: "", logoUrl: "", batch: "" };
+    try {
+      if (ObjectId.isValid(orgId)) {
+        const org: any = await db.collection("organizations").findOne({ _id: new ObjectId(orgId) }, { projection: { name: 1, logoUrl: 1 } });
+        report.orgName = org?.name || "";
+        report.logoUrl = org?.logoUrl || "";
+      }
+      const secIds: string[] = Array.from(new Set([...(testDoc?.visibleSectionIds || []), ...(testDoc?.sectionIds || [])].map(String)));
+      const secOids = secIds.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
+      const secs: any[] = secOids.length ? await db.collection("orgsections").find({ _id: { $in: secOids } }).project({ programId: 1, name: 1 }).toArray() : [];
+      const progOids = Array.from(new Set(secs.map((x) => String(x.programId || "")).filter((id) => ObjectId.isValid(id)))).map((id) => new ObjectId(id));
+      const progs: any[] = progOids.length ? await db.collection("orgprograms").find({ _id: { $in: progOids } }).project({ name: 1 }).toArray() : [];
+      report.batch = (progs.length ? progs.map((x) => x.name) : secs.map((x) => x.name)).filter(Boolean).join(", ");
+    } catch {
+      /* the sheet still downloads without a header line */
+    }
+
     return NextResponse.json({
       test: {
         id: testId,
@@ -555,6 +579,7 @@ export async function GET(req: NextRequest) {
         totalMarks,
         durationMin,
         totalQuestions: qOrder.length,
+        ...report,
       },
       overall,
       subjects,
