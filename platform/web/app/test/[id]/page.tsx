@@ -664,7 +664,7 @@ export default function TestPage({ params }: { params: { id: string } }) {
                         checked={answers[currentQuestion.id] === oi}
                         onChange={() => setAnswers((a) => ({ ...a, [currentQuestion.id]: oi }))}
                       />
-                      <MathText className="text-lg text-slate-800">{opt}</MathText>
+                      <MathText className="text-lg text-slate-800 [&_img]:mix-blend-multiply">{opt}</MathText>
                     </label>
                   ))}
                 </div>
@@ -1232,7 +1232,7 @@ function ReviewPanel({
                       <div key={oi} className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-base ${cls}`}>
                         {isCorrect && <span className="text-emerald-600">✓</span>}
                         {!isCorrect && isChosen && <span className="text-red-600">✕</span>}
-                        <MathText className="text-slate-700">{opt}</MathText>
+                        <MathText className="text-slate-700 [&_img]:mix-blend-multiply">{opt}</MathText>
                       </div>
                     );
                   })}

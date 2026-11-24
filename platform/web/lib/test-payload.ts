@@ -25,8 +25,12 @@ export async function fetchTestPayload(id: string, orgId: string, userId: string
   // used to surface "Unexpected token '<' … is not valid JSON" to students —
   // log what the service actually said and show something readable instead.
   const post = async (p: string) => {
+    // no-store: Next caches fetch() results — POSTs included — when called
+    // from a GET route, so without this a question edited in CMDS kept
+    // being served from .next/cache in its old form.
     const r = await fetch(`${API.content}/tests/${p}`, {
       method: "POST",
+      cache: "no-store",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: form(),
     });
