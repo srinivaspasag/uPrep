@@ -630,8 +630,8 @@ export default function TestPage({ params }: { params: { id: string } }) {
                     </button>
                   )}
                 </div>
-                <div className="mt-2 flex gap-2">
-                  <MathText className="text-slate-800">{currentQuestion.content}</MathText>
+                <div className="paper-box mt-2">
+                  <MathText className="paper-q">{currentQuestion.content}</MathText>
                 </div>
                 {isNumeric(currentQuestion) ? (
                   <NumericAnswer
@@ -647,11 +647,11 @@ export default function TestPage({ params }: { params: { id: string } }) {
                     }
                   />
                 ) : (
-                <div className="mt-4 space-y-2">
+                <div className="mt-4 space-y-3">
                   {currentQuestion.options.map((opt, oi) => (
                     <label
                       key={oi}
-                      className={`flex items-center gap-3 rounded-md border px-3 py-2 cursor-pointer ${
+                      className={`flex items-center gap-3 rounded-lg border px-4 py-3 cursor-pointer ${
                         answers[currentQuestion.id] === oi
                           ? "border-blue-500 bg-blue-50"
                           : "border-slate-200 hover:bg-slate-50"
@@ -659,11 +659,12 @@ export default function TestPage({ params }: { params: { id: string } }) {
                     >
                       <input
                         type="radio"
+                        className="h-5 w-5 shrink-0"
                         name={currentQuestion.id}
                         checked={answers[currentQuestion.id] === oi}
                         onChange={() => setAnswers((a) => ({ ...a, [currentQuestion.id]: oi }))}
                       />
-                      <MathText className="text-slate-700">{opt}</MathText>
+                      <MathText className="paper-opt [&_img]:mix-blend-multiply">{opt}</MathText>
                     </label>
                   ))}
                 </div>
@@ -1196,8 +1197,8 @@ function ReviewPanel({
                     {VERDICT_LABEL[q.verdict]}
                   </span>
                 </div>
-                <div className="mt-2">
-                  <MathText className="text-slate-800">{q.content}</MathText>
+                <div className="paper-box mt-2">
+                  <MathText className="paper-q">{q.content}</MathText>
                 </div>
                 {isNumeric(q) ? (
                   <div className="mt-3 flex flex-wrap gap-2 text-sm">
@@ -1217,7 +1218,7 @@ function ReviewPanel({
                     </span>
                   </div>
                 ) : (
-                <div className="mt-3 space-y-1.5">
+                <div className="mt-3 space-y-2">
                   {q.options.map((opt, oi) => {
                     const idxStr = String(oi);
                     const isCorrect = q.correctIndexes.includes(idxStr);
@@ -1228,10 +1229,10 @@ function ReviewPanel({
                       ? "border-red-400 bg-red-50"
                       : "border-slate-200";
                     return (
-                      <div key={oi} className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm ${cls}`}>
+                      <div key={oi} className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-base ${cls}`}>
                         {isCorrect && <span className="text-emerald-600">✓</span>}
                         {!isCorrect && isChosen && <span className="text-red-600">✕</span>}
-                        <MathText className="text-slate-700">{opt}</MathText>
+                        <MathText className="paper-opt [&_img]:mix-blend-multiply">{opt}</MathText>
                       </div>
                     );
                   })}
