@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
+    "@napi-rs/canvas": "^0.1.100",
     "exceljs": "^4.4.0",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
@@ -21,6 +22,7 @@
     "mongodb": "^3.7.4",
     "next": "14.2.35",
     "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^4.10.38",
     "react": "^18",
     "react-dom": "^18"
   },
