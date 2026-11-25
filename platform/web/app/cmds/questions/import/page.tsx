@@ -8,7 +8,7 @@ import MathText from "@/components/MathText";
 import BoardPicker from "@/components/BoardPicker";
 import CmdsShell from "@/components/CmdsShell";
 import PictureButton, { pastePicture } from "@/components/PictureButton";
-import { LETTERS, parseAnswerKey, parseSolutions, splitOptions, splitQuestionBlocks } from "@/lib/questionImport";
+import { LETTERS, parseAnswerKey, parseNumericKey, parseSolutions, splitOptions, splitQuestionBlocks } from "@/lib/questionImport";
 
 // Bulk-import many single-correct MCQs at once from a pasted question bank +
 // answer key (the common coaching-institute PDF/Word format: "1] question
@@ -33,7 +33,15 @@ type ParsedRow = {
   keyConflict: string;
   parseOk: boolean;
   raw: string;
+  // Exact-picture import (PDF): "whole" = options printed inside the question
+  // picture, "numerical" = no options (numerical-answer question).
+  layout?: "options" | "whole" | "numerical";
+  numericAnswer?: string; // numerical-answer questions: the correct value
 };
+
+// From POST /api/cmds/questions/cut (lib/pdfPictures).
+type PicQuestion = { num: number; content: string; options: string[] | null; layout: "options" | "whole" | "numerical"; note: string };
+type PicSolution = { num: number; content: string; key: string };
 
 export default function BulkImportQuestionsPage() {
   const router = useRouter();
@@ -52,6 +60,54 @@ export default function BulkImportQuestionsPage() {
   const [extractNote, setExtractNote] = useState<{ target: "questions" | "answers" | "solutions"; text: string; ok: boolean } | null>(
     null
   );
+  // Exact pictures cut from the uploaded PDFs; when set they replace the
+  // text boxes as the source for the review step.
+  const [picQuestions, setPicQuestions] = useState<{ file: string; list: PicQuestion[]; warnings: string[]; missing: number[] } | null>(null);
+  const [picSolutions, setPicSolutions] = useState<{ file: string; list: PicSolution[] } | null>(null);
+
+  async function cutFile(file: File, target: "questions" | "solutions") {
+    setExtracting(target);
+    setExtractError("");
+    setExtractNote(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("kind", target);
+      const r = await fetch("/api/cmds/questions/cut", { method: "POST", body: form });
+      const d = await r.json();
+      if (!r.ok || d.error) {
+        setExtractError(d.error || "Failed to read the PDF");
+        return;
+      }
+      if (target === "questions") {
+        const list: PicQuestion[] = d.questions || [];
+        setPicQuestions({ file: file.name, list, warnings: d.warnings || [], missing: d.missing || [] });
+        const whole = list.filter((q) => q.layout === "whole").length;
+        const numerical = list.filter((q) => q.layout === "numerical").length;
+        setExtractNote({
+          target,
+          ok: !(d.missing || []).length && !(d.warnings || []).some((w: string) => /check this question/.test(w)),
+          text:
+            `${list.length} questions cut from the PDF exactly as printed (equations, diagrams and tables included).` +
+            (whole ? ` ${whole} kept as one picture with the options inside it.` : "") +
+            (numerical ? ` ${numerical} numerical-answer (no options).` : "") +
+            ((d.missing || []).length ? ` Question number(s) ${d.missing.join(", ")} not found — check the PDF.` : ""),
+        });
+      } else {
+        const list: PicSolution[] = d.solutions || [];
+        setPicSolutions({ file: file.name, list });
+        setExtractNote({
+          target,
+          ok: true,
+          text: `${list.length} solutions cut from the PDF exactly as printed; ${list.filter((x) => x.key).length} show their answer.`,
+        });
+      }
+    } catch {
+      setExtractError("Failed to read the PDF");
+    } finally {
+      setExtracting(null);
+    }
+  }
 
   async function extractFile(file: File, target: "questions" | "answers" | "solutions") {
     setExtracting(target);
@@ -97,8 +153,38 @@ export default function BulkImportQuestionsPage() {
   }, [router]);
 
   function runParse() {
+    const answersFromKey = parseAnswerKey(answerKeyText);
+    if (picQuestions) {
+      const numericKey = parseNumericKey(answerKeyText);
+      const sols = new Map((picSolutions?.list || []).map((x) => [x.num, x]));
+      const textSols = !picSolutions && solutionsText.trim() ? parseSolutions(solutionsText) : {};
+      setRows(
+        picQuestions.list.map((q) => {
+          const sol = sols.get(q.num);
+          const tsol = (textSols as any)[q.num] as { text: string; key: string } | undefined;
+          const solKey = sol?.key || tsol?.key || "";
+          const fromKey = answersFromKey[q.num] || "";
+          return {
+            num: q.num,
+            content: q.content,
+            // options printed inside the question picture: the student picks
+            // the printed number
+            options: q.layout === "numerical" ? [] : q.options || ["(1)", "(2)", "(3)", "(4)"],
+            correctLetter: q.layout === "numerical" ? "" : fromKey || solKey,
+            numericAnswer: q.layout === "numerical" ? numericKey[q.num] || "" : undefined,
+            solution: sol?.content || tsol?.text || "",
+            keyConflict: q.layout !== "numerical" && fromKey && solKey && solKey !== fromKey ? solKey : "",
+            parseOk: true,
+            raw: "",
+            layout: q.layout,
+          };
+        })
+      );
+      setStep("review");
+      return;
+    }
     const blocks = splitQuestionBlocks(questionsText);
-    const answers = parseAnswerKey(answerKeyText);
+    const answers = answersFromKey;
     const sols = solutionsText.trim() ? parseSolutions(solutionsText) : {};
     const parsed: ParsedRow[] = blocks.map((b) => {
       const split = splitOptions(b.text);
@@ -141,6 +227,34 @@ export default function BulkImportQuestionsPage() {
     const errors: string[] = [];
     for (const r of rows) {
       const correctIdx = LETTERS.indexOf(r.correctLetter.toLowerCase());
+      if (r.layout === "numerical") {
+        const v = (r.numericAnswer || "").trim();
+        if (!/^-?\d+(\.\d+)?$/.test(v)) {
+          errors.push(`Q${r.num}: numerical-answer question with no numeric answer — skipped`);
+          continue;
+        }
+        try {
+          const res = await fetch("/api/cmds/questions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: session.id,
+              content: r.content,
+              type: "NUMERIC",
+              numericAnswers: [v],
+              solution: r.solution.trim() || undefined,
+              difficulty,
+              boardIds: boardIds.length ? boardIds : undefined,
+            }),
+          });
+          const d = await res.json();
+          if (!res.ok || d.error) errors.push(`Q${r.num}: ${d.error || "failed"}`);
+          else done++;
+        } catch {
+          errors.push(`Q${r.num}: network error`);
+        }
+        continue;
+      }
       if (!r.content.trim()) {
         errors.push(`Q${r.num}: empty question text — skipped`);
         continue;
@@ -236,7 +350,11 @@ export default function BulkImportQuestionsPage() {
                     className="hidden"
                     onChange={(e) => {
                       const f = e.target.files?.[0];
-                      if (f) extractFile(f, "questions");
+                      if (f && /\.pdf$/i.test(f.name)) cutFile(f, "questions");
+                      else if (f) {
+                        setPicQuestions(null);
+                        extractFile(f, "questions");
+                      }
                       e.target.value = "";
                     }}
                   />
@@ -252,6 +370,22 @@ export default function BulkImportQuestionsPage() {
                   symbols from PDFs can come through garbled, so double-check those in the review step.
                 </p>
               )}
+              {picQuestions ? (
+                <div className="mt-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm text-emerald-800">
+                  <div className="font-medium">{picQuestions.file}</div>
+                  <div className="mt-1 text-xs">
+                    {picQuestions.list.length} questions ready as exact pictures. They are shown in full in the review step.
+                  </div>
+                  {picQuestions.warnings.map((w, i) => (
+                    <div key={i} className="mt-1 text-xs text-amber-700">
+                      {w}
+                    </div>
+                  ))}
+                  <button onClick={() => setPicQuestions(null)} className="mt-2 text-xs text-slate-500 underline hover:text-red-600">
+                    Remove and paste text instead
+                  </button>
+                </div>
+              ) : (
               <textarea
                 value={questionsText}
                 onChange={(e) => setQuestionsText(e.target.value)}
@@ -259,6 +393,7 @@ export default function BulkImportQuestionsPage() {
                 className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 font-mono text-xs text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 placeholder={"1] Question text here\na) option 1\nb) option 2\nc) option 3\nd) option 4\n\n2] ..."}
               />
+              )}
             </div>
             <div className="rounded-xl bg-white p-5 ring-1 ring-black/5">
               <div className="flex items-center justify-between">
@@ -310,7 +445,11 @@ export default function BulkImportQuestionsPage() {
                   className="hidden"
                   onChange={(e) => {
                     const f = e.target.files?.[0];
-                    if (f) extractFile(f, "solutions");
+                    if (f && /\.pdf$/i.test(f.name)) cutFile(f, "solutions");
+                    else if (f) {
+                      setPicSolutions(null);
+                      extractFile(f, "solutions");
+                    }
                     e.target.value = "";
                   }}
                 />
@@ -320,6 +459,14 @@ export default function BulkImportQuestionsPage() {
               Each solution is attached to its question, e.g. "12. [3] explanation…". The answer printed with a solution is
               checked against the answer key, and used if the key is missing.
             </p>
+            {picSolutions ? (
+              <div className="mt-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+                <span className="font-medium">{picSolutions.file}</span> — {picSolutions.list.length} solutions ready as exact pictures.{" "}
+                <button onClick={() => setPicSolutions(null)} className="text-xs text-slate-500 underline hover:text-red-600">
+                  Remove
+                </button>
+              </div>
+            ) : (
             <textarea
               value={solutionsText}
               onChange={(e) => setSolutionsText(e.target.value)}
@@ -327,11 +474,12 @@ export default function BulkImportQuestionsPage() {
               className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 font-mono text-xs text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder={"1. [2] Wombat is a marsupial…\n2. [3] …"}
             />
+            )}
           </div>
 
           <button
             onClick={runParse}
-            disabled={!questionsText.trim()}
+            disabled={!questionsText.trim() && !picQuestions}
             className="rounded-md bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
           >
             Parse & Review
@@ -349,8 +497,8 @@ export default function BulkImportQuestionsPage() {
                   {rows.filter((r) => !r.parseOk).length} need manual fixing (options not detected).
                 </span>
               )}{" "}
-              {rows.filter((r) => r.correctLetter).length}/{rows.length} with answers
-              {solutionsText.trim() ? `, ${rows.filter((r) => r.solution).length}/${rows.length} with solutions` : ""}.{" "}
+              {rows.filter((r) => r.correctLetter || (r.layout === "numerical" && /^-?\d+(\.\d+)?$/.test((r.numericAnswer || "").trim()))).length}/{rows.length} with answers
+              {solutionsText.trim() || picSolutions ? `, ${rows.filter((r) => r.solution).length}/${rows.length} with solutions` : ""}.{" "}
               {rows.filter((r) => r.keyConflict).length > 0 && (
                 <span className="font-medium text-red-700">
                   {rows.filter((r) => r.keyConflict).length} answer(s) differ between key and solutions.{" "}
@@ -371,10 +519,20 @@ export default function BulkImportQuestionsPage() {
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-blue-600">Q{r.num}</span>
                 <div className="flex items-center gap-3">
-                  {!r.parseOk && (
-                    <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-                      Options not auto-detected — edit below
+                  {r.layout === "numerical" ? (
+                    <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                      Numerical-answer question
                     </span>
+                  ) : r.layout === "whole" ? (
+                    <span className="rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-medium text-sky-700">
+                      Options are inside the question picture — students pick (1)–(4)
+                    </span>
+                  ) : (
+                    !r.parseOk && (
+                      <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                        Options not auto-detected — edit below
+                      </span>
+                    )
                   )}
                   <button onClick={() => removeRow(i)} className="text-xs text-slate-400 hover:text-red-500">
                     Remove
@@ -398,6 +556,20 @@ export default function BulkImportQuestionsPage() {
                 </div>
               )}
 
+              {r.layout === "numerical" && (
+                <div className="mt-3 flex items-center gap-2 text-sm">
+                  <label className="font-medium text-slate-600">Correct answer (number)</label>
+                  <input
+                    value={r.numericAnswer || ""}
+                    onChange={(e) => updateRow(i, { numericAnswer: e.target.value })}
+                    className="w-32 rounded-md border border-slate-300 px-2 py-1 text-sm"
+                    placeholder="e.g. 267"
+                  />
+                  {!/^-?\d+(\.\d+)?$/.test((r.numericAnswer || "").trim()) && (
+                    <span className="text-xs text-amber-600">Enter the answer — the key file had none for this question.</span>
+                  )}
+                </div>
+              )}
               <div className="mt-3 space-y-2">
                 {r.options.map((opt, oi) => (
                   <div key={oi} className="flex items-center gap-2">
@@ -449,7 +621,7 @@ export default function BulkImportQuestionsPage() {
                   </div>
                 )}
               </div>
-              {!r.correctLetter && (
+              {!r.correctLetter && r.layout !== "numerical" && (
                 <p className="mt-2 text-xs text-amber-600">
                   No correct answer detected for this question — select one above before importing.
                 </p>

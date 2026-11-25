@@ -156,6 +156,24 @@ export function parseAnswerKey(text: string): Record<number, string> {
   return map;
 }
 
+// Numerical answers from a spreadsheet key: rows whose answer is a number and
+// carry no letter, e.g. WT-17 JEE "23<TAB>4<TAB>4" or "50<TAB>267.0<TAB>267.0".
+// Only used for questions printed without options — parseAnswerKey would
+// read a 1-4 there as an option letter (23 → "d"), which is wrong for them.
+export function parseNumericKey(text: string): Record<number, string> {
+  const map: Record<number, string> = {};
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.includes("\t") && !line.includes(",")) continue;
+    const cells = line.split(/\t|,/).map((c) => c.trim()).filter(Boolean);
+    if (cells.length < 2 || !/^\d{1,3}$/.test(cells[0])) continue;
+    const rest = cells.slice(1);
+    if (rest.some((c) => /^\(?[a-dA-D]\)?$/.test(c))) continue;
+    const last = rest[rest.length - 1];
+    if (/^-?\d+(\.\d+)?$/.test(last)) map[parseInt(cells[0], 10)] = last;
+  }
+  return map;
+}
+
 // Solutions sheet -> { questionNumber: { text, key? } }. Handles the common
 // coaching format "12. [3] explanation…" (Scholar Spectra DT papers) as well
 // as "12] (c) …", "12. Ans: 3 …" and plain "12. explanation…". The key found
